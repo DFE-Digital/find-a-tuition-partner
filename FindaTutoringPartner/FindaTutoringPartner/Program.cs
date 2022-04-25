@@ -1,6 +1,15 @@
+using FindaTutoringPartner;
+using GovUk.Frontend.AspNetCore;
+using Mapster;
+using MediatR;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMediatR(typeof(AssemblyReference));
+
+builder.Services.AddGovUkFrontend();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
