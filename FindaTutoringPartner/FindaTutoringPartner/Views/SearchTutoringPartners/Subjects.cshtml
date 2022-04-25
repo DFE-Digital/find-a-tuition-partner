@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Search Tutoring Partners - Subjects";
+}
+
+<govuk-back-link asp-action="School"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Which subjects do you need tutors for?</h1>
+        <p class="govuk-body-l">Select all that apply</p>
+        
+        <form asp-action="Subjects">
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Continue</govuk-button>
+            </div>
+        </form>
+    </div>
+</div>
