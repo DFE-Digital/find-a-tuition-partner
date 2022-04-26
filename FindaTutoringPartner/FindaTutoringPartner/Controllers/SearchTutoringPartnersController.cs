@@ -1,10 +1,18 @@
-﻿using UI.Handlers.SearchTutoringPartners;
+﻿using MediatR;
+using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers;
 
 public class SearchTutoringPartnersController : Controller
 {
+    private readonly ISender _sender;
+
+    public SearchTutoringPartnersController(ISender sender)
+    {
+        _sender = sender;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Start()
     {
@@ -12,9 +20,11 @@ public class SearchTutoringPartnersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> School()
+    public async Task<IActionResult> School(School.Query query)
     {
-        return View();
+        var command = await _sender.Send(query);
+
+        return View(command);
     }
 
     [HttpPost]
