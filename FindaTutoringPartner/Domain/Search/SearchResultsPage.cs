@@ -2,7 +2,7 @@
 
 public class SearchResultsPage<TRequest, TResult> where TRequest : SearchRequestBase
 {
-    public SearchResultsPage(TRequest request, int count, ICollection<TResult> results)
+    public SearchResultsPage(TRequest request, int count, TResult[] results)
     {
         Request = request;
         Count = count;
@@ -11,5 +11,5 @@ public class SearchResultsPage<TRequest, TResult> where TRequest : SearchRequest
 
     public TRequest Request { get; set; }
     public int Count { get; set; }
-    public ICollection<TResult> Results { get; set; }
+    public TResult[] Results { get; set; }
 }

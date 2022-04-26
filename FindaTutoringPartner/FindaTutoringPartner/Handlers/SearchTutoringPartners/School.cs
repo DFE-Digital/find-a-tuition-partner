@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Application;
+﻿using Application;
 using Domain.Search;
+using FluentValidation;
 using Mapster;
 using MediatR;
 using UI.Models;
@@ -11,7 +11,7 @@ public class School
 {
     public class Query : IRequest<Command>
     {
-        public SearchAction Action { get; set; } = SearchAction.Parameters;
+        public SearchAction SearchAction { get; set; } = SearchAction.Parameters;
         public string Postcode { get; set; } = string.Empty;
     }
 
@@ -32,16 +32,45 @@ public class School
         }
     }
 
-    public class Command
+    public class Validator : AbstractValidator<Command>
     {
-        public SearchAction Action { get; set; }
-        public bool IsSearchParameters => Action == SearchAction.Parameters;
-        public bool IsSearchResults => Action == SearchAction.Results;
+        public Validator()
+        {
+            RuleFor(_ => _.Postcode)
+                .NotEmpty()
+                .WithMessage("Enter a postcode")
+                .When(_ => _.IsSearchParameters);
 
-        [Required(ErrorMessage = "Enter a postcode")]
+            RuleFor(_ => _.SelectedIndex)
+                .NotEmpty()
+                .WithMessage("Select an address")
+                .When(_ => _.IsSearchResults);
+        }
+    }
+
+    public class Command : IRequest<Command>
+    {
+        public SearchAction SearchAction { get; set; }
+        public bool IsSearchParameters => SearchAction == SearchAction.Parameters;
+        public bool IsSearchResults => SearchAction == SearchAction.Results;
+
         public string Postcode { get; set; } = string.Empty;
-        
-        public AddressSearchResultsPage? Results { get; set; }
+        public AddressSearchResultsPage? Addresses { get; set; }
+        public int? SelectedIndex { get; set; }
+        public bool IsComplete => SelectedIndex.HasValue;
+    }
+
+    public class CommandHandler : IRequestHandler<Command, Command>
+    {
+        public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
+        {
+            if (request.IsSearchParameters)
+            {
+                request.SearchAction = SearchAction.Results;
+            }
+
+            return request;
+        }
     }
 
     public class HydrateCommand : IRequest<Command>
@@ -74,7 +103,7 @@ public class School
         {
             if (command.IsSearchResults)
             {
-                command.Results = await addressLookup.LookupAddressAsync(command.Postcode);
+                command.Addresses = await addressLookup.LookupAddressAsync(command.Postcode);
             }
 
             return command;

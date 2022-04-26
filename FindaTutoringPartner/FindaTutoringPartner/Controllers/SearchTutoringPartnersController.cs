@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,10 +34,18 @@ public class SearchTutoringPartnersController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View();
+            command = await _sender.Send(new School.HydrateCommand(command));
+            return View(command);
         }
 
-        return RedirectToAction("Subjects");
+        command = await _sender.Send(command);
+        if (command.IsComplete)
+        {
+            return RedirectToAction("Subjects");
+        }
+
+        // Post Redirect Get
+        return RedirectToAction("School", command.Adapt<School.Query>());
     }
 
     [HttpGet]

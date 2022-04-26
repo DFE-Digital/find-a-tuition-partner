@@ -1,8 +1,8 @@
 using Application;
 using FindaTutoringPartner;
+using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure;
-using Mapster;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,9 @@ builder.Services.AddMediatR(typeof(AssemblyReference));
 
 builder.Services.AddGovUkFrontend();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
+    .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 
 var app = builder.Build();
 

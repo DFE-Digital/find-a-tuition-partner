@@ -2,7 +2,7 @@
 
 public class AddressSearchResultsPage : SearchResultsPage<AddressSearchRequest, Address>
 {
-    public AddressSearchResultsPage(AddressSearchRequest request, int count, ICollection<Address> results) : base(request, count, results)
+    public AddressSearchResultsPage(AddressSearchRequest request, int count, Address[] results) : base(request, count, results)
     {
     }
 }
