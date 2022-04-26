@@ -1,8 +1,8 @@
-﻿using FindaTutoringPartner.Models;
+﻿using UI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace FindaTutoringPartner.Controllers;
+namespace UI.Controllers;
 
 public class HomeController : Controller
 {

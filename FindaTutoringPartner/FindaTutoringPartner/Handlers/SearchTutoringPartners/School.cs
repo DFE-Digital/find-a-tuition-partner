@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FindaTutoringPartner.Handlers.SearchTutoringPartners;
+namespace UI.Handlers.SearchTutoringPartners;
 
 public class School
 {

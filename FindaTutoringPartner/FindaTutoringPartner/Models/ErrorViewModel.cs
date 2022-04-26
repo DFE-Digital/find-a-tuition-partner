@@ -1,4 +1,4 @@
-namespace FindaTutoringPartner.Models
+namespace UI.Models
 {
     public class ErrorViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace FindaTutoringPartner.TagHelpers;
+namespace UI.TagHelpers;
 
 [HtmlTargetElement("form")]
 public class FormTagHelper : TagHelper

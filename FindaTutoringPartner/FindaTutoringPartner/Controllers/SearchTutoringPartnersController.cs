@@ -1,7 +1,7 @@
-﻿using FindaTutoringPartner.Handlers.SearchTutoringPartners;
+﻿using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FindaTutoringPartner.Controllers;
+namespace UI.Controllers;
 
 public class SearchTutoringPartnersController : Controller
 {
