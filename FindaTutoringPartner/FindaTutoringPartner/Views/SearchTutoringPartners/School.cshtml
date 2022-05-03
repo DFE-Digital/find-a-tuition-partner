@@ -1,0 +1,89 @@
+﻿@model School.Command
+
+@{
+    ViewData["Title"] = "Search Tutoring Partners - School";
+}
+
+<govuk-back-link asp-controller="Home" asp-action="Index"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="SearchAction" />
+            <govuk-error-summary-item asp-for="Postcode" />
+            <govuk-error-summary-item asp-for="SelectedIndex" />
+        </govuk-error-summary>
+        
+        @if (Model.IsSearchParameters)
+        {
+            <h1 class="govuk-heading-xl">What is your school address?</h1>
+            <p class="govuk-body-l">We'll find tuition partners in your area</p>
+
+            <form asp-action="School">
+                <input type="hidden" asp-for="SearchAction"/>
+
+                <govuk-input asp-for="Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
+                    <govuk-input-label class="govuk-label--m">Postcode</govuk-input-label>
+                    <govuk-input-hint>This can be your schools postcode or postcode appropriate for a pupil</govuk-input-hint>
+                </govuk-input>
+
+                <div class="govuk-button-group">
+                    <govuk-button type="submit">Find address</govuk-button>
+                </div>
+            </form>
+        }
+        else if (Model.IsSearchResults)
+        {
+            <form asp-action="School">
+                <input type="hidden" asp-for="SearchAction"/>
+                <input type="hidden" asp-for="Postcode"/>
+                
+                <govuk-summary-list>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Postcode
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            @Model.Postcode
+                        </govuk-summary-list-row-value>
+                        <govuk-summary-list-row-action visually-hidden-text="postcode" asp-action="School" asp-route-Postcode="@Model.Postcode">
+                            Change
+                        </govuk-summary-list-row-action>
+                    </govuk-summary-list-row>
+                </govuk-summary-list>
+
+                @if (Model.Addresses!.Count < 7)
+                {
+                    <govuk-radios asp-for="SelectedIndex">
+                        <govuk-radios-fieldset>
+                            <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                                Address
+                            </govuk-radios-fieldset-legend>
+                        </govuk-radios-fieldset>
+                        @for (var index = 0; index < Model.Addresses.Results.Length; index++)
+                        {
+                            var item = Model.Addresses.Results[index];
+                            <govuk-radios-item value="@index">@item</govuk-radios-item>
+                        }
+                    </govuk-radios>
+                }
+                else
+                {
+                    <govuk-select asp-for="SelectedIndex">
+                        <govuk-select-label class="govuk-label--m">Address</govuk-select-label>
+                        <govuk-select-item value="">@Model.Addresses.Results.Length @(Model.Addresses.Results.Length == 1 ? "address" : "addresses") found</govuk-select-item>
+                        @for (var index = 0; index < Model.Addresses.Results.Length; index++)
+                        {
+                            var item = Model.Addresses.Results[index];
+                            <govuk-select-item value="@index">@item</govuk-select-item>
+                        }
+                    </govuk-select>
+                }
+
+                <div class="govuk-button-group">
+                    <govuk-button type="submit">Find address</govuk-button>
+                </div>
+            </form>
+        }
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-xl">Guidance</span>
+        <h1 class="govuk-heading-xl">Find a DfE approved tutoring provider</h1>
+        <p class="govuk-body-l">Find quality checked tutoring providers if your school needs one for the National Tutoring Programme.</p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">This service is for schools, [LAs? MATs?] who need to find a tutor to un sessions with pupils as part of the National Tutoring Programme.</p>
+        <p class="govuk-body">Is will help you to:</p>
+        <ul class="govuk-list">
+            <li>
+                find a tutoring provider that has been approved by DfE
+            </li>
+            <li>
+                compare prices for different tutoring providers.
+            </li>
+        </ul>
+        <a asp-controller="SearchTutoringPartners" asp-action="Start" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+            Start now
+            <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+            </svg>
+        </a>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-m">Related content</h2>
+        <p class="govuk-body"><a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp" class="govuk-link">National Tutoring Programme guidance</a></p>
+    </div>
+</div>
