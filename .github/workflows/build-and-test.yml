@@ -17,4 +17,4 @@ jobs:
     - name: Build
       run: dotnet build FindaTutoringPartner/FindaTutoringPartner.sln --no-restore
     - name: Test
-      run: dotnet test FindaTutoringPartner/FindaTutoringPartner.sln --no-builddotnet restore 
+      run: dotnet test FindaTutoringPartner/FindaTutoringPartner.sln --no-build
