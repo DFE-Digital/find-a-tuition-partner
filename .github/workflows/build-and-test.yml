@@ -17,4 +17,10 @@ jobs:
     - name: Build
       run: dotnet build FindaTutoringPartner/FindaTutoringPartner.sln --no-restore
     - name: Test
-      run: dotnet test FindaTutoringPartner/FindaTutoringPartner.sln --no-build
+      run: dotnet test FindaTutoringPartner/FindaTutoringPartner.sln --no-build --logger trx --results-directory TestResults
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        path: TestResults
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
