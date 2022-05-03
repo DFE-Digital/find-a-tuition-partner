@@ -36,5 +36,6 @@ jobs:
 
       - name: Deploy to PaaS
         run: |
+          cd FindaTutoringPartner
           cf push -f manifest.yml --strategy rolling
           cf logout
