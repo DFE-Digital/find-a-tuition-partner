@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<NtpDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetConnectionString("NTP"));
+            options.UseNpgsql(configuration.GetConnectionString("NtpDatabase"), action => action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName));
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);
