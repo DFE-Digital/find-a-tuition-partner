@@ -51,7 +51,9 @@ public class SearchTutoringPartnersController : Controller
     [HttpGet]
     public async Task<IActionResult> Subjects()
     {
-        return View();
+        var command = await _sender.Send(new Subjects.Query());
+
+        return View(command);
     }
 
     [HttpPost]
@@ -60,8 +62,11 @@ public class SearchTutoringPartnersController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View();
+            command = await _sender.Send(new Subjects.HydrateCommand(command));
+            return View(command);
         }
+
+        await _sender.Send(command);
 
         return RedirectToAction("TutorTypes");
     }
