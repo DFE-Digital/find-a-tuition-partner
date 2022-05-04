@@ -1,4 +1,4 @@
-﻿namespace UI
+﻿namespace Infrastructure
 {
     public sealed record AssemblyReference;
 }

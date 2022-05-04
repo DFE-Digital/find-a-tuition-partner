@@ -4,20 +4,19 @@ namespace Domain;
 
 public class Address
 {
-    public string? Line1 { get; set; }
+    public int Id { get; set; }
+    public string Line1 { get; set; } = null!;
     public string? Line2 { get; set; }
     public string? Line3 { get; set; }
     public string? Line4 { get; set; }
-    public string? Postcode { get; set; }
+    public string Postcode { get; set; } = null!;
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
 
     public override string ToString()
     {
-        var sb = new StringBuilder();
+        var sb = new StringBuilder($"{Line1} ");
 
-        if(!string.IsNullOrEmpty(Line1))
-        {
-            sb.Append($"{Line1} ");
-        }
         if(!string.IsNullOrEmpty(Line2))
         {
             sb.Append($"{Line2} ");
@@ -30,10 +29,8 @@ public class Address
         {
             sb.Append($"{Line4} ");
         }
-        if(!string.IsNullOrEmpty(Postcode))
-        {
-            sb.Append($"{Postcode} ");
-        }
+        
+        sb.Append(Postcode);
 
         return sb.ToString().Trim();
     }

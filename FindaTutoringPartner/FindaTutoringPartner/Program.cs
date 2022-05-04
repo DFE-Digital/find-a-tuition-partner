@@ -1,15 +1,14 @@
-using Application;
-using FindaTutoringPartner;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
-using Infrastructure;
+using Infrastructure.Extensions;
 using MediatR;
+using UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//TODO: Move registering application implementations to extension method in infrastructure
-builder.Services.AddTransient<IAddressLookup, HardCodedAddressLookup>();
+builder.Services.AddNtpDbContext(builder.Configuration);
+builder.Services.AddAddressLookup();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
