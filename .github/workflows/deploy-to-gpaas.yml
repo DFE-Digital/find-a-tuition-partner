@@ -2,6 +2,10 @@ name: Deploy to GOV.UK PaaS
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment (development, staging, production)"
+        required: true
 
 jobs:
   deploy:
