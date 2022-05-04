@@ -4,10 +4,11 @@ public class TuitionPartner
 {
     public TuitionPartner()
     {
-        Addresses = new List<Address>();
+        Locations = new List<TuitionPartnerLocation>();
     }
 
     public int Id { get; set; }
     public string Name { get; set; } = null!;
-    public ICollection<Address> Addresses { get; set; }
+    public string Website { get; set; } = null!;
+    public ICollection<TuitionPartnerLocation> Locations { get; set; }
 }

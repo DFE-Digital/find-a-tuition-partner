@@ -10,7 +10,13 @@ public class NtpDbContext : DbContext, INtpDbContext
     {
     }
 
+    public DbSet<Address> Addresses { get; set; } = null!;
+    public DbSet<Subject> Subjects { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
+    public DbSet<TuitionPartnerLocation> TuitionPartnerLocations { get; set; } = null!;
+    public DbSet<TutorType> TutorTypes { get; set; } = null!;
+    public DbSet<UserSearch> UserSearches { get; set; } = null!;
+    public DbSet<UserSession> UserSessions { get; set; } = null!;
 
     public Task<int> SaveChangesAsync()
     {
