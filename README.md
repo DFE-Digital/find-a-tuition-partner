@@ -35,5 +35,8 @@ cf create-service postgres tiny-unencrypted-13 fatp-dev-postgres-db
 cf service fatp-dev-postgres-db
 cf delete-service fatp-dev-postgres-db
 
+cf install-plugin conduit
+cf conduit fatp-dev-postgres-db -- psql
+
 
 https://github.com/DFE-Digital/national-tutoring-programme/settings/secrets/actions

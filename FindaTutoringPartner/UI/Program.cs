@@ -1,8 +1,10 @@
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
+using Infrastructure;
 using Infrastructure.Extensions;
 using MediatR;
-using UI;
+using Microsoft.EntityFrameworkCore;
+using AssemblyReference = UI.AssemblyReference;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,14 @@ builder.Services.AddControllersWithViews()
     .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    // This is fine for development and while we're spiking but an on demand migration run will be required for production
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
