@@ -1,4 +1,4 @@
-﻿namespace FindaTutoringPartner
+﻿namespace UI
 {
     public sealed record AssemblyReference;
 }
