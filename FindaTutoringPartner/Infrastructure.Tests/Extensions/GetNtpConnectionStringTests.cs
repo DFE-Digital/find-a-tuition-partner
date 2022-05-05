@@ -1,50 +1,63 @@
 using System.Collections.Generic;
+using FluentAssertions;
+using Infrastructure.Constants;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace Infrastructure.Tests.Extensions
+namespace Infrastructure.Tests.Extensions;
+
+public class GetNtpConnectionStringTests
 {
-    public class GetNtpConnectionStringTests
+    [Fact]
+    public void UseCredentialsForConnectionString_WhenVcapServicesConfigured()
     {
-        [Fact]
-        public void WhenVcapServicesConfigured()
-        {
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    {"VCAP_SERVICES", @"{
-  ""postgres"": [
-   {
-    ""binding_name"": null,
-    ""credentials"": {
-     ""host"": ""rdsbroker-66ecd739-2e98-401a-9e45-15436165be06.c7uewwm9qebj.eu-west-1.rds.amazonaws.com"",
-     ""jdbcuri"": ""jdbc:postgresql://rdsbroker-66ecd739-2e98-401a-9e45-17938165be06.c7uewwm9qebj.eu-west-1.rds.amazonaws.com:5432/DATABASE_NAME?password=PASSWORD\u0026ssl=true\u0026user=USERNAME"",
-     ""name"": ""DATABASE_NAME"",
-     ""password"": ""PASSWORD"",
-     ""port"": 5432,
-     ""uri"": ""postgres://USERNAME:PASSWORD@rdsbroker-66ecd739-2e98-401a-9e45-17938165be06.c7uewwm9qebj.eu-west-1.rds.amazonaws.com:5432/DATABASE_NAME"",
-     ""username"": ""USERNAME""
-    },
-    ""instance_name"": ""SERVICE_NAME"",
-    ""label"": ""postgres"",
-    ""name"": ""SERVICE_NAME"",
-    ""plan"": ""PLAN"",
-    ""provider"": null,
-    ""syslog_drain_url"": null,
-    ""tags"": [
-     ""postgres"",
-     ""relational""
-    ],
-    ""volume_mounts"": []
-   }
-  ]
- }"}
-                })
-                .Build();
+        var expected = $"Host={ScenarioConstants.PostgresHost};Port={ScenarioConstants.PostgresPort};Username={ScenarioConstants.PostgresUsername};Password={ScenarioConstants.PostgresPassword};Database={ScenarioConstants.PostgresDatabaseName}";
 
-            var connectionString = configuration.GetNtpConnectionString();
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                {EnvironmentVariables.VcapServices, ScenarioConstants.VcapServicesJson}
+            })
+            .Build();
 
-        }
+        var connectionString = configuration.GetNtpConnectionString();
+
+        connectionString.Should().Be(expected);
+    }
+
+    [Fact]
+    public void UseNtpConnectionString_WhenVcapServicesConfiguredButInvalid()
+    {
+        var expected = "expected-connection-string";
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                {$"ConnectionStrings:{EnvironmentVariables.NtpDatabaseConnectionString}", expected},
+                {EnvironmentVariables.VcapServices, ScenarioConstants.VcapServicesInvalidJson}
+            })
+            .Build();
+
+        var connectionString = configuration.GetNtpConnectionString();
+
+        connectionString.Should().Be(expected);
+    }
+
+    [Fact]
+    public void UseNtpConnectionString_WhenVcapServicesNotConfigured()
+    {
+        var expected = "expected-connection-string";
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                {$"ConnectionStrings:{EnvironmentVariables.NtpDatabaseConnectionString}", expected}
+            })
+            .Build();
+
+        var connectionString = configuration.GetNtpConnectionString();
+
+        connectionString.Should().Be(expected);
     }
 }

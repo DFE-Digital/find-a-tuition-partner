@@ -17,4 +17,9 @@ public class Credentials
     public string? Password { get; set; }
     public int? Port { get; set; }
     public string? Username { get; set; }
+
+    public bool IsValid()
+    {
+        return !string.IsNullOrEmpty(Host) && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Password) && Port.HasValue && !string.IsNullOrEmpty(Username);
+    }
 }
