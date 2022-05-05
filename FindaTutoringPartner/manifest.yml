@@ -1,6 +1,8 @@
 ---
 applications:
 - name: fatp-dev
+  services:
+    - fatp-dev-postgres-db
   buildpacks:
     - dotnet_core_buildpack
   memory: 256M
