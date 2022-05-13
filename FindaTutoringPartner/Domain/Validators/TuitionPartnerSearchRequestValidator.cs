@@ -7,6 +7,6 @@ public class TuitionPartnerSearchRequestValidator<T> : AbstractValidator<T> wher
 {
     public TuitionPartnerSearchRequestValidator()
     {
-        
+        RuleFor(_ => _.Page).GreaterThan(0);
     }
 }
