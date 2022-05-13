@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
@@ -5,6 +6,7 @@ using Infrastructure;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using UI.Filters;
 using AssemblyReference = UI.AssemblyReference;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +20,13 @@ builder.Services.AddMediatR(typeof(AssemblyReference));
 
 builder.Services.AddGovUkFrontend();
 
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews(options =>
+    {
+        options.Filters.Add<FluentValidationExceptionFilterAttribute>();
+    }).AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    })
     // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
     .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 
