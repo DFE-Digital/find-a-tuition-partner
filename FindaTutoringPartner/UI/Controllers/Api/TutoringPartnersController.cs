@@ -1,5 +1,8 @@
-﻿using Domain;
+﻿using Application.Handlers;
+using Domain;
 using Domain.Search;
+using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers.Api;
@@ -8,9 +11,21 @@ namespace UI.Controllers.Api;
 [ApiController]
 public class TutoringPartnersController : ControllerBase
 {
+    private readonly ISender _sender;
+
+    public TutoringPartnersController(ISender sender)
+    {
+        _sender = sender;
+    }
+
     [HttpPost("search")]
     [ProducesResponseType(typeof(SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>), StatusCodes.Status200OK)]
-    public void Post([FromBody] TuitionPartnerSearchRequest request)
+    public async Task<IActionResult> Post([FromBody] TuitionPartnerSearchRequest request)
     {
+        var command = request.Adapt<SearchTuitionPartnerHandler.Command>();
+
+        var result = await _sender.Send(command);
+
+        return Ok(result);
     }
 }
