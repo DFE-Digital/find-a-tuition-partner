@@ -5,9 +5,9 @@ namespace Application.Behaviours;
 
 public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : class, IRequest<TResponse>
 {
-    private readonly IEnumerable<IValidator> _validators;
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidationBehaviour(IEnumerable<IValidator> validators)
+    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators)
     {
         _validators = validators;
     }

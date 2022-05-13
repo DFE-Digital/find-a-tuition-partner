@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Domain.Validators;
 
-public class TuitionPartnerSearchRequestValidator<T> : AbstractValidator<T> where T : TuitionPartnerSearchRequest
+public abstract class TuitionPartnerSearchRequestValidator<T> : AbstractValidator<T> where T : TuitionPartnerSearchRequest
 {
-    public TuitionPartnerSearchRequestValidator()
+    protected TuitionPartnerSearchRequestValidator()
     {
         RuleFor(_ => _.Page).GreaterThan(0);
     }
