@@ -1,4 +1,4 @@
-﻿@model TuitionPartnerSearchResultsPage
+﻿@model TuitionPartnerSearchResultsViewModel
 
 @{
     ViewData["Title"] = "Search Tutoring Partners - Results";
@@ -7,17 +7,27 @@
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
 		<h1 class="govuk-heading-l">Search results</h1>
-		<p class="govuk-body govuk-!-font-size-27">@(Model.Count == 0 ? "No" : Model.Count) @(Model.Count != 1 ? "results" : "result")</p>
+		<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result")</p>
 	</div>
 </div>
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Filter results</h2>
+		<h2 class="govuk-heading-m">Filter results (non functional)</h2>
+		
+		<div>
+			<h3 class="govuk-heading-s">Subjects</h3>
+			<govuk-checkboxes name="SubjectIds">
+				@foreach (var item in Model.Subjects)
+				{
+					<govuk-checkboxes-item value="@item.Id" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+				}
+			</govuk-checkboxes>
+		</div>
 	</div>
 
 	<div class="govuk-grid-column-two-thirds">
-		@foreach (var item in Model.Results)
+		@foreach (var item in Model.SearchResultsPage.Results)
 		{
 			<div>
 				<h2><a href="@item.Website" class="govuk-link">@item.Name</a></h2>

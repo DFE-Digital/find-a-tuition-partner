@@ -1,4 +1,5 @@
-﻿using Application.Handlers;
+﻿using Application;
+using Application.Handlers;
 using Domain.Search;
 using Mapster;
 using MediatR;
@@ -11,10 +12,12 @@ namespace UI.Controllers;
 public class SearchTutoringPartnersController : Controller
 {
     private readonly ISender _sender;
+    private readonly ILookupDataRepository _lookupDataRepository;
 
-    public SearchTutoringPartnersController(ISender sender)
+    public SearchTutoringPartnersController(ISender sender, ILookupDataRepository lookupDataRepository)
     {
         _sender = sender;
+        _lookupDataRepository = lookupDataRepository;
     }
 
     [HttpGet]
@@ -114,7 +117,11 @@ public class SearchTutoringPartnersController : Controller
     public async Task<IActionResult> Results()
     {
         var result = await _sender.Send(new SearchTuitionPartnerHandler.Command{PageSize = SearchRequestBase.MaxPageSize});
-        var viewModel = result.Adapt<TuitionPartnerSearchResultsPage>();
+        var viewModel = new TuitionPartnerSearchResultsViewModel
+        {
+            SearchResultsPage = result,
+            Subjects = await _lookupDataRepository.GetSubjectsAsync()
+        };
 
         return View(viewModel);
     }
