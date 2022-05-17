@@ -8,6 +8,6 @@ public abstract class SearchRequestBaseValidator<T> : AbstractValidator<T> where
     protected SearchRequestBaseValidator()
     {
         RuleFor(_ => _.Page).GreaterThan(-1);
-        RuleFor(_ => _.PageSize).InclusiveBetween(1, 500);
+        RuleFor(_ => _.PageSize).InclusiveBetween(1, SearchRequestBase.MaxPageSize);
     }
 }

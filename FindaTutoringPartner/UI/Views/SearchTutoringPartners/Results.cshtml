@@ -1,10 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model TuitionPartnerSearchResultsPage
+
+@{
+    ViewData["Title"] = "Search Tutoring Partners - Results";
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">Matching tutoring providers</h1>
-        <p class="govuk-body-l">Based on your answers, there are multiple approved tutoring providers to choose from.</p>
-    </div>
+	<div class="govuk-grid-column-full">
+		<h1 class="govuk-heading-l">Search results</h1>
+		<p class="govuk-body govuk-!-font-size-27">@(Model.Count == 0 ? "No" : Model.Count) @(Model.Count != 1 ? "results" : "result")</p>
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-one-third">
+		<h2 class="govuk-heading-m">Filter results</h2>
+	</div>
+
+	<div class="govuk-grid-column-two-thirds">
+		@foreach (var item in Model.Results)
+		{
+			<div>
+				<h2><a href="@item.Website" class="govuk-link">@item.Name</a></h2>
+				<govuk-summary-list>
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Subjects covered
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Type of tuition
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Price
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Tuition ratio
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Provider information
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				</govuk-summary-list>
+			</div>
+		}
+	</div>
 </div>

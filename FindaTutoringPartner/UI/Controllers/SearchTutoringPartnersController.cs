@@ -1,7 +1,10 @@
-﻿using Mapster;
+﻿using Application.Handlers;
+using Domain.Search;
+using Mapster;
 using MediatR;
 using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
+using UI.Models;
 
 namespace UI.Controllers;
 
@@ -110,6 +113,9 @@ public class SearchTutoringPartnersController : Controller
     [HttpGet]
     public async Task<IActionResult> Results()
     {
-        return View();
+        var result = await _sender.Send(new SearchTuitionPartnerHandler.Command{PageSize = SearchRequestBase.MaxPageSize});
+        var viewModel = result.Adapt<TuitionPartnerSearchResultsPage>();
+
+        return View(viewModel);
     }
 }
