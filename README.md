@@ -19,7 +19,6 @@ docker stop ntp
 
 dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username=postgres;Password=Pa55word!;Database=ntp" -p UI
 
-dotnet ef migrations add NameOfMigration
 dotnet ef migrations add InitialCreate -p Infrastructure -s UI
 dotnet ef migrations remove -p Infrastructure -s UI
 dotnet ef database update -p Infrastructure -s UI
