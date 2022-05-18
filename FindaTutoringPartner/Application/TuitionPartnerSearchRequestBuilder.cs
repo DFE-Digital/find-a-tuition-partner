@@ -83,6 +83,6 @@ public class TuitionPartnerSearchRequestBuilder
 
     public TuitionPartnerSearchRequest Build()
     {
-        return new TuitionPartnerSearchRequest();
+        return new TuitionPartnerSearchRequest { PageSize = SearchRequestBase.MaxPageSize };
     }
 }

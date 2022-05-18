@@ -157,13 +157,21 @@ public class SearchTutoringPartnersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Results()
+    public async Task<IActionResult> Results(Guid searchId)
     {
-        var result = await _sender.Send(new SearchTuitionPartnerHandler.Command{PageSize = SearchRequestBase.MaxPageSize});
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+        var request = builder.Build();
+
+        var result = await _sender.Send(request.Adapt<SearchTuitionPartnerHandler.Command>());
         var viewModel = new TuitionPartnerSearchResultsViewModel
         {
-            SearchResultsPage = result,
-            Subjects = await _lookupDataRepository.GetSubjectsAsync()
+            SearchId = searchId,
+            LocationFilterParameters = builder.SearchState.LocationFilterParameters,
+            SubjectIds = builder.SearchState.Subjects!.Keys,
+            Subjects = await _lookupDataRepository.GetSubjectsAsync(),
+            TutorTypeIds = builder.SearchState.TutorTypes!.Keys,
+            TutorTypes = await _lookupDataRepository.GetTutorTypesAsync(),
+            SearchResultsPage = result
         };
 
         return View(viewModel);
