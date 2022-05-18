@@ -5,6 +5,7 @@ using Mapster;
 using MediatR;
 using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
+using UI.Filters;
 using UI.Models;
 
 namespace UI.Controllers;
@@ -12,18 +13,46 @@ namespace UI.Controllers;
 public class SearchTutoringPartnersController : Controller
 {
     private readonly ISender _sender;
+    private readonly ISearchRequestBuilderRepository _searchRequestBuilderRepository;
     private readonly ILookupDataRepository _lookupDataRepository;
 
-    public SearchTutoringPartnersController(ISender sender, ILookupDataRepository lookupDataRepository)
+    public SearchTutoringPartnersController(ISender sender, ISearchRequestBuilderRepository searchRequestBuilderRepository, ILookupDataRepository lookupDataRepository)
     {
         _sender = sender;
+        _searchRequestBuilderRepository = searchRequestBuilderRepository;
         _lookupDataRepository = lookupDataRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> Start()
     {
-        return RedirectToAction("School");
+        var builder = await _searchRequestBuilderRepository.CreateAsync();
+
+        return RedirectToAction("Location", new { builder.State.SearchId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Location(Guid searchId)
+    {
+        var viewModel = new LocationSearchViewModel { SearchId = searchId };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Location(LocationSearchViewModel viewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(viewModel);
+        }
+
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+        builder = await builder.WithPostcode(viewModel.Postcode);
+        await _searchRequestBuilderRepository.UpdateAsync(builder);
+
+        return RedirectToAction("Subjects");
     }
 
     [HttpGet]
@@ -36,7 +65,8 @@ public class SearchTutoringPartnersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> School(School.Command command)
+    [UseTuitionPartnerSearchRequestBuilder]
+    public async Task<IActionResult> School(TuitionPartnerSearchRequestBuilder builder, [FromBody] School.Command command)
     {
         if (!ModelState.IsValid)
         {
