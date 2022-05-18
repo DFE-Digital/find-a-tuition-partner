@@ -30,6 +30,6 @@ public class InMemorySearchStateRepository : ISearchStateRepository
 
     public async Task DeleteAsync(Guid searchId)
     {
-        _states[searchId] = null;
+        _states.Remove(searchId);
     }
 }

@@ -58,13 +58,6 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAddressLookup(this IServiceCollection services)
-    {
-        services.AddScoped<IAddressLookup, HardCodedAddressLookup>();
-
-        return services;
-    }
-
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ILookupDataRepository, LookupDataRepository>();

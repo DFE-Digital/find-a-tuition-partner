@@ -1,4 +1,4 @@
-﻿@model SubjectSearchViewModel
+﻿@model SubjectsSearchViewModel
 
 @{
     ViewData["Title"] = "Search Tutoring Partners - Subjects";
@@ -16,9 +16,7 @@
         <h1 class="govuk-heading-xl">Which subjects do you need tutors for?</h1>
         <p class="govuk-body-l">Select all that apply</p>
         
-        <form asp-action="Subjects">
-	        <input type="hidden" asp-for="SearchId"/>
-
+        <form asp-action="Subjects" asp-route-SearchId="@Model.SearchId">
             <govuk-checkboxes asp-for="SubjectIds">
                 @foreach (var item in Model.Subjects!)
                 {

@@ -1,18 +1,26 @@
-﻿@{
+﻿@model SessionSearchViewModel
+
+@{
     ViewData["Title"] = "Search Tutoring Partners - Sessions";
 }
 
-<govuk-back-link asp-action="TutorTypes"/>
+<govuk-back-link asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+	    <govuk-error-summary>
+		    <govuk-error-summary-item asp-for="SearchId" />
+	    </govuk-error-summary>
+
         <h1 class="govuk-heading-xl">How would you like the tutoring sessions to be run?</h1>
         <p class="govuk-body-l">Select all that apply</p>
         
-        <form asp-action="Sessions">
+        <form asp-action="Sessions" asp-route-SearchId="@Model.SearchId">
             <div class="govuk-button-group">
                 <govuk-button type="submit">Continue</govuk-button>
             </div>
         </form>
+		
+	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

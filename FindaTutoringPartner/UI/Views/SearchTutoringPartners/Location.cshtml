@@ -16,9 +16,7 @@
 	    <h1 class="govuk-heading-xl">What is your school location?</h1>
 	    <p class="govuk-body-l">We'll find tuition partners in your area</p>
 
-	    <form asp-action="Location">
-		    <input type="hidden" asp-for="SearchId"/>
-
+	    <form asp-action="Location" asp-route-SearchId="@Model.SearchId">
 		    <govuk-input asp-for="Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
 			    <govuk-input-label class="govuk-label--m">Postcode</govuk-input-label>
 			    <govuk-input-hint>This can be your schools postcode or postcode appropriate for a pupil</govuk-input-hint>
