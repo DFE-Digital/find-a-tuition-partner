@@ -13,7 +13,7 @@
 		    <govuk-error-summary-item asp-for="Postcode" />
 	    </govuk-error-summary>
         
-	    <h1 class="govuk-heading-xl">What is your school address?</h1>
+	    <h1 class="govuk-heading-xl">What is your school location?</h1>
 	    <p class="govuk-body-l">We'll find tuition partners in your area</p>
 
 	    <form asp-action="Location">
@@ -28,5 +28,7 @@
 			    <govuk-button type="submit">Continue</govuk-button>
 		    </div>
 	    </form>
+		
+	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

@@ -1,11 +1,11 @@
 ﻿using Application;
+using Application.Exceptions;
 using Application.Handlers;
 using Domain.Search;
 using Mapster;
 using MediatR;
 using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
-using UI.Filters;
 using UI.Models;
 using Application.Repositories;
 
@@ -29,13 +29,16 @@ public class SearchTutoringPartnersController : Controller
     {
         var builder = await _searchRequestBuilderRepository.CreateAsync();
 
-        return RedirectToAction("Location", new { builder.State.SearchId });
+        return RedirectToAction("Location", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
     public async Task<IActionResult> Location(Guid searchId)
     {
-        var viewModel = new LocationSearchViewModel { SearchId = searchId };
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+
+        var viewModel = builder.Adapt<LocationSearchViewModel>();
+        viewModel.Postcode = viewModel.SearchState?.LocationFilterParameters?.Postcode;
 
         return View(viewModel);
     }
@@ -44,15 +47,26 @@ public class SearchTutoringPartnersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Location(LocationSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
+            builder.Adapt(viewModel);
             return View(viewModel);
         }
 
-        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
-        await builder.WithPostcode(viewModel.Postcode);
+        try
+        {
+            await builder.WithPostcode(viewModel.Postcode);
+        }
+        catch (LocationNotFoundException)
+        {
+            ModelState.AddModelError("Postcode", "Enter a valid postcode");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+        }
 
-        return RedirectToAction("Subjects");
+        return RedirectToAction("Subjects", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
@@ -65,8 +79,7 @@ public class SearchTutoringPartnersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [UseTuitionPartnerSearchRequestBuilder]
-    public async Task<IActionResult> School(TuitionPartnerSearchRequestBuilder builder, [FromBody] School.Command command)
+    public async Task<IActionResult> School([FromBody] School.Command command)
     {
         if (!ModelState.IsValid)
         {
@@ -85,24 +98,30 @@ public class SearchTutoringPartnersController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Subjects()
+    public async Task<IActionResult> Subjects(Guid searchId)
     {
-        var command = await _sender.Send(new Subjects.Query());
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
-        return View(command);
+        var viewModel = builder.Adapt<SubjectSearchViewModel>();
+        viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Subjects(Subjects.Command command)
+    public async Task<IActionResult> Subjects(SubjectSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
-            command = await _sender.Send(new Subjects.HydrateCommand(command));
-            return View(command);
+            builder.Adapt(viewModel);
+            viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+            return View(viewModel);
         }
 
-        await _sender.Send(command);
+        //await builder.WithSubjectIds(viewModel.SubjectIds);
 
         return RedirectToAction("TutorTypes");
     }

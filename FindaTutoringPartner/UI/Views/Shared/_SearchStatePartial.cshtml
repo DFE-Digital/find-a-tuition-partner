@@ -1,0 +1,25 @@
+﻿@model Domain.Search.SearchState?
+
+@if (Model != null && Model.LocationFilterParameters != null)
+{
+	<div>
+		<h2 class="govuk-heading-m">Previous answers</h2>
+
+		<govuk-summary-list>
+			@if (Model.LocationFilterParameters != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						What is your school location?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						@Model.LocationFilterParameters.LocalAuthority, @(Model.LocationFilterParameters.Region ?? Model.LocationFilterParameters.Country), @Model.LocationFilterParameters.Postcode
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="location" asp-action="Location" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+		</govuk-summary-list>
+	</div>
+}
