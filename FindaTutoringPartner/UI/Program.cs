@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddAddressLookup();
+builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
