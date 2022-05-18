@@ -18,17 +18,19 @@ public class School
     public class QueryHandler : IRequestHandler<Query, Command>
     {
         private readonly IAddressLookup _addressLookup;
+        private readonly ILocationFilterService _locationFilterService;
 
-        public QueryHandler(IAddressLookup addressLookup)
+        public QueryHandler(IAddressLookup addressLookup, ILocationFilterService locationFilterService)
         {
             _addressLookup = addressLookup;
+            _locationFilterService = locationFilterService;
         }
 
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
             var command = request.Adapt<Command>();
 
-            return await HydrateCommandHandler.Hydrate(command, _addressLookup);
+            return await HydrateCommandHandler.Hydrate(command, _addressLookup, _locationFilterService);
         }
     }
 
@@ -86,24 +88,27 @@ public class School
     public class HydrateCommandHandler : IRequestHandler<HydrateCommand, Command>
     {
         private readonly IAddressLookup _addressLookup;
+        private readonly ILocationFilterService _locationFilterService;
 
-        public HydrateCommandHandler(IAddressLookup addressLookup)
+        public HydrateCommandHandler(IAddressLookup addressLookup, ILocationFilterService locationFilterService)
         {
             _addressLookup = addressLookup;
+            _locationFilterService = locationFilterService;
         }
 
         public async Task<Command> Handle(HydrateCommand request, CancellationToken cancellationToken)
         {
             var command = request.Command;
 
-            return await Hydrate(command, _addressLookup);
+            return await Hydrate(command, _addressLookup, _locationFilterService);
         }
 
-        public static async Task<Command> Hydrate(Command command, IAddressLookup addressLookup)
+        public static async Task<Command> Hydrate(Command command, IAddressLookup addressLookup, ILocationFilterService locationFilterService)
         {
             if (command.IsSearchResults)
             {
                 command.Addresses = await addressLookup.LookupAddressAsync(command.Postcode);
+                var parameters = await locationFilterService.GetLocationFilterParametersAsync(command.Postcode);
             }
 
             return command;

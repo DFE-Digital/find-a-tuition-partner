@@ -45,9 +45,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
     {
-        services.AddScoped<ILocationFilterService, PostcodesIoLocationFilterService>();
-
-        services.AddHttpClient<ILocationFilterService>(client =>
+        services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
         {
             client.BaseAddress = new Uri("https://api.postcodes.io");
         });
