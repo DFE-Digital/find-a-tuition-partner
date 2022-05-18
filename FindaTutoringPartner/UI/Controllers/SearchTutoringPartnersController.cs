@@ -92,7 +92,7 @@ public class SearchTutoringPartnersController : Controller
             return View(viewModel);
         }
 
-        //await builder.WithSubjectIds(viewModel.SubjectIds);
+        await builder.WithSubjectIds(viewModel.SubjectIds!);
 
         return RedirectToAction("TutorTypes", new { builder.SearchState.SearchId });
     }
@@ -121,7 +121,7 @@ public class SearchTutoringPartnersController : Controller
             return View(viewModel);
         }
 
-        //await builder.WithTutorTypeIds(viewModel.TutorTypeIds);
+        await builder.WithTutorTypeIds(viewModel.TutorTypeIds!);
 
         return RedirectToAction("Sessions", new { builder.SearchState.SearchId });
     }

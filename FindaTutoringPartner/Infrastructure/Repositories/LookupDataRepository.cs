@@ -1,8 +1,9 @@
 ﻿using Application;
+using Application.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Repositories;
 
 public class LookupDataRepository : ILookupDataRepository
 {

@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Application;
+namespace Application.Repositories;
 
 public interface ILookupDataRepository
 {

@@ -1,6 +1,6 @@
 ﻿@model Domain.Search.SearchState?
 
-@if (Model != null && Model.LocationFilterParameters != null)
+@if (Model != null && (Model.LocationFilterParameters != null || Model.Subjects != null || Model.TutorTypes != null))
 {
 	<div>
 		<h2 class="govuk-heading-m">Previous answers</h2>
@@ -16,6 +16,25 @@
 						@Model.LocationFilterParameters.LocalAuthority, @(Model.LocationFilterParameters.Region ?? Model.LocationFilterParameters.Country), @Model.LocationFilterParameters.Postcode
 					</govuk-summary-list-row-value>
 					<govuk-summary-list-row-action visually-hidden-text="location" asp-action="Location" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+			@if (Model.Subjects != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						Which subjects do you need tutors for?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.Subjects)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="subjects" asp-action="Subjects" asp-route-SearchId="@Model.SearchId">
 						Change
 					</govuk-summary-list-row-action>
 				</govuk-summary-list-row>
