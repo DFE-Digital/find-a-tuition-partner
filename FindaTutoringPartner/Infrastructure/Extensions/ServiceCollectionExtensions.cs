@@ -43,6 +43,18 @@ public static class ServiceCollectionExtensions
         return configuration.GetConnectionString("NtpDatabase");
     }
 
+    public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
+    {
+        services.AddScoped<ILocationFilterService, PostcodesIoLocationFilterService>();
+
+        services.AddHttpClient<ILocationFilterService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.postcodes.io");
+        });
+
+        return services;
+    }
+
     public static IServiceCollection AddAddressLookup(this IServiceCollection services)
     {
         services.AddScoped<IAddressLookup, HardCodedAddressLookup>();
