@@ -7,6 +7,7 @@ using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
 using UI.Filters;
 using UI.Models;
+using Application.Repositories;
 
 namespace UI.Controllers;
 
@@ -49,8 +50,7 @@ public class SearchTutoringPartnersController : Controller
         }
 
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
-        builder = await builder.WithPostcode(viewModel.Postcode);
-        await _searchRequestBuilderRepository.UpdateAsync(builder);
+        await builder.WithPostcode(viewModel.Postcode);
 
         return RedirectToAction("Subjects");
     }
