@@ -39,6 +39,25 @@
 					</govuk-summary-list-row-action>
 				</govuk-summary-list-row>
 			}
+			@if (Model.TutorTypes != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						What type of tutor would you like?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.TutorTypes)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="tutor types" asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
 		</govuk-summary-list>
 	</div>
 }

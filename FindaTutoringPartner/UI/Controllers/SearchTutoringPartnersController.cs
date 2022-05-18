@@ -74,6 +74,7 @@ public class SearchTutoringPartnersController : Controller
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
         var viewModel = builder.Adapt<SubjectsSearchViewModel>();
+        viewModel.SubjectIds = viewModel.SearchState?.Subjects?.Keys;
         viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
 
         return View(viewModel);
@@ -103,6 +104,7 @@ public class SearchTutoringPartnersController : Controller
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
         var viewModel = builder.Adapt<TutorTypesSearchViewModel>();
+        viewModel.TutorTypeIds = viewModel.SearchState?.TutorTypes?.Keys;
         viewModel.TutorTypes = await _lookupDataRepository.GetTutorTypesAsync();
 
         return View(viewModel);

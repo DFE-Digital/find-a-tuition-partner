@@ -21,7 +21,7 @@
 	        <govuk-checkboxes asp-for="TutorTypeIds">
 		        @foreach (var item in Model.TutorTypes!)
 		        {
-			        <govuk-checkboxes-item value="@item.Id">@item.Name</govuk-checkboxes-item>
+			        <govuk-checkboxes-item value="@item.Id" checked="@(Model.TutorTypeIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
 		        }
 	        </govuk-checkboxes>
 
