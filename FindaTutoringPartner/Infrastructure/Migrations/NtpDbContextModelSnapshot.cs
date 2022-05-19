@@ -59,7 +59,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Latitude", "Longitude");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Subject", b =>
@@ -76,7 +76,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
@@ -141,7 +141,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("TuitionPartners");
+                    b.ToTable("TuitionPartners", (string)null);
 
                     b.HasData(
                         new
@@ -511,7 +511,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId");
 
-                    b.ToTable("TuitionPartnerLocations");
+                    b.ToTable("TuitionPartnerLocations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.TutorType", b =>
@@ -528,7 +528,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TutorTypes");
+                    b.ToTable("TutorTypes", (string)null);
 
                     b.HasData(
                         new
@@ -591,7 +591,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserSessionId");
 
-                    b.ToTable("UserSearches");
+                    b.ToTable("UserSearches", (string)null);
                 });
 
             modelBuilder.Entity("Domain.UserSession", b =>
@@ -608,7 +608,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("UserSessions", (string)null);
                 });
 
             modelBuilder.Entity("SubjectTuitionPartnerLocation", b =>
@@ -623,7 +623,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerLocationsId");
 
-                    b.ToTable("SubjectTuitionPartnerLocation");
+                    b.ToTable("SubjectTuitionPartnerLocation", (string)null);
                 });
 
             modelBuilder.Entity("TuitionPartnerLocationTutorType", b =>
@@ -638,7 +638,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TutorTypesId");
 
-                    b.ToTable("TuitionPartnerLocationTutorType");
+                    b.ToTable("TuitionPartnerLocationTutorType", (string)null);
                 });
 
             modelBuilder.Entity("Domain.TuitionPartnerLocation", b =>
