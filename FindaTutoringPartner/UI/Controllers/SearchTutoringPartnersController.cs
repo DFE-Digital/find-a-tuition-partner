@@ -1,126 +1,181 @@
 ﻿using Application;
+using Application.Exceptions;
 using Application.Handlers;
 using Domain.Search;
 using Mapster;
 using MediatR;
-using UI.Handlers.SearchTutoringPartners;
 using Microsoft.AspNetCore.Mvc;
 using UI.Models;
+using Application.Repositories;
 
 namespace UI.Controllers;
 
 public class SearchTutoringPartnersController : Controller
 {
     private readonly ISender _sender;
+    private readonly ISearchRequestBuilderRepository _searchRequestBuilderRepository;
     private readonly ILookupDataRepository _lookupDataRepository;
 
-    public SearchTutoringPartnersController(ISender sender, ILookupDataRepository lookupDataRepository)
+    public SearchTutoringPartnersController(ISender sender, ISearchRequestBuilderRepository searchRequestBuilderRepository, ILookupDataRepository lookupDataRepository)
     {
         _sender = sender;
+        _searchRequestBuilderRepository = searchRequestBuilderRepository;
         _lookupDataRepository = lookupDataRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> Start()
     {
-        return RedirectToAction("School");
+        var builder = await _searchRequestBuilderRepository.CreateAsync();
+
+        return RedirectToAction("Location", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> School(School.Query query)
+    public async Task<IActionResult> Location(Guid searchId)
     {
-        var command = await _sender.Send(query);
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
-        return View(command);
+        var viewModel = builder.Adapt<LocationSearchViewModel>();
+        viewModel.Postcode = viewModel.SearchState?.LocationFilterParameters?.Postcode;
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> School(School.Command command)
+    public async Task<IActionResult> Location(LocationSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
-            command = await _sender.Send(new School.HydrateCommand(command));
-            return View(command);
+            builder.Adapt(viewModel);
+            return View(viewModel);
         }
 
-        command = await _sender.Send(command);
-        if (command.IsComplete)
+        try
         {
-            return RedirectToAction("Subjects");
+            await builder.WithPostcode(viewModel.Postcode);
+        }
+        catch (LocationNotFoundException)
+        {
+            ModelState.AddModelError("Postcode", "Enter a valid postcode");
+            builder.Adapt(viewModel);
+            return View(viewModel);
         }
 
-        // Post Redirect Get
-        return RedirectToAction("School", command.Adapt<School.Query>());
+        return RedirectToAction("Subjects", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Subjects()
+    public async Task<IActionResult> Subjects(Guid searchId)
     {
-        var command = await _sender.Send(new Subjects.Query());
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
-        return View(command);
+        var viewModel = builder.Adapt<SubjectsSearchViewModel>();
+        viewModel.SubjectIds = viewModel.SearchState?.Subjects?.Keys;
+        viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Subjects(Subjects.Command command)
+    public async Task<IActionResult> Subjects(SubjectsSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
-            command = await _sender.Send(new Subjects.HydrateCommand(command));
-            return View(command);
+            builder.Adapt(viewModel);
+            viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+            return View(viewModel);
         }
 
-        await _sender.Send(command);
+        await builder.WithSubjectIds(viewModel.SubjectIds!);
 
-        return RedirectToAction("TutorTypes");
+        return RedirectToAction("TutorTypes", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> TutorTypes()
+    public async Task<IActionResult> TutorTypes(Guid searchId)
     {
-        return View();
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+
+        var viewModel = builder.Adapt<TutorTypesSearchViewModel>();
+        viewModel.TutorTypeIds = viewModel.SearchState?.TutorTypes?.Keys;
+        viewModel.TutorTypes = await _lookupDataRepository.GetTutorTypesAsync();
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> TutorTypes(TutorTypes.Command command)
+    public async Task<IActionResult> TutorTypes(TutorTypesSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
-            return View();
+            builder.Adapt(viewModel);
+            viewModel.TutorTypes = await _lookupDataRepository.GetTutorTypesAsync();
+            return View(viewModel);
         }
 
-        return RedirectToAction("Sessions");
+        await builder.WithTutorTypeIds(viewModel.TutorTypeIds!);
+
+        return RedirectToAction("Sessions", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Sessions()
+    public async Task<IActionResult> Sessions(Guid searchId)
     {
-        return View();
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+
+        var viewModel = builder.Adapt<SessionSearchViewModel>();
+        viewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
+        viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Sessions(Sessions.Command command)
+    public async Task<IActionResult> Sessions(SessionSearchViewModel viewModel)
     {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
         if (!ModelState.IsValid)
         {
-            return View();
+            builder.Adapt(viewModel);
+            viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+            return View(viewModel);
         }
 
-        return RedirectToAction("Results");
+        await builder.WithTuitionTypeIds(viewModel.TuitionTypeIds!);
+
+        return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Results()
+    public async Task<IActionResult> Results(Guid searchId)
     {
-        var result = await _sender.Send(new SearchTuitionPartnerHandler.Command{PageSize = SearchRequestBase.MaxPageSize});
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+        var request = builder.Build();
+
+        var result = await _sender.Send(request.Adapt<SearchTuitionPartnerHandler.Command>());
         var viewModel = new TuitionPartnerSearchResultsViewModel
         {
-            SearchResultsPage = result,
-            Subjects = await _lookupDataRepository.GetSubjectsAsync()
+            SearchId = searchId,
+            LocationFilterParameters = builder.SearchState.LocationFilterParameters,
+            SubjectIds = builder.SearchState.Subjects!.Keys,
+            Subjects = await _lookupDataRepository.GetSubjectsAsync(),
+            TutorTypeIds = builder.SearchState.TutorTypes!.Keys,
+            TutorTypes = await _lookupDataRepository.GetTutorTypesAsync(),
+            TuitionTypeIds = builder.SearchState.TuitionTypes!.Keys,
+            TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync(),
+            SearchResultsPage = result
         };
 
         return View(viewModel);

@@ -1,0 +1,82 @@
+﻿@model Domain.Search.SearchState?
+
+@if (Model != null && (Model.LocationFilterParameters != null || Model.Subjects != null || Model.TutorTypes != null))
+{
+	<div>
+		<h2 class="govuk-heading-m">Previous answers</h2>
+
+		<govuk-summary-list>
+			@if (Model.LocationFilterParameters != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						What is your school location?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						@Model.LocationFilterParameters.LocalAuthority, @(Model.LocationFilterParameters.Region ?? Model.LocationFilterParameters.Country), @Model.LocationFilterParameters.Postcode
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="location" asp-action="Location" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+			@if (Model.Subjects != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						Which subjects do you need tutors for?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.Subjects)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="subjects" asp-action="Subjects" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+			@if (Model.TutorTypes != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						What type of tutor would you like?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.TutorTypes)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="tutor types" asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+			@if (Model.TuitionTypes != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						How would you like the tutoring sessions to be run?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.TuitionTypes)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="tuition types" asp-action="Session" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
+		</govuk-summary-list>
+	</div>
+}

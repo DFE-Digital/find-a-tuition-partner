@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace UI.Filters;
 
-public class FluentValidationExceptionFilterAttribute : ExceptionFilterAttribute
+public class FluentValidationExceptionAttribute : ExceptionFilterAttribute
 {
     public override void OnException(ExceptionContext context)
     {

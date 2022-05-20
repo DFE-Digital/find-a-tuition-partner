@@ -7,7 +7,6 @@ namespace Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    //AddValidatorsFromAssembly
     public static IServiceCollection AddCqrs(this IServiceCollection services)
     {
         services.AddMediatR(typeof(AssemblyReference));

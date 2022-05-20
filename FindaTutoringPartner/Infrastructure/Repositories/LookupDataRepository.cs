@@ -1,12 +1,12 @@
-﻿using Application;
+﻿using Application.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Repositories;
 
 public class LookupDataRepository : ILookupDataRepository
 {
-    private NtpDbContext _dbContext;
+    private readonly NtpDbContext _dbContext;
 
     public LookupDataRepository(NtpDbContext dbContext)
     {
@@ -21,5 +21,14 @@ public class LookupDataRepository : ILookupDataRepository
     public async Task<IEnumerable<TutorType>> GetTutorTypesAsync()
     {
         return await _dbContext.TutorTypes.OrderBy(e => e.Id).ToArrayAsync();
+    }
+
+    public async Task<IEnumerable<TuitionType>> GetTuitionTypesAsync()
+    {
+        return new List<TuitionType>
+        {
+            new() { Id = 1, Name = "Online" },
+            new() { Id = 2, Name = "In Person" }
+        };
     }
 }

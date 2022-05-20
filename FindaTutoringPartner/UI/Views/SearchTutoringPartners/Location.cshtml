@@ -1,0 +1,32 @@
+﻿@model LocationSearchViewModel
+
+@{
+    ViewData["Title"] = "Search Tutoring Partners - Location";
+}
+
+<govuk-back-link asp-controller="Home" asp-action="Index"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+	    <govuk-error-summary>
+		    <govuk-error-summary-item asp-for="SearchId" />
+		    <govuk-error-summary-item asp-for="Postcode" />
+	    </govuk-error-summary>
+        
+	    <h1 class="govuk-heading-xl">What is your school location?</h1>
+	    <p class="govuk-body-l">We'll find tuition partners in your area</p>
+
+	    <form asp-action="Location" asp-route-SearchId="@Model.SearchId">
+		    <govuk-input asp-for="Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
+			    <govuk-input-label class="govuk-label--m">Postcode</govuk-input-label>
+			    <govuk-input-hint>This can be your schools postcode or postcode appropriate for a pupil</govuk-input-hint>
+		    </govuk-input>
+
+		    <div class="govuk-button-group">
+			    <govuk-button type="submit">Continue</govuk-button>
+		    </div>
+	    </form>
+		
+	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
+    </div>
+</div>

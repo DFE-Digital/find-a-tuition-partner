@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using Application;
+using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,9 +45,15 @@ public static class ServiceCollectionExtensions
         return configuration.GetConnectionString("NtpDatabase");
     }
 
-    public static IServiceCollection AddAddressLookup(this IServiceCollection services)
+    public static IServiceCollection AddSearchRequestBuilder(this IServiceCollection services)
     {
-        services.AddScoped<IAddressLookup, HardCodedAddressLookup>();
+        services.AddScoped<ISearchStateRepository, InMemorySearchStateRepository>();
+        services.AddScoped<ISearchRequestBuilderRepository, SearchRequestBuilderRepository>();
+
+        services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.postcodes.io");
+        });
 
         return services;
     }

@@ -1,19 +1,35 @@
-﻿@{
+﻿@model TutorTypesSearchViewModel
+
+@{
     ViewData["Title"] = "Search Tutoring Partners - Tutor Types";
 }
 
-<govuk-back-link asp-action="Subjects"/>
+<govuk-back-link asp-action="Subjects" asp-route-SearchId="@Model.SearchId"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+	    <govuk-error-summary>
+		    <govuk-error-summary-item asp-for="SearchId" />
+		    <govuk-error-summary-item asp-for="TutorTypeIds" />
+	    </govuk-error-summary>
+
         <h1 class="govuk-heading-xl">What type of tutor would you like?</h1>
         <p class="govuk-body"><a href="#" class="govuk-link">Find out more about the different tutor types available</a></p>
         <p class="govuk-body-l">Select all that apply</p>
         
-        <form asp-action="TutorTypes">
+        <form asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId">
+	        <govuk-checkboxes asp-for="TutorTypeIds">
+		        @foreach (var item in Model.TutorTypes!)
+		        {
+			        <govuk-checkboxes-item value="@item.Id" checked="@(Model.TutorTypeIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
+		        }
+	        </govuk-checkboxes>
+
             <div class="govuk-button-group">
                 <govuk-button type="submit">Continue</govuk-button>
             </div>
         </form>
+		
+	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

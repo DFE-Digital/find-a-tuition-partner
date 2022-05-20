@@ -1,25 +1,26 @@
-﻿@model Subjects.Command
+﻿@model SubjectsSearchViewModel
 
 @{
     ViewData["Title"] = "Search Tutoring Partners - Subjects";
 }
 
-<govuk-back-link asp-action="School"/>
+<govuk-back-link asp-action="School" asp-route-SearchId="@Model.SearchId"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <govuk-error-summary>
+	        <govuk-error-summary-item asp-for="SearchId" />
             <govuk-error-summary-item asp-for="SubjectIds" />
         </govuk-error-summary>
 
         <h1 class="govuk-heading-xl">Which subjects do you need tutors for?</h1>
         <p class="govuk-body-l">Select all that apply</p>
         
-        <form asp-action="Subjects">
+        <form asp-action="Subjects" asp-route-SearchId="@Model.SearchId">
             <govuk-checkboxes asp-for="SubjectIds">
                 @foreach (var item in Model.Subjects!)
                 {
-                    <govuk-checkboxes-item value="@item.Id">@item.Name</govuk-checkboxes-item>
+                    <govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
                 }
             </govuk-checkboxes>
 
@@ -27,5 +28,7 @@
                 <govuk-button type="submit">Continue</govuk-button>
             </div>
         </form>
+		
+	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

@@ -14,28 +14,41 @@ You also require the [Entity Framework Core Tools for the .NET Command-Line Inte
 dotnet tool install -g dotnet-ef
 dotnet tool update -g dotnet-ef
 ```
+
+```
 docker run --name ntp -e POSTGRES_PASSWORD=Pa55word! -p 5432:5432 -d postgres:13
 docker stop ntp
+```
 
+Database connection string for local development
+```
 dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username=postgres;Password=Pa55word!;Database=ntp" -p UI
+```
 
+```
 dotnet ef migrations add InitialCreate -p Infrastructure -s UI
 dotnet ef migrations remove -p Infrastructure -s UI
 dotnet ef database update -p Infrastructure -s UI
+```
 
 ### GOV.UK PaaS
 
 #### Commands
 
+Login
+```
 cf login -a api.london.cloud.service.gov.uk -u nationaltutoring@digital.education.gov.uk
+```
+
+```
 cf push
 cf delete fatp-dev
 cf create-service postgres tiny-unencrypted-13 fatp-dev-postgres-db
 cf service fatp-dev-postgres-db
 cf delete-service fatp-dev-postgres-db
-
 cf install-plugin conduit
 cf conduit fatp-dev-postgres-db -- psql
+```
 
 
 https://github.com/DFE-Digital/national-tutoring-programme/settings/secrets/actions
