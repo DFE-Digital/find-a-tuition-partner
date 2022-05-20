@@ -5,7 +5,7 @@ namespace UI.Models;
 
 public class TutorTypesSearchViewModel : SearchViewModelBase
 {
-    [Required(ErrorMessage = "Select the tutor type or tutor types")]
+    [Required(ErrorMessage = "Select the tutor type or types")]
     public ICollection<int>? TutorTypeIds { get; set; }
     public IEnumerable<TutorType>? TutorTypes { get; set; }
 }

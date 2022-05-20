@@ -58,6 +58,25 @@
 					</govuk-summary-list-row-action>
 				</govuk-summary-list-row>
 			}
+			@if (Model.TuitionTypes != null)
+			{
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						How would you like the tutoring sessions to be run?
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						<ul class="govuk-list">
+							@foreach (var (_, name) in Model.TuitionTypes)
+							{
+								<li>@name</li>
+							}
+						</ul>
+					</govuk-summary-list-row-value>
+					<govuk-summary-list-row-action visually-hidden-text="tuition types" asp-action="Session" asp-route-SearchId="@Model.SearchId">
+						Change
+					</govuk-summary-list-row-action>
+				</govuk-summary-list-row>
+			}
 		</govuk-summary-list>
 	</div>
 }

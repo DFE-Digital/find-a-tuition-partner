@@ -134,6 +134,8 @@ public class SearchTutoringPartnersController : Controller
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
         var viewModel = builder.Adapt<SessionSearchViewModel>();
+        viewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
+        viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
 
         return View(viewModel);
     }
@@ -147,11 +149,11 @@ public class SearchTutoringPartnersController : Controller
         if (!ModelState.IsValid)
         {
             builder.Adapt(viewModel);
-            //viewModel.Sessions = await _lookupDataRepository.GetSessionsAsync();
+            viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
             return View(viewModel);
         }
 
-        //await builder.WithSessionIds(viewModel.SessionIds);
+        await builder.WithTuitionTypeIds(viewModel.TuitionTypeIds!);
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
@@ -171,6 +173,8 @@ public class SearchTutoringPartnersController : Controller
             Subjects = await _lookupDataRepository.GetSubjectsAsync(),
             TutorTypeIds = builder.SearchState.TutorTypes!.Keys,
             TutorTypes = await _lookupDataRepository.GetTutorTypesAsync(),
+            TuitionTypeIds = builder.SearchState.TuitionTypes!.Keys,
+            TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync(),
             SearchResultsPage = result
         };
 

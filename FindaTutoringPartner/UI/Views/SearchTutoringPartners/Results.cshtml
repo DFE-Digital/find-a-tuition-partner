@@ -20,7 +20,23 @@
 			<govuk-checkboxes name="SubjectIds">
 				@foreach (var item in Model.Subjects)
 				{
-					<govuk-checkboxes-item value="@item.Id" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+					<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+				}
+			</govuk-checkboxes>
+
+			<h3 class="govuk-heading-s">Tutor types</h3>
+			<govuk-checkboxes asp-for="TutorTypeIds">
+				@foreach (var item in Model.TutorTypes)
+				{
+					<govuk-checkboxes-item value="@item.Id" checked="@(Model.TutorTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+				}
+			</govuk-checkboxes>
+			
+			<h3 class="govuk-heading-s">How the sessions will be run</h3>
+			<govuk-checkboxes asp-for="TuitionTypeIds">
+				@foreach (var item in Model.TuitionTypes!)
+				{
+					<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
 				}
 			</govuk-checkboxes>
 		</div>

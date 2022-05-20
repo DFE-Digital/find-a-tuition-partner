@@ -81,6 +81,26 @@ public class TuitionPartnerSearchRequestBuilder
         return this;
     }
 
+    public async Task<TuitionPartnerSearchRequestBuilder> WithTuitionTypeIds(ICollection<int> tuitionTypeIds)
+    {
+        var tuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+
+        var tuitionTypeDictionary = new Dictionary<int, string>();
+
+        foreach (var tuitionType in tuitionTypes)
+        {
+            if (tuitionTypeIds.Contains(tuitionType.Id))
+            {
+                tuitionTypeDictionary[tuitionType.Id] = tuitionType.Name;
+            }
+        }
+
+        SearchState.TuitionTypes = tuitionTypeDictionary;
+        SearchState = await _searchStateRepository.UpdateAsync(SearchState);
+
+        return this;
+    }
+
     public TuitionPartnerSearchRequest Build()
     {
         return new TuitionPartnerSearchRequest { PageSize = SearchRequestBase.MaxPageSize };
