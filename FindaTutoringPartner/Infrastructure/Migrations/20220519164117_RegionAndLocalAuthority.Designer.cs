@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220519164117_RegionAndLocalAuthority")]
+    partial class RegionAndLocalAuthority
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -443,7 +445,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 51,
-                            Code = "E08000031",
+                            Code = "E08000030",
                             Name = "Wolverhampton",
                             RegionId = 5
                         },
@@ -1487,7 +1489,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 200,
                             Code = "E09000030",
-                            Name = "Tower Hamlets",
+                            Name = "Sutton",
                             RegionId = 7
                         },
                         new

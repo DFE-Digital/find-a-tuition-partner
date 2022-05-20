@@ -11,6 +11,8 @@ public class NtpDbContext : DbContext, INtpDbContext
     }
 
     public DbSet<Address> Addresses { get; set; } = null!;
+    public DbSet<LocalAuthority> LocalAuthorities { get; set; } = null!;
+    public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
     public DbSet<TuitionPartnerLocation> TuitionPartnerLocations { get; set; } = null!;
