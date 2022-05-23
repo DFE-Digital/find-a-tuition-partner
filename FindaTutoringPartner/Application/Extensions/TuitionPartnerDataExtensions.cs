@@ -59,7 +59,7 @@ public static class TuitionPartnerDataExtensions
 
             var delta = new TuitionPartnerDelta
             {
-                Id = target.Id,
+                Id = existing.Id,
                 Name = existing.Name,
                 Website = existing.Website
             };
@@ -71,6 +71,7 @@ public static class TuitionPartnerDataExtensions
                         && e.Subject.Equals(targetCoverage.Subject)
                         && e.TuitionType.Equals(targetCoverage.TuitionType))) continue;
 
+                targetCoverage.TuitionPartner = existing;
                 delta.CoverageAdd.Add(targetCoverage);
             }
 

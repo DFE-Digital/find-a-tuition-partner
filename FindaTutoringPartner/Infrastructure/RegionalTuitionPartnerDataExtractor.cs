@@ -65,7 +65,8 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
         {
             var tuitionPartner = new TuitionPartner
             {
-                Name = datum.Name
+                Name = datum.Name,
+                Website = ""
             };
 
             AddSubjectCoverage(tuitionPartner, datum.PrimaryLiteracyRegionInitials, initialsToRegionDictionary, subjects[Subjects.Id.PrimaryLiteracy], tuitionType);
