@@ -25,10 +25,6 @@ public class LookupDataRepository : ILookupDataRepository
 
     public async Task<IEnumerable<TuitionType>> GetTuitionTypesAsync()
     {
-        return new List<TuitionType>
-        {
-            new() { Id = 1, Name = "Online" },
-            new() { Id = 2, Name = "In Person" }
-        };
+        return await _dbContext.TuitionTypes.OrderBy(e => e.Id).ToArrayAsync();
     }
 }
