@@ -15,6 +15,7 @@ public class NtpDbContext : DbContext, INtpDbContext
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
+    public DbSet<TuitionPartnerCoverage> TuitionPartnerCoverage { get; set; } = null!;
     public DbSet<TuitionType> TuitionTypes { get; set; } = null!;
     public DbSet<TutorType> TutorTypes { get; set; } = null!;
     public DbSet<UserSearch> UserSearches { get; set; } = null!;
