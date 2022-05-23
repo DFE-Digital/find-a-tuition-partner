@@ -56,6 +56,35 @@ public static class TuitionPartnerDataExtensions
                 deltas.Remove.Add(existing);
                 continue;
             }
+
+            var delta = new TuitionPartnerDelta
+            {
+                Id = target.Id,
+                Name = existing.Name,
+                Website = existing.Website
+            };
+
+            foreach (var targetCoverage in target.Coverage)
+            {
+                if (existing.Coverage.Any(e =>
+                        e.LocalAuthorityDistrict.Equals(targetCoverage.LocalAuthorityDistrict)
+                        && e.Subject.Equals(targetCoverage.Subject)
+                        && e.TuitionType.Equals(targetCoverage.TuitionType))) continue;
+
+                delta.CoverageAdd.Add(targetCoverage);
+            }
+
+            foreach (var existingCoverage in existing.Coverage)
+            {
+                if (target.Coverage.Any(e =>
+                        e.LocalAuthorityDistrict.Equals(existingCoverage.LocalAuthorityDistrict)
+                        && e.Subject.Equals(existingCoverage.Subject)
+                        && e.TuitionType.Equals(existingCoverage.TuitionType))) continue;
+
+                delta.CoverageRemove.Add(existingCoverage);
+            }
+
+            deltas.Update.Add(delta);
         }
 
         return deltas;
