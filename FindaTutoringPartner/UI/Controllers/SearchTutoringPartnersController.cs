@@ -1,7 +1,5 @@
-﻿using Application;
-using Application.Exceptions;
+﻿using Application.Exceptions;
 using Application.Handlers;
-using Domain.Search;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -125,15 +123,15 @@ public class SearchTutoringPartnersController : Controller
 
         await builder.WithTutorTypeIds(viewModel.TutorTypeIds!);
 
-        return RedirectToAction("Sessions", new { builder.SearchState.SearchId });
+        return RedirectToAction("TuitionTypes", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Sessions(Guid searchId)
+    public async Task<IActionResult> TuitionTypes(Guid searchId)
     {
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
-        var viewModel = builder.Adapt<SessionSearchViewModel>();
+        var viewModel = builder.Adapt<TuitionTypeSearchViewModel>();
         viewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
         viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
 
@@ -142,7 +140,7 @@ public class SearchTutoringPartnersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Sessions(SessionSearchViewModel viewModel)
+    public async Task<IActionResult> TuitionTypes(TuitionTypeSearchViewModel viewModel)
     {
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
 

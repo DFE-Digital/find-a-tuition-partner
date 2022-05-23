@@ -3,7 +3,7 @@ using Domain;
 
 namespace UI.Models;
 
-public class SessionSearchViewModel : SearchViewModelBase
+public class TuitionTypeSearchViewModel : SearchViewModelBase
 {
     [Required(ErrorMessage = "Select the tuition type or types")]
     public ICollection<int>? TuitionTypeIds { get; set; }

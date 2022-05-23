@@ -1,7 +1,7 @@
-﻿@model SessionSearchViewModel
+﻿@model TuitionTypeSearchViewModel
 
 @{
-    ViewData["Title"] = "Search Tutoring Partners - Sessions";
+    ViewData["Title"] = "Search Tutoring Partners - Tuition Types";
 }
 
 <govuk-back-link asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId"/>
@@ -15,7 +15,7 @@
         <h1 class="govuk-heading-xl">How would you like the tutoring sessions to be run?</h1>
         <p class="govuk-body-l">Select all that apply</p>
         
-	    <form asp-action="Sessions" asp-route-SearchId="@Model.SearchId">
+	    <form asp-action="TuitionTypes" asp-route-SearchId="@Model.SearchId">
 		    <govuk-checkboxes asp-for="TuitionTypeIds">
 			    @foreach (var item in Model.TuitionTypes!)
 			    {

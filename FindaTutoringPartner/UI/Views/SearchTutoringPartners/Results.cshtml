@@ -34,7 +34,7 @@
 			
 			<h3 class="govuk-heading-s">How the sessions will be run</h3>
 			<govuk-checkboxes asp-for="TuitionTypeIds">
-				@foreach (var item in Model.TuitionTypes!)
+				@foreach (var item in Model.TuitionTypes)
 				{
 					<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
 				}

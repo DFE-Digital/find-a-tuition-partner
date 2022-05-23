@@ -17,6 +17,6 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
             new Subject {Id = 6, Name = "Secondary - Maths"},
             new Subject {Id = 7, Name = "Secondary - Modern Foreign Languages"},
             new Subject {Id = 8, Name = "Secondary - Science"}
-            );
+        );
     }
 }
