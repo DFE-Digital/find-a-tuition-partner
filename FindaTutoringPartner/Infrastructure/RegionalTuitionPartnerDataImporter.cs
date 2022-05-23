@@ -29,7 +29,7 @@ public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
         var inPerson = await _extractor.ExtractFromCsvFileAsync(new FileInfo(@"Data/tuition_partners_face_to_face_regions.csv"), TuitionTypes.Id.InPerson).ToListAsync();
         var online = await _extractor.ExtractFromCsvFileAsync(new FileInfo(@"Data/tuition_partners_online_regions.csv"), TuitionTypes.Id.Online).ToListAsync();
 
-        var from = await _dbContext.TuitionPartners.Include(e => e.Coverage).OrderBy(e => e.Name).ToListAsync();
+        var from = await _dbContext.TuitionPartners.AsNoTracking().Include(e => e.Coverage).OrderBy(e => e.Name).ToListAsync();
         var to = inPerson.Combine(online);
 
         var deltas = from.GetDeltas(to);

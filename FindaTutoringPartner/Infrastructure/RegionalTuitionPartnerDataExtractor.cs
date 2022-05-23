@@ -118,8 +118,11 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
                 tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
                 {
                     TuitionPartner = tuitionPartner,
+                    LocalAuthorityDistrictId = localAuthorityDistrict.Id,
                     LocalAuthorityDistrict = localAuthorityDistrict,
+                    SubjectId = subject.Id,
                     Subject = subject,
+                    TuitionTypeId = tuitionType.Id,
                     TuitionType = tuitionType
                 });
             }

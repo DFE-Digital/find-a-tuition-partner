@@ -17,11 +17,6 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         foreach (var toAdd in deltas.Add)
         {
             _dbContext.TuitionPartners.Add(toAdd);
-
-            /*foreach (var coverageToAdd in toAdd.Coverage)
-            {
-                _dbContext.TuitionPartnerCoverage.Add(coverageToAdd);
-            }*/
         }
 
         foreach (var toUpdateDelta in deltas.Update)
@@ -37,7 +32,6 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             {
                 coverageToAdd.TuitionPartner = toUpdate;
                 toUpdate.Coverage.Add(coverageToAdd);
-                //_dbContext.TuitionPartnerCoverage.Add(coverageToAdd);
             }
 
             foreach (var coverageToRemove in toUpdateDelta.CoverageRemove)

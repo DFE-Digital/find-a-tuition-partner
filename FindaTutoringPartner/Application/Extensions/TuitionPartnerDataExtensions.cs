@@ -67,9 +67,9 @@ public static class TuitionPartnerDataExtensions
             foreach (var targetCoverage in target.Coverage)
             {
                 if (existing.Coverage.Any(e =>
-                        e.LocalAuthorityDistrict.Equals(targetCoverage.LocalAuthorityDistrict)
-                        && e.Subject.Equals(targetCoverage.Subject)
-                        && e.TuitionType.Equals(targetCoverage.TuitionType))) continue;
+                        e.LocalAuthorityDistrictId == targetCoverage.LocalAuthorityDistrictId
+                        && e.SubjectId == targetCoverage.SubjectId
+                        && e.TuitionTypeId == targetCoverage.TuitionTypeId)) continue;
 
                 targetCoverage.TuitionPartner = existing;
                 delta.CoverageAdd.Add(targetCoverage);
@@ -78,9 +78,9 @@ public static class TuitionPartnerDataExtensions
             foreach (var existingCoverage in existing.Coverage)
             {
                 if (target.Coverage.Any(e =>
-                        e.LocalAuthorityDistrict.Equals(existingCoverage.LocalAuthorityDistrict)
-                        && e.Subject.Equals(existingCoverage.Subject)
-                        && e.TuitionType.Equals(existingCoverage.TuitionType))) continue;
+                        e.LocalAuthorityDistrictId == existingCoverage.LocalAuthorityDistrictId
+                        && e.SubjectId == existingCoverage.SubjectId
+                        && e.TuitionTypeId == existingCoverage.TuitionTypeId)) continue;
 
                 delta.CoverageRemove.Add(existingCoverage);
             }
