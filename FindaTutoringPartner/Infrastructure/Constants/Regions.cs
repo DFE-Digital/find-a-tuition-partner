@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Infrastructure.Constants;
 
-namespace Infrastructure.Constants
+public class Regions
 {
-    public class RegionValue
+    public class Id
     {
         public const int NorthEast = 1;
         public const int NorthWest = 2;
@@ -19,4 +15,3 @@ namespace Infrastructure.Constants
         public const int SouthWest = 9;
     }
 }
-

@@ -2,15 +2,54 @@
 using Application;
 using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
 using Domain;
+using Infrastructure.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
 public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
 {
+    private const string RegionInitialsAll = "ALL";
+    private const string RegionInitialsNorthEast = "NE";
+    private const string RegionInitialsNorthWest = "NW";
+    private const string RegionInitialsYorkshireandTheHumber = "YH";
+    private const string RegionInitialsEastMidlands = "EM";
+    private const string RegionInitialsWestMidlands = "WM";
+    private const string RegionInitialsEastofEngland = "E";
+    private const string RegionInitialsLondon = "L";
+    private const string RegionInitialsSouthEast = "SE";
+    private const string RegionInitialsSouthWest = "SW";
+
+    private static readonly string[] RegionInitials = {
+        RegionInitialsNorthEast,
+        RegionInitialsNorthWest,
+        RegionInitialsYorkshireandTheHumber,
+        RegionInitialsEastMidlands,
+        RegionInitialsWestMidlands,
+        RegionInitialsEastofEngland,
+        RegionInitialsLondon,
+        RegionInitialsSouthEast,
+        RegionInitialsSouthWest
+    };
+
+    private readonly NtpDbContext _dbContext;
+
+    public RegionalTuitionPartnerDataExtractor(NtpDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
     public async IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(FileInfo csvFile)
     {
+        var initialsToRegionDictionary = await GetInitialsToRegionDictionary();
+
+        var subjects = await _dbContext.Subjects.OrderBy(e => e.Id)
+            .ToDictionaryAsync(e => e.Id);
+
+        var tuitionTypes = await _dbContext.TuitionTypes.OrderBy(e => e.Id)
+            .ToDictionaryAsync(e => e.Id);
+
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             HasHeaderRecord = false,
@@ -30,38 +69,71 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
                 Name = datum.Name
             };
 
+            if (!string.IsNullOrEmpty(datum.PrimaryLiteracyRegions))
+            {
+                var regionInitials = datum.PrimaryLiteracyRegions.Split(',');
+
+                foreach (var regionInitial in RegionInitials)
+                {
+                    if (regionInitials.Contains(regionInitial) || regionInitials.Contains(RegionInitialsAll))
+                    {
+                        foreach (var localAuthorityDistrict in initialsToRegionDictionary[regionInitial].LocalAuthorityDistricts)
+                        {
+                            tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
+                            {
+                                TuitionPartner = tuitionPartner,
+                                LocalAuthorityDistrict = localAuthorityDistrict,
+                                Subject = subjects[Subjects.Id.PrimaryLiteracy],
+                            });
+                        }
+                    }
+                }
+            }
+
             yield return tuitionPartner;
         }
     }
 
-    private class RegionalTuitionPartnerDatum
+    private async Task<IDictionary<string, Region>> GetInitialsToRegionDictionary()
     {
-        [Index(0)]
-        public string Name { get; set; } = null!;
-        [Index(1)]
-        public string? PrimaryLiteracyRegions { get; set; }
-        [Index(2)]
-        public string? PrimaryNumeracyRegions { get; set; }
-        [Index(3)]
-        public string? PrimaryScienceRegions { get; set; }
-        [Index(4)]
-        public string? SecondaryEnglishRegions { get; set; }
-        [Index(5)]
-        public string? SecondaryHumanitiesRegions { get; set; }
-        [Index(6)]
-        public string? SecondaryMathsRegions { get; set; }
-        [Index(7)]
-        public string? SecondaryModernForeignLanguagesRegions { get; set; }
-        [Index(8)]
-        public string? SecondaryScienceRegions { get; set; }
+        var regionsAndLads = await _dbContext.Regions
+            .Include(e => e.LocalAuthorityDistricts.OrderBy(ce => ce.Code))
+            .OrderBy(e => e.Id)
+            .ToDictionaryAsync(e => e.Id);
+
+        return new Dictionary<string, Region>
+        {
+            { RegionInitialsNorthEast, regionsAndLads[Regions.Id.NorthEast] },
+            { RegionInitialsNorthWest, regionsAndLads[Regions.Id.NorthWest] },
+            { RegionInitialsYorkshireandTheHumber, regionsAndLads[Regions.Id.YorkshireandTheHumber] },
+            { RegionInitialsEastMidlands, regionsAndLads[Regions.Id.EastMidlands] },
+            { RegionInitialsWestMidlands, regionsAndLads[Regions.Id.WestMidlands] },
+            { RegionInitialsEastofEngland, regionsAndLads[Regions.Id.EastofEngland] },
+            { RegionInitialsLondon, regionsAndLads[Regions.Id.London] },
+            { RegionInitialsSouthEast, regionsAndLads[Regions.Id.SouthEast] },
+            { RegionInitialsSouthWest, regionsAndLads[Regions.Id.SouthWest] }
+        };
     }
 
-    /*new Subject {Id = 1, Name = "Primary - Literacy"},
-            new Subject {Id = 2, Name = "Primary - Numeracy"},
-            new Subject {Id = 3, Name = "Primary - Science"},
-            new Subject {Id = 4, Name = "Secondary - English"},
-            new Subject {Id = 5, Name = "Secondary - Humanities"},
-            new Subject {Id = 6, Name = "Secondary - Maths"},
-            new Subject {Id = 7, Name = "Secondary - Modern Foreign Languages"},
-            new Subject {Id = 8, Name = "Secondary - Science"}*/
+    private class RegionalTuitionPartnerDatum
+    {
+        [CsvHelper.Configuration.Attributes.Index(0)]
+        public string Name { get; set; } = null!;
+        [CsvHelper.Configuration.Attributes.Index(1)]
+        public string? PrimaryLiteracyRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(2)]
+        public string? PrimaryNumeracyRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(3)]
+        public string? PrimaryScienceRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(4)]
+        public string? SecondaryEnglishRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(5)]
+        public string? SecondaryHumanitiesRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(6)]
+        public string? SecondaryMathsRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(7)]
+        public string? SecondaryModernForeignLanguagesRegions { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(8)]
+        public string? SecondaryScienceRegions { get; set; }
+    }
 }
