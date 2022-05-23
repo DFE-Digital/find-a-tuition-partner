@@ -34,8 +34,8 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
             Latitude = result["latitude"] == null ? null : result["latitude"]!.GetValue<decimal>(),
             Country = result["country"]!.ToString(),
             Region = result["region"]?.ToString(),
-            LocalAuthority = result["admin_district"]?.ToString() ?? "",
-            LocalAuthorityCode = result["codes"]!["admin_district"]!.ToString()
+            LocalAuthorityDistrict = result["admin_district"]?.ToString() ?? "",
+            LocalAuthorityDistrictCode = result["codes"]!["admin_district"]!.ToString()
         };
 
         return parameters;
