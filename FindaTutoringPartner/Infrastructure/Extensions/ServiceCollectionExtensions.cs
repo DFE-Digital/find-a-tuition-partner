@@ -64,4 +64,12 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddRegionalTuitionPartnerData(this IServiceCollection services)
+    {
+        services.AddScoped<ITuitionPartnerDataExtractor, RegionalTuitionPartnerDataExtractor>();
+        services.AddScoped<ITuitionPartnerDataImporter, RegionalTuitionPartnerDataImporter>();
+
+        return services;
+    }
 }
