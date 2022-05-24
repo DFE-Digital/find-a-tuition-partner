@@ -6,6 +6,14 @@
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
+		
+		<govuk-error-summary>
+			<govuk-error-summary-item asp-for="SearchId" />
+			<govuk-error-summary-item asp-for="LocationFilterParameters.Postcode" />
+			<govuk-error-summary-item asp-for="SubjectIds" />
+			<govuk-error-summary-item asp-for="TuitionTypeIds" />
+		</govuk-error-summary>
+
 		<h1 class="govuk-heading-l">Search results</h1>
 		<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result")</p>
 	</div>
@@ -24,7 +32,7 @@
 
 			<div>
 				<h3 class="govuk-heading-s">Subjects</h3>
-				<govuk-checkboxes name="SubjectIds">
+				<govuk-checkboxes asp-for="SubjectIds">
 					@foreach (var item in Model.Subjects)
 					{
 						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>

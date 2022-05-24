@@ -185,12 +185,21 @@ public class SearchTutoringPartnersController : Controller
 
         try
         {
-            await builder.WithPostcode(viewModel.LocationFilterParameters.Postcode);
+            if (!string.IsNullOrWhiteSpace(viewModel.LocationFilterParameters.Postcode))
+            {
+                await builder.WithPostcode(viewModel.LocationFilterParameters.Postcode);
+            }
         }
         catch (LocationNotFoundException)
         {
-            ModelState.AddModelError("Postcode", "Enter a valid postcode");
-            builder.Adapt(viewModel);
+            ModelState.AddModelError("LocationFilterParameters.Postcode", "Enter a valid postcode");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+            viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+            viewModel.SearchResultsPage = await _sender.Send(builder.Build().Adapt<SearchTuitionPartnerHandler.Command>());
             return View(viewModel);
         }
 

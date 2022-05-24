@@ -1,7 +1,10 @@
-﻿namespace Domain.Search;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Search;
 
 public class LocationFilterParameters
 {
+    [Required(ErrorMessage = "Enter a postcode")]
     public string Postcode { get; set; } = null!;
     public decimal? Longitude { get; set; }
     public decimal? Latitude { get; set; }
