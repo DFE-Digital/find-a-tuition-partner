@@ -48,6 +48,13 @@ cf service fatp-dev-postgres-db
 cf delete-service fatp-dev-postgres-db
 cf install-plugin conduit
 cf conduit fatp-dev-postgres-db -- psql
+
+cf set-env fatp-dev-auth-service AUTH_USERNAME ntp
+cf set-env fatp-dev-auth-service AUTH_PASSWORD alpha
+cf create-user-provided-service fatp-dev-auth-app -r https://fatp-dev-auth-service.london.cloudapps.digital
+cf update-user-provided-service fatp-dev-auth-app -r https://fatp-dev-auth-service.london.cloudapps.digital
+cf bind-route-service london.cloudapps.digital fatp-dev-auth-app --hostname fatp-dev
+
 ```
 
 
