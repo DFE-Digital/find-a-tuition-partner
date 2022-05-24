@@ -112,8 +112,6 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
 
         foreach (var regionInitial in AllRegionInitials)
         {
-            if (!subjectRegionInitials.Contains(regionInitial) && !subjectRegionInitials.Contains(RegionInitialsAll)) continue;
-
             foreach (var localAuthorityDistrict in initialsToRegionDictionary[regionInitial].LocalAuthorityDistricts)
             {
                 var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == localAuthorityDistrict.Id);
@@ -130,22 +128,24 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
                     tuitionPartner.Coverage.Add(coverage);
                 }
 
+                var covered = subjectRegionInitials.Contains(regionInitial) || subjectRegionInitials.Contains(RegionInitialsAll);
+
                 switch (subject.Id)
                 {
-                    case Subjects.Id.PrimaryLiteracy: coverage.PrimaryLiteracy = true; break;
-                    case Subjects.Id.PrimaryNumeracy: coverage.PrimaryNumeracy = true; break;
-                    case Subjects.Id.PrimaryScience: coverage.PrimaryScience = true; break;
-                    case Subjects.Id.SecondaryEnglish: coverage.SecondaryEnglish = true; break;
-                    case Subjects.Id.SecondaryHumanities: coverage.SecondaryHumanities = true; break;
-                    case Subjects.Id.SecondaryMaths: coverage.SecondaryMaths = true; break;
-                    case Subjects.Id.SecondaryModernForeignLanguages: coverage.SecondaryModernForeignLanguages = true; break;
-                    case Subjects.Id.SecondaryScience: coverage.SecondaryScience = true; break;
+                    case Subjects.Id.PrimaryLiteracy: coverage.PrimaryLiteracy = covered; break;
+                    case Subjects.Id.PrimaryNumeracy: coverage.PrimaryNumeracy = covered; break;
+                    case Subjects.Id.PrimaryScience: coverage.PrimaryScience = covered; break;
+                    case Subjects.Id.SecondaryEnglish: coverage.SecondaryEnglish = covered; break;
+                    case Subjects.Id.SecondaryHumanities: coverage.SecondaryHumanities = covered; break;
+                    case Subjects.Id.SecondaryMaths: coverage.SecondaryMaths = covered; break;
+                    case Subjects.Id.SecondaryModernForeignLanguages: coverage.SecondaryModernForeignLanguages = covered; break;
+                    case Subjects.Id.SecondaryScience: coverage.SecondaryScience = covered; break;
                 }
 
                 switch (tuitionType.Id)
                 {
-                    case TuitionTypes.Id.Online: coverage.Online = true; break;
-                    case TuitionTypes.Id.InPerson: coverage.InPerson = true; break;
+                    case TuitionTypes.Id.Online: coverage.Online = covered; break;
+                    case TuitionTypes.Id.InPerson: coverage.InPerson = covered; break;
                 }
             }
         }

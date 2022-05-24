@@ -76,12 +76,15 @@ public static class TuitionPartnerDataExtensions
                 Website = existing.Website
             };
 
+            var update = false;
+
             foreach (var targetCoverage in target.Coverage)
             {
                 if (existing.Coverage.Any(e => e.LocalAuthorityDistrictId == targetCoverage.LocalAuthorityDistrictId)) continue;
 
                 targetCoverage.TuitionPartner = existing;
                 delta.CoverageAdd.Add(targetCoverage);
+                update = true;
             }
 
             foreach (var existingCoverage in existing.Coverage)
@@ -91,14 +94,31 @@ public static class TuitionPartnerDataExtensions
                 if (targetCoverage == null)
                 {
                     delta.CoverageRemove.Add(existingCoverage);
+                    update = true;
                     continue;
                 }
 
-                existingCoverage.Id = targetCoverage.Id;
-                delta.CoverageUpdate.Add(existingCoverage);
+                if (existingCoverage.PrimaryLiteracy != targetCoverage.PrimaryLiteracy
+                    || existingCoverage.PrimaryNumeracy != targetCoverage.PrimaryNumeracy
+                    || existingCoverage.PrimaryScience != targetCoverage.PrimaryScience
+                    || existingCoverage.SecondaryEnglish != targetCoverage.SecondaryEnglish
+                    || existingCoverage.SecondaryHumanities != targetCoverage.SecondaryHumanities
+                    || existingCoverage.SecondaryMaths != targetCoverage.SecondaryMaths
+                    || existingCoverage.SecondaryModernForeignLanguages != targetCoverage.SecondaryModernForeignLanguages
+                    || existingCoverage.SecondaryScience != targetCoverage.SecondaryScience
+                    || existingCoverage.Online != targetCoverage.Online
+                    || existingCoverage.InPerson != targetCoverage.InPerson)
+                {
+                    existingCoverage.Id = targetCoverage.Id;
+                    delta.CoverageUpdate.Add(targetCoverage);
+                    update = true;
+                }
             }
 
-            deltas.Update.Add(delta);
+            if (update)
+            {
+                deltas.Update.Add(delta);
+            }
         }
 
         return deltas;
