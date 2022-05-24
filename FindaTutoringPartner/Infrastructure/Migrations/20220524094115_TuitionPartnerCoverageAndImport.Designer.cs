@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20220524085534_TuitionPartnerCoverageTuitionType")]
-    partial class TuitionPartnerCoverageTuitionType
+    [Migration("20220524094115_TuitionPartnerCoverageAndImport")]
+    partial class TuitionPartnerCoverageAndImport
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

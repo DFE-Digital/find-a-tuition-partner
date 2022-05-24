@@ -1,13 +1,71 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
-    public partial class TuitionPartnerNames : Migration
+    public partial class TuitionPartnerCoverageAndImport : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "TuitionPartnerCoverage",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
+                    LocalAuthorityDistrictId = table.Column<int>(type: "integer", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
+                    PrimaryLiteracy = table.Column<bool>(type: "boolean", nullable: false),
+                    PrimaryNumeracy = table.Column<bool>(type: "boolean", nullable: false),
+                    PrimaryScience = table.Column<bool>(type: "boolean", nullable: false),
+                    SecondaryEnglish = table.Column<bool>(type: "boolean", nullable: false),
+                    SecondaryHumanities = table.Column<bool>(type: "boolean", nullable: false),
+                    SecondaryMaths = table.Column<bool>(type: "boolean", nullable: false),
+                    SecondaryModernForeignLanguages = table.Column<bool>(type: "boolean", nullable: false),
+                    SecondaryScience = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TuitionPartnerCoverage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnerCoverage_LocalAuthorityDistricts_LocalAuthori~",
+                        column: x => x.LocalAuthorityDistrictId,
+                        principalTable: "LocalAuthorityDistricts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnerCoverage_TuitionPartners_TuitionPartnerId",
+                        column: x => x.TuitionPartnerId,
+                        principalTable: "TuitionPartners",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnerCoverage_TuitionTypes_TuitionTypeId",
+                        column: x => x.TuitionTypeId,
+                        principalTable: "TuitionTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TuitionPartnerDataImportHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Importer = table.Column<string>(type: "text", nullable: false),
+                    Md5Checksum = table.Column<string>(type: "text", nullable: false),
+                    ImportDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TuitionPartnerDataImportHistories", x => x.Id);
+                });
+
             migrationBuilder.UpdateData(
                 table: "TuitionPartners",
                 keyColumn: "Id",
@@ -189,10 +247,32 @@ namespace Infrastructure.Migrations
                 keyValue: 56,
                 column: "Name",
                 value: "Assess Education");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnerCoverage_LocalAuthorityDistrictId_TuitionType~",
+                table: "TuitionPartnerCoverage",
+                columns: new[] { "LocalAuthorityDistrictId", "TuitionTypeId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnerCoverage_TuitionPartnerId_LocalAuthorityDistr~",
+                table: "TuitionPartnerCoverage",
+                columns: new[] { "TuitionPartnerId", "LocalAuthorityDistrictId", "TuitionTypeId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnerCoverage_TuitionTypeId",
+                table: "TuitionPartnerCoverage",
+                column: "TuitionTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "TuitionPartnerCoverage");
+
+            migrationBuilder.DropTable(
+                name: "TuitionPartnerDataImportHistories");
+
             migrationBuilder.UpdateData(
                 table: "TuitionPartners",
                 keyColumn: "Id",
