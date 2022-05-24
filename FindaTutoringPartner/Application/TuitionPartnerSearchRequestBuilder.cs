@@ -103,6 +103,14 @@ public class TuitionPartnerSearchRequestBuilder
 
     public TuitionPartnerSearchRequest Build()
     {
-        return new TuitionPartnerSearchRequest { PageSize = SearchRequestBase.MaxPageSize };
+        var request = new TuitionPartnerSearchRequest
+        {
+            LocalAuthorityDistrictCode = SearchState.LocationFilterParameters?.LocalAuthorityDistrictCode,
+            SubjectIds = SearchState.Subjects?.Keys,
+            TuitionTypeIds = SearchState.TuitionTypes?.Keys,
+            PageSize = SearchRequestBase.MaxPageSize
+        };
+
+        return request;
     }
 }

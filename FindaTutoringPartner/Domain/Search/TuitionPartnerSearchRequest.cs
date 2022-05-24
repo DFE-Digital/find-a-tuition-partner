@@ -4,8 +4,9 @@ namespace Domain.Search;
 
 public class TuitionPartnerSearchRequest : SearchRequestBase
 {
-    public decimal Latitude { get; set; }
-    public decimal Longitude { get; set; }
+    public string? LocalAuthorityDistrictCode { get; set; }
+    public IEnumerable<int>? SubjectIds { get; set; }
+    public IEnumerable<int>? TuitionTypeIds { get; set; }
     [DefaultValue(TuitionPartnerOrderBy.Name)]
     public TuitionPartnerOrderBy OrderBy { get; set; } = TuitionPartnerOrderBy.Name;
     [DefaultValue(OrderByDirection.Ascending)]

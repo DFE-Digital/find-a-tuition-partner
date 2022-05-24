@@ -29,7 +29,30 @@ public class SearchTuitionPartnerHandler
 
         public async Task<SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var queryable = _dbContext.TuitionPartners.AsQueryable();
+            var coverageQueryable = _dbContext.TuitionPartnerCoverage.AsQueryable();
+
+            if (request.LocalAuthorityDistrictCode != null)
+            {
+                var lad = await _dbContext.LocalAuthorityDistricts.SingleOrDefaultAsync(e => e.Code == request.LocalAuthorityDistrictCode, cancellationToken);
+                if (lad != null)
+                {
+                    coverageQueryable = coverageQueryable.Where(e => e.LocalAuthorityDistrictId == lad.Id);
+                }
+            }
+
+            if (request.SubjectIds != null)
+            {
+                coverageQueryable = coverageQueryable.Where(e => request.SubjectIds.Contains(e.SubjectId));
+            }
+
+            if (request.TuitionTypeIds != null)
+            {
+                coverageQueryable = coverageQueryable.Where(e => request.TuitionTypeIds.Contains(e.TuitionTypeId));
+            }
+
+            var tuitionPartnerIds = await coverageQueryable.Select(e => e.TuitionPartnerId).Distinct().ToArrayAsync(cancellationToken);
+
+            var queryable = _dbContext.TuitionPartners.Where(e => tuitionPartnerIds.Contains(e.Id));
 
             switch (request.OrderBy)
             {
