@@ -33,7 +33,8 @@ public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
 
         var md5Checksum = GetMd5Checksum(inPersonFileInfo) + "_" + GetMd5Checksum(onlineFileInfo);
 
-        if (await _dbContext.TuitionPartnerDataImportHistories.AnyAsync(e => e.Importer == GetType().Name && e.Md5Checksum == md5Checksum))
+        var lastImport = await _dbContext.TuitionPartnerDataImportHistories.Where(e => e.Importer == GetType().Name).OrderByDescending(e => e.ImportDateTime).FirstOrDefaultAsync();
+        if (lastImport?.Md5Checksum == md5Checksum)
         {
             return;
         }
