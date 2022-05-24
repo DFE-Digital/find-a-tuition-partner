@@ -114,7 +114,7 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
         {
             foreach (var localAuthorityDistrict in initialsToRegionDictionary[regionInitial].LocalAuthorityDistricts)
             {
-                var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == localAuthorityDistrict.Id);
+                var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == localAuthorityDistrict.Id && e.TuitionTypeId == tuitionType.Id);
                 if (coverage == null)
                 {
                     coverage = new TuitionPartnerCoverage
@@ -122,7 +122,9 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
                         TuitionPartnerId = tuitionPartner.Id,
                         TuitionPartner = tuitionPartner,
                         LocalAuthorityDistrictId = localAuthorityDistrict.Id,
-                        LocalAuthorityDistrict = localAuthorityDistrict
+                        LocalAuthorityDistrict = localAuthorityDistrict,
+                        TuitionType = tuitionType,
+                        TuitionTypeId = tuitionType.Id
                     };
 
                     tuitionPartner.Coverage.Add(coverage);
@@ -140,12 +142,6 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
                     case Subjects.Id.SecondaryMaths: coverage.SecondaryMaths = covered; break;
                     case Subjects.Id.SecondaryModernForeignLanguages: coverage.SecondaryModernForeignLanguages = covered; break;
                     case Subjects.Id.SecondaryScience: coverage.SecondaryScience = covered; break;
-                }
-
-                switch (tuitionType.Id)
-                {
-                    case TuitionTypes.Id.Online: coverage.Online = covered; break;
-                    case TuitionTypes.Id.InPerson: coverage.InPerson = covered; break;
                 }
             }
         }

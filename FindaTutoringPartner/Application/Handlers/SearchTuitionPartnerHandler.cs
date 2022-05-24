@@ -66,14 +66,14 @@ public class SearchTuitionPartnerHandler
 
             if (request.TuitionTypeIds != null)
             {
-                foreach (var tuitionTypeId in request.TuitionTypeIds)
+                /*foreach (var tuitionTypeId in request.TuitionTypeIds)
                 {
                     switch (tuitionTypeId)
                     {
                         case TuitionTypes.Id.Online: coverageQueryable = coverageQueryable.Where(e => e.Online == true); break;
                         case TuitionTypes.Id.InPerson: coverageQueryable = coverageQueryable.Where(e => e.InPerson == true); break;
                     }
-                }
+                }*/
 
                 returnAll = false;
             }
@@ -86,7 +86,26 @@ public class SearchTuitionPartnerHandler
             }
             else
             {
-                var tuitionPartnerIds = await coverageQueryable.Select(e => e.TuitionPartnerId).Distinct().ToArrayAsync(cancellationToken);
+                var groupQueryable = coverageQueryable.GroupBy(e => e.TuitionPartnerId);
+
+                if (request.TuitionTypeIds != null)
+                {
+                    foreach (var tuitionTypeId in request.TuitionTypeIds)
+                    {
+                        switch (tuitionTypeId)
+                        {
+                            case TuitionTypes.Id.Online:
+                                groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.Online));
+                                break;
+                            case TuitionTypes.Id.InPerson:
+                                groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.InPerson));
+                                break;
+                        }
+                    }
+                }
+
+                var tuitionPartnerIds = await groupQueryable.Select(g => g.Key).ToArrayAsync(cancellationToken);
+
                 queryable = _dbContext.TuitionPartners.Where(e => tuitionPartnerIds.Contains(e.Id));
             }
 

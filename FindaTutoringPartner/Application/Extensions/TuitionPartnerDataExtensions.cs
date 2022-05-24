@@ -21,7 +21,10 @@ public static class TuitionPartnerDataExtensions
 
             foreach (var coverage in fromTuitionPartner.Coverage)
             {
-                var intoCoverage = intoTuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == coverage.LocalAuthorityDistrictId);
+                var intoCoverage = intoTuitionPartner.Coverage.SingleOrDefault(e =>
+                    e.LocalAuthorityDistrictId == coverage.LocalAuthorityDistrictId &&
+                    e.TuitionTypeId == coverage.TuitionTypeId);
+
                 if (intoCoverage == null)
                 {
                     intoTuitionPartner.Coverage.Add(coverage);
@@ -36,8 +39,6 @@ public static class TuitionPartnerDataExtensions
                     intoCoverage.SecondaryMaths = intoCoverage.SecondaryMaths || coverage.SecondaryMaths;
                     intoCoverage.SecondaryModernForeignLanguages = intoCoverage.SecondaryModernForeignLanguages || coverage.SecondaryModernForeignLanguages;
                     intoCoverage.SecondaryScience = intoCoverage.SecondaryScience || coverage.SecondaryScience;
-                    intoCoverage.Online = intoCoverage.Online || coverage.Online;
-                    intoCoverage.InPerson = intoCoverage.InPerson || coverage.InPerson;
                 }
             }
         }
@@ -89,7 +90,9 @@ public static class TuitionPartnerDataExtensions
 
             foreach (var existingCoverage in existing.Coverage)
             {
-                var targetCoverage = target.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == existingCoverage.LocalAuthorityDistrictId);
+                var targetCoverage = target.Coverage.SingleOrDefault(e =>
+                    e.LocalAuthorityDistrictId == existingCoverage.LocalAuthorityDistrictId &&
+                    e.TuitionTypeId == existingCoverage.TuitionTypeId);
 
                 if (targetCoverage == null)
                 {
@@ -105,9 +108,7 @@ public static class TuitionPartnerDataExtensions
                     || existingCoverage.SecondaryHumanities != targetCoverage.SecondaryHumanities
                     || existingCoverage.SecondaryMaths != targetCoverage.SecondaryMaths
                     || existingCoverage.SecondaryModernForeignLanguages != targetCoverage.SecondaryModernForeignLanguages
-                    || existingCoverage.SecondaryScience != targetCoverage.SecondaryScience
-                    || existingCoverage.Online != targetCoverage.Online
-                    || existingCoverage.InPerson != targetCoverage.InPerson)
+                    || existingCoverage.SecondaryScience != targetCoverage.SecondaryScience)
                 {
                     existingCoverage.Id = targetCoverage.Id;
                     delta.CoverageUpdate.Add(targetCoverage);

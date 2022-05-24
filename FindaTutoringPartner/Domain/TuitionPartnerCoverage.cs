@@ -7,6 +7,8 @@ public class TuitionPartnerCoverage
     public TuitionPartner TuitionPartner { get; set; } = null!;
     public int LocalAuthorityDistrictId { get; set; }
     public LocalAuthorityDistrict LocalAuthorityDistrict { get; set; } = null!;
+    public int TuitionTypeId { get; set; }
+    public TuitionType TuitionType { get; set; } = null!;
     public bool PrimaryLiteracy { get; set; }
     public bool PrimaryNumeracy { get; set; }
     public bool PrimaryScience { get; set; }
@@ -15,6 +17,4 @@ public class TuitionPartnerCoverage
     public bool SecondaryMaths { get; set; }
     public bool SecondaryModernForeignLanguages { get; set; }
     public bool SecondaryScience { get; set; }
-    public bool Online { get; set; }
-    public bool InPerson { get; set; }
 }

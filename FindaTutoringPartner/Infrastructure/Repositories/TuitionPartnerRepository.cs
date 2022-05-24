@@ -47,8 +47,6 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
                 coverageToUpdate.SecondaryMaths = coverageToUpdateDelta.SecondaryMaths;
                 coverageToUpdate.SecondaryModernForeignLanguages = coverageToUpdateDelta.SecondaryModernForeignLanguages;
                 coverageToUpdate.SecondaryScience = coverageToUpdateDelta.SecondaryScience;
-                coverageToUpdate.Online = coverageToUpdateDelta.Online;
-                coverageToUpdate.InPerson = coverageToUpdateDelta.InPerson;
 
                 toUpdate.Coverage.Remove(coverageToUpdate);
             }
