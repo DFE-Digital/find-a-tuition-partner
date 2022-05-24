@@ -160,19 +160,17 @@ public class SearchTutoringPartnersController : Controller
     public async Task<IActionResult> Results(Guid searchId)
     {
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
-        var request = builder.Build();
 
-        var result = await _sender.Send(request.Adapt<SearchTuitionPartnerHandler.Command>());
-        var viewModel = new TuitionPartnerSearchResultsViewModel
-        {
-            SearchId = searchId,
-            LocationFilterParameters = builder.SearchState.LocationFilterParameters!,
-            SubjectIds = builder.SearchState.Subjects!.Keys,
-            Subjects = await _lookupDataRepository.GetSubjectsAsync(),
-            TuitionTypeIds = builder.SearchState.TuitionTypes!.Keys,
-            TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync(),
-            SearchResultsPage = result
-        };
+        var viewModel = builder.Adapt<TuitionPartnerSearchResultsViewModel>();
+        viewModel.LocationSearchViewModel = builder.Adapt<LocationSearchViewModel>();
+        viewModel.LocationSearchViewModel.Postcode = viewModel.SearchState?.LocationFilterParameters?.Postcode;
+        viewModel.SubjectsSearchViewModel = builder.Adapt<SubjectsSearchViewModel>();
+        viewModel.SubjectsSearchViewModel.SubjectIds = viewModel.SearchState?.Subjects?.Keys;
+        viewModel.SubjectsSearchViewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+        viewModel.TuitionTypeSearchViewModel = builder.Adapt<TuitionTypeSearchViewModel>();
+        viewModel.TuitionTypeSearchViewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
+        viewModel.TuitionTypeSearchViewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+        viewModel.SearchResultsPage = await _sender.Send(builder.Build().Adapt<SearchTuitionPartnerHandler.Command>());
 
         return View(viewModel);
     }
@@ -185,26 +183,26 @@ public class SearchTutoringPartnersController : Controller
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(viewModel.LocationFilterParameters.Postcode))
+            if (!string.IsNullOrWhiteSpace(viewModel.LocationSearchViewModel.Postcode))
             {
-                await builder.WithPostcode(viewModel.LocationFilterParameters.Postcode);
+                await builder.WithPostcode(viewModel.LocationSearchViewModel.Postcode);
             }
         }
         catch (LocationNotFoundException)
         {
-            ModelState.AddModelError("LocationFilterParameters.Postcode", "Enter a valid postcode");
+            ModelState.AddModelError("LocationSearchViewModel.Postcode", "Enter a valid postcode");
         }
 
         if (!ModelState.IsValid)
         {
-            viewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
-            viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
+            viewModel.SubjectsSearchViewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
+            viewModel.TuitionTypeSearchViewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
             viewModel.SearchResultsPage = await _sender.Send(builder.Build().Adapt<SearchTuitionPartnerHandler.Command>());
             return View(viewModel);
         }
 
-        await builder.WithSubjectIds(viewModel.SubjectIds);
-        await builder.WithTuitionTypeIds(viewModel.TuitionTypeIds);
+        await builder.WithSubjectIds(viewModel.SubjectsSearchViewModel.SubjectIds!);
+        await builder.WithTuitionTypeIds(viewModel.TuitionTypeSearchViewModel.TuitionTypeIds!);
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }

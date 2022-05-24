@@ -9,13 +9,16 @@
 		
 		<govuk-error-summary>
 			<govuk-error-summary-item asp-for="SearchId" />
-			<govuk-error-summary-item asp-for="LocationFilterParameters.Postcode" />
-			<govuk-error-summary-item asp-for="SubjectIds" />
-			<govuk-error-summary-item asp-for="TuitionTypeIds" />
+			<govuk-error-summary-item asp-for="LocationSearchViewModel.Postcode" />
+			<govuk-error-summary-item asp-for="SubjectsSearchViewModel.SubjectIds" />
+			<govuk-error-summary-item asp-for="TuitionTypeSearchViewModel.TuitionTypeIds" />
 		</govuk-error-summary>
-
-		<h1 class="govuk-heading-l">Search results</h1>
-		<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result")</p>
+		
+		@if (Model.SearchResultsPage != null)
+		{
+			<h1 class="govuk-heading-l">Search results</h1>
+			<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result")</p>
+		}
 	</div>
 </div>
 
@@ -32,18 +35,18 @@
 
 			<div>
 				<h3 class="govuk-heading-s">Subjects</h3>
-				<govuk-checkboxes asp-for="SubjectIds">
-					@foreach (var item in Model.Subjects)
+				<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds">
+					@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
 					{
-						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
 					}
 				</govuk-checkboxes>
 
 				<h3 class="govuk-heading-s">How the sessions will be run</h3>
-				<govuk-checkboxes asp-for="TuitionTypeIds">
-					@foreach (var item in Model.TuitionTypes)
+				<govuk-checkboxes asp-for="TuitionTypeSearchViewModel.TuitionTypeIds">
+					@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
 					{
-						<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
+						<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeSearchViewModel.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
 					}
 				</govuk-checkboxes>
 			</div>
@@ -54,7 +57,7 @@
 		</div>
 
 		<div class="govuk-grid-column-two-thirds">
-			<govuk-input asp-for="LocationFilterParameters.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
+			<govuk-input asp-for="LocationSearchViewModel.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
 				<govuk-input-label class="govuk-label--s">Postcode</govuk-input-label>
 			</govuk-input>
 			
@@ -62,53 +65,56 @@
 				<govuk-button type="submit">Search</govuk-button>
 			</div>
 
-			@foreach (var item in Model.SearchResultsPage.Results)
+			@if (Model.SearchResultsPage != null)
 			{
-				<div>
-					<h2><a href="@item.Website" class="govuk-link">@item.Name</a></h2>
-					<govuk-summary-list>
-						<govuk-summary-list-row>
-							<govuk-summary-list-row-key>
-								Subjects covered
-							</govuk-summary-list-row-key>
-							<govuk-summary-list-row-value>
+				foreach (var item in Model.SearchResultsPage.Results)
+				{
+					<div>
+						<h2><a href="@item.Website" class="govuk-link">@item.Name</a></h2>
+						<govuk-summary-list>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Subjects covered
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
 
-							</govuk-summary-list-row-value>
-						</govuk-summary-list-row>
-						<govuk-summary-list-row>
-							<govuk-summary-list-row-key>
-								Type of tuition
-							</govuk-summary-list-row-key>
-							<govuk-summary-list-row-value>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Type of tuition
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
 
-							</govuk-summary-list-row-value>
-						</govuk-summary-list-row>
-						<govuk-summary-list-row>
-							<govuk-summary-list-row-key>
-								Price
-							</govuk-summary-list-row-key>
-							<govuk-summary-list-row-value>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Price
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
 
-							</govuk-summary-list-row-value>
-						</govuk-summary-list-row>
-						<govuk-summary-list-row>
-							<govuk-summary-list-row-key>
-								Tuition ratio
-							</govuk-summary-list-row-key>
-							<govuk-summary-list-row-value>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Tuition ratio
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
 
-							</govuk-summary-list-row-value>
-						</govuk-summary-list-row>
-						<govuk-summary-list-row>
-							<govuk-summary-list-row-key>
-								Provider information
-							</govuk-summary-list-row-key>
-							<govuk-summary-list-row-value>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Provider information
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
 
-							</govuk-summary-list-row-value>
-						</govuk-summary-list-row>
-					</govuk-summary-list>
-				</div>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+						</govuk-summary-list>
+					</div>
+				}
 			}
 		</div>
 	
