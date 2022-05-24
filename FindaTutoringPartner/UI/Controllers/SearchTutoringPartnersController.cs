@@ -1,4 +1,4 @@
-﻿using Application.Exceptions;
+using Application.Exceptions;
 using Application.Handlers;
 using Mapster;
 using MediatR;
@@ -93,7 +93,7 @@ public class SearchTutoringPartnersController : Controller
 
         await builder.WithSubjectIds(viewModel.SubjectIds!);
 
-        return RedirectToAction("TutorTypes", new { builder.SearchState.SearchId });
+        return RedirectToAction("TuitionTypes", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
@@ -166,16 +166,37 @@ public class SearchTutoringPartnersController : Controller
         var viewModel = new TuitionPartnerSearchResultsViewModel
         {
             SearchId = searchId,
-            LocationFilterParameters = builder.SearchState.LocationFilterParameters,
+            LocationFilterParameters = builder.SearchState.LocationFilterParameters!,
             SubjectIds = builder.SearchState.Subjects!.Keys,
             Subjects = await _lookupDataRepository.GetSubjectsAsync(),
-            TutorTypeIds = builder.SearchState.TutorTypes!.Keys,
-            TutorTypes = await _lookupDataRepository.GetTutorTypesAsync(),
             TuitionTypeIds = builder.SearchState.TuitionTypes!.Keys,
             TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync(),
             SearchResultsPage = result
         };
 
         return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Results(TuitionPartnerSearchResultsViewModel viewModel)
+    {
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(viewModel.SearchId);
+
+        try
+        {
+            await builder.WithPostcode(viewModel.LocationFilterParameters.Postcode);
+        }
+        catch (LocationNotFoundException)
+        {
+            ModelState.AddModelError("Postcode", "Enter a valid postcode");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+        }
+
+        await builder.WithSubjectIds(viewModel.SubjectIds);
+        await builder.WithTuitionTypeIds(viewModel.TuitionTypeIds);
+
+        return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
 }
