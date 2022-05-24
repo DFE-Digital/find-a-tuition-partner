@@ -34,14 +34,20 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
                 toUpdate.Coverage.Add(coverageToAdd);
             }
 
-            foreach (var coverageToRemove in toUpdateDelta.CoverageRemove)
+            foreach (var coverageToRemoveDelta in toUpdateDelta.CoverageRemove)
             {
-                _dbContext.TuitionPartnerCoverage.Remove(coverageToRemove);
+                var coverageToRemove = await _dbContext.TuitionPartnerCoverage.FindAsync(coverageToRemoveDelta.Id);
+                if (coverageToRemove == null) continue;
+
+                toUpdate.Coverage.Remove(coverageToRemove);
             }
         }
 
-        foreach (var toRemove in deltas.Remove)
+        foreach (var toRemoveDelta in deltas.Remove)
         {
+            var toRemove = await _dbContext.TuitionPartners.FindAsync(toRemoveDelta.Id);
+            if (toRemove == null) continue;
+
             _dbContext.TuitionPartners.Remove(toRemove);
         }
 
