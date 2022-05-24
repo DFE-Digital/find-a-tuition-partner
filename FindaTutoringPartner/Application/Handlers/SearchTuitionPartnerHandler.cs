@@ -31,28 +31,41 @@ public class SearchTuitionPartnerHandler
         {
             var coverageQueryable = _dbContext.TuitionPartnerCoverage.AsQueryable();
 
+            var returnAll = true;
+
             if (request.LocalAuthorityDistrictCode != null)
             {
                 var lad = await _dbContext.LocalAuthorityDistricts.SingleOrDefaultAsync(e => e.Code == request.LocalAuthorityDistrictCode, cancellationToken);
                 if (lad != null)
                 {
                     coverageQueryable = coverageQueryable.Where(e => e.LocalAuthorityDistrictId == lad.Id);
+                    returnAll = false;
                 }
             }
 
             if (request.SubjectIds != null)
             {
                 coverageQueryable = coverageQueryable.Where(e => request.SubjectIds.Contains(e.SubjectId));
+                returnAll = false;
             }
 
             if (request.TuitionTypeIds != null)
             {
                 coverageQueryable = coverageQueryable.Where(e => request.TuitionTypeIds.Contains(e.TuitionTypeId));
+                returnAll = false;
             }
 
-            var tuitionPartnerIds = await coverageQueryable.Select(e => e.TuitionPartnerId).Distinct().ToArrayAsync(cancellationToken);
+            IQueryable<TuitionPartner> queryable;
 
-            var queryable = _dbContext.TuitionPartners.Where(e => tuitionPartnerIds.Contains(e.Id));
+            if (returnAll)
+            {
+                queryable = _dbContext.TuitionPartners.AsQueryable();
+            }
+            else
+            {
+                var tuitionPartnerIds = await coverageQueryable.Select(e => e.TuitionPartnerId).Distinct().ToArrayAsync(cancellationToken);
+                queryable = _dbContext.TuitionPartners.Where(e => tuitionPartnerIds.Contains(e.Id));
+            }
 
             switch (request.OrderBy)
             {
