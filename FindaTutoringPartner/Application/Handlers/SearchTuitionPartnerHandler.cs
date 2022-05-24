@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Constants;
 using Domain.Search;
 using Domain.Validators;
 using MediatR;
@@ -49,17 +50,31 @@ public class SearchTuitionPartnerHandler
                 {
                     switch (subjectId)
                     {
-                        
+                        case Subjects.Id.PrimaryLiteracy: coverageQueryable = coverageQueryable.Where(e => e.PrimaryLiteracy == true); break;
+                        case Subjects.Id.PrimaryNumeracy: coverageQueryable = coverageQueryable.Where(e => e.PrimaryNumeracy == true); break;
+                        case Subjects.Id.PrimaryScience: coverageQueryable = coverageQueryable.Where(e => e.PrimaryScience == true); break;
+                        case Subjects.Id.SecondaryEnglish: coverageQueryable = coverageQueryable.Where(e => e.SecondaryEnglish == true); break;
+                        case Subjects.Id.SecondaryHumanities: coverageQueryable = coverageQueryable.Where(e => e.SecondaryHumanities == true); break;
+                        case Subjects.Id.SecondaryMaths: coverageQueryable = coverageQueryable.Where(e => e.SecondaryMaths == true); break;
+                        case Subjects.Id.SecondaryModernForeignLanguages: coverageQueryable = coverageQueryable.Where(e => e.SecondaryModernForeignLanguages == true); break;
+                        case Subjects.Id.SecondaryScience: coverageQueryable = coverageQueryable.Where(e => e.SecondaryScience == true); break;
                     }
                 }
 
-                //coverageQueryable = coverageQueryable.Where(e => request.SubjectIds.Contains(e.SubjectId));
                 returnAll = false;
             }
 
             if (request.TuitionTypeIds != null)
             {
-                //coverageQueryable = coverageQueryable.Where(e => request.TuitionTypeIds.Contains(e.TuitionTypeId));
+                foreach (var tuitionTypeId in request.TuitionTypeIds)
+                {
+                    switch (tuitionTypeId)
+                    {
+                        case TuitionTypes.Id.Online: coverageQueryable = coverageQueryable.Where(e => e.Online == true); break;
+                        case TuitionTypes.Id.InPerson: coverageQueryable = coverageQueryable.Where(e => e.InPerson == true); break;
+                    }
+                }
+
                 returnAll = false;
             }
 

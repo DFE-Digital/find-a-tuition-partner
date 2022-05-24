@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Constants;
+﻿namespace Domain.Constants;
 
 public class TutorTypes
 {

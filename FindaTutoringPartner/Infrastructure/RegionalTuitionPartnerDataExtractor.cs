@@ -3,6 +3,7 @@ using Application;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Domain;
+using Domain.Constants;
 using Infrastructure.Constants;
 using Microsoft.EntityFrameworkCore;
 
