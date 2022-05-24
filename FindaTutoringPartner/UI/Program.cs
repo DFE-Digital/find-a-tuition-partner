@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Application;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
@@ -16,6 +17,7 @@ builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddSearchRequestBuilder();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
+builder.Services.AddRegionalTuitionPartnerData();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
@@ -43,6 +45,9 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
     db.Database.Migrate();
+
+    var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
+    importer.Import();
 
     app.UseSwagger();
     app.UseSwaggerUI();

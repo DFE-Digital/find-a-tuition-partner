@@ -4,11 +4,11 @@ public class TuitionPartner
 {
     public TuitionPartner()
     {
-        Locations = new List<TuitionPartnerLocation>();
+        Coverage = new List<TuitionPartnerCoverage>();
     }
 
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Website { get; set; } = null!;
-    public ICollection<TuitionPartnerLocation> Locations { get; set; }
+    public ICollection<TuitionPartnerCoverage> Coverage { get; set; }
 }

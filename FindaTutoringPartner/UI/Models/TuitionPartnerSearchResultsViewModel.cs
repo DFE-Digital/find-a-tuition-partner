@@ -3,15 +3,17 @@ using Domain.Search;
 
 namespace UI.Models;
 
-public class TuitionPartnerSearchResultsViewModel
+public class TuitionPartnerSearchResultsViewModel : SearchViewModelBase
 {
-    public Guid SearchId { get; set; }
-    public LocationFilterParameters? LocationFilterParameters { get; set; }
-    public ICollection<int> SubjectIds { get; set; } = null!;
-    public IEnumerable<Subject> Subjects { get; set; } = null!;
-    public ICollection<int> TutorTypeIds { get; set; } = null!;
-    public IEnumerable<TutorType> TutorTypes { get; set; } = null!;
-    public ICollection<int> TuitionTypeIds { get; set; } = null!;
-    public IEnumerable<TuitionType> TuitionTypes { get; set; } = null!;
-    public SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner> SearchResultsPage { get; set; } = null!;
+    public TuitionPartnerSearchResultsViewModel()
+    {
+        LocationSearchViewModel = new LocationSearchViewModel();
+        SubjectsSearchViewModel = new SubjectsSearchViewModel();
+        TuitionTypeSearchViewModel = new TuitionTypeSearchViewModel();
+    }
+
+    public LocationSearchViewModel LocationSearchViewModel { get; set; }
+    public SubjectsSearchViewModel SubjectsSearchViewModel { get; set; }
+    public TuitionTypeSearchViewModel TuitionTypeSearchViewModel { get; set; }
+    public SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>? SearchResultsPage { get; set; }
 }

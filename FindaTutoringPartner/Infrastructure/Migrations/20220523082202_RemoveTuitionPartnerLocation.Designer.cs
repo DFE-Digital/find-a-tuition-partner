@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220523082202_RemoveTuitionPartnerLocation")]
+    partial class RemoveTuitionPartnerLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2443,19 +2445,19 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 5,
-                            Name = "Tutor Doctor Cambridge",
+                            Name = "Cambridge Tuition Limited",
                             Website = "https://www.tutordoctor.co.uk/cambridge/"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Career Tree",
+                            Name = "Career Group Courses",
                             Website = "https://www.careertree.com/"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "CoachBright",
+                            Name = "Coachbright",
                             Website = "https://www.coachbright.org/nationaltutoringprogramme"
                         },
                         new
@@ -2467,13 +2469,13 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 9,
-                            Name = "Connex Education Partnership",
+                            Name = "Connex Education Partnership Limited",
                             Website = "https://connex-education.com/"
                         },
                         new
                         {
                             Id = 10,
-                            Name = "EM Tuition",
+                            Name = "EM Skills Enterprise CIC (EM Tuition)",
                             Website = "https://emtuition.org.uk/"
                         },
                         new
@@ -2491,7 +2493,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 13,
-                            Name = "Equal Education Partners",
+                            Name = "Equal Education Partners (E-Qual)",
                             Website = "https://equaleducationpartners.com/tutoring/#:~:text=The%20NTP%20aims%20to%20help,we%20can%20support%20your%20school."
                         },
                         new
@@ -2503,13 +2505,13 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 15,
-                            Name = "Fledge Tuition",
+                            Name = "Fledge Tuition Ltd",
                             Website = "https://www.fledgetuition.com/#/"
                         },
                         new
                         {
                             Id = 16,
-                            Name = "Fleet Education Services",
+                            Name = "Fleet Education Services Limited",
                             Website = "https://www.fleet-tutors.co.uk/"
                         },
                         new
@@ -2527,7 +2529,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 19,
-                            Name = "Manning's Tutors",
+                            Name = "Mannings Tutors",
                             Website = "https://manningstutors.co.uk/ntp/#:~:text=We%20are%20very%20excited%20to,doing%20during%20these%20challenging%20times."
                         },
                         new
@@ -2539,19 +2541,19 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 21,
-                            Name = "Pearson Education",
+                            Name = "Pearson Education Ltd",
                             Website = "https://www.pearson.com/uk/educators/schools/pearson-tutoring-programme.html"
                         },
                         new
                         {
                             Id = 22,
-                            Name = "PET-XI Training",
+                            Name = "Pet-Xi Training",
                             Website = "https://www.pet-xi.co.uk/services/school-programmes/national-tuition-partners-programme/"
                         },
                         new
                         {
                             Id = 23,
-                            Name = "Protocol Education",
+                            Name = "Protocol Education Ltd",
                             Website = "https://www.protocol-education.com/ntp?source=google.co.uk"
                         },
                         new
@@ -2563,7 +2565,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 25,
-                            Name = "Randstad Tuition Services",
+                            Name = "Randstad HR Solutions",
                             Website = "https://www.randstad.co.uk/job-seeker/areas-of-expertise/education/ntp-tutor-training/"
                         },
                         new
@@ -2581,7 +2583,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 28,
-                            Name = "Step Teachers",
+                            Name = "Step Teachers Limited",
                             Website = "https://www.stepteachers.co.uk/job/ntp-tutor"
                         },
                         new
@@ -2593,7 +2595,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 30,
-                            Name = "Targeted Provision",
+                            Name = "Targeted provision Limited",
                             Website = "https://targetedprovision.com/national-tutoring-programme#:~:text=What%20modes%20of%20tutoring%20do,available%20to%20continue%20throughout%20holidays."
                         },
                         new
@@ -2659,7 +2661,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 41,
-                            Name = "Seven Springs Education",
+                            Name = "Nebula Education Ltd (Trading as Seven Springs Education)",
                             Website = "https://seven-springs.co.uk/national-tutoring-programme.php"
                         },
                         new
@@ -2671,7 +2673,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 43,
-                            Name = "Nudge Education",
+                            Name = "Nudge Education Limited",
                             Website = "https://nudgeeducation.co.uk/"
                         },
                         new
@@ -2683,25 +2685,25 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 45,
-                            Name = "Bright Heart Education",
+                            Name = "Bright Heart Education Ltd",
                             Website = "https://www.brightheart.co.uk/ntp/"
                         },
                         new
                         {
                             Id = 46,
-                            Name = "Tutor Doctor Bristol",
+                            Name = "Avon Education Services Ltd (Tutor Doctor Bristol)",
                             Website = "https://www.tutordoctor.co.uk/bristol/"
                         },
                         new
                         {
                             Id = 47,
-                            Name = "REESON Education",
+                            Name = "K&G Recruitment Consultancy Ltd t/a REESON Education",
                             Website = "https://www.reesoneducation.com/national-tutoring-programme"
                         },
                         new
                         {
                             Id = 48,
-                            Name = "3D Recruit",
+                            Name = "3D Recruit Ltd",
                             Website = "https://www.3drecruiteducation.com/#!amy-gudgeon/zoom/exss3/dataItem-io5s4mw6"
                         },
                         new
@@ -2713,7 +2715,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 50,
-                            Name = "Purple Ruler (ADM computing)",
+                            Name = "ADM Computer Services Ltd (The Online Teacher)",
                             Website = ""
                         },
                         new
@@ -2725,19 +2727,19 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 52,
-                            Name = "Simply Learning Tuition",
+                            Name = "Simply Learning Tuition Agency Ltd",
                             Website = "https://www.simplylearningtuition.co.uk/"
                         },
                         new
                         {
                             Id = 53,
-                            Name = "Prospero Teaching",
+                            Name = "Prospero Group Ltd",
                             Website = "https://prosperoteaching.com/prospero-tutoring-for-tutors/#:~:text=Prospero%20are%20an%20approved%20tuition,those%20receiving%20Pupil%20Premium%20funding."
                         },
                         new
                         {
                             Id = 54,
-                            Name = "Third Space Learning",
+                            Name = "Third Space Learning/Virtual Class Ltd",
                             Website = "https://thirdspacelearning.com/national-tutoring-programme/"
                         },
                         new
@@ -2749,62 +2751,9 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 56,
-                            Name = "Assess Education",
+                            Name = "Assess Education Ltd",
                             Website = "https://assesseducation.co.uk/national-tutoring-programme/"
                         });
-                });
-
-            modelBuilder.Entity("Domain.TuitionPartnerCoverage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LocalAuthorityDistrictId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("PrimaryLiteracy")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("PrimaryNumeracy")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("PrimaryScience")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryEnglish")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryHumanities")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryMaths")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryModernForeignLanguages")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryScience")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("TuitionPartnerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionTypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TuitionTypeId");
-
-                    b.HasIndex("LocalAuthorityDistrictId", "TuitionTypeId");
-
-                    b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId", "TuitionTypeId")
-                        .IsUnique();
-
-                    b.ToTable("TuitionPartnerCoverage");
                 });
 
             modelBuilder.Entity("Domain.TuitionType", b =>
@@ -2933,66 +2882,15 @@ namespace Infrastructure.Migrations
                     b.ToTable("UserSessions");
                 });
 
-            modelBuilder.Entity("Infrastructure.Entities.TuitionPartnerDataImportHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ImportDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Importer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Md5Checksum")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TuitionPartnerDataImportHistories");
-                });
-
             modelBuilder.Entity("Domain.LocalAuthorityDistrict", b =>
                 {
                     b.HasOne("Domain.Region", "Region")
-                        .WithMany("LocalAuthorityDistricts")
+                        .WithMany("LocalAuthorities")
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Region");
-                });
-
-            modelBuilder.Entity("Domain.TuitionPartnerCoverage", b =>
-                {
-                    b.HasOne("Domain.LocalAuthorityDistrict", "LocalAuthorityDistrict")
-                        .WithMany()
-                        .HasForeignKey("LocalAuthorityDistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionPartner", "TuitionPartner")
-                        .WithMany("Coverage")
-                        .HasForeignKey("TuitionPartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LocalAuthorityDistrict");
-
-                    b.Navigation("TuitionPartner");
-
-                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.UserSearch", b =>
@@ -3004,12 +2902,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Region", b =>
                 {
-                    b.Navigation("LocalAuthorityDistricts");
-                });
-
-            modelBuilder.Entity("Domain.TuitionPartner", b =>
-                {
-                    b.Navigation("Coverage");
+                    b.Navigation("LocalAuthorities");
                 });
 
             modelBuilder.Entity("Domain.UserSession", b =>

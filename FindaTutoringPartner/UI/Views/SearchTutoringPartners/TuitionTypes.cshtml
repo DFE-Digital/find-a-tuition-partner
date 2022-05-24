@@ -4,12 +4,13 @@
     ViewData["Title"] = "Search Tutoring Partners - Tuition Types";
 }
 
-<govuk-back-link asp-action="TutorTypes" asp-route-SearchId="@Model.SearchId"/>
+<govuk-back-link asp-action="Subjects" asp-route-SearchId="@Model.SearchId"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 	    <govuk-error-summary>
 		    <govuk-error-summary-item asp-for="SearchId" />
+		    <govuk-error-summary-item asp-for="TuitionTypeIds" />
 	    </govuk-error-summary>
 
         <h1 class="govuk-heading-xl">How would you like the tutoring sessions to be run?</h1>

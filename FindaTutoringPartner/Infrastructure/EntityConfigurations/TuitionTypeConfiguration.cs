@@ -1,4 +1,6 @@
 ﻿using Domain;
+using Domain.Constants;
+using Infrastructure.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,8 +11,8 @@ public class TuitionTypeConfiguration : IEntityTypeConfiguration<TuitionType>
     public void Configure(EntityTypeBuilder<TuitionType> builder)
     {
         builder.HasData(
-            new TuitionType { Id = 1, Name = "Online" },
-            new TuitionType { Id = 2, Name = "In Person" }
+            new TuitionType { Id = TuitionTypes.Id.Online, Name = "Online" },
+            new TuitionType { Id = TuitionTypes.Id.InPerson, Name = "In Person" }
         );
     }
 }
