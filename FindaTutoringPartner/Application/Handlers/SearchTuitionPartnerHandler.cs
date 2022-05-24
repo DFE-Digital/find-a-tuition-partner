@@ -66,15 +66,6 @@ public class SearchTuitionPartnerHandler
 
             if (request.TuitionTypeIds != null)
             {
-                /*foreach (var tuitionTypeId in request.TuitionTypeIds)
-                {
-                    switch (tuitionTypeId)
-                    {
-                        case TuitionTypes.Id.Online: coverageQueryable = coverageQueryable.Where(e => e.Online == true); break;
-                        case TuitionTypes.Id.InPerson: coverageQueryable = coverageQueryable.Where(e => e.InPerson == true); break;
-                    }
-                }*/
-
                 returnAll = false;
             }
 

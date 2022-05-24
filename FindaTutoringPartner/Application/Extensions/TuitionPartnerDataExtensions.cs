@@ -110,7 +110,7 @@ public static class TuitionPartnerDataExtensions
                     || existingCoverage.SecondaryModernForeignLanguages != targetCoverage.SecondaryModernForeignLanguages
                     || existingCoverage.SecondaryScience != targetCoverage.SecondaryScience)
                 {
-                    existingCoverage.Id = targetCoverage.Id;
+                    targetCoverage.Id = existingCoverage.Id;
                     delta.CoverageUpdate.Add(targetCoverage);
                     update = true;
                 }
