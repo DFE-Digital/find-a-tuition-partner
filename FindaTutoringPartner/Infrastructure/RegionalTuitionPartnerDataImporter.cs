@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Reflection;
+using System.Security.Cryptography;
 using Application;
 using Application.Extensions;
 using Application.Repositories;
@@ -10,6 +11,9 @@ namespace Infrastructure;
 
 public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
 {
+    private const string InPersonCsvFileName = "Infrastructure.Data.tuition_partners_face_to_face_regions.csv";
+    private const string OnlineCsvFileName = "Infrastructure.Data.tuition_partners_online_regions.csv";
+
     private readonly ITuitionPartnerDataExtractor _extractor;
     private readonly NtpDbContext _dbContext;
     private readonly ITuitionPartnerRepository _repository;
@@ -28,10 +32,7 @@ public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
 
     public async Task ImportAsync()
     {
-        var inPersonFileInfo = new FileInfo(@"Data/tuition_partners_face_to_face_regions.csv");
-        var onlineFileInfo = new FileInfo(@"Data/tuition_partners_online_regions.csv");
-
-        var md5Checksum = GetMd5Checksum(inPersonFileInfo) + "_" + GetMd5Checksum(onlineFileInfo);
+        var md5Checksum = GetMd5Checksum(InPersonCsvFileName) + "_" + GetMd5Checksum(OnlineCsvFileName);
 
         var lastImport = await _dbContext.TuitionPartnerDataImportHistories.Where(e => e.Importer == GetType().Name).OrderByDescending(e => e.ImportDateTime).FirstOrDefaultAsync();
         if (lastImport?.Md5Checksum == md5Checksum)
@@ -39,8 +40,8 @@ public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
             return;
         }
 
-        var inPerson = await _extractor.ExtractFromCsvFileAsync(inPersonFileInfo, TuitionTypes.Id.InPerson).ToListAsync();
-        var online = await _extractor.ExtractFromCsvFileAsync(onlineFileInfo, TuitionTypes.Id.Online).ToListAsync();
+        var inPerson = await _extractor.ExtractFromCsvFileAsync(InPersonCsvFileName, TuitionTypes.Id.InPerson).ToListAsync();
+        var online = await _extractor.ExtractFromCsvFileAsync(OnlineCsvFileName, TuitionTypes.Id.Online).ToListAsync();
 
         var from = await _dbContext.TuitionPartners.AsNoTracking().Include(e => e.Coverage).OrderBy(e => e.Name).ToListAsync();
         var to = inPerson.Combine(online);
@@ -59,11 +60,11 @@ public class RegionalTuitionPartnerDataImporter : ITuitionPartnerDataImporter
         await _dbContext.SaveChangesAsync();
     }
 
-    private string GetMd5Checksum(FileInfo fileInfo)
+    private string GetMd5Checksum(string fileName)
     {
         using var md5 = MD5.Create();
-        using var stream = fileInfo.OpenRead();
-        var hash = md5.ComputeHash(stream);
+        using var stream = typeof(AssemblyReference).Assembly.GetManifestResourceStream(fileName);
+        var hash = md5.ComputeHash(stream ?? throw new InvalidOperationException());
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }

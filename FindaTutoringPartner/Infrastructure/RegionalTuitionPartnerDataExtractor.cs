@@ -41,7 +41,7 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
         _dbContext = dbContext;
     }
 
-    public async IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(FileInfo csvFile, int tuitionTypeId)
+    public async IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(string fileName, int tuitionTypeId)
     {
         var initialsToRegionDictionary = await GetInitialsToRegionDictionary();
 
@@ -57,8 +57,8 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
             TrimOptions = TrimOptions.Trim
         };
 
-        using var reader = new StreamReader(csvFile.OpenRead());
-        using var csv = new CsvReader(reader, config);
+        await using var reader = typeof(AssemblyReference).Assembly.GetManifestResourceStream(fileName);
+        using var csv = new CsvReader(new StreamReader(reader ?? throw new InvalidOperationException()), config);
 
         var data = csv.GetRecordsAsync<RegionalTuitionPartnerDatum>();
 

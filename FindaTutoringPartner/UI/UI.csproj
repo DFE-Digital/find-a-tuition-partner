@@ -9,16 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\tuition_partners_face_to_face_regions.csv" />
-    <None Remove="Data\tuition_partners_online_regions.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Data\tuition_partners_face_to_face_regions.csv" />
-    <Content Include="Data\tuition_partners_online_regions.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.1" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.5.1" />
     <PackageReference Include="Mapster" Version="7.3.0" />

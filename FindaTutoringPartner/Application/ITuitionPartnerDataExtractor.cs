@@ -4,5 +4,5 @@ namespace Application;
 
 public interface ITuitionPartnerDataExtractor
 {
-    IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(FileInfo csvFile, int tuitionTypeId);
+    IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(string fileName, int tuitionTypeId);
 }
