@@ -5,6 +5,7 @@ public class TuitionPartnerDelta
     public TuitionPartnerDelta()
     {
         CoverageAdd = new List<TuitionPartnerCoverage>();
+        CoverageUpdate = new List<TuitionPartnerCoverage>();
         CoverageRemove = new List<TuitionPartnerCoverage>();
     }
 
@@ -12,5 +13,6 @@ public class TuitionPartnerDelta
     public string Name { get; set; } = null!;
     public string Website { get; set; } = null!;
     public ICollection<TuitionPartnerCoverage> CoverageAdd { get; set; }
+    public ICollection<TuitionPartnerCoverage> CoverageUpdate { get; set; }
     public ICollection<TuitionPartnerCoverage> CoverageRemove { get; set; }
 }

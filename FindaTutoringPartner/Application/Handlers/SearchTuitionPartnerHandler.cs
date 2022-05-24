@@ -45,13 +45,21 @@ public class SearchTuitionPartnerHandler
 
             if (request.SubjectIds != null)
             {
-                coverageQueryable = coverageQueryable.Where(e => request.SubjectIds.Contains(e.SubjectId));
+                foreach (var subjectId in request.SubjectIds)
+                {
+                    switch (subjectId)
+                    {
+                        
+                    }
+                }
+
+                //coverageQueryable = coverageQueryable.Where(e => request.SubjectIds.Contains(e.SubjectId));
                 returnAll = false;
             }
 
             if (request.TuitionTypeIds != null)
             {
-                coverageQueryable = coverageQueryable.Where(e => request.TuitionTypeIds.Contains(e.TuitionTypeId));
+                //coverageQueryable = coverageQueryable.Where(e => request.TuitionTypeIds.Contains(e.TuitionTypeId));
                 returnAll = false;
             }
 

@@ -21,12 +21,24 @@ public static class TuitionPartnerDataExtensions
 
             foreach (var coverage in fromTuitionPartner.Coverage)
             {
-                if (intoTuitionPartner.Coverage.Any(e => 
-                        e.LocalAuthorityDistrict.Equals(coverage.LocalAuthorityDistrict)
-                        && e.Subject.Equals(coverage.Subject)
-                        && e.TuitionType.Equals(coverage.TuitionType))) continue;
-
-                intoTuitionPartner.Coverage.Add(coverage);
+                var intoCoverage = intoTuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == coverage.LocalAuthorityDistrictId);
+                if (intoCoverage == null)
+                {
+                    intoTuitionPartner.Coverage.Add(coverage);
+                }
+                else
+                {
+                    intoCoverage.PrimaryLiteracy = intoCoverage.PrimaryLiteracy || coverage.PrimaryLiteracy;
+                    intoCoverage.PrimaryNumeracy = intoCoverage.PrimaryNumeracy || coverage.PrimaryNumeracy;
+                    intoCoverage.PrimaryScience = intoCoverage.PrimaryScience || coverage.PrimaryScience;
+                    intoCoverage.SecondaryEnglish = intoCoverage.SecondaryEnglish || coverage.SecondaryEnglish;
+                    intoCoverage.SecondaryHumanities = intoCoverage.SecondaryHumanities || coverage.SecondaryHumanities;
+                    intoCoverage.SecondaryMaths = intoCoverage.SecondaryMaths || coverage.SecondaryMaths;
+                    intoCoverage.SecondaryModernForeignLanguages = intoCoverage.SecondaryModernForeignLanguages || coverage.SecondaryModernForeignLanguages;
+                    intoCoverage.SecondaryScience = intoCoverage.SecondaryScience || coverage.SecondaryScience;
+                    intoCoverage.Online = intoCoverage.Online || coverage.Online;
+                    intoCoverage.InPerson = intoCoverage.InPerson || coverage.InPerson;
+                }
             }
         }
 
@@ -66,10 +78,7 @@ public static class TuitionPartnerDataExtensions
 
             foreach (var targetCoverage in target.Coverage)
             {
-                if (existing.Coverage.Any(e =>
-                        e.LocalAuthorityDistrictId == targetCoverage.LocalAuthorityDistrictId
-                        && e.SubjectId == targetCoverage.SubjectId
-                        && e.TuitionTypeId == targetCoverage.TuitionTypeId)) continue;
+                if (existing.Coverage.Any(e => e.LocalAuthorityDistrictId == targetCoverage.LocalAuthorityDistrictId)) continue;
 
                 targetCoverage.TuitionPartner = existing;
                 delta.CoverageAdd.Add(targetCoverage);
@@ -77,12 +86,16 @@ public static class TuitionPartnerDataExtensions
 
             foreach (var existingCoverage in existing.Coverage)
             {
-                if (target.Coverage.Any(e =>
-                        e.LocalAuthorityDistrictId == existingCoverage.LocalAuthorityDistrictId
-                        && e.SubjectId == existingCoverage.SubjectId
-                        && e.TuitionTypeId == existingCoverage.TuitionTypeId)) continue;
+                var targetCoverage = target.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == existingCoverage.LocalAuthorityDistrictId);
 
-                delta.CoverageRemove.Add(existingCoverage);
+                if (targetCoverage == null)
+                {
+                    delta.CoverageRemove.Add(existingCoverage);
+                    continue;
+                }
+
+                existingCoverage.Id = targetCoverage.Id;
+                delta.CoverageUpdate.Add(existingCoverage);
             }
 
             deltas.Update.Add(delta);

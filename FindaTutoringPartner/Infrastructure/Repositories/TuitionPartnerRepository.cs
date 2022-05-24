@@ -34,6 +34,25 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
                 toUpdate.Coverage.Add(coverageToAdd);
             }
 
+            foreach (var coverageToUpdateDelta in toUpdateDelta.CoverageUpdate)
+            {
+                var coverageToUpdate = await _dbContext.TuitionPartnerCoverage.FindAsync(coverageToUpdateDelta.Id);
+                if (coverageToUpdate == null) continue;
+
+                coverageToUpdate.PrimaryLiteracy = coverageToUpdateDelta.PrimaryLiteracy;
+                coverageToUpdate.PrimaryNumeracy = coverageToUpdateDelta.PrimaryNumeracy;
+                coverageToUpdate.PrimaryScience = coverageToUpdateDelta.PrimaryScience;
+                coverageToUpdate.SecondaryEnglish = coverageToUpdateDelta.SecondaryEnglish;
+                coverageToUpdate.SecondaryHumanities = coverageToUpdateDelta.SecondaryHumanities;
+                coverageToUpdate.SecondaryMaths = coverageToUpdateDelta.SecondaryMaths;
+                coverageToUpdate.SecondaryModernForeignLanguages = coverageToUpdateDelta.SecondaryModernForeignLanguages;
+                coverageToUpdate.SecondaryScience = coverageToUpdateDelta.SecondaryScience;
+                coverageToUpdate.Online = coverageToUpdateDelta.Online;
+                coverageToUpdate.InPerson = coverageToUpdateDelta.InPerson;
+
+                toUpdate.Coverage.Remove(coverageToUpdate);
+            }
+
             foreach (var coverageToRemoveDelta in toUpdateDelta.CoverageRemove)
             {
                 var coverageToRemove = await _dbContext.TuitionPartnerCoverage.FindAsync(coverageToRemoveDelta.Id);

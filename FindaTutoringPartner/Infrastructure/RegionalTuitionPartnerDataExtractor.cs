@@ -115,16 +115,37 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
 
             foreach (var localAuthorityDistrict in initialsToRegionDictionary[regionInitial].LocalAuthorityDistricts)
             {
-                tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
+                var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrictId == localAuthorityDistrict.Id);
+                if (coverage == null)
                 {
-                    TuitionPartner = tuitionPartner,
-                    LocalAuthorityDistrictId = localAuthorityDistrict.Id,
-                    LocalAuthorityDistrict = localAuthorityDistrict,
-                    SubjectId = subject.Id,
-                    Subject = subject,
-                    TuitionTypeId = tuitionType.Id,
-                    TuitionType = tuitionType
-                });
+                    coverage = new TuitionPartnerCoverage
+                    {
+                        TuitionPartnerId = tuitionPartner.Id,
+                        TuitionPartner = tuitionPartner,
+                        LocalAuthorityDistrictId = localAuthorityDistrict.Id,
+                        LocalAuthorityDistrict = localAuthorityDistrict
+                    };
+
+                    tuitionPartner.Coverage.Add(coverage);
+                }
+
+                switch (subject.Id)
+                {
+                    case Subjects.Id.PrimaryLiteracy: coverage.PrimaryLiteracy = true; break;
+                    case Subjects.Id.PrimaryNumeracy: coverage.PrimaryNumeracy = true; break;
+                    case Subjects.Id.PrimaryScience: coverage.PrimaryScience = true; break;
+                    case Subjects.Id.SecondaryEnglish: coverage.SecondaryEnglish = true; break;
+                    case Subjects.Id.SecondaryHumanities: coverage.SecondaryHumanities = true; break;
+                    case Subjects.Id.SecondaryMaths: coverage.SecondaryMaths = true; break;
+                    case Subjects.Id.SecondaryModernForeignLanguages: coverage.SecondaryModernForeignLanguages = true; break;
+                    case Subjects.Id.SecondaryScience: coverage.SecondaryScience = true; break;
+                }
+
+                switch (tuitionType.Id)
+                {
+                    case TuitionTypes.Id.Online: coverage.Online = true; break;
+                    case TuitionTypes.Id.InPerson: coverage.InPerson = true; break;
+                }
             }
         }
     }
