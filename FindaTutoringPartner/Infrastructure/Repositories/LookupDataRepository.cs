@@ -13,18 +13,18 @@ public class LookupDataRepository : ILookupDataRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Subject>> GetSubjectsAsync()
+    public async Task<IEnumerable<Subject>> GetSubjectsAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Subjects.OrderBy(e => e.Id).ToArrayAsync();
+        return await _dbContext.Subjects.OrderBy(e => e.Id).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TutorType>> GetTutorTypesAsync()
+    public async Task<IEnumerable<TutorType>> GetTutorTypesAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.TutorTypes.OrderBy(e => e.Id).ToArrayAsync();
+        return await _dbContext.TutorTypes.OrderBy(e => e.Id).ToArrayAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TuitionType>> GetTuitionTypesAsync()
+    public async Task<IEnumerable<TuitionType>> GetTuitionTypesAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.TuitionTypes.OrderBy(e => e.Id).ToArrayAsync();
+        return await _dbContext.TuitionTypes.OrderBy(e => e.Id).ToArrayAsync(cancellationToken);
     }
 }

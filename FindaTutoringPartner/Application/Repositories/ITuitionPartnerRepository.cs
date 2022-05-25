@@ -5,6 +5,6 @@ namespace Application.Repositories;
 
 public interface ITuitionPartnerRepository
 {
-    Task<IDictionary<int, TuitionPartnerSearchResult>> GetSearchResultsDictionaryAsync(IEnumerable<int> ids, TuitionPartnerOrderBy orderBy, OrderByDirection direction, CancellationToken cancellationToken = default);
+    Task<IDictionary<int, TuitionPartnerSearchResult>> GetSearchResultsDictionaryAsync(IEnumerable<int> ids, int? localAuthorityDistrictId, TuitionPartnerOrderBy orderBy, OrderByDirection direction, CancellationToken cancellationToken = default);
     Task ApplyDeltas(TuitionPartnerDeltas deltas);
 }
