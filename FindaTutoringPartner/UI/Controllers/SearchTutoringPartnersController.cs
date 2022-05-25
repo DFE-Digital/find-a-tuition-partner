@@ -56,11 +56,21 @@ public class SearchTutoringPartnersController : Controller
         {
             await builder.WithPostcode(viewModel.Postcode);
         }
-        catch (LocationNotFoundException)
+        catch (Exception ex)
         {
-            ModelState.AddModelError("Postcode", "Enter a valid postcode");
-            builder.Adapt(viewModel);
-            return View(viewModel);
+            switch(ex)
+            {
+                case LocationNotFoundException:
+                    ModelState.AddModelError("Postcode", "Enter a valid postcode");
+                    builder.Adapt(viewModel);
+                    return View(viewModel);
+
+                case LocationNotAVailableException:
+                    ModelState.AddModelError("Postcode", "This service covers England only");
+                    builder.Adapt(viewModel);
+                    return View(viewModel);
+            }
+           
         }
 
         return RedirectToAction("Subjects", new { builder.SearchState.SearchId });

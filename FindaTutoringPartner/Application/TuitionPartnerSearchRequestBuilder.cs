@@ -20,6 +20,7 @@ public class TuitionPartnerSearchRequestBuilder
 
     public Guid SearchId => SearchState.SearchId;
     public SearchState SearchState { get; private set; }
+    public const string England = "England";
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithPostcode(string? postcode)
     {
@@ -30,11 +31,8 @@ public class TuitionPartnerSearchRequestBuilder
         }
 
         var parameters = await _locationFilterService.GetLocationFilterParametersAsync(postcode);
-        if (parameters == null)
-        {
-            throw new LocationNotFoundException();
-        }
 
+        ValidatePostCode(parameters);
         SearchState.LocationFilterParameters = parameters;
         SearchState = await _searchStateRepository.UpdateAsync(SearchState);
 
@@ -112,5 +110,17 @@ public class TuitionPartnerSearchRequestBuilder
         };
 
         return request;
+    }
+
+    private void ValidatePostCode(LocationFilterParameters? parameters)
+    {
+        if(parameters == null)
+        {
+            throw new LocationNotFoundException();
+        }
+        if(parameters.Country != England)
+        {
+            throw new LocationNotAVailableException();
+        }
     }
 }
