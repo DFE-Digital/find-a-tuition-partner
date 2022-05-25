@@ -77,7 +77,7 @@
 									Subjects covered
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
-
+									@string.Join(", ", item.Subjects.Select(e => e.Name))
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 							<govuk-summary-list-row>
@@ -85,7 +85,7 @@
 									Type of tuition
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
-
+									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 							<govuk-summary-list-row>
@@ -109,7 +109,7 @@
 									Provider information
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
-
+									@item.Description
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 						</govuk-summary-list>

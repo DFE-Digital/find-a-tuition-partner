@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Repositories;
+using Domain;
 using Domain.Constants;
 using Domain.Search;
 using Domain.Validators;
@@ -14,29 +15,36 @@ public class SearchTuitionPartnerHandler
 
     }
 
-    public class Command : TuitionPartnerSearchRequest, IRequest<SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>>
+    public class Command : TuitionPartnerSearchRequest, IRequest<TuitionPartnerSearchResultsPage>
     {
 
     }
 
-    public class Handler : IRequestHandler<Command, SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>>
+    public class Handler : IRequestHandler<Command, TuitionPartnerSearchResultsPage>
     {
         private readonly INtpDbContext _dbContext;
+        private readonly ITuitionPartnerRepository _repository;
 
-        public Handler(INtpDbContext dbContext)
+        public Handler(INtpDbContext dbContext, ITuitionPartnerRepository repository)
         {
             _dbContext = dbContext;
+            _repository = repository;
         }
 
-        public async Task<SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<TuitionPartnerSearchResultsPage> Handle(Command request, CancellationToken cancellationToken)
         {
             var coverageQueryable = _dbContext.TuitionPartnerCoverage.AsQueryable();
 
             var returnAll = true;
 
+            LocalAuthorityDistrict? lad = null;
+
             if (request.LocalAuthorityDistrictCode != null)
             {
-                var lad = await _dbContext.LocalAuthorityDistricts.SingleOrDefaultAsync(e => e.Code == request.LocalAuthorityDistrictCode, cancellationToken);
+                lad = await _dbContext.LocalAuthorityDistricts
+                    .Include(e => e.Region)
+                    .SingleOrDefaultAsync(e => e.Code == request.LocalAuthorityDistrictCode, cancellationToken);
+
                 if (lad != null)
                 {
                     coverageQueryable = coverageQueryable.Where(e => e.LocalAuthorityDistrictId == lad.Id);
@@ -110,9 +118,10 @@ public class SearchTuitionPartnerHandler
             }
 
             var count = await queryable.CountAsync(cancellationToken);
-            var results = await queryable.Skip(request.Page * request.PageSize).Take(request.PageSize).ToArrayAsync(cancellationToken);
+            var ids = await queryable.Skip(request.Page * request.PageSize).Take(request.PageSize).Select(e => e.Id).ToArrayAsync(cancellationToken);
+            var results = (await _repository.GetSearchResultsDictionaryAsync(ids, lad?.Id, request.OrderBy, request.Direction, cancellationToken)).Values.ToArray();
 
-            return new SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>(request, count, results);
+            return new TuitionPartnerSearchResultsPage(request, count, results, lad);
         }
     }
 }
