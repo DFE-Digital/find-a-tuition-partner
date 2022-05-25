@@ -118,7 +118,7 @@ public class TuitionPartnerSearchRequestBuilder
         {
             throw new LocationNotFoundException();
         }
-        if(parameters.Country != Country.England)
+        if(parameters.Country != Country.Name.England)
         {
             throw new LocationNotAvailableException();
         }
