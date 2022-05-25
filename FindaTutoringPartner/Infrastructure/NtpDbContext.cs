@@ -20,7 +20,6 @@ public class NtpDbContext : DbContext, INtpDbContext
     public DbSet<TuitionType> TuitionTypes { get; set; } = null!;
     public DbSet<TutorType> TutorTypes { get; set; } = null!;
     public DbSet<UserSearch> UserSearches { get; set; } = null!;
-    public DbSet<UserSession> UserSessions { get; set; } = null!;
 
     public Task<int> SaveChangesAsync()
     {
