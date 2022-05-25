@@ -11,6 +11,5 @@ namespace Domain
         public const string England = "England";
         public const string Wales = "Wales";
         public const string Scotland = "Scotland";
-
     }
 }
