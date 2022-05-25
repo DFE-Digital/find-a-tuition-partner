@@ -23,6 +23,8 @@ public class TuitionPartnerSearchRequestBuilder
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithPostcode(string? postcode)
     {
+        if (postcode == SearchState.LocationFilterParameters?.Postcode) return this;
+
         if (postcode == null)
         {
             SearchState.LocationFilterParameters = null;
@@ -43,6 +45,21 @@ public class TuitionPartnerSearchRequestBuilder
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithSubjectIds(ICollection<int> subjectIds)
     {
+        if (SearchState.Subjects != null && subjectIds.Count == SearchState.Subjects.Count)
+        {
+            var changed = false;
+            foreach (var subjectId in subjectIds)
+            {
+                if (!SearchState.Subjects.ContainsKey(subjectId))
+                {
+                    changed = true;
+                    break;
+                }
+            }
+
+            if (!changed) return this;
+        }
+
         var subjects = await _lookupDataRepository.GetSubjectsAsync();
 
         var subjectDictionary = new Dictionary<int, string>();
@@ -63,6 +80,21 @@ public class TuitionPartnerSearchRequestBuilder
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithTutorTypeIds(ICollection<int> tutorTypeIds)
     {
+        if (SearchState.TutorTypes != null && tutorTypeIds.Count == SearchState.TutorTypes.Count)
+        {
+            var changed = false;
+            foreach (var tutorTypeId in tutorTypeIds)
+            {
+                if (!SearchState.TutorTypes.ContainsKey(tutorTypeId))
+                {
+                    changed = true;
+                    break;
+                }
+            }
+
+            if (!changed) return this;
+        }
+
         var tutorTypes = await _lookupDataRepository.GetTutorTypesAsync();
 
         var tutorTypeDictionary = new Dictionary<int, string>();
@@ -83,6 +115,21 @@ public class TuitionPartnerSearchRequestBuilder
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithTuitionTypeIds(ICollection<int> tuitionTypeIds)
     {
+        if (SearchState.TuitionTypes != null && tuitionTypeIds.Count == SearchState.TuitionTypes.Count)
+        {
+            var changed = false;
+            foreach (var tuitionTypeId in tuitionTypeIds)
+            {
+                if (!SearchState.TuitionTypes.ContainsKey(tuitionTypeId))
+                {
+                    changed = true;
+                    break;
+                }
+            }
+
+            if (!changed) return this;
+        }
+
         var tuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
 
         var tuitionTypeDictionary = new Dictionary<int, string>();
