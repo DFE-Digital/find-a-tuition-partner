@@ -158,14 +158,14 @@ public class RegionalTuitionPartnerDataExtractor : ITuitionPartnerDataExtractor
         [CsvHelper.Configuration.Attributes.Index(3)]
         public string? PrimaryScienceRegionInitials { get; set; }
         [CsvHelper.Configuration.Attributes.Index(4)]
-        public string? SecondaryEnglishRegionInitials { get; set; }
-        [CsvHelper.Configuration.Attributes.Index(5)]
-        public string? SecondaryHumanitiesRegionInitials { get; set; }
-        [CsvHelper.Configuration.Attributes.Index(6)]
         public string? SecondaryMathsRegionInitials { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(5)]
+        public string? SecondaryEnglishRegionInitials { get; set; }
+        [CsvHelper.Configuration.Attributes.Index(6)]
+        public string? SecondaryScienceRegionInitials { get; set; }
         [CsvHelper.Configuration.Attributes.Index(7)]
         public string? SecondaryModernForeignLanguagesRegionInitials { get; set; }
         [CsvHelper.Configuration.Attributes.Index(8)]
-        public string? SecondaryScienceRegionInitials { get; set; }
+        public string? SecondaryHumanitiesRegionInitials { get; set; }
     }
 }
