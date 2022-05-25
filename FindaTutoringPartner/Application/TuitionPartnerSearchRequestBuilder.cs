@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.Repositories;
+using Domain;
 using Domain.Search;
 
 namespace Application;
@@ -20,7 +21,6 @@ public class TuitionPartnerSearchRequestBuilder
 
     public Guid SearchId => SearchState.SearchId;
     public SearchState SearchState { get; private set; }
-    public const string England = "England";
 
     public async Task<TuitionPartnerSearchRequestBuilder> WithPostcode(string? postcode)
     {
@@ -118,7 +118,7 @@ public class TuitionPartnerSearchRequestBuilder
         {
             throw new LocationNotFoundException();
         }
-        if(parameters.Country != England)
+        if(parameters.Country != Country.England)
         {
             throw new LocationNotAvailableException();
         }
