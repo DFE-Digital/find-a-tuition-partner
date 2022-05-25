@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddSearchRequestBuilder(this IServiceCollection services)
     {
-        services.AddScoped<ISearchStateRepository, InMemorySearchStateRepository>();
+        services.AddScoped<ISearchStateRepository, SearchStateRepository>();
         services.AddScoped<ISearchRequestBuilderRepository, SearchRequestBuilderRepository>();
 
         services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
