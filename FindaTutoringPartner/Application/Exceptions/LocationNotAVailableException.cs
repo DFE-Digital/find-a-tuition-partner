@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Exceptions
 {
-    public class LocationNotAVailableException : Exception
+    public class LocationNotAvailableException : Exception
     {
     }
 }

@@ -56,21 +56,19 @@ public class SearchTutoringPartnersController : Controller
         {
             await builder.WithPostcode(viewModel.Postcode);
         }
-        catch (Exception ex)
+        catch (LocationNotFoundException)
         {
-            switch(ex)
-            {
-                case LocationNotFoundException:
-                    ModelState.AddModelError("Postcode", "Enter a valid postcode");
-                    builder.Adapt(viewModel);
-                    return View(viewModel);
+            ModelState.AddModelError("Postcode", "Enter a valid postcode");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+        }
 
-                case LocationNotAVailableException:
-                    ModelState.AddModelError("Postcode", "This service covers England only");
-                    builder.Adapt(viewModel);
-                    return View(viewModel);
-            }
-           
+        catch (LocationNotAvailableException)
+        {
+            ModelState.AddModelError("Postcode", "This service covers England only");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+
         }
 
         return RedirectToAction("Subjects", new { builder.SearchState.SearchId });
@@ -203,6 +201,12 @@ public class SearchTutoringPartnersController : Controller
             ModelState.AddModelError("LocationSearchViewModel.Postcode", "Enter a valid postcode");
         }
 
+
+        catch (LocationNotAvailableException)
+        {
+            ModelState.AddModelError("LocationSearchViewModel.Postcode", "This service covers England only");
+        }
+
         if (!ModelState.IsValid)
         {
             viewModel.SubjectsSearchViewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
@@ -216,4 +220,5 @@ public class SearchTutoringPartnersController : Controller
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
+
 }

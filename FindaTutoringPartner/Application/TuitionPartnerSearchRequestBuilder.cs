@@ -120,7 +120,7 @@ public class TuitionPartnerSearchRequestBuilder
         }
         if(parameters.Country != England)
         {
-            throw new LocationNotAVailableException();
+            throw new LocationNotAvailableException();
         }
     }
 }
