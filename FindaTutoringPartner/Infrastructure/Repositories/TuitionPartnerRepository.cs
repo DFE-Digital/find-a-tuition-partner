@@ -1,5 +1,6 @@
 ﻿using Application.Repositories;
 using Domain.Deltas;
+using Domain.Search;
 
 namespace Infrastructure.Repositories;
 
@@ -10,6 +11,11 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
     public TuitionPartnerRepository(NtpDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<IDictionary<int, TuitionPartnerSearchResult>> GetSearchResultsDictionaryAsync(IEnumerable<int> ids, TuitionPartnerOrderBy orderBy, OrderByDirection direction, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task ApplyDeltas(TuitionPartnerDeltas deltas)

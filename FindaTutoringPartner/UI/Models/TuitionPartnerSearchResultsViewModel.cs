@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.Search;
+﻿using Domain.Search;
 
 namespace UI.Models;
 
@@ -15,5 +14,5 @@ public class TuitionPartnerSearchResultsViewModel : SearchViewModelBase
     public LocationSearchViewModel LocationSearchViewModel { get; set; }
     public SubjectsSearchViewModel SubjectsSearchViewModel { get; set; }
     public TuitionTypeSearchViewModel TuitionTypeSearchViewModel { get; set; }
-    public SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>? SearchResultsPage { get; set; }
+    public TuitionPartnerSearchResultsPage? SearchResultsPage { get; set; }
 }
