@@ -42,6 +42,8 @@ cf login -a api.london.cloud.service.gov.uk -u nationaltutoring@digital.educatio
 
 ```
 cf push --strategy rolling
+cf tail -f fatp-dev
+
 cf delete fatp-dev
 cf create-service postgres tiny-unencrypted-13 fatp-dev-postgres-db
 cf service fatp-dev-postgres-db
