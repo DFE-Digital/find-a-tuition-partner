@@ -216,5 +216,4 @@ public class SearchTutoringPartnersController : Controller
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
-
 }

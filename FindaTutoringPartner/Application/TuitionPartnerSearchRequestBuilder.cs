@@ -1,6 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.Repositories;
-using Domain;
+using Domain.Constants;
 using Domain.Search;
 
 namespace Application;
