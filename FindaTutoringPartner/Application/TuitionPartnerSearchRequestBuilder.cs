@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Application.Repositories;
+using Domain;
 using Domain.Search;
 
 namespace Application;
@@ -32,11 +33,8 @@ public class TuitionPartnerSearchRequestBuilder
         }
 
         var parameters = await _locationFilterService.GetLocationFilterParametersAsync(postcode);
-        if (parameters == null)
-        {
-            throw new LocationNotFoundException();
-        }
 
+        ValidatePostCode(parameters);
         SearchState.LocationFilterParameters = parameters;
         SearchState = await _searchStateRepository.UpdateAsync(SearchState);
 
@@ -159,5 +157,17 @@ public class TuitionPartnerSearchRequestBuilder
         };
 
         return request;
+    }
+
+    private void ValidatePostCode(LocationFilterParameters? parameters)
+    {
+        if(parameters == null)
+        {
+            throw new LocationNotFoundException();
+        }
+        if(parameters.Country != Country.Name.England)
+        {
+            throw new LocationNotAvailableException();
+        }
     }
 }
