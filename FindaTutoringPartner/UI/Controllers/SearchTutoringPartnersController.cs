@@ -62,6 +62,12 @@ public class SearchTutoringPartnersController : Controller
             builder.Adapt(viewModel);
             return View(viewModel);
         }
+        catch (LocationNotAvailableException)
+        {
+            ModelState.AddModelError("Postcode", "This service covers England only");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+        }
 
         return RedirectToAction("Subjects", new { builder.SearchState.SearchId });
     }
@@ -192,6 +198,10 @@ public class SearchTutoringPartnersController : Controller
         {
             ModelState.AddModelError("LocationSearchViewModel.Postcode", "Enter a valid postcode");
         }
+        catch (LocationNotAvailableException)
+        {
+            ModelState.AddModelError("LocationSearchViewModel.Postcode", "This service covers England only");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -206,4 +216,5 @@ public class SearchTutoringPartnersController : Controller
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
+
 }
