@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace Domain.Constants;
 
 public class Country
 {
@@ -9,6 +9,4 @@ public class Country
         public const string Scotland = "Scotland";
         public const string NorthernIreland = "Northern Ireland";
     }
-       
 }
-

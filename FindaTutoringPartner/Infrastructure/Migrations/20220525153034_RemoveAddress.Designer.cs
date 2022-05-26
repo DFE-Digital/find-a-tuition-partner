@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220525153034_RemoveAddress")]
+    partial class RemoveAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2890,9 +2892,31 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("UserSessionId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserSessionId");
+
                     b.ToTable("UserSearches");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.UserSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthorityDistrict", b =>
@@ -2933,6 +2957,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("TuitionType");
                 });
 
+            modelBuilder.Entity("Infrastructure.Entities.UserSearch", b =>
+                {
+                    b.HasOne("Infrastructure.Entities.UserSession", null)
+                        .WithMany("Searches")
+                        .HasForeignKey("UserSessionId");
+                });
+
             modelBuilder.Entity("Domain.Region", b =>
                 {
                     b.Navigation("LocalAuthorityDistricts");
@@ -2941,6 +2972,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.TuitionPartner", b =>
                 {
                     b.Navigation("Coverage");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.UserSession", b =>
+                {
+                    b.Navigation("Searches");
                 });
 #pragma warning restore 612, 618
         }
