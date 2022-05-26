@@ -1,16 +1,18 @@
 ﻿using Application;
 using Domain;
 using Infrastructure.Entities;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
-public class NtpDbContext : DbContext, INtpDbContext
+public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
 {
     public NtpDbContext(DbContextOptions<NtpDbContext> options) : base(options)
     {
     }
 
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<LocalAuthorityDistrict> LocalAuthorityDistricts { get; set; } = null!;
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
@@ -30,4 +32,5 @@ public class NtpDbContext : DbContext, INtpDbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
     }
+
 }
