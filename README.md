@@ -4,6 +4,13 @@
 
 National Tutoring Programme's Find a Tutoring Partner service is currently in discovery. This respository will initially contain spikes and prototype work and will eventually contain the publically accessible code under an appropriate licence for the live service.
 
+## Architectural Decision Records (ADR)
+
+[adr.github.io](https://adr.github.io/)
+[Markdown Any Decision Records (MADR)](https://adr.github.io/madr/)
+
+[Our decisions](docs/decisions)
+
 ## Development environment setup
 
 ### Tooling requirements
@@ -41,7 +48,9 @@ cf login -a api.london.cloud.service.gov.uk -u nationaltutoring@digital.educatio
 ```
 
 ```
-cf push
+cf push --strategy rolling
+cf tail -f fatp-dev
+
 cf delete fatp-dev
 cf create-service postgres tiny-unencrypted-13 fatp-dev-postgres-db
 cf service fatp-dev-postgres-db

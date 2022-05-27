@@ -34,16 +34,24 @@
 			</div>
 
 			<div>
-				<h3 class="govuk-heading-s">Subjects</h3>
 				<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							Subjects
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
 					@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
 					{
 						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
 					}
 				</govuk-checkboxes>
 
-				<h3 class="govuk-heading-s">How the sessions will be run</h3>
 				<govuk-checkboxes asp-for="TuitionTypeSearchViewModel.TuitionTypeIds">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							How the sessions will be run
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
 					@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
 					{
 						<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeSearchViewModel.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>

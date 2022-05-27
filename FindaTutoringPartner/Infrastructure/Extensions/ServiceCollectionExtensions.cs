@@ -3,6 +3,7 @@ using Application;
 using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);
+
+        services.AddDataProtection().PersistKeysToDbContext<NtpDbContext>();
 
         return services;
     }
