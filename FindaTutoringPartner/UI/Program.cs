@@ -46,8 +46,11 @@ if (app.Environment.IsDevelopment())
     var db = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
     db.Database.Migrate();
 
-    var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
-    importer.Import();
+    //var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
+    //importer.Import();
+
+    var LocalImporter = scope.ServiceProvider.GetRequiredService<ITuitionPartnerLocalRegionDataImporter>();
+    LocalImporter.Import();
 
     app.UseSwagger();
     app.UseSwaggerUI();
