@@ -2,6 +2,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using Domain;
+using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,29 +15,6 @@ namespace Infrastructure;
 
 public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegionDataExtractor
 {
-    private const string RegionInitialsAll = "ALL";
-    private const string RegionInitialsNorthEast = "NE";
-    private const string RegionInitialsNorthWest = "NW";
-    private const string RegionInitialsYorkshireandTheHumber = "YH";
-    private const string RegionInitialsEastMidlands = "EM";
-    private const string RegionInitialsWestMidlands = "WM";
-    private const string RegionInitialsEastofEngland = "E";
-    private const string RegionInitialsLondon = "L";
-    private const string RegionInitialsSouthEast = "SE";
-    private const string RegionInitialsSouthWest = "SW";
-
-
-    private static readonly string[] AllRegionInitials = {
-        RegionInitialsNorthEast,
-        RegionInitialsNorthWest,
-        RegionInitialsYorkshireandTheHumber,
-        RegionInitialsEastMidlands,
-        RegionInitialsWestMidlands,
-        RegionInitialsEastofEngland,
-        RegionInitialsLondon,
-        RegionInitialsSouthEast,
-        RegionInitialsSouthWest
-    };
 
     private readonly NtpDbContext _dbContext;
 
@@ -47,6 +25,8 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
 
     public async IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(string fileName, int tuitionTypeId)
     {
+        var initialsLocalAuthorityDistrictDictionary = await GetInitialsToLocalAuthorityDistrictDictionary();
+
         var subjects = await _dbContext.Subjects.OrderBy(e => e.Id)
           .ToDictionaryAsync(e => e.Id);
 
@@ -70,31 +50,77 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
                 Name = datum.Name,
                 Website = ""
             };
+            AddSubjectCoverage(tuitionPartner, datum.PrimaryLiteracyLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.PrimaryLiteracy], tuitionType);
         }
 
         yield return null;
     }
 
+    private void AddSubjectCoverage(TuitionPartner tuitionPartner, string? subjectLocalRegionDistrictsString, IDictionary<string, LocalAuthorityDistrict> initialsToRegionDictionary, Subject subject, TuitionType tuitionType)
+    {
+        if (string.IsNullOrEmpty(subjectLocalRegionDistrictsString)) return;
+
+        var subjectLocalRegionDistricts = subjectLocalRegionDistrictsString.Split(',').Select(s => s.Trim().ToUpper()).ToArray();
+
+        foreach (var subjectLocalRegionDistrict in subjectLocalRegionDistricts)
+        {
+            var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrict.Name == subjectLocalRegionDistrict && e.TuitionTypeId == tuitionType.Id);
+            if (coverage == null)
+            {
+                var localAuthorityDistrict = initialsToRegionDictionary[subjectLocalRegionDistrict.ToLower()];
+                coverage = new TuitionPartnerCoverage
+                {
+                    TuitionPartnerId = tuitionPartner.Id,
+                    TuitionPartner = tuitionPartner,
+                    LocalAuthorityDistrictId = localAuthorityDistrict.Id,
+                    LocalAuthorityDistrict = localAuthorityDistrict,
+                    TuitionType = tuitionType,
+                    TuitionTypeId = tuitionType.Id
+                };
+            }
+            var covered = subjectLocalRegionDistricts.Contains(subjectLocalRegionDistrict);
+
+            switch (subject.Id)
+            {
+                case Subjects.Id.PrimaryLiteracy: coverage.PrimaryLiteracy = covered; break;
+                case Subjects.Id.PrimaryNumeracy: coverage.PrimaryNumeracy = covered; break;
+                case Subjects.Id.PrimaryScience: coverage.PrimaryScience = covered; break;
+                case Subjects.Id.SecondaryEnglish: coverage.SecondaryEnglish = covered; break;
+                case Subjects.Id.SecondaryHumanities: coverage.SecondaryHumanities = covered; break;
+                case Subjects.Id.SecondaryMaths: coverage.SecondaryMaths = covered; break;
+                case Subjects.Id.SecondaryModernForeignLanguages: coverage.SecondaryModernForeignLanguages = covered; break;
+                case Subjects.Id.SecondaryScience: coverage.SecondaryScience = covered; break;
+            }
+        }
+    }
+    private async Task<IDictionary<string,LocalAuthorityDistrict>> GetInitialsToLocalAuthorityDistrictDictionary()
+    {
+        var localAuthorityDistrict = await _dbContext.LocalAuthorityDistricts
+            .OrderBy(e => e.Name)
+            .ToDictionaryAsync(e => e.Name.ToLower());
+
+        return localAuthorityDistrict;
+    }
     private class LocalRegionalTuitionPartnerDatum
     {
         [CsvHelper.Configuration.Attributes.Index(0)]
         public string Name { get; set; } = null!;
         [CsvHelper.Configuration.Attributes.Index(1)]
-        public string? PrimaryLiteracyRegionInitials { get; set; }
+        public string? PrimaryLiteracyLocalRegionDistricts{ get; set; }
         [CsvHelper.Configuration.Attributes.Index(2)]
-        public string? PrimaryNumeracyRegionInitials { get; set; }
+        public string? PrimaryNumeracyLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(3)]
-        public string? PrimaryScienceRegionInitials { get; set; }
+        public string? PrimaryScienceLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(4)]
-        public string? SecondaryMathsRegionInitials { get; set; }
+        public string? SecondaryMathsLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(5)]
-        public string? SecondaryEnglishRegionInitials { get; set; }
+        public string? SecondaryEnglishLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(6)]
-        public string? SecondaryScienceRegionInitials { get; set; }
+        public string? SecondaryScienceLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(7)]
-        public string? SecondaryModernForeignLanguagesRegionInitials { get; set; }
+        public string? SecondaryModernForeignLanguagesLocalRegionDistricts { get; set; }
         [CsvHelper.Configuration.Attributes.Index(8)]
-        public string? SecondaryHumanitiesRegionInitials { get; set; }
+        public string? SecondaryHumanitiesLocalRegionDistricts { get; set; }
     }
 
 
