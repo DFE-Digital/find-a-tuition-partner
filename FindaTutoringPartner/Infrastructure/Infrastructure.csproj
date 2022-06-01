@@ -9,11 +9,15 @@
   <ItemGroup>
     <None Remove="Data\tuition_partners_face_to_face_regions.csv" />
     <None Remove="Data\tuition_partners_online_regions.csv" />
+	<None Remove="Data\tuition_partners_face_to_face_local_regions.csv" />
+	<None Remove="Data\tuition_partners_online_local_regions.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\tuition_partners_face_to_face_regions.csv" />
     <EmbeddedResource Include="Data\tuition_partners_online_regions.csv" />
+	<EmbeddedResource Include="Data\tuition_partners_face_to_face_local_regions.csv" />
+	<EmbeddedResource Include="Data\tuition_partners_online_local_regions.csv" />
   </ItemGroup>
 
   <ItemGroup>

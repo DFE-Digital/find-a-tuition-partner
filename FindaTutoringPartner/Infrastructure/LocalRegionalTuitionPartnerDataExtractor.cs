@@ -4,12 +4,8 @@ using CsvHelper.Configuration;
 using Domain;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure;
 
@@ -51,9 +47,17 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
                 Website = ""
             };
             AddSubjectCoverage(tuitionPartner, datum.PrimaryLiteracyLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.PrimaryLiteracy], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.PrimaryNumeracyLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.PrimaryNumeracy], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.PrimaryScienceLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.PrimaryScience], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.SecondaryEnglishLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryEnglish], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.SecondaryHumanitiesLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryHumanities], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.SecondaryMathsLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryMaths], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.SecondaryModernForeignLanguagesLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryModernForeignLanguages], tuitionType);
+            AddSubjectCoverage(tuitionPartner, datum.SecondaryScienceLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryScience], tuitionType);
+
+            yield return tuitionPartner;
         }
 
-        yield return null;
     }
 
     private void AddSubjectCoverage(TuitionPartner tuitionPartner, string? subjectLocalRegionDistrictsString, IDictionary<string, LocalAuthorityDistrict> initialsToRegionDictionary, Subject subject, TuitionType tuitionType)
