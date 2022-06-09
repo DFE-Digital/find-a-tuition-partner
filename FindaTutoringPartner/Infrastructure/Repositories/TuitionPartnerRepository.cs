@@ -88,7 +88,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             case TuitionPartnerOrderBy.Random:
                 return results.OrderBy(_ => Guid.NewGuid()).ToDictionary(e => e.Id);
             default:
-                return results.OrderBy(_ => Guid.NewGuid()).ToDictionary(e => e.Id);
+                return results.OrderByDescending(e => e.Id).ToDictionary(e => e.Id);
         }
     }
 
