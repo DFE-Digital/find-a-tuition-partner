@@ -76,8 +76,6 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
             results.Add(result);
         }
-
-
        
         switch (orderBy)
         {
