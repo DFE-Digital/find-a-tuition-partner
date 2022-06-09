@@ -76,13 +76,15 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
             results.Add(result);
         }
-
+       
         switch (orderBy)
         {
             case TuitionPartnerOrderBy.Name:
                 return direction == OrderByDirection.Descending
                     ? results.OrderByDescending(e => e.Name).ToDictionary(e => e.Id)
                     : results.OrderBy(e => e.Name).ToDictionary(e => e.Id);
+            case TuitionPartnerOrderBy.Random:
+                return results.OrderBy(_ => Guid.NewGuid()).ToDictionary(e => e.Id);
             default:
                 return results.OrderByDescending(e => e.Id).ToDictionary(e => e.Id);
         }
