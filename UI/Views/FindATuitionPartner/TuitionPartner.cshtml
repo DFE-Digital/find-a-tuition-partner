@@ -1,0 +1,80 @@
+﻿@model TuitionPartnerViewModel
+
+@{
+    ViewData["Title"] = $"Find a Tuition Partner - {Model.Name}";
+}
+
+<govuk-back-link asp-action="Results" asp-route-SearchId="@Model.SearchId"/>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">@Model.Name</h1>
+        <p class="govuk-body">@Model.Description</p>
+        
+	    <div>
+		    <h2 class="govuk-heading-m">Tuition details</h2>
+		    <govuk-summary-list>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Subjects covered
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Subjects)
+						    {
+							    <li>@item.Name</li>
+						    }
+					    </ul>
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Type of tuition
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    @string.Join(", ", Model.TuitionTypes.Select(e => e.Name))
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Tuition ratio
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+		    </govuk-summary-list>
+	    </div>
+        
+	    <div>
+		    <h2 class="govuk-heading-m">Contact details</h2>
+		    <govuk-summary-list>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Website
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    @Model.Website
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Phone number
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Email address
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+		    </govuk-summary-list>
+	    </div>
+    </div>
+</div>

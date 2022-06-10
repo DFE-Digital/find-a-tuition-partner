@@ -1,7 +1,7 @@
 ﻿@model TuitionPartnerSearchResultsViewModel
 
 @{
-    ViewData["Title"] = "Search Tutoring Partners - Results";
+    ViewData["Title"] = "Find a Tuition Partner - Results";
 }
 
 <div class="govuk-grid-row">
@@ -78,7 +78,7 @@
 				foreach (var item in Model.SearchResultsPage.Results)
 				{
 					<div>
-						<h2><a href="@item.Website" class="govuk-link">@item.Name</a></h2>
+						<h2><a asp-action="TuitionPartner" asp-route-id="@item.Id" asp-route-searchId="@Model.SearchId" class="govuk-link">@item.Name</a></h2>
 						<govuk-summary-list>
 							<govuk-summary-list-row>
 								<govuk-summary-list-row-key>
@@ -94,22 +94,6 @@
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
 									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
-								</govuk-summary-list-row-value>
-							</govuk-summary-list-row>
-							<govuk-summary-list-row>
-								<govuk-summary-list-row-key>
-									Price
-								</govuk-summary-list-row-key>
-								<govuk-summary-list-row-value>
-
-								</govuk-summary-list-row-value>
-							</govuk-summary-list-row>
-							<govuk-summary-list-row>
-								<govuk-summary-list-row-key>
-									Tuition ratio
-								</govuk-summary-list-row-key>
-								<govuk-summary-list-row-value>
-
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 							<govuk-summary-list-row>
