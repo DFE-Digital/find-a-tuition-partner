@@ -102,6 +102,6 @@ Tooling is cross platform - Verified that the Cloud Foundry command line interfa
     * The primary search implementation
     * Data protection services
     * Identity tables
-* Application scaling - Scaled the application up to three instances and down through two to one instance with the `cf scale fatp-dev -i 2` command
+* Application scaling - Scaled the application up to three instances and down through two to one instance with the `cf scale national-tutoring-dev -i 2` command
 
 <!-- markdownlint-disable-file MD013 -->
