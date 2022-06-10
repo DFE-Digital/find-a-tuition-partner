@@ -217,4 +217,20 @@ public class FindATuitionPartnerController : Controller
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> TuitionPartner(int id, Guid searchId)
+    {
+        //TODO: This all needs replacing with a proper view model based on the populated TuitionPartner class and pulled from a repository or similar
+        var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
+
+        var searchResultsPage = await _sender.Send(builder.Build().Adapt<SearchTuitionPartnerHandler.Command>());
+
+        var searchResult = searchResultsPage.Results.Single(e => e.Id == id);
+
+        var viewModel = searchResult.Adapt<TuitionPartnerViewModel>();
+        viewModel.SearchId = searchId;
+
+        return View(viewModel);
+    }
 }

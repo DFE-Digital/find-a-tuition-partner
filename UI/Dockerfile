@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["FindaTutoringPartner/UI.csproj", "FindaTutoringPartner/"]
-RUN dotnet restore "FindaTutoringPartner/UI.csproj"
+COPY ["UI/UI.csproj", "UI/"]
+RUN dotnet restore "UI/UI.csproj"
 COPY . .
-WORKDIR "/src/FindaTutoringPartner"
+WORKDIR "/src/CompareNationalTutoringOptions"
 RUN dotnet build "UI.csproj" -c Release -o /app/build
 
 FROM build AS publish

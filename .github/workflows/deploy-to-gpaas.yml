@@ -38,4 +38,3 @@ jobs:
         run: |
           cf push --strategy rolling
           cf logout
-        working-directory: FindaTutoringPartner

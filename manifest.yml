@@ -1,8 +1,8 @@
 ---
 applications:
-- name: fatp-dev
+- name: national-tutoring-dev
   services:
-    - fatp-dev-postgres-db
+    - national-tutoring-dev-postgres-db
   buildpacks:
     - dotnet_core_buildpack
   memory: 256M

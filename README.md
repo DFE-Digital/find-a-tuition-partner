@@ -49,20 +49,20 @@ cf login -a api.london.cloud.service.gov.uk -u nationaltutoring@digital.educatio
 
 ```
 cf push --strategy rolling
-cf tail -f fatp-dev
+cf tail -f national-tutoring-dev
 
-cf delete fatp-dev
-cf create-service postgres tiny-unencrypted-13 fatp-dev-postgres-db
-cf service fatp-dev-postgres-db
-cf delete-service fatp-dev-postgres-db
+cf delete national-tutoring-dev
+cf create-service postgres tiny-unencrypted-13 national-tutoring-dev-postgres-db
+cf service national-tutoring-dev-postgres-db
+cf delete-service national-tutoring-dev-postgres-db
 cf install-plugin conduit
-cf conduit fatp-dev-postgres-db -- psql
+cf conduit national-tutoring-dev-postgres-db -- psql
 
-cf set-env fatp-dev-auth-service AUTH_USERNAME ntp
-cf set-env fatp-dev-auth-service AUTH_PASSWORD alpha
-cf create-user-provided-service fatp-dev-auth-app -r https://fatp-dev-auth-service.london.cloudapps.digital
-cf update-user-provided-service fatp-dev-auth-app -r https://fatp-dev-auth-service.london.cloudapps.digital
-cf bind-route-service london.cloudapps.digital fatp-dev-auth-app --hostname fatp-dev
+cf set-env national-tutoring-dev-auth-service AUTH_USERNAME private
+cf set-env national-tutoring-dev-auth-service AUTH_PASSWORD beta
+cf create-user-provided-service national-tutoring-dev-auth-app -r https://national-tutoring-dev-auth-service.london.cloudapps.digital
+cf update-user-provided-service national-tutoring-dev-auth-app -r https://national-tutoring-dev-auth-service.london.cloudapps.digital
+cf bind-route-service london.cloudapps.digital national-tutoring-dev-auth-app --hostname national-tutoring-dev
 
 ```
 

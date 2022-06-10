@@ -153,6 +153,7 @@ public class TuitionPartnerSearchRequestBuilder
             LocalAuthorityDistrictCode = SearchState.LocationFilterParameters?.LocalAuthorityDistrictCode,
             SubjectIds = SearchState.Subjects?.Keys,
             TuitionTypeIds = SearchState.TuitionTypes?.Keys,
+            OrderBy = TuitionPartnerOrderBy.Name,
             PageSize = SearchRequestBase.MaxPageSize
         };
 
