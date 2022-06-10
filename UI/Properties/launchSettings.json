@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "FindaTutoringPartner": {
+    "CompareNationalTutoringOptions": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
