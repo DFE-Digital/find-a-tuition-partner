@@ -73,6 +73,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<ITuitionPartnerDataExtractor, RegionalTuitionPartnerDataExtractor>();
         services.AddScoped<ITuitionPartnerDataImporter, RegionalTuitionPartnerDataImporter>();
+        services.AddScoped<ITuitionPartnerLocalRegionDataExtractor, LocalRegionalTuitionPartnerDataExtractor>();
+        services.AddScoped<ITuitionPartnerLocalRegionDataImporter, LocalRegionalTuitionPartnerDataImporter>();
 
         return services;
     }

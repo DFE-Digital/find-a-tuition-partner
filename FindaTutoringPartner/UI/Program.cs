@@ -47,7 +47,10 @@ if (app.Environment.IsDevelopment())
     db.Database.Migrate();
 
     var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
+    var localImporter = scope.ServiceProvider.GetRequiredService<ITuitionPartnerLocalRegionDataImporter>();
     importer.Import();
+    //Disabling the import file for local regions
+   // localImporter.Import();
 
     app.UseSwagger();
     app.UseSwaggerUI();
