@@ -6,8 +6,10 @@ using GovUk.Frontend.AspNetCore;
 using Infrastructure;
 using Infrastructure.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using UI.Filters;
+using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,7 @@ builder.Services.AddGovUkFrontend();
 
 builder.Services.AddControllersWithViews(options =>
     {
+        options.Conventions.Add(new RouteTokenTransformerConvention(new SeoRouteConvention()));
         options.Filters.Add<FluentValidationExceptionAttribute>();
     }).AddJsonOptions(options =>
     {
@@ -32,6 +35,8 @@ builder.Services.AddControllersWithViews(options =>
     })
     // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
     .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
+
+builder.Services.AddRazorPages(options => options.Conventions.Add(new SeoRouteConvention()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -74,5 +79,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();
