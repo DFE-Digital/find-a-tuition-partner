@@ -1,24 +1,19 @@
-﻿using Application;
-using CsvHelper;
+﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Domain;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
-
 namespace Infrastructure;
 
 public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegionDataExtractor
 {
-
     private readonly NtpDbContext _dbContext;
-
     public LocalRegionalTuitionPartnerDataExtractor(NtpDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-
     public async IAsyncEnumerable<TuitionPartner> ExtractFromCsvFileAsync(string fileName, int tuitionTypeId)
     {
         var initialsLocalAuthorityDistrictDictionary = await GetInitialsToLocalAuthorityDistrictDictionary();
@@ -27,8 +22,6 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
           .ToDictionaryAsync(e => e.Id);
 
         var tuitionType = await _dbContext.TuitionTypes.SingleAsync(e => e.Id == tuitionTypeId);
-
-
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             HasHeaderRecord = false,
@@ -54,16 +47,12 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
             AddSubjectCoverage(tuitionPartner, datum.SecondaryMathsLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryMaths], tuitionType);
             AddSubjectCoverage(tuitionPartner, datum.SecondaryModernForeignLanguagesLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryModernForeignLanguages], tuitionType);
             AddSubjectCoverage(tuitionPartner, datum.SecondaryScienceLocalRegionDistricts, initialsLocalAuthorityDistrictDictionary, subjects[Subjects.Id.SecondaryScience], tuitionType);
-
             yield return tuitionPartner;
         }
-
     }
-
     private void AddSubjectCoverage(TuitionPartner tuitionPartner, string? subjectLocalRegionDistrictsString, IDictionary<string, LocalAuthorityDistrict> initialsToRegionDictionary, Subject subject, TuitionType tuitionType)
     {
         if (string.IsNullOrEmpty(subjectLocalRegionDistrictsString)) return;
-
         var subjectLocalRegionDistricts = subjectLocalRegionDistrictsString.Split(',').Select(s => s.Trim().ToUpper()).ToArray();
 
         foreach (var subjectLocalRegionDistrict in subjectLocalRegionDistricts)
@@ -83,7 +72,6 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
                 };
             }
             var covered = subjectLocalRegionDistricts.Contains(subjectLocalRegionDistrict);
-
             switch (subject.Id)
             {
                 case Subjects.Id.PrimaryLiteracy: coverage.PrimaryLiteracy = covered; break;
@@ -102,7 +90,6 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
         var localAuthorityDistrict = await _dbContext.LocalAuthorityDistricts
             .OrderBy(e => e.Name)
             .ToDictionaryAsync(e => e.Name.ToLower());
-
         return localAuthorityDistrict;
     }
     private class LocalRegionalTuitionPartnerDatum
@@ -126,7 +113,5 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
         [CsvHelper.Configuration.Attributes.Index(8)]
         public string? SecondaryHumanitiesLocalRegionDistricts { get; set; }
     }
-
-
 }
 

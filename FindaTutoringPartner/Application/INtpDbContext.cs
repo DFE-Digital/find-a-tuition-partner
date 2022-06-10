@@ -12,6 +12,5 @@ public interface INtpDbContext
     DbSet<TuitionPartner> TuitionPartners { get; set; }
     DbSet<TuitionType> TuitionTypes { get; set; }
     DbSet<TutorType> TutorTypes { get; set; }
-   
     Task<int> SaveChangesAsync();
 }
