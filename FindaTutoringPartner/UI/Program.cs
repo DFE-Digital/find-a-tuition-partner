@@ -49,7 +49,8 @@ if (app.Environment.IsDevelopment())
     var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
     var localImporter = scope.ServiceProvider.GetRequiredService<ITuitionPartnerLocalRegionDataImporter>();
     importer.Import();
-    localImporter.Import();
+    //Disabling the import file for local regions
+   // localImporter.Import();
 
     app.UseSwagger();
     app.UseSwaggerUI();
