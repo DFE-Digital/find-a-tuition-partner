@@ -50,7 +50,7 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
             yield return tuitionPartner;
         }
     }
-    private void AddSubjectCoverage(TuitionPartner tuitionPartner, string? subjectLocalRegionDistrictsString, IDictionary<string, LocalAuthorityDistrict> initialsToRegionDictionary, Subject subject, TuitionType tuitionType)
+    private void AddSubjectCoverage(TuitionPartner tuitionPartner, string? subjectLocalRegionDistrictsString, IList<LocalAuthorityDistrict> initialsToRegionDictionary, Subject subject, TuitionType tuitionType)
     {
         if (string.IsNullOrEmpty(subjectLocalRegionDistrictsString)) return;
         var subjectLocalRegionDistricts = subjectLocalRegionDistrictsString.Split(',').Select(s => s.Trim().ToUpper()).ToArray();
@@ -60,7 +60,11 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
             var coverage = tuitionPartner.Coverage.SingleOrDefault(e => e.LocalAuthorityDistrict.Name == subjectLocalRegionDistrict && e.TuitionTypeId == tuitionType.Id);
             if (coverage == null)
             {
-                var localAuthorityDistrict = initialsToRegionDictionary[subjectLocalRegionDistrict.ToLower()];
+                var localAuthorityDistrict = initialsToRegionDictionary.FirstOrDefault(s => s.Name.ToLower().StartsWith(subjectLocalRegionDistrict.ToLower()));
+                if(localAuthorityDistrict == null)
+                {
+                    break;
+                }
                 coverage = new TuitionPartnerCoverage
                 {
                     TuitionPartnerId = tuitionPartner.Id,
@@ -85,11 +89,11 @@ public class LocalRegionalTuitionPartnerDataExtractor : ITuitionPartnerLocalRegi
             }
         }
     }
-    private async Task<IDictionary<string,LocalAuthorityDistrict>> GetInitialsToLocalAuthorityDistrictDictionary()
+    private async Task<IList<LocalAuthorityDistrict>> GetInitialsToLocalAuthorityDistrictDictionary()
     {
         var localAuthorityDistrict = await _dbContext.LocalAuthorityDistricts
             .OrderBy(e => e.Name)
-            .ToDictionaryAsync(e => e.Name.ToLower());
+            .ToArrayAsync();
         return localAuthorityDistrict;
     }
     private class LocalRegionalTuitionPartnerDatum
