@@ -8,8 +8,8 @@ using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
-using UI;
 using UI.Filters;
+using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
 
 var builder = WebApplication.CreateBuilder(args);

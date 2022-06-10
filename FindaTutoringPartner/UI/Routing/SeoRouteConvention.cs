@@ -1,7 +1,7 @@
 ﻿using Application.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace UI;
+namespace UI.Routing;
 
 public class SeoRouteConvention : IPageRouteModelConvention, IOutboundParameterTransformer
 {
