@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace UI.Controllers;
 
+[Route("[controller]/[action]")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

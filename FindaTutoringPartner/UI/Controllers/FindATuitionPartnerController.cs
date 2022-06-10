@@ -8,6 +8,7 @@ using Application.Repositories;
 
 namespace UI.Controllers;
 
+[Route("[controller]/[action]")]
 public class FindATuitionPartnerController : Controller
 {
     private readonly ISender _sender;

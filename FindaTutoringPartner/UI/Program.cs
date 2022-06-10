@@ -25,8 +25,6 @@ builder.Services.AddMediatR(typeof(AssemblyReference));
 
 builder.Services.AddGovUkFrontend();
 
-//builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
 builder.Services.AddControllersWithViews(options =>
     {
         options.Conventions.Add(new RouteTokenTransformerConvention(new SeoRouteConvention()));
