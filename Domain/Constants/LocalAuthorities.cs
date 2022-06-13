@@ -14,7 +14,7 @@ public class LocalAuthorities
         public const int BlackburnWithDarwen = 889;
         public const int Blackpool = 890;
         public const int Bolton = 350;
-        public const int Bournemouth = 837;
+        public const int BournemouthChristchurchAndPoole = 839;
         public const int BracknellForest = 867;
         public const int Bradford = 380;
         public const int Brent = 304;
@@ -101,7 +101,6 @@ public class LocalAuthorities
         public const int Oxfordshire = 931;
         public const int Peterborough = 874;
         public const int Plymouth = 879;
-        public const int Poole = 836;
         public const int Portsmouth = 851;
         public const int Reading = 870;
         public const int Redbridge = 317;

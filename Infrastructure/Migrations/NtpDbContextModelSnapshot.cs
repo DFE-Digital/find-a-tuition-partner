@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("LocalAuthorityDistricts");
+                    b.ToTable("LocalAuthorityDistricts", (string)null);
 
                     b.HasData(
                         new
@@ -2235,7 +2235,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Code");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
 
                     b.HasData(
                         new
@@ -2308,7 +2308,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
@@ -2373,7 +2373,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("TuitionPartners");
+                    b.ToTable("TuitionPartners", (string)null);
 
                     b.HasData(
                         new
@@ -2764,7 +2764,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId", "TuitionTypeId")
                         .IsUnique();
 
-                    b.ToTable("TuitionPartnerCoverage");
+                    b.ToTable("TuitionPartnerCoverage", (string)null);
                 });
 
             modelBuilder.Entity("Domain.TuitionType", b =>
@@ -2781,7 +2781,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TuitionTypes");
+                    b.ToTable("TuitionTypes", (string)null);
 
                     b.HasData(
                         new
@@ -2810,7 +2810,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TutorTypes");
+                    b.ToTable("TutorTypes", (string)null);
 
                     b.HasData(
                         new
@@ -2871,7 +2871,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TuitionPartnerDataImportHistories");
+                    b.ToTable("TuitionPartnerDataImportHistories", (string)null);
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.UserSearch", b =>
@@ -2892,7 +2892,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserSearches");
+                    b.ToTable("UserSearches", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -2911,7 +2911,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("DataProtectionKeys", (string)null);
                 });
 
             modelBuilder.Entity("Domain.LocalAuthorityDistrict", b =>
