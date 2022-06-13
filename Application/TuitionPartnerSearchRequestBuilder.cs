@@ -9,13 +9,15 @@ public class TuitionPartnerSearchRequestBuilder
 {
     private readonly ISearchStateRepository _searchStateRepository;
     private readonly ILocationFilterService _locationFilterService;
+    private readonly IGeographyLookupRepository _geographyLookupRepository;
     private readonly ILookupDataRepository _lookupDataRepository;
 
-    public TuitionPartnerSearchRequestBuilder(SearchState searchState, ISearchStateRepository searchStateRepository, ILocationFilterService locationFilterService, ILookupDataRepository lookupDataRepository)
+    public TuitionPartnerSearchRequestBuilder(SearchState searchState, ISearchStateRepository searchStateRepository, ILocationFilterService locationFilterService, IGeographyLookupRepository geographyLookupRepository, ILookupDataRepository lookupDataRepository)
     {
         SearchState = searchState;
         _searchStateRepository = searchStateRepository;
         _locationFilterService = locationFilterService;
+        _geographyLookupRepository = geographyLookupRepository;
         _lookupDataRepository = lookupDataRepository;
     }
 
@@ -34,7 +36,8 @@ public class TuitionPartnerSearchRequestBuilder
 
         var parameters = await _locationFilterService.GetLocationFilterParametersAsync(postcode);
 
-        ValidatePostCode(parameters);
+        await ValidatePostCode(parameters);
+
         SearchState.LocationFilterParameters = parameters;
         SearchState = await _searchStateRepository.UpdateAsync(SearchState);
 
@@ -160,15 +163,27 @@ public class TuitionPartnerSearchRequestBuilder
         return request;
     }
 
-    private void ValidatePostCode(LocationFilterParameters? parameters)
+    private async Task ValidatePostCode(LocationFilterParameters? parameters)
     {
         if(parameters == null)
         {
             throw new LocationNotFoundException();
         }
+        
         if(parameters.Country != Country.Name.England)
         {
             throw new LocationNotAvailableException();
         }
+
+        var lad = await _geographyLookupRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
+        if (lad == null)
+        {
+            throw new LocationNotMappedException();
+        }
+
+        parameters.LocalAuthorityDistrictCode = lad.Code;
+        parameters.LocalAuthorityDistrict = lad.Name;
+        parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
+        parameters.LocalAuthority = lad.LocalAuthority.Name;
     }
 }

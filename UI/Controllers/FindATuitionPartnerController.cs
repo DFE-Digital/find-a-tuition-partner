@@ -69,6 +69,12 @@ public class FindATuitionPartnerController : Controller
             builder.Adapt(viewModel);
             return View(viewModel);
         }
+        catch (LocationNotMappedException)
+        {
+            ModelState.AddModelError("Postcode", "Could not identify Local Authority for the supplies postcode");
+            builder.Adapt(viewModel);
+            return View(viewModel);
+        }
 
         return RedirectToAction("Subjects", new { builder.SearchState.SearchId });
     }
@@ -202,6 +208,10 @@ public class FindATuitionPartnerController : Controller
         catch (LocationNotAvailableException)
         {
             ModelState.AddModelError("LocationSearchViewModel.Postcode", "This service covers England only");
+        }
+        catch (LocationNotMappedException)
+        {
+            ModelState.AddModelError("LocationSearchViewModel.Postcode", "Could not identify Local Authority for the supplies postcode");
         }
 
         if (!ModelState.IsValid)

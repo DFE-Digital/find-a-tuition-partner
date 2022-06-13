@@ -13,7 +13,7 @@
 						What is your school location?
 					</govuk-summary-list-row-key>
 					<govuk-summary-list-row-value>
-						@Model.LocationFilterParameters.LocalAuthorityDistrict, @(Model.LocationFilterParameters.Region ?? Model.LocationFilterParameters.Country), @Model.LocationFilterParameters.Postcode
+						@Model.LocationFilterParameters.LocalAuthorityDistrict, @Model.LocationFilterParameters.LocalAuthority, @(Model.LocationFilterParameters.Region ?? Model.LocationFilterParameters.Country), @Model.LocationFilterParameters.Postcode
 					</govuk-summary-list-row-value>
 					<govuk-summary-list-row-action visually-hidden-text="location" asp-action="Location" asp-route-SearchId="@Model.SearchId">
 						Change

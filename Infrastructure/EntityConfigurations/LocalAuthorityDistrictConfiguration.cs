@@ -10,6 +10,7 @@ public class LocalAuthorityDistrictConfiguration : IEntityTypeConfiguration<Loca
     public void Configure(EntityTypeBuilder<LocalAuthorityDistrict> builder)
     {
         builder.HasIndex(e => e.Code);
+        builder.HasIndex(e => e.Name);
 
         builder.HasData(
             new LocalAuthorityDistrict { Id = 1, Code = "E06000011", Name = "East Riding of Yorkshire", RegionId = Regions.Id.YorkshireandTheHumber, LocalAuthorityId = LocalAuthorities.Id.EastRidingOfYorkshire },
