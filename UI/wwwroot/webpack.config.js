@@ -1,17 +1,25 @@
-const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: ["./UI/assets/site.sass"],
-  output: {
-    path: path.resolve(__dirname, "UI/assets")
+  entry: ["./src/index.js", "./src/index.scss"],
+  plugins: [new MiniCssExtractPlugin()],
+  resolve: {
+    extensions: ['.mjs'],
   },
-  plugins: [new MiniCssExtractPlugin({ filename: '[name].css' })],
   module: {
     rules: [
       {
+        test: /\.mjs$/,
+        type: 'javascript/auto',
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
+          // Creates `style` nodes from JS strings
+          "style-loader",
           MiniCssExtractPlugin.loader,
           // Translates CSS into CommonJS
           "css-loader",
