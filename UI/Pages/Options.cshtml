@@ -7,26 +7,36 @@
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h1 class="govuk-heading-l">Find tuition support</h1>
-		<p class="govuk-body">The National Tutoring Programme gives state-funded schools additional funding to help young people who have had their education disrupted by coronavirus (COVID-19).</p>
-		<p class="govuk-body">Schools can choose high-quality subsidised tutoring from 3 routes:</p>
+		<h1 class="govuk-heading-l">Compare national tutoring options</h1>
+		<p class="govuk-body">Your state-funded school will be allocated National Tutoring Programme funding for 2022 to 2023 so you can provide high-quality tuition in the most effective way for your pupils.</p>
+		<p class="govuk-body">Use this service to compare the 3 tutoring options, including information on <a asp-page="/Funding" class="govuk-link">funding</a>, <a asp-page="/Training" class="govuk-link">training</a> and the <a asp-page="/QualityAssuranceProcess" class="govuk-link">quality assurance process</a>.</p>
+		<p class="govuk-body">You can use any combination of the 3 options to meet your tuition needs.</p>
 	</div>
 </div>
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Find a tuition partner</h2>
-		<p class="govuk-body">Schools can access the full list of quality assured tuition partners through the Find a tuition partner service. The cost of tuition partners is 60% subsidised.</p>
-		<a asp-controller="FindATuitionPartner" asp-action="Start" class="govuk-button govuk-button-sec">Continue</a>
+	<div class="govuk-grid-column-one-third govuk-!-padding-0">
+		<div class="govuk-!-margin-1 govuk-!-padding-3" style="background-color: #f3f2f1;">
+			<h2 class="govuk-heading-m">Find a tuition partner</h2>
+			<p class="govuk-body">Schools can access the full list of quality assured tuition partners through the Find a tuition partner service.<br/>
+				The cost of tuition partners is 60% subsidised.</p>
+			<a asp-controller="FindATuitionPartner" asp-action="Start" class="govuk-button govuk-!-margin-bottom-0">Continue</a>
+		</div>
 	</div>
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Academic mentors</h2>
-		<p class="govuk-body">Acedemic mentors are an 'in class' resource to work alongside teachers to help with a range of interventions. The cost of academic mentors is 60% subsidised.</p>
-		<a asp-page="AcademicMentors" class="govuk-button">Continue</a>
+	<div class="govuk-grid-column-one-third govuk-!-padding-0">
+		<div style="margin: 5px; padding: 15px; background-color: #f3f2f1;">
+			<h2 class="govuk-heading-m">Academic mentors</h2>
+			<p class="govuk-body">Academic mentors are an ‘in class’ resource to work alongside teachers to help with a range of interventions.<br/>
+				The cost of academic mentors is 60% subsidised.</p>
+			<a asp-page="AcademicMentors" class="govuk-button govuk-!-margin-bottom-0">Continue</a>
+		</div>
 	</div>
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">School-led tutoring</h2>
-		<p class="govuk-body">School-Led Tutoring lets schools use existing staff or external tutoring resources they trust to deliver tutoring to their pupils. The cost of school-led tutoring is 60% subsidised.</p>
-		<a asp-page="SchoolLedTutoring" class="govuk-button">Continue</a>
+	<div class="govuk-grid-column-one-third govuk-!-padding-0">
+		<div style="margin: 5px; padding: 15px; background-color: #f3f2f1;">
+			<h2 class="govuk-heading-m">School-led tutoring</h2>
+			<p class="govuk-body">School-Led Tutoring lets schools use existing staff or external tutoring resources they trust to deliver tutoring to their pupils.<br/>
+				The cost of school-led tutoring is 60% subsidised.</p>
+			<a asp-page="SchoolLedTutoring" class="govuk-button govuk-!-margin-bottom-0">Continue</a>
+		</div>
 	</div>
 </div>
