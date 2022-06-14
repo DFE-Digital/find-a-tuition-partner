@@ -23,7 +23,10 @@ builder.Services.AddRegionalTuitionPartnerData();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
-builder.Services.AddGovUkFrontend();
+builder.Services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
+{
+    AddImportsToHtml = false
+});
 
 builder.Services.AddControllersWithViews(options =>
     {
