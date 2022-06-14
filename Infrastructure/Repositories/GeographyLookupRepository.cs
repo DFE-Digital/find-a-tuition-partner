@@ -23,8 +23,10 @@ public class GeographyLookupRepository : IGeographyLookupRepository
         return (await GetLocalAuthorityDistrictsAsync(cancellationToken)).ToDictionary(e => e.Code);
     }
 
-    public async Task<LocalAuthorityDistrict?> GetLocalAuthorityDistrictAsync(string code, CancellationToken cancellationToken = default)
+    public async Task<LocalAuthorityDistrict?> GetLocalAuthorityDistrictAsync(string? code, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+
         return await _dbContext.LocalAuthorityDistricts.Include(e => e.LocalAuthority).SingleOrDefaultAsync(e => e.Code == code, cancellationToken);
     }
 }
