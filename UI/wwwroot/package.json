@@ -7,8 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:assets & npm run build:frontend",
+    "build:assets": "webpack --config webpack.assets.config.js",
+    "build:frontend": "webpack",
+    "build:watch": "webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
     "govuk-frontend": "^4.1.0"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "mini-css-extract-plugin": "^2.6.0",
     "sass": "^1.32.13",
