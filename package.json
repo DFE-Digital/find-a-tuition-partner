@@ -1,0 +1,30 @@
+{
+  "name": "compare-national-tutoring-options",
+  "version": "0.1.0",
+  "description": "National Tuition Programme Compare National Tutoring Options",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DFE-Digital/national-tutoring-programme.git"
+  },
+  "author": "The Department for Education",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DFE-Digital/national-tutoring-programme/issues"
+  },
+  "homepage": "https://github.com/DFE-Digital/national-tutoring-programme#readme",
+  "dependencies": {
+    "govuk-frontend": "^4.1.0"
+  },
+  "devDependencies": {
+    "sass": "^1.32.13",
+    "sass-loader": "^13.0.0",
+    "webpack": "^5.73.0"
+  }
+}
