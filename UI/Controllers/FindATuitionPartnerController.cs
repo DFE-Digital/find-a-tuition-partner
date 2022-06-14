@@ -106,7 +106,7 @@ public class FindATuitionPartnerController : Controller
 
         await builder.WithSubjectIds(viewModel.SubjectIds!);
 
-        return RedirectToAction("TuitionTypes", new { builder.SearchState.SearchId });
+        return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
 
     [HttpGet]
@@ -145,7 +145,7 @@ public class FindATuitionPartnerController : Controller
         var builder = await _searchRequestBuilderRepository.RetrieveAsync(searchId);
 
         var viewModel = builder.Adapt<TuitionTypeSearchViewModel>();
-        viewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
+        viewModel.TuitionTypeId = viewModel.SearchState?.TuitionType;
         viewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
 
         return View(viewModel);
@@ -164,7 +164,7 @@ public class FindATuitionPartnerController : Controller
             return View(viewModel);
         }
 
-        await builder.WithTuitionTypeIds(viewModel.TuitionTypeIds!);
+        await builder.WithTuitionTypeId(viewModel.TuitionTypeId!);
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }
@@ -181,7 +181,7 @@ public class FindATuitionPartnerController : Controller
         viewModel.SubjectsSearchViewModel.SubjectIds = viewModel.SearchState?.Subjects?.Keys;
         viewModel.SubjectsSearchViewModel.Subjects = await _lookupDataRepository.GetSubjectsAsync();
         viewModel.TuitionTypeSearchViewModel = builder.Adapt<TuitionTypeSearchViewModel>();
-        viewModel.TuitionTypeSearchViewModel.TuitionTypeIds = viewModel.SearchState?.TuitionTypes?.Keys;
+        viewModel.TuitionTypeSearchViewModel.TuitionTypeId = viewModel.SearchState?.TuitionType;
         viewModel.TuitionTypeSearchViewModel.TuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
         viewModel.SearchResultsPage = await _sender.Send(builder.Build().Adapt<SearchTuitionPartnerHandler.Command>());
 
@@ -223,7 +223,7 @@ public class FindATuitionPartnerController : Controller
         }
 
         await builder.WithSubjectIds(viewModel.SubjectsSearchViewModel.SubjectIds!);
-        await builder.WithTuitionTypeIds(viewModel.TuitionTypeSearchViewModel.TuitionTypeIds!);
+        await builder.WithTuitionTypeId(viewModel.TuitionTypeSearchViewModel.TuitionTypeId!);
 
         return RedirectToAction("Results", new { builder.SearchState.SearchId });
     }

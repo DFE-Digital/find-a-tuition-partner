@@ -13,8 +13,8 @@
             <govuk-error-summary-item asp-for="SubjectIds" />
         </govuk-error-summary>
 
-        <h1 class="govuk-heading-xl">Which subjects do you need tutors for?</h1>
-        <p class="govuk-body-l">Select all that apply</p>
+        <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
+        <p class="govuk-body">Select all that apply</p>
         
         <form asp-action="Subjects" asp-route-SearchId="@Model.SearchId">
             <govuk-checkboxes asp-for="SubjectIds">
@@ -28,7 +28,5 @@
                 <govuk-button type="submit">Continue</govuk-button>
             </div>
         </form>
-		
-	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

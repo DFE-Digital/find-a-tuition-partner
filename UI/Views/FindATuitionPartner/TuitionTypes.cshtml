@@ -10,25 +10,24 @@
     <div class="govuk-grid-column-two-thirds">
 	    <govuk-error-summary>
 		    <govuk-error-summary-item asp-for="SearchId" />
-		    <govuk-error-summary-item asp-for="TuitionTypeIds" />
+		    <govuk-error-summary-item asp-for="TuitionTypeId" />
 	    </govuk-error-summary>
 
         <h1 class="govuk-heading-xl">How would you like the tutoring sessions to be run?</h1>
         <p class="govuk-body-l">Select all that apply</p>
         
 	    <form asp-action="TuitionTypes" asp-route-SearchId="@Model.SearchId">
-		    <govuk-checkboxes asp-for="TuitionTypeIds">
+		    <govuk-radios asp-for="TuitionTypeId">
+			    <govuk-radios-item value="@null" checked="@(Model.TuitionTypeId == null)">Any</govuk-radios-item>
 			    @foreach (var item in Model.TuitionTypes!)
 			    {
-				    <govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
+				    <govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
 			    }
-		    </govuk-checkboxes>
+		    </govuk-radios>
 
 		    <div class="govuk-button-group">
 			    <govuk-button type="submit">Continue</govuk-button>
 		    </div>
 	    </form>
-		
-	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>
