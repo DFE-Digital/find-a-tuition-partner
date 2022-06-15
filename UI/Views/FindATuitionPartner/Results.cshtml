@@ -11,13 +11,13 @@
 			<govuk-error-summary-item asp-for="SearchId" />
 			<govuk-error-summary-item asp-for="LocationSearchViewModel.Postcode" />
 			<govuk-error-summary-item asp-for="SubjectsSearchViewModel.SubjectIds" />
-			<govuk-error-summary-item asp-for="TuitionTypeSearchViewModel.TuitionTypeIds" />
+			<govuk-error-summary-item asp-for="TuitionTypeSearchViewModel.TuitionTypeId" />
 		</govuk-error-summary>
 		
 		@if (Model.SearchResultsPage != null)
 		{
 			<h1 class="govuk-heading-l">Search results</h1>
-			<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result")</p>
+			<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result") for @Model.SearchState?.LocationFilterParameters?.LocalAuthority</p>
 		}
 	</div>
 </div>
@@ -27,50 +27,51 @@
 	<form asp-action="Results" asp-route-SearchId="@Model.SearchId">
 
 		<div class="govuk-grid-column-one-third">
-			<h2 class="govuk-heading-m">Filter results</h2>
-			
-			<div class="govuk-button-group">
-				<govuk-button type="submit">Apply filters</govuk-button>
-			</div>
+			<div class="app-results-filter">
+				<h2 class="govuk-heading-m">Filter results</h2>
+				
+				<div>
+					<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds" class="govuk-checkboxes--small govuk-!-margin-0">
+						<govuk-checkboxes-fieldset>
+							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+								Subjects
+							</govuk-checkboxes-fieldset-legend>
+						</govuk-checkboxes-fieldset>
+						@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
+						{
+							<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
+						}
+					</govuk-checkboxes>
+					
+					<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-			<div>
-				<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds">
-					<govuk-checkboxes-fieldset>
-						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-							Subjects
-						</govuk-checkboxes-fieldset-legend>
-					</govuk-checkboxes-fieldset>
-					@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
-					{
-						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
-					}
-				</govuk-checkboxes>
-
-				<govuk-checkboxes asp-for="TuitionTypeSearchViewModel.TuitionTypeIds">
-					<govuk-checkboxes-fieldset>
-						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-							How the sessions will be run
-						</govuk-checkboxes-fieldset-legend>
-					</govuk-checkboxes-fieldset>
-					@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
-					{
-						<govuk-checkboxes-item value="@item.Id" checked="@(Model.TuitionTypeSearchViewModel.TuitionTypeIds?.Contains(item.Id) == true)" class="govuk-checkboxes--small">@item.Name</govuk-checkboxes-item>
-					}
-				</govuk-checkboxes>
-			</div>
-			
-			<div class="govuk-button-group">
-				<govuk-button type="submit">Apply filters</govuk-button>
+					<govuk-radios asp-for="TuitionTypeSearchViewModel.TuitionTypeId" class="govuk-radios--small">
+						<govuk-radios-fieldset>
+							<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+								Type of tuition
+							</govuk-radios-fieldset-legend>
+						</govuk-radios-fieldset>
+						<govuk-radios-item value="@null">Any</govuk-radios-item>
+						@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
+						{
+							<govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
+						}
+					</govuk-radios>
+				</div>
 			</div>
 		</div>
 
 		<div class="govuk-grid-column-two-thirds">
-			<govuk-input asp-for="LocationSearchViewModel.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
-				<govuk-input-label class="govuk-label--s">Postcode</govuk-input-label>
-			</govuk-input>
-			
-			<div class="govuk-button-group">
-				<govuk-button type="submit">Search</govuk-button>
+			<div>
+				<div class="govuk-form-group">
+					<h1 class="govuk-label-wrapper">
+						<label asp-for="LocationSearchViewModel.Postcode" class="govuk-label govuk-label--s">
+							Postcode
+						</label>
+					</h1>
+					<input asp-for="LocationSearchViewModel.Postcode" class="govuk-input govuk-input--width-10" type="text">
+					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0">Search again</govuk-button>
+				</div>
 			</div>
 
 			@if (Model.SearchResultsPage != null)

@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220613144532_LadToLaMapping")]
+    partial class LadToLaMapping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,8 +46,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code");
-
-                    b.HasIndex("Name");
 
                     b.HasIndex("RegionId");
 
@@ -1145,8 +1145,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Code");
 
                     b.HasIndex("LocalAuthorityId");
-
-                    b.HasIndex("Name");
 
                     b.HasIndex("RegionId");
 
@@ -3646,8 +3644,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("Regions");
 

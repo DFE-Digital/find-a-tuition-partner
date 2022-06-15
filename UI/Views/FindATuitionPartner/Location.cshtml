@@ -13,20 +13,18 @@
 		    <govuk-error-summary-item asp-for="Postcode" />
 	    </govuk-error-summary>
         
-	    <h1 class="govuk-heading-xl">What is your school location?</h1>
-	    <p class="govuk-body-l">We'll find tuition partners in your area</p>
+	    <h1 class="govuk-heading-l">Find a tuition partner</h1>
+	    <p class="govuk-body">Find a tuition partner will help match you with the best tuition partner for your school from the full list of quality assured tuition partners.</p>
 
 	    <form asp-action="Location" asp-route-SearchId="@Model.SearchId">
 		    <govuk-input asp-for="Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
-			    <govuk-input-label class="govuk-label--m">Postcode</govuk-input-label>
-			    <govuk-input-hint>This can be your schools postcode or postcode appropriate for a pupil</govuk-input-hint>
+			    <govuk-input-label class="govuk-label--m">What is your school's' location?</govuk-input-label>
+			    <govuk-input-hint>Enter the postcode</govuk-input-hint>
 		    </govuk-input>
 
 		    <div class="govuk-button-group">
 			    <govuk-button type="submit">Continue</govuk-button>
 		    </div>
 	    </form>
-		
-	    <partial name="_SearchStatePartial" model="@Model.SearchState" />
     </div>
 </div>

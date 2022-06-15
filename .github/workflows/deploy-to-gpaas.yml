@@ -19,6 +19,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Bundle web assets
+        working-directory: ./UI
+        run: |
+          npm ci
+          npm run build
+
       - name: Install the CF CLI
         run: |
           wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=7.4.0&source=github-rel"

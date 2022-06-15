@@ -1,6 +1,5 @@
-﻿using Application.Exceptions;
+﻿using Application.Extensions;
 using Application.Repositories;
-using Domain.Constants;
 using Domain.Search;
 
 namespace Application;
@@ -33,8 +32,8 @@ public class TuitionPartnerSearchRequestBuilder
         }
 
         var parameters = await _locationFilterService.GetLocationFilterParametersAsync(postcode);
+        parameters.Validate();
 
-        ValidatePostCode(parameters);
         SearchState.LocationFilterParameters = parameters;
         SearchState = await _searchStateRepository.UpdateAsync(SearchState);
 
@@ -111,36 +110,9 @@ public class TuitionPartnerSearchRequestBuilder
         return this;
     }
 
-    public async Task<TuitionPartnerSearchRequestBuilder> WithTuitionTypeIds(ICollection<int> tuitionTypeIds)
+    public async Task<TuitionPartnerSearchRequestBuilder> WithTuitionTypeId(int? tuitionTypeId)
     {
-        if (SearchState.TuitionTypes != null && tuitionTypeIds.Count == SearchState.TuitionTypes.Count)
-        {
-            var changed = false;
-            foreach (var tuitionTypeId in tuitionTypeIds)
-            {
-                if (!SearchState.TuitionTypes.ContainsKey(tuitionTypeId))
-                {
-                    changed = true;
-                    break;
-                }
-            }
-
-            if (!changed) return this;
-        }
-
-        var tuitionTypes = await _lookupDataRepository.GetTuitionTypesAsync();
-
-        var tuitionTypeDictionary = new Dictionary<int, string>();
-
-        foreach (var tuitionType in tuitionTypes)
-        {
-            if (tuitionTypeIds.Contains(tuitionType.Id))
-            {
-                tuitionTypeDictionary[tuitionType.Id] = tuitionType.Name;
-            }
-        }
-
-        SearchState.TuitionTypes = tuitionTypeDictionary;
+        SearchState.TuitionType = tuitionTypeId;
         SearchState = await _searchStateRepository.UpdateAsync(SearchState);
 
         return this;
@@ -152,23 +124,11 @@ public class TuitionPartnerSearchRequestBuilder
         {
             LocalAuthorityDistrictCode = SearchState.LocationFilterParameters?.LocalAuthorityDistrictCode,
             SubjectIds = SearchState.Subjects?.Keys,
-            TuitionTypeIds = SearchState.TuitionTypes?.Keys,
+            TuitionTypeId = SearchState.TuitionType,
             OrderBy = TuitionPartnerOrderBy.Name,
             PageSize = SearchRequestBase.MaxPageSize
         };
 
         return request;
-    }
-
-    private void ValidatePostCode(LocationFilterParameters? parameters)
-    {
-        if(parameters == null)
-        {
-            throw new LocationNotFoundException();
-        }
-        if(parameters.Country != Country.Name.England)
-        {
-            throw new LocationNotAvailableException();
-        }
     }
 }

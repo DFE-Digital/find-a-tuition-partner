@@ -10,6 +10,7 @@ public class RegionConfiguration : IEntityTypeConfiguration<Region>
     public void Configure(EntityTypeBuilder<Region> builder)
     {
         builder.HasIndex(e => e.Code);
+        builder.HasIndex(e => e.Name);
 
         builder.HasData(
             new Region { Id = Regions.Id.NorthEast, Code = "E12000001", Name = "North East" },

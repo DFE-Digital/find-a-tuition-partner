@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using Application;
+using Application.Repositories;
 using Domain.Search;
 
 namespace Infrastructure;
@@ -8,10 +9,12 @@ namespace Infrastructure;
 public class PostcodesIoLocationFilterService : ILocationFilterService
 {
     private readonly HttpClient _httpClient;
+    private readonly IGeographyLookupRepository _geographyLookupRepository;
 
-    public PostcodesIoLocationFilterService(HttpClient httpClient)
+    public PostcodesIoLocationFilterService(HttpClient httpClient, IGeographyLookupRepository geographyLookupRepository)
     {
         _httpClient = httpClient;
+        _geographyLookupRepository = geographyLookupRepository;
     }
 
     public async Task<LocationFilterParameters?> GetLocationFilterParametersAsync(string postcode)
@@ -37,6 +40,14 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
             LocalAuthorityDistrict = result["admin_district"]?.ToString() ?? "",
             LocalAuthorityDistrictCode = result["codes"]!["admin_district"]!.ToString()
         };
+
+        var lad = await _geographyLookupRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
+        if (lad == null) return parameters;
+
+        parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
+        parameters.LocalAuthority = lad.LocalAuthority.Name;
+        parameters.LocalAuthorityDistrictCode = lad.Code;
+        parameters.LocalAuthorityDistrict = lad.Name;
 
         return parameters;
     }
