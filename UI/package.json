@@ -7,10 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "npm run build:assets & npm run build:frontend",
-    "build:assets": "webpack --config webpack.assets.config.js",
-    "build:frontend": "webpack",
-    "build:watch": "webpack --watch"
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "watch": "webpack --watch --mode development"
   },
   "repository": {
     "type": "git",

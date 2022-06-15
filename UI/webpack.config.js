@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
@@ -6,7 +7,15 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'wwwroot/dist'),
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, "node_modules/govuk-frontend/govuk/assets"), to: path.resolve(__dirname, "wwwroot/assets") },
+        { from: path.resolve(__dirname, "node_modules/govuk-frontend/govuk/all.js"), to: path.resolve(__dirname, "wwwroot/dist/govuk.js") }
+      ],
+    }),
+    new MiniCssExtractPlugin()
+  ],
   resolve: {
     extensions: ['.mjs'],
   },

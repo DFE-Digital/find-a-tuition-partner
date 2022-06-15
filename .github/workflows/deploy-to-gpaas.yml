@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 16
       - name: Bundle web assets
-        working-directory: ./UI/wwwroot
+        working-directory: ./UI
         run: |
           npm ci
           npm run build

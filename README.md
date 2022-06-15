@@ -15,6 +15,9 @@ National Tutoring Programme's Find a Tutoring Partner service is currently in di
 
 ### Tooling requirements
 
+* .NET 6
+* NodeJS 16
+
 You also require the [Entity Framework Core Tools for the .NET Command-Line Interface](https://www.nuget.org/packages/dotnet-ef/) to manage database migrations. Install or update these using the following commands:
 
 ```
@@ -37,6 +40,14 @@ dotnet ef migrations add InitialCreate -p Infrastructure -s UI
 dotnet ef migrations remove -p Infrastructure -s UI
 dotnet ef database update -p Infrastructure -s UI
 ```
+
+### Web assets
+
+From a command prompt, change to the `UI` directory and run `npm install` to install the dependencies. Then run one of the following commands:
+
+* `npm run build` to bundle the assets using webpack 5 in production mode
+* `npm run build:dev` to bundle the assets using webpack 5 in development mode
+* `npm run watch` to bundle the assets using webpack 5 in development mode and apply changes immediately when developing
 
 ### GOV.UK PaaS
 
