@@ -27,37 +27,38 @@
 	<form asp-action="Results" asp-route-SearchId="@Model.SearchId">
 
 		<div class="govuk-grid-column-one-third">
-			<div class="govuk-!-padding-3" style="background-color: #f3f2f1;">
-				<h2 class="govuk-heading-m">Filter results</h2>
+			<div class="app-results-filter">
+				<div class="filters-component__groups__group" data-filters-target="group" data-group="job_roles"><div><div class="govuk-form-group" data-action="change->form#submitListener"><fieldset class="govuk-fieldset"><legend class="govuk-fieldset__legend govuk-fieldset__legend--s"><h3 class="govuk-fieldset__heading">Job role</h3></legend><div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes"><input type="hidden" name="job_roles[]" value="" autocomplete="off"><div class="govuk-checkboxes__item"><input id="job-roles-teacher-field" class="govuk-checkboxes__input" type="checkbox" value="teacher" name="job_roles[]"><label for="job-roles-teacher-field" class="govuk-label govuk-checkboxes__label">Teacher</label></div><div class="govuk-checkboxes__item"><input id="job-roles-senior-leader-field" class="govuk-checkboxes__input" type="checkbox" value="senior_leader" name="job_roles[]"><label for="job-roles-senior-leader-field" class="govuk-label govuk-checkboxes__label">Senior leader</label></div><div class="govuk-checkboxes__item"><input id="job-roles-middle-leader-field" class="govuk-checkboxes__input" type="checkbox" value="middle_leader" name="job_roles[]"><label for="job-roles-middle-leader-field" class="govuk-label govuk-checkboxes__label">Middle leader</label></div><div class="govuk-checkboxes__item"><input id="job-roles-teaching-assistant-field" class="govuk-checkboxes__input" type="checkbox" value="teaching_assistant" name="job_roles[]"><label for="job-roles-teaching-assistant-field" class="govuk-label govuk-checkboxes__label">Teaching assistant</label></div><div class="govuk-checkboxes__item"><input id="job-roles-education-support-field" class="govuk-checkboxes__input" type="checkbox" value="education_support" name="job_roles[]"><label for="job-roles-education-support-field" class="govuk-label govuk-checkboxes__label">Education support</label></div><div class="govuk-checkboxes__item"><input id="job-roles-sendco-field" class="govuk-checkboxes__input" type="checkbox" value="sendco" name="job_roles[]"><label for="job-roles-sendco-field" class="govuk-label govuk-checkboxes__label">SENDCo</label></div></div></fieldset></div></div></div>
 				
-				<div>
-					<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds" class="govuk-checkboxes--small govuk-!-margin-0">
-						<govuk-checkboxes-fieldset>
-							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-								Subjects
-							</govuk-checkboxes-fieldset-legend>
-						</govuk-checkboxes-fieldset>
-						@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
-						{
-							<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
-						}
-					</govuk-checkboxes>
-					
-					<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-					<govuk-radios asp-for="TuitionTypeSearchViewModel.TuitionTypeId" class="govuk-radios--small">
-						<govuk-radios-fieldset>
-							<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-								Type of tuition
-							</govuk-radios-fieldset-legend>
-						</govuk-radios-fieldset>
-						<govuk-radios-item value="@null">Any</govuk-radios-item>
-						@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
-						{
-							<govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
-						}
-					</govuk-radios>
-				</div>
+				<h2 class="govuk-heading-m">Filter results</h2>
+
+				<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds" class="govuk-checkboxes--small govuk-!-margin-0">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							Subjects
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
+					@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
+					{
+						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
+					}
+				</govuk-checkboxes>
+
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+				<govuk-radios asp-for="TuitionTypeSearchViewModel.TuitionTypeId" class="govuk-radios--small">
+					<govuk-radios-fieldset>
+						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+							Type of tuition
+						</govuk-radios-fieldset-legend>
+					</govuk-radios-fieldset>
+					<govuk-radios-item value="@null">Any</govuk-radios-item>
+					@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
+					{
+						<govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
+					}
+				</govuk-radios>
 			</div>
 		</div>
 
