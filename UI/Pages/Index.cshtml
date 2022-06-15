@@ -11,13 +11,13 @@
 	    <p class="govuk-body">Schools can choose high-quality subsidised tutoring from 3 routes:</p>
 	    <ul class="govuk-list govuk-list--bullet">
 		    <li>
-			    <a asp-controller="FindATuitionPartner" asp-action="Start" class="govuk-link">Find a Tuition Partner</a>
+			    <a asp-fragment="find-a-tuition-partner" class="govuk-link">Find a Tuition Partner</a>
 		    </li>
 		    <li>
-			    <a asp-page="/AcademicMentors" class="govuk-link">Academic Mentors</a>
+			    <a asp-fragment="academic-mentors" class="govuk-link">Academic Mentors</a>
 		    </li>
 		    <li>
-			    <a asp-page="/SchoolLedTutoring" class="govuk-link">School-Led Tutoring</a>
+			    <a asp-fragment="school-led-tutoring" class="govuk-link">School-Led Tutoring</a>
 		    </li>
 	    </ul>
 	    <a asp-page="/Options" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
@@ -38,15 +38,15 @@
 		    </li>
 	    </ul>
 		
-	    <h2 class="govuk-heading-m">Find a Tuition Partner</h2>
+	    <h2 id="find-a-tuition-partner" class="govuk-heading-m">Find a Tuition Partner</h2>
 	    <p class="govuk-body">Schools can access the full list of quality assured tuition partners through the ‘Find a Tuition Partner’ service. The tuition partners offer a wide range of subjects and options for how to deliver tutoring to schools.</p>
 	    <p class="govuk-body">The cost of tuition partners is 60% subsidised.</p>
 		
-	    <h2 class="govuk-heading-m">Academic Mentors</h2>
+	    <h2 id="academic-mentors" class="govuk-heading-m">Academic Mentors</h2>
 	    <p class="govuk-body">Academic mentors are an ‘in class’ resource to work alongside teachers to help with a range of interventions. Academic mentors are typically employed to work in 15 hour blocks of support to provide intensive support where needed.</p>
 	    <p class="govuk-body">The cost of academic mentors is 60% subsidised.</p>
 		
-	    <h2 class="govuk-heading-m">School-Led Tutoring</h2>
+	    <h2 id="school-led-tutoring" class="govuk-heading-m">School-Led Tutoring</h2>
 	    <p class="govuk-body">School-Led Tutoring lets schools use existing staff or external tutoring resources they trust to deliver tutoring to their pupils. This route offers flexibility for schools to identify their own tutors.</p>
 	    <p class="govuk-body">School-Led Tutoring’s funding is based on the number of pupil premium students.</p>
 	    <p class="govuk-body">The cost of School-Led Tutoring is 60% subsidised.</p>

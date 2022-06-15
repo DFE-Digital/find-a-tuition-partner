@@ -72,7 +72,7 @@ public class SearchTuitionPartnerHandler
                 returnAll = false;
             }
 
-            if (request.TuitionTypeIds != null)
+            if (request.TuitionTypeId != null)
             {
                 returnAll = false;
             }
@@ -87,19 +87,16 @@ public class SearchTuitionPartnerHandler
             {
                 var groupQueryable = coverageQueryable.GroupBy(e => e.TuitionPartnerId);
 
-                if (request.TuitionTypeIds != null)
+                if (request.TuitionTypeId != null)
                 {
-                    foreach (var tuitionTypeId in request.TuitionTypeIds)
+                    switch (request.TuitionTypeId)
                     {
-                        switch (tuitionTypeId)
-                        {
-                            case TuitionTypes.Id.Online:
-                                groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.Online));
-                                break;
-                            case TuitionTypes.Id.InPerson:
-                                groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.InPerson));
-                                break;
-                        }
+                        case TuitionTypes.Id.Online:
+                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.Online));
+                            break;
+                        case TuitionTypes.Id.InPerson:
+                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.InPerson));
+                            break;
                     }
                 }
 
