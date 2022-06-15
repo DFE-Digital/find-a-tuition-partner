@@ -23,8 +23,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci
-      - run: npm run build
+      - name: Bundle web assets
+        working-directory: ./UI/wwwroot
+        run: |
+          npm ci
+          npm run build
 
       - name: Install the CF CLI
         run: |
