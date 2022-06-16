@@ -17,7 +17,6 @@ jobs:
          with:
            -node-version: 16
            -cache-dependency-path: ./End-2-End-Testing/package-lock.json
-         run:
-           npm run -e username=private,password=beta,baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
+           -build: npm run -e username=private,password=beta,baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
            
            
