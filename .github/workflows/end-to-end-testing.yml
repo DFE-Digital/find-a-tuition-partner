@@ -16,7 +16,7 @@ jobs:
          uses: cypress-io/github-action@v4
          with:
            -node-version: 16
-           -cache-dependency-path: ./End-2-End-Testing/package-lock.json
+           working-directory: ./End-2-End-Testing
            -build: npm run -e username=private,password=beta,baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
            
            
