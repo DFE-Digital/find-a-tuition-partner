@@ -77,6 +77,13 @@ cf bind-route-service london.cloudapps.digital national-tutoring-dev-auth-app --
 
 ```
 
+#### End To End Testing Setup
+
+Setup
+```
+In order to run the End to End Tests  first you need to install latest node js on your system and then  run npm install command on end-to-end folder
+This should install cypress local to you and should open the cypress cli locally to you than you should be able to run any local spec files 
+
 
 https://github.com/DFE-Digital/national-tutoring-programme/settings/secrets/actions
 
