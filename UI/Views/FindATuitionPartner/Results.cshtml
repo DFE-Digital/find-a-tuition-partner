@@ -30,33 +30,35 @@
 			<div class="app-results-filter" data-module="results-filter">
 				<h2 class="govuk-heading-m">Filter results</h2>
 				
-				<div>
-					<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds" class="govuk-checkboxes--small govuk-!-margin-0">
-						<govuk-checkboxes-fieldset>
-							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-								Subjects
-							</govuk-checkboxes-fieldset-legend>
-						</govuk-checkboxes-fieldset>
-						@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
-						{
-							<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
-						}
-					</govuk-checkboxes>
+				<govuk-checkboxes asp-for="SubjectsSearchViewModel.SubjectIds" class="govuk-checkboxes--small govuk-!-margin-0">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							Subjects
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
+					@foreach (var item in Model.SubjectsSearchViewModel.Subjects!)
+					{
+						<govuk-checkboxes-item value="@item.Id" checked="@(Model.SubjectsSearchViewModel.SubjectIds?.Contains(item.Id) == true)">@item.Name</govuk-checkboxes-item>
+					}
+				</govuk-checkboxes>
 					
-					<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-					<govuk-radios asp-for="TuitionTypeSearchViewModel.TuitionTypeId" class="govuk-radios--small">
-						<govuk-radios-fieldset>
-							<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-								Type of tuition
-							</govuk-radios-fieldset-legend>
-						</govuk-radios-fieldset>
-						<govuk-radios-item value="@null">Any</govuk-radios-item>
-						@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
-						{
-							<govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
-						}
-					</govuk-radios>
+				<govuk-radios asp-for="TuitionTypeSearchViewModel.TuitionTypeId" class="govuk-radios--small">
+					<govuk-radios-fieldset>
+						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+							Type of tuition
+						</govuk-radios-fieldset-legend>
+					</govuk-radios-fieldset>
+					<govuk-radios-item value="@null">Any</govuk-radios-item>
+					@foreach (var item in Model.TuitionTypeSearchViewModel.TuitionTypes!)
+					{
+						<govuk-radios-item value="@item.Id">@item.Name</govuk-radios-item>
+					}
+				</govuk-radios>
+					
+				<div class="govuk-button-group" data-module="results-filter-button">
+					<govuk-button type="submit">Apply filters</govuk-button>
 				</div>
 			</div>
 		</div>

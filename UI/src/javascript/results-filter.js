@@ -5,6 +5,8 @@ function ResultsFilter() {
 
 ResultsFilter.prototype.init = function () {
     if (this.$filters) {
+        document.querySelector('[data-module="results-filter-button"]').style.display = 'none'
+
         this.$filters.querySelectorAll("input[type='checkbox']").forEach(element => {
             element.addEventListener('click', this.filterChangedEvent.bind(this))
         });
