@@ -49,4 +49,7 @@ Chosen option: "Cypress", because it is open source, well documented, was straig
 * Good, because it integrates well and simply with GitHub actions
 * Good, because it proved significantly faster to execute tests than SpecFlow
 * Good, because it reports test results simply and effectively and will produce a video of the test run
+* Good, because easy to config and run in different Environment like DEV,QA,PROD
+* Good, because it runs the test without need to of selenium drivers in developers laptop
 * Neutral, because it is a command line tool which requires NodeJS installed and that can put of .NET devs who prefer all tooling available in Visual Studio
+
