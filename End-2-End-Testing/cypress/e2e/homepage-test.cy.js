@@ -14,11 +14,13 @@ it('login Test', () => {
 })
 
 it('Navigate to options page check', () => {
-    let url = Cypress.config().baseUrl;
+    let url = Cypress.env('baseUrl');
+    let username = Cypress.env('username');
+    let password = Cypress.env('password');
     cy.visit(url, {
         auth: {
-            username: 'private',
-            password: 'beta',
+            username: username,
+            password: password,
         },
     })
     cy.get('a[href*="/options"]').click();
