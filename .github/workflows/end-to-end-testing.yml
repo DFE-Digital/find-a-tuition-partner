@@ -4,19 +4,20 @@ on: [push]
 
 jobs:
   end-to-end-testing:
-      runs-on: ubuntu-latest
-      defaults:
-       run:
-         working-directory: ./End-2-End-Testing
-      steps: 
-       - name: checkout
-         uses: actions/checkout@v2
-        
-       - name: Cypress run
-         uses: cypress-io/github-action@v4
-         with:
-           -node-version: 16
-           working-directory: ./End-2-End-Testing
-           -build: npm run -e username=private,password=beta,baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
-           
-           
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./End-2-End-Testing
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        env:
+          CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
+          CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
+        uses: cypress-io/github-action@v4
+        with:
+          -node-version: 16
+          working-directory: ./End-2-End-Testing
+          -build: npm run -e baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
