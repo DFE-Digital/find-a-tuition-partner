@@ -2,12 +2,17 @@ beforeEach(() => {
     let url = Cypress.env('baseUrl');
     let username = Cypress.env('username');
     let password = Cypress.env('password');
-    cy.visit(url, {
-        auth: {
-            username: username,
-            password: password,
-        },
-    })
+    if (username && password) {
+        cy.visit(url + 'options', {
+            auth: {
+                username: username,
+                password: password,
+            },
+        })
+    }
+    else {
+        cy.visit(url)
+    }
 })
 
 it('login Test', () => {
@@ -19,5 +24,4 @@ it('login Test', () => {
 it('Navigate to options page check', () => {
     cy.get('a[href*="/options"]').click();
     cy.location('pathname').should('match', /\/options$/);
-
 })

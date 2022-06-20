@@ -2,23 +2,20 @@ beforeEach(() => {
     let url = Cypress.env('baseUrl');
     let username = Cypress.env('username');
     let password = Cypress.env('password');
-    cy.visit(url + 'options', {
-        auth: {
-            username: username,
-            password: password,
-        },
-    })
+    if (username && password) {
+        cy.visit(url + 'options', {
+            auth: {
+                username: username,
+                password: password,
+            },
+        })
+    }
+    else {
+        cy.visit(url)
+    }
 })
+
 it('search Tutor Happy Path', () => {
-    let url = Cypress.env('baseUrl');
-    let username = Cypress.env('username');
-    let password = Cypress.env('password');
-    cy.visit(url + 'options', {
-        auth: {
-            username: username,
-            password: password,
-        },
-    })
     cy.get('a[href*="/find-a-tuition-partner/start"]').click();
     cy.get('input[name="Postcode"]').type('WF84SW')
     cy.get('button').click()

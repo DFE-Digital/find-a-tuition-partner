@@ -2,9 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
     env: {
-        baseUrl: 'https://national-tutoring-dev.london.cloudapps.digital/',
-        username: 'private',
-        password: 'beta'
+        baseUrl: 'https://localhost:7036/'
     },
     e2e: {
     
