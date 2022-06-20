@@ -5,9 +5,6 @@ on: [push]
 jobs:
   end-to-end-testing:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./End-2-End-Testing
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -20,3 +17,16 @@ jobs:
         env:
           CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
           CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: End-2-End-Testing/cypress/screenshots
+      - name: Store videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: End-2-End-Testing/cypress/videos
