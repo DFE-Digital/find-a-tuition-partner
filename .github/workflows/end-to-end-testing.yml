@@ -13,11 +13,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cypress run
-        env:
-          CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
-          CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
         uses: cypress-io/github-action@v4
         with:
-          -node-version: 16
           working-directory: ./End-2-End-Testing
-          -build: npm run -e baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
+        env:
+          CYPRESS_baseUrl: https://national-tutoring-dev.london.cloudapps.digital/
+          CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
+          CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
