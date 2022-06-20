@@ -1,7 +1,7 @@
 
 describe('Verify Error Messages For Search Page', () => {
     beforeEach(() => {
-        let url = Cypress.env('baseUrl') + 'options';
+        let url = '/options';
         let username = Cypress.env('username');
         let password = Cypress.env('password');
         if (username && password) {

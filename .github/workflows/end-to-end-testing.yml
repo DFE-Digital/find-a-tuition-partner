@@ -16,7 +16,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           working-directory: ./End-2-End-Testing
+          config: baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
         env:
-          CYPRESS_baseUrl: https://national-tutoring-dev.london.cloudapps.digital/
-          CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
-          CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
+          CYPRESS_USERNAME: ${{ secrets.HTTP_AUTH_USERNAME }}
+          CYPRESS_PASSWORD: ${{ secrets.HTTP_AUTH_PASSWORD }}

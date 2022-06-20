@@ -1,5 +1,5 @@
 beforeEach(() => {
-    let url = Cypress.env('baseUrl') + 'options';
+    let url = '/';
     let username = Cypress.env('username');
     let password = Cypress.env('password');
     if (username && password) {
