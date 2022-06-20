@@ -1,7 +1,25 @@
 $govuk-assets-path: "/node_modules/govuk-frontend/govuk/assets/";
 $govuk-page-width: 1180px;
 
-@import "node_modules/govuk-frontend/govuk/all.scss";
+@import "node_modules/govuk-frontend/govuk/base";
+
+@import "node_modules/govuk-frontend/govuk/core/all";
+@import "node_modules/govuk-frontend/govuk/objects/all";
+@import "node_modules/govuk-frontend/govuk/components/footer/index";
+@import "node_modules/govuk-frontend/govuk/components/header/index";
+@import "node_modules/govuk-frontend/govuk/components/skip-link/index";
+@import "node_modules/govuk-frontend/govuk/utilities/all";
+@import "node_modules/govuk-frontend/govuk/overrides/all";
+
+@import "node_modules/govuk-frontend/govuk/components/back-link/index";
+@import "node_modules/govuk-frontend/govuk/components/button/index";
+@import "node_modules/govuk-frontend/govuk/components/checkboxes/index";
+@import "node_modules/govuk-frontend/govuk/components/error-message/index";
+@import "node_modules/govuk-frontend/govuk/components/error-summary/index";
+@import "node_modules/govuk-frontend/govuk/components/input/index";
+@import "node_modules/govuk-frontend/govuk/components/phase-banner/index";
+@import "node_modules/govuk-frontend/govuk/components/radios/index";
+@import "node_modules/govuk-frontend/govuk/components/summary-list/index";
 
 @import "src/sass/options-card";
 @import "src/sass/results-filter";
