@@ -1,0 +1,32 @@
+name: end-to-end-testing
+
+on: [push]
+
+jobs:
+  end-to-end-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          working-directory: ./End-2-End-Testing
+          config: baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
+        env:
+          CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
+          CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: End-2-End-Testing/cypress/screenshots
+      - name: Store videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: End-2-End-Testing/cypress/videos
