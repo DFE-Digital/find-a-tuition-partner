@@ -25,17 +25,22 @@ public class SliceFixture : IAsyncLifetime
     private class ContosoTestApplicationFactory
         : WebApplicationFactory<Program>
     {
-        protected override TestServer CreateServer(IWebHostBuilder builder)
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(services =>
             {
+                var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType == typeof(DbContextOptions<NtpDbContext>));
+
+                services.Remove(descriptor);
+
+                var db = Guid.NewGuid().ToString();
+
                 services.AddDbContext<NtpDbContext>(options =>
                 {
-                    options.UseSqlite(Guid.NewGuid().ToString());
+                    options.UseSqlite($"Data Source={db}");
                 });
             });
-
-            return base.CreateServer(builder);
         }
     }
 
