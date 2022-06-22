@@ -2,15 +2,20 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests;
 
+[CollectionDefinition(nameof(SliceFixture))]
+public class SliceFixtureCollection : ICollectionFixture<SliceFixture>
+{
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
+}
+
 public class SliceFixture : IAsyncLifetime
 {
-    private readonly IConfiguration _configuration;
-
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly WebApplicationFactory<Program> _factory;
 
@@ -18,7 +23,6 @@ public class SliceFixture : IAsyncLifetime
     {
         _factory = new ContosoTestApplicationFactory();
 
-        _configuration = _factory.Services.GetRequiredService<IConfiguration>();
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
@@ -29,7 +33,7 @@ public class SliceFixture : IAsyncLifetime
         {
             builder.ConfigureTestServices(services =>
             {
-                var descriptor = services.SingleOrDefault(
+                var descriptor = services.Single(
                     d => d.ServiceType == typeof(DbContextOptions<NtpDbContext>));
 
                 services.Remove(descriptor);
@@ -87,22 +91,22 @@ public class SliceFixture : IAsyncLifetime
     }
 
     public Task ExecuteDbContextAsync(Func<NtpDbContext, Task> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>()));
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()));
 
     public Task ExecuteDbContextAsync(Func<NtpDbContext, ValueTask> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>()).AsTask());
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()).AsTask());
 
     public Task ExecuteDbContextAsync(Func<NtpDbContext, IMediator, Task> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>(), sp.GetService<IMediator>()));
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>(), sp.GetRequiredService<IMediator>()));
 
     public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, Task<T>> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>()));
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()));
 
     public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, ValueTask<T>> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>()).AsTask());
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()).AsTask());
 
     public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, IMediator, Task<T>> action)
-        => ExecuteScopeAsync(sp => action(sp.GetService<NtpDbContext>(), sp.GetService<IMediator>()));
+        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>(), sp.GetRequiredService<IMediator>()));
 
     public Task InsertAsync<T>(params T[] entities) where T : class
     {
