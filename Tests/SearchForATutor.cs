@@ -27,7 +27,7 @@ public class SearchForATutor
     [Fact]
     public async void Starting_a_search_redirects_to_location()
     {
-        var result = await fixture.GetPage<Search, IActionResult>(x => x.OnGet());
+        var result = await fixture.GetPage<Search>().Execute(page => page.OnGet());
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
         redirect.PageName.Should().Be("Location");

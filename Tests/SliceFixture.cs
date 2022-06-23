@@ -50,13 +50,19 @@ public class SliceFixture : IAsyncLifetime
         }
     }
 
-    public Task<TResult> GetPage<TPage, TResult>(Func<TPage, Task<TResult>> action) where TPage : notnull
+    public ScopedPageExecutor<TPage> GetPage<TPage>() where TPage : class
+    {
+        return new(_scopeFactory);
+    }
+
+    public Task<TResult> GetPage<TPage, TResult>(Func<TPage, Task<TResult>> action) where TPage : class
     {
         return ExecuteScopeAsync(sp =>
         {
             var ctorparms = typeof(TPage).GetConstructors().First().GetParameters().Select(p => sp.GetRequiredService(p.ParameterType)).ToArray();
 
-            var page = (TPage)Activator.CreateInstance(typeof(TPage), ctorparms);
+            var page = sp.CreateWithDependenciesFromServices<TPage>()
+                ?? throw new ArgumentException($"Cannot create page {typeof(TPage).Name}");
             
             return action(page);
         });
@@ -225,5 +231,50 @@ public class SliceFixture : IAsyncLifetime
     {
         _factory?.Dispose();
         return Task.CompletedTask;
+    }
+}
+
+public class ScopedPageExecutor<T> where T : class
+{
+    private IServiceScopeFactory scopeFactory;
+
+    public ScopedPageExecutor(IServiceScopeFactory scopeFactory) => this.scopeFactory = scopeFactory;
+
+    internal async Task<TResult> Execute<TResult>(Func<T, Task<TResult>> action)
+    {
+        using var scope = scopeFactory.CreateScope();
+
+        var page = scope.ServiceProvider.CreateWithDependenciesFromServices<T>()
+                ?? throw new ArgumentException($"Cannot create page {typeof(T).Name}");
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
+
+        try
+        {
+            await dbContext.Database.BeginTransactionAsync();
+
+            var result = await action(page);
+
+            await dbContext.Database.CommitTransactionAsync();
+
+            return result;
+        }
+        catch (Exception)
+        {
+            dbContext.Database.RollbackTransaction();
+            throw;
+        }
+    }
+}
+
+public static class ServiceCollectionExtensions
+{
+    public static T? CreateWithDependenciesFromServices<T>(this IServiceProvider services) where T : class
+    {
+        var ctorparms = typeof(T).GetConstructors().First().GetParameters().Select(p => services.GetRequiredService(p.ParameterType)).ToArray();
+
+        var page = Activator.CreateInstance(typeof(T), ctorparms) as T;
+
+        return page;
     }
 }
