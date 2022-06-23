@@ -3,6 +3,7 @@ using Domain.Search;
 using Infrastructure;
 using Infrastructure.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
@@ -10,8 +11,14 @@ namespace UI.Pages.FindTuition
 {
     public class Search : PageModel
     {
-        public void OnGet()
+        private readonly IMediator mediator;
+
+        public Search(IMediator mediator) => this.mediator = mediator;
+
+        public async Task<IActionResult> OnGet()
         {
+            var search = await mediator.Send(new Command());
+            return RedirectToPage("Location", new { search.SearchId });
         }
 
         public record Command : IRequest<TuitionPartnerSearchRequestBuilder>

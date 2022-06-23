@@ -44,8 +44,22 @@ public class SliceFixture : IAsyncLifetime
                 {
                     options.UseSqlite($"Data Source={db}");
                 });
+
+                services.AddMvc().AddControllersAsServices();
             });
         }
+    }
+
+    public Task<TResult> GetPage<TPage, TResult>(Func<TPage, Task<TResult>> action) where TPage : notnull
+    {
+        return ExecuteScopeAsync(sp =>
+        {
+            var ctorparms = typeof(TPage).GetConstructors().First().GetParameters().Select(p => sp.GetRequiredService(p.ParameterType)).ToArray();
+
+            var page = (TPage)Activator.CreateInstance(typeof(TPage), ctorparms);
+            
+            return action(page);
+        });
     }
 
     public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
