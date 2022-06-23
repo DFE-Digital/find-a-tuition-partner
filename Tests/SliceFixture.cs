@@ -1,8 +1,9 @@
-﻿using Infrastructure;
+using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Tests.Utilities;
 
 namespace Tests;
 
