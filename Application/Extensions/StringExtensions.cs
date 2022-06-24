@@ -12,6 +12,8 @@ public static class StringExtensions
 
         var spacesToDash = withSpaces.Replace(' ', '-');
 
-        return spacesToDash.ToLower();
+        var withoutDashAfterSeparator = spacesToDash.Replace("/-", "/");
+
+        return withoutDashAfterSeparator.ToLower();
     }
 }

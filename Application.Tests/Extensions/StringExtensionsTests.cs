@@ -69,4 +69,17 @@ public class StringExtensionsTests
 
         value.ToSeoUrl().Should().Be("search-id");
     }
+
+    [Theory]
+    [InlineData("Find/Location", "find/location")]
+    [InlineData("find/location", "find/location")]
+    [InlineData("FindPage/LocationSearch", "find-page/location-search")]
+    [InlineData("find-page/location-search", "find-page/location-search")]
+    [InlineData("Find/FindAnNTPApprovedTuitionPartner", "find/find-an-ntp-approved-tuition-partner")]
+    [InlineData("Find/FindATuitionPartner", "find/find-a-tuition-partner")]
+    [InlineData("Find/FindATuitionPartner ", "find/find-a-tuition-partner")]
+    public void ToSeoUrl_ReturnsKebabCase_WhenDirectory(string camel, string kebab)
+    {
+        camel.ToSeoUrl().Should().Be(kebab);
+    }
 }
