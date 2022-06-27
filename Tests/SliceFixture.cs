@@ -231,7 +231,13 @@ public class SliceFixture : IAsyncLifetime
         });
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public Task ResetDatabase() => ExecuteDbContextAsync(db =>
+    {
+        db.Subjects.RemoveRange(db.Subjects);
+        return db.SaveChangesAsync();
+    });
+
+    public Task InitializeAsync() => ResetDatabase();
 
     public Task DisposeAsync()
     {
