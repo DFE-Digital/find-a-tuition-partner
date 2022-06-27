@@ -1,0 +1,35 @@
+﻿@page
+@model KeyStages
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Find a Tuition Partner - Key stages";
+}
+
+<govuk-back-link asp-action="Location" />
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.KeyStages" />
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">Which key stages do you need tutoring support for?</h1>
+        <p class="govuk-body">Select all of the key stages that apply</p>
+
+        <form method="post">
+            <govuk-checkboxes asp-for="Data.KeyStages">
+                @foreach (var item in @Model.Data.AllKeyStages)
+                {
+                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Continue</govuk-button>
+            </div>
+
+            <input asp-for="Data.Postcode" hidden />
+            <input asp-for="Data.Subjects" hidden />
+        </form>
+    </div>
+</div>
