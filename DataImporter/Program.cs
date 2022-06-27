@@ -1,14 +1,12 @@
 ﻿using Infrastructure.Importers;
 
-    if (Directory.Exists(@"C:\Farsight"))
+if (Directory.Exists(@"C:\Farsight"))
+{
+    // Get only xlsx files from directory.
+    string[] dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
+
+    foreach (string fileName in dirs)
     {
-        // Get only xlsx files from directory.
-        string[] dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
-
-        foreach (string fileName in dirs)
-        {
-            var test = new NtpTutionPartnerExcelImporter();
-        }
+        var importer = new NtpTutionPartnerExcelImporter();
     }
-
-
+}
