@@ -9,11 +9,10 @@
 	<div class="govuk-grid-column-full">
 		
 		<govuk-error-summary>
-@*			<govuk-error-summary-item asp-for="SearchId" />
-			<govuk-error-summary-item asp-for="LocationSearchViewModel.Postcode" />
-			<govuk-error-summary-item asp-for="SubjectsSearchViewModel.SubjectIds" />
-			<govuk-error-summary-item asp-for="TuitionTypeSearchViewModel.TuitionTypeId" />
-*@		</govuk-error-summary>
+			<govuk-error-summary-item asp-for="Data.Postcode" />
+			<govuk-error-summary-item asp-for="Data.Subjects" />
+			<govuk-error-summary-item asp-for="Data.TuitionTypes" />
+		</govuk-error-summary>
 		
 @*		@if (Model.SearchResultsPage != null)
 		{
@@ -25,13 +24,18 @@
 
 <div class="govuk-grid-row">
 	
-	<form method="post">
+	<form>
 
 		<div class="govuk-grid-column-one-third">
 			<div class="app-results-filter" data-module="results-filter">
 				<h2 class="govuk-heading-m">Filter results</h2>
 				
 				<govuk-checkboxes asp-for="Data.Subjects">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							Subjects
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
 					@foreach (var item in @Model.Data.AllSubjects)
 					{
 						<govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>

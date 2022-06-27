@@ -1,6 +1,7 @@
 using Application;
 using Application.Handlers;
 using Domain.Search;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,17 +15,14 @@ public class Results : PageModel
 
     public Results(IMediator mediator) => this.mediator = mediator;
 
-    [BindProperty]
+    [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new();
 
-    public async Task OnGet(Query query)
+    public async Task OnGet()
     {
-        Data = await mediator.Send(query);
+        if (!ModelState.IsValid) return; 
+        Data = await mediator.Send(Data);
     }
-
-    //public void OnPost()
-    //{
-    //}
 
     public record Query : SearchModel, IRequest<Command>
     {
@@ -32,7 +30,7 @@ public class Results : PageModel
         public Query(SearchModel query) : base(query) { }
     }
 
-    public record Command : SearchModel, IRequest<SearchModel>
+    public record Command : SearchModel, IRequest<Command>
     {
         public Command() { }
         public Command(SearchModel query) : base(query) { }
@@ -42,7 +40,25 @@ public class Results : PageModel
         public TuitionPartnerSearchResultsPage? Results { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, Command>
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(m => m.Postcode)
+                .NotEmpty()
+                .WithMessage("Enter a postcode");
+
+            RuleFor(m => m.Postcode)
+                .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
+                .WithMessage("Enter a valid postcode");
+
+            RuleFor(m => m.Subjects)
+                .NotEmpty()
+                .WithMessage("Select the subject or subjects");
+        }
+    }
+
+    public class Handler : IRequestHandler<Command, Command>
     {
         private readonly ILocationFilterService locationService;
         private readonly INtpDbContext db;
@@ -55,9 +71,9 @@ public class Results : PageModel
             this.mediator = mediator;
         }
 
-        public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (request.Postcode == null) throw new FluentValidation.ValidationException("Enter a postcode");
+            //if (request.Postcode == null) throw new FluentValidation.ValidationException("Enter a postcode");
             var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode);
             var subjects = await db.Subjects.Where(s => request.Subjects.Contains(s.Name)).ToListAsync(cancellationToken);
 
@@ -70,7 +86,7 @@ public class Results : PageModel
                 SubjectIds = subjects.Select(x => x.Id),
             };
 
-            return new()
+            return new(request)
             {
                 AllSubjects = allSubjects.AllSubjects,
                 Results = await mediator.Send(cmd, cancellationToken),
