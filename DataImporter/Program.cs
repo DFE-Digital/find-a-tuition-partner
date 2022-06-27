@@ -7,6 +7,6 @@ if (Directory.Exists(@"C:\Farsight"))
 
     foreach (string fileName in dirs)
     {
-        var importer = new NtpTutionPartnerExcelImporter();
+        NtpTutionPartnerExcelImporter.Import(fileName);
     }
 }

@@ -1,15 +1,42 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Domain;
 
 namespace Infrastructure.Importers
 {
     public class NtpTutionPartnerExcelImporter
     {
+
+        public static void Import(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                // Retrieve the value in cell A1.
+                string name = GetCellValue(fileName, "General information", "C3");
+                Console.WriteLine(name);
+
+                // Retrieve the value in cell A1.
+                string address = GetCellValue(fileName, "General information", "C4");
+                Console.WriteLine(address);
+
+                // Retrieve the value in cell A1.
+                string description = GetCellValue(fileName, "General information", "C15");
+                Console.WriteLine(description);
+
+                Console.WriteLine("**********************************");
+
+                var tuitionPartner = new TuitionPartner
+                {
+                    Name = name,
+                    Website = address,
+                    Description = description
+                };
+
+
+            }
+        }
+    
+
         private static string GetCellValue(string fileName,
                                           string sheetName,
                                           string addressName)
