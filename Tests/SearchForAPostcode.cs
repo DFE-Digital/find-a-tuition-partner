@@ -10,9 +10,9 @@ namespace Tests;
 [Collection(nameof(SliceFixture))]
 public class SearchForAPostcode
 {
-    private readonly SliceFixture fixture;
+    private readonly SliceFixture _fixture;
 
-    public SearchForAPostcode(SliceFixture fixture) => this.fixture = fixture;
+    public SearchForAPostcode(SliceFixture fixture) => _fixture = fixture;
 
     [Theory]
     [InlineData("")]
@@ -40,10 +40,10 @@ public class SearchForAPostcode
     [InlineData("AA0 0AA")]
     public async void With_a_postcode_that_is_not_found(string postcode)
     {
-        fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
+        _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(null as LocationFilterParameters);
 
-        await fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotFoundException>();
     }
 
@@ -52,10 +52,10 @@ public class SearchForAPostcode
     [InlineData("DD1 4NP", "Scotland")]
     public async void With_a_postcode_outside_of_England(string postcode, string country)
     {
-        fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
+        _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(new LocationFilterParameters { Country = country });
 
-        await fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotAvailableException>();
     }
 
@@ -64,14 +64,14 @@ public class SearchForAPostcode
     [InlineData("DD1 4NP")]
     public async void With_a_postcode_that_cannot_be_mapped(string postcode)
     {
-        fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
+        _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(new LocationFilterParameters
             {
                 Country = "England",
                 LocalAuthorityDistrictCode = null,
             });
 
-        await fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotMappedException>();
     }
 
@@ -80,14 +80,14 @@ public class SearchForAPostcode
     [InlineData("DD1 4NP")]
     public async void With_a_valid_postcode(string postcode)
     {
-        fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
+        _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(new LocationFilterParameters
             {
                 Country = "England",
                 LocalAuthorityDistrictCode = "ebcdic",
             });
 
-        var result = await fixture.GetPage<Location>().Execute(page =>
+        var result = await _fixture.GetPage<Location>().Execute(page =>
         {
             page.Data.Postcode = postcode;
             return page.OnPost();

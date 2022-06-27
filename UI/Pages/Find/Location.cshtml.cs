@@ -10,8 +10,8 @@ namespace UI.Pages.Find;
 
 public partial class Location : PageModel
 {
-    private readonly IMediator mediator;
-    public Location(IMediator mediator) => this.mediator = mediator;
+    private readonly IMediator _mediator;
+    public Location(IMediator mediator) => _mediator = mediator;
 
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new Command();
@@ -24,7 +24,7 @@ public partial class Location : PageModel
 
         try
         {
-            return RedirectToPage("Subjects", await mediator.Send(Data));
+            return RedirectToPage("Subjects", await _mediator.Send(Data));
         }
         catch (LocationNotFoundException)
         {
