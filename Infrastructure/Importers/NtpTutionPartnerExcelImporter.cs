@@ -6,7 +6,6 @@ namespace Infrastructure.Importers
 {
     public class NtpTutionPartnerExcelImporter
     {
-
         public static void Import(string fileName)
         {
             if (File.Exists(fileName))
@@ -31,12 +30,9 @@ namespace Infrastructure.Importers
                     Website = address,
                     Description = description
                 };
-
-
             }
         }
     
-
         private static string GetCellValue(string fileName,
                                           string sheetName,
                                           string addressName)

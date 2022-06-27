@@ -1,12 +1,21 @@
-﻿using Infrastructure.Importers;
+﻿using Infrastructure.Extensions;
+using Infrastructure.Importers;
+using Microsoft.Extensions.Hosting;
+using Application;
+using DataImporter;
+using Microsoft.Extensions.DependencyInjection;
 
-if (Directory.Exists(@"C:\Farsight"))
-{
-    // Get only xlsx files from directory.
-    string[] dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
-
-    foreach (string fileName in dirs)
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
     {
-        NtpTutionPartnerExcelImporter.Import(fileName);
-    }
-}
+        services.AddNtpDbContext(hostContext.Configuration);
+        services.AddHostedService<DataImporterService>();
+    })
+    .Build();
+
+host.Run();
+
+//var result = host.Services.GetService(typeof (INtpDbContext));
+
+
+
