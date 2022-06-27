@@ -1,19 +1,31 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Domain;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Importers
 {
     public class NtpTutionPartnerExcelImporter
     {
-        public static void Import(string fileName)
+        public static void Import(string fileName, NtpDbContext dbContext, ILogger logger)
         {
             if (File.Exists(fileName))
             {
                 // Retrieve the value in cell A1.
                 string name = GetCellValue(fileName, "General information", "C3");
-                Console.WriteLine(name);
 
+                if (!String.IsNullOrEmpty(name))
+                {
+                    string[] Names = name.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+                    if (Names.Length > 1)
+                    {
+                        name = Names[0];
+                    }
+
+                    Console.WriteLine(name);
+                }
+                
                 // Retrieve the value in cell A1.
                 string address = GetCellValue(fileName, "General information", "C4");
                 Console.WriteLine(address);
@@ -24,11 +36,17 @@ namespace Infrastructure.Importers
 
                 Console.WriteLine("**********************************");
 
+                var test = dbContext.TuitionPartners.FirstOrDefault(e => e.Name == name);
+
+                if(test != null)
+                {
+                    Console.WriteLine($"Found partner id {test.Id} for {test.Name}");
+                }
+
                 var tuitionPartner = new TuitionPartner
                 {
                     Name = name,
-                    Website = address,
-                    Description = description
+                    Website = address
                 };
             }
         }

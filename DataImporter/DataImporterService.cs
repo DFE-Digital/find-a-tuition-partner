@@ -24,16 +24,17 @@ namespace DataImporter
             using (var scope = _scopeFactory.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
-            }
 
-            if (Directory.Exists(@"C:\Farsight"))
-            {
-                // Get only xlsx files from directory.
-                string[] dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
 
-                foreach (string fileName in dirs)
+                if (Directory.Exists(@"C:\Farsight"))
                 {
-                    NtpTutionPartnerExcelImporter.Import(fileName);
+                    // Get only xlsx files from directory.
+                    string[] dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
+
+                    foreach (string fileName in dirs)
+                    {
+                        NtpTutionPartnerExcelImporter.Import(fileName, dbContext, _logger);
+                    }
                 }
             }
         }
