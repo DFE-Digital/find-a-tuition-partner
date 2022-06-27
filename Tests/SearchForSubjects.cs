@@ -1,6 +1,6 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Mvc;
-using UI.Pages.Find;
+using UI.Pages.FindATuitionPartner;
 
 namespace Tests;
 

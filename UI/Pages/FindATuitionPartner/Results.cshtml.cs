@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace UI.Pages.Find;
+namespace UI.Pages.FindATuitionPartner;
 
 public class Results : PageModel
 {
@@ -22,13 +22,9 @@ public class Results : PageModel
     public async Task OnGet()
     {
         Data = await mediator.Send(Data);
-        if(!Data.Validation.IsValid)
-        {
+        if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
-            {
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
-            }
-        }
     }
 
     public record Command : SearchModel, IRequest<Command>

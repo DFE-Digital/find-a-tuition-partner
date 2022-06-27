@@ -16,8 +16,8 @@ beforeEach(() => {
 })
 
 it('search Tutor Happy Path', () => {
-    cy.get('a[href*="/find-a-tuition-partner/start"]').click();
-    cy.get('input[name="Postcode"]').type('WF84SW')
+    cy.get('a[href*="/find-a-tuition-partner"]').click();
+    cy.get('input[name="Data.Postcode"]').type('WF84SW')
     cy.get('button').click()
     //To do Element Id Tags
     cy.contains('label', 'Primary - Literacy')  // find your text

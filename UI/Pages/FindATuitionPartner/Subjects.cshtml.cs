@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace UI.Pages.Find;
+namespace UI.Pages.FindATuitionPartner;
 
 public class Subjects : PageModel
 {

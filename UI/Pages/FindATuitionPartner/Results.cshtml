@@ -79,7 +79,7 @@
 				foreach (var item in Model.Data.Results.Results)
 				{
 					<div>
-						<h2><a asp-action="TuitionPartner" asp-route-id="@item.Id" class="govuk-link">@item.Name</a></h2>
+						<h2><a asp-page="TuitionPartner" asp-route-id="@item.Id" class="govuk-link">@item.Name</a></h2>
 						<govuk-summary-list>
 							<govuk-summary-list-row>
 								<govuk-summary-list-row-key>

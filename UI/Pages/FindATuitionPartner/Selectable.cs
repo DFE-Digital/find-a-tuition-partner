@@ -1,4 +1,4 @@
-﻿namespace UI.Pages.Find;
+﻿namespace UI.Pages.FindATuitionPartner;
 
 public class Selectable : Selectable<string> { }
 

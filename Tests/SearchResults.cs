@@ -2,7 +2,7 @@
 using Domain;
 using Domain.Search;
 using NSubstitute;
-using UI.Pages.Find;
+using UI.Pages.FindATuitionPartner;
 
 namespace Tests;
 

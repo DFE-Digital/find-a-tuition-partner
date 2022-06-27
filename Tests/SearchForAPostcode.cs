@@ -3,7 +3,7 @@ using Domain.Search;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using UI.Pages.Find;
+using UI.Pages.FindATuitionPartner;
 
 namespace Tests;
 

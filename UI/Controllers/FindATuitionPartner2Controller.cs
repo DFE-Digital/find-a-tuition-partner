@@ -9,13 +9,13 @@ using Application.Repositories;
 namespace UI.Controllers;
 
 [Route("[controller]/[action]")]
-public class FindATuitionPartnerController : Controller
+public class FindATuitionPartner2Controller : Controller
 {
     private readonly ISender _sender;
     private readonly ISearchRequestBuilderRepository _searchRequestBuilderRepository;
     private readonly ILookupDataRepository _lookupDataRepository;
 
-    public FindATuitionPartnerController(ISender sender, ISearchRequestBuilderRepository searchRequestBuilderRepository, ILookupDataRepository lookupDataRepository)
+    public FindATuitionPartner2Controller(ISender sender, ISearchRequestBuilderRepository searchRequestBuilderRepository, ILookupDataRepository lookupDataRepository)
     {
         _sender = sender;
         _searchRequestBuilderRepository = searchRequestBuilderRepository;
