@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
 
-namespace UI.Pages.FindTuition
+namespace UI.Pages.Find
 {
     public class Search : PageModel
     {

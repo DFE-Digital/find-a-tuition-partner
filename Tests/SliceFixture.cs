@@ -1,8 +1,10 @@
+using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Tests.Utilities;
 
 namespace Tests;
@@ -18,26 +20,26 @@ public class SliceFixtureCollection : ICollectionFixture<SliceFixture>
 public class SliceFixture : IAsyncLifetime
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly NtpApplicationFactory _factory;
 
     public SliceFixture()
     {
-        _factory = new ContosoTestApplicationFactory();
-
+        _factory = new NtpApplicationFactory();
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
-    private class ContosoTestApplicationFactory
+    public ILocationFilterService LocationFilter => _factory.LocationFilter;
+
+    private class NtpApplicationFactory
         : WebApplicationFactory<Program>
     {
+        public ILocationFilterService LocationFilter { get; } = Substitute.For<ILocationFilterService>();
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(services =>
             {
-                var descriptor = services.Single(
-                    d => d.ServiceType == typeof(DbContextOptions<NtpDbContext>));
-
-                services.Remove(descriptor);
+                services.Remove<DbContextOptions<NtpDbContext>>();
 
                 var db = Guid.NewGuid().ToString();
 
@@ -45,6 +47,9 @@ public class SliceFixture : IAsyncLifetime
                 {
                     options.UseSqlite($"Data Source={db}");
                 });
+
+                services.Remove<ILocationFilterService>();
+                services.AddSingleton(LocationFilter);
 
                 services.AddMvc().AddControllersAsServices();
             });
@@ -64,7 +69,7 @@ public class SliceFixture : IAsyncLifetime
 
             var page = sp.CreateWithDependenciesFromServices<TPage>()
                 ?? throw new ArgumentException($"Cannot create page {typeof(TPage).Name}");
-            
+
             return action(page);
         });
     }
@@ -265,17 +270,5 @@ public class ScopedPageExecutor<T> where T : class
             dbContext.Database.RollbackTransaction();
             throw;
         }
-    }
-}
-
-public static class ServiceCollectionExtensions
-{
-    public static T? CreateWithDependenciesFromServices<T>(this IServiceProvider services) where T : class
-    {
-        var ctorparms = typeof(T).GetConstructors().First().GetParameters().Select(p => services.GetRequiredService(p.ParameterType)).ToArray();
-
-        var page = Activator.CreateInstance(typeof(T), ctorparms) as T;
-
-        return page;
     }
 }

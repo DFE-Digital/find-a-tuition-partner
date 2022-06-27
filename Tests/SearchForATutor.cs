@@ -1,6 +1,6 @@
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
-using UI.Pages.FindTuition;
+using UI.Pages.Find;
 
 namespace Tests;
 
