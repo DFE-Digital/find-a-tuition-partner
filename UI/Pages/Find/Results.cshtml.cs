@@ -2,6 +2,7 @@ using Application;
 using Application.Handlers;
 using Domain.Search;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,14 +21,14 @@ public class Results : PageModel
 
     public async Task OnGet()
     {
-        if (!ModelState.IsValid) return; 
         Data = await mediator.Send(Data);
-    }
-
-    public record Query : SearchModel, IRequest<Command>
-    {
-        public Query() { }
-        public Query(SearchModel query) : base(query) { }
+        if(!Data.Validation.IsValid)
+        {
+            foreach (var error in Data.Validation.Errors)
+            {
+                ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
+            }
+        }
     }
 
     public record Command : SearchModel, IRequest<Command>
@@ -35,12 +36,13 @@ public class Results : PageModel
         public Command() { }
         public Command(SearchModel query) : base(query) { }
         public IEnumerable<Selectable> AllSubjects { get; set; } = new List<Selectable>();
-        public IEnumerable<Selectable> AllTuitionTypes { get; set; } = new List<Selectable>();
+        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
+        public ValidationResult Validation { get; internal set; } = new ValidationResult();
     }
 
-    public class Validator : AbstractValidator<Query>
+    private class Validator : AbstractValidator<Command>
     {
         public Validator()
         {
@@ -73,23 +75,36 @@ public class Results : PageModel
 
         public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
         {
-            //if (request.Postcode == null) throw new FluentValidation.ValidationException("Enter a postcode");
-            var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode);
-            var subjects = await db.Subjects.Where(s => request.Subjects.Contains(s.Name)).ToListAsync(cancellationToken);
+            var validator = new Validator();
+            var validationResults = await validator.ValidateAsync(request, cancellationToken);
 
             var allSubjects = await mediator.Send(new Subjects.Query { Subjects = request.Subjects }, cancellationToken);
 
-            var cmd = new SearchTuitionPartnerHandler.Command
+            TuitionPartnerSearchResultsPage? results = null;
+
+            if (validationResults.IsValid)
             {
-                OrderBy = TuitionPartnerOrderBy.Name,
-                LocalAuthorityDistrictCode = loc.LocalAuthorityDistrictCode,
-                SubjectIds = subjects.Select(x => x.Id),
-            };
+                var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
+
+                var subjects = await db.Subjects.Where(s => request.Subjects.Contains(s.Name)).ToListAsync(cancellationToken);
+
+                var cmd = new SearchTuitionPartnerHandler.Command
+                {
+                    OrderBy = TuitionPartnerOrderBy.Name,
+                    LocalAuthorityDistrictCode = loc?.LocalAuthorityDistrictCode,
+                    SubjectIds = subjects.Select(x => x.Id),
+                    TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+                };
+
+                results = await mediator.Send(cmd, cancellationToken);
+            }
 
             return new(request)
             {
                 AllSubjects = allSubjects.AllSubjects,
-                Results = await mediator.Send(cmd, cancellationToken),
+                Results = results,
+                Validation = validationResults,
+                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InPerson, TuitionType.Online },
             };
         }
     }

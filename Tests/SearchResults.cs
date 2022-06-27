@@ -29,7 +29,7 @@ public class SearchResults : IAsyncLifetime
                 new Region { Code = "-", Name = "-", }
                 );
 
-            db.TuitionTypes.Add(new TuitionType { Name = "In Person" });
+            db.TuitionTypes.Add(new Domain.TuitionType { Name = "In Person" });
 
             db.Subjects.Add(new Subject { Name = "English" });
 
@@ -72,9 +72,14 @@ public class SearchResults : IAsyncLifetime
             await db.SaveChangesAsync();
         });
 
-        var result = await fixture.SendAsync(new Results.Query { Postcode = "-", Subjects = new[] { "x" } });
+        var result = await fixture.SendAsync(new Results.Command
+        {
+            Postcode = "AB00BA",
+            Subjects = new[] { "English" } 
+        });
 
-        result.Results.Results.Should().BeEquivalentTo(new[]
+        result.Results.Should().NotBeNull();
+        result.Results!.Results.Should().BeEquivalentTo(new[]
         {
             new { Name = "Alpha" },
         });

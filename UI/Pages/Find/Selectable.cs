@@ -1,7 +1,9 @@
 ﻿namespace UI.Pages.Find;
 
-public class Selectable
+public class Selectable : Selectable<string> { }
+
+public class Selectable<T>
 {
-    public string? Name { get; set; }
+    public T? Name { get; set; }
     public bool Selected { get; set; }
 }

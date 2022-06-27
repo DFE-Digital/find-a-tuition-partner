@@ -11,7 +11,6 @@
 		<govuk-error-summary>
 			<govuk-error-summary-item asp-for="Data.Postcode" />
 			<govuk-error-summary-item asp-for="Data.Subjects" />
-			<govuk-error-summary-item asp-for="Data.TuitionTypes" />
 		</govuk-error-summary>
 		
 @*		@if (Model.SearchResultsPage != null)
@@ -44,16 +43,15 @@
 					
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-				<govuk-radios asp-for="Data.TuitionTypes">
+				<govuk-radios asp-for="Data.TuitionType">
 					<govuk-radios-fieldset>
 						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
 							Type of tuition
 						</govuk-radios-fieldset-legend>
 					</govuk-radios-fieldset>
-					<govuk-radios-item value="@null">Any</govuk-radios-item>
 					@foreach (var item in @Model.Data.AllTuitionTypes)
 					{
-						<govuk-radios-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-radios-item>
+						<govuk-radios-item value="@item" checked="@item == @Model.Data.TuitionType">@item</govuk-radios-item>
 					}
 				</govuk-radios>
 
