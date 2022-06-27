@@ -15,7 +15,6 @@ IHost host = Host.CreateDefaultBuilder(args)
 
 host.Run();
 
-//var result = host.Services.GetService(typeof (INtpDbContext));
 
 
 
