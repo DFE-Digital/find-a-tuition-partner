@@ -11,4 +11,5 @@ public record SearchModel
     public string? Postcode { get; set; }
 
     public IEnumerable<string> Subjects { get; set; } = new List<string>();
+    public IEnumerable<string> TuitionTypes { get; set; } = new List<string>();
 }

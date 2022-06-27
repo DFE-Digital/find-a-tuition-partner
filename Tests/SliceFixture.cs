@@ -119,17 +119,11 @@ public class SliceFixture : IAsyncLifetime
     public Task ExecuteDbContextAsync(Func<NtpDbContext, Task> action)
         => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()));
 
-    public Task ExecuteDbContextAsync(Func<NtpDbContext, ValueTask> action)
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()).AsTask());
-
     public Task ExecuteDbContextAsync(Func<NtpDbContext, IMediator, Task> action)
         => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>(), sp.GetRequiredService<IMediator>()));
 
     public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, Task<T>> action)
         => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()));
-
-    public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, ValueTask<T>> action)
-        => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>()).AsTask());
 
     public Task<T> ExecuteDbContextAsync<T>(Func<NtpDbContext, IMediator, Task<T>> action)
         => ExecuteScopeAsync(sp => action(sp.GetRequiredService<NtpDbContext>(), sp.GetRequiredService<IMediator>()));
@@ -234,6 +228,7 @@ public class SliceFixture : IAsyncLifetime
     public Task ResetDatabase() => ExecuteDbContextAsync(db =>
     {
         db.Subjects.RemoveRange(db.Subjects);
+        db.TuitionPartnerCoverage.RemoveRange(db.TuitionPartnerCoverage);
         return db.SaveChangesAsync();
     });
 
