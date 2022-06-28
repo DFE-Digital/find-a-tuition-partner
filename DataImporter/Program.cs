@@ -1,7 +1,5 @@
 ﻿using Infrastructure.Extensions;
-using Infrastructure.Importers;
 using Microsoft.Extensions.Hosting;
-using Application;
 using DataImporter;
 using Microsoft.Extensions.DependencyInjection;
 

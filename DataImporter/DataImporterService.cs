@@ -1,10 +1,9 @@
-﻿using Infrastructure.Extensions;
-using Infrastructure.Importers;
+﻿using Infrastructure.Importers;
 using Microsoft.Extensions.Hosting;
-using Application;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataImporter
 {
@@ -25,6 +24,7 @@ namespace DataImporter
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
 
+                dbContext.Database.Migrate();
 
                 if (Directory.Exists(@"C:\Farsight"))
                 {
@@ -34,6 +34,7 @@ namespace DataImporter
                     foreach (string fileName in dirs)
                     {
                         NtpTutionPartnerExcelImporter.Import(fileName, dbContext, _logger);
+                        await dbContext.SaveChangesAsync(cancellationToken);
                     }
                 }
             }

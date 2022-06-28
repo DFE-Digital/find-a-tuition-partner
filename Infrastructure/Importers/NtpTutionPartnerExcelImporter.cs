@@ -41,12 +41,15 @@ namespace Infrastructure.Importers
                 if(test != null)
                 {
                     Console.WriteLine($"Found partner id {test.Id} for {test.Name}");
-                }
+
+                    test.Description = description;
+                } 
 
                 var tuitionPartner = new TuitionPartner
                 {
                     Name = name,
-                    Website = address
+                    Website = address,
+                    Description = description
                 };
             }
         }
