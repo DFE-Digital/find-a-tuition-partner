@@ -10,11 +10,13 @@ namespace DataImporter;
 
 public class DataImporterService : IHostedService
 {
+    private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public DataImporterService(ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
+    public DataImporterService(IHostApplicationLifetime host, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
     {
+        _host = host;
         _logger = logger;
         _scopeFactory = scopeFactory;
     }
@@ -66,6 +68,8 @@ public class DataImporterService : IHostedService
                 _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {fileName}");
             }
         }
+
+        _host.StopApplication();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
