@@ -10,7 +10,45 @@ namespace Infrastructure.Factories;
 public class OpenXmlFactory
 {
     private const string GeneralInformationSheetName = "General information";
+    private const string PricingSheetName = "Pricing, Key Stage and SEN";
     private const string LocationSheetName = "Location of Tuition Provision";
+
+    private static readonly IDictionary<(int, int), (string, int)> SubjectPricesCellReference = new Dictionary<(int, int), (string, int)>
+        {
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Literacy), ("C", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Numeracy), ("D", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Science), ("E", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Literacy), ("F", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Numeracy), ("G", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Science), ("H", 15) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3English), ("C", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Humanities), ("D", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Maths), ("E", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Science), ("G", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4English), ("H", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Humanities), ("I", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Maths), ("J", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 25) },
+            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Science), ("K", 25) },
+
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Literacy), ("C", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Numeracy), ("D", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Science), ("E", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Literacy), ("F", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Numeracy), ("G", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Science), ("H", 35) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3English), ("C", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Humanities), ("D", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Maths), ("E", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Science), ("G", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4English), ("H", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Humanities), ("I", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Maths), ("J", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 46) },
+            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
+        };
 
     public static TuitionPartner? GetTuitionPartner(ILogger logger, FileStream fileStream, NtpDbContext dbContext)
     {
