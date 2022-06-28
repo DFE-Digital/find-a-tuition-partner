@@ -43,14 +43,19 @@ namespace Infrastructure.Importers
                     Console.WriteLine($"Found partner id {test.Id} for {test.Name}");
 
                     test.Description = description;
-                } 
-
-                var tuitionPartner = new TuitionPartner
+                }
+                else
                 {
-                    Name = name,
-                    Website = address,
-                    Description = description
-                };
+                    var tuitionPartner = new TuitionPartner
+                    {
+                        Name = name,
+                        Website = address,
+                        Description = description
+                    };
+
+                    dbContext.TuitionPartners.Add(tuitionPartner);
+                    logger.LogWarning($"Added tuition partner {tuitionPartner.Name} with id of {tuitionPartner.Id}");
+                }
             }
         }
     
