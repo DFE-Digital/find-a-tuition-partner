@@ -5,7 +5,7 @@ public class TuitionPartner
     public TuitionPartner()
     {
         Coverage = new List<TuitionPartnerCoverage>();
-
+        Prices = new List<Price>();
     }
 
     public int Id { get; set; }
@@ -13,4 +13,5 @@ public class TuitionPartner
     public string Website { get; set; } = null!;
     public string Description { get; set; } = string.Empty;
     public ICollection<TuitionPartnerCoverage> Coverage { get; set; }
+    public ICollection<Price> Prices { get; set; }
 }
