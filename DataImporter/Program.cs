@@ -11,4 +11,4 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-host.RunAsync();
+await host.RunAsync();

@@ -27,7 +27,7 @@ public class DataImporterService : IHostedService
 
         //Drop and recreate database each time this is run? No need for deltas? Yes - that seems simpler and more testable
         //await dbContext.Database.EnsureDeletedAsync(cancellationToken);
-        dbContext.Database.Migrate();
+        await dbContext.Database.MigrateAsync(cancellationToken);
 
         //Replace with files in code
         //Files in code should be encrypted - use some kind of CLI syntax for this tool e.g. dataimporter prepare, dataimporter apply
@@ -68,7 +68,8 @@ public class DataImporterService : IHostedService
         }
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
+        return Task.CompletedTask;
     }
 }

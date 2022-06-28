@@ -115,10 +115,10 @@ public class OpenXmlFactory
     private static bool GetBooleanCellValue(WorkbookPart wbPart, string sheetName, string addressName)
     {
         var value = GetCellValue(wbPart, sheetName, addressName);
-        return value.StartsWith("Y");
+        return value != null && value.StartsWith("Y");
     }
 
-    private static string GetCellValue(WorkbookPart wbPart, string sheetName, string addressName)
+    private static string? GetCellValue(WorkbookPart wbPart, string sheetName, string addressName)
     {
         string value = null;
 
