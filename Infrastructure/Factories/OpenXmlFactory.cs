@@ -42,7 +42,29 @@ public class OpenXmlFactory
         var inPersonLads = GetLocalAuthorityDistricts(dbContext, isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
         var onlineLads = GetLocalAuthorityDistricts(dbContext, isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
 
-        //tuitionPartner.Coverage = TuitionPartnerCoverageFactory.GetCoverage(isInPersonNationwide, isOnlineNationwide, inPersonRegions, onlineRegions, inPersonLocalAuthorityDistricts, onlineLocalAuthorityDistricts);
+        foreach (var localAuthorityDistrict in inPersonLads)
+        {
+            tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
+            {
+                TuitionPartner = tuitionPartner,
+                LocalAuthorityDistrictId = localAuthorityDistrict.Id,
+                LocalAuthorityDistrict = localAuthorityDistrict,
+                TuitionTypeId = TuitionTypes.Id.InPerson,
+                PrimaryLiteracy = true
+            });
+        }
+
+        foreach (var localAuthorityDistrict in onlineLads)
+        {
+            tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
+            {
+                TuitionPartner = tuitionPartner,
+                LocalAuthorityDistrictId = localAuthorityDistrict.Id,
+                LocalAuthorityDistrict = localAuthorityDistrict,
+                TuitionTypeId = TuitionTypes.Id.Online,
+                PrimaryNumeracy = true
+            });
+        }
 
         return tuitionPartner;
     }
@@ -115,12 +137,12 @@ public class OpenXmlFactory
     private static bool GetBooleanCellValue(WorkbookPart wbPart, string sheetName, string addressName)
     {
         var value = GetCellValue(wbPart, sheetName, addressName);
-        return value != null && value.StartsWith("Y");
+        return value.StartsWith("Y");
     }
 
-    private static string? GetCellValue(WorkbookPart wbPart, string sheetName, string addressName)
+    private static string GetCellValue(WorkbookPart wbPart, string sheetName, string addressName)
     {
-        string value = null;
+        string value = "";
 
         // Find the sheet with the supplied name, and then use that 
         // Sheet object to retrieve a reference to the first worksheet.
