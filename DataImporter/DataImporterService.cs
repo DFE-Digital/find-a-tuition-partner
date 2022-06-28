@@ -27,7 +27,7 @@ public class DataImporterService : IHostedService
 
         //Drop and recreate database each time this is run? No need for deltas? Yes - that seems simpler and more testable
         //await dbContext.Database.EnsureDeletedAsync(cancellationToken);
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        dbContext.Database.Migrate();
 
         //Replace with files in code
         //Files in code should be encrypted - use some kind of CLI syntax for this tool e.g. dataimporter prepare, dataimporter apply
@@ -45,7 +45,7 @@ public class DataImporterService : IHostedService
                 }
 
                 await using var fileStream = File.OpenRead(fileName);
-                var tuitionPartner = OpenXmlFactory.GetTuitionPartner(_logger, fileStream);
+                var tuitionPartner = OpenXmlFactory.GetTuitionPartner(_logger, fileStream, dbContext);
                 if (tuitionPartner == null)
                 {
                     _logger.LogError($"Could not create Tuition Partner from file {fileName}");
