@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Tests.Utilities;
 
-namespace Tests;
+namespace Tests.Utilities;
 
 [CollectionDefinition(nameof(SliceFixture))]
 public class SliceFixtureCollection : ICollectionFixture<SliceFixture>

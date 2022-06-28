@@ -5,25 +5,22 @@ using UI.Pages.FindATuitionPartner;
 namespace Tests;
 
 [Collection(nameof(SliceFixture))]
-public class SearchForSubjects : IAsyncLifetime
+public class SearchForSubjects : CleanSliceFixture
 {
-    private readonly SliceFixture fixture;
-
-    public SearchForSubjects(SliceFixture fixture) => this.fixture = fixture;
-
-    public Task InitializeAsync() => fixture.ResetDatabase();
-    public Task DisposeAsync() => Task.CompletedTask;
+    public SearchForSubjects(SliceFixture fixture) : base(fixture)
+    {
+    }
 
     [Fact]
     public async Task Displays_all_subjects_in_database()
     {
-        await fixture.InsertAsync(
+        await Fixture.InsertAsync(
             new Subject { Name = "English" },
             new Subject { Name = "Maths" },
             new Subject { Name = "Science" }
             );
 
-        var result = await fixture.SendAsync(new Subjects.Query());
+        var result = await Fixture.SendAsync(new Subjects.Query());
 
         result.AllSubjects.Should().BeEquivalentTo(new[]
         {
@@ -36,13 +33,13 @@ public class SearchForSubjects : IAsyncLifetime
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        await fixture.InsertAsync(
+        await Fixture.InsertAsync(
             new Subject { Name = "English" },
             new Subject { Name = "Maths" },
             new Subject { Name = "Science" }
             );
 
-        var result = await fixture.SendAsync(new Subjects.Query
+        var result = await Fixture.SendAsync(new Subjects.Query
         {
             Subjects = new[] { "English" }
         });
@@ -63,7 +60,7 @@ public class SearchForSubjects : IAsyncLifetime
             Postcode = "123456",
         };
 
-        var result = await fixture.SendAsync(query);
+        var result = await Fixture.SendAsync(query);
 
         result.Should().BeEquivalentTo(new
         {
@@ -74,7 +71,7 @@ public class SearchForSubjects : IAsyncLifetime
     [Fact]
     public async Task Updates_selection()
     {
-        var result = await fixture.GetPage<Subjects>().Execute(page =>
+        var result = await Fixture.GetPage<Subjects>().Execute(page =>
         {
             page.Data.Subjects = new List<string>
             {

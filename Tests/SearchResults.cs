@@ -1,5 +1,4 @@
-﻿using Application.Handlers;
-using Domain;
+﻿using Domain;
 using Domain.Search;
 using NSubstitute;
 using UI.Pages.FindATuitionPartner;
@@ -7,23 +6,17 @@ using UI.Pages.FindATuitionPartner;
 namespace Tests;
 
 [Collection(nameof(SliceFixture))]
-public class SearchResults : IAsyncLifetime
+public class SearchResults : CleanSliceFixture
 {
-    private readonly SliceFixture fixture;
-    public SearchResults(SliceFixture fixture) => this.fixture = fixture;
-
-    public Task InitializeAsync() => fixture.ResetDatabase();
-    public Task DisposeAsync() => Task.CompletedTask;
+    public SearchResults(SliceFixture fixture) : base(fixture) { }
 
     [Fact]
     public async Task Displays_all_tutor_types_in_database2()
     {
-        await ResetDatabase();
-
-        fixture.LocationFilter.GetLocationFilterParametersAsync(Arg.Any<string>())
+        Fixture.LocationFilter.GetLocationFilterParametersAsync(Arg.Any<string>())
             .Returns(new LocationFilterParameters { LocalAuthorityDistrictCode = "N1" });
 
-        await fixture.ExecuteDbContextAsync(async db =>
+        await Fixture.ExecuteDbContextAsync(async db =>
         {
             db.Regions.AddRange(
                 new Region { Code = "-", Name = "-", }
@@ -37,8 +30,8 @@ public class SearchResults : IAsyncLifetime
 
             db.LocalAuthorityDistricts.AddRange(
                 new LocalAuthorityDistrict
-                { 
-                    Code = "N1", 
+                {
+                    Code = "N1",
                     Name = "North-One",
                     Region = db.Regions.First(),
                     LocalAuthority = new LocalAuthority { Code = "A", Name = "-", Region = db.Regions.First() },
@@ -51,10 +44,10 @@ public class SearchResults : IAsyncLifetime
                     LocalAuthority = new LocalAuthority { Code = "B", Name = "-", Region = db.Regions.First() }
                 }
                 );
-            
+
             await db.SaveChangesAsync();
 
-            db.TuitionPartners.Add(new TuitionPartner
+            db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
                 Website = "-",
@@ -72,29 +65,16 @@ public class SearchResults : IAsyncLifetime
             await db.SaveChangesAsync();
         });
 
-        var result = await fixture.SendAsync(new Results.Command
+        var result = await Fixture.SendAsync(new Results.Command
         {
             Postcode = "AB00BA",
-            Subjects = new[] { "English" } 
+            Subjects = new[] { "English" }
         });
 
         result.Results.Should().NotBeNull();
         result.Results!.Results.Should().BeEquivalentTo(new[]
         {
             new { Name = "Alpha" },
-        });
-    }
-
-    private async Task ResetDatabase()
-    {
-        await fixture.ExecuteDbContextAsync(db =>
-        {
-            db.LocalAuthorityDistricts.RemoveRange(db.LocalAuthorityDistricts);
-            db.TuitionTypes.RemoveRange(db.TuitionTypes);
-            db.TuitionPartners.RemoveRange(db.TuitionPartners);
-            db.Regions.RemoveRange(db.Regions);
-            db.TutorTypes.RemoveRange(db.TutorTypes);
-            return db.SaveChangesAsync();
         });
     }
 }
