@@ -1,13 +1,10 @@
 using System.Text.Json.Serialization;
-using Application;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
-using Infrastructure;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.EntityFrameworkCore;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
@@ -49,17 +46,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    // This is fine for development and while we're spiking but an on demand migration run will be required for production
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
-    db.Database.Migrate();
-
-    var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
-    var localImporter = scope.ServiceProvider.GetRequiredService<ITuitionPartnerLocalRegionDataImporter>();
-    //importer.Import();
-    //Disabling the import file for local regions
-   // localImporter.Import();
-
     app.UseSwagger();
     app.UseSwaggerUI();
 }

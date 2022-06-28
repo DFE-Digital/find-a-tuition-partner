@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using DataImporter;
 using Microsoft.Extensions.DependencyInjection;
 
-IHost host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddNtpDbContext(hostContext.Configuration);
@@ -11,8 +11,4 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-host.Run();
-
-
-
-
+host.RunAsync();
