@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Tests", "Applic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Tests", "Infrastructure.Tests\Infrastructure.Tests.csproj", "{99F9DA69-1D32-4CDF-AD6B-63BBDFFE5035}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{8784C8A6-9F1B-447B-90E6-08485CB749BE}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataImporter", "DataImporter\DataImporter.csproj", "{0655ABE3-6759-4A0C-A6B0-0DED33470542}"
 EndProject
 Global
@@ -47,10 +49,6 @@ Global
 		{99F9DA69-1D32-4CDF-AD6B-63BBDFFE5035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99F9DA69-1D32-4CDF-AD6B-63BBDFFE5035}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99F9DA69-1D32-4CDF-AD6B-63BBDFFE5035}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0655ABE3-6759-4A0C-A6B0-0DED33470542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0655ABE3-6759-4A0C-A6B0-0DED33470542}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0655ABE3-6759-4A0C-A6B0-0DED33470542}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0655ABE3-6759-4A0C-A6B0-0DED33470542}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

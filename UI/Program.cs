@@ -56,7 +56,7 @@ if (app.Environment.IsDevelopment())
 
     var importer = scope.ServiceProvider.GetRequiredService<ITuitionPartnerDataImporter>();
     var localImporter = scope.ServiceProvider.GetRequiredService<ITuitionPartnerLocalRegionDataImporter>();
-    importer.Import();
+    //importer.Import();
     //Disabling the import file for local regions
    // localImporter.Import();
 
@@ -86,3 +86,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+public partial class Program { }
