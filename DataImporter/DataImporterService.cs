@@ -26,7 +26,7 @@ public class DataImporterService : IHostedService
         //dbContext.Database.d
 
         //Drop and recreate database each time this is run? No need for deltas? Yes - that seems simpler and more testable
-        //await dbContext.Database.EnsureDeletedAsync(cancellationToken);
+        await dbContext.Database.EnsureDeletedAsync(cancellationToken);
         await dbContext.Database.MigrateAsync(cancellationToken);
 
         //Replace with files in code
