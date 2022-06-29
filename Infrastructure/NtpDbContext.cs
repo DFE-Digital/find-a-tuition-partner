@@ -33,5 +33,4 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
     }
-
 }

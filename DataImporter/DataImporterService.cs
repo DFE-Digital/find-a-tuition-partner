@@ -1,4 +1,5 @@
-﻿using Domain.Validators;
+﻿using System.Reflection;
+using Domain.Validators;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,48 +26,43 @@ public class DataImporterService : IHostedService
     {
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
-        //dbContext.Database.d
 
         //Drop and recreate database each time this is run? No need for deltas? Yes - that seems simpler and more testable
         await dbContext.Database.EnsureDeletedAsync(cancellationToken);
         await dbContext.Database.MigrateAsync(cancellationToken);
 
-        //Replace with files in code
         //Files in code should be encrypted - use some kind of CLI syntax for this tool e.g. dataimporter prepare, dataimporter apply
-        if (Directory.Exists(@"C:\Farsight"))
+        var assembly = typeof(AssemblyReference).Assembly;
+
+        foreach (var resourceName in assembly.GetManifestResourceNames())
         {
-            // Get only xlsx files from directory.
-            var dirs = Directory.GetFiles(@"C:\Farsight", "*.xlsx");
-
-            foreach (var fileName in dirs)
+            await using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
             {
-                if (!File.Exists(fileName))
-                {
-                    _logger.LogError($"Tuition Partner file {fileName} not found");
-                    continue;
-                }
-
-                await using var fileStream = File.OpenRead(fileName);
-                var tuitionPartner = OpenXmlFactory.GetTuitionPartner(_logger, fileStream, dbContext);
-                if (tuitionPartner == null)
-                {
-                    _logger.LogError($"Could not create Tuition Partner from file {fileName}");
-                    continue;
-                }
-                        
-                var validator = new TuitionPartnerValidator();
-                var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
-                if (!results.IsValid)
-                {
-                    _logger.LogError($"Tuition Partner created from file {fileName} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
-                    continue;
-                }
-
-                dbContext.TuitionPartners.Add(tuitionPartner);
-                await dbContext.SaveChangesAsync(cancellationToken);
-
-                _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {fileName}");
+                _logger.LogError($"Tuition Partner resource name {resourceName} not found");
+                continue;
             }
+
+            _logger.LogInformation($"Attempting create Tuition Partner from resource name {resourceName}");
+            var tuitionPartner = OpenXmlFactory.GetTuitionPartner(_logger, stream, dbContext);
+            if (tuitionPartner == null)
+            {
+                _logger.LogError($"Could not create Tuition Partner from resource name {resourceName}");
+                continue;
+            }
+
+            var validator = new TuitionPartnerValidator();
+            var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
+            if (!results.IsValid)
+            {
+                _logger.LogError($"Tuition Partner created from resource name {resourceName} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
+                continue;
+            }
+
+            dbContext.TuitionPartners.Add(tuitionPartner);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from resource name {resourceName}");
         }
 
         _host.StopApplication();

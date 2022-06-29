@@ -402,6 +402,10 @@ UI/wwwroot/assets
 
 # Webpack bundled files
 UI/wwwroot/dist
-*.ncrunchsolution
 
+# NCrunch 
+*.ncrunchsolution
 Tests/Tests.v3.ncrunchproject
+
+# We want to conciously commit files that will be imported from this directory
+DataImporter/Data

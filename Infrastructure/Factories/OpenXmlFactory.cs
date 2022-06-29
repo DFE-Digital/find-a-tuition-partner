@@ -50,9 +50,9 @@ public class OpenXmlFactory
             { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
         };
 
-    public static TuitionPartner? GetTuitionPartner(ILogger logger, FileStream fileStream, NtpDbContext dbContext)
+    public static TuitionPartner? GetTuitionPartner(ILogger logger, Stream stream, NtpDbContext dbContext)
     {
-        using var document = SpreadsheetDocument.Open(fileStream, false);
+        using var document = SpreadsheetDocument.Open(stream, false);
 
         var workbookPart = document.WorkbookPart;
         if (workbookPart == null)
