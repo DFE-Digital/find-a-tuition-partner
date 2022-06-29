@@ -13,7 +13,7 @@ public class OpenXmlFactory
     private const string PricingSheetName = "Pricing, Key Stage and SEN";
     private const string LocationSheetName = "Location of Tuition Provision";
 
-    private static readonly IDictionary<(int, int), (string, int)> SubjectPricesCellReference = new Dictionary<(int, int), (string, int)>
+    private static readonly IDictionary<(int, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(int, int), (string, int)>
         {
             { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Literacy), ("C", 15) },
             { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Numeracy), ("D", 15) },
@@ -79,6 +79,32 @@ public class OpenXmlFactory
 
         var inPersonLads = GetLocalAuthorityDistricts(dbContext, isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
         var onlineLads = GetLocalAuthorityDistricts(dbContext, isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
+
+        var supportedSubjects = new HashSet<(int, int)>();
+
+
+        foreach(var cellReference in SubjectPricesCellReferences)
+        {
+            var prices = new decimal[6];
+            for (int i = 0; i < 6; i++)    
+            {
+                var addressName = $"{cellReference.Value.Item1}{cellReference.Value.Item2 + i}";
+
+                string cellPriceContent = GetCellValue(workbookPart, PricingSheetName, addressName);
+
+                if(decimal.TryParse(cellPriceContent, out var price))
+                {
+                    prices[i] = price;
+                }
+            }
+
+            bool isSubjectSupported = prices.Any(x => x > 0);
+
+            if (isSubjectSupported)
+            {
+                supportedSubjects.Add(cellReference.Key);
+            }
+        }
 
         foreach (var localAuthorityDistrict in inPersonLads)
         {
