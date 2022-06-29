@@ -7,20 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\tuition_partners_face_to_face_regions.csv" />
-    <None Remove="Data\tuition_partners_online_regions.csv" />
-	<None Remove="Data\tuition_partners_face_to_face_local_regions.csv" />
-	<None Remove="Data\tuition_partners_online_local_regions.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Data\tuition_partners_face_to_face_regions.csv" />
-    <EmbeddedResource Include="Data\tuition_partners_online_regions.csv" />
-	<EmbeddedResource Include="Data\tuition_partners_face_to_face_local_regions.csv" />
-	<EmbeddedResource Include="Data\tuition_partners_online_local_regions.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.16.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
@@ -31,6 +17,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

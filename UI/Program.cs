@@ -16,7 +16,6 @@ builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddSearchRequestBuilder();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
-builder.Services.AddRegionalTuitionPartnerData();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
