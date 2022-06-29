@@ -56,9 +56,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             var result = entity.Adapt<TuitionPartnerSearchResult>();
             result.Description = string.IsNullOrWhiteSpace(result.Description) ? $"{result.Name} description placeholder" : result.Description;
 
-            if (coverageDictionary.Count < result.Id) break;
-         
-            var coverage = coverageDictionary[result.Id];
+            if (!coverageDictionary.TryGetValue(result.Id, out var coverage)) break;
 
             var subjects = new List<Subject>();
             if (coverage.Any(e => e.PrimaryLiteracy)) subjects.Add(subjectDictionary[Subjects.Id.PrimaryLiteracy]);
