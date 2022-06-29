@@ -402,3 +402,6 @@ UI/wwwroot/assets
 
 # Webpack bundled files
 UI/wwwroot/dist
+*.ncrunchsolution
+
+Tests/Tests.v3.ncrunchproject
