@@ -16,7 +16,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Displays_all_key_stages()
     {
-        var result = await fixture.SendAsync(new KeyStages.Query());
+        var result = await fixture.SendAsync(new WhichKeyStages.Query());
 
         result.AllKeyStages.Should().BeEquivalentTo(new[]
         {
@@ -30,7 +30,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        var result = await fixture.SendAsync(new KeyStages.Query
+        var result = await fixture.SendAsync(new WhichKeyStages.Query
         {
             KeyStages = new[] { KeyStage.KeyStage1, KeyStage.KeyStage3 }
         });
@@ -47,7 +47,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Preserves_other_search_parameters()
     {
-        var query = new KeyStages.Query
+        var query = new WhichKeyStages.Query
         {
             Postcode = "123456",
         };
@@ -63,7 +63,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Updates_selection()
     {
-        var result = await fixture.GetPage<KeyStages>().Execute(page =>
+        var result = await fixture.GetPage<WhichKeyStages>().Execute(page =>
         {
             page.Data.Postcode = "AB00BA";
             page.Data.Subjects = new[]
@@ -74,7 +74,7 @@ public class SearchForKeyStages : IAsyncLifetime
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("Subjects");
+        resultPage.PageName.Should().Be(nameof(WhichSubjects));
         resultPage.RouteValues.Should().ContainKey("Postcode")
             .WhoseValue.Should().Be("AB00BA");
         resultPage.RouteValues.Should().ContainKey("Subjects")

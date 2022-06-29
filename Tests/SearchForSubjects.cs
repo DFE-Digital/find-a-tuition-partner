@@ -14,7 +14,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Displays_all_subjects_in_key_stage()
     {
-        var result = await Fixture.SendAsync(new Subjects.Query
+        var result = await Fixture.SendAsync(new WhichSubjects.Query
         {
             KeyStages = new[] { KeyStage.KeyStage1 }
         });
@@ -31,7 +31,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        var result = await Fixture.SendAsync(new Subjects.Query
+        var result = await Fixture.SendAsync(new WhichSubjects.Query
         {
             KeyStages = new[] { KeyStage.KeyStage1 },
             Subjects = new[] { $"{KeyStage.KeyStage1}-Literacy" },
@@ -49,7 +49,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Preserves_other_search_parameters()
     {
-        var query = new Subjects.Query
+        var query = new WhichSubjects.Query
         {
             Postcode = "123456",
         };
@@ -65,7 +65,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Updates_selection()
     {
-        var result = await Fixture.GetPage<Subjects>().Execute(page =>
+        var result = await Fixture.GetPage<WhichSubjects>().Execute(page =>
         {
             page.Data.Subjects = new[]
             {

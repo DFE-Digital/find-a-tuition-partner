@@ -1,4 +1,3 @@
-using Application;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace UI.Pages.FindATuitionPartner
 {
-    public class KeyStages : PageModel
+    public class WhichKeyStages : PageModel
     {
         private readonly IMediator mediator;
 
-        public KeyStages(IMediator mediator) => this.mediator = mediator;
+        public WhichKeyStages(IMediator mediator) => this.mediator = mediator;
 
         [BindProperty]
         public Command Data { get; set; } = new();
@@ -40,7 +39,7 @@ namespace UI.Pages.FindATuitionPartner
                 Data = await mediator.Send(new Query(Data));
                 return Page();
             }
-            return RedirectToPage("Subjects", new SearchModel(Data));
+            return RedirectToPage(nameof(WhichSubjects), new SearchModel(Data));
         }
 
         public class Validator : AbstractValidator<Command>

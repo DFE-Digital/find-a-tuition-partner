@@ -1,4 +1,3 @@
-using Application;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UI.Pages.FindATuitionPartner;
 
-public class Subjects : PageModel
+public class WhichSubjects : PageModel
 {
     private readonly IMediator mediator;
 
-    public Subjects(IMediator mediator) => this.mediator = mediator;
+    public WhichSubjects(IMediator mediator) => this.mediator = mediator;
 
     [BindProperty]
     public Command Data { get; set; } = new();

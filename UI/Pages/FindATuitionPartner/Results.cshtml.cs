@@ -77,7 +77,7 @@ public class Results : PageModel
             var validator = new Validator();
             var validationResults = await validator.ValidateAsync(request, cancellationToken);
 
-            var allSubjects = await mediator.Send(new Subjects.Query { Subjects = request.Subjects }, cancellationToken);
+            var allSubjects = await mediator.Send(new WhichSubjects.Query { Subjects = request.Subjects }, cancellationToken);
 
             TuitionPartnerSearchResultsPage? results = null;
 
