@@ -82,27 +82,38 @@ public class OpenXmlFactory
 
         var supportedSubjects = new HashSet<(int, int)>();
 
-
-        foreach(var cellReference in SubjectPricesCellReferences)
+        foreach(var ((tuitionTypeId, subjectId), (column, row)) in SubjectPricesCellReferences)
         {
             var prices = new decimal[6];
-            for (int i = 0; i < 6; i++)    
+            for (var i = 0; i < 6; i++)
             {
-                var addressName = $"{cellReference.Value.Item1}{cellReference.Value.Item2 + i}";
+                var groupSize = i + 1;
+                var addressName = $"{column}{row + i}";
 
-                string cellPriceContent = GetCellValue(workbookPart, PricingSheetName, addressName);
+                var cellPriceContent = GetCellValue(workbookPart, PricingSheetName, addressName);
 
-                if(decimal.TryParse(cellPriceContent, out var price))
+                //TODO: Investigate 2 decimal point precision
+                if (decimal.TryParse(cellPriceContent, out var hourlyRate))
                 {
-                    prices[i] = price;
+                    prices[i] = hourlyRate;
+
+                    var price = new Price
+                    {
+                        TuitionPartner = tuitionPartner,
+                        TuitionTypeId = tuitionTypeId,
+                        SubjectId = subjectId,
+                        GroupSize = groupSize,
+                        HourlyRate = hourlyRate
+                    };
+
+                    tuitionPartner.Prices.Add(price);
                 }
             }
 
-            bool isSubjectSupported = prices.Any(x => x > 0);
-
+            var isSubjectSupported = prices.Any(x => x > 0);
             if (isSubjectSupported)
             {
-                supportedSubjects.Add(cellReference.Key);
+                supportedSubjects.Add((tuitionTypeId, subjectId));
             }
         }
 
