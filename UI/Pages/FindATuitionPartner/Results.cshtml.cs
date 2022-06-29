@@ -31,7 +31,7 @@ public class Results : PageModel
     {
         public Command() { }
         public Command(SearchModel query) : base(query) { }
-        public IEnumerable<Selectable> AllSubjects { get; set; } = new List<Selectable>();
+        public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
@@ -77,7 +77,17 @@ public class Results : PageModel
             var validator = new Validator();
             var validationResults = await validator.ValidateAsync(request, cancellationToken);
 
-            var allSubjects = await mediator.Send(new WhichSubjects.Query { Subjects = request.Subjects }, cancellationToken);
+            var allSubjects = await mediator.Send(new WhichSubjects.Query 
+            {
+                KeyStages = new[]
+                {
+                    KeyStage.KeyStage1,
+                    KeyStage.KeyStage2,
+                    KeyStage.KeyStage3,
+                    KeyStage.KeyStage4,
+                } ,
+                Subjects = request.Subjects,
+            }, cancellationToken);
 
             TuitionPartnerSearchResultsPage? results = null;
 
@@ -114,7 +124,7 @@ public class Results : PageModel
 
             return new(request)
             {
-                //AllSubjects = allSubjects.AllSubjects,
+                AllSubjects = allSubjects.AllSubjects,
                 Results = results,
                 Validation = validationResults,
                 AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InPerson, TuitionType.Online },
