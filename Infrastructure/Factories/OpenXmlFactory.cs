@@ -102,7 +102,7 @@ public class OpenXmlFactory
                 //TODO: Investigate 2 decimal point precision
                 if (decimal.TryParse(cellPriceContent, out var hourlyRate))
                 {
-                    prices[i] = hourlyRate;
+                    prices[i] = Math.Round(hourlyRate, 2);
 
                     var price = new Price
                     {
