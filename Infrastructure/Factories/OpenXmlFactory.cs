@@ -80,7 +80,11 @@ public class OpenXmlFactory
         var inPersonLads = GetLocalAuthorityDistricts(dbContext, isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
         var onlineLads = GetLocalAuthorityDistricts(dbContext, isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
 
-        var supportedSubjects = new HashSet<(int, int)>();
+        var supportedTuitionTypeSubjects = new Dictionary<int, HashSet<int>>
+        {
+            {TuitionTypes.Id.InPerson, new HashSet<int>()},
+            {TuitionTypes.Id.Online, new HashSet<int>()}
+        };
 
         foreach(var ((tuitionTypeId, subjectId), (column, row)) in SubjectPricesCellReferences)
         {
@@ -113,31 +117,49 @@ public class OpenXmlFactory
             var isSubjectSupported = prices.Any(x => x > 0);
             if (isSubjectSupported)
             {
-                supportedSubjects.Add((tuitionTypeId, subjectId));
+                supportedTuitionTypeSubjects[tuitionTypeId].Add(subjectId);
             }
         }
 
         foreach (var localAuthorityDistrict in inPersonLads)
         {
+            if (!supportedTuitionTypeSubjects.TryGetValue(TuitionTypes.Id.InPerson, out var supportedSubjects)) break;
+
             tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
             {
                 TuitionPartner = tuitionPartner,
                 LocalAuthorityDistrictId = localAuthorityDistrict.Id,
                 LocalAuthorityDistrict = localAuthorityDistrict,
                 TuitionTypeId = TuitionTypes.Id.InPerson,
-                PrimaryLiteracy = true
+                PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
+                PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
+                PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),
+                SecondaryEnglish = supportedSubjects.Contains(Subjects.Id.KeyStage3English) || supportedSubjects.Contains(Subjects.Id.KeyStage4English),
+                SecondaryHumanities = supportedSubjects.Contains(Subjects.Id.KeyStage3Humanities) || supportedSubjects.Contains(Subjects.Id.KeyStage4Humanities),
+                SecondaryMaths = supportedSubjects.Contains(Subjects.Id.KeyStage3Maths) || supportedSubjects.Contains(Subjects.Id.KeyStage4Maths),
+                SecondaryModernForeignLanguages = supportedSubjects.Contains(Subjects.Id.KeyStage3ModernForeignLanguages) || supportedSubjects.Contains(Subjects.Id.KeyStage4ModernForeignLanguages),
+                SecondaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage3Science) || supportedSubjects.Contains(Subjects.Id.KeyStage4Science)
             });
         }
 
         foreach (var localAuthorityDistrict in onlineLads)
         {
+            if (!supportedTuitionTypeSubjects.TryGetValue(TuitionTypes.Id.Online, out var supportedSubjects)) break;
+
             tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
             {
                 TuitionPartner = tuitionPartner,
                 LocalAuthorityDistrictId = localAuthorityDistrict.Id,
                 LocalAuthorityDistrict = localAuthorityDistrict,
                 TuitionTypeId = TuitionTypes.Id.Online,
-                PrimaryNumeracy = true
+                PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
+                PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
+                PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),
+                SecondaryEnglish = supportedSubjects.Contains(Subjects.Id.KeyStage3English) || supportedSubjects.Contains(Subjects.Id.KeyStage4English),
+                SecondaryHumanities = supportedSubjects.Contains(Subjects.Id.KeyStage3Humanities) || supportedSubjects.Contains(Subjects.Id.KeyStage4Humanities),
+                SecondaryMaths = supportedSubjects.Contains(Subjects.Id.KeyStage3Maths) || supportedSubjects.Contains(Subjects.Id.KeyStage4Maths),
+                SecondaryModernForeignLanguages = supportedSubjects.Contains(Subjects.Id.KeyStage3ModernForeignLanguages) || supportedSubjects.Contains(Subjects.Id.KeyStage4ModernForeignLanguages),
+                SecondaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage3Science) || supportedSubjects.Contains(Subjects.Id.KeyStage4Science)
             });
         }
 
