@@ -177,7 +177,7 @@ public class OpenXmlFactory
         {
             var separator = GetSeparator(localAuthorityDistrictsString);
 
-            if (!string.IsNullOrWhiteSpace(separator))
+            if (!string.IsNullOrEmpty(separator))
             {
                 var localAuthorityDistrictIdentifiers = localAuthorityDistrictsString.Split(separator);
 
