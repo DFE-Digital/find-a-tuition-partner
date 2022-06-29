@@ -77,7 +77,7 @@ Follow the [Cloud Foundry command line set up guide](https://docs.cloud.service.
 
 Login
 ```
-cf login -a api.london.cloud.service.gov.uk -u nationaltutoring@digital.education.gov.uk
+cf login -a api.london.cloud.service.gov.uk -u USERNAME
 ```
 
 ```
