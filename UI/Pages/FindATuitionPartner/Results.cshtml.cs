@@ -53,6 +53,9 @@ public class Results : PageModel
             RuleFor(m => m.Subjects)
                 .NotEmpty()
                 .WithMessage("Select the subject or subjects");
+
+            RuleForEach(m => m.Subjects)
+                .Must(x => KeyStageSubject.TryParse(x, out var _));
         }
     }
 
@@ -82,7 +85,21 @@ public class Results : PageModel
             {
                 var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
 
-                var subjects = await db.Subjects.Where(s => request.Subjects.Contains(s.Name)).ToListAsync(cancellationToken);
+                var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+                var subjectLookup = keyStageSubjects.Select(x =>
+                {
+                    var stage = x.KeyStage switch
+                    {
+                        KeyStage.KeyStage1 => "Primary",
+                        KeyStage.KeyStage2 => "Primary",
+                        KeyStage.KeyStage3 => "Secondary",
+                        KeyStage.KeyStage4 => "Secondary",
+                        _ => "",
+                    };
+                    return $"{stage} - {x.Subject}";
+                }).ToHashSet();
+
+                var subjects = await db.Subjects.Where(s => subjectLookup.Contains(s.Name)).ToListAsync(cancellationToken);
 
                 var cmd = new SearchTuitionPartnerHandler.Command
                 {
@@ -97,7 +114,7 @@ public class Results : PageModel
 
             return new(request)
             {
-                AllSubjects = allSubjects.AllSubjects,
+                //AllSubjects = allSubjects.AllSubjects,
                 Results = results,
                 Validation = validationResults,
                 AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InPerson, TuitionType.Online },

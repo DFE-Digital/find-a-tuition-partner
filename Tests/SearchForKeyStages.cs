@@ -66,21 +66,21 @@ public class SearchForKeyStages : IAsyncLifetime
         var result = await fixture.GetPage<KeyStages>().Execute(page =>
         {
             page.Data.Postcode = "AB00BA";
-            page.Data.Subjects = new List<string>
+            page.Data.Subjects = new[]
             {
-                "English", "Humanities",
+                $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
             };
             return page.OnPost();
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("Results");
+        resultPage.PageName.Should().Be("Subjects");
         resultPage.RouteValues.Should().ContainKey("Postcode")
             .WhoseValue.Should().Be("AB00BA");
         resultPage.RouteValues.Should().ContainKey("Subjects")
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                "English", "Humanities",
+                $"{KeyStage.KeyStage1 }-English", $"{KeyStage.KeyStage1 }-Humanities",
             });
     }
 }

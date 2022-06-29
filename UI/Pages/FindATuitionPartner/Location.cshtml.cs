@@ -24,7 +24,7 @@ public partial class Location : PageModel
 
         try
         {
-            return RedirectToPage("Subjects", await _mediator.Send(Data));
+            return RedirectToPage("KeyStages", await _mediator.Send(Data));
         }
         catch (LocationNotFoundException)
         {

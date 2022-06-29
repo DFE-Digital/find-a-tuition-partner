@@ -17,12 +17,17 @@
         <p class="govuk-body">Select all that apply</p>
 
         <form method="post">
-            <govuk-checkboxes asp-for="Data.Subjects">
-                @foreach (var item in @Model.Data.AllSubjects)
-                {
-                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>
-                }
-            </govuk-checkboxes>
+            @foreach (var item in @Model.Data.AllSubjects.Keys)
+            {
+                <h2 class="govuk-heading-m">@item subects</h2>
+
+                <govuk-checkboxes asp-for="Data.Subjects">
+                    @foreach (var subject in @Model.Data.AllSubjects[item])
+                    {
+                        <govuk-checkboxes-item value="@item-@subject.Name" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
+                    }
+                </govuk-checkboxes>
+            }
 
             <div class="govuk-button-group">
                 <govuk-button type="submit">Continue</govuk-button>

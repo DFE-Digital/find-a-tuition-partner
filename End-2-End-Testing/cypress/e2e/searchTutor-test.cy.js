@@ -1,5 +1,5 @@
 beforeEach(() => {
-    let url = '/options';
+    let url = '/';
     let username = Cypress.env('username');
     let password = Cypress.env('password');
     if (username && password) {
@@ -16,16 +16,36 @@ beforeEach(() => {
 })
 
 it('search Tutor Happy Path', () => {
-    cy.get('a[href*="/find-a-tuition-partner"]').click();
-    cy.get('input[name="Data.Postcode"]').type('WF84SW')
-    cy.get('button').click()
-    //To do Element Id Tags
-    cy.contains('label', 'Primary - Literacy')  // find your text
+    // Start page
+    cy.contains('Start').click();
+    
+    // Options page
+    cy.contains('Find a tuition partner')
+        .parent()
+        .contains('Continue')
+        .click();
+
+    // Location page
+    cy.get('input[name="Data.Postcode"]').type('WF84SW{enter}')
+
+    // Key stages page
+    cy.contains('KeyStage1')
         .parent('div')                      // move to parent div
         .find('input')                      // select it's input
         .check();
-    cy.get('button').click()
+    cy.get('form').submit();
+
+    // Subjects page
+    cy.contains('Literacy')
+        .parent('div')                      // move to parent div
+        .find('input')                      // select it's input
+        .check();
+    cy.get('form').submit();
+
+    // Results page
     cy.get('h2').first().should('be.exist');
+
+    // Tuition partner page
     cy.get('a[class="govuk-link"]').last().click();
     cy.get('h2').first().should('contain', 'Tuition details');
 })

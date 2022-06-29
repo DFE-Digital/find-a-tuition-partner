@@ -39,7 +39,7 @@ public class Subjects : PageModel
 
     public record Command : SearchModel, IRequest<SearchModel>
     {
-        public IEnumerable<Selectable> AllSubjects { get; set; } = new List<Selectable>();
+        public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
     }
 
     public class Validator : AbstractValidator<Command>
@@ -49,31 +49,42 @@ public class Subjects : PageModel
             RuleFor(m => m.Subjects)
                 .NotEmpty()
                 .WithMessage("Select the subject or subjects");
+
+            RuleForEach(m => m.Subjects)
+                .Must(x => KeyStageSubject.TryParse(x, out var _));
         }
     }
 
     public class Handler : IRequestHandler<Query, Command>
     {
-        private readonly INtpDbContext db;
-
-        public Handler(INtpDbContext db) => this.db = db;
+        public Dictionary<KeyStage, string[]> KeyStageSubjects = new()
+        {
+            { KeyStage.KeyStage1, new[] { "Literacy", "Numeracy", "Science" } },
+            { KeyStage.KeyStage2, new[] { "Literacy", "Numeracy", "Science" } },
+            { KeyStage.KeyStage3, new[] { "Maths", "English", "Science", "Humanities", "Modern foreign languages" } },
+            { KeyStage.KeyStage4, new[] { "Maths", "English", "Science", "Humanities", "Modern foreign languages" } },
+        };
 
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
-            var q =
-                from subject in await db.Subjects.ToListAsync(cancellationToken)
-                join selected in request.Subjects on subject.Name equals selected into queryJoin
-                from sub in queryJoin.DefaultIfEmpty()
-                select new Selectable
-                {
-                    Name = subject.Name,
-                    Selected = sub != null,
-                };
+            request.KeyStages ??= Array.Empty<KeyStage>();
+            request.Subjects ??= Array.Empty<string>();
+
+            var selectable = KeyStageSubjects
+                .Where(x => request.KeyStages.Contains(x.Key))
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.Value.Select(subject => new Selectable<string>
+                    {
+                        Name = subject,
+                        Selected = request.Subjects.ParseKeyStageSubjects().Any(s => s.Subject == subject),
+                    }).ToArray()
+                );
 
             return new Command
             {
                 Postcode = request.Postcode,
-                AllSubjects = q.ToList(),
+                AllSubjects = selectable,
             };
         }
     }

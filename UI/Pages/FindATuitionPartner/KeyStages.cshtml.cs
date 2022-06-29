@@ -28,6 +28,8 @@ namespace UI.Pages.FindATuitionPartner
 
         public record Command : SearchModel, IRequest<SearchModel>
         {
+            public Command() { }
+            public Command(SearchModel query) : base(query) { }
             public Selectable<KeyStage>[] AllKeyStages { get; set; } = Array.Empty<Selectable<KeyStage>>();
         }
 
@@ -38,7 +40,7 @@ namespace UI.Pages.FindATuitionPartner
                 Data = await mediator.Send(new Query(Data));
                 return Page();
             }
-            return RedirectToPage("Results", new SearchModel(Data));
+            return RedirectToPage("Subjects", new SearchModel(Data));
         }
 
         public class Validator : AbstractValidator<Command>
@@ -68,9 +70,8 @@ namespace UI.Pages.FindATuitionPartner
                     Selected = request.KeyStages.Contains(x)
                 });
 
-                return Task.FromResult(new Command
+                return Task.FromResult(new Command(request)
                 {
-                    Postcode = request.Postcode,
                     AllKeyStages = selectable.ToArray(),
                 });
             }

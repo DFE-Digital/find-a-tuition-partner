@@ -24,7 +24,7 @@ public class SearchResults : CleanSliceFixture
 
             db.TuitionTypes.Add(new Domain.TuitionType { Name = "In Person" });
 
-            db.Subjects.Add(new Subject { Name = "English" });
+            db.Subjects.Add(new Domain.Subject { Name = "English" });
 
             await db.SaveChangesAsync();
 
@@ -68,7 +68,7 @@ public class SearchResults : CleanSliceFixture
         var result = await Fixture.SendAsync(new Results.Command
         {
             Postcode = "AB00BA",
-            Subjects = new[] { "English" }
+            Subjects = new[] { $"{KeyStage.KeyStage1}-English" }
         });
 
         result.Results.Should().NotBeNull();

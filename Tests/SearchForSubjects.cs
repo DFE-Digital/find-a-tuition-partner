@@ -12,44 +12,38 @@ public class SearchForSubjects : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Displays_all_subjects_in_database()
+    public async Task Displays_all_subjects_in_key_stage()
     {
-        await Fixture.InsertAsync(
-            new Subject { Name = "English" },
-            new Subject { Name = "Maths" },
-            new Subject { Name = "Science" }
-            );
-
-        var result = await Fixture.SendAsync(new Subjects.Query());
-
-        result.AllSubjects.Should().BeEquivalentTo(new[]
+        var result = await Fixture.SendAsync(new Subjects.Query
         {
-            new { Name = "English" },
-            new { Name = "Maths" },
-            new { Name = "Science" },
+            KeyStages = new[] { KeyStage.KeyStage1 }
         });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
     }
 
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        await Fixture.InsertAsync(
-            new Subject { Name = "English" },
-            new Subject { Name = "Maths" },
-            new Subject { Name = "Science" }
-            );
-
         var result = await Fixture.SendAsync(new Subjects.Query
         {
-            Subjects = new[] { "English" }
+            KeyStages = new[] { KeyStage.KeyStage1 },
+            Subjects = new[] { $"{KeyStage.KeyStage1}-Literacy" },
         });
 
-        result.AllSubjects.Should().BeEquivalentTo(new[]
-        {
-            new { Name = "English", Selected = true },
-            new { Name = "Maths", Selected = false },
-            new { Name = "Science", Selected = false },
-        });
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Literacy", Selected = true },
+                new { Name = "Numeracy", Selected = false },
+                new { Name = "Science", Selected = false },
+            });
     }
 
     [Fact]
@@ -73,9 +67,9 @@ public class SearchForSubjects : CleanSliceFixture
     {
         var result = await Fixture.GetPage<Subjects>().Execute(page =>
         {
-            page.Data.Subjects = new List<string>
+            page.Data.Subjects = new[]
             {
-                "English", "Humanities",
+                $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage3}-Humanities",
             };
             return page.OnPost();
         });
@@ -85,7 +79,7 @@ public class SearchForSubjects : CleanSliceFixture
         resultPage.RouteValues.Should().ContainKey("Subjects")
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                "English", "Humanities",
+                "KeyStage1-English", "KeyStage3-Humanities",
             });
     }
 }
