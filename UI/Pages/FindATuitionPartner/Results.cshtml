@@ -1,0 +1,115 @@
+﻿@page
+@model Results
+@{
+	Layout = "_Layout";
+    ViewData["Title"] = "Find a Tuition Partner - Results";
+}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		
+		<govuk-error-summary>
+			<govuk-error-summary-item asp-for="Data.Postcode" />
+			<govuk-error-summary-item asp-for="Data.Subjects" />
+		</govuk-error-summary>
+		
+@*		@if (Model.SearchResultsPage != null)
+		{
+			<h1 class="govuk-heading-l">Search results</h1>
+			<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result") for @Model.SearchState?.LocationFilterParameters?.LocalAuthority</p>
+		}
+*@	</div>
+</div>
+
+<div class="govuk-grid-row">
+	
+	<form>
+
+		<div class="govuk-grid-column-one-third">
+			<div class="app-results-filter" data-module="results-filter">
+				<h2 class="govuk-heading-m">Filter results</h2>
+				
+				<govuk-checkboxes asp-for="Data.Subjects" class="govuk-checkboxes--small govuk-!-margin-0">
+					<govuk-checkboxes-fieldset>
+						<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+							Subjects
+						</govuk-checkboxes-fieldset-legend>
+					</govuk-checkboxes-fieldset>
+					@foreach (var item in @Model.Data.AllSubjects)
+					{
+						<govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>
+					}
+				</govuk-checkboxes>
+					
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+				<govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small">
+					<govuk-radios-fieldset>
+						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+							Type of tuition
+						</govuk-radios-fieldset-legend>
+					</govuk-radios-fieldset>
+					@foreach (var item in @Model.Data.AllTuitionTypes)
+					{
+						<govuk-radios-item value="@item" checked="@item == @Model.Data.TuitionType">@item</govuk-radios-item>
+					}
+				</govuk-radios>
+
+				<div class="govuk-button-group" data-module="results-filter-button">
+					<govuk-button type="submit">Apply filters</govuk-button>
+				</div>
+			</div>
+		</div>
+
+		<div class="govuk-grid-column-two-thirds">
+			<div>
+				<div class="govuk-form-group">
+					<h1 class="govuk-label-wrapper">
+						<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
+							Postcode
+						</label>
+					</h1>
+					<input asp-for="Data.Postcode" class="govuk-input govuk-input--width-10" type="text">
+					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0">Search again</govuk-button>
+				</div>
+			</div>
+
+			@if (Model.Data.Results != null)
+			{
+				foreach (var item in Model.Data.Results.Results)
+				{
+					<div>
+						<h2><a asp-page="TuitionPartner" asp-route-id="@item.Id" class="govuk-link">@item.Name</a></h2>
+						<govuk-summary-list>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Subjects covered
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@string.Join(", ", item.Subjects.Select(e => e.Name))
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Type of tuition
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row>
+								<govuk-summary-list-row-key>
+									Provider information
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@item.Description
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+						</govuk-summary-list>
+					</div>
+				}
+			}
+		</div>
+	
+	</form>
+</div>

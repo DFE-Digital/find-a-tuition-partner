@@ -1,0 +1,34 @@
+﻿@page
+@model Subjects
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Find a Tuition Partner - Subjects";
+}
+
+<govuk-back-link asp-action="Location" />
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.Subjects" />
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
+        <p class="govuk-body">Select all that apply</p>
+
+        <form method="post">
+            <govuk-checkboxes asp-for="Data.Subjects">
+                @foreach (var item in @Model.Data.AllSubjects)
+                {
+                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Continue</govuk-button>
+            </div>
+
+            <input asp-for="Data.Postcode" hidden />
+        </form>
+    </div>
+</div>

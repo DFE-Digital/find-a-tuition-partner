@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Application.Extensions;
 
-namespace UI.Pages.Find;
+namespace UI.Pages.FindATuitionPartner;
 
 public partial class Location : PageModel
 {
