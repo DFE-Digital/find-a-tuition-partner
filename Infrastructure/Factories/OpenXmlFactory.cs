@@ -65,6 +65,9 @@ public class OpenXmlFactory
         {
             Name = GetCellValue(workbookPart, GeneralInformationSheetName, "C3"),
             Website = GetCellValue(workbookPart, GeneralInformationSheetName, "C4"),
+            Email = GetCellValue(workbookPart, GeneralInformationSheetName, "D5"),
+            PhoneNumber = GetCellValue(workbookPart, GeneralInformationSheetName, "D6"),
+            Address = GetCellValue(workbookPart, GeneralInformationSheetName, "D8"),
             Description = GetCellValue(workbookPart, GeneralInformationSheetName, "C15")
         };
 
