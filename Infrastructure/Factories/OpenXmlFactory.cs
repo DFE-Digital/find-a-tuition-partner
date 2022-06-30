@@ -15,39 +15,39 @@ public class OpenXmlFactory
 
     private static readonly IDictionary<(int, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(int, int), (string, int)>
         {
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Literacy), ("C", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Numeracy), ("D", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage1Science), ("E", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Literacy), ("F", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Numeracy), ("G", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage2Science), ("H", 15) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3English), ("C", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Humanities), ("D", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Maths), ("E", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage3Science), ("G", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4English), ("H", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Humanities), ("I", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Maths), ("J", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 25) },
-            { (TuitionTypes.Id.InPerson, Subjects.Id.KeyStage4Science), ("K", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage1Literacy), ("C", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage1Numeracy), ("D", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage1Science), ("E", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage2Literacy), ("F", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage2Numeracy), ("G", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage2Science), ("H", 15) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage3English), ("C", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage3Humanities), ("D", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage3Maths), ("E", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage3Science), ("G", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage4English), ("H", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage4Humanities), ("I", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage4Maths), ("J", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 25) },
+            { ((int)TuitionTypes.InPerson, Subjects.Id.KeyStage4Science), ("K", 25) },
 
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Literacy), ("C", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Numeracy), ("D", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage1Science), ("E", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Literacy), ("F", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Numeracy), ("G", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage2Science), ("H", 35) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3English), ("C", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Humanities), ("D", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Maths), ("E", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage3Science), ("G", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4English), ("H", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Humanities), ("I", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Maths), ("J", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 46) },
-            { (TuitionTypes.Id.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Literacy), ("C", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Numeracy), ("D", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Literacy), ("F", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Numeracy), ("G", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("H", 35) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Maths), ("E", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Science), ("G", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4English), ("H", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Humanities), ("I", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Maths), ("J", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 46) },
+            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
         };
 
     public static TuitionPartner? GetTuitionPartner(ILogger logger, Stream stream, NtpDbContext dbContext)
@@ -85,8 +85,8 @@ public class OpenXmlFactory
 
         var supportedTuitionTypeSubjects = new Dictionary<int, HashSet<int>>
         {
-            {TuitionTypes.Id.InPerson, new HashSet<int>()},
-            {TuitionTypes.Id.Online, new HashSet<int>()}
+            {(int)TuitionTypes.InPerson, new HashSet<int>()},
+            {(int)TuitionTypes.Online, new HashSet<int>()}
         };
 
         foreach(var ((tuitionTypeId, subjectId), (column, row)) in SubjectPricesCellReferences)
@@ -126,14 +126,14 @@ public class OpenXmlFactory
 
         foreach (var localAuthorityDistrict in inPersonLads)
         {
-            if (!supportedTuitionTypeSubjects.TryGetValue(TuitionTypes.Id.InPerson, out var supportedSubjects)) break;
+            if (!supportedTuitionTypeSubjects.TryGetValue((int)TuitionTypes.InPerson, out var supportedSubjects)) break;
 
             tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
             {
                 TuitionPartner = tuitionPartner,
                 LocalAuthorityDistrictId = localAuthorityDistrict.Id,
                 LocalAuthorityDistrict = localAuthorityDistrict,
-                TuitionTypeId = TuitionTypes.Id.InPerson,
+                TuitionTypeId = (int)TuitionTypes.InPerson,
                 PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
                 PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
                 PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),
@@ -147,14 +147,14 @@ public class OpenXmlFactory
 
         foreach (var localAuthorityDistrict in onlineLads)
         {
-            if (!supportedTuitionTypeSubjects.TryGetValue(TuitionTypes.Id.Online, out var supportedSubjects)) break;
+            if (!supportedTuitionTypeSubjects.TryGetValue((int)TuitionTypes.Online, out var supportedSubjects)) break;
 
             tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
             {
                 TuitionPartner = tuitionPartner,
                 LocalAuthorityDistrictId = localAuthorityDistrict.Id,
                 LocalAuthorityDistrict = localAuthorityDistrict,
-                TuitionTypeId = TuitionTypes.Id.Online,
+                TuitionTypeId = (int)TuitionTypes.Online,
                 PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
                 PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
                 PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),

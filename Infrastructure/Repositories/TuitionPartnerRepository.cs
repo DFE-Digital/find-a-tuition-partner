@@ -70,8 +70,8 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             result.Subjects = subjects.ToArray();
             
             var resultTuitionTypes = new List<TuitionType>();
-            if (coverage.Any(e => e.TuitionTypeId == TuitionTypes.Id.Online && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[TuitionTypes.Id.Online]);
-            if (coverage.Any(e => e.TuitionTypeId == TuitionTypes.Id.InPerson && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[TuitionTypes.Id.InPerson]);
+            if (coverage.Any(e => e.TuitionTypeId == (int)TuitionTypes.Online && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[(int)TuitionTypes.Online]);
+            if (coverage.Any(e => e.TuitionTypeId == (int)TuitionTypes.InPerson && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[(int)TuitionTypes.InPerson]);
             result.TuitionTypes = resultTuitionTypes.ToArray();
 
             results.Add(result);

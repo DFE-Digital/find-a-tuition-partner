@@ -2,6 +2,7 @@
 using Domain.Search;
 using NSubstitute;
 using UI.Pages.FindATuitionPartner;
+using KeyStage = UI.Pages.FindATuitionPartner.KeyStage;
 
 namespace Tests;
 
@@ -18,35 +19,6 @@ public class SearchResults : CleanSliceFixture
 
         await Fixture.ExecuteDbContextAsync(async db =>
         {
-            db.Regions.AddRange(
-                new Region { Code = "-", Name = "-", }
-                );
-
-            db.TuitionTypes.Add(new Domain.TuitionType { Name = "In Person" });
-
-            db.Subjects.Add(new Domain.Subject { Name = "English" });
-
-            await db.SaveChangesAsync();
-
-            db.LocalAuthorityDistricts.AddRange(
-                new LocalAuthorityDistrict
-                {
-                    Code = "N1",
-                    Name = "North-One",
-                    Region = db.Regions.First(),
-                    LocalAuthority = new LocalAuthority { Code = "A", Name = "-", Region = db.Regions.First() },
-                },
-                new LocalAuthorityDistrict
-                {
-                    Code = "S2",
-                    Name = "South-Two",
-                    Region = db.Regions.First(),
-                    LocalAuthority = new LocalAuthority { Code = "B", Name = "-", Region = db.Regions.First() }
-                }
-                );
-
-            await db.SaveChangesAsync();
-
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
@@ -65,10 +37,13 @@ public class SearchResults : CleanSliceFixture
             await db.SaveChangesAsync();
         });
 
+        var subject = await Fixture.ExecuteDbContextAsync(db =>
+            db.Subjects.FindAsync(Domain.Constants.Subjects.Id.KeyStage1Literacy));
+
         var result = await Fixture.SendAsync(new Results.Command
         {
             Postcode = "AB00BA",
-            Subjects = new[] { $"{KeyStage.KeyStage1}-English" }
+            Subjects = new[] { $"{KeyStage.KeyStage1}-{subject?.Name}" }
         });
 
         result.Results.Should().NotBeNull();

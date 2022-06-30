@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Mvc;
 using UI.Pages.FindATuitionPartner;
+using KeyStage = UI.Pages.FindATuitionPartner.KeyStage;
 
 namespace Tests;
 

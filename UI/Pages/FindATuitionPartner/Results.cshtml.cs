@@ -1,5 +1,6 @@
 using Application;
 using Application.Handlers;
+using Domain.Constants;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
@@ -32,7 +33,7 @@ public class Results : PageModel
         public Command() { }
         public Command(SearchModel query) : base(query) { }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
+        public IEnumerable<TuitionTypes> AllTuitionTypes { get; set; } = new List<TuitionTypes>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public ValidationResult Validation { get; internal set; } = new ValidationResult();
@@ -127,7 +128,7 @@ public class Results : PageModel
                 AllSubjects = allSubjects.AllSubjects,
                 Results = results,
                 Validation = validationResults,
-                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InPerson, TuitionType.Online },
+                AllTuitionTypes = new List<TuitionTypes> { TuitionTypes.Any, TuitionTypes.InPerson, TuitionTypes.Online },
             };
         }
     }
