@@ -13,16 +13,15 @@
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
         <p class="govuk-body">@Model.Data.Description</p>
 
-		<details class="govuk-details" data-module="govuk-details">
-		  <summary class="govuk-details__summary">
-			<span class="govuk-details__summary-text">
+		<govuk-details>
+			<govuk-details-summary>
 				What is a quality assured tuition partner?
-			</span>
-		  </summary>
-		  <div class="govuk-details__text">
-			We need to know your nationality so we can work out which elections you’re entitled to vote in. If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.
-		  </div>
-		</details>
+			</govuk-details-summary>
+			<govuk-details-text>
+				We need to know your nationality so we can work out which elections you’re entitled to vote in.
+				If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.
+			</govuk-details-text>
+		</govuk-details>
 
 	    <div>
 		    <h2 class="govuk-heading-m">Tuition details</h2>
@@ -45,7 +44,12 @@
 					    Type of tuition
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    @string.Join(", ", Model.Data.TuitionTypes)
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Data.TuitionTypes)
+						    {
+							    <li>@item</li>
+						    }
+					    </ul>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
 			    <govuk-summary-list-row>
@@ -53,7 +57,12 @@
 					    Tuition group size(s)
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    @string.Join(", ", Model.Data.Ratios)
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Data.Ratios)
+						    {
+							    <li>@item</li>
+						    }
+					    </ul>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
 		    </govuk-summary-list>
@@ -69,18 +78,16 @@
 			</p>
 
 			<p>
-				<details class="govuk-details" data-module="govuk-details">
-				  <summary class="govuk-details__summary">
-					<span class="govuk-details__summary-text">
+				<govuk-details>
+					<govuk-details-summary>
 						How much will I pay?
-					</span>
-				  </summary>
-				  <div class="govuk-details__text">
-					<p class="govuk-body"><strong>Example:</strong></p>
-					<p class="govuk-body">If you spend £15 per pupil per hour, the government will cover 60% of the cost.</p>
-					<p class="govuk-body">If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest.</p>
-				  </div>
-				</details>
+					</govuk-details-summary>
+					<govuk-details-text>
+						<p class="govuk-body"><strong>Example:</strong></p>
+						<p class="govuk-body">If you spend £15 per pupil per hour, the government will cover 60% of the cost.</p>
+						<p class="govuk-body">If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest.</p>
+					</govuk-details-text>
+				</govuk-details>
 			</p>
 		</div>
 

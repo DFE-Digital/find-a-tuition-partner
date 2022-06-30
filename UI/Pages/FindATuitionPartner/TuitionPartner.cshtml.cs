@@ -42,15 +42,17 @@ public class TuitionPartner : PageModel
                 .ThenInclude(x => x.KeyStage)
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
+            var subjects = tp.Prices.Select(x => x.Subject.Name).Distinct();
+            var types = tp.Prices.Select(x => (TuitionTypes)x.TuitionTypeId).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = tp.Prices.GroupBy(x => x.Subject).Select(x => 
-                new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", (int)x.MaxBy(y => y.HourlyRate).HourlyRate));
+                new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", (int)(x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0)));
 
             return new(
                 tp.Name,
-                "This is BobCo",
-                new[] { "English" },
-                new[] { TuitionTypes.Online },
+                tp.Description,
+                subjects.ToArray(),
+                types.ToArray(),
                 ratios.ToArray(),
                 prices.ToArray(),
                 tp.Website,
