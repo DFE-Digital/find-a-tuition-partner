@@ -1,4 +1,5 @@
 ﻿@page
+@using Application.Extensions
 @model Results
 @{
 	Layout = "_Layout";
@@ -34,7 +35,7 @@
 					<govuk-checkboxes asp-for="Data.Subjects" class="govuk-checkboxes--small govuk-!-margin-0">
 						<govuk-checkboxes-fieldset>
 							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-								@item
+								@item.DisplayName()
 							</govuk-checkboxes-fieldset-legend>
 						</govuk-checkboxes-fieldset>
 							@foreach (var subject in @Model.Data.AllSubjects[item])

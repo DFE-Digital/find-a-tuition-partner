@@ -29,7 +29,7 @@ it('search Tutor Happy Path', () => {
     cy.get('input[name="Data.Postcode"]').type('WF84SW{enter}')
 
     // Key stages page
-    cy.contains('KeyStage1')
+    cy.contains('Key stage 1')
         .parent('div')                      // move to parent div
         .find('input')                      // select it's input
         .check();

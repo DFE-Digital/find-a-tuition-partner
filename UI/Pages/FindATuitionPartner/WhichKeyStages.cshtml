@@ -1,4 +1,5 @@
 ﻿@page
+@using Application.Extensions
 @model WhichKeyStages
 @{
     Layout = "_Layout";
@@ -20,7 +21,7 @@
             <govuk-checkboxes asp-for="Data.KeyStages">
                 @foreach (var item in @Model.Data.AllKeyStages)
                 {
-                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name</govuk-checkboxes-item>
+                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
                 }
             </govuk-checkboxes>
 

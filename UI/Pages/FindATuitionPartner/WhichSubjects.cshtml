@@ -1,4 +1,5 @@
 ﻿@page
+@using Application.Extensions
 @model WhichSubjects
 @{
     Layout = "_Layout";
@@ -19,7 +20,7 @@
         <form method="post">
             @foreach (var item in @Model.Data.AllSubjects.Keys)
             {
-                <h2 class="govuk-heading-m">@item subects</h2>
+                <h2 class="govuk-heading-m">@item.DisplayName() subects</h2>
 
                 <govuk-checkboxes asp-for="Data.Subjects">
                     @foreach (var subject in @Model.Data.AllSubjects[item])

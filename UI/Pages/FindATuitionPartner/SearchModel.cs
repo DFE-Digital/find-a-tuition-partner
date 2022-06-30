@@ -76,7 +76,7 @@ public enum KeyStage
 {
     Unspecified = 0,
 
-    [Description("Key Stage 1")]
+    [Description("Key stage 1")]
     KeyStage1 = 1,
     
     [Description("Key stage 2")]
