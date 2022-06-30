@@ -76,7 +76,7 @@ public class WhichSubjects : PageModel
                     x => x.Value.Select(subject => new Selectable<string>
                     {
                         Name = subject,
-                        Selected = request.Subjects.ParseKeyStageSubjects().Any(s => s.Subject == subject),
+                        Selected = request.Subjects.ParseKeyStageSubjects().Any(s => s.KeyStage == x.Key && s.Subject == subject),
                     }).ToArray()
                 );
 
