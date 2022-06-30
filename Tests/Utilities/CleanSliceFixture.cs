@@ -10,15 +10,17 @@ public class CleanSliceFixture : IAsyncLifetime
 
     public Task DisposeAsync() => Task.CompletedTask;
 
-    public Task ResetDatabase() => Fixture.ExecuteDbContextAsync(db =>
+    public Task ResetDatabase() => Fixture.ExecuteDbContextAsync(async db =>
     {
-        db.Subjects.RemoveRange(db.Subjects);
+        //await db.Database.EnsureDeletedAsync();
+        //await db.Database.EnsureCreatedAsync();
+        //db.Subjects.RemoveRange(db.Subjects);
         db.TuitionPartnerCoverage.RemoveRange(db.TuitionPartnerCoverage);
-        db.LocalAuthorityDistricts.RemoveRange(db.LocalAuthorityDistricts);
-        db.TuitionTypes.RemoveRange(db.TuitionTypes);
+        //db.LocalAuthorityDistricts.RemoveRange(db.LocalAuthorityDistricts);
+        //db.TuitionTypes.RemoveRange(db.TuitionTypes);
         db.TuitionPartners.RemoveRange(db.TuitionPartners);
-        db.Regions.RemoveRange(db.Regions);
-        db.TutorTypes.RemoveRange(db.TutorTypes);
-        return db.SaveChangesAsync();
+        //db.Regions.RemoveRange(db.Regions);
+        //db.TutorTypes.RemoveRange(db.TutorTypes);
+        //return db.SaveChangesAsync();
     });
 }

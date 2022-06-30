@@ -94,7 +94,7 @@ public class SearchForAPostcode
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be("Subjects");
+        redirect.PageName.Should().Be(nameof(WhichKeyStages));
         redirect.RouteValues.Should().ContainKey("Postcode").WhoseValue.Should().Be(postcode);
     }
 }
