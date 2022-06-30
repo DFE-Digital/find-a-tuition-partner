@@ -14,8 +14,8 @@ The Tuition Partner Excel spreadsheets returned by the Tuition Partners are chec
 
 1. Navigate to the `Quality Assured` folder in the ntp Google Drive
 2. Use the down arrow menu in the breadcrumb to download all the files
-3. Remove any existing files in the `DataImporter\Data` directory
-4. Extract the contents of the downloaded `Quality Assured` folder into the `DataImporter\Data` directory. The .xlsx files should not be in a subdirectory of that folder
+3. Remove any existing files in the `Infrastructure\Data` directory
+4. Extract the contents of the downloaded `Quality Assured` folder into the `Infrastructure\Data` directory. The .xlsx files should not be in a subdirectory of that folder
 5. Follow the steps below for a local or cloud deployment
 
 ### Local deployment
@@ -24,8 +24,12 @@ The Tuition Partner Excel spreadsheets returned by the Tuition Partners are chec
 
 ### Cloud (GOV.UK PaaS) deployment
 
-1. Log into GOV.UK PaaS `cf login -a api.london.cloud.service.gov.uk -u USERNAME` and select the destination space
+The following steps should be run from a command prompt or your terminal of choice.
+
+1. Ensure that you have built the latest web assests by changing to the `UI` directory and running `npm install` followed by `npm run build`
+Log into GOV.UK PaaS `cf login -a api.london.cloud.service.gov.uk -u USERNAME` and select the destination space
 2. Confirm the database backing service is present and available with by running `cf service national-tutoring-postgres-db`
 3. If the database has not yet been created, provision a new instance with a command similar to `cf create-service postgres small-13 national-tutoring-postgres-db`
-4. Change to the `DataImporter` project folder
-5. Run `cf push`
+4. Run `cf push --strategy rolling` to deploy the app and the updated data files
+5. Run `cf run-task national-tutoring --command "exec /home/vcap/deps/0/dotnet_publish/UI import" --name national-tutoring-data-import` to run both the migrations and update the Tuition Partner data
+

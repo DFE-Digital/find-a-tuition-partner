@@ -408,4 +408,4 @@ UI/wwwroot/dist
 Tests/Tests.v3.ncrunchproject
 
 # We want to conciously commit files that will be imported from this directory
-DataImporter/Data
+Infrastructure/Data
