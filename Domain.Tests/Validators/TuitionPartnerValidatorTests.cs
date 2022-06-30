@@ -1,5 +1,6 @@
 ﻿using Domain.Validators;
 using FluentValidation.TestHelper;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Domain.Tests.Validators;
@@ -25,6 +26,15 @@ public class TuitionPartnerValidatorTests
     }
 
     [Theory]
+    [InlineData("Tuition Partner")]
+    public void With_valid_name(string name)
+    {
+        var model = new TuitionPartner { Name = name };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Name);
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
@@ -33,5 +43,190 @@ public class TuitionPartnerValidatorTests
         var model = new TuitionPartner { Description = description };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Description);
+    }
+
+    [Theory]
+    [InlineData("Tuition partner description")]
+    public void With_valid_description(string description)
+    {
+        var model = new TuitionPartner { Description = description };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Description);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    public void With_no_website(string website)
+    {
+        var model = new TuitionPartner { Website = website };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Website);
+    }
+
+    [Theory]
+    [InlineData("website")]
+    [InlineData("http\\www.something.org")]
+    [InlineData("https\\www.something.org")]
+    [InlineData("http//www.something.org")]
+    [InlineData("https//www.something.org")]
+    [InlineData("http:/www.something.org")]
+    [InlineData("http:www.something.org")]
+    [InlineData("https:www.something.org")]
+    public void With_invalid_website(string website)
+    {
+        var model = new TuitionPartner { Website = website };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Website);
+    }
+
+    [Theory]
+    [InlineData("www.something.com")]
+    [InlineData("www.something.org")]
+    [InlineData("something.com")]
+    [InlineData("something.org")]
+    [InlineData("http://www.something.org")]
+    [InlineData("https://www.something.org")]
+
+    public void With_valid_website(string website)
+    {
+        var model = new TuitionPartner { Website = website };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Website);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    public void With_no_email(string email)
+    {
+        var model = new TuitionPartner { Email = email };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Theory]
+    [InlineData("something.co.uk")]
+    [InlineData("www.something.com")]
+    public void With_invalid_email(string email)
+    {
+        var model = new TuitionPartner { Email = email };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Theory]
+    [InlineData("something@something.co.uk")]
+    [InlineData("something@something.com")]
+    public void With_valid_email(string email)
+    {
+        var model = new TuitionPartner { Email = email };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Email);
+    }
+
+    [Fact]
+  
+    public void With_no_valid_price()
+    {
+        var ListOfPrices = new List<Price>();
+        var model = new TuitionPartner { Prices = ListOfPrices };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Prices);
+    }
+
+    [Fact]
+
+    public void With_price_but_no_valid_hourly_and_groupsize()
+    {
+        var price = new Price { HourlyRate = 0, GroupSize = 0 };
+        var ListOfPrices = new List<Price>();
+        ListOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = ListOfPrices };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Prices);
+    }
+
+    [Fact]
+
+    public void With_price_and_no_valid_hourlyRate()
+    {
+        var price = new Price { HourlyRate = 0, GroupSize = 1 };
+        var ListOfPrices = new List<Price>();
+        ListOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = ListOfPrices };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Prices);
+    }
+
+    [Fact]
+
+    public void With_price_and_no_valid_groupsize()
+    {
+        var price = new Price { HourlyRate = 1, GroupSize = 0 };
+        var ListOfPrices = new List<Price>();
+        ListOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = ListOfPrices };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Prices);
+    }
+
+    [Fact]
+
+    public void With_valid_Price()
+    {
+        var price = new Price { HourlyRate = 1, GroupSize = 1 };
+        var ListOfPrices = new List<Price>();
+        ListOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = ListOfPrices };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Prices);
+    }
+
+    [Fact]
+
+    public void With_no_coverage()
+    {
+        var ListOfCoverage = new List<TuitionPartnerCoverage>();
+        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+    }
+
+    [Fact]
+
+    public void With_Coverage_but_no_subject()
+    {
+        var ListOfCoverage = new List<TuitionPartnerCoverage>();
+        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict() };
+        ListOfCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+    }
+
+    [Fact]
+
+    public void With_Coverage_but_no_local_authority_district()
+    {
+        var ListOfCoverage = new List<TuitionPartnerCoverage>();
+        var tuitionPartnerCoverage = new TuitionPartnerCoverage { PrimaryLiteracy = true };
+        ListOfCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+    }
+
+    [Fact]
+    public void With_valid_Coverage()
+    {
+        var ListOfCoverage = new List<TuitionPartnerCoverage>();
+        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict(), PrimaryLiteracy = true };
+        ListOfCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Coverage);
     }
 }

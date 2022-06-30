@@ -36,6 +36,7 @@ public class DataImporterService : IHostedService
 
         foreach (var resourceName in assembly.GetManifestResourceNames())
         {
+            if (resourceName.EndsWith("README.md")) break;
             await using var stream = assembly.GetManifestResourceStream(resourceName);
             if (stream == null)
             {
