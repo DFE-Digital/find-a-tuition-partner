@@ -15,12 +15,12 @@
 			<govuk-error-summary-item asp-for="Data.Subjects" />
 		</govuk-error-summary>
 		
-@*		@if (Model.SearchResultsPage != null)
+		@if (Model.Data.Results != null)
 		{
 			<h1 class="govuk-heading-l">Search results</h1>
-			<p class="govuk-body govuk-!-font-size-27">@(Model.SearchResultsPage.Count == 0 ? "No" : Model.SearchResultsPage.Count) @(Model.SearchResultsPage.Count != 1 ? "results" : "result") for @Model.SearchState?.LocationFilterParameters?.LocalAuthority</p>
+			<p class="govuk-body govuk-!-font-size-27"><strong>@(Model.Data.Results.Count == 0 ? "No" : Model.Data.Results.Count)</strong> @(Model.Data.Results.Count != 1 ? "results" : "result") for @Model.Data.LocalAuthority</p>
 		}
-*@	</div>
+	</div>
 </div>
 
 <div class="govuk-grid-row">
@@ -84,9 +84,9 @@
 				foreach (var item in Model.Data.Results.Results)
 				{
 					<div>
-						<h2><a asp-page="TuitionPartner" asp-route-id="@item.Id" class="govuk-link">@item.Name</a></h2>
+						<h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.Id" class="govuk-link">@item.Name</a></h2>
 						<govuk-summary-list>
-							<govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
 								<govuk-summary-list-row-key>
 									Subjects covered
 								</govuk-summary-list-row-key>
@@ -94,7 +94,7 @@
 									@string.Join(", ", item.Subjects.Select(e => e.Name))
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
-							<govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
 								<govuk-summary-list-row-key>
 									Type of tuition
 								</govuk-summary-list-row-key>
@@ -102,7 +102,7 @@
 									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
-							<govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
 								<govuk-summary-list-row-key>
 									Provider information
 								</govuk-summary-list-row-key>
