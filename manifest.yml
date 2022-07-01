@@ -1,10 +1,11 @@
 ---
 applications:
-- name: national-tutoring
+- name: national-tutoring((environment-postfix))
   services:
-    - national-tutoring-postgres-db
+    - national-tutoring((environment-postfix))-postgres-db
   buildpacks:
     - dotnet_core_buildpack
-  memory: 256M
+  instances: ((instances))
+  memory: ((memory))
   env:
-    ASPNETCORE_ENVIRONMENT: Development
+    ASPNETCORE_ENVIRONMENT: ((dotnet-environment))

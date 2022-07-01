@@ -1,6 +1,7 @@
 $govuk-assets-path: "/node_modules/govuk-frontend/govuk/assets/";
 $govuk-page-width: 1180px;
 
+// Foundational GDS styling
 @import "node_modules/govuk-frontend/govuk/base";
 
 @import "node_modules/govuk-frontend/govuk/core/all";
@@ -11,9 +12,11 @@ $govuk-page-width: 1180px;
 @import "node_modules/govuk-frontend/govuk/utilities/all";
 @import "node_modules/govuk-frontend/govuk/overrides/all";
 
+// GDS components that we use
 @import "node_modules/govuk-frontend/govuk/components/back-link/index";
 @import "node_modules/govuk-frontend/govuk/components/button/index";
 @import "node_modules/govuk-frontend/govuk/components/checkboxes/index";
+@import "node_modules/govuk-frontend/govuk/components/details/index";
 @import "node_modules/govuk-frontend/govuk/components/error-message/index";
 @import "node_modules/govuk-frontend/govuk/components/error-summary/index";
 @import "node_modules/govuk-frontend/govuk/components/input/index";

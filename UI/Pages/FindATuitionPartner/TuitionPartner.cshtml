@@ -1,6 +1,164 @@
 ﻿@page "{id}"
 @model TuitionPartner
 @{
+	Layout = "_Layout";
+    ViewData["Title"] = $"Find a Tuition Partner - {Model.Data.Name}";
 }
 
-<h2>Tuition details</h2>
+<govuk-back-link asp-action="Results" />
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">@Model.Data.Name</h1>
+        <p class="govuk-body">@Model.Data.Description</p>
+
+		<govuk-details>
+			<govuk-details-summary>
+				What is a quality assured tuition partner?
+			</govuk-details-summary>
+			<govuk-details-text>
+				We need to know your nationality so we can work out which elections you’re entitled to vote in.
+				If you cannot provide your nationality, you’ll have to send copies of identity documents through the post.
+			</govuk-details-text>
+		</govuk-details>
+
+	    <div>
+		    <h2 class="govuk-heading-m">Tuition details</h2>
+		    <govuk-summary-list>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Subjects covered
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Data.Subjects)
+						    {
+							    <li>@item</li>
+						    }
+					    </ul>
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Type of tuition
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Data.TuitionTypes)
+						    {
+							    <li>@item</li>
+						    }
+					    </ul>
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Tuition group size(s)
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    <ul class="govuk-list">
+						    @foreach (var item in Model.Data.Ratios)
+						    {
+							    <li>@item</li>
+						    }
+					    </ul>
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+		    </govuk-summary-list>
+	    </div>
+
+	    <div>
+		    <h2 class="govuk-heading-m">Tuition cost information</h2>
+
+			<p class="govuk-body">
+				Each Pupil Premium (PP) eligible student will receive £162. This funding cost has been calculated
+				so you will have 60% of the cost covered for up to £18 per pupil per hour. For more information on
+				tuition cost, you can see our [link]funding guidance.
+			</p>
+
+			<p>
+				<govuk-details>
+					<govuk-details-summary>
+						How much will I pay?
+					</govuk-details-summary>
+					<govuk-details-text>
+						<p class="govuk-body"><strong>Example:</strong></p>
+						<p class="govuk-body">If you spend £15 per pupil per hour, the government will cover 60% of the cost.</p>
+						<p class="govuk-body">If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest.</p>
+					</govuk-details-text>
+				</govuk-details>
+			</p>
+		</div>
+
+	    <div>
+		    <h2 class="govuk-heading-m">Cost per subject</h2>
+		    <govuk-summary-list>
+				@foreach(var (subject, price) in Model.Data.Prices)
+				{
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							@subject
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+							<strong>£@price</strong> per hour per pupil
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				}
+		    </govuk-summary-list>
+		</div>
+
+	    <div>
+		    <h2 class="govuk-heading-m">Next steps</h2>
+			<p class="govuk-body">
+				Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
+			</p>
+			<p class="govuk-body">
+				For help on how to report your tuition costs and get your 60% subsidy, you can see our <link>funding guidance.
+			</p>
+
+		    <govuk-summary-list>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Website
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+					    <a href="@Model.Data.Website" class="govuk-link">@Model.Data.Website</a>
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Phone number
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+						@Model.Data.PhoneNumber
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Email address
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+						@Model.Data.EmailAddress
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Address
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+			    <govuk-summary-list-row>
+				    <govuk-summary-list-row-key>
+					    Office hours
+				    </govuk-summary-list-row-key>
+				    <govuk-summary-list-row-value>
+
+				    </govuk-summary-list-row-value>
+			    </govuk-summary-list-row>
+		    </govuk-summary-list>
+	    </div>
+    </div>
+</div>

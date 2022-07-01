@@ -1,0 +1,4 @@
+environment-postfix: -research
+instances: 3
+memory: 256M
+dotnet-environment: Staging

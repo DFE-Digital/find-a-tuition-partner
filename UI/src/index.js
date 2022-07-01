@@ -1,6 +1,7 @@
 ﻿import {
     Button,
     Checkboxes,
+    Details,
     ErrorSummary,
     Radios,
     SkipLink
@@ -17,6 +18,13 @@ var $checkboxes = document.querySelectorAll('[data-module="govuk-checkboxes"]')
 if ($checkboxes) {
     for (var i = 0; i < $checkboxes.length; i++) {
         new Checkboxes($checkboxes[i]).init()
+    }
+}
+
+var $details = document.querySelectorAll('[data-module="govuk-details"]')
+if ($details) {
+    for (var i = 0; i < $details.length; i++) {
+        new Details($details[i]).init()
     }
 }
 

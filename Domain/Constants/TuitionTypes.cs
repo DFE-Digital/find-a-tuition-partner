@@ -1,10 +1,8 @@
 ﻿namespace Domain.Constants;
 
-public class TuitionTypes
+public enum TuitionTypes
 {
-    public class Id
-    {
-        public const int Online = 1;
-        public const int InPerson = 2;
-    }
+    Any = 0,
+    Online = 1,
+    InPerson = 2,
 }

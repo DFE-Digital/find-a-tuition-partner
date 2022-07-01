@@ -91,11 +91,11 @@ public class SearchTuitionPartnerHandler
                 {
                     switch (request.TuitionTypeId)
                     {
-                        case TuitionTypes.Id.Online:
-                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.Online));
+                        case (int)TuitionTypes.Online:
+                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.Online));
                             break;
-                        case TuitionTypes.Id.InPerson:
-                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == TuitionTypes.Id.InPerson));
+                        case (int)TuitionTypes.InPerson:
+                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.InPerson));
                             break;
                     }
                 }

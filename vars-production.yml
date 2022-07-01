@@ -1,0 +1,4 @@
+environment-postfix: 
+instances: 3
+memory: 1G
+dotnet-environment: Production
