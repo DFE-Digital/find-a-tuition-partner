@@ -28,11 +28,11 @@ public partial class Location : PageModel
         }
         catch (LocationNotFoundException)
         {
-            ModelState.AddModelError("Data.Postcode", "Enter a valid postcode");
+            ModelState.AddModelError("Data.Postcode", "Postcode not recognised by service");
         }
         catch (LocationNotAvailableException)
         {
-            ModelState.AddModelError("Data.Postcode", "This service covers England only");
+            ModelState.AddModelError("Data.Postcode", "Service only covers England");
         }
         catch (LocationNotMappedException)
         {

@@ -21,7 +21,7 @@ describe('Verify Error Messages For Search Page', () => {
         cy.get('a[href*="/find-a-tuition-partner"]').click();
         cy.get('input[name="Data.Postcode"]').type('WF84S1');
         cy.get('button').click();
-        cy.get('[data-module="govuk-error-summary"]').type('Enter a valid postcode');
+        cy.get('[data-module="govuk-error-summary"]').type('Postcode not recognised by service');
     })
 
     it('check Error Message For Not Entering Postcode', () => {
@@ -35,6 +35,6 @@ describe('Verify Error Messages For Search Page', () => {
         cy.get('a[href*="/find-a-tuition-partner"]').click();
         cy.get('input[name="Data.Postcode"]').type('EH12NG');
         cy.get('button').click();
-        cy.get('[data-module="govuk-error-summary"]').type('This service covers England only');
+        cy.get('[data-module="govuk-error-summary"]').type('Service only covers England');
     })
 })

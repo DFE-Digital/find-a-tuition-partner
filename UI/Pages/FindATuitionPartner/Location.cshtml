@@ -14,9 +14,20 @@
 	    </govuk-error-summary>
         
 	    <h1 class="govuk-heading-l">Find a tuition partner</h1>
-	    <p class="govuk-body">Find a tuition partner will help match you with the best partner from the full list of quality assured tuition partners. A tuition partner will help you deliver all of your tutoring needs online and in person.</p>
-		<p class="govuk-body">Understand how your funding can cover 60% of the cost of your tutoring with our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" target="_blank" class="govuk-link"><br/>funding guidance.</a></p>.
+	    
+		<p class="govuk-body">Find a tuition partner will help match you with the best partner from the full list of quality assured tuition partners. A tuition partner will help you deliver all of your tutoring needs online and in person.</p>
+		<govuk-details>
+			<govuk-details-summary>
+				What is a quality assured tuition partner?
+			</govuk-details-summary>
+			<govuk-details-text>
+				The tuition partners shown on this service have been through a quality assurance process by the Department of Education. This process is to ensure quality tuition is delivered and includes safeguarding checks.
+			</govuk-details-text>
+		</govuk-details>
+
+		<p class="govuk-body">Understand how your funding can cover 60% of the cost of your tutoring with our funding guidance.</p>.
 	   
+
 		<form method="post">
 		    <govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code">
 			    <govuk-input-label class="govuk-label--m">What is your school’s postcode?</govuk-input-label>
