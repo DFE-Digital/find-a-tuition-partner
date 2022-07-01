@@ -5,6 +5,8 @@ public class TuitionPartner
     public TuitionPartner()
     {
         Coverage = new List<TuitionPartnerCoverage>();
+        LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>();
+        SubjectCoverage = new List<SubjectCoverage>();
         Prices = new List<Price>();
     }
 
@@ -17,5 +19,7 @@ public class TuitionPartner
     public string Address { get; set; } = string.Empty;
 
     public ICollection<TuitionPartnerCoverage> Coverage { get; set; }
+    public ICollection<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }
+    public ICollection<SubjectCoverage> SubjectCoverage { get; set; }
     public ICollection<Price> Prices { get; set; }
 }
