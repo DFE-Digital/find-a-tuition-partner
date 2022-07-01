@@ -44,7 +44,7 @@
 								<govuk-checkboxes-item value="@item-@subject.Name" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
 							}
 					</govuk-checkboxes>
-					}
+				}
 					
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
@@ -56,7 +56,7 @@
 					</govuk-radios-fieldset>
 					@foreach (var item in @Model.Data.AllTuitionTypes)
 					{
-						<govuk-radios-item value="@item" checked="@item == @Model.Data.TuitionType">@item</govuk-radios-item>
+						<govuk-radios-item value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
 					}
 				</govuk-radios>
 

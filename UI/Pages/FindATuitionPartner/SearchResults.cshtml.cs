@@ -34,7 +34,7 @@ public class SearchResults : PageModel
         public Command(SearchModel query) : base(query) { }
         public string LocalAuthority { get; set; }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<TuitionTypes> AllTuitionTypes { get; set; } = new List<TuitionTypes>();
+        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public ValidationResult Validation { get; internal set; } = new ValidationResult();
@@ -132,7 +132,7 @@ public class SearchResults : PageModel
                 AllSubjects = allSubjects.AllSubjects,
                 Results = results,
                 Validation = validationResults,
-                AllTuitionTypes = new List<TuitionTypes> { TuitionTypes.Any, TuitionTypes.InPerson, TuitionTypes.Online },
+                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
             };
         }
     }

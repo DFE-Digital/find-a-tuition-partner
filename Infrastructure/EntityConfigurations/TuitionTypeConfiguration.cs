@@ -11,7 +11,7 @@ public class TuitionTypeConfiguration : IEntityTypeConfiguration<TuitionType>
     {
         builder.HasData(
             new TuitionType { Id = (int)TuitionTypes.Online, Name = "Online" },
-            new TuitionType { Id = (int)TuitionTypes.InPerson, Name = "In Person" }
+            new TuitionType { Id = (int)TuitionTypes.InSchool, Name = "In School" }
         );
     }
 }

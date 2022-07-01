@@ -23,7 +23,7 @@ public class TuitionPartner : PageModel
 
     public record Command(
         string Name, string Description, string[] Subjects,
-        TuitionTypes[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
+        string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
         string Website, string PhoneNumber, string EmailAddress);
 
     public record SubjectPrice(string Subject, int Price);
@@ -38,12 +38,14 @@ public class TuitionPartner : PageModel
         {
             var tp = await _db.TuitionPartners
                 .Include(x => x.Prices)
+                .ThenInclude(x => x.TuitionType)
+                .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             var subjects = tp.Prices.Select(x => x.Subject.Name).Distinct();
-            var types = tp.Prices.Select(x => (TuitionTypes)x.TuitionTypeId).Distinct();
+            var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = tp.Prices.GroupBy(x => x.Subject).Select(x => 
                 new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", (int)(x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0)));

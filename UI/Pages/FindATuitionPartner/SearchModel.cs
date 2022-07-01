@@ -1,5 +1,4 @@
-﻿using Domain.Constants;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
@@ -19,7 +18,7 @@ public record SearchModel
 
     public string[]? Subjects { get; set; }
         
-    public TuitionTypes TuitionType { get; set; }
+    public TuitionType TuitionType { get; set; }
     
     public KeyStage[] KeyStages { get; set; } = Array.Empty<KeyStage>();
 }
@@ -101,4 +100,16 @@ public enum Subject
     English,
     Humanities,
     ModernForeignLanguages,
+}
+
+public enum TuitionType
+{
+    [Description("Any")]
+    Any = 0,
+
+    [Description("Online")]
+    Online = 1,
+
+    [Description("In School")]
+    InSchool,
 }
