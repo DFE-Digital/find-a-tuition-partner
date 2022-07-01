@@ -91,7 +91,12 @@
 									Subjects covered
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
-									@string.Join(", ", item.Subjects.Select(e => e.Name))
+									<ul class="govuk-list govuk-body-s">
+									@foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
+									{
+										<li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
+									}
+									</ul>
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 							<govuk-summary-list-row class="govuk-body-s">

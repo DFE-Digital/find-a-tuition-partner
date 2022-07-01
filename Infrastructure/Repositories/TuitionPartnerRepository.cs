@@ -22,57 +22,21 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
     public async Task<IDictionary<int, TuitionPartnerSearchResult>> GetSearchResultsDictionaryAsync(IEnumerable<int> ids, int? localAuthorityDistrictId, TuitionPartnerOrderBy orderBy, OrderByDirection direction, CancellationToken cancellationToken = default)
     {
         var entities = await _dbContext.TuitionPartners.AsNoTracking()
+            .Include(e => e.LocalAuthorityDistrictCoverage.Where(lad => lad.LocalAuthorityDistrictId == localAuthorityDistrictId))
+            .ThenInclude(e => e.TuitionType)
+            .Include(e => e.SubjectCoverage)
+            .ThenInclude(e => e.Subject)
             .Where(e => ids.Distinct().Contains(e.Id))
             .ToListAsync(cancellationToken);
-
-        var coverageQueryable = _dbContext.TuitionPartnerCoverage.Where(e => ids.Distinct().Contains(e.TuitionPartnerId));
-
-        if (localAuthorityDistrictId.HasValue)
-        {
-            coverageQueryable = coverageQueryable.Where(e => e.LocalAuthorityDistrictId == localAuthorityDistrictId.Value);
-        }
-
-        var coverageDictionary = (await coverageQueryable.Select(e => new
-            {
-                e.TuitionPartnerId,
-                e.TuitionTypeId,
-                e.PrimaryLiteracy,
-                e.PrimaryNumeracy,
-                e.PrimaryScience,
-                e.SecondaryEnglish,
-                e.SecondaryHumanities,
-                e.SecondaryMaths,
-                e.SecondaryModernForeignLanguages,
-                e.SecondaryScience
-            }).Distinct().ToListAsync(cancellationToken))
-            .GroupBy(e => e.TuitionPartnerId).ToDictionary(e => e.Key, e => e.ToArray());
-
-        var subjectDictionary = (await _lookupDataRepository.GetSubjectsAsync(cancellationToken)).ToDictionary(e => e.Id);
-        var tuitionTypeDictionary = (await _lookupDataRepository.GetTuitionTypesAsync(cancellationToken)).ToDictionary(e => e.Id);
 
         var results = new List<TuitionPartnerSearchResult>(entities.Count);
         foreach (var entity in entities)
         {
             var result = entity.Adapt<TuitionPartnerSearchResult>();
-            result.Description = string.IsNullOrWhiteSpace(result.Description) ? $"{result.Name} description placeholder" : result.Description;
 
-            if (!coverageDictionary.TryGetValue(result.Id, out var coverage)) break;
-
-            var subjects = new List<Subject>();
-            if (coverage.Any(e => e.PrimaryLiteracy)) subjects.Add(subjectDictionary[Subjects.Id.PrimaryLiteracy]);
-            if (coverage.Any(e => e.PrimaryNumeracy)) subjects.Add(subjectDictionary[Subjects.Id.PrimaryNumeracy]);
-            if (coverage.Any(e => e.PrimaryScience)) subjects.Add(subjectDictionary[Subjects.Id.PrimaryScience]);
-            if (coverage.Any(e => e.SecondaryEnglish)) subjects.Add(subjectDictionary[Subjects.Id.SecondaryEnglish]);
-            if (coverage.Any(e => e.SecondaryHumanities)) subjects.Add(subjectDictionary[Subjects.Id.SecondaryHumanities]);
-            if (coverage.Any(e => e.SecondaryMaths)) subjects.Add(subjectDictionary[Subjects.Id.SecondaryMaths]);
-            if (coverage.Any(e => e.SecondaryModernForeignLanguages)) subjects.Add(subjectDictionary[Subjects.Id.SecondaryModernForeignLanguages]);
-            if (coverage.Any(e => e.SecondaryScience)) subjects.Add(subjectDictionary[Subjects.Id.SecondaryScience]);
-            result.Subjects = subjects.ToArray();
+            result.Subjects = entity.SubjectCoverage.Select(e => e.Subject).Distinct().ToArray();
             
-            var resultTuitionTypes = new List<TuitionType>();
-            if (coverage.Any(e => e.TuitionTypeId == (int)TuitionTypes.Online && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[(int)TuitionTypes.Online]);
-            if (coverage.Any(e => e.TuitionTypeId == (int)TuitionTypes.InSchool && (e.PrimaryLiteracy || e.PrimaryNumeracy || e.PrimaryScience || e.SecondaryEnglish || e.SecondaryHumanities || e.SecondaryMaths || e.SecondaryModernForeignLanguages || e.SecondaryScience))) resultTuitionTypes.Add(tuitionTypeDictionary[(int)TuitionTypes.InSchool]);
-            result.TuitionTypes = resultTuitionTypes.ToArray();
+            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).Distinct().ToArray();
 
             results.Add(result);
         }
