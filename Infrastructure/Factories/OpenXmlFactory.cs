@@ -72,16 +72,35 @@ public class OpenXmlFactory
         };
 
         var isInPersonNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "E24");
-        var isOnlineNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "F24");
-
         var inPersonRegions = GetCellValue(workbookPart, LocationSheetName, "G24");
-        var onlineRegions = GetCellValue(workbookPart, LocationSheetName, "H24");
-
         var inPersonLocalAuthorityDistricts = GetCellValue(workbookPart, LocationSheetName, "I24");
-        var onlineLocalAuthorityDistricts = GetCellValue(workbookPart, LocationSheetName, "J24");
-
         var inPersonLads = GetLocalAuthorityDistricts(dbContext, isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
+
+        var isOnlineNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "F24");
+        var onlineRegions = GetCellValue(workbookPart, LocationSheetName, "H24");
+        var onlineLocalAuthorityDistricts = GetCellValue(workbookPart, LocationSheetName, "J24");
         var onlineLads = GetLocalAuthorityDistricts(dbContext, isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
+
+        var supportedTuitionTypeLads = new Dictionary<TuitionTypes, ICollection<LocalAuthorityDistrict>>
+        {
+            {TuitionTypes.InSchool, inPersonLads},
+            {TuitionTypes.Online, onlineLads}
+        };
+
+        foreach (var (tuitionTypeId, lads) in supportedTuitionTypeLads)
+        {
+            foreach (var lad in lads)
+            {
+                var coverage = new LocalAuthorityDistrictCoverage
+                {
+                    TuitionPartner = tuitionPartner,
+                    TuitionTypeId = (int)tuitionTypeId,
+                    LocalAuthorityDistrictId = lad.Id,
+                };
+
+                tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+            }
+        }
 
         var supportedTuitionTypeSubjects = new Dictionary<int, HashSet<int>>
         {
@@ -120,6 +139,15 @@ public class OpenXmlFactory
             var isSubjectSupported = prices.Any(x => x > 0);
             if (isSubjectSupported)
             {
+                var coverage = new SubjectCoverage
+                {
+                    TuitionPartner = tuitionPartner,
+                    TuitionTypeId = tuitionTypeId,
+                    SubjectId = subjectId
+                };
+
+                tuitionPartner.SubjectCoverage.Add(coverage);
+
                 supportedTuitionTypeSubjects[tuitionTypeId].Add(subjectId);
             }
         }
