@@ -2,12 +2,28 @@ using System.Text.Json.Serialization;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
+using Infrastructure;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
+
+if (args.Length > 0 && args[0] == "import")
+{
+    var host = Host.CreateDefaultBuilder(args)
+        .ConfigureServices((hostContext, services) =>
+        {
+            services.AddNtpDbContext(hostContext.Configuration);
+            services.AddHostedService<DataImporterService>();
+        })
+        .Build();
+
+    await host.RunAsync();
+
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 

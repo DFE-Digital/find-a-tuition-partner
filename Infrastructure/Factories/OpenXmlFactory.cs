@@ -63,12 +63,12 @@ public class OpenXmlFactory
 
         var tuitionPartner = new TuitionPartner
         {
-            Name = GetCellValue(workbookPart, GeneralInformationSheetName, "C3"),
-            Website = GetCellValue(workbookPart, GeneralInformationSheetName, "C4"),
-            Email = GetCellValue(workbookPart, GeneralInformationSheetName, "D5"),
-            PhoneNumber = GetCellValue(workbookPart, GeneralInformationSheetName, "D6"),
-            Address = GetCellValue(workbookPart, GeneralInformationSheetName, "D8"),
-            Description = GetCellValue(workbookPart, GeneralInformationSheetName, "C15")
+            Name = GetCellValue(workbookPart, GeneralInformationSheetName, "C3").Trim(),
+            Website = GetCellValue(workbookPart, GeneralInformationSheetName, "C4").Trim(),
+            Email = GetCellValue(workbookPart, GeneralInformationSheetName, "D5").Trim(),
+            PhoneNumber = GetCellValue(workbookPart, GeneralInformationSheetName, "D6").Trim(),
+            Address = GetCellValue(workbookPart, GeneralInformationSheetName, "D8").Trim(),
+            Description = GetCellValue(workbookPart, GeneralInformationSheetName, "C15").Trim()
         };
 
         var isInPersonNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "E24");

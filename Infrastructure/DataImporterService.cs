@@ -1,13 +1,11 @@
-﻿using System.Reflection;
-using Domain.Validators;
+﻿using Domain.Validators;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Infrastructure;
 using Infrastructure.Factories;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataImporter;
+namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
@@ -27,15 +25,23 @@ public class DataImporterService : IHostedService
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
 
-        //Drop and recreate database each time this is run? No need for deltas? Yes - that seems simpler and more testable
-        await dbContext.Database.EnsureDeletedAsync(cancellationToken);
+        _logger.LogWarning("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
+
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+        _logger.LogWarning("Deleting all existing Tuition Partner data");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartnerCoverage\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 
         //Files in code should be encrypted - use some kind of CLI syntax for this tool e.g. dataimporter prepare, dataimporter apply
         var assembly = typeof(AssemblyReference).Assembly;
 
         foreach (var resourceName in assembly.GetManifestResourceNames())
         {
+            if (resourceName.EndsWith("README.md")) break;
+
             await using var stream = assembly.GetManifestResourceStream(resourceName);
             if (stream == null)
             {
@@ -64,6 +70,8 @@ public class DataImporterService : IHostedService
 
             _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from resource name {resourceName}");
         }
+
+        await transaction.CommitAsync(cancellationToken);
 
         _host.StopApplication();
     }

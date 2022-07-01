@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Extensions;
 using Microsoft.Extensions.Hosting;
-using DataImporter;
+using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 var host = Host.CreateDefaultBuilder(args)
