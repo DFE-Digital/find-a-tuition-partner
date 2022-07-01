@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UI.Pages.FindATuitionPartner;
 
-public class Results : PageModel
+public class SearchResults : PageModel
 {
     private readonly IMediator mediator;
 
-    public Results(IMediator mediator) => this.mediator = mediator;
+    public SearchResults(IMediator mediator) => this.mediator = mediator;
 
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new();

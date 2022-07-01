@@ -2,11 +2,11 @@
 @model TuitionPartner
 @{
 	Layout = "_Layout";
-    ViewData["Title"] = $"Find a Tuition Partner - {Model.Data.Name}";
+    ViewData["Title"] = Model.Data.Name;
 	ViewData["Service Name"] = "Find a tuition partner";
 }
 
-<govuk-back-link asp-action="Results" />
+<govuk-back-link asp-action="@nameof(SearchResults)" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -124,7 +124,7 @@
 					    Website
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    <a href="@Model.Data.Website" class="govuk-link">@Model.Data.Website</a>
+					    <a href="@Model.Data.Website" class="govuk-link" target="_blank">@Model.Data.Website</a>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
 			    <govuk-summary-list-row>
@@ -140,7 +140,7 @@
 					    Email address
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-						@Model.Data.EmailAddress
+					    <a href="mailto:@(Model.Data.EmailAddress)" class="govuk-link">@Model.Data.EmailAddress</a>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
 			    <govuk-summary-list-row>

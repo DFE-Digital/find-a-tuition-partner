@@ -27,7 +27,7 @@ public class WhichSubjects : PageModel
             Data = await mediator.Send(new Query(Data));
             return Page();
         }
-        return RedirectToPage("Results", new SearchModel(Data));
+        return RedirectToPage("SearchResults", new SearchModel(Data));
     }
 
     public record Query : SearchModel, IRequest<Command>
