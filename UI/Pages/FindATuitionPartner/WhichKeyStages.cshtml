@@ -20,9 +20,9 @@
 
         <form method="post">
             <govuk-checkboxes asp-for="Data.KeyStages">
-                @foreach (var item in @Model.Data.AllKeyStages)
+                @foreach (var item in Model.Data.AllKeyStages)
                 {
-                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
+                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
                 }
             </govuk-checkboxes>
 

@@ -31,7 +31,7 @@
 			<div class="app-results-filter" data-module="results-filter">
 				<h2 class="govuk-heading-m">Filter results</h2>
 				
-				@foreach (var item in @Model.Data.AllSubjects.Keys)
+				@foreach (var item in Model.Data.AllSubjects.Keys)
 				{
 					<govuk-checkboxes asp-for="Data.Subjects" class="govuk-checkboxes--small govuk-!-margin-0">
 						<govuk-checkboxes-fieldset>
@@ -39,9 +39,10 @@
 								@item.DisplayName()
 							</govuk-checkboxes-fieldset-legend>
 						</govuk-checkboxes-fieldset>
-							@foreach (var subject in @Model.Data.AllSubjects[item])
+							@foreach (var subject in Model.Data.AllSubjects[item])
 							{
-								<govuk-checkboxes-item value="@item-@subject.Name" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
+								var value = $"{item}-{subject.Name}";
+								<govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
 							}
 					</govuk-checkboxes>
 				}
@@ -54,9 +55,9 @@
 							Type of tuition
 						</govuk-radios-fieldset-legend>
 					</govuk-radios-fieldset>
-					@foreach (var item in @Model.Data.AllTuitionTypes)
+					@foreach (var item in Model.Data.AllTuitionTypes)
 					{
-						<govuk-radios-item value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+						<govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
 					}
 				</govuk-radios>
 
