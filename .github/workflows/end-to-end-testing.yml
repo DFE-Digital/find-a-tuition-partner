@@ -1,6 +1,6 @@
 name: end-to-end-testing
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   end-to-end-testing:
