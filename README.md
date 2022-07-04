@@ -70,7 +70,7 @@ From a command prompt, change to the `End-2-End-Testing` directory and run `npm 
 
 * `npx cypress run` to run all Cypress end to end tests in a headless browser
 * `npx cypress open` to open the Cypress test runner for fully manual configuration of the test runner
-* `npx cypress open --config baseUrl=https://my-url/ --env username=private,password=beta` to open the Cypress test runner specifying a different base url and basic HTTP authentication credentials
+* `npx cypress open --config baseUrl=https://my-url/ --env username=<USERNAME>,password=<PASSWORD>` to open the Cypress test runner specifying a different base url and basic HTTP authentication credentials
 
 ### Accessibility Testing
 
