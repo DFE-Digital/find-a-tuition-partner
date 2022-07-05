@@ -23,7 +23,7 @@ public class SearchForResults : CleanSliceFixture
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
-                SeoUrl = "-",
+                SeoUrl = "a",
                 Website = "-",
                 SubjectCoverage = new List<SubjectCoverage>
                 {
@@ -64,8 +64,8 @@ public class SearchForResults : CleanSliceFixture
         {
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
-                Name = "Alpha",
-                SeoUrl = "-",
+                Name = "Beta",
+                SeoUrl = "b",
                 Website = "-",
                 SubjectCoverage = new List<SubjectCoverage>
                 {

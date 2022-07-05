@@ -45,11 +45,11 @@ public static class ServiceCollectionExtensions
 
             if (postgresCredentials?.IsValid() == true)
             {
-                return $"Host={postgresCredentials.Host};Port={postgresCredentials.Port};Username={postgresCredentials.Username};Password={postgresCredentials.Password};Database={postgresCredentials.Name};Include Error Detail=true";
+                return $"Host={postgresCredentials.Host};Port={postgresCredentials.Port};Username={postgresCredentials.Username};Password={postgresCredentials.Password};Database={postgresCredentials.Name}";
             }
         }
 
-        return configuration.GetConnectionString("NtpDatabase") + ";Include Error Detail=true";
+        return configuration.GetConnectionString("NtpDatabase");
     }
 
     public static IServiceCollection AddLocationFilterService(this IServiceCollection services)

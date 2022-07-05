@@ -38,6 +38,7 @@ public class SpreadsheetExtensionsTests
     [InlineData("20.12", 20.12)]
     [InlineData("40.8", 40.8)]
     [InlineData("18.16", 18.16)]
+    [InlineData("£17.67", 17.67)]
     public void With_valid_decimal(string value, decimal expected)
     {
         value.ParseDecimal().Should().Be(expected);

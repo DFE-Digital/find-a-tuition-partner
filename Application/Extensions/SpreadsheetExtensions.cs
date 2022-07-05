@@ -17,6 +17,8 @@ public static class SpreadsheetExtensions
     {
         if (cellValue == null) return 0;
 
+        cellValue = cellValue.Replace("£", "");
+
         if (decimal.TryParse(cellValue, out var decimalValue)) return decimalValue;
 
         return 0;

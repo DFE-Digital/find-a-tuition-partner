@@ -81,6 +81,11 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13)
         };
 
+        if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
+        {
+            tuitionPartner.Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 8);
+        }
+
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 
         tuitionPartner = await AddLocalAuthorityDistrictCoverage(tuitionPartner, cancellationToken);

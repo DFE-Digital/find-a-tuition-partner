@@ -45,13 +45,13 @@ public class SearchTuitionPartnerHandler
 
                 if (lad != null)
                 {
-                    queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.Id == lad.Id && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
+                    queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == lad.Id && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
                 }
             }
 
             if (request.SubjectIds != null)
             {
-                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => request.SubjectIds.Contains(x.Id) && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
+                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => request.SubjectIds.Contains(x.SubjectId) && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
             }
 
             switch (request.OrderBy)
