@@ -10,15 +10,6 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
         builder.HasData(
-            new Subject {Id = Subjects.Id.PrimaryLiteracy, KeyStageId = KeyStages.Id.One, Name = "Primary - Literacy"},
-            new Subject {Id = Subjects.Id.PrimaryNumeracy, KeyStageId = KeyStages.Id.One, Name = "Primary - Numeracy"},
-            new Subject {Id = Subjects.Id.PrimaryScience, KeyStageId = KeyStages.Id.One, Name = "Primary - Science"},
-            new Subject {Id = Subjects.Id.SecondaryEnglish, KeyStageId = KeyStages.Id.Three, Name = "Secondary - English"},
-            new Subject {Id = Subjects.Id.SecondaryHumanities, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Humanities"},
-            new Subject {Id = Subjects.Id.SecondaryMaths, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Maths"},
-            new Subject {Id = Subjects.Id.SecondaryModernForeignLanguages, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Modern Foreign Languages"},
-            new Subject {Id = Subjects.Id.SecondaryScience, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Science"},
-
             new Subject {Id = Subjects.Id.KeyStage1Literacy, KeyStageId = KeyStages.Id.One, Name = "Literacy"},
             new Subject {Id = Subjects.Id.KeyStage1Numeracy, KeyStageId = KeyStages.Id.One, Name = "Numeracy"},
             new Subject {Id = Subjects.Id.KeyStage1Science, KeyStageId = KeyStages.Id.One, Name = "Science"},
