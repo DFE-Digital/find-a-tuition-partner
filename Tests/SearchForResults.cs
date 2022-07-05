@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Constants;
 using Domain.Search;
 using NSubstitute;
 using UI.Pages.FindATuitionPartner;
@@ -22,14 +23,14 @@ public class SearchForResults : CleanSliceFixture
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
+                SeoUrl = "-",
                 Website = "-",
-                Coverage = new List<TuitionPartnerCoverage>
+                SubjectCoverage = new List<SubjectCoverage>
                 {
-                    new TuitionPartnerCoverage
+                    new()
                     {
                         TuitionType = db.TuitionTypes.First(),
-                        LocalAuthorityDistrict = db.LocalAuthorityDistricts.First(),
-                        PrimaryLiteracy = true,
+                        SubjectId = Subjects.Id.KeyStage1Literacy
                     }
                 }
             });
@@ -38,7 +39,7 @@ public class SearchForResults : CleanSliceFixture
         });
 
         var subject = await Fixture.ExecuteDbContextAsync(db =>
-            db.Subjects.FindAsync(Domain.Constants.Subjects.Id.KeyStage1Literacy));
+            db.Subjects.FindAsync(Subjects.Id.KeyStage1Literacy));
 
         var result = await Fixture.SendAsync(new SearchResults.Command
         {
@@ -64,14 +65,14 @@ public class SearchForResults : CleanSliceFixture
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
+                SeoUrl = "-",
                 Website = "-",
-                Coverage = new List<TuitionPartnerCoverage>
+                SubjectCoverage = new List<SubjectCoverage>
                 {
-                    new TuitionPartnerCoverage
+                    new()
                     {
                         TuitionType = db.TuitionTypes.First(),
-                        LocalAuthorityDistrict = db.LocalAuthorityDistricts.First(),
-                        PrimaryLiteracy = true,
+                        SubjectId = Subjects.Id.KeyStage1Literacy
                     }
                 }
             });
@@ -80,7 +81,7 @@ public class SearchForResults : CleanSliceFixture
         });
 
         var subject = await Fixture.ExecuteDbContextAsync(db =>
-            db.Subjects.FindAsync(Domain.Constants.Subjects.Id.KeyStage1Literacy));
+            db.Subjects.FindAsync(Subjects.Id.KeyStage1Literacy));
 
         var result = await Fixture.SendAsync(new SearchResults.Command
         {

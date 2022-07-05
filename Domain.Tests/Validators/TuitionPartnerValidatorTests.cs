@@ -184,49 +184,4 @@ public class TuitionPartnerValidatorTests
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Prices);
     }
-
-    [Fact]
-
-    public void With_no_coverage()
-    {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
-    }
-
-    [Fact]
-
-    public void With_Coverage_but_no_subject()
-    {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict() };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
-    }
-
-    [Fact]
-
-    public void With_Coverage_but_no_local_authority_district()
-    {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { PrimaryLiteracy = true };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
-    }
-
-    [Fact]
-    public void With_valid_Coverage()
-    {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict(), PrimaryLiteracy = true };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
-        var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.Coverage);
-    }
 }

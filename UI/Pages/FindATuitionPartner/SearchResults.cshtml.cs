@@ -1,6 +1,6 @@
 using Application;
+using Application.Extensions;
 using Application.Handlers;
-using Domain.Constants;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
@@ -100,20 +100,14 @@ public class SearchResults : PageModel
                 localAuthority = loc?.LocalAuthority ?? "";
 
                 var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-                var subjectLookup = keyStageSubjects.Select(x =>
-                {
-                    var stage = x.KeyStage switch
-                    {
-                        KeyStage.KeyStage1 => "Primary",
-                        KeyStage.KeyStage2 => "Primary",
-                        KeyStage.KeyStage3 => "Secondary",
-                        KeyStage.KeyStage4 => "Secondary",
-                        _ => "",
-                    };
-                    return $"{stage} - {x.Subject}";
-                }).ToHashSet();
 
-                var subjects = await db.Subjects.Where(s => subjectLookup.Contains(s.Name)).ToListAsync(cancellationToken);
+                var subjects = new List<Domain.Subject>();
+                foreach (var keyStageSubject in keyStageSubjects)
+                {
+                    var subject = await db.Subjects.SingleOrDefaultAsync(s => s.KeyStageId == (int)keyStageSubject.KeyStage && s.Name == keyStageSubject.Subject, cancellationToken);
+                    if (subject == null) continue;
+                    subjects.Add(subject);
+                }
 
                 var cmd = new SearchTuitionPartnerHandler.Command
                 {
