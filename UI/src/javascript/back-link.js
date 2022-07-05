@@ -1,5 +1,5 @@
 function BackLink() {
-    this.$links = document.querySelectorAll('.govuk-back-link')
+    this.$links = document.querySelectorAll('.govuk-back-link[data-module="history-back-link"]')
 }
 
 BackLink.prototype.init = function () {

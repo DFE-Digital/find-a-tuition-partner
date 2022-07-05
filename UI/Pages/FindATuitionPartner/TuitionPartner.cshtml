@@ -4,9 +4,10 @@
 	Layout = "_Layout";
     ViewData["Title"] = Model.Data.Name;
 	ViewData["Service Name"] = "Find a tuition partner";
+	ViewData["Service Home Page"] = nameof(Index);
 }
 
-<govuk-back-link asp-action="@nameof(SearchResults)" />
+<govuk-back-link asp-action="@nameof(SearchResults)" data-module="history-back-link" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -74,7 +75,7 @@
 			<p class="govuk-body">
 				Each Pupil Premium (PP) eligible student will receive £162. This funding cost has been calculated
 				so you will have 60% of the cost covered for up to £18 per pupil per hour. For more information on
-				tuition cost, you can see our [link]funding guidance.
+				tuition cost, you can see our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" class="govuk-link">funding guidance</a>.
 			</p>
 
 			<p>
