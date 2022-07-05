@@ -9,8 +9,8 @@ public class KeyStageConfiguration : IEntityTypeConfiguration<KeyStage>
 {
     public void Configure(EntityTypeBuilder<KeyStage> builder)
     {
-        builder.HasIndex(e => e.Name);
         builder.HasIndex(e => e.SeoUrl).IsUnique();
+        builder.HasIndex(e => e.Name);
 
         builder.HasData(
             new KeyStage { Id = KeyStages.Id.One, SeoUrl = "key-stage-1", Name = "Key stage 1" },

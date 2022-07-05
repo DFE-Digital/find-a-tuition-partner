@@ -9,8 +9,8 @@ public class TuitionTypeConfiguration : IEntityTypeConfiguration<TuitionType>
 {
     public void Configure(EntityTypeBuilder<TuitionType> builder)
     {
-        builder.HasIndex(e => e.Name);
         builder.HasIndex(e => e.SeoUrl).IsUnique();
+        builder.HasIndex(e => e.Name);
 
         builder.HasData(
             new TuitionType { Id = (int)TuitionTypes.Online, SeoUrl = "online", Name = "Online" },

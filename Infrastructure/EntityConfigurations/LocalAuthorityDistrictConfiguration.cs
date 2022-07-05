@@ -9,7 +9,7 @@ public class LocalAuthorityDistrictConfiguration : IEntityTypeConfiguration<Loca
 {
     public void Configure(EntityTypeBuilder<LocalAuthorityDistrict> builder)
     {
-        builder.HasIndex(e => e.Code);
+        builder.HasIndex(e => e.Code).IsUnique();
         builder.HasIndex(e => e.Name);
 
         builder.HasData(
@@ -306,7 +306,7 @@ public class LocalAuthorityDistrictConfiguration : IEntityTypeConfiguration<Loca
             new LocalAuthorityDistrict { Id = 291, Code = "E07000131", Name = "Harborough", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
             new LocalAuthorityDistrict { Id = 292, Code = "E07000132", Name = "Hinckley and Bosworth", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
             new LocalAuthorityDistrict { Id = 293, Code = "E07000133", Name = "Melton", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
-            new LocalAuthorityDistrict { Id = 294, Code = "E07000133", Name = "North West Leicestershire", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
+            new LocalAuthorityDistrict { Id = 294, Code = "E07000134", Name = "North West Leicestershire", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
             new LocalAuthorityDistrict { Id = 295, Code = "E07000135", Name = "Oadby and Wigston", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Leicestershire },
             new LocalAuthorityDistrict { Id = 296, Code = "E07000136", Name = "Boston", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Lincolnshire },
             new LocalAuthorityDistrict { Id = 297, Code = "E07000137", Name = "East Lindsey", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Lincolnshire },

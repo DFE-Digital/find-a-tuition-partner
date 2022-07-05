@@ -10,9 +10,9 @@ public class TuitionPartner
     }
 
     public int Id { get; set; }
+    public string SeoUrl { get; set; } = null!;
     public DateOnly LastUpdated { get; set; }
     public string Name { get; set; } = null!;
-    public string SeoUrl { get; set; } = null!;
     public string Website { get; set; } = null!;
     public string Description { get; set; } = string.Empty;
     public string Experience { get; set; } = string.Empty;

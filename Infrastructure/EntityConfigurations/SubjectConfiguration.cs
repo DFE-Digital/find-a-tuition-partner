@@ -9,8 +9,8 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
 {
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
-        builder.HasIndex(e => e.Name);
         builder.HasIndex(e => e.SeoUrl).IsUnique();
+        builder.HasIndex(e => e.Name);
 
         builder.HasData(
             new Subject {Id = Subjects.Id.KeyStage1Literacy, SeoUrl = "key-stage-1-literacy", KeyStageId = KeyStages.Id.One, Name = "Literacy"},

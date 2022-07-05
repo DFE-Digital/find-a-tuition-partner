@@ -33,7 +33,6 @@ public class DataImporterService : IHostedService
         await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         _logger.LogWarning("Deleting all existing Tuition Partner data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartnerCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);

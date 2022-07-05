@@ -34,7 +34,16 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SeoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("SeoUrl")
+                        .IsUnique();
 
                     b.ToTable("KeyStage");
 
@@ -42,22 +51,26 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Key Stage 1"
+                            Name = "Key stage 1",
+                            SeoUrl = "key-stage-1"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Key Stage 2"
+                            Name = "Key stage 2",
+                            SeoUrl = "key-stage-2"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Key Stage 3"
+                            Name = "Key stage 3",
+                            SeoUrl = "key-stage-3"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Key Stage 4"
+                            Name = "Key stage 4",
+                            SeoUrl = "key-stage-4"
                         });
                 });
 
@@ -82,7 +95,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code");
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("Name");
 
@@ -1181,7 +1195,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code");
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("LocalAuthorityId");
 
@@ -3539,7 +3554,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 294,
-                            Code = "E07000133",
+                            Code = "E07000134",
                             LocalAuthorityId = 855,
                             Name = "North West Leicestershire",
                             RegionId = 4
@@ -3746,7 +3761,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code");
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("Name");
 
@@ -3824,9 +3840,18 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SeoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("KeyStageId");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("SeoUrl")
+                        .IsUnique();
 
                     b.ToTable("Subjects");
 
@@ -3835,145 +3860,113 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             KeyStageId = 1,
-                            Name = "Primary - Literacy"
+                            Name = "Literacy",
+                            SeoUrl = "key-stage-1-literacy"
                         },
                         new
                         {
                             Id = 2,
                             KeyStageId = 1,
-                            Name = "Primary - Numeracy"
+                            Name = "Numeracy",
+                            SeoUrl = "key-stage-1-numeracy"
                         },
                         new
                         {
                             Id = 3,
                             KeyStageId = 1,
-                            Name = "Primary - Science"
+                            Name = "Science",
+                            SeoUrl = "key-stage-1-science"
                         },
                         new
                         {
                             Id = 4,
-                            KeyStageId = 3,
-                            Name = "Secondary - English"
+                            KeyStageId = 2,
+                            Name = "Literacy",
+                            SeoUrl = "key-stage-2-literacy"
                         },
                         new
                         {
                             Id = 5,
-                            KeyStageId = 3,
-                            Name = "Secondary - Humanities"
+                            KeyStageId = 2,
+                            Name = "Numeracy",
+                            SeoUrl = "key-stage-2-numeracy"
                         },
                         new
                         {
                             Id = 6,
-                            KeyStageId = 3,
-                            Name = "Secondary - Maths"
+                            KeyStageId = 2,
+                            Name = "Literacy",
+                            SeoUrl = "key-stage-2-science"
                         },
                         new
                         {
                             Id = 7,
                             KeyStageId = 3,
-                            Name = "Secondary - Modern Foreign Languages"
+                            Name = "English",
+                            SeoUrl = "key-stage-3-english"
                         },
                         new
                         {
                             Id = 8,
                             KeyStageId = 3,
-                            Name = "Secondary - Science"
+                            Name = "Humanities",
+                            SeoUrl = "key-stage-3-humanities"
                         },
                         new
                         {
                             Id = 9,
-                            KeyStageId = 1,
-                            Name = "Literacy"
+                            KeyStageId = 3,
+                            Name = "Maths",
+                            SeoUrl = "key-stage-3-maths"
                         },
                         new
                         {
                             Id = 10,
-                            KeyStageId = 1,
-                            Name = "Numeracy"
+                            KeyStageId = 3,
+                            Name = "Modern Foreign Languages",
+                            SeoUrl = "key-stage-3-modern-foreign-languages"
                         },
                         new
                         {
                             Id = 11,
-                            KeyStageId = 1,
-                            Name = "Science"
+                            KeyStageId = 3,
+                            Name = "Science",
+                            SeoUrl = "key-stage-3-science"
                         },
                         new
                         {
                             Id = 12,
-                            KeyStageId = 2,
-                            Name = "Literacy"
+                            KeyStageId = 4,
+                            Name = "English",
+                            SeoUrl = "key-stage-4-english"
                         },
                         new
                         {
                             Id = 13,
-                            KeyStageId = 2,
-                            Name = "Numeracy"
+                            KeyStageId = 4,
+                            Name = "Humanities",
+                            SeoUrl = "key-stage-4-humanities"
                         },
                         new
                         {
                             Id = 14,
-                            KeyStageId = 2,
-                            Name = "Literacy"
+                            KeyStageId = 4,
+                            Name = "Maths",
+                            SeoUrl = "key-stage-4-maths"
                         },
                         new
                         {
                             Id = 15,
-                            KeyStageId = 3,
-                            Name = "English"
+                            KeyStageId = 4,
+                            Name = "Modern Foreign Languages",
+                            SeoUrl = "key-stage-4-modern-foreign-languages"
                         },
                         new
                         {
                             Id = 16,
-                            KeyStageId = 3,
-                            Name = "Humanities"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            KeyStageId = 3,
-                            Name = "Maths"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            KeyStageId = 3,
-                            Name = "Modern Foreign Languages"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            KeyStageId = 3,
-                            Name = "Science"
-                        },
-                        new
-                        {
-                            Id = 20,
                             KeyStageId = 4,
-                            Name = "English"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            KeyStageId = 4,
-                            Name = "Humanities"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            KeyStageId = 4,
-                            Name = "Maths"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            KeyStageId = 4,
-                            Name = "Modern Foreign Languages"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            KeyStageId = 4,
-                            Name = "Science"
+                            Name = "Science",
+                            SeoUrl = "key-stage-4-science"
                         });
                 });
 
@@ -4013,6 +4006,10 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdditionalServiceOfferings")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("text");
@@ -4025,11 +4022,29 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Experience")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("HasSenProvision")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateOnly>("LastUpdated")
+                        .HasColumnType("date");
+
+                    b.Property<string>("LegalStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeoUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -4041,60 +4056,10 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("TuitionPartners");
-                });
-
-            modelBuilder.Entity("Domain.TuitionPartnerCoverage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LocalAuthorityDistrictId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("PrimaryLiteracy")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("PrimaryNumeracy")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("PrimaryScience")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryEnglish")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryHumanities")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryMaths")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryModernForeignLanguages")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("SecondaryScience")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("TuitionPartnerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionTypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TuitionTypeId");
-
-                    b.HasIndex("LocalAuthorityDistrictId", "TuitionTypeId");
-
-                    b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId", "TuitionTypeId")
+                    b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionPartnerCoverage");
+                    b.ToTable("TuitionPartners");
                 });
 
             modelBuilder.Entity("Domain.TuitionType", b =>
@@ -4109,7 +4074,16 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SeoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("SeoUrl")
+                        .IsUnique();
 
                     b.ToTable("TuitionTypes");
 
@@ -4117,112 +4091,15 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Online"
+                            Name = "Online",
+                            SeoUrl = "online"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "In School"
+                            Name = "In School",
+                            SeoUrl = "in-school"
                         });
-                });
-
-            modelBuilder.Entity("Domain.TutorType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TutorTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Qualified Teachers"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Professional Tutors"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "SEN Specialists"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Higher Level Teaching Assistants"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "University Students"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Volunteer tutors"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "No preference"
-                        });
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.TuitionPartnerDataImportHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ImportDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Importer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Md5Checksum")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TuitionPartnerDataImportHistories");
-                });
-
-            modelBuilder.Entity("Infrastructure.Entities.UserSearch", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SearchJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserSearches");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -4366,33 +4243,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("TuitionType");
                 });
 
-            modelBuilder.Entity("Domain.TuitionPartnerCoverage", b =>
-                {
-                    b.HasOne("Domain.LocalAuthorityDistrict", "LocalAuthorityDistrict")
-                        .WithMany()
-                        .HasForeignKey("LocalAuthorityDistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionPartner", "TuitionPartner")
-                        .WithMany("Coverage")
-                        .HasForeignKey("TuitionPartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LocalAuthorityDistrict");
-
-                    b.Navigation("TuitionPartner");
-
-                    b.Navigation("TuitionType");
-                });
-
             modelBuilder.Entity("Domain.LocalAuthority", b =>
                 {
                     b.Navigation("LocalAuthorityDistricts");
@@ -4407,8 +4257,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
                 {
-                    b.Navigation("Coverage");
-
                     b.Navigation("LocalAuthorityDistrictCoverage");
 
                     b.Navigation("Prices");
