@@ -29,9 +29,9 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         {
             var result = entity.Adapt<TuitionPartnerSearchResult>();
 
-            result.Subjects = entity.SubjectCoverage.Select(e => e.Subject).Distinct().ToArray();
+            result.Subjects = entity.SubjectCoverage.OrderBy(e => e.Id).Select(e => e.Subject).Distinct().ToArray();
             
-            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).Distinct().ToArray();
+            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
 
             results.Add(result);
         }
