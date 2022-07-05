@@ -1,5 +1,6 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
+﻿using Application.Extensions;
+using Application.Extraction;
+using Application.Factories;
 using Domain;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Factories;
 
-public class OpenXmlFactory
+public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactory
 {
+    private readonly ILogger _logger;
+    private readonly ISpreadsheetExtractor _spreadsheetExtractor;
+    private readonly NtpDbContext _dbContext;
+
     private const string GeneralInformationSheetName = "General information";
     private const string PricingSheetName = "Pricing, Key Stage and SEN";
     private const string LocationSheetName = "Location of Tuition Provision";
@@ -50,36 +55,40 @@ public class OpenXmlFactory
             { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
         };
 
-    public static TuitionPartner? GetTuitionPartner(ILogger logger, Stream stream, NtpDbContext dbContext)
+    public QualityAssuredSpreadsheetTuitionPartnerFactory(ILogger<QualityAssuredSpreadsheetTuitionPartnerFactory> logger, ISpreadsheetExtractor spreadsheetExtractor, NtpDbContext dbContext)
     {
-        using var document = SpreadsheetDocument.Open(stream, false);
+        _logger = logger;
+        _spreadsheetExtractor = spreadsheetExtractor;
+        _dbContext = dbContext;
+    }
 
-        var workbookPart = document.WorkbookPart;
-        if (workbookPart == null)
-        {
-            logger.LogWarning("Spreadsheet workbook part was null");
-            return null;
-        }
+    public TuitionPartner GetTuitionPartner(Stream stream)
+    {
+        _spreadsheetExtractor.SetStream(stream);
 
         var tuitionPartner = new TuitionPartner
         {
-            Name = GetCellValue(workbookPart, GeneralInformationSheetName, "C3").Trim(),
-            Website = GetCellValue(workbookPart, GeneralInformationSheetName, "C4").Trim(),
-            Email = GetCellValue(workbookPart, GeneralInformationSheetName, "D5").Trim(),
-            PhoneNumber = GetCellValue(workbookPart, GeneralInformationSheetName, "D6").Trim(),
-            Address = GetCellValue(workbookPart, GeneralInformationSheetName, "D8").Trim(),
-            Description = GetCellValue(workbookPart, GeneralInformationSheetName, "C15").Trim()
+            Name = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 4),
+            Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 5),
+            Email = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 6),
+            PhoneNumber = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 7),
+            Address = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 9),
+            Description = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "B", 13),
+            Experience = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 13),
+            LegalStatus = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "D", 13),
+            HasSenProvision = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 13).ParseBoolean(),
+            AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13)
         };
 
-        var isInPersonNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "E24");
-        var inPersonRegions = GetCellValue(workbookPart, LocationSheetName, "G24");
-        var inPersonLocalAuthorityDistricts = GetCellValue(workbookPart, LocationSheetName, "I24");
-        var inPersonLads = GetLocalAuthorityDistricts(dbContext, isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
+        var isInPersonNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "E", 24).ParseBoolean();
+        var inPersonRegions = _spreadsheetExtractor.GetCellValue(LocationSheetName, "G", 24);
+        var inPersonLocalAuthorityDistricts = _spreadsheetExtractor.GetCellValue(LocationSheetName, "I", 24);
+        var inPersonLads = GetLocalAuthorityDistricts(isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
 
-        var isOnlineNationwide = GetBooleanCellValue(workbookPart, LocationSheetName, "F24");
-        var onlineRegions = GetCellValue(workbookPart, LocationSheetName, "H24");
-        var onlineLocalAuthorityDistricts = GetCellValue(workbookPart, LocationSheetName, "J24");
-        var onlineLads = GetLocalAuthorityDistricts(dbContext, isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
+        var isOnlineNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "F", 24).ParseBoolean();
+        var onlineRegions = _spreadsheetExtractor.GetCellValue(LocationSheetName, "H", 24);
+        var onlineLocalAuthorityDistricts = _spreadsheetExtractor.GetCellValue(LocationSheetName, "J", 24);
+        var onlineLads = GetLocalAuthorityDistricts(isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
 
         var supportedTuitionTypeLads = new Dictionary<TuitionTypes, ICollection<LocalAuthorityDistrict>>
         {
@@ -114,9 +123,8 @@ public class OpenXmlFactory
             for (var i = 0; i < 6; i++)
             {
                 var groupSize = i + 1;
-                var addressName = $"{column}{row + i}";
 
-                var cellPriceContent = GetCellValue(workbookPart, PricingSheetName, addressName);
+                var cellPriceContent = _spreadsheetExtractor.GetCellValue(PricingSheetName, column, row + i);
 
                 //TODO: Investigate 2 decimal point precision
                 if (decimal.TryParse(cellPriceContent, out var hourlyRate))
@@ -197,11 +205,11 @@ public class OpenXmlFactory
         return tuitionPartner;
     }
 
-    private static ICollection<LocalAuthorityDistrict> GetLocalAuthorityDistricts(NtpDbContext dbContext, bool isNationwide, string regionsString, string localAuthorityDistrictsString)
+    private ICollection<LocalAuthorityDistrict> GetLocalAuthorityDistricts(bool isNationwide, string regionsString, string localAuthorityDistrictsString)
     {
         if (isNationwide)
         {
-            return dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code).ToList();
+            return _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code).ToList();
         }
 
         if (!string.IsNullOrWhiteSpace(localAuthorityDistrictsString))
@@ -216,13 +224,13 @@ public class OpenXmlFactory
                 {
                     if (localAuthorityDistrictIdentifiers[0].StartsWith("E0"))
                     {
-                        return dbContext.LocalAuthorityDistricts
+                        return _dbContext.LocalAuthorityDistricts
                             .Where(e => localAuthorityDistrictIdentifiers.Contains(e.Code))
                             .OrderBy(e => e.Code)
                             .ToList();
                     }
 
-                    return dbContext.LocalAuthorityDistricts
+                    return _dbContext.LocalAuthorityDistricts
                         .Where(e => localAuthorityDistrictIdentifiers.Contains(e.Name))
                         .OrderBy(e => e.Code)
                         .ToList();
@@ -241,7 +249,7 @@ public class OpenXmlFactory
             {
                 var regionIds = Regions.InitialsToId.Where(x => regionInitials.Contains(x.Key)).Select(x => x.Value);
 
-                var regions = dbContext.Regions
+                var regions = _dbContext.Regions
                     .Include(e => e.LocalAuthorityDistricts)
                     .Where(e => regionIds.Contains(e.Id))
                     .ToList();
@@ -260,89 +268,5 @@ public class OpenXmlFactory
         if (value.Contains("\r\n")) return "\r\n";
         if (value.Contains("\n")) return "\n";
         return "";
-    }
-
-    private static bool GetBooleanCellValue(WorkbookPart wbPart, string sheetName, string addressName)
-    {
-        var value = GetCellValue(wbPart, sheetName, addressName);
-        return value.StartsWith("Y");
-    }
-
-    private static string GetCellValue(WorkbookPart wbPart, string sheetName, string addressName)
-    {
-        string value = "";
-
-        // Find the sheet with the supplied name, and then use that 
-        // Sheet object to retrieve a reference to the first worksheet.
-        Sheet theSheet = wbPart.Workbook.Descendants<Sheet>().
-            Where(s => s.Name == sheetName).FirstOrDefault();
-
-        // Throw an exception if there is no sheet.
-        if (theSheet == null)
-        {
-            throw new ArgumentException("sheetName");
-        }
-
-        // Retrieve a reference to the worksheet part.
-        WorksheetPart wsPart =
-            (WorksheetPart)(wbPart.GetPartById(theSheet.Id));
-
-        // Use its Worksheet property to get a reference to the cell 
-        // whose address matches the address you supplied.
-        Cell theCell = wsPart.Worksheet.Descendants<Cell>().
-            Where(c => c.CellReference == addressName).FirstOrDefault();
-
-        // If the cell does not exist, return an empty string.
-        if (theCell != null)
-        {
-            value = theCell.InnerText;
-
-            // If the cell represents an integer number, you are done. 
-            // For dates, this code returns the serialized value that 
-            // represents the date. The code handles strings and 
-            // Booleans individually. For shared strings, the code 
-            // looks up the corresponding value in the shared string 
-            // table. For Booleans, the code converts the value into 
-            // the words TRUE or FALSE.
-            if (theCell.DataType != null)
-            {
-                switch (theCell.DataType.Value)
-                {
-                    case CellValues.SharedString:
-
-                        // For shared strings, look up the value in the
-                        // shared strings table.
-                        var stringTable =
-                            wbPart.GetPartsOfType<SharedStringTablePart>()
-                            .FirstOrDefault();
-
-                        // If the shared string table is missing, something 
-                        // is wrong. Return the index that is in
-                        // the cell. Otherwise, look up the correct text in 
-                        // the table.
-                        if (stringTable != null)
-                        {
-                            value =
-                                stringTable.SharedStringTable
-                                .ElementAt(int.Parse(value)).InnerText;
-                        }
-                        break;
-
-                    case CellValues.Boolean:
-                        switch (value)
-                        {
-                            case "0":
-                                value = "FALSE";
-                                break;
-                            default:
-                                value = "TRUE";
-                                break;
-                        }
-                        break;
-                }
-            }
-        }
-
-        return value;
     }
 }

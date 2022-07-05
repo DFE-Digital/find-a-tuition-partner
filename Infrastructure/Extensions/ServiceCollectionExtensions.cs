@@ -1,7 +1,11 @@
 ﻿using System.Text.Json;
 using Application;
+using Application.Extraction;
+using Application.Factories;
 using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
+using Infrastructure.Extraction;
+using Infrastructure.Factories;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
@@ -66,6 +70,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();
         services.AddScoped<ILookupDataRepository, LookupDataRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddDataImporter(this IServiceCollection services)
+    {
+        services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
+        services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
 
         return services;
     }

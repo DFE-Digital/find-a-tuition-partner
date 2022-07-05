@@ -16,6 +16,7 @@ if (args.Length > 0 && args[0] == "import")
         .ConfigureServices((hostContext, services) =>
         {
             services.AddNtpDbContext(hostContext.Configuration);
+            services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
         .Build();

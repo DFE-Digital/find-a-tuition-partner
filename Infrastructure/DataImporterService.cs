@@ -1,8 +1,9 @@
-﻿using Domain.Validators;
+﻿using Application.Factories;
+using Domain;
+using Domain.Validators;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Infrastructure.Factories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
@@ -24,6 +25,7 @@ public class DataImporterService : IHostedService
     {
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
+        var factory = scope.ServiceProvider.GetRequiredService<ITuitionPartnerFactory>();
 
         _logger.LogWarning("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
@@ -52,10 +54,14 @@ public class DataImporterService : IHostedService
             }
 
             _logger.LogInformation($"Attempting create Tuition Partner from resource name {resourceName}");
-            var tuitionPartner = OpenXmlFactory.GetTuitionPartner(_logger, stream, dbContext);
-            if (tuitionPartner == null)
+            TuitionPartner tuitionPartner;
+            try
             {
-                _logger.LogError($"Could not create Tuition Partner from resource name {resourceName}");
+                tuitionPartner = factory.GetTuitionPartner(stream);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from resource name {resourceName}");
                 continue;
             }
 

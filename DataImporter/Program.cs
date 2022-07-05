@@ -7,6 +7,7 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddNtpDbContext(hostContext.Configuration);
+        services.AddDataImporter();
         services.AddHostedService<DataImporterService>();
     })
     .Build();
