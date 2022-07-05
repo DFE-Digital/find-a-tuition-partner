@@ -66,7 +66,13 @@ public class WhichSubjects : PageModel
 
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
-            request.KeyStages ??= Array.Empty<KeyStage>();
+            request.KeyStages ??= new[]
+            {
+                KeyStage.KeyStage1,
+                KeyStage.KeyStage2,
+                KeyStage.KeyStage3,
+                KeyStage.KeyStage4,
+            };
             request.Subjects ??= Array.Empty<string>();
 
             var selectable = KeyStageSubjects

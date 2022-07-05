@@ -20,7 +20,7 @@ public record SearchModel
         
     public TuitionType TuitionType { get; set; }
     
-    public KeyStage[] KeyStages { get; set; } = Array.Empty<KeyStage>();
+    public KeyStage[]? KeyStages { get; set; }
 }
 
 public static class ModelExtensions

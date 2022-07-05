@@ -28,7 +28,7 @@
                     @foreach (var subject in Model.Data.AllSubjects[item])
                     {
 	                    var value = $"{item}-{subject.Name}";
-                        <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
+                        <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
                     }
                 </govuk-checkboxes>
             }

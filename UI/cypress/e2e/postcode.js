@@ -1,9 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has started the 'Find a tuition partner' journey", () => {
-  cy.visit("/find-a-tuition-partner");
-});
-
 Given("a user has tried to continue without entering a postcode", () => {
   Step(this, "a user has started the 'Find a tuition partner' journey");
   Step(this, "they click 'Continue'");
