@@ -30,7 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
-builder.Services.AddSearchRequestBuilder();
+builder.Services.AddLocationFilterService();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 

@@ -52,11 +52,8 @@ public static class ServiceCollectionExtensions
         return configuration.GetConnectionString("NtpDatabase");
     }
 
-    public static IServiceCollection AddSearchRequestBuilder(this IServiceCollection services)
+    public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
     {
-        services.AddScoped<ISearchStateRepository, SearchStateRepository>();
-        services.AddScoped<ISearchRequestBuilderRepository, SearchRequestBuilderRepository>();
-
         services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
         {
             client.BaseAddress = new Uri("https://api.postcodes.io");

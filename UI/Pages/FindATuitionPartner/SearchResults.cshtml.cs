@@ -101,13 +101,7 @@ public class SearchResults : PageModel
 
                 var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
 
-                var subjects = new List<Domain.Subject>();
-                foreach (var keyStageSubject in keyStageSubjects)
-                {
-                    var subject = await db.Subjects.SingleOrDefaultAsync(s => s.KeyStageId == (int)keyStageSubject.KeyStage && s.Name == keyStageSubject.Subject, cancellationToken);
-                    if (subject == null) continue;
-                    subjects.Add(subject);
-                }
+                var subjects = await db.Subjects.Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl)).ToListAsync(cancellationToken);
 
                 var cmd = new SearchTuitionPartnerHandler.Command
                 {
