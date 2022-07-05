@@ -1,4 +1,5 @@
-﻿using Application.Extensions;
+﻿using System;
+using Application.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -51,5 +52,21 @@ public class SpreadsheetExtensionsTests
     public void With_invalid_decimal(string value)
     {
         value.ParseDecimal().Should().Be(0);
+    }
+
+    [Fact]
+    public void With_valid_date()
+    {
+        "44658.0".ParseDateOnly().Should().Be(new DateOnly(2022, 4, 7));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    [InlineData("Today")]
+    public void With_invalid_date(string value)
+    {
+        value.ParseDateOnly().Should().BeNull();
     }
 }

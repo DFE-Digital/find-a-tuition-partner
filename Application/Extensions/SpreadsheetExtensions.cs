@@ -1,4 +1,6 @@
-﻿namespace Application.Extensions;
+﻿using System.Globalization;
+
+namespace Application.Extensions;
 
 public static class SpreadsheetExtensions
 {
@@ -18,5 +20,17 @@ public static class SpreadsheetExtensions
         if (decimal.TryParse(cellValue, out var decimalValue)) return decimalValue;
 
         return 0;
+    }
+
+    public static DateOnly? ParseDateOnly(this string? cellValue)
+    {
+        if (cellValue == null) return null;
+
+        if (double.TryParse(cellValue, out var doubleValue))
+        {
+            return DateOnly.FromDateTime(DateTime.FromOADate(doubleValue));
+        }
+
+        return null;
     }
 }

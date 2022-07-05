@@ -68,6 +68,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
         var tuitionPartner = new TuitionPartner
         {
+            LastUpdated = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 5).ParseDateOnly() ?? DateOnly.MinValue,
             Name = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 4),
             Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 5),
             Email = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 6),
@@ -79,6 +80,8 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             HasSenProvision = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 13).ParseBoolean(),
             AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13)
         };
+
+        tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 
         tuitionPartner = await AddLocalAuthorityDistrictCoverage(tuitionPartner, cancellationToken);
 
