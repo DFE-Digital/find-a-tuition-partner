@@ -51,7 +51,11 @@ public class SearchTuitionPartnerHandler
 
             if (request.SubjectIds != null)
             {
-                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => request.SubjectIds.Contains(x.SubjectId) && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
+                foreach (var subjectId in request.SubjectIds)
+                {
+                    // Must support all selected subjects for the tuition type if selected
+                    queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
+                }
             }
 
             switch (request.OrderBy)
