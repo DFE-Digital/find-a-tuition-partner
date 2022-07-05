@@ -38,9 +38,15 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
         return value;
     }
 
-    public string[] GetColumnValues(string sheetName, string column, int startRow, string endRow)
+    public string[] GetColumnValues(string sheetName, string column, int startRow, int endRow)
     {
-        throw new NotImplementedException();
+        var count = endRow - startRow;
+        var values = new string[count];
+        for (int i = 0; i < count; i++)
+        {
+            values[i] = GetCellValue(sheetName, column, startRow + i);
+        }
+        return values;
     }
 
     private WorkbookPart GetWorkbookPart()

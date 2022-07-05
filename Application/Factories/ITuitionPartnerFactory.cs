@@ -4,5 +4,5 @@ namespace Application.Factories;
 
 public interface ITuitionPartnerFactory
 {
-    TuitionPartner GetTuitionPartner(Stream stream);
+    Task<TuitionPartner> GetTuitionPartner(Stream stream, CancellationToken cancellationToken);
 }

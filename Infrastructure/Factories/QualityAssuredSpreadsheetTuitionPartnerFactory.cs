@@ -18,41 +18,41 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
     private const string PricingSheetName = "Pricing, Key Stage and SEN";
     private const string LocationSheetName = "Location of Tuition Provision";
 
-    private static readonly IDictionary<(int, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(int, int), (string, int)>
+    private static readonly IDictionary<(TuitionTypes, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(TuitionTypes, int), (string, int)>
         {
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage1Literacy), ("C", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage1Numeracy), ("D", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage1Science), ("E", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage2Literacy), ("F", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage2Numeracy), ("G", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage2Science), ("H", 15) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage3English), ("C", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage3Maths), ("E", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage3Science), ("G", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage4English), ("H", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage4Humanities), ("I", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage4Maths), ("J", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 25) },
-            { ((int)TuitionTypes.InSchool, Subjects.Id.KeyStage4Science), ("K", 25) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Literacy), ("C", 7) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Numeracy), ("D", 7) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Science), ("E", 7) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Literacy), ("C", 17) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Numeracy), ("D", 17) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Science), ("E", 17) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3English), ("C", 27) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 27) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Maths), ("E", 27) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 27) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Science), ("G", 27) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4English), ("C", 37) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Humanities), ("D", 37) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Maths), ("E", 37) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 37) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Science), ("G", 37) },
 
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Literacy), ("C", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Numeracy), ("D", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Literacy), ("F", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Numeracy), ("G", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("H", 35) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Maths), ("E", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage3Science), ("G", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4English), ("H", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Humanities), ("I", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Maths), ("J", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("K", 46) },
-            { ((int)TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("K", 46) }
+            { (TuitionTypes.Online, Subjects.Id.KeyStage1Literacy), ("C", 47) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage1Numeracy), ("D", 47) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 47) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage2Literacy), ("C", 57) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage2Numeracy), ("D", 57) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("E", 57) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 67) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 67) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage3Maths), ("E", 67) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 67) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage3Science), ("G", 67) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage4English), ("C", 77) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage4Humanities), ("D", 77) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage4Maths), ("E", 77) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 77) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
         };
 
     public QualityAssuredSpreadsheetTuitionPartnerFactory(ILogger<QualityAssuredSpreadsheetTuitionPartnerFactory> logger, ISpreadsheetExtractor spreadsheetExtractor, NtpDbContext dbContext)
@@ -62,7 +62,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         _dbContext = dbContext;
     }
 
-    public TuitionPartner GetTuitionPartner(Stream stream)
+    public async Task<TuitionPartner> GetTuitionPartner(Stream stream, CancellationToken cancellationToken)
     {
         _spreadsheetExtractor.SetStream(stream);
 
@@ -80,193 +80,190 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13)
         };
 
-        var isInPersonNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "E", 24).ParseBoolean();
-        var inPersonRegions = _spreadsheetExtractor.GetCellValue(LocationSheetName, "G", 24);
-        var inPersonLocalAuthorityDistricts = _spreadsheetExtractor.GetCellValue(LocationSheetName, "I", 24);
-        var inPersonLads = GetLocalAuthorityDistricts(isInPersonNationwide, inPersonRegions, inPersonLocalAuthorityDistricts);
+        tuitionPartner = await AddLocalAuthorityDistrictCoverage(tuitionPartner, cancellationToken);
 
-        var isOnlineNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "F", 24).ParseBoolean();
-        var onlineRegions = _spreadsheetExtractor.GetCellValue(LocationSheetName, "H", 24);
-        var onlineLocalAuthorityDistricts = _spreadsheetExtractor.GetCellValue(LocationSheetName, "J", 24);
-        var onlineLads = GetLocalAuthorityDistricts(isOnlineNationwide, onlineRegions, onlineLocalAuthorityDistricts);
+        tuitionPartner = AddSubjectCoverageAndPrice(tuitionPartner);
 
-        var supportedTuitionTypeLads = new Dictionary<TuitionTypes, ICollection<LocalAuthorityDistrict>>
+        return tuitionPartner;
+    }
+
+    private async Task<TuitionPartner> AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, CancellationToken cancellationToken)
+    {
+        var isInSchoolNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "B", 6).ParseBoolean();
+        var isOnlineNationwide = _spreadsheetExtractor.GetCellValue(LocationSheetName, "C", 6).ParseBoolean();
+
+        var regionInitialsCovered = GetRegionInitialsCovered();
+
+        var ladCodesCovered = GetLadCodesCovered();
+
+        var ladsCovered = new Dictionary<(string code, TuitionTypes tuitionType), LocalAuthorityDistrict>();
+
+        if (isInSchoolNationwide)
         {
-            {TuitionTypes.InSchool, inPersonLads},
-            {TuitionTypes.Online, onlineLads}
-        };
-
-        foreach (var (tuitionTypeId, lads) in supportedTuitionTypeLads)
-        {
-            foreach (var lad in lads)
+            foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
             {
-                var coverage = new LocalAuthorityDistrictCoverage
-                {
-                    TuitionPartner = tuitionPartner,
-                    TuitionTypeId = (int)tuitionTypeId,
-                    LocalAuthorityDistrictId = lad.Id,
-                };
-
-                tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
             }
         }
 
-        var supportedTuitionTypeSubjects = new Dictionary<int, HashSet<int>>
+        if (isOnlineNationwide)
         {
-            {(int)TuitionTypes.InSchool, new HashSet<int>()},
-            {(int)TuitionTypes.Online, new HashSet<int>()}
-        };
-
-        foreach(var ((tuitionTypeId, subjectId), (column, row)) in SubjectPricesCellReferences)
-        {
-            var prices = new decimal[6];
-            for (var i = 0; i < 6; i++)
+            foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
             {
-                var groupSize = i + 1;
+                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
+            }
+        }
 
-                var cellPriceContent = _spreadsheetExtractor.GetCellValue(PricingSheetName, column, row + i);
+        foreach ((string regionInitials, (bool inSchoolCovered, bool onlineCovered)) in regionInitialsCovered)
+        {
+            if (!Regions.InitialsToId.TryGetValue(regionInitials, out var regionId))
+            {
+                throw new Exception($"Region initial {regionInitials} was not recognised");
+            }
 
-                //TODO: Investigate 2 decimal point precision
-                if (decimal.TryParse(cellPriceContent, out var hourlyRate))
+            var region = await _dbContext.Regions
+                .Include(e => e.LocalAuthorityDistricts)
+                .FirstOrDefaultAsync(e => e.Id == regionId, cancellationToken);
+            
+            if (region == null)
+            {
+                throw new Exception($"Region with id {regionId} from initial {regionInitials} was not found");
+            }
+
+            foreach (var lad in region.LocalAuthorityDistricts)
+            {
+                if (inSchoolCovered)
                 {
-                    prices[i] = Math.Round(hourlyRate, 2);
-
-                    var price = new Price
-                    {
-                        TuitionPartner = tuitionPartner,
-                        TuitionTypeId = tuitionTypeId,
-                        SubjectId = subjectId,
-                        GroupSize = groupSize,
-                        HourlyRate = hourlyRate
-                    };
-
-                    tuitionPartner.Prices.Add(price);
+                    ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
+                }
+                if (onlineCovered)
+                {
+                    ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
                 }
             }
+        }
 
-            var isSubjectSupported = prices.Any(x => x > 0);
-            if (isSubjectSupported)
+        foreach ((string ladCode, (bool inSchoolCovered, bool onlineCovered)) in ladCodesCovered)
+        {
+            var lad = await _dbContext.LocalAuthorityDistricts
+                .FirstOrDefaultAsync(e => e.Code == ladCode, cancellationToken);
+            
+            if (lad == null)
             {
-                var coverage = new SubjectCoverage
-                {
-                    TuitionPartner = tuitionPartner,
-                    TuitionTypeId = tuitionTypeId,
-                    SubjectId = subjectId
-                };
+                throw new Exception($"Local Authority District with code {ladCode} was not found");
+            }
 
-                tuitionPartner.SubjectCoverage.Add(coverage);
-
-                supportedTuitionTypeSubjects[tuitionTypeId].Add(subjectId);
+            if (inSchoolCovered)
+            {
+                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
+            }
+            if (onlineCovered)
+            {
+                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
             }
         }
 
-        foreach (var localAuthorityDistrict in inPersonLads)
+        foreach (((_, TuitionTypes tuitionType), LocalAuthorityDistrict lad) in ladsCovered)
         {
-            if (!supportedTuitionTypeSubjects.TryGetValue((int)TuitionTypes.InSchool, out var supportedSubjects)) break;
-
-            tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
+            var coverage = new LocalAuthorityDistrictCoverage
             {
                 TuitionPartner = tuitionPartner,
-                LocalAuthorityDistrictId = localAuthorityDistrict.Id,
-                LocalAuthorityDistrict = localAuthorityDistrict,
-                TuitionTypeId = (int)TuitionTypes.InSchool,
-                PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
-                PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
-                PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),
-                SecondaryEnglish = supportedSubjects.Contains(Subjects.Id.KeyStage3English) || supportedSubjects.Contains(Subjects.Id.KeyStage4English),
-                SecondaryHumanities = supportedSubjects.Contains(Subjects.Id.KeyStage3Humanities) || supportedSubjects.Contains(Subjects.Id.KeyStage4Humanities),
-                SecondaryMaths = supportedSubjects.Contains(Subjects.Id.KeyStage3Maths) || supportedSubjects.Contains(Subjects.Id.KeyStage4Maths),
-                SecondaryModernForeignLanguages = supportedSubjects.Contains(Subjects.Id.KeyStage3ModernForeignLanguages) || supportedSubjects.Contains(Subjects.Id.KeyStage4ModernForeignLanguages),
-                SecondaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage3Science) || supportedSubjects.Contains(Subjects.Id.KeyStage4Science)
-            });
-        }
+                TuitionTypeId = (int)tuitionType,
+                LocalAuthorityDistrictId = lad.Id
+            };
 
-        foreach (var localAuthorityDistrict in onlineLads)
-        {
-            if (!supportedTuitionTypeSubjects.TryGetValue((int)TuitionTypes.Online, out var supportedSubjects)) break;
-
-            tuitionPartner.Coverage.Add(new TuitionPartnerCoverage
-            {
-                TuitionPartner = tuitionPartner,
-                LocalAuthorityDistrictId = localAuthorityDistrict.Id,
-                LocalAuthorityDistrict = localAuthorityDistrict,
-                TuitionTypeId = (int)TuitionTypes.Online,
-                PrimaryLiteracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Literacy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Literacy),
-                PrimaryNumeracy = supportedSubjects.Contains(Subjects.Id.KeyStage1Numeracy) || supportedSubjects.Contains(Subjects.Id.KeyStage2Numeracy),
-                PrimaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage1Science) || supportedSubjects.Contains(Subjects.Id.KeyStage2Science),
-                SecondaryEnglish = supportedSubjects.Contains(Subjects.Id.KeyStage3English) || supportedSubjects.Contains(Subjects.Id.KeyStage4English),
-                SecondaryHumanities = supportedSubjects.Contains(Subjects.Id.KeyStage3Humanities) || supportedSubjects.Contains(Subjects.Id.KeyStage4Humanities),
-                SecondaryMaths = supportedSubjects.Contains(Subjects.Id.KeyStage3Maths) || supportedSubjects.Contains(Subjects.Id.KeyStage4Maths),
-                SecondaryModernForeignLanguages = supportedSubjects.Contains(Subjects.Id.KeyStage3ModernForeignLanguages) || supportedSubjects.Contains(Subjects.Id.KeyStage4ModernForeignLanguages),
-                SecondaryScience = supportedSubjects.Contains(Subjects.Id.KeyStage3Science) || supportedSubjects.Contains(Subjects.Id.KeyStage4Science)
-            });
+            tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
         }
 
         return tuitionPartner;
     }
 
-    private ICollection<LocalAuthorityDistrict> GetLocalAuthorityDistricts(bool isNationwide, string regionsString, string localAuthorityDistrictsString)
+    private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetRegionInitialsCovered()
     {
-        if (isNationwide)
-        {
-            return _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code).ToList();
-        }
+        var regionCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "E", 6, 14);
+        var inSchoolRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "G", 6, 14);
+        var onlineRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "H", 6, 14);
 
-        if (!string.IsNullOrWhiteSpace(localAuthorityDistrictsString))
+        var regionCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
+        var index = 0;
+        foreach (var regionCode in regionCodes)
         {
-            var separator = GetSeparator(localAuthorityDistrictsString);
-
-            if (!string.IsNullOrEmpty(separator))
+            var inSchoolRegionCovered = inSchoolRegionsCovered[index].ParseBoolean();
+            var onlineRegionCovered = onlineRegionsCovered[index].ParseBoolean();
+            if (inSchoolRegionCovered || onlineRegionCovered)
             {
-                var localAuthorityDistrictIdentifiers = localAuthorityDistrictsString.Split(separator);
-
-                if (localAuthorityDistrictIdentifiers.Any())
-                {
-                    if (localAuthorityDistrictIdentifiers[0].StartsWith("E0"))
-                    {
-                        return _dbContext.LocalAuthorityDistricts
-                            .Where(e => localAuthorityDistrictIdentifiers.Contains(e.Code))
-                            .OrderBy(e => e.Code)
-                            .ToList();
-                    }
-
-                    return _dbContext.LocalAuthorityDistricts
-                        .Where(e => localAuthorityDistrictIdentifiers.Contains(e.Name))
-                        .OrderBy(e => e.Code)
-                        .ToList();
-
-                    //TODO: Check we've found all the listed LADs
-                }
+                regionCodesCovered[regionCode] = (inSchoolRegionCovered, onlineRegionCovered);
             }
+
+            index++;
         }
 
-        if (!string.IsNullOrWhiteSpace(regionsString))
-        {
-            var separator = GetSeparator(regionsString);
-
-            var regionInitials = regionsString.Split(separator);
-            if (regionInitials.Any())
-            {
-                var regionIds = Regions.InitialsToId.Where(x => regionInitials.Contains(x.Key)).Select(x => x.Value);
-
-                var regions = _dbContext.Regions
-                    .Include(e => e.LocalAuthorityDistricts)
-                    .Where(e => regionIds.Contains(e.Id))
-                    .ToList();
-
-                return regions.SelectMany(e => e.LocalAuthorityDistricts).ToList();
-            }
-        }
-
-        return new List<LocalAuthorityDistrict>();
+        return regionCodesCovered;
     }
 
-    private static string GetSeparator(string value)
+    private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetLadCodesCovered()
     {
-        if (value.Contains(",")) return ",";
-        if (value.Contains(";")) return ";";
-        if (value.Contains("\r\n")) return "\r\n";
-        if (value.Contains("\n")) return "\n";
-        return "";
+        var ladCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "K", 6, 314);
+        var inSchoolLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "M", 6, 314);
+        var onlineLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "N", 6, 314);
+
+        var ladCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
+        var index = 0;
+        foreach (var ladCode in ladCodes)
+        {
+            var inSchoolLadCovered = inSchoolLadsCovered[index].ParseBoolean();
+            var onlineLadCovered = onlineLadsCovered[index].ParseBoolean();
+            if (inSchoolLadCovered || onlineLadCovered)
+            {
+                ladCodesCovered[ladCode] = (inSchoolLadCovered, onlineLadCovered);
+            }
+
+            index++;
+        }
+
+        return ladCodesCovered;
+    }
+
+    private TuitionPartner AddSubjectCoverageAndPrice(TuitionPartner tuitionPartner)
+    {
+        foreach (var ((tuitionType, subjectId), (column, row)) in SubjectPricesCellReferences)
+        {
+            var subjectHourlyRates = _spreadsheetExtractor.GetColumnValues(PricingSheetName, column, row, row + 6)
+                .Select(x => x.ParseDecimal())
+                .ToArray();
+
+            var isSubjectSupported = subjectHourlyRates.Any(x => x > 0);
+            if (isSubjectSupported)
+            {
+                var coverage = new SubjectCoverage
+                {
+                    TuitionPartner = tuitionPartner,
+                    TuitionTypeId = (int)tuitionType,
+                    SubjectId = subjectId
+                };
+
+                tuitionPartner.SubjectCoverage.Add(coverage);
+            }
+
+            for (int i = 0; i < subjectHourlyRates.Length; i++)
+            {
+                var subjectHourlyRate = subjectHourlyRates[i];
+
+                if (subjectHourlyRate <= 0) continue;
+
+                var price = new Price
+                {
+                    TuitionPartner = tuitionPartner,
+                    TuitionTypeId = (int)tuitionType,
+                    SubjectId = subjectId,
+                    GroupSize = i + 1,
+                    HourlyRate = subjectHourlyRate
+                };
+
+                tuitionPartner.Prices.Add(price);
+            }
+        }
+
+        return tuitionPartner;
     }
 }

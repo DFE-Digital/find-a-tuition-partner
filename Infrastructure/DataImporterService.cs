@@ -57,7 +57,7 @@ public class DataImporterService : IHostedService
             TuitionPartner tuitionPartner;
             try
             {
-                tuitionPartner = factory.GetTuitionPartner(stream);
+                tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
             }
             catch (Exception ex)
             {
