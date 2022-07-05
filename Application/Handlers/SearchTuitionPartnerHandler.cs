@@ -54,6 +54,7 @@ public class SearchTuitionPartnerHandler
                 foreach (var subjectId in request.SubjectIds)
                 {
                     // Must support all selected subjects for the tuition type if selected
+                    // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising either via pulling the data back and querying in memory or denormalising the data
                     queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
                 }
             }
