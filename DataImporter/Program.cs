@@ -4,7 +4,7 @@ using Infrastructure;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-if (args.Length > 0 && args[0] == "encrypt")
+if (args.Length > 0 && args.Any(x => x == "encrypt"))
 {
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
