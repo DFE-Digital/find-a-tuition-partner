@@ -7,9 +7,9 @@ using KeyStage = UI.Pages.FindATuitionPartner.KeyStage;
 namespace Tests;
 
 [Collection(nameof(SliceFixture))]
-public class SearchResults : CleanSliceFixture
+public class SearchForResults : CleanSliceFixture
 {
-    public SearchResults(SliceFixture fixture) : base(fixture) { }
+    public SearchForResults(SliceFixture fixture) : base(fixture) { }
 
     [Fact]
     public async Task Displays_all_tutor_types_in_database()
@@ -40,7 +40,7 @@ public class SearchResults : CleanSliceFixture
         var subject = await Fixture.ExecuteDbContextAsync(db =>
             db.Subjects.FindAsync(Domain.Constants.Subjects.Id.KeyStage1Literacy));
 
-        var result = await Fixture.SendAsync(new Results.Command
+        var result = await Fixture.SendAsync(new SearchResults.Command
         {
             Postcode = "AB00BA",
             Subjects = new[] { $"{KeyStage.KeyStage1}-{subject?.Name}" }
@@ -82,7 +82,7 @@ public class SearchResults : CleanSliceFixture
         var subject = await Fixture.ExecuteDbContextAsync(db =>
             db.Subjects.FindAsync(Domain.Constants.Subjects.Id.KeyStage1Literacy));
 
-        var result = await Fixture.SendAsync(new Results.Command
+        var result = await Fixture.SendAsync(new SearchResults.Command
         {
             Postcode = "AB00BA",
             KeyStages = new[] { KeyStage.KeyStage1 },

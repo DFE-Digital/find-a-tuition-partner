@@ -94,8 +94,8 @@ public class SearchTuitionPartnerHandler
                         case (int)TuitionTypes.Online:
                             groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.Online));
                             break;
-                        case (int)TuitionTypes.InPerson:
-                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.InPerson));
+                        case (int)TuitionTypes.InSchool:
+                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.InSchool));
                             break;
                     }
                 }

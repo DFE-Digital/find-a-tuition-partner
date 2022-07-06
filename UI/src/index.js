@@ -45,6 +45,10 @@ if ($skipLink) {
     new SkipLink($skipLink).init()
 }
 
+import BackLink from './javascript/back-link'
+var backLink = new BackLink()
+backLink.init()
+
 import ResultsFilter from './javascript/results-filter'
 var resultsFilter = new ResultsFilter()
 resultsFilter.init()

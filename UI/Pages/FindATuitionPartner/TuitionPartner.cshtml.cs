@@ -1,3 +1,4 @@
+using Application.Extensions;
 using Domain.Constants;
 using Infrastructure;
 using MediatR;
@@ -23,7 +24,7 @@ public class TuitionPartner : PageModel
 
     public record Command(
         string Name, string Description, string[] Subjects,
-        TuitionTypes[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
+        string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
         string Website, string PhoneNumber, string EmailAddress);
 
     public record SubjectPrice(string Subject, int Price);
@@ -37,13 +38,17 @@ public class TuitionPartner : PageModel
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
             var tp = await _db.TuitionPartners
+                .Include(e => e.SubjectCoverage)
+                .ThenInclude(e => e.Subject)
+                .Include(x => x.Prices)
+                .ThenInclude(x => x.TuitionType)
                 .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-            var subjects = tp.Prices.Select(x => x.Subject.Name).Distinct();
-            var types = tp.Prices.Select(x => (TuitionTypes)x.TuitionTypeId).Distinct();
+            var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
+            var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = tp.Prices.GroupBy(x => x.Subject).Select(x => 
                 new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", (int)(x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0)));

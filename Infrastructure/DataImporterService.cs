@@ -32,6 +32,8 @@ public class DataImporterService : IHostedService
 
         _logger.LogWarning("Deleting all existing Tuition Partner data");
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartnerCoverage\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 

@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UI.Pages.FindATuitionPartner;
 
-public class Results : PageModel
+public class SearchResults : PageModel
 {
     private readonly IMediator mediator;
 
-    public Results(IMediator mediator) => this.mediator = mediator;
+    public SearchResults(IMediator mediator) => this.mediator = mediator;
 
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new();
@@ -32,8 +32,9 @@ public class Results : PageModel
     {
         public Command() { }
         public Command(SearchModel query) : base(query) { }
+        public string LocalAuthority { get; set; }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<TuitionTypes> AllTuitionTypes { get; set; } = new List<TuitionTypes>();
+        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public ValidationResult Validation { get; internal set; } = new ValidationResult();
@@ -90,11 +91,13 @@ public class Results : PageModel
                 Subjects = request.Subjects,
             }, cancellationToken);
 
+            var localAuthority = "";
             TuitionPartnerSearchResultsPage? results = null;
 
             if (validationResults.IsValid)
             {
                 var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
+                localAuthority = loc?.LocalAuthority ?? "";
 
                 var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
                 var subjectLookup = keyStageSubjects.Select(x =>
@@ -125,10 +128,11 @@ public class Results : PageModel
 
             return new(request)
             {
+                LocalAuthority = localAuthority,
                 AllSubjects = allSubjects.AllSubjects,
                 Results = results,
                 Validation = validationResults,
-                AllTuitionTypes = new List<TuitionTypes> { TuitionTypes.Any, TuitionTypes.InPerson, TuitionTypes.Online },
+                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
             };
         }
     }

@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220701140432_TuitionTypeInSchool")]
+    partial class TuitionTypeInSchool
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3666,34 +3668,6 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.LocalAuthorityDistrictCoverage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LocalAuthorityDistrictId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionPartnerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionTypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocalAuthorityDistrictId");
-
-                    b.HasIndex("TuitionPartnerId");
-
-                    b.HasIndex("TuitionTypeId");
-
-                    b.ToTable("LocalAuthorityDistrictCoverage");
-                });
-
             modelBuilder.Entity("Domain.Price", b =>
                 {
                     b.Property<int>("Id")
@@ -3977,34 +3951,6 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.SubjectCoverage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionPartnerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionTypeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("TuitionPartnerId");
-
-                    b.HasIndex("TuitionTypeId");
-
-                    b.ToTable("SubjectCoverage");
-                });
-
             modelBuilder.Entity("Domain.TuitionPartner", b =>
                 {
                     b.Property<int>("Id")
@@ -4274,33 +4220,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Region");
                 });
 
-            modelBuilder.Entity("Domain.LocalAuthorityDistrictCoverage", b =>
-                {
-                    b.HasOne("Domain.LocalAuthorityDistrict", "LocalAuthorityDistrict")
-                        .WithMany()
-                        .HasForeignKey("LocalAuthorityDistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionPartner", "TuitionPartner")
-                        .WithMany("LocalAuthorityDistrictCoverage")
-                        .HasForeignKey("TuitionPartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LocalAuthorityDistrict");
-
-                    b.Navigation("TuitionPartner");
-
-                    b.Navigation("TuitionType");
-                });
-
             modelBuilder.Entity("Domain.Price", b =>
                 {
                     b.HasOne("Domain.Subject", "Subject")
@@ -4337,33 +4256,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("KeyStage");
-                });
-
-            modelBuilder.Entity("Domain.SubjectCoverage", b =>
-                {
-                    b.HasOne("Domain.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionPartner", "TuitionPartner")
-                        .WithMany("SubjectCoverage")
-                        .HasForeignKey("TuitionPartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("TuitionPartner");
-
-                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartnerCoverage", b =>
@@ -4409,11 +4301,7 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Coverage");
 
-                    b.Navigation("LocalAuthorityDistrictCoverage");
-
                     b.Navigation("Prices");
-
-                    b.Navigation("SubjectCoverage");
                 });
 #pragma warning restore 612, 618
         }

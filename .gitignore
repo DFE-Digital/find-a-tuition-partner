@@ -403,6 +403,10 @@ UI/wwwroot/assets
 # Webpack bundled files
 UI/wwwroot/dist
 
+# Cypress test artifacts
+UI/cypress/videos
+UI/cypress/screenshots
+
 # NCrunch 
 *.ncrunchsolution
 Tests/Tests.v3.ncrunchproject

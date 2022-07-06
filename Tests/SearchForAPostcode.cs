@@ -4,6 +4,7 @@ using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using UI.Pages.FindATuitionPartner;
+using Index = UI.Pages.FindATuitionPartner.Index;
 
 namespace Tests;
 
@@ -20,8 +21,8 @@ public class SearchForAPostcode
     [InlineData(null)]
     public void With_no_postcode(string postcode)
     {
-        var model = new Location.Command { Postcode = postcode };
-        var result = new Location.Validator().TestValidate(model);
+        var model = new Index.Command { Postcode = postcode };
+        var result = new Index.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a postcode");
     }
@@ -30,8 +31,8 @@ public class SearchForAPostcode
     [InlineData("not a postcode")]
     public void With_an_invalid_postcode(string postcode)
     {
-        var model = new Location.Command { Postcode = postcode };
-        var result = new Location.Validator().TestValidate(model);
+        var model = new Index.Command { Postcode = postcode };
+        var result = new Index.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a valid postcode");
     }
@@ -43,7 +44,7 @@ public class SearchForAPostcode
         _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(null as LocationFilterParameters);
 
-        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotFoundException>();
     }
 
@@ -55,7 +56,7 @@ public class SearchForAPostcode
         _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(new LocationFilterParameters { Country = country });
 
-        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotAvailableException>();
     }
 
@@ -71,7 +72,7 @@ public class SearchForAPostcode
                 LocalAuthorityDistrictCode = null,
             });
 
-        await _fixture.Invoking(f => f.SendAsync(new Location.Command { Postcode = postcode }))
+        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
             .Should().ThrowAsync<LocationNotMappedException>();
     }
 
@@ -87,7 +88,7 @@ public class SearchForAPostcode
                 LocalAuthorityDistrictCode = "ebcdic",
             });
 
-        var result = await _fixture.GetPage<Location>().Execute(page =>
+        var result = await _fixture.GetPage<Index>().Execute(page =>
         {
             page.Data.Postcode = postcode;
             return page.OnPost();

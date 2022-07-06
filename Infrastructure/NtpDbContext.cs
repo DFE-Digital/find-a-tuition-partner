@@ -14,6 +14,7 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
 
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<LocalAuthorityDistrict> LocalAuthorityDistricts { get; set; } = null!;
+    public DbSet<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; } = null!;
     public DbSet<Price> Prices { get; set; } = null!;
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
@@ -21,6 +22,7 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<TuitionPartnerDataImportHistory> TuitionPartnerDataImportHistories { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
     public DbSet<TuitionType> TuitionTypes { get; set; } = null!;
+    public DbSet<SubjectCoverage> SubjectCoverage { get; set; } = null!;
     public DbSet<TutorType> TutorTypes { get; set; } = null!;
     public DbSet<UserSearch> UserSearches { get; set; } = null!;
 

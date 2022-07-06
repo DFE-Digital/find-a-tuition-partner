@@ -76,7 +76,7 @@ public class SearchForSubjects : CleanSliceFixture
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("Results");
+        resultPage.PageName.Should().Be("SearchResults");
         resultPage.RouteValues.Should().ContainKey("Subjects")
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
