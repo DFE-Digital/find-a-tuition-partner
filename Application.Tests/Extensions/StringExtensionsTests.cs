@@ -78,8 +78,18 @@ public class StringExtensionsTests
     [InlineData("Find/FindAnNTPApprovedTuitionPartner", "find/find-an-ntp-approved-tuition-partner")]
     [InlineData("Find/FindATuitionPartner", "find/find-a-tuition-partner")]
     [InlineData("Find/FindATuitionPartner ", "find/find-a-tuition-partner")]
+    [InlineData("Find/findATuitionPartner", "find/find-a-tuition-partner")]
     public void ToSeoUrl_ReturnsKebabCase_WhenDirectory(string camel, string kebab)
     {
         camel.ToSeoUrl().Should().Be(kebab);
+    }
+
+    [Theory]
+    [InlineData("KeyStage1-Science", "key-stage-1-science")]
+    [InlineData("KeyStage2 Literature", "key-stage-2-literature")]
+    [InlineData("KeyStage3 Modern Foreign Languages", "key-stage-3-modern-foreign-languages")]
+    public void With_spaces(string value, string expected)
+    {
+        value.ToSeoUrl().Should().Be(expected);
     }
 }

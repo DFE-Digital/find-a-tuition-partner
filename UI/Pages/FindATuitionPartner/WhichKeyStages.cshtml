@@ -5,9 +5,10 @@
     Layout = "_Layout";
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
 	ViewData["Service Name"] = "Find a tuition partner";
+	ViewData["Service Home Page"] = nameof(Index);
 }
 
-<govuk-back-link asp-page="@nameof(Index)" />
+<govuk-back-link asp-page="@nameof(Index)" data-module="history-back-link" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -20,9 +21,9 @@
 
         <form method="post">
             <govuk-checkboxes asp-for="Data.KeyStages">
-                @foreach (var item in @Model.Data.AllKeyStages)
+                @foreach (var item in Model.Data.AllKeyStages)
                 {
-                    <govuk-checkboxes-item value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
+                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
                 }
             </govuk-checkboxes>
 

@@ -23,3 +23,19 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
+
+    const username = Cypress.env('username');
+    const password = Cypress.env('password');
+
+    if (username && password) {
+        options = options || {};
+        options.auth = {
+            username: username,
+            password: password,
+        };
+    }
+
+    return originalFn(url, options);
+})
