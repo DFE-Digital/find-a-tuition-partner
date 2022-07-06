@@ -1,3 +1,7 @@
+---
+Last verfied: 2022-07-04
+---
+
 # Manual Environment Setup
 
 ## Description
@@ -77,7 +81,7 @@ cf run-task national-tutoring-<ENVIRONMENT> --command "exec /home/vcap/deps/0/do
 
 The site is kept private during the private beta phase using basic HTTP authentication. This step will be removed when the service moves into the public beta phase.
 
-Clone the basic HTTP authentication route service
+Clone and deploy the basic HTTP authentication route application
 
 ```
 git clone https://github.com/alphagov/paas-cf_basic_auth_route_service

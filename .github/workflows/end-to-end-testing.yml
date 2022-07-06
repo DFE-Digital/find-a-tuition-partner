@@ -1,6 +1,18 @@
-name: end-to-end-testing
+name: End to End Testing
 
-on: [push]
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the End to End tests'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
 
 jobs:
   end-to-end-testing:
@@ -13,7 +25,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           working-directory: ./End-2-End-Testing
-          config: baseUrl=https://national-tutoring-dev.london.cloudapps.digital/
+          config: baseUrl=https://national-tutoring-${{ github.event.inputs.environment }}.london.cloudapps.digital/
         env:
           CYPRESS_username: ${{ secrets.HTTP_AUTH_USERNAME }}
           CYPRESS_password: ${{ secrets.HTTP_AUTH_PASSWORD }}

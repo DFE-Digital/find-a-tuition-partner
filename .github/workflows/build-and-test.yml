@@ -1,5 +1,4 @@
-name: build-and-test
-
+name: .NET Build and Test
 on: [push]
 
 jobs:

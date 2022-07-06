@@ -1,6 +1,18 @@
 name: Deploy to GOV.UK PaaS
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
 
 jobs:
   deploy:
@@ -10,7 +22,7 @@ jobs:
     env:
       CF_API: "https://api.london.cloud.service.gov.uk"
       CF_ORG: "dfe"
-      CF_SPACE: "sandbox"
+      CF_SPACE: ntp-${{ github.event.inputs.environment }}
 
     permissions:
       contents: read
@@ -31,7 +43,7 @@ jobs:
 
       - name: Install the CF CLI
         run: |
-          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=7.4.0&source=github-rel"
+          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
           sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
 
       - name: Authenticate
@@ -46,5 +58,5 @@ jobs:
 
       - name: Deploy to PaaS
         run: |
-          cf push --strategy rolling
+          cf push --strategy rolling --vars-file vars-${{ github.event.inputs.environment }}.yml
           cf logout
