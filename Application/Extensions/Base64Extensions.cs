@@ -17,11 +17,10 @@ public static class Base64Extensions
         return noForwardSlash;
     }
 
-    public static byte[] FromBase64Filename(this string base64Filename)
+    public static string FromBase64Filename(this string base64Filename)
     {
         var withForwardSlash = base64Filename.Replace('_', '/');
         var withPlus = withForwardSlash.Replace('-', '+');
-        var bytes = Convert.FromBase64String(withPlus);
-        return bytes;
+        return withPlus;
     }
 }

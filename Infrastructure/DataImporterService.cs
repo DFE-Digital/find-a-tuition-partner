@@ -1,28 +1,46 @@
-﻿using Application.Factories;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Application.Extensions;
+using Application.Factories;
 using Domain;
 using Domain.Validators;
+using Infrastructure.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
     private readonly IHostApplicationLifetime _host;
+    private readonly DataEncryption _config;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public DataImporterService(IHostApplicationLifetime host, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
+    public DataImporterService(IHostApplicationLifetime host, IOptions<DataEncryption> config, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
     {
         _host = host;
+        _config = config.Value;
         _logger = logger;
         _scopeFactory = scopeFactory;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(_config.Key))
+        {
+            _logger.LogError("Importing encrypted files requires the --DataEncryption:Key argument e.g. --DataEncryption:Key \"I0YRt6YZrMvdTSN107O1R5b4lS16Gz7wBMMruEhqAJc=\". These can also be environment variables");
+
+            _host.StopApplication();
+
+            return;
+        }
+
+        var keyBytes = Convert.FromBase64String(_config.Key);
+
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
         var factory = scope.ServiceProvider.GetRequiredService<ITuitionPartnerFactory>();
@@ -38,15 +56,18 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 
-        //Files in code should be encrypted - use some kind of CLI syntax for this tool e.g. dataimporter prepare, dataimporter apply
         var assembly = typeof(AssemblyReference).Assembly;
 
         foreach (var resourceName in assembly.GetManifestResourceNames())
         {
             if (resourceName.EndsWith("README.md")) break;
 
-            await using var stream = assembly.GetManifestResourceStream(resourceName);
-            if (stream == null)
+            var base64Filename = resourceName.Substring(resourceName.LastIndexOf('.') + 1).FromBase64Filename();
+            var originalFilename = Encoding.UTF8.GetString(Convert.FromBase64String(base64Filename));
+            _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename}");
+
+            await using var resourceStream = assembly.GetManifestResourceStream(resourceName);
+            if (resourceStream == null)
             {
                 _logger.LogError($"Tuition Partner resource name {resourceName} not found");
                 continue;
@@ -56,6 +77,13 @@ public class DataImporterService : IHostedService
             TuitionPartner tuitionPartner;
             try
             {
+                using var stream = new MemoryStream();
+                using var crypto = Aes.Create();
+                var iv = new byte[crypto.IV.Length];
+                await resourceStream.ReadAsync(iv, 0, iv.Length, cancellationToken);
+                using var cryptoTransform = crypto.CreateDecryptor(keyBytes, iv);
+                await using var cryptoStream = new CryptoStream(resourceStream, cryptoTransform, CryptoStreamMode.Read);
+                await cryptoStream.CopyToAsync(stream, cancellationToken);
                 tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
             }
             catch (Exception ex)

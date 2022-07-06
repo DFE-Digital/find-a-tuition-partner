@@ -27,7 +27,7 @@ public class DataEncryptionService : IHostedService
     {
         if (string.IsNullOrEmpty(_config.SourceDirectory) || string.IsNullOrEmpty(_config.Key))
         {
-            _logger.LogError("Encrypting files requires the following two arguments: --DataEncryption:SourceDirectory and --DataEncryption:Key e.g. --DataEncryption:SourceDirectory=\"C:\\Quality Assured\" --DataEncryption:Key=\"I0YRt6YZrMvdTSN107O1R5b4lS16Gz7wBMMruEhqAJc=\". These can also be environment variables");
+            _logger.LogError("Encrypting files requires the following two arguments: --DataEncryption:SourceDirectory and --DataEncryption:Key e.g. --DataEncryption:SourceDirectory \"<DIRECTORY>\" --DataEncryption:Key \"I0YRt6YZrMvdTSN107O1R5b4lS16Gz7wBMMruEhqAJc=\". These can also be environment variables");
 
             _host.StopApplication();
 
@@ -57,25 +57,24 @@ public class DataEncryptionService : IHostedService
 
         foreach (var fileInfo in source.GetFiles("*.xlsx"))
         {
-            using var crypto = Aes.Create();
-            using var cryptoTransform = crypto.CreateEncryptor(keyBytes, crypto.IV);
-
             var base64Filename = fileInfo.Name.ToBase64Filename();
-            var base64Iv = crypto.IV.ToBase64Filename();
-            var destinationFilename = $"{base64Filename}_{base64Iv}";
-            var destinationFilePath = Path.Combine(destination.FullName, destinationFilename);
+            var destinationFilePath = Path.Combine(destination.FullName, base64Filename);
 
             _logger.LogInformation($"Encrypting {fileInfo} and copying to {destinationFilePath}");
-            
+
             await using var sourceStream = fileInfo.OpenRead();
             await using var destinationStream = File.Create(destinationFilePath);
+            using var crypto = Aes.Create();
+            using var cryptoTransform = crypto.CreateEncryptor(keyBytes, crypto.IV);
             await using var cryptoStream = new CryptoStream(destinationStream, cryptoTransform, CryptoStreamMode.Write);
-            await sourceStream.CopyToAsync(destinationStream, cancellationToken);
+            await destinationStream.WriteAsync(crypto.IV, 0, crypto.IV.Length, cancellationToken);
+            await sourceStream.CopyToAsync(cryptoStream, cancellationToken);
 
             _logger.LogInformation("File encryption successful");
         }
 
         _logger.LogInformation($"All files encrypted successfully using key {_config.Key}");
+        _logger.LogInformation($"use import --DataEncryption:Key \"{_config.Key}\" to import data files with this key");
 
         _host.StopApplication();
     }
