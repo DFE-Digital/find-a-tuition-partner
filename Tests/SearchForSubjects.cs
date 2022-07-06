@@ -59,6 +59,16 @@ public class SearchForSubjects : CleanSliceFixture
                 new { Name = "Humanities" },
                 new { Name = "Modern foreign languages" },
             });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage4)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
+            });
     }
 
     [Fact]
