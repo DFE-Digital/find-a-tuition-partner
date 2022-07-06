@@ -13,6 +13,11 @@ on:
           - research
           - staging
           - production
+      run_database_migrations_and_import_data:
+        description: 'Run database migrations and import data'
+        required: true
+        default: false
+        type: boolean
 
 jobs:
   deploy:
@@ -59,4 +64,11 @@ jobs:
       - name: Deploy to PaaS
         run: |
           cf push --strategy rolling --vars-file vars-${{ github.event.inputs.environment }}.yml
-          cf logout
+
+      - name: Run database migrations and import data
+        if: ${{ github.event.inputs.run_database_migrations_and_import_data == 'true' }}
+        run: |
+          cf run-task national-tutoring-${{ github.event.inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name national-tutoring-${{ github.event.inputs.environment }}-data-import
+      
+      - name: Logout
+        run: cf logout
