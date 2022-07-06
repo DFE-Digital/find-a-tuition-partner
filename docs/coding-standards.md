@@ -11,13 +11,13 @@ Please be particularly careful around casing.
 ## Branches and Commits
 
 * Branches should be named using the format `feature/ntp-xxx-short-description` where NTP-XXX is the Jira ticket reference. Please note: this is all lowercase
-* Commit messages should use the format "NTP-XXX: Short description" where NTP-XXX is the Jira ticket reference
+* Commit messages should use the format "NTP-XXX: Short description" where NTP-XXX is the Jira ticket reference. The message should be in the imperative present tense. It can be useful to imaging you are finishing the sentence "If applied, this commit will..."
 
 ## Naming
 
 * Private variables should be prefixed by an underscore e.g. `private string _myString`
 * Method names should be descriptive and should avoid `And`
-* Unit test names should start `With_` followed by the context in lowecase separated by underscores e.g. `With_no_postcode`
+* Unit test names should be a natural language sentence using underscores instead of spaces to aid understanding of the purpose of the test
 
 ## Spacing
 
