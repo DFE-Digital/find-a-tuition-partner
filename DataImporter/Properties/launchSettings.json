@@ -2,6 +2,7 @@
   "profiles": {
     "DataImporter": {
       "commandName": "Project",
+      "commandLineArgs": "encrypt --DataEncryption:SourceDirectory=\"C:\\Users\\david\\Downloads\\QA Responses-20220705T104603Z-001\\QA Responses\" --DataEncryption:Key=\"2c56c54e-10fd-4f91-a343-0218d9372894\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }
