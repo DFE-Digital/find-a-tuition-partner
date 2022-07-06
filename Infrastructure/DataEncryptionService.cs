@@ -1,4 +1,7 @@
-﻿using Infrastructure.Configuration;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Application.Extensions;
+using Infrastructure.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,7 +27,7 @@ public class DataEncryptionService : IHostedService
     {
         if (string.IsNullOrEmpty(_config.SourceDirectory) || string.IsNullOrEmpty(_config.Key))
         {
-            _logger.LogError("Encrypting files requires the following two arguments: --DataEncryption:SourceDirectory and --DataEncryption:Key e.g. --DataEncryption:SourceDirectory=\"C:\\Quality Assured\" --DataEncryption:Key=\"2c56c54e-10fd-4f91-a343-0218d9372894\"");
+            _logger.LogError("Encrypting files requires the following two arguments: --DataEncryption:SourceDirectory and --DataEncryption:Key e.g. --DataEncryption:SourceDirectory=\"C:\\Quality Assured\" --DataEncryption:Key=\"I0YRt6YZrMvdTSN107O1R5b4lS16Gz7wBMMruEhqAJc=\". These can also be environment variables");
 
             _host.StopApplication();
 
@@ -42,8 +45,37 @@ public class DataEncryptionService : IHostedService
         }
 
         var destination = GetDestinationDirectoryInfo();
+        var keyBytes = Convert.FromBase64String(_config.Key);
 
         _logger.LogWarning($"Encrypting files from {source} and replacing all existing files in the {destination} directory");
+
+        foreach (var fileInfo in destination.GetFiles().Where(x => x.Name != "README.md"))
+        {
+            _logger.LogWarning($"Deleting existing file {fileInfo}");
+            fileInfo.Delete();
+        }
+
+        foreach (var fileInfo in source.GetFiles("*.xlsx"))
+        {
+            using var crypto = Aes.Create();
+            using var cryptoTransform = crypto.CreateEncryptor(keyBytes, crypto.IV);
+
+            var base64Filename = fileInfo.Name.ToBase64Filename();
+            var base64Iv = crypto.IV.ToBase64Filename();
+            var destinationFilename = $"{base64Filename}_{base64Iv}";
+            var destinationFilePath = Path.Combine(destination.FullName, destinationFilename);
+
+            _logger.LogInformation($"Encrypting {fileInfo} and copying to {destinationFilePath}");
+            
+            await using var sourceStream = fileInfo.OpenRead();
+            await using var destinationStream = File.Create(destinationFilePath);
+            await using var cryptoStream = new CryptoStream(destinationStream, cryptoTransform, CryptoStreamMode.Write);
+            await sourceStream.CopyToAsync(destinationStream, cancellationToken);
+
+            _logger.LogInformation("File encryption successful");
+        }
+
+        _logger.LogInformation($"All files encrypted successfully using key {_config.Key}");
 
         _host.StopApplication();
     }
