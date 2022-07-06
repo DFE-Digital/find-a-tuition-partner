@@ -129,7 +129,7 @@ public class SearchResults : PageModel
             return new(request)
             {
                 LocalAuthority = localAuthority,
-                AllSubjects = allSubjects.AllSubjects,
+                AllSubjects = allSubjects,
                 Results = results,
                 Validation = validationResults,
                 AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
