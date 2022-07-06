@@ -1,5 +1,5 @@
 ---
-Last verfied: 2022-07-04
+Last verfied: 2022-07-06
 ---
 
 # Importing Tuition Partner Data
@@ -8,32 +8,63 @@ Last verfied: 2022-07-04
 
 The service relies on an import of Tuition Partner data from Excel spreadsheets they fill in and return to us. These are parsed by the code in the `DataImporter` project and added to the database.
 
-The data importer also runs the migrations against the database prior to the import to update the schema.
+The data importer also runs the migrations against the database prior to the import to update the schema. This runbook explains how to encrypt and update the data files in source and deploy them to an environment.
+
+Updating the data files and importing them again is the current method of updating the Tuition Partner data. The plan for the future is to replace this with a file upload function protected by a login.
 
 ## Data files
 
-The Tuition Partner Excel spreadsheets returned by the Tuition Partners are checked for consistency and quality and placed in the `Quality Assured` folder in the ntp Google Drive. Is this these quality assured files that are imported.
+The Tuition Partner Excel spreadsheets returned by the Tuition Partners are checked for consistency and quality and placed in the `QA Responses` folder in the ntp Google Drive. It is this these quality assured files that are imported.
 
-## Steps
+## Encryption
 
-1. Navigate to the `Quality Assured` folder in the ntp Google Drive
+The data files are encrypted using the Advanced Encryption Standard (AES) symmetric block cipher. Once encrypted, these files are safe to commit to a public repository. It is important to note that there is no sensitive data in these files. They only contain data that will be publicly accessible via the service. It is however best practice to encrypt data at rest which is why we have chosen to do so.
+
+## Runbook
+
+### Generating a new encryption key
+
+The encryption key should be rotated regularly and when development team members leave. The data importer application is used to generate new keys which then need to be used and stored. Please note, you do not have to rotate the key on every import.
+
+Generate a new key
+
+```
+dotnet run --project DataImporter generate-key
+```
+
+You will see messages showing the key and the parameters you will need to use that key when encrypting the files. Once you have encrypted the data files in source using this key you will need to perform some further actions:
+
+1. Update your local key by running `dotnet user-secrets set "DataEncryption:Key" "<DATA_ENCRYPTION_KEY>" -p UI`
+2. Use [https://onetimesecret.com/](https://onetimesecret.com/) to share the new key with the developers
+3. Update the `DATA_ENCRYPTION_KEY` [GitHub secret](settings/secrets/actions)
+
+### Update the data files
+
+The data files commited to the repo need updating when the Tuition Partner data changes. This is the first step in updating the Tuition Partner data on the live service.
+
+1. Navigate to the `QA Responses` folder in the ntp Google Drive
 2. Use the down arrow menu in the breadcrumb to download all the files
-3. Remove any existing files in the `Infrastructure\Data` directory
-4. Extract the contents of the downloaded `Quality Assured` folder into the `Infrastructure\Data` directory. The .xlsx files should not be in a subdirectory of that folder
-5. Follow the steps below for a local or cloud deployment
+3. Extract the contents of the downloaded zip file to a directory
+4. Copy the full path of the directory containing the .xlsx files
+
+You can now encrypt the data files and copy them into the repo by running the following command
+
+```
+dotnet run --project DataImporter encrypt --DataEncryption:SourceDirectory "<QA_RESPONSES_DIRECTORY>"
+```
+
+This will pick up your `DataEncryption:Key` user secret. If you want to override this, add `--DataEncryption:Key "<DATA_ENCRYPTION_KEY>"` to the previous command.
+
+Finally ensure you commit the new files and push the changes.
 
 ### Local deployment
 
-1. Either open up the solution and run the `DataImporter` project or run `dotnet run --project DataImporter` from the repo folder on the command line
+Ensure you test the data files locally by running the following command to import the new data
+
+```
+dotnet run --project DataImporter import
+```
 
 ### Cloud (GOV.UK PaaS) deployment
 
-The following steps should be run from a command prompt or your terminal of choice.
-
-1. Ensure that you have built the latest web assests by changing to the `UI` directory and running `npm install` followed by `npm run build`. Return to the root of the repo with `cd ..`
-2. Log into GOV.UK PaaS `cf login -a api.london.cloud.service.gov.uk -u USERNAME` and select the destination space
-3. Confirm the database backing service is present and available with by running `cf service national-tutoring-<ENVIRONMENT>-postgres-db`
-4. If the database has not yet been created, provision a new instance with a command similar to `cf create-service postgres small-13 national-tutoring-<ENVIRONMENT>-postgres-db`
-5. Run `cf push --strategy rolling --vars-file vars-<ENVIRONMENT>.yml` to deploy the app and the updated data files
-6. Run `cf run-task national-tutoring-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key <BASE64_ENCRYPTION_KEY>" --name national-tutoring-<ENVIRONMENT>-data-import` to start a task that will apply the migrations and update the Tuition Partner data
-
+Use the Deploy to GOV.UK PaaS and select the `Run database migrations and import data` option to import the data into the target environment.
