@@ -34,6 +34,6 @@ The following steps should be run from a command prompt or your terminal of choi
 2. Log into GOV.UK PaaS `cf login -a api.london.cloud.service.gov.uk -u USERNAME` and select the destination space
 3. Confirm the database backing service is present and available with by running `cf service national-tutoring-<ENVIRONMENT>-postgres-db`
 4. If the database has not yet been created, provision a new instance with a command similar to `cf create-service postgres small-13 national-tutoring-<ENVIRONMENT>-postgres-db`
-5. Run `cf push --strategy rolling` to deploy the app and the updated data files
+5. Run `cf push --strategy rolling --vars-file vars-<ENVIRONMENT>.yml` to deploy the app and the updated data files
 6. Run `cf run-task national-tutoring-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key <BASE64_ENCRYPTION_KEY>" --name national-tutoring-<ENVIRONMENT>-data-import` to start a task that will apply the migrations and update the Tuition Partner data
 
