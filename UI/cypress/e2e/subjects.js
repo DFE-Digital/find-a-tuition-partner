@@ -1,7 +1,25 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 
+Given("a user has arrived on the 'Which subjects' page for Key stage 1", () => {
+    cy.visit("/find-a-tuition-partner/which-subjects?KeyStages=KeyStage1");
+});
+
 When("they manually navigate to the 'Which subjects' page", () => {
     cy.visit("/find-a-tuition-partner/which-subjects");
+});
+
+Then("they are shown the subjects for Key stage 1", () => {
+    let allSubjects = [
+        // KS1
+        "Literacy",
+        "Numeracy",
+        "Science"
+    ]
+
+    cy.get('[data-testid="subject-name"]').should('have.length.greaterThan', 0)
+    cy.get('[data-testid="subject-name"]').each((item, index) => {
+        cy.wrap(item).should('contain.text', allSubjects[index])
+    })
 });
 
 Then("they are shown all the subjects under all the keys stages", () => {
