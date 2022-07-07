@@ -48,7 +48,7 @@ namespace UI.Pages.FindATuitionPartner
             {
                 RuleFor(m => m.KeyStages)
                     .NotEmpty()
-                    .WithMessage("Select the key stage or key stages");
+                    .WithMessage("Select the key stage or stages");
             }
         }
 
