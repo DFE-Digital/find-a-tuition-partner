@@ -2,10 +2,10 @@ import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor
 import { kebabCase } from "../support/utils";
         
 const allSubjects = {
-    "Key stage 1": [ "Literacy", "Numeracy", "Science"],
-    "Key stage 2": [ "Literacy", "Numeracy", "Science"],
-    "Key stage 3": [ "Maths", "English", "Science", "Humanities", "Modern foreign languages"],
-    "Key stage 4": [ "Maths", "English", "Science", "Humanities", "Modern foreign languages"]
+    "Key stage 1": [ "English", "Maths", "Science"],
+    "Key stage 2": [ "English", "Maths", "Science"],
+    "Key stage 3": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"],
+    "Key stage 4": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"]
 }
 
 Given("a user has arrived on the 'Which key stages' page", () => {

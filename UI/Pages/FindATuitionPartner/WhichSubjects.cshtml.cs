@@ -62,10 +62,10 @@ public class WhichSubjects : PageModel
     {
         public Dictionary<KeyStage, string[]> KeyStageSubjects = new()
         {
-            { KeyStage.KeyStage1, new[] { "Literacy", "Numeracy", "Science" } },
-            { KeyStage.KeyStage2, new[] { "Literacy", "Numeracy", "Science" } },
-            { KeyStage.KeyStage3, new[] { "Maths", "English", "Science", "Humanities", "Modern foreign languages" } },
-            { KeyStage.KeyStage4, new[] { "Maths", "English", "Science", "Humanities", "Modern foreign languages" } },
+            { KeyStage.KeyStage1, new[] { "English", "Maths", "Science" } },
+            { KeyStage.KeyStage2, new[] { "English", "Maths", "Science" } },
+            { KeyStage.KeyStage3, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
+            { KeyStage.KeyStage4, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
         };
 
         public async Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
