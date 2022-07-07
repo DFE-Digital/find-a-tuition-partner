@@ -17,10 +17,30 @@ jobs:
       environment: qa
       run_database_migrations_and_import_data: true
 
-  end_to_end_testing:
-    name: End to End Testing
-    uses: ./.github/workflows/end-to-end-testing.yml
-    with:
-      environment: qa
-      username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
-      password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
+  end-to-end-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          working-directory: ./UI
+          config: baseUrl=https://national-tutoring-${{ github.event.inputs.environment }}.london.cloudapps.digital/
+        env:
+          CYPRESS_username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
+          CYPRESS_password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: UI/cypress/screenshots
+      - name: Store videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: UI/cypress/videos

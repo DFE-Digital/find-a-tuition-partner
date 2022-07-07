@@ -1,17 +1,6 @@
 name: End to End Testing
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-      username:
-        required: false 
-        type: string
-      password:
-        required: false 
-        type: string
   workflow_dispatch:
     inputs:
       environment:
