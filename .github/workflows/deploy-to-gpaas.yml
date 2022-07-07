@@ -2,6 +2,13 @@ name: Deploy to GOV.UK PaaS
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      run_database_migrations_and_import_data:
+        required: true
+        type: boolean
   workflow_dispatch:
     inputs:
       environment:
