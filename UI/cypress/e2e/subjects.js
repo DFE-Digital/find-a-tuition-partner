@@ -33,8 +33,8 @@ Then("they will see all the keys stages as options", () => {
 Then("they are shown the subjects for Key stage 1", () => {
     let allSubjects = [
         // KS1
-        "Literacy",
-        "Numeracy",
+        "English",
+        "Maths",
         "Science"
     ]
 
@@ -47,12 +47,12 @@ Then("they are shown the subjects for Key stage 1", () => {
 Then("they are shown the subjects for Key stage 1 and Key stage 2", () => {
     let allSubjects = [
         // KS1
-        "Literacy",
-        "Numeracy",
+        "English",
+        "Maths",
         "Science",
         // KS2
-        "Literacy",
-        "Numeracy",
+        "English",
+        "Maths",
         "Science"
     ]
 
@@ -65,22 +65,22 @@ Then("they are shown the subjects for Key stage 1 and Key stage 2", () => {
 Then("they are shown all the subjects under all the keys stages", () => {
     let allSubjects = [
         // KS1
-        "Literacy", 
-        "Numeracy",
+        "English", 
+        "Maths",
         "Science",
         // KS2
-        "Literacy", 
-        "Numeracy",
+        "English", 
+        "Maths",
         "Science",
         // KS3
-        "Maths",
         "English",
+        "Maths",
         "Science",
         "Humanities", 
         "Modern foreign languages",
         // KS4
-        "Maths",
         "English",
+        "Maths",
         "Science",
         "Humanities", 
         "Modern foreign languages",

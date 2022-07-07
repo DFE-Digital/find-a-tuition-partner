@@ -25,8 +25,8 @@ public class SearchForSubjects : CleanSliceFixture
             .And.ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                new { Name = "Numeracy" },
-                new { Name = "Literacy" },
+                new { Name = "Maths" },
+                new { Name = "English" },
                 new { Name = "Science" },
             });
     }
@@ -48,8 +48,8 @@ public class SearchForSubjects : CleanSliceFixture
             .And.ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                new { Name = "Numeracy" },
-                new { Name = "Literacy" },
+                new { Name = "Maths" },
+                new { Name = "English" },
                 new { Name = "Science" },
             });
     }
@@ -62,16 +62,16 @@ public class SearchForSubjects : CleanSliceFixture
         result.Should().ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                new { Name = "Numeracy" },
-                new { Name = "Literacy" },
+                new { Name = "Maths" },
+                new { Name = "English" },
                 new { Name = "Science" },
             });
 
         result.Should().ContainKey(KeyStage.KeyStage2)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                new { Name = "Numeracy" },
-                new { Name = "Literacy" },
+                new { Name = "Maths" },
+                new { Name = "English" },
                 new { Name = "Science" },
             });
 
@@ -102,14 +102,14 @@ public class SearchForSubjects : CleanSliceFixture
         var result = await Fixture.SendAsync(new WhichSubjects.Query
         {
             KeyStages = new[] { KeyStage.KeyStage1 },
-            Subjects = new[] { $"{KeyStage.KeyStage1}-Literacy" },
+            Subjects = new[] { $"{KeyStage.KeyStage1}-English" },
         });
 
         result.Should().ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
-                new { Name = "Literacy", Selected = true },
-                new { Name = "Numeracy", Selected = false },
+                new { Name = "English", Selected = true },
+                new { Name = "Maths", Selected = false },
                 new { Name = "Science", Selected = false },
             });
     }

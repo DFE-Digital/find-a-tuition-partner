@@ -30,7 +30,7 @@ public class SearchForResults : CleanSliceFixture
                     new()
                     {
                         TuitionType = db.TuitionTypes.First(),
-                        SubjectId = Subjects.Id.KeyStage1Literacy
+                        SubjectId = Subjects.Id.KeyStage1English
                     }
                 }
             });
@@ -39,7 +39,7 @@ public class SearchForResults : CleanSliceFixture
         });
 
         var subject = await Fixture.ExecuteDbContextAsync(db =>
-            db.Subjects.FindAsync(Subjects.Id.KeyStage1Literacy));
+            db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
 
         var result = await Fixture.SendAsync(new SearchResults.Command
         {
@@ -72,7 +72,7 @@ public class SearchForResults : CleanSliceFixture
                     new()
                     {
                         TuitionType = db.TuitionTypes.First(),
-                        SubjectId = Subjects.Id.KeyStage1Literacy
+                        SubjectId = Subjects.Id.KeyStage1English
                     }
                 }
             });
@@ -81,7 +81,7 @@ public class SearchForResults : CleanSliceFixture
         });
 
         var subject = await Fixture.ExecuteDbContextAsync(db =>
-            db.Subjects.FindAsync(Subjects.Id.KeyStage1Literacy));
+            db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
 
         var result = await Fixture.SendAsync(new SearchResults.Command
         {
@@ -94,7 +94,7 @@ public class SearchForResults : CleanSliceFixture
         result.AllSubjects.Values.SelectMany(x => x)
             .Where(x => x.Selected).Should().BeEquivalentTo(new[]
             {
-                new { Name = "Literacy", Selected = true },
+                new { Name = "English", Selected = true },
             });
     }
 }
