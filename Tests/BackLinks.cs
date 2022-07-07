@@ -39,6 +39,14 @@ public class BackLinks
     }
 
     [Fact]
+    public void Construct_querystring_from_array_property_with_null_item()
+    {
+        var model = new SearchModel { Subjects = new string[] { null! } };
+        var result = model.ToRouteData();
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
     public void Construct_querystring_from_non_null_search_model_properties()
     {
         var model = new SearchModel

@@ -46,7 +46,10 @@ public static class SearchModelAsQueryStringDictionary
 
         var qs = buildQueryText(property, name);
 
-        dictionary.Add(name, qs);
+        if (!string.IsNullOrEmpty(qs))
+        {
+            dictionary.Add(name, qs);
+        }
     }
 
     private static string MemberName<T>(this Expression<Func<SearchModel, T?>> expression)
@@ -58,7 +61,7 @@ public static class SearchModelAsQueryStringDictionary
 
     private static string BuildQueryString<T>(IEnumerable<T> data, string name)
     {
-        var first = data.Take(1).Select(x => x.ToString());
+        var first = data.Take(1).Select(x => x?.ToString());
         var rest = data.Skip(1).Select(x => $"{name}={x}");
         return string.Join("&", first.Union(rest));
     }
