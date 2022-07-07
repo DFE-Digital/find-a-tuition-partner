@@ -22,6 +22,5 @@ jobs:
     uses: ./.github/workflows/end-to-end-testing.yml
     with:
       environment: qa
-    secrets:
       username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
       password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
