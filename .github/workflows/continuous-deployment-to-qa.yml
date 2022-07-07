@@ -1,0 +1,26 @@
+name: Continuous Deployment to QA Environment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    name: .NET Build and Test
+    uses: ./.github/workflows/build-and-test.yml
+
+  deploy_to_gpaas:
+    name: Deploy to GOV.UK PaaS
+    uses: ./.github/workflows/deploy-to-gpaas.yml
+    with:
+      environment: qa
+      run_database_migrations_and_import_data: true
+
+  end_to_end_testing:
+    name: End to End Testing
+    uses: ./.github/workflows/end-to-end-testing.yml
+    with:
+      environment: qa
+      username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
+      password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
