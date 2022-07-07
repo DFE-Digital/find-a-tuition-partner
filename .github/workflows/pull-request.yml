@@ -6,10 +6,6 @@ on:
     types: [assigned, opened, synchronize, reopened]
 
 jobs:
-  build_and_test:
-    name: .NET Build and Test
-    uses: ./.github/workflows/build-and-test.yml
-
   docker_compose_test:
     name: Start Service and run End to End Testing
     runs-on: ubuntu-latest
