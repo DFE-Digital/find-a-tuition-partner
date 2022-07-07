@@ -48,5 +48,10 @@ jobs:
         name: cypress-videos
         path: UI/cypress/videos
 
+    - name: Logs on failure
+      if: failure()
+      run: docker compose logs --since 1m
+
     - name: Docker Compose Down
+      if: always()
       run: docker compose down
