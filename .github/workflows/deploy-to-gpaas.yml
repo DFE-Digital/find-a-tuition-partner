@@ -9,6 +9,13 @@ on:
       run_database_migrations_and_import_data:
         required: true
         type: boolean
+    secrets:
+      CF_USERNAME:
+        required: true
+      CF_PASSWORD:
+        required: true
+      DATA_ENCRYPTION_KEY:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
