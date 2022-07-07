@@ -30,6 +30,48 @@ public class SearchForSubjects : CleanSliceFixture
     }
 
     [Fact]
+    public async Task Displays_all_subjects_when_no_key_stages_selected()
+    {
+        var result = await Fixture.SendAsync(new WhichSubjects.Query());
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage2)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage3)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
+            });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage4)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
+            });
+    }
+
+    [Fact]
     public async Task Preserves_selected_from_querystring()
     {
         var result = await Fixture.SendAsync(new WhichSubjects.Query
