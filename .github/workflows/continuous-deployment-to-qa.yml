@@ -12,12 +12,16 @@ jobs:
 
   deploy_to_gpaas:
     name: Deploy to GOV.UK PaaS
+    needs: build_and_test
     uses: ./.github/workflows/deploy-to-gpaas.yml
     with:
       environment: qa
       run_database_migrations_and_import_data: true
+    secrets: inherit
 
   end-to-end-testing:
+    name: End to End Testing
+    needs: deploy_to_gpaas
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -27,7 +31,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           working-directory: ./UI
-          config: baseUrl=https://national-tutoring-${{ github.event.inputs.environment }}.london.cloudapps.digital/
+          config: baseUrl=https://national-tutoring-qa.london.cloudapps.digital/
         env:
           CYPRESS_username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
           CYPRESS_password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
