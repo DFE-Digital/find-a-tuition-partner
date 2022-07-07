@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace Application.Extensions;
+﻿namespace Application.Extensions;
 
 public static class SpreadsheetExtensions
 {
@@ -26,8 +24,6 @@ public static class SpreadsheetExtensions
 
     public static DateOnly? ParseDateOnly(this string? cellValue)
     {
-        if (cellValue == null) return null;
-
         if (double.TryParse(cellValue, out var doubleValue))
         {
             return DateOnly.FromDateTime(DateTime.FromOADate(doubleValue));

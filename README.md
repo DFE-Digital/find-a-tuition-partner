@@ -44,7 +44,9 @@ dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username
 
 You will also need to set the current data encryption key used to encrypt the data files in order to import them locally. Ask the other developers for the latest encryption key and add it as a .NET user secret with the following command.
 
+```
 dotnet user-secrets set "DataEncryption:Key" "<DATA_ENCRYPTION_KEY>" -p UI
+```
 
 The database migrations, seed data and Tuition Partner data is deployed by and running the data importer project. Either run the project via Visual Studio or with the following command.
 
