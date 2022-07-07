@@ -21,6 +21,9 @@ public class WhichSubjects : PageModel
         Subjects = await mediator.Send(query);
     }
 
+    [BindProperty(SupportsGet = true)]
+    public SearchModel AllSearchParams { get; set; }
+
     public async Task<IActionResult> OnPost(Command data)
     {
         if (!ModelState.IsValid)

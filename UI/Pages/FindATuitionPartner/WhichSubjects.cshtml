@@ -1,5 +1,6 @@
 ﻿@page
 @using Application.Extensions
+@using UI.Models
 @model WhichSubjects
 @{
     Layout = "_Layout";
@@ -8,7 +9,7 @@
 	ViewData["Service Home Page"] = nameof(Index);
 }
 
-<govuk-back-link asp-page="@nameof(WhichKeyStages)" data-module="history-back-link" />
+<govuk-back-link asp-page="@nameof(WhichKeyStages)" asp-all-route-data="Model.AllSearchParams.ToRouteData()" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
