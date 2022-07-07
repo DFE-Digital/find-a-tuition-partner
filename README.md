@@ -42,7 +42,17 @@ You will need to register the database connection string for local development a
 dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=ntp" -p UI
 ```
 
-The database migrations, seed data and Tuition Partner data is deployed by configuring and running the data importer. Follow the [Importing Tuition Partner Data](docs/runbooks/import-tuition-partner-data.md) runbook to complete the database setup
+You will also need to set the current data encryption key used to encrypt the data files in order to import them locally. Ask the other developers for the latest encryption key and add it as a .NET user secret with the following command.
+
+```
+dotnet user-secrets set "DataEncryption:Key" "<DATA_ENCRYPTION_KEY>" -p UI
+```
+
+The database migrations, seed data and Tuition Partner data is deployed by and running the data importer project. Either run the project via Visual Studio or with the following command.
+
+```
+dotnet run --project DataImporter import
+```
 
 #### Migrations
 
@@ -61,6 +71,16 @@ From a command prompt, change to the `UI` directory and run `npm install` to ins
 * `npm run build` to bundle the assets using webpack 5 in production mode
 * `npm run build:dev` to bundle the assets using webpack 5 in development mode
 * `npm run watch` to bundle the assets using webpack 5 in development mode and apply changes immediately when developing
+
+### Running the application
+
+The UI project should be the startup project. Either run the project via Visual Studio or with the following command.
+
+```
+dotnet run --project UI
+```
+
+You can then access the application on [https://localhost:7036/](https://localhost:7036/)
 
 ## Testing
 

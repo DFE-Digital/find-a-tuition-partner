@@ -9,32 +9,26 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
 {
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
-        builder.HasData(
-            new Subject {Id = Subjects.Id.PrimaryLiteracy, KeyStageId = KeyStages.Id.One, Name = "Primary - Literacy"},
-            new Subject {Id = Subjects.Id.PrimaryNumeracy, KeyStageId = KeyStages.Id.One, Name = "Primary - Numeracy"},
-            new Subject {Id = Subjects.Id.PrimaryScience, KeyStageId = KeyStages.Id.One, Name = "Primary - Science"},
-            new Subject {Id = Subjects.Id.SecondaryEnglish, KeyStageId = KeyStages.Id.Three, Name = "Secondary - English"},
-            new Subject {Id = Subjects.Id.SecondaryHumanities, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Humanities"},
-            new Subject {Id = Subjects.Id.SecondaryMaths, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Maths"},
-            new Subject {Id = Subjects.Id.SecondaryModernForeignLanguages, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Modern Foreign Languages"},
-            new Subject {Id = Subjects.Id.SecondaryScience, KeyStageId = KeyStages.Id.Three, Name = "Secondary - Science"},
+        builder.HasIndex(e => e.SeoUrl).IsUnique();
+        builder.HasIndex(e => e.Name);
 
-            new Subject {Id = Subjects.Id.KeyStage1Literacy, KeyStageId = KeyStages.Id.One, Name = "Literacy"},
-            new Subject {Id = Subjects.Id.KeyStage1Numeracy, KeyStageId = KeyStages.Id.One, Name = "Numeracy"},
-            new Subject {Id = Subjects.Id.KeyStage1Science, KeyStageId = KeyStages.Id.One, Name = "Science"},
-            new Subject {Id = Subjects.Id.KeyStage2Literacy, KeyStageId = KeyStages.Id.Two, Name = "Literacy"},
-            new Subject {Id = Subjects.Id.KeyStage2Numeracy, KeyStageId = KeyStages.Id.Two, Name = "Numeracy"},
-            new Subject {Id = Subjects.Id.KeyStage2Science, KeyStageId = KeyStages.Id.Two, Name = "Literacy"},
-            new Subject {Id = Subjects.Id.KeyStage3English, KeyStageId = KeyStages.Id.Three, Name = "English"},
-            new Subject {Id = Subjects.Id.KeyStage3Humanities, KeyStageId = KeyStages.Id.Three, Name = "Humanities"},
-            new Subject {Id = Subjects.Id.KeyStage3Maths, KeyStageId = KeyStages.Id.Three, Name = "Maths"},
-            new Subject {Id = Subjects.Id.KeyStage3ModernForeignLanguages, KeyStageId = KeyStages.Id.Three, Name = "Modern Foreign Languages"},
-            new Subject {Id = Subjects.Id.KeyStage3Science, KeyStageId = KeyStages.Id.Three, Name = "Science"},
-            new Subject {Id = Subjects.Id.KeyStage4English, KeyStageId = KeyStages.Id.Four, Name = "English"},
-            new Subject {Id = Subjects.Id.KeyStage4Humanities, KeyStageId = KeyStages.Id.Four, Name = "Humanities"},
-            new Subject {Id = Subjects.Id.KeyStage4Maths, KeyStageId = KeyStages.Id.Four, Name = "Maths"},
-            new Subject {Id = Subjects.Id.KeyStage4ModernForeignLanguages, KeyStageId = KeyStages.Id.Four, Name = "Modern Foreign Languages"},
-            new Subject {Id = Subjects.Id.KeyStage4Science, KeyStageId = KeyStages.Id.Four, Name = "Science"}
+        builder.HasData(
+            new Subject {Id = Subjects.Id.KeyStage1Literacy, SeoUrl = "key-stage-1-literacy", KeyStageId = KeyStages.Id.One, Name = "Literacy"},
+            new Subject {Id = Subjects.Id.KeyStage1Numeracy, SeoUrl = "key-stage-1-numeracy", KeyStageId = KeyStages.Id.One, Name = "Numeracy"},
+            new Subject {Id = Subjects.Id.KeyStage1Science, SeoUrl = "key-stage-1-science", KeyStageId = KeyStages.Id.One, Name = "Science"},
+            new Subject {Id = Subjects.Id.KeyStage2Literacy, SeoUrl = "key-stage-2-literacy", KeyStageId = KeyStages.Id.Two, Name = "Literacy"},
+            new Subject {Id = Subjects.Id.KeyStage2Numeracy, SeoUrl = "key-stage-2-numeracy", KeyStageId = KeyStages.Id.Two, Name = "Numeracy"},
+            new Subject {Id = Subjects.Id.KeyStage2Science, SeoUrl = "key-stage-2-science", KeyStageId = KeyStages.Id.Two, Name = "Literacy"},
+            new Subject {Id = Subjects.Id.KeyStage3English, SeoUrl = "key-stage-3-english", KeyStageId = KeyStages.Id.Three, Name = "English"},
+            new Subject {Id = Subjects.Id.KeyStage3Humanities, SeoUrl = "key-stage-3-humanities", KeyStageId = KeyStages.Id.Three, Name = "Humanities"},
+            new Subject {Id = Subjects.Id.KeyStage3Maths, SeoUrl = "key-stage-3-maths", KeyStageId = KeyStages.Id.Three, Name = "Maths"},
+            new Subject {Id = Subjects.Id.KeyStage3ModernForeignLanguages, SeoUrl = "key-stage-3-modern-foreign-languages", KeyStageId = KeyStages.Id.Three, Name = "Modern Foreign Languages"},
+            new Subject {Id = Subjects.Id.KeyStage3Science, SeoUrl = "key-stage-3-science", KeyStageId = KeyStages.Id.Three, Name = "Science"},
+            new Subject {Id = Subjects.Id.KeyStage4English, SeoUrl = "key-stage-4-english", KeyStageId = KeyStages.Id.Four, Name = "English"},
+            new Subject {Id = Subjects.Id.KeyStage4Humanities, SeoUrl = "key-stage-4-humanities", KeyStageId = KeyStages.Id.Four, Name = "Humanities"},
+            new Subject {Id = Subjects.Id.KeyStage4Maths, SeoUrl = "key-stage-4-maths", KeyStageId = KeyStages.Id.Four, Name = "Maths"},
+            new Subject {Id = Subjects.Id.KeyStage4ModernForeignLanguages, SeoUrl = "key-stage-4-modern-foreign-languages", KeyStageId = KeyStages.Id.Four, Name = "Modern Foreign Languages"},
+            new Subject {Id = Subjects.Id.KeyStage4Science, SeoUrl = "key-stage-4-science", KeyStageId = KeyStages.Id.Four, Name = "Science"}
         );
     }
 }
