@@ -21,14 +21,14 @@ public class WhichSubjects : PageModel
         Subjects = await mediator.Send(query);
     }
 
-    public async Task<IActionResult> OnPost(Command Data)
+    public async Task<IActionResult> OnPost(Command data)
     {
         if (!ModelState.IsValid)
         {
-            Subjects = await mediator.Send(new Query(Data));
+            Subjects = await mediator.Send(new Query(data));
             return Page();
         }
-        return RedirectToPage("SearchResults", new SearchModel(Data));
+        return RedirectToPage("SearchResults", new SearchModel(data));
     }
 
     public record Query : SearchModel, IRequest<KeyStageSubjectDictionary>
