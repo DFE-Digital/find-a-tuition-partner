@@ -9,3 +9,9 @@ Feature: User can choose Key Stage and Subject
     When they click 'Continue'
     Then they will see 'Select the subject or subjects' as an error message for the 'subjects'
     And they are shown the subjects for Key stage 1
+
+  Scenario: Back click returns to key subjects input page
+    Given a user has arrived on the 'Which subjects' page for Key stage 1
+    When they click 'Back'
+    Then they will be taken to the 'Which key stages' page
+    And they will see 'Key stage 1' selected

@@ -51,3 +51,7 @@ Then("they are shown all the subjects under all the keys stages", () => {
         cy.wrap(item).should('contain.text', allSubjects[index])
     })
 })
+
+Then("they will see 'Key stage 1' selected", () => {
+    cy.get('input[id="key-stage-1"]').should('be.checked');
+});
