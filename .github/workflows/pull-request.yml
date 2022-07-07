@@ -1,0 +1,46 @@
+name: Pull Request .NET Build, Test and End to End Testing
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  build_and_test:
+    name: .NET Build and Test
+    uses: ./.github/workflows/build-and-test.yml
+
+  docker_compose_test:
+    name: Start Service and run End to End Testing
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Docker Compose Up
+      run: docker compose up -d
+
+    - name: Run database migrations and import data
+      run: docker compose run -e DataEncryption:Key=${{ secrets.DATA_ENCRYPTION_KEY }} web ./UI import
+
+    - name: End to End Testing
+      uses: cypress-io/github-action@v4
+      with:
+        working-directory: ./UI
+        config: baseUrl=http://localhost:8080/
+
+    - name: Store screenshots on test failure
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: UI/cypress/screenshots
+    - name: Store videos
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: cypress-videos
+        path: UI/cypress/videos
+
+    - name: Docker Compose Down
+      run: docker compose down
