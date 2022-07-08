@@ -14,13 +14,19 @@ Feature: User can choose Key Stage and Subject
     When they click 'Continue'
     Then they will see 'Select the key stage or stages' as an error message for the 'keystages'
 
-  Scenario: Click continue with any combination of key stages selected
+  Scenario Outline: Click continue with any combination of key stages selected
     Given a user has arrived on the 'Which key stages' page
-    When they select 'Key stage 1'
-    And they select 'Key stage 2'
+    When they select '<keyStages>'
     And they click 'Continue'
-    Then they are shown the subjects for 'Key stage 1'
-    And they are shown the subjects for 'Key stage 2'
+    Then they are shown the subjects for '<keyStages>'
+    Examples:
+    | keyStages |
+    | Key stage 1 |
+    | Key stage 1, Key stage 2 |
+    | Key stage 1, Key stage 3 |
+    | Key stage 3 |
+    | Key stage 3, Key stage 4 |
+    | Key stage 1, Key stage 2, Key stage 3, Key stage 4 |
 
   Scenario: User lands on subjects page without associated key stages selected
     Given a user has started the 'Find a tuition partner' journey

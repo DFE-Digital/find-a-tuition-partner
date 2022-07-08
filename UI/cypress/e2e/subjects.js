@@ -25,7 +25,10 @@ When("they manually navigate to the 'Which subjects' page", () => {
 });
 
 When("they select {string}", keystage => {
-    cy.get(`input[id=${kebabCase(keystage)}]`).check();
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`input[id=${kebabCase(element)}]`).check();
+    });
 });
 
 Then("they will see all the keys stages as options", () => {
@@ -41,16 +44,22 @@ Then("they will see all the keys stages as options", () => {
 
 Then("they are shown the subjects for {string}", keystage => {
     
-    const subjects = allSubjects[keystage]
+    const stages = keystage.split(',').map(s => s.trim());
+    
+    stages.forEach(element => {
 
-    cy.get('h2')
-    .contains(`${keystage} subjects`)
-    .parent()
-    .within(() =>
-    {
-        cy.get('[data-testid="subject-name"]').each((item, index) => {
-            cy.wrap(item).should('contain.text', subjects[index])
+        const subjects = allSubjects[element]
+
+        cy.get('h2')
+        .contains(`${element} subjects`)
+        .parent()
+        .within(() =>
+        {
+            cy.get('[data-testid="subject-name"]').each((item, index) => {
+                cy.wrap(item).should('contain.text', subjects[index])
+            });
         });
+
     });
 });
 
