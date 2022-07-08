@@ -18,7 +18,7 @@ public record SearchModel
 
     public string[]? Subjects { get; set; }
         
-    public TuitionType TuitionType { get; set; }
+    public TuitionType? TuitionType { get; set; }
     
     public KeyStage[]? KeyStages { get; set; }
 }
