@@ -1,4 +1,0 @@
-environment-postfix: -qa
-instances: 1
-memory: 256M
-dotnet-environment: Development
