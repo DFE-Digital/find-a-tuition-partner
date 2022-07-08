@@ -24,30 +24,30 @@ public class TuitionPartner : PageModel
     {
         if (string.IsNullOrWhiteSpace(query.Id))
         {
-            _logger.LogWarning($"Null or whitespace id '{query.Id}' provided");
+            _logger.LogWarning("Null or whitespace id '{Id}' provided", query.Id);
             return NotFound();
         }
 
         var seoUrl = query.Id.ToSeoUrl();
         if (query.Id != seoUrl)
         {
-            _logger.LogInformation($"Non SEO id '{query.Id}' provided. Redirecting to {seoUrl}");
-            return RedirectToPage(nameof(TuitionPartner), new { Id = seoUrl });
+            _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
+            return RedirectToPage(new { Id = seoUrl });
         }
 
         Data = await _mediator.Send(query);
 
         if (Data == null)
         {
-            _logger.LogInformation($"No Tuition Partner found for id '{query.Id}'");
+            _logger.LogInformation("No Tuition Partner found for id '{Id}'", query.Id);
             return NotFound();
         }
 
-        _logger.LogInformation($"Tuition Partner {Data.Name} found for id '{query.Id}'");
+        _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
 
-    public record Query(string Id) : IRequest<Command>;
+    public record Query(string Id) : IRequest<Command?>;
 
     public record Command(
         string Name, string Description, string[] Subjects,
