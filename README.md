@@ -98,7 +98,7 @@ It is also possible to test the full stack from within docker using docker compo
 
 ```
 dotnet test
-docker compose up -d
+docker compose up --build -d
 docker compose run -e DataEncryption:Key=<DATA_ENCRYPTION_KEY> web ./UI import
 cd UI
 npx cypress run --config baseUrl=http://localhost:8080/

@@ -24,7 +24,7 @@ jobs:
         npm run build
 
     - name: Docker Compose Up
-      run: docker compose up -d
+      run: docker compose up --build -d
 
     - name: Run database migrations and import data
       run: docker compose run -e DataEncryption:Key=${{ secrets.DATA_ENCRYPTION_KEY }} web ./UI import

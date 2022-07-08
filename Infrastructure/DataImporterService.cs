@@ -48,65 +48,71 @@ public class DataImporterService : IHostedService
         _logger.LogWarning("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        var strategy = dbContext.Database.CreateExecutionStrategy();
 
-        _logger.LogWarning("Deleting all existing Tuition Partner data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
-
-        var assembly = typeof(AssemblyReference).Assembly;
-
-        foreach (var resourceName in assembly.GetManifestResourceNames())
-        {
-            if (resourceName.EndsWith("README.md")) break;
-
-            var base64Filename = resourceName.Substring(resourceName.LastIndexOf('.') + 1).FromBase64Filename();
-            var originalFilename = Encoding.UTF8.GetString(Convert.FromBase64String(base64Filename));
-            _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename}");
-
-            await using var resourceStream = assembly.GetManifestResourceStream(resourceName);
-            if (resourceStream == null)
+        await strategy.ExecuteAsync(
+            async () =>
             {
-                _logger.LogError($"Tuition Partner resource name {resourceName} not found");
-                continue;
-            }
+                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            _logger.LogInformation($"Attempting create Tuition Partner from resource name {resourceName}");
-            TuitionPartner tuitionPartner;
-            try
-            {
-                using var stream = new MemoryStream();
-                using var crypto = Aes.Create();
-                var iv = new byte[crypto.IV.Length];
-                await resourceStream.ReadAsync(iv, 0, iv.Length, cancellationToken);
-                using var cryptoTransform = crypto.CreateDecryptor(keyBytes, iv);
-                await using var cryptoStream = new CryptoStream(resourceStream, cryptoTransform, CryptoStreamMode.Read);
-                await cryptoStream.CopyToAsync(stream, cancellationToken);
-                tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from resource name {resourceName}");
-                continue;
-            }
+                _logger.LogWarning("Deleting all existing Tuition Partner data");
+                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
+                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
+                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
+                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 
-            var validator = new TuitionPartnerValidator();
-            var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
-            if (!results.IsValid)
-            {
-                _logger.LogError($"Tuition Partner created from resource name {resourceName} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
-                continue;
-            }
+                var assembly = typeof(AssemblyReference).Assembly;
 
-            dbContext.TuitionPartners.Add(tuitionPartner);
-            await dbContext.SaveChangesAsync(cancellationToken);
+                foreach (var resourceName in assembly.GetManifestResourceNames())
+                {
+                    if (resourceName.EndsWith("README.md")) break;
 
-            _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from resource name {resourceName}");
-        }
+                    var base64Filename = resourceName.Substring(resourceName.LastIndexOf('.') + 1).FromBase64Filename();
+                    var originalFilename = Encoding.UTF8.GetString(Convert.FromBase64String(base64Filename));
+                    _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename}");
 
-        await transaction.CommitAsync(cancellationToken);
+                    await using var resourceStream = assembly.GetManifestResourceStream(resourceName);
+                    if (resourceStream == null)
+                    {
+                        _logger.LogError($"Tuition Partner resource name {resourceName} not found");
+                        continue;
+                    }
+
+                    _logger.LogInformation($"Attempting create Tuition Partner from resource name {resourceName}");
+                    TuitionPartner tuitionPartner;
+                    try
+                    {
+                        using var stream = new MemoryStream();
+                        using var crypto = Aes.Create();
+                        var iv = new byte[crypto.IV.Length];
+                        await resourceStream.ReadAsync(iv, 0, iv.Length, cancellationToken);
+                        using var cryptoTransform = crypto.CreateDecryptor(keyBytes, iv);
+                        await using var cryptoStream = new CryptoStream(resourceStream, cryptoTransform, CryptoStreamMode.Read);
+                        await cryptoStream.CopyToAsync(stream, cancellationToken);
+                        tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from resource name {resourceName}");
+                        continue;
+                    }
+
+                    var validator = new TuitionPartnerValidator();
+                    var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
+                    if (!results.IsValid)
+                    {
+                        _logger.LogError($"Tuition Partner created from resource name {resourceName} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
+                        continue;
+                    }
+
+                    dbContext.TuitionPartners.Add(tuitionPartner);
+                    await dbContext.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogWarning($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from resource name {resourceName}");
+                }
+
+                await transaction.CommitAsync(cancellationToken);
+            });
 
         _host.StopApplication();
     }
