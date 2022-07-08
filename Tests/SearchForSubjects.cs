@@ -20,12 +20,79 @@ public class SearchForSubjects : CleanSliceFixture
             KeyStages = new[] { KeyStage.KeyStage1 }
         });
 
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+        result
+            .Should().HaveCount(1)
+            .And.ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
                 new { Name = "Numeracy" },
                 new { Name = "Literacy" },
                 new { Name = "Science" },
+            });
+    }
+
+    [Fact]
+    public async Task Displays_all_subjects_in_key_stage_after_validation_failure()
+    {
+        var command = new WhichSubjects.Command
+        {
+            KeyStages = new[] { KeyStage.KeyStage1 }
+        };
+
+        var query = new WhichSubjects.Query(command);
+
+        var result = await Fixture.SendAsync(query);
+
+        result
+            .Should().HaveCount(1)
+            .And.ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
+    }
+
+    [Fact]
+    public async Task Displays_all_subjects_when_no_key_stages_selected()
+    {
+        var result = await Fixture.SendAsync(new WhichSubjects.Query());
+
+        result.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
+
+        result.Should().ContainKey(KeyStage.KeyStage2)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Numeracy" },
+                new { Name = "Literacy" },
+                new { Name = "Science" },
+            });
+
+        result.Should().ContainKey(KeyStage.KeyStage3)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
+            });
+
+        result.Should().ContainKey(KeyStage.KeyStage4)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
             });
     }
 
@@ -38,7 +105,7 @@ public class SearchForSubjects : CleanSliceFixture
             Subjects = new[] { $"{KeyStage.KeyStage1}-Literacy" },
         });
 
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+        result.Should().ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
                 new { Name = "Literacy", Selected = true },
@@ -48,31 +115,18 @@ public class SearchForSubjects : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Preserves_other_search_parameters()
-    {
-        var query = new WhichSubjects.Query
-        {
-            Postcode = "123456",
-        };
-
-        var result = await Fixture.SendAsync(query);
-
-        result.Should().BeEquivalentTo(new
-        {
-            Postcode = "123456",
-        });
-    }
-
-    [Fact]
     public async Task Updates_selection()
     {
         var result = await Fixture.GetPage<WhichSubjects>().Execute(page =>
         {
-            page.Data.Subjects = new[]
+            var command = new WhichSubjects.Command
             {
-                $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage3}-Humanities",
+                Subjects = new[]
+                {
+                    $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage3}-Humanities",
+                }
             };
-            return page.OnPost();
+            return page.OnPost(command);
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;

@@ -6,31 +6,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace UI.Pages.FindATuitionPartner;
 
+using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;
+
 public class WhichSubjects : PageModel
 {
     private readonly IMediator mediator;
 
     public WhichSubjects(IMediator mediator) => this.mediator = mediator;
 
-    [BindProperty]
-    public Command Data { get; set; } = new();
+    public KeyStageSubjectDictionary Subjects { get; set; } = new();
 
     public async Task OnGet(Query query)
     {
-        Data = await mediator.Send(query);
+        Subjects = await mediator.Send(query);
     }
 
-    public async Task<IActionResult> OnPost()
+    [BindProperty(SupportsGet = true)]
+    public SearchModel AllSearchParams { get; set; }
+
+    public async Task<IActionResult> OnPost(Command data)
     {
         if (!ModelState.IsValid)
         {
-            Data = await mediator.Send(new Query(Data));
+            Subjects = await mediator.Send(new Query(data));
             return Page();
         }
-        return RedirectToPage("SearchResults", new SearchModel(Data));
+        return RedirectToPage("SearchResults", new SearchModel(data));
     }
 
-    public record Query : SearchModel, IRequest<Command>
+    public record Query : SearchModel, IRequest<KeyStageSubjectDictionary>
     {
         public Query() { }
         public Query(SearchModel query) : base(query) { }
@@ -38,7 +42,7 @@ public class WhichSubjects : PageModel
 
     public record Command : SearchModel, IRequest<SearchModel>
     {
-        public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
+        public KeyStageSubjectDictionary AllSubjects { get; set; } = new();
     }
 
     public class Validator : AbstractValidator<Command>
@@ -54,7 +58,7 @@ public class WhichSubjects : PageModel
         }
     }
 
-    public class Handler : IRequestHandler<Query, Command>
+    public class Handler : IRequestHandler<Query, KeyStageSubjectDictionary>
     {
         public Dictionary<KeyStage, string[]> KeyStageSubjects = new()
         {
@@ -64,9 +68,15 @@ public class WhichSubjects : PageModel
             { KeyStage.KeyStage4, new[] { "Maths", "English", "Science", "Humanities", "Modern foreign languages" } },
         };
 
-        public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
         {
-            request.KeyStages ??= Array.Empty<KeyStage>();
+            request.KeyStages ??= new[]
+            {
+                KeyStage.KeyStage1,
+                KeyStage.KeyStage2,
+                KeyStage.KeyStage3,
+                KeyStage.KeyStage4,
+            };
             request.Subjects ??= Array.Empty<string>();
 
             var selectable = KeyStageSubjects
@@ -80,11 +90,7 @@ public class WhichSubjects : PageModel
                     }).ToArray()
                 );
 
-            return new Command
-            {
-                Postcode = request.Postcode,
-                AllSubjects = selectable,
-            };
+            return selectable;
         }
     }
 }

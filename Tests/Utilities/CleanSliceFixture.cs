@@ -15,7 +15,6 @@ public class CleanSliceFixture : IAsyncLifetime
         //await db.Database.EnsureDeletedAsync();
         //await db.Database.EnsureCreatedAsync();
         //db.Subjects.RemoveRange(db.Subjects);
-        db.TuitionPartnerCoverage.RemoveRange(db.TuitionPartnerCoverage);
         //db.LocalAuthorityDistricts.RemoveRange(db.LocalAuthorityDistricts);
         //db.TuitionTypes.RemoveRange(db.TuitionTypes);
         db.TuitionPartners.RemoveRange(db.TuitionPartners);

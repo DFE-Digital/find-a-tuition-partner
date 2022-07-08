@@ -8,6 +8,7 @@ public class TuitionPartnerConfiguration : IEntityTypeConfiguration<TuitionPartn
 {
     public void Configure(EntityTypeBuilder<TuitionPartner> builder)
     {
+        builder.HasIndex(e => e.SeoUrl).IsUnique();
         builder.HasIndex(e => e.Name);
     }
 }

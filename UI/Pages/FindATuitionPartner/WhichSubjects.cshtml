@@ -1,5 +1,6 @@
 ﻿@page
 @using Application.Extensions
+@using UI.Models
 @model WhichSubjects
 @{
     Layout = "_Layout";
@@ -8,36 +9,34 @@
 	ViewData["Service Home Page"] = nameof(Index);
 }
 
-<govuk-back-link asp-page="@nameof(WhichKeyStages)" data-module="history-back-link" />
+<govuk-back-link asp-page="@nameof(WhichKeyStages)" asp-all-route-data="Model.AllSearchParams.ToRouteData()" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.Subjects" />
+            <govuk-error-summary-item asp-for="Subjects" />
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
         <p class="govuk-body">Select all of the subjects that apply</p>
 
         <form method="post">
-            @foreach (var item in Model.Data.AllSubjects.Keys)
+            @foreach (var item in Model.Subjects.Keys)
             {
                 <h2 class="govuk-heading-m">@item.DisplayName() subjects</h2>
 
-                <govuk-checkboxes asp-for="Data.Subjects">
-                    @foreach (var subject in Model.Data.AllSubjects[item])
+                <govuk-checkboxes asp-for="Subjects">
+                    @foreach (var subject in Model.Subjects[item])
                     {
 	                    var value = $"{item}-{subject.Name}";
-                        <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
+                        <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
                     }
                 </govuk-checkboxes>
             }
 
             <div class="govuk-button-group">
-                <govuk-button type="submit">Continue</govuk-button>
+                <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
             </div>
-
-            <input asp-for="Data.Postcode" hidden />
         </form>
     </div>
 </div>

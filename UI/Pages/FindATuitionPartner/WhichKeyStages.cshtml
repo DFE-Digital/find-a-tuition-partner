@@ -1,5 +1,6 @@
 ﻿@page
 @using Application.Extensions
+@using UI.Models
 @model WhichKeyStages
 @{
     Layout = "_Layout";
@@ -8,7 +9,7 @@
 	ViewData["Service Home Page"] = nameof(Index);
 }
 
-<govuk-back-link asp-page="@nameof(Index)" data-module="history-back-link" />
+<govuk-back-link asp-page="@nameof(Index)" asp-all-route-data="Model.Data.ToRouteData()" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -23,7 +24,7 @@
             <govuk-checkboxes asp-for="Data.KeyStages">
                 @foreach (var item in Model.Data.AllKeyStages)
                 {
-                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected">@item.Name.DisplayName()</govuk-checkboxes-item>
+                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected" data-testid="key-stage-name">@item.Name.DisplayName()</govuk-checkboxes-item>
                 }
             </govuk-checkboxes>
 

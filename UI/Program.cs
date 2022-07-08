@@ -3,6 +3,7 @@ using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure;
+using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -10,12 +11,15 @@ using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
 
-if (args.Length > 0 && args[0] == "import")
+if (args.Any(x => x == "import"))
 {
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
+            services.Configure<DataEncryption>(hostContext.Configuration.GetSection(nameof(DataEncryption)));
+            services.AddOptions();
             services.AddNtpDbContext(hostContext.Configuration);
+            services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
         .Build();
@@ -29,7 +33,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
-builder.Services.AddSearchRequestBuilder();
+builder.Services.AddLocationFilterService();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 

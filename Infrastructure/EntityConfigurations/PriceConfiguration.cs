@@ -8,6 +8,6 @@ public class PriceConfiguration : IEntityTypeConfiguration<Price>
 {
     public void Configure(EntityTypeBuilder<Price> builder)
     {
-
+        builder.HasIndex(e => new { e.GroupSize });
     }
 }

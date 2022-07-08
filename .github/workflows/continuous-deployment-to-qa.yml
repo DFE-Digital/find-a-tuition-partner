@@ -1,0 +1,50 @@
+name: Continuous Deployment to QA Environment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    name: .NET Build and Test
+    uses: ./.github/workflows/build-and-test.yml
+
+  deploy_to_gpaas:
+    name: Deploy to GOV.UK PaaS
+    needs: build_and_test
+    uses: ./.github/workflows/deploy-to-gpaas.yml
+    with:
+      environment: qa
+      run_database_migrations_and_import_data: true
+    secrets: inherit
+
+  end-to-end-testing:
+    name: End to End Testing
+    needs: deploy_to_gpaas
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          working-directory: ./UI
+          config: baseUrl=https://national-tutoring-qa.london.cloudapps.digital/
+        env:
+          CYPRESS_username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
+          CYPRESS_password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: UI/cypress/screenshots
+      - name: Store videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: UI/cypress/videos
