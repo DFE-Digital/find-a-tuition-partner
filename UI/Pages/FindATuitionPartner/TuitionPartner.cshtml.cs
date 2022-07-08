@@ -17,6 +17,11 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnGetAsync(Query query)
     {
+        if (string.IsNullOrWhiteSpace(query.Id))
+        {
+            return NotFound();
+        }
+
         var seoUrl = query.Id.ToSeoUrl();
         if (query.Id != seoUrl)
         {
