@@ -23,15 +23,17 @@
         <form method="post">
             @foreach (var item in Model.Subjects.Keys)
             {
-                <h2 class="govuk-heading-m">@item.DisplayName() subjects</h2>
+                <div data-testid="@(item)-subjects">
+                    <h2 class="govuk-heading-m">@item.DisplayName() subjects</h2>
 
-                <govuk-checkboxes asp-for="Subjects">
-                    @foreach (var subject in Model.Subjects[item])
-                    {
-	                    var value = $"{item}-{subject.Name}";
-                        <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
-                    }
-                </govuk-checkboxes>
+                    <govuk-checkboxes asp-for="Subjects">
+                        @foreach (var subject in Model.Subjects[item])
+                        {
+	                        var value = $"{item}-{subject.Name}";
+                            <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
+                        }
+                    </govuk-checkboxes>
+                </div>
             }
 
             <div class="govuk-button-group">

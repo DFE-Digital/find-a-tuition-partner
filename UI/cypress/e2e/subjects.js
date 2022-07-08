@@ -1,6 +1,13 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase } from "../support/utils";
         
+const allSubjects = {
+    "Key stage 1": [ "Literacy", "Numeracy", "Science"],
+    "Key stage 2": [ "Literacy", "Numeracy", "Science"],
+    "Key stage 3": [ "Maths", "English", "Science", "Humanities", "Modern foreign languages"],
+    "Key stage 4": [ "Maths", "English", "Science", "Humanities", "Modern foreign languages"]
+}
+
 Given("a user has arrived on the 'Which key stages' page", () => {
     Step(this, "a user has arrived on the 'Which key stages' page for postcode 'AB12CD'");
 });
@@ -22,74 +29,36 @@ When("they select {string}", keystage => {
 });
 
 Then("they will see all the keys stages as options", () => {
-    cy.get('[data-testid="key-stage-name"]').then(items => {
-        cy.wrap(items[0]).should('contain.text', 'Key stage 1')
-        cy.wrap(items[1]).should('contain.text', 'Key stage 2')
-        cy.wrap(items[2]).should('contain.text', 'Key stage 3')
-        cy.wrap(items[3]).should('contain.text', 'Key stage 4')
+    const keyStages = Object.keys(allSubjects)
+
+    cy.get('[data-testid="key-stage-name"]')
+        .should('have.length', keyStages.length);
+
+    cy.get('[data-testid="key-stage-name"]').each((item, index) => {
+        cy.wrap(item).should('contain.text', keyStages[index])
     })
 });
 
-Then("they are shown the subjects for Key stage 1", () => {
-    let allSubjects = [
-        // KS1
-        "Literacy",
-        "Numeracy",
-        "Science"
-    ]
+Then("they are shown the subjects for {string}", keystage => {
+    
+    const subjects = allSubjects[keystage]
 
-    cy.get('[data-testid="subject-name"]').should('have.length.greaterThan', 0)
-    cy.get('[data-testid="subject-name"]').each((item, index) => {
-        cy.wrap(item).should('contain.text', allSubjects[index])
-    })
-});
-
-Then("they are shown the subjects for Key stage 1 and Key stage 2", () => {
-    let allSubjects = [
-        // KS1
-        "Literacy",
-        "Numeracy",
-        "Science",
-        // KS2
-        "Literacy",
-        "Numeracy",
-        "Science"
-    ]
-
-    cy.get('[data-testid="subject-name"]').should('have.length.greaterThan', 0)
-    cy.get('[data-testid="subject-name"]').each((item, index) => {
-        cy.wrap(item).should('contain.text', allSubjects[index])
-    })
+    cy.get('h2')
+    .contains(`${keystage} subjects`)
+    .parent()
+    .within(() =>
+    {
+        cy.get('[data-testid="subject-name"]').each((item, index) => {
+            cy.wrap(item).should('contain.text', subjects[index])
+        });
+    });
 });
 
 Then("they are shown all the subjects under all the keys stages", () => {
-    let allSubjects = [
-        // KS1
-        "Literacy", 
-        "Numeracy",
-        "Science",
-        // KS2
-        "Literacy", 
-        "Numeracy",
-        "Science",
-        // KS3
-        "Maths",
-        "English",
-        "Science",
-        "Humanities", 
-        "Modern foreign languages",
-        // KS4
-        "Maths",
-        "English",
-        "Science",
-        "Humanities", 
-        "Modern foreign languages",
-    ]
-
-    cy.get('[data-testid="subject-name"]').should('have.length.greaterThan', 0)
-    cy.get('[data-testid="subject-name"]').each((item, index) => {
-        cy.wrap(item).should('contain.text', allSubjects[index])
-    })
+    Step(this, "they are shown the subjects for 'Key stage 1'")
+    Step(this, "they are shown the subjects for 'Key stage 2'")
+    Step(this, "they are shown the subjects for 'Key stage 3'")
+    Step(this, "they are shown the subjects for 'Key stage 4'")
 })
 
 Then("they will see {string} entered for the postcode", postcode => {

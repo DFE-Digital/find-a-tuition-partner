@@ -19,7 +19,8 @@ Feature: User can choose Key Stage and Subject
     When they select 'Key stage 1'
     And they select 'Key stage 2'
     And they click 'Continue'
-    Then they are shown the subjects for Key stage 1 and Key stage 2
+    Then they are shown the subjects for 'Key stage 1'
+    And they are shown the subjects for 'Key stage 2'
 
   Scenario: User lands on subjects page without associated key stages selected
     Given a user has started the 'Find a tuition partner' journey
@@ -30,7 +31,7 @@ Feature: User can choose Key Stage and Subject
     Given a user has arrived on the 'Which subjects' page for Key stage 1
     When they click 'Continue'
     Then they will see 'Select the subject or subjects' as an error message for the 'subjects'
-    And they are shown the subjects for Key stage 1
+    And they are shown the subjects for 'Key stage 1'
 
   Scenario: Back click returns to key stages input page
     Given a user has arrived on the 'Which subjects' page for Key stage 1
