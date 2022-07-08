@@ -20,11 +20,11 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
     private static readonly IDictionary<(TuitionTypes, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(TuitionTypes, int), (string, int)>
         {
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Literacy), ("C", 7) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Numeracy), ("D", 7) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1English), ("C", 7) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Maths), ("D", 7) },
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Science), ("E", 7) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Literacy), ("C", 17) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Numeracy), ("D", 17) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2English), ("C", 17) },
+            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Maths), ("D", 17) },
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Science), ("E", 17) },
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage3English), ("C", 27) },
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 27) },
@@ -37,11 +37,11 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 37) },
             { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Science), ("G", 37) },
 
-            { (TuitionTypes.Online, Subjects.Id.KeyStage1Literacy), ("C", 47) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage1Numeracy), ("D", 47) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage1English), ("C", 47) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage1Maths), ("D", 47) },
             { (TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 47) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage2Literacy), ("C", 57) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage2Numeracy), ("D", 57) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage2English), ("C", 57) },
+            { (TuitionTypes.Online, Subjects.Id.KeyStage2Maths), ("D", 57) },
             { (TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("E", 57) },
             { (TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 67) },
             { (TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 67) },

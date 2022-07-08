@@ -92,12 +92,10 @@ public enum Subject
 {
     Unspecified = 0,
 
-    Literacy,
-    Numeracy,
+    English,
+    Maths,
     Science,
 
-    Maths,
-    English,
     Humanities,
     ModernForeignLanguages,
 }

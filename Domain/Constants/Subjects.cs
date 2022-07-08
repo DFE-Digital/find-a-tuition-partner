@@ -4,11 +4,11 @@ public class Subjects
 {
     public class Id
     {
-        public const int KeyStage1Literacy = 1;
-        public const int KeyStage1Numeracy = 2;
+        public const int KeyStage1English = 1;
+        public const int KeyStage1Maths = 2;
         public const int KeyStage1Science = 3;
-        public const int KeyStage2Literacy = 4;
-        public const int KeyStage2Numeracy = 5;
+        public const int KeyStage2English = 4;
+        public const int KeyStage2Maths = 5;
         public const int KeyStage2Science = 6;
         public const int KeyStage3English = 7;
         public const int KeyStage3Humanities = 8;
