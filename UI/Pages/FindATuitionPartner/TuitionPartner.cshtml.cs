@@ -9,9 +9,14 @@ namespace UI.Pages.FindATuitionPartner;
 
 public class TuitionPartner : PageModel
 {
+    private readonly ILogger<TuitionPartner> _logger;
     private readonly IMediator _mediator;
 
-    public TuitionPartner(IMediator mediator) => _mediator = mediator;
+    public TuitionPartner(ILogger<TuitionPartner> logger, IMediator mediator)
+    {
+        _logger = logger;
+        _mediator = mediator;
+    }
 
     public Command? Data { get; set; }
 
@@ -19,12 +24,14 @@ public class TuitionPartner : PageModel
     {
         if (string.IsNullOrWhiteSpace(query.Id))
         {
+            _logger.LogWarning($"Null or whitespace id '{query.Id}' provided");
             return NotFound();
         }
 
         var seoUrl = query.Id.ToSeoUrl();
         if (query.Id != seoUrl)
         {
+            _logger.LogInformation($"Non SEO id '{query.Id}' provided. Redirecting to {seoUrl}");
             return RedirectToPage(nameof(TuitionPartner), new { Id = seoUrl });
         }
 
@@ -32,9 +39,11 @@ public class TuitionPartner : PageModel
 
         if (Data == null)
         {
+            _logger.LogInformation($"No Tuition Partner found for id '{query.Id}'");
             return NotFound();
         }
 
+        _logger.LogInformation($"Tuition Partner {Data.Name} found for id '{query.Id}'");
         return Page();
     }
 
@@ -45,7 +54,7 @@ public class TuitionPartner : PageModel
         string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
         string Website, string PhoneNumber, string EmailAddress);
 
-    public record SubjectPrice(string Subject, int Price);
+    public record SubjectPrice(string Subject, decimal Price);
 
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
@@ -81,7 +90,7 @@ public class TuitionPartner : PageModel
             var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = tp.Prices.Where(x => x.GroupSize == 3).GroupBy(x => x.Subject).Select(x => 
-                new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", (int)(x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0)));
+                new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0));
 
             return new(
                 tp.Name,

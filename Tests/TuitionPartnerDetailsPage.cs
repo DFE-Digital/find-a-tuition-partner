@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain;
+using Domain.Constants;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UI.Pages.FindATuitionPartner;
+using TuitionPartner = UI.Pages.FindATuitionPartner.TuitionPartner;
 
 namespace Tests;
 
@@ -21,9 +23,24 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Id = 1,
-                Name = "A Tuition Partner",
                 SeoUrl = "a-tuition-partner",
-                Website = "https://a-tuition-partner.testdata"
+                Name = "A Tuition Partner",
+                Website = "https://a-tuition-partner.testdata/ntp",
+                Description = "A Tuition Partner Description",
+                PhoneNumber = "0123456789",
+                Email = "ntp@a-tuition-partner.testdata",
+                SubjectCoverage = new List<SubjectCoverage>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths }
+                },
+                Prices = new List<Price>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English, GroupSize = 2, HourlyRate = 12.34m },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English, GroupSize = 3, HourlyRate = 12.34m },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 2, HourlyRate = 56.78m },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 3, HourlyRate = 56.78m },
+                }
             });
 
             await db.SaveChangesAsync();
@@ -63,19 +80,43 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Should().BeOfType<NotFoundResult>();
     }
 
-    [Fact]
-    public async Task Get_with_numerical_id()
+    [Theory]
+    [InlineData("1")]
+    [InlineData("a-tuition-partner")]
+    public async Task Get_with_valid_id(string id)
     {
         var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new TuitionPartner.Query("1")));
+            .Execute(page => page.OnGetAsync(new TuitionPartner.Query(id)));
         result.Should().BeOfType<PageResult>();
     }
 
     [Fact]
-    public async Task Get_with_seo_id()
+    public async Task Returns_null_when_not_found()
     {
-        var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new TuitionPartner.Query("a-tuition-partner")));
-        result.Should().BeOfType<PageResult>();
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("not-found"));
+
+        result.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("1")]
+    [InlineData("a-tuition-partner")]
+    public async Task Returns_tuition_partner_details(string id)
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query(id));
+
+        result.Name.Should().Be("A Tuition Partner");
+        result.Description.Should().Be("A Tuition Partner Description");
+        result.Subjects.Should().BeEquivalentTo("Key stage 3 - English and Maths");
+        result.TuitionTypes.Should().BeEquivalentTo("In School");
+        result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");
+        result.Prices.Should().BeEquivalentTo(new[]
+        {
+            new TuitionPartner.SubjectPrice("Key stage 3 - English", 12.34m),
+            new TuitionPartner.SubjectPrice("Key stage 3 - Maths", 56.78m),
+        });
+        result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
+        result.PhoneNumber.Should().Be("0123456789");
+        result.EmailAddress.Should().Be("ntp@a-tuition-partner.testdata");
     }
 }
