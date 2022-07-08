@@ -20,7 +20,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<NtpDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetNtpConnectionString(), action => action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName));
+            options.UseNpgsql(
+                configuration.GetNtpConnectionString(),
+                action =>
+                {
+                    action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName);
+                    action.EnableRetryOnFailure();
+                });
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);

@@ -92,6 +92,19 @@ From a command prompt, change to the `UI` directory and run `npm install` to ins
 * `npx cypress open` to open the Cypress test runner for fully manual configuration of the test runner
 * `npx cypress open --config baseUrl=https://my-url/ --env username=<USERNAME>,password=<PASSWORD>` to open the Cypress test runner specifying a different base url and basic HTTP authentication credentials
 
+### Docker Compose
+
+It is also possible to test the full stack from within docker using docker compose. This method supports easy setup and teardown of the database and can be a good way to test database migrations and updated data. This is also how the PR builds are tested for rapid feeback. The following commands will run all unit tests, start the stack, run the migrations, import the data and run the end to end tests
+
+```
+dotnet test
+docker compose up --build -d
+docker compose run -e DataEncryption:Key=<DATA_ENCRYPTION_KEY> web ./UI import
+cd UI
+npx cypress run --config baseUrl=http://localhost:8080/
+cd ..
+```
+
 ### Accessibility Testing
 
 The team currently use the following tools to aid manual accessibility testing
