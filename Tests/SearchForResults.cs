@@ -1,4 +1,4 @@
-﻿using Application.Exceptions;
+using Application.Exceptions;
 using Domain;
 using Domain.Constants;
 using Domain.Search;
@@ -41,6 +41,46 @@ public class SearchForResults : CleanSliceFixture
         var validationResult = new TestValidationResult<SearchResults.Query>(result.Validation);
         validationResult.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a valid postcode");
+    }
+
+    [Fact]
+    public async Task Displays_all_subjects_in_key_stage_after_validation_failure()
+    {
+        var query = new SearchResults.Query
+        {
+            Subjects = null,
+            KeyStages = new[] { KeyStage.KeyStage1 }
+        };
+
+        var result = await Fixture.SendAsync(query);
+
+        result.AllSubjects.Should().HaveCount(4);
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+            });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage2)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+            });
+
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage3)
+            .WhoseValue.Should().BeEquivalentTo(new[]
+            {
+                new { Name = "Maths" },
+                new { Name = "English" },
+                new { Name = "Science" },
+                new { Name = "Humanities" },
+                new { Name = "Modern foreign languages" },
+            });
     }
 
     [Fact]
@@ -116,10 +156,12 @@ public class SearchForResults : CleanSliceFixture
         });
 
         result.Results.Should().NotBeNull();
-        result.AllSubjects.Values.SelectMany(x => x)
-            .Where(x => x.Selected).Should().BeEquivalentTo(new[]
+        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
+            .WhoseValue.Should().BeEquivalentTo(new[]
             {
                 new { Name = "English", Selected = true },
+                new { Name = "Maths", Selected = false },
+                new { Name = "Science", Selected = false },
             });
     }
 }
