@@ -41,7 +41,7 @@ public class SearchForResults : CleanSliceFixture
         var subject = await Fixture.ExecuteDbContextAsync(db =>
             db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
 
-        var result = await Fixture.SendAsync(new SearchResults.Command
+        var result = await Fixture.SendAsync(new SearchResults.Query
         {
             Postcode = "AB00BA",
             Subjects = new[] { $"{KeyStage.KeyStage1}-{subject?.Name}" }
@@ -83,7 +83,7 @@ public class SearchForResults : CleanSliceFixture
         var subject = await Fixture.ExecuteDbContextAsync(db =>
             db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
 
-        var result = await Fixture.SendAsync(new SearchResults.Command
+        var result = await Fixture.SendAsync(new SearchResults.Query
         {
             Postcode = "AB00BA",
             KeyStages = new[] { KeyStage.KeyStage1 },

@@ -17,22 +17,23 @@ public class SearchResults : PageModel
 
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
-    [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new();
 
-    public async Task OnGet()
+    public async Task OnGet(Query query)
     {
-        Data = await mediator.Send(Data);
+        Data = await mediator.Send(query);
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public record Command : SearchModel, IRequest<Command>
+    public record Query : SearchModel, IRequest<Command> { }
+
+    public record Command : SearchModel
     {
         public Command() { }
         public Command(SearchModel query) : base(query) { }
-        public string LocalAuthority { get; set; }
+        public string? LocalAuthority { get; set; }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
@@ -40,7 +41,7 @@ public class SearchResults : PageModel
         public ValidationResult Validation { get; internal set; } = new ValidationResult();
     }
 
-    private class Validator : AbstractValidator<Command>
+    private class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
@@ -61,7 +62,7 @@ public class SearchResults : PageModel
         }
     }
 
-    public class Handler : IRequestHandler<Command, Command>
+    public class Handler : IRequestHandler<Query, Command>
     {
         private readonly ILocationFilterService locationService;
         private readonly INtpDbContext db;
@@ -74,7 +75,7 @@ public class SearchResults : PageModel
             this.mediator = mediator;
         }
 
-        public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
             var validator = new Validator();
             var validationResults = await validator.ValidateAsync(request, cancellationToken);
