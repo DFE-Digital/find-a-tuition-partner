@@ -7,6 +7,7 @@ public static class Basic
     public static SearchResults.Query SearchResultsQuery => new()
     {
         Postcode = "AA00AA",
+        KeyStages = new[] { KeyStage.KeyStage1 },
         Subjects = new[] { "KeyStage1-English" },
     };
 }

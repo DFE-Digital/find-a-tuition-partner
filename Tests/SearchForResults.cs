@@ -188,15 +188,7 @@ public class SearchForResults : CleanSliceFixture
             await db.SaveChangesAsync();
         });
 
-        var subject = await Fixture.ExecuteDbContextAsync(db =>
-            db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
-
-        var result = await Fixture.SendAsync(new SearchResults.Query
-        {
-            Postcode = "AB00BA",
-            KeyStages = new[] { KeyStage.KeyStage1 },
-            Subjects = new[] { $"{KeyStage.KeyStage1}-{subject?.Name}" }
-        });
+        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
 
         result.Results.Should().NotBeNull();
         result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
