@@ -36,15 +36,6 @@ jobs:
         with:
           node-version: 16
 
-      - name: Setup Environment Variables
-        id:  variables
-        shell: bash
-        run: |
-         
-         - uses: hashicorp/setup-terraform@v1.3.2
-         with:
-              terraform_version: 0.14.9
-
       - name: Terraform ( ${{inputs.environment}} )
         shell: bash
         run: |
