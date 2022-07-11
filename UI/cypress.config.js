@@ -3,6 +3,20 @@ const webpack = require("@cypress/webpack-preprocessor");
 const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
 
 async function setupNodeEvents(on, config) {
+
+  on('task', {
+    log(message) {
+      console.log(message)
+
+      return null
+    },
+    table(message) {
+      console.table(message)
+
+      return null
+    }
+  });
+  
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
 
   on(
