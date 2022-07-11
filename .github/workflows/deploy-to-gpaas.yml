@@ -35,28 +35,22 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Bundle web assets
-        working-directory: ./UI
-        run: |
-          npm ci
-          npm run build
 
-      - name: Install the CF CLI
+      - name: Setup Environment Variables
+        id:  variables
+        shell: bash
         run: |
-          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
-          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+         
+         - uses: hashicorp/setup-terraform@v1.3.2
+         with:
+              terraform_version: 0.14.9
 
-      - name: Authenticate
+      - name: Terraform ( ${{inputs.environment}} )
+        shell: bash
+        run: |
+            cd terraform/paas && pwd
+            terraform init
         env:
-          CF_USERNAME: ${{ secrets.CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        run: |
-          echo "Logging into $CF_ORG/$CF_SPACE..."
-          cf api "${CF_API}"
-          cf auth
-          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+          TF_VAR_username: ${{ secrets.CF_USERNAME }}
+          TF_VAR_password: ${{ secrets.CF_PASSWORD }}
 
-      - name: Deploy to PaaS
-        run: |
-          cf push --strategy rolling --vars-file vars-${{ github.event.inputs.environment }}.yml
-          cf logout
