@@ -47,7 +47,7 @@ public class TuitionPartner : PageModel
         return Page();
     }
 
-    public record Query(string Id) : IRequest<Command?>;
+    public record Query(string Id, bool ShowLocationsCovered = false, bool ShowFullPricing = false) : IRequest<Command?>;
 
     public record Command(
         string Name, string Description, string[] Subjects,
