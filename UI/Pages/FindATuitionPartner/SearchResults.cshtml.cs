@@ -1,11 +1,11 @@
 using Application;
 using Application.Extensions;
 using Application.Handlers;
+using Domain;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -97,22 +97,42 @@ public class SearchResults : PageModel
 
             if (validationResults.IsValid)
             {
-                var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
-                localAuthority = loc?.LocalAuthority ?? "";
+                var loc = (await locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
 
                 var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
 
                 var subjects = await db.Subjects.Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl)).ToListAsync(cancellationToken);
 
-                var cmd = new SearchTuitionPartnerHandler.Command
+                var retn = new Command(request) with
                 {
-                    OrderBy = TuitionPartnerOrderBy.Name,
-                    LocalAuthorityDistrictCode = loc?.LocalAuthorityDistrictCode,
-                    SubjectIds = subjects.Select(x => x.Id),
-                    TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+                    AllSubjects = allSubjects,
+                    AllTuitionTypes = new List<TuitionType>
+                    {
+                        TuitionType.Any,
+                        TuitionType.InSchool,
+                        TuitionType.Online,
+                    },
                 };
 
-                results = await mediator.Send(cmd, cancellationToken);
+                return loc switch
+                {
+                    SuccessResult => retn with
+                    {
+                        LocalAuthority = loc.Data.LocalAuthority,
+                        Results = await FindSubjectsMatchingFilter(
+                            loc.Data.LocalAuthorityDistrictCode,
+                            request,
+                            cancellationToken),
+                    },
+                    ErrorResult error => retn with
+                    {
+                        Validation = new ValidationResult(new[]
+                        {
+                            new ValidationFailure("Postcode", error.ToString()),
+                        }),
+                    },
+                    _ => retn with { Validation = UnknownError() },
+                };
             }
 
             return new(request)
@@ -123,6 +143,29 @@ public class SearchResults : PageModel
                 Validation = validationResults,
                 AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
             };
+
+            static ValidationResult UnknownError() =>
+                new(new[] { new ValidationFailure("", "An unknown problem occurred") });
+        }
+
+        private async Task<TuitionPartnerSearchResultsPage> FindSubjectsMatchingFilter(
+            string? localAuthorityDisctict,
+            Query request,
+            CancellationToken cancellationToken)
+        {
+            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+
+            var subjects = await db.Subjects.Where(e =>
+                keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
+                .ToListAsync(cancellationToken);
+
+            return await mediator.Send(new SearchTuitionPartnerHandler.Command
+            {
+                OrderBy = TuitionPartnerOrderBy.Name,
+                LocalAuthorityDistrictCode = localAuthorityDisctict,
+                SubjectIds = subjects.Select(x => x.Id),
+                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+            }, cancellationToken);
         }
     }
 }
