@@ -14,3 +14,24 @@ Then("TP has provided full contact details", () => {
     .and('contain.text', 'Email address', { matchCase: true })
     .and('contain.text', 'Address', { matchCase: true });
 });
+
+
+Then("the tuition partner locations covered table is not displayed", () => {
+    cy.get('[data-testid="locations-covered-table"]')
+        .should('not.exist');
+});
+
+Then("the tuition partner locations covered table is displayed", () => {
+    cy.get('[data-testid="locations-covered-table"]')
+        .should('exist');
+});
+
+Then("the tuition partner full pricing table is not displayed", () => {
+    cy.get('[data-testid="full-pricing-table"]')
+        .should('not.exist');
+});
+
+Then("the tuition partner full pricing table is displayed", () => {
+    cy.get('[data-testid="full-pricing-table"]')
+        .should('exist');
+});
