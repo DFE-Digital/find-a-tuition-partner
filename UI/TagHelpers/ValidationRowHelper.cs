@@ -14,10 +14,12 @@ public class ValidationRowHelper : TagHelper
     [HtmlAttributeName("asp-validation-group-for")]
     public string PropertyName { get; set; } = null!;
 
-    public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
+    public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
     {
         if (PropertyIsInvalid())
             output.Attributes.Add("class", "govuk-form-group--error");
+
+        return Task.CompletedTask;
     }
 
     private bool PropertyIsInvalid()
