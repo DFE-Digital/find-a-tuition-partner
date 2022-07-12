@@ -12,6 +12,9 @@ public static class Result
 
     public static ErrorResult<T, string> Error<T>(string message) => new(message);
 
+    public static ValidationResult<T> Invalid<T>(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+        => new(failures);
+
     public static ExceptionResult Exception(Exception exception) => new(exception);
 
     public static ExceptionResult<T> Exception<T>(Exception exception) => new(exception);
@@ -50,11 +53,18 @@ public class SuccessResult<T> : SuccessResult, IResult<T>
     public override string ToString() => Data?.ToString() ?? $"Success<{typeof(T).Name}>";
 }
 
-public class ErrorResult : IResult
+public interface IErrorResult : IResult 
+{
+    public ErrorResult<TCast> Cast<TCast>();
+}
+
+public class ErrorResult : IErrorResult
 {
     public bool IsSuccess => false;
 
     public override string ToString() => "Error";
+
+    public virtual ErrorResult<TCast> Cast<TCast>() => new();
 }
 
 public class ErrorResult<T> : ErrorResult, IResult<T>
@@ -69,6 +79,32 @@ public class ErrorResult<T, E> : ErrorResult<T>, IResult<T>
     public E Error { get; }
 
     public override string ToString() => $"{Error}";
+
+    public override ErrorResult<TCast> Cast<TCast>() => new ErrorResult<TCast, E>(Error);
+}
+
+public class ValidationResult : ErrorResult
+{
+    public ValidationResult(params FluentValidation.Results.ValidationFailure[] failures)
+        => Failures = failures;
+    
+    public ValidationResult(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+        => Failures = failures;
+
+    public IEnumerable<FluentValidation.Results.ValidationFailure> Failures { get; }
+}
+
+public class ValidationResult<T> : ErrorResult<T>
+{
+    public ValidationResult(params FluentValidation.Results.ValidationFailure[] failures)
+        => Failures = failures;
+
+    public ValidationResult(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
+        => Failures = failures;
+
+    public IEnumerable<FluentValidation.Results.ValidationFailure> Failures { get; }
+
+    public override ErrorResult<TCast> Cast<TCast>() => new ValidationResult<TCast>(Failures);
 }
 
 public class ExceptionResult : ErrorResult

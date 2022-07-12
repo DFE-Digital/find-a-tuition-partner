@@ -8,6 +8,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages.FindATuitionPartner;
 
@@ -38,7 +39,7 @@ public class SearchResults : PageModel
         public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
-        public ValidationResult Validation { get; internal set; } = new ValidationResult();
+        public FluentValidationResult Validation { get; internal set; } = new();
     }
 
     private class Validator : AbstractValidator<Query>
@@ -77,75 +78,94 @@ public class SearchResults : PageModel
 
         public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
         {
-            var validator = new Validator();
-            var validationResults = await validator.ValidateAsync(request, cancellationToken);
-
-            var allSubjects = await mediator.Send(new WhichSubjects.Query 
+            var queryResponse = new Command(request) with
             {
-                KeyStages = new[]
-                {
-                    KeyStage.KeyStage1,
-                    KeyStage.KeyStage2,
-                    KeyStage.KeyStage3,
-                    KeyStage.KeyStage4,
-                } ,
-                Subjects = request.Subjects,
-            }, cancellationToken);
-
-            var localAuthority = "";
-            TuitionPartnerSearchResultsPage? results = null;
-
-            if (validationResults.IsValid)
-            {
-                var loc = (await locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
-
-                var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-
-                var subjects = await db.Subjects.Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl)).ToListAsync(cancellationToken);
-
-                var retn = new Command(request) with
-                {
-                    AllSubjects = allSubjects,
-                    AllTuitionTypes = new List<TuitionType>
-                    {
-                        TuitionType.Any,
-                        TuitionType.InSchool,
-                        TuitionType.Online,
-                    },
-                };
-
-                return loc switch
-                {
-                    SuccessResult => retn with
-                    {
-                        LocalAuthority = loc.Data.LocalAuthority,
-                        Results = await FindSubjectsMatchingFilter(
-                            loc.Data.LocalAuthorityDistrictCode,
-                            request,
-                            cancellationToken),
-                    },
-                    ErrorResult error => retn with
-                    {
-                        Validation = new ValidationResult(new[]
-                        {
-                            new ValidationFailure("Postcode", error.ToString()),
-                        }),
-                    },
-                    _ => retn with { Validation = UnknownError() },
-                };
-            }
-
-            return new(request)
-            {
-                LocalAuthority = localAuthority,
-                AllSubjects = allSubjects,
-                Results = results,
-                Validation = validationResults,
-                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
+                AllSubjects = await GetSubjectsList(request, cancellationToken),
+                AllTuitionTypes = AllTuitionTypes,
             };
 
-            static ValidationResult UnknownError() =>
+            var searchResults = await GetSearchResults(request, cancellationToken);
+
+            return searchResults switch
+            {
+                SuccessResult => queryResponse with
+                {
+                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.Name,
+                    Results = searchResults.Data,
+                },
+                Domain.ValidationResult error => queryResponse with
+                {
+                    Validation = new FluentValidationResult(error.Failures)
+                },
+                ErrorResult error => queryResponse with
+                {
+                    Validation = new FluentValidationResult(new[]
+                    {
+                        new ValidationFailure("Postcode", error.ToString()),
+                    }),
+                },
+                _ => queryResponse with { Validation = UnknownError() },
+            };
+
+            static FluentValidationResult UnknownError() =>
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
+        }
+
+        private static KeyStage[] AllKeyStages =>
+            new[]
+            {
+                KeyStage.KeyStage1,
+                KeyStage.KeyStage2,
+                KeyStage.KeyStage3,
+                KeyStage.KeyStage4,
+            };
+
+        private static List<TuitionType> AllTuitionTypes =>
+            new()
+            {
+                TuitionType.Any,
+                TuitionType.InSchool,
+                TuitionType.Online,
+            };
+
+        private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
+        {
+            return await mediator.Send(new WhichSubjects.Query
+            {
+                KeyStages = AllKeyStages,
+                Subjects = request.Subjects,
+            }, cancellationToken);
+        }
+
+        private async Task<IResult<TuitionPartnerSearchResultsPage>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        {
+            var location = await GetSearchLocation(request, cancellationToken);
+
+            if (location is IErrorResult error)
+            {
+                return error.Cast<TuitionPartnerSearchResultsPage>();
+            }
+
+            var results = await FindSubjectsMatchingFilter(
+                        location.Data.LocalAuthorityDistrictCode,
+                        request,
+                        cancellationToken);
+            
+            return Result.Success(results);
+        }
+
+        private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
+        {
+            var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
+
+            if (!validationResults.IsValid)
+            {
+                return Result.Invalid<LocationFilterParameters>(validationResults.Errors);
+            }
+            else
+            {
+                return (await locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
+            }
         }
 
         private async Task<TuitionPartnerSearchResultsPage> FindSubjectsMatchingFilter(

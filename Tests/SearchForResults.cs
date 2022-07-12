@@ -133,11 +133,22 @@ public class SearchForResults : CleanSliceFixture
         // Given
         await Fixture.ExecuteDbContextAsync(async db =>
         {
+            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E06000011");
+            var tuitionType = await db.TuitionTypes.FirstAsync();
+
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Name = "Alpha",
                 SeoUrl = "a",
                 Website = "-",
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new()
+                    {
+                        TuitionType = tuitionType,
+                        LocalAuthorityDistrict = lad,
+                    }
+                },
                 SubjectCoverage = new List<SubjectCoverage>
                 {
                     new()
@@ -163,6 +174,51 @@ public class SearchForResults : CleanSliceFixture
         {
             new { Name = "Alpha" },
         });
+    }
+
+    [Fact]
+    public async Task Displays_local_authority()
+    {
+        // Given
+        await Fixture.ExecuteDbContextAsync(async db =>
+        {
+            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E06000011");
+            var tuitionType = await db.TuitionTypes.FirstAsync();
+
+            var tp = db.TuitionPartners.Add(new Domain.TuitionPartner
+            {
+                Name = "Alpha",
+                SeoUrl = "a",
+                Website = "-",
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new()
+                    {
+                        TuitionType = tuitionType,
+                        LocalAuthorityDistrict = lad,
+                    }
+                },
+                SubjectCoverage = new List<SubjectCoverage>
+                {
+                    new()
+                    {
+                        TuitionType = db.TuitionTypes.First(),
+                        SubjectId = Subjects.Id.KeyStage1English
+                    }
+                }
+            });
+
+            await db.SaveChangesAsync();
+        });
+
+        var subject = await Fixture.ExecuteDbContextAsync(db =>
+            db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
+
+        // When
+        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
+
+        // Then
+        result.LocalAuthority.Should().Be("East Riding of Yorkshire");
     }
 
     [Fact]
