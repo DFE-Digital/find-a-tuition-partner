@@ -86,6 +86,12 @@ You can then access the application on [https://localhost:7036/](https://localho
 
 ### End To End Testing
 
+#### PR Workflow
+
+The full suite of end to end tests is run automatically for every opened PR branch using [this workflow](/.github/workflows/pull-request.yml)
+
+#### Running Locally
+
 From a command prompt, change to the `UI` directory and run `npm install` to install the dependencies. Then run one of the following commands:
 
 * `npx cypress run` to run all Cypress end to end tests in a headless browser
@@ -107,7 +113,9 @@ cd ..
 
 ### Accessibility Testing
 
-The team currently use the following tools to aid manual accessibility testing
+Axe has been integrated with the Cypress end to end tests using [cypress-axe](https://github.com/component-driven/cypress-axe). This provides a basic level of automated accessibility testing for every scenario in the suite. See [accessibility.js](/UI/cypress/support/step_definitions/accessibility.js) to understand how this is configured and run. Accessibility violations are logged to the browser's console meaning that diagnosing a violation requires running the tests locally and [viewing the error in the DevTools console](https://github.com/component-driven/cypress-axe#standard-output)
+
+Please note: This automated accessibility testing is not sufficient to replace manual testing by the team and a full external accessibility audit. The dev team should also use the following tools locally to confirm there are no accessibility violations prior to QA
 
 * [axe DevTools](https://www.deque.com/axe/devtools/)
 * [WAVE](https://wave.webaim.org/)
