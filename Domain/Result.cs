@@ -72,7 +72,7 @@ public class ErrorResult<T, E> : ErrorResult<T>, IErrorResult<T>
 
     public override string ToString() => $"{Error}";
 
-    public override ErrorResult<TCast> Cast<TCast>() => new ErrorResult<TCast, E>(Error);
+    public override ErrorResult<TCast, E> Cast<TCast>() => new(Error);
 }
 
 public class ValidationResult : ErrorResult
@@ -96,5 +96,5 @@ public class ValidationResult<T> : ValidationResult, IErrorResult<T>
 
     public T Data => throw new Exception("Cannot access data when result is in error");
 
-    public override IErrorResult<TCast> Cast<TCast>() => new ValidationResult<TCast>(Failures);
+    public override ValidationResult<TCast> Cast<TCast>() => new(Failures);
 }
