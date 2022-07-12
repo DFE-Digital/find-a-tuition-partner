@@ -14,16 +14,6 @@ public static class Result
 
     public static ValidationResult<T> Invalid<T>(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
         => new(failures);
-
-    public static ExceptionResult Exception(Exception exception) => new(exception);
-
-    public static ExceptionResult<T> Exception<T>(Exception exception) => new(exception);
-
-    public static SuccessStatusResult<TStatus> SuccessStatus<TStatus>(TStatus status)
-        => new(status);
-
-    public static ExceptionStatusResult<TStatus> ExceptionStatus<TStatus>(TStatus status, Exception exception)
-        => new(status, exception);
 }
 
 public interface IResult
@@ -107,53 +97,4 @@ public class ValidationResult<T> : ValidationResult, IErrorResult<T>
     public T Data => throw new Exception("Cannot access data when result is in error");
 
     public override IErrorResult<TCast> Cast<TCast>() => new ValidationResult<TCast>(Failures);
-}
-
-public class ExceptionResult : ErrorResult
-{
-    public Exception Exception { get; }
-
-    public ExceptionResult(Exception exception) => Exception = exception;
-
-    public override string ToString() => Exception.ToString();
-}
-
-public class ExceptionResult<T> : ErrorResult<T>
-{
-    public Exception Exception { get; }
-
-    public ExceptionResult(Exception exception) => Exception = exception;
-
-    public override string ToString() => Exception.ToString();
-}
-
-public interface IStatusResult<out TStatus> : IResult
-{
-    public TStatus Status { get; }
-}
-
-public class SuccessStatusResult<TStatus> : SuccessResult<TStatus>, IStatusResult<TStatus>
-{
-    public TStatus Status => Data;
-
-    public SuccessStatusResult(TStatus status) : base(status)
-    {
-    }
-}
-
-public class ExceptionStatusResult<TStatus> : ExceptionResult, IStatusResult<TStatus>
-{
-    public TStatus Status { get; }
-
-    public ExceptionStatusResult(TStatus status, Exception exception)
-        : base(exception)
-    {
-        Status = status;
-    }
-
-    public override string ToString()
-    {
-        if (Status == null) return typeof(TStatus).Name;
-        return $"{Status} ({base.ToString()})";
-    }
 }
