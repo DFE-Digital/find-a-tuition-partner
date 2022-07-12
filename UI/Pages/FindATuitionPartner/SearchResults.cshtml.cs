@@ -20,11 +20,11 @@ public class SearchResults : PageModel
 
     public ResultsModel Data { get; set; } = new();
 
-    public async Task OnGet(Query query)
+    public async Task OnGet(Query Data)
     {
-        Data = await mediator.Send(query);
-        if (!Data.Validation.IsValid)
-            foreach (var error in Data.Validation.Errors)
+        this.Data = await mediator.Send(Data);
+        if (!this.Data.Validation.IsValid)
+            foreach (var error in this.Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 

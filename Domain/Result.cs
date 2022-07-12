@@ -55,7 +55,7 @@ public class SuccessResult<T> : SuccessResult, IResult<T>
 
 public interface IErrorResult : IResult 
 {
-    public ErrorResult<TCast> Cast<TCast>();
+    public IErrorResult<TCast> Cast<TCast>();
 }
 
 public class ErrorResult : IErrorResult
@@ -64,15 +64,17 @@ public class ErrorResult : IErrorResult
 
     public override string ToString() => "Error";
 
-    public virtual ErrorResult<TCast> Cast<TCast>() => new();
+    public virtual IErrorResult<TCast> Cast<TCast>() => new ErrorResult<TCast>();
 }
 
-public class ErrorResult<T> : ErrorResult, IResult<T>
+public interface IErrorResult<T> : IResult<T>, IErrorResult { }
+
+public class ErrorResult<T> : ErrorResult, IErrorResult<T>
 {
     public T Data => throw new Exception("Cannot access data when result is in error");
 }
 
-public class ErrorResult<T, E> : ErrorResult<T>, IResult<T>
+public class ErrorResult<T, E> : ErrorResult<T>, IErrorResult<T>
 {
     public ErrorResult(E error) => Error = error;
 
@@ -94,17 +96,17 @@ public class ValidationResult : ErrorResult
     public IEnumerable<FluentValidation.Results.ValidationFailure> Failures { get; }
 }
 
-public class ValidationResult<T> : ErrorResult<T>
+public class ValidationResult<T> : ValidationResult, IErrorResult<T>
 {
     public ValidationResult(params FluentValidation.Results.ValidationFailure[] failures)
-        => Failures = failures;
+        : base(failures) { }
 
     public ValidationResult(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
-        => Failures = failures;
+        : base(failures) { }
 
-    public IEnumerable<FluentValidation.Results.ValidationFailure> Failures { get; }
+    public T Data => throw new Exception("Cannot access data when result is in error");
 
-    public override ErrorResult<TCast> Cast<TCast>() => new ValidationResult<TCast>(Failures);
+    public override IErrorResult<TCast> Cast<TCast>() => new ValidationResult<TCast>(Failures);
 }
 
 public class ExceptionResult : ErrorResult
