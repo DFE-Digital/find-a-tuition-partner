@@ -16,9 +16,10 @@
 			<govuk-error-summary-item asp-for="Data.Subjects" />
 		</govuk-error-summary>
 		
+		<h1 class="govuk-heading-l">Search results</h1>
+
 		@if (Model.Data.Results != null)
 		{
-			<h1 class="govuk-heading-l">Search results</h1>
 			<p class="govuk-body govuk-!-font-size-27"><strong>@(Model.Data.Results.Count == 0 ? "No" : Model.Data.Results.Count)</strong> @(Model.Data.Results.Count != 1 ? "results" : "result") for @Model.Data.LocalAuthority</p>
 		}
 	</div>
