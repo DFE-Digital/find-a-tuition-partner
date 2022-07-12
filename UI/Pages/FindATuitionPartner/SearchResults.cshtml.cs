@@ -18,7 +18,7 @@ public class SearchResults : PageModel
 
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
-    public Command Data { get; set; } = new();
+    public ResultsModel Data { get; set; } = new();
 
     public async Task OnGet(Query query)
     {
@@ -28,12 +28,12 @@ public class SearchResults : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public record Query : SearchModel, IRequest<Command> { }
+    public record Query : SearchModel, IRequest<ResultsModel> { }
 
-    public record Command : SearchModel
+    public record ResultsModel : SearchModel
     {
-        public Command() { }
-        public Command(SearchModel query) : base(query) { }
+        public ResultsModel() { }
+        public ResultsModel(SearchModel query) : base(query) { }
         public string? LocalAuthority { get; set; }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
@@ -63,7 +63,7 @@ public class SearchResults : PageModel
         }
     }
 
-    public class Handler : IRequestHandler<Query, Command>
+    public class Handler : IRequestHandler<Query, ResultsModel>
     {
         private readonly ILocationFilterService locationService;
         private readonly INtpDbContext db;
@@ -76,9 +76,9 @@ public class SearchResults : PageModel
             this.mediator = mediator;
         }
 
-        public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryResponse = new Command(request) with
+            var queryResponse = new ResultsModel(request) with
             {
                 AllSubjects = await GetSubjectsList(request, cancellationToken),
                 AllTuitionTypes = AllTuitionTypes,
