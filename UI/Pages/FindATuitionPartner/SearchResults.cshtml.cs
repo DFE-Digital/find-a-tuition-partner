@@ -1,13 +1,14 @@
 using Application;
 using Application.Extensions;
 using Application.Handlers;
+using Domain;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages.FindATuitionPartner;
 
@@ -17,30 +18,32 @@ public class SearchResults : PageModel
 
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
-    [BindProperty(SupportsGet = true)]
-    public Command Data { get; set; } = new();
+    public ResultsModel Data { get; set; } = new();
 
-    public async Task OnGet()
+    public async Task OnGet(Query Data)
     {
-        Data = await mediator.Send(Data);
-        if (!Data.Validation.IsValid)
-            foreach (var error in Data.Validation.Errors)
+        Data.TuitionType ??= TuitionType.Any; 
+        this.Data = await mediator.Send(Data);
+        if (!this.Data.Validation.IsValid)
+            foreach (var error in this.Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public record Command : SearchModel, IRequest<Command>
+    public record Query : SearchModel, IRequest<ResultsModel> { }
+
+    public record ResultsModel : SearchModel
     {
-        public Command() { }
-        public Command(SearchModel query) : base(query) { }
-        public string LocalAuthority { get; set; }
+        public ResultsModel() { }
+        public ResultsModel(SearchModel query) : base(query) { }
+        public string? LocalAuthority { get; set; }
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
-        public ValidationResult Validation { get; internal set; } = new ValidationResult();
+        public FluentValidationResult Validation { get; internal set; } = new();
     }
 
-    private class Validator : AbstractValidator<Command>
+    private class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
@@ -61,7 +64,7 @@ public class SearchResults : PageModel
         }
     }
 
-    public class Handler : IRequestHandler<Command, Command>
+    public class Handler : IRequestHandler<Query, ResultsModel>
     {
         private readonly ILocationFilterService locationService;
         private readonly INtpDbContext db;
@@ -74,54 +77,116 @@ public class SearchResults : PageModel
             this.mediator = mediator;
         }
 
-        public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var validator = new Validator();
-            var validationResults = await validator.ValidateAsync(request, cancellationToken);
-
-            var allSubjects = await mediator.Send(new WhichSubjects.Query 
+            var queryResponse = new ResultsModel(request) with
             {
-                KeyStages = new[]
+                AllSubjects = await GetSubjectsList(request, cancellationToken),
+                AllTuitionTypes = AllTuitionTypes,
+            };
+
+            var searchResults = await GetSearchResults(request, cancellationToken);
+
+            return searchResults switch
+            {
+                SuccessResult => queryResponse with
                 {
-                    KeyStage.KeyStage1,
-                    KeyStage.KeyStage2,
-                    KeyStage.KeyStage3,
-                    KeyStage.KeyStage4,
-                } ,
+                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.Name,
+                    Results = searchResults.Data,
+                },
+                Domain.ValidationResult error => queryResponse with
+                {
+                    Validation = new FluentValidationResult(error.Failures)
+                },
+                ErrorResult error => queryResponse with
+                {
+                    Validation = new FluentValidationResult(new[]
+                    {
+                        new ValidationFailure("Postcode", error.ToString()),
+                    }),
+                },
+                _ => queryResponse with { Validation = UnknownError() },
+            };
+
+            static FluentValidationResult UnknownError() =>
+                new(new[] { new ValidationFailure("", "An unknown problem occurred") });
+        }
+
+        private static KeyStage[] AllKeyStages =>
+            new[]
+            {
+                KeyStage.KeyStage1,
+                KeyStage.KeyStage2,
+                KeyStage.KeyStage3,
+                KeyStage.KeyStage4,
+            };
+
+        private static List<TuitionType> AllTuitionTypes =>
+            new()
+            {
+                TuitionType.Any,
+                TuitionType.InSchool,
+                TuitionType.Online,
+            };
+
+        private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
+        {
+            return await mediator.Send(new WhichSubjects.Query
+            {
+                KeyStages = AllKeyStages,
                 Subjects = request.Subjects,
             }, cancellationToken);
+        }
 
-            var localAuthority = "";
-            TuitionPartnerSearchResultsPage? results = null;
+        private async Task<IResult<TuitionPartnerSearchResultsPage>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        {
+            var location = await GetSearchLocation(request, cancellationToken);
 
-            if (validationResults.IsValid)
+            if (location is IErrorResult error)
             {
-                var loc = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
-                localAuthority = loc?.LocalAuthority ?? "";
-
-                var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-
-                var subjects = await db.Subjects.Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl)).ToListAsync(cancellationToken);
-
-                var cmd = new SearchTuitionPartnerHandler.Command
-                {
-                    OrderBy = TuitionPartnerOrderBy.Name,
-                    LocalAuthorityDistrictCode = loc?.LocalAuthorityDistrictCode,
-                    SubjectIds = subjects.Select(x => x.Id),
-                    TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
-                };
-
-                results = await mediator.Send(cmd, cancellationToken);
+                return error.Cast<TuitionPartnerSearchResultsPage>();
             }
 
-            return new(request)
+            var results = await FindSubjectsMatchingFilter(
+                        location.Data.LocalAuthorityDistrictCode,
+                        request,
+                        cancellationToken);
+            
+            return Result.Success(results);
+        }
+
+        private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
+        {
+            var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
+
+            if (!validationResults.IsValid)
             {
-                LocalAuthority = localAuthority,
-                AllSubjects = allSubjects,
-                Results = results,
-                Validation = validationResults,
-                AllTuitionTypes = new List<TuitionType> { TuitionType.Any, TuitionType.InSchool, TuitionType.Online },
-            };
+                return Result.Invalid<LocationFilterParameters>(validationResults.Errors);
+            }
+            else
+            {
+                return (await locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
+            }
+        }
+
+        private async Task<TuitionPartnerSearchResultsPage> FindSubjectsMatchingFilter(
+            string? localAuthorityDisctict,
+            Query request,
+            CancellationToken cancellationToken)
+        {
+            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+
+            var subjects = await db.Subjects.Where(e =>
+                keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
+                .ToListAsync(cancellationToken);
+
+            return await mediator.Send(new SearchTuitionPartnerHandler.Command
+            {
+                OrderBy = TuitionPartnerOrderBy.Name,
+                LocalAuthorityDistrictCode = localAuthorityDisctict,
+                SubjectIds = subjects.Select(x => x.Id),
+                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+            }, cancellationToken);
         }
     }
 }

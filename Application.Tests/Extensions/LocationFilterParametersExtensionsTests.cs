@@ -1,5 +1,4 @@
-﻿using Application.Exceptions;
-using Application.Extensions;
+﻿using Application.Extensions;
 using Domain.Constants;
 using Domain.Search;
 using FluentAssertions;
@@ -14,9 +13,9 @@ public class LocationFilterParametersExtensionsTests
     {
         LocationFilterParameters? parameters = null;
 
-        var action = () => parameters.Validate();
+        var result = parameters.TryValidate();
 
-        action.Should().Throw<LocationNotFoundException>();
+        result.Should().BeOfType<LocationNotFoundResult>();
     }
 
     [Theory]
@@ -30,9 +29,9 @@ public class LocationFilterParametersExtensionsTests
         var parameters = GetLocationFilterParametersForPostcode("TS1 1ON");
         parameters.Country = country;
 
-        var action = () => parameters.Validate();
+        var result = parameters.TryValidate();
 
-        action.Should().Throw<LocationNotAvailableException>();
+        result.Should().BeOfType<LocationNotAvailableResult>();
     }
 
     [Fact]
@@ -41,9 +40,9 @@ public class LocationFilterParametersExtensionsTests
         var parameters = GetLocationFilterParametersForPostcode("TS1 1ON");
         parameters.LocalAuthorityDistrictCode = "";
 
-        var action = () => parameters.Validate();
+        var result = parameters.TryValidate();
 
-        action.Should().Throw<LocationNotMappedException>();
+        result.Should().BeOfType<LocationNotMappedResult>();
     }
 
     private LocationFilterParameters GetLocationFilterParametersForPostcode(string postcode)

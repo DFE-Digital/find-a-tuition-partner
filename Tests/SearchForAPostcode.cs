@@ -1,4 +1,4 @@
-﻿using Application.Exceptions;
+﻿using Application.Extensions;
 using Domain.Search;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
@@ -44,8 +44,8 @@ public class SearchForAPostcode
         _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(null as LocationFilterParameters);
 
-        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
-            .Should().ThrowAsync<LocationNotFoundException>();
+        (await _fixture.SendAsync(new Index.Command { Postcode = postcode }))
+            .Should().BeOfType<LocationNotFoundResult>();
     }
 
     [Theory]
@@ -56,8 +56,8 @@ public class SearchForAPostcode
         _fixture.LocationFilter.GetLocationFilterParametersAsync(postcode)
             .Returns(new LocationFilterParameters { Country = country });
 
-        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
-            .Should().ThrowAsync<LocationNotAvailableException>();
+        (await _fixture.SendAsync(new Index.Command { Postcode = postcode }))
+            .Should().BeOfType<LocationNotAvailableResult>();
     }
 
     [Theory]
@@ -72,8 +72,8 @@ public class SearchForAPostcode
                 LocalAuthorityDistrictCode = null,
             });
 
-        await _fixture.Invoking(f => f.SendAsync(new Index.Command { Postcode = postcode }))
-            .Should().ThrowAsync<LocationNotMappedException>();
+        (await _fixture.SendAsync(new Index.Command { Postcode = postcode }))
+            .Should().BeOfType<LocationNotMappedResult>();
     }
 
     [Theory]
