@@ -1,10 +1,10 @@
-using Application.Exceptions;
 using Application;
+using Application.Extensions;
+using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Application.Extensions;
 
 namespace UI.Pages.FindATuitionPartner;
 
@@ -16,28 +16,21 @@ public partial class Index : PageModel
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new Command();
 
-    public record Command : SearchModel, IRequest<Command> { }
+    public record Command : SearchModel, IRequest<Domain.IResult> { }
 
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid) return Page();
 
-        try
+        var validation = await _mediator.Send(Data);
+
+        if (validation.IsSuccess)
         {
-            return RedirectToPage(nameof(WhichKeyStages), await _mediator.Send(Data));
+            return RedirectToPage(nameof(WhichKeyStages), Data);
         }
-        catch (LocationNotFoundException)
-        {
-            ModelState.AddModelError("Data.Postcode", "Enter a valid postcode");
-        }
-        catch (LocationNotAvailableException)
-        {
-            ModelState.AddModelError("Data.Postcode", "This service covers England only");
-        }
-        catch (LocationNotMappedException)
-        {
-            ModelState.AddModelError("Data.Postcode", "Could not identify Local Authority for the supplied postcode");
-        }
+
+        if(validation is ErrorResult error)
+            ModelState.AddModelError("Data.Postcode", error.ToString());
 
         return Page();
     }
@@ -56,17 +49,16 @@ public partial class Index : PageModel
         }
     }
 
-    public class Handler : IRequestHandler<Command, Command>
+    public class Handler : IRequestHandler<Command, Domain.IResult>
     {
         private readonly ILocationFilterService locationService;
 
         public Handler(ILocationFilterService location) => locationService = location;
 
-        public async Task<Command> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Domain.IResult> Handle(Command request, CancellationToken cancellationToken)
         {
             var location = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
-            location.Validate();
-            return request;
+            return location.TryValidate();
         }
     }
 }
