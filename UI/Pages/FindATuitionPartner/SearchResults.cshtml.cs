@@ -22,6 +22,7 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query Data)
     {
+        Data.TuitionType ??= TuitionType.Any; 
         this.Data = await mediator.Send(Data);
         if (!this.Data.Validation.IsValid)
             foreach (var error in this.Data.Validation.Errors)

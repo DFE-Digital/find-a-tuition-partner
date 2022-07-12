@@ -32,3 +32,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page for 'Key stage 1'
     When they click on the postcode error
     Then the school's postcode text input is focused
+
+  Scenario: results default to any tuition type
+    Given a user has arrived on the 'Search results' page for 'Key stage 1'
+    Then they will see the tuition type 'Any' is selected

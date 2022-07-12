@@ -54,3 +54,6 @@ Then("they will see a collapsed subject filter for {string}}", keystage => {
     });
 });
 
+Then("they will see the tuition type {string} is selected", tutionType => {
+    cy.get(`input[id="${kebabCase(tutionType)}"]`).should('be.checked');
+});
