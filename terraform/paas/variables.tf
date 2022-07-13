@@ -14,8 +14,12 @@ variable "application_memory" {
   default = "1024"
 }
 
+variable "application_stopped" {
+  default = false
+}
+
 variable "application_instances" {
-  default = 1
+  default = 2
 }
 
 variable "application_disk" {
@@ -31,11 +35,11 @@ variable "paas_space" {
 }
 
 variable "paas_database_common_name" {
-  default = "national-tutoring-postgres-db"
+  default = "national-tutoring-sandbox-postgres-db"
 }
 
 variable "paas_application_name" {
-  default = "sandbox"
+  default = "national-tutoring-sandbox"
 }
 
 variable "database_plan" {

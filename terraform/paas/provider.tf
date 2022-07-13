@@ -4,12 +4,6 @@ provider "cloudfoundry" {
   password = var.password
 }
 
-resource "null_resource" "bundle_web_assests" {
-    for_each = local.map1
-    provisioner "local-exec" {
-        command = "cd ${path.module}/UI  &&  npm ci npm run build"
-    }
-}
 
 terraform {
 
