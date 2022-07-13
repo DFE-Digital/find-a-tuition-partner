@@ -74,11 +74,11 @@ public class DataImporterService : IHostedService
                     await using var resourceStream = assembly.GetManifestResourceStream(resourceName);
                     if (resourceStream == null)
                     {
-                        _logger.LogError($"Tuition Partner resource file {originalFilename} not found");
+                        _logger.LogError($"Tuition Partner resource name {resourceName} for file {originalFilename} not found");
                         continue;
                     }
 
-                    _logger.LogInformation($"Attempting create Tuition Partner from resource file {originalFilename}");
+                    _logger.LogInformation($"Attempting create Tuition Partner from file {originalFilename}");
                     TuitionPartner tuitionPartner;
                     try
                     {
@@ -93,7 +93,7 @@ public class DataImporterService : IHostedService
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, $"Exception thrown when creating Tuition Partner file {originalFilename}");
+                        _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from file {originalFilename}");
                         continue;
                     }
 
@@ -101,14 +101,14 @@ public class DataImporterService : IHostedService
                     var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
                     if (!results.IsValid)
                     {
-                        _logger.LogError($"Tuition Partner name {tuitionPartner.Name} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
+                        _logger.LogError($"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
                         continue;
                     }
 
                     dbContext.TuitionPartners.Add(tuitionPartner);
                     await dbContext.SaveChangesAsync(cancellationToken);
 
-                    _logger.LogInformation($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id}");
+                    _logger.LogInformation($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {originalFilename}");
                 }
 
                 await transaction.CommitAsync(cancellationToken);
