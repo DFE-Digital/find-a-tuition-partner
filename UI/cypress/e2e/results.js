@@ -9,11 +9,11 @@ const allSubjects = {
 }
 
 Given("a user has arrived on the 'Search results' page for {string}", keyStage => {
-    cy.visit(`/find-a-tuition-partner/search-results?postcode=AB12CD&key-subjects=KeyStage1&subjects=KeyStage1-English`);
+    cy.visit(`/search-results?postcode=AB12CD&key-subjects=KeyStage1&subjects=KeyStage1-English`);
 });
 
 Given("a user has arrived on the 'Search results' page for {string} without a postcode", keyStage => {
-    cy.visit(`/find-a-tuition-partner/search-results?key-subjects=KeyStage1&subjects=KeyStage1-English`);
+    cy.visit(`/search-results?key-subjects=KeyStage1&subjects=KeyStage1-English`);
 });
 
 Then("they will see all the subjects for {string}", keystage => {
