@@ -23,3 +23,7 @@ Then("the page URL ends with {string}", url => {
 Then("the heading should say {string}", (heading) => {
     cy.get("h1").should("have.text", heading);
 });
+
+Then("the page's title is {string}", (title) => {
+    cy.title().should("eq", title);
+});

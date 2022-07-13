@@ -1,4 +1,30 @@
-Feature: User can choose Key Stage and Subject 
+Feature: User can choose Key Stage and Subject
+  Scenario: key stages page url is '/which-key-stages'
+    Given a user has arrived on the 'Which key stages' page
+    Then the page URL ends with '/which-key-stages'
+
+  Scenario: key stages page title is 'Which key stages do you need tutoring support for?'
+    Given a user has arrived on the 'Which key stages' page
+    Then the page's title is 'Which key stages do you need tutoring support for?'
+
+  Scenario: user clicks service name on key stages page
+    Given a user has arrived on the 'Which key stages' page
+    When they click the 'Find a tuition partner' service name link
+    Then they will be taken to the 'Find a tuition partner' journey start page
+
+  Scenario: subjects page url is '/which-subjects'
+    Given a user has arrived on the 'Which subjects' page for Key stage 1
+    Then the page URL ends with '/which-subjects'
+
+  Scenario: subjects page title is 'Which subjects do you need tutoring support for?'
+    Given a user has arrived on the 'Which subjects' page for Key stage 1
+    Then the page's title is 'Which subjects do you need tutoring support for?'
+
+  Scenario: user clicks service name on key stages page
+    Given a user has arrived on the 'Which subjects' page for Key stage 1
+    When they click the 'Find a tuition partner' service name link
+    Then they will be taken to the 'Find a tuition partner' journey start page
+
   Scenario: All key stages are shown
     Given a user has arrived on the 'Which key stages' page
     Then they will see all the keys stages as options
