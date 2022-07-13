@@ -4,10 +4,9 @@ Feature: User enters postcode to begin search
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: user clicks back link
+  Scenario: no back link on the 'Find a tuition partner' journey start page
     Given a user has started the 'Find a tuition partner' journey
-    When they click 'Back'
-    Then they will be taken to the 'Compare national tutoring options' page
+    Then the 'Back' link is not displayed
 
   Scenario: quality assured tuition partner details is initially hidden
     Given a user has started the 'Find a tuition partner' journey
