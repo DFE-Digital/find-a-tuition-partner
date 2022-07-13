@@ -189,8 +189,8 @@ public class TuitionPartnerValidatorTests
 
     public void With_no_coverage()
     {
-        var ListOfCoverage = new List<LocalAuthorityDistrictCoverage>();
-        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = ListOfCoverage };
+        var listOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = listOfCoverage };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
     }
@@ -199,8 +199,8 @@ public class TuitionPartnerValidatorTests
 
     public void With_no_subject()
     {
-        var SubjectCoverage = new List<SubjectCoverage>();
-        var model = new TuitionPartner { SubjectCoverage = SubjectCoverage };
+        var subjectCoverage = new List<SubjectCoverage>();
+        var model = new TuitionPartner { SubjectCoverage = subjectCoverage };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SubjectCoverage);
     }
@@ -209,10 +209,10 @@ public class TuitionPartnerValidatorTests
 
     public void With_Valid_Coverage()
     {
-        var ListOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var listOfCoverage = new List<LocalAuthorityDistrictCoverage>();
         var localAuthorityDistrictCoverage = new LocalAuthorityDistrictCoverage();
-        ListOfCoverage.Add(localAuthorityDistrictCoverage);
-        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = ListOfCoverage };
+        listOfCoverage.Add(localAuthorityDistrictCoverage);
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = listOfCoverage };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
     }
@@ -220,10 +220,10 @@ public class TuitionPartnerValidatorTests
     [Fact]
     public void With_valid_Subject()
     {
-        var SubjectCoverage = new List<SubjectCoverage>();
+        var subjectCoverage = new List<SubjectCoverage>();
         var tuitionPartnerCoverage = new SubjectCoverage();
-        SubjectCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { SubjectCoverage = SubjectCoverage };
+        subjectCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { SubjectCoverage = subjectCoverage };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.SubjectCoverage);
     }
