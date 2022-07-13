@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using UI.Pages.FindATuitionPartner;
+using UI.Pages;
 
 namespace UI.Models;
 

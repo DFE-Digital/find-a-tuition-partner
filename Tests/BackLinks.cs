@@ -1,5 +1,5 @@
 ﻿using UI.Models;
-using UI.Pages.FindATuitionPartner;
+using UI.Pages;
 
 namespace Tests;
 

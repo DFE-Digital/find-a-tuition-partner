@@ -2,7 +2,7 @@
 using Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using TuitionPartner = UI.Pages.FindATuitionPartner.TuitionPartner;
+using TuitionPartner = UI.Pages.TuitionPartner;
 
 namespace Tests;
 

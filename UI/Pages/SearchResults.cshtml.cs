@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace UI.Pages.FindATuitionPartner;
+namespace UI.Pages;
 
 public class SearchResults : PageModel
 {

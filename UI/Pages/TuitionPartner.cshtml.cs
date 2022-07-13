@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace UI.Pages.FindATuitionPartner;
+namespace UI.Pages;
 
 public class TuitionPartner : PageModel
 {

@@ -3,8 +3,8 @@ using Domain.Search;
 using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using UI.Pages.FindATuitionPartner;
-using Index = UI.Pages.FindATuitionPartner.Index;
+using UI.Pages;
+using Index = UI.Pages.Index;
 
 namespace Tests;
 

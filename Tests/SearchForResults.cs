@@ -4,9 +4,9 @@ using Domain.Search;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using Tests.TestData;
-using UI.Pages.FindATuitionPartner;
-using Index = UI.Pages.FindATuitionPartner.Index;
-using KeyStage = UI.Pages.FindATuitionPartner.KeyStage;
+using UI.Pages;
+using KeyStage = UI.Pages.KeyStage;
+using Index = UI.Pages.Index;
 
 namespace Tests;
 
