@@ -12,7 +12,7 @@ Feature: User can choose Key Stage and Subject
   Scenario: Key stage must be selected to move to the next page
     Given a user has arrived on the 'Which key stages' page
     When they click 'Continue'
-    Then they will see 'Select the key stage or stages' as an error message for the 'keystages'
+    Then they will see 'Select at least one key stage' as an error message for the 'keystages'
 
   Scenario Outline: Click continue with any combination of key stages selected
     Given a user has arrived on the 'Which key stages' page
