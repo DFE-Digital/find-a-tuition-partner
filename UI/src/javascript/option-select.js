@@ -238,31 +238,31 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
   }
 
   OptionSelect.prototype.setupHeight = function setupHeight () {
-    var initialOptionContainerHeight = this.$optionsContainer.clientHeight
-    var height = this.$optionList.offsetHeight
+    // var initialOptionContainerHeight = this.$optionsContainer.clientHeight
+    // var height = this.$optionList.offsetHeight
 
-    // check whether this is hidden by progressive disclosure,
-    // because height calculations won't work
-    // would use offsetParent === null but for IE10+
-    var parent = this.$optionSelect.parentElement
-    var parentIsHidden = !(parent.offsetWidth || parent.offsetHeight || parent.getClientRects().length)
-    if (parentIsHidden) {
-      initialOptionContainerHeight = 200
-      height = 200
-    }
+    // // check whether this is hidden by progressive disclosure,
+    // // because height calculations won't work
+    // // would use offsetParent === null but for IE10+
+    // var parent = this.$optionSelect.parentElement
+    // var parentIsHidden = !(parent.offsetWidth || parent.offsetHeight || parent.getClientRects().length)
+    // if (parentIsHidden) {
+    //   initialOptionContainerHeight = 200
+    //   height = 200
+    // }
 
-    // Resize if the list is only slightly bigger than its container
-    if (height < initialOptionContainerHeight + 50) {
-      this.setContainerHeight(height + 1)
-      return
-    }
+    // // Resize if the list is only slightly bigger than its container
+    // if (height < initialOptionContainerHeight + 50) {
+    //   this.setContainerHeight(height + 1)
+    //   return
+    // }
 
-    // Resize to cut last item cleanly in half
-    var visibleCheckboxes = this.getVisibleCheckboxes()
+    // // Resize to cut last item cleanly in half
+    // var visibleCheckboxes = this.getVisibleCheckboxes()
 
-    var lastVisibleCheckbox = visibleCheckboxes[visibleCheckboxes.length - 1]
-    var position = lastVisibleCheckbox.parentNode.offsetTop // parent element is relative
-    this.setContainerHeight(position + (lastVisibleCheckbox.clientHeight / 1.5))
+    // var lastVisibleCheckbox = visibleCheckboxes[visibleCheckboxes.length - 1]
+    // var position = lastVisibleCheckbox.parentNode.offsetTop // parent element is relative
+    // this.setContainerHeight(position + (lastVisibleCheckbox.clientHeight / 1.5))
   }
 
   Modules.OptionSelect = OptionSelect
