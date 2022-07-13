@@ -1,4 +1,4 @@
-﻿import {
+import {
     Button,
     Checkboxes,
     Details,
@@ -48,3 +48,9 @@ if ($skipLink) {
 import ResultsFilter from './javascript/results-filter'
 var resultsFilter = new ResultsFilter()
 resultsFilter.init()
+
+import OptionSelect from './javascript/option-select'
+var $optionsSelect = document.querySelector('[data-module="option-select"]')
+if ($optionsSelect) {
+    new window.GOVUK.Modules.OptionSelect($optionsSelect).init()
+}
