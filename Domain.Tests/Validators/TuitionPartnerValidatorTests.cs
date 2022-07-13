@@ -131,8 +131,8 @@ public class TuitionPartnerValidatorTests
   
     public void With_no_valid_price()
     {
-        var ListOfPrices = new List<Price>();
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -142,9 +142,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_but_no_valid_hourly_and_groupsize()
     {
         var price = new Price { HourlyRate = 0, GroupSize = 0 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -154,9 +154,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_and_no_valid_hourlyRate()
     {
         var price = new Price { HourlyRate = 0, GroupSize = 1 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -166,9 +166,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_and_no_valid_groupsize()
     {
         var price = new Price { HourlyRate = 1, GroupSize = 0 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -178,9 +178,9 @@ public class TuitionPartnerValidatorTests
     public void With_valid_Price()
     {
         var price = new Price { HourlyRate = 1, GroupSize = 1 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Prices);
     }
