@@ -92,4 +92,11 @@ public class StringExtensionsTests
     {
         value.ToSeoUrl().Should().Be(expected);
     }
+
+    [Theory]
+    [InlineData("KeyStage1", "key-stage-1")]
+    public void With_trailing_digit(string value, string expected)
+    {
+        value.ToSeoUrl().Should().Be(expected);
+    }
 }
