@@ -41,6 +41,7 @@ jobs:
         run: |
             cd terraform/paas && pwd
             terraform init
+            terraform apply
         env:
           TF_VAR_username: ${{ secrets.CF_USERNAME }}
           TF_VAR_password: ${{ secrets.CF_PASSWORD }}
