@@ -1,12 +1,7 @@
 ﻿@page
-@using Application.Extensions
-@using UI.Models
 @model WhichKeyStages
 @{
-    Layout = "_Layout";
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
-	ViewData["Service Name"] = "Find a tuition partner";
-	ViewData["Service Home Page"] = nameof(Index);
 }
 
 <govuk-back-link asp-page="@nameof(Index)" asp-all-route-data="Model.Data.ToRouteData()" />
