@@ -26,6 +26,14 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         RuleFor(m => m.Prices)
             .Must(HasValidPrice)
         .WithMessage("Enter a price greater then zero");
+
+        RuleFor(m => m.LocalAuthorityDistrictCoverage)
+            .Must(m => m.Any())
+            .WithMessage("Enter Local Authority District Coverage");
+
+        RuleFor(m => m.SubjectCoverage)
+            .Must(m => m.Any())
+            .WithMessage("Enter subject Coverage");
     }
 
     private bool BeValidWebsite(string website)
@@ -46,7 +54,7 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         }
         return prices.Any(x => x.GroupSize > 0 && x.HourlyRate > 0);
     }
-
+   
     private static bool CheckRegex(string property, string regex)
     {
         return Regex.IsMatch(property,

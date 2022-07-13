@@ -2,7 +2,7 @@
   "profiles": {
     "DataImporter": {
       "commandName": "Project",
-      "commandLineArgs": "import",
+      "commandLineArgs": "import \"9/xvaC4iHirN3xqcRUH36DWm8O5XYTBPHL4SHRlfqKM=\"",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }
