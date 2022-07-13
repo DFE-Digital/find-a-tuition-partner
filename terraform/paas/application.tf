@@ -1,11 +1,10 @@
-
-resource "cloudfoundry_app" "national-tutoring-sandbox" {
+resource "cloudfoundry_app" "find-a-tuition-partner-sandbox" {
   name         = var.paas_application_name
-  command      = "cf push --strategy rolling"
   space        = data.cloudfoundry_space.space.id
   instances    = var.application_instances
   stopped      = var.application_stopped
   memory       = var.application_memory
+  docker_image = var.paas_app_docker_image
   disk_quota   = var.application_disk
 
  

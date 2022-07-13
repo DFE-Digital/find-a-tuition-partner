@@ -39,11 +39,15 @@ variable "paas_database_common_name" {
 }
 
 variable "paas_application_name" {
-  default = "national-tutoring-sandbox"
+  default = "find-a-tuition-partner-sandbox"
 }
 
 variable "database_plan" {
   default = "small-13"
+}
+
+variable "paas_app_docker_image" {
+  default = "dfedigital/find-a-tuition-partner:latest"
 }
 
 variable "username" {
