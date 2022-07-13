@@ -184,4 +184,47 @@ public class TuitionPartnerValidatorTests
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Prices);
     }
+
+    [Fact]
+
+    public void With_no_coverage()
+    {
+        var ListOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
+    }
+
+    [Fact]
+
+    public void With_no_subject()
+    {
+        var SubjectCoverage = new List<SubjectCoverage>();
+        var model = new TuitionPartner { SubjectCoverage = SubjectCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.SubjectCoverage);
+    }
+
+    [Fact]
+
+    public void With_Valid_Coverage()
+    {
+        var ListOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var localAuthorityDistrictCoverage = new LocalAuthorityDistrictCoverage();
+        ListOfCoverage.Add(localAuthorityDistrictCoverage);
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = ListOfCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
+    }
+
+    [Fact]
+    public void With_valid_Subject()
+    {
+        var SubjectCoverage = new List<SubjectCoverage>();
+        var tuitionPartnerCoverage = new SubjectCoverage();
+        SubjectCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { SubjectCoverage = SubjectCoverage };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.SubjectCoverage);
+    }
 }
