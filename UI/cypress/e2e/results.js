@@ -39,15 +39,27 @@ Then("they will see all the subjects for {string}", keystage => {
 
 Then("they will see a collapsed subject filter for {string}", keystage => {
     const stages = keystage.split(',').map(s => s.trim());
-    
     stages.forEach(element => {
-
         cy.get(`[data-testid=${kebabCase(element)}]`).
             should('have.class', 'js-closed')
+    });
+});
 
+Then("they will see an expanded subject filter for {string}", keystage => {
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`[data-testid=${kebabCase(element)}]`).
+            should('not.have.class', 'js-closed')
     });
 });
 
 Then("they will see the tuition type {string} is selected", tutionType => {
     cy.get(`input[id="${kebabCase(tutionType)}"]`).should('be.checked');
 });
+
+When("they click on the option heading for {string}", keystage => {
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`#option-select-title-${kebabCase(element)}`).click()
+    });
+})
