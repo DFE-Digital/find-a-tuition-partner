@@ -413,3 +413,6 @@ Tests/Tests.v3.ncrunchproject
 
 # We want to conciously commit files that will be imported from this directory
 Infrastructure/Data
+
+# Terraforms
+terraform/paas/.terraform
