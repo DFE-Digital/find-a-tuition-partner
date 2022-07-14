@@ -1,7 +1,7 @@
 ﻿@model OptionsSelectModel
 @using Application.Extensions
 				
-<div class="app-c-option-select js-collapsible @Model.ClosedClass" data-testid="@Model.Name" data-module="option-select">
+<div class="app-c-option-select js-collapsible" data-testid="@Model.Name" data-module="option-select" @Model.ClosedData>
 					  
 	<div class="app-c-option-select__heading js-container-heading">
 		<button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button"
