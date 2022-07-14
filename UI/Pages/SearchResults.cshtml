@@ -31,7 +31,9 @@
 				
 				@foreach (var item in Model.Data.AllSubjects.Keys)
 				{
-				<div class="app-c-option-select js-collapsible" data-module="option-select">
+					var closed = Model.Data.AllSubjects[item].Any(x => x.Selected) ? "" : "js-closed";
+				
+				<div class="app-c-option-select js-collapsible @closed" data-testid="@item.ToString().ToSeoUrl()" data-module="option-select">
 					  
 					<div class="app-c-option-select__heading js-container-heading">
 						<button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" id="option-select-title-@item.ToString().ToSeoUrl()" aria-controls="list-of-@item.ToString().ToSeoUrl()">@item.DisplayName()</button>
@@ -50,7 +52,7 @@
 										{
 											var value = $"{item}-{subject.Name}";
 
-											<li class="govuk-checkboxes__item">
+											<li class="govuk-checkboxes__item" data-testid="subject-name">
 												<input type="checkbox" name="Data.Subjects" class="govuk-checkboxes__input" 
 													   id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">
 												<label class="govuk-label govuk-checkboxes__label" for="@value.ToSeoUrl()">
