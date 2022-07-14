@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace UI.Pages.FindATuitionPartner;
+namespace UI.Pages;
 
 public record SearchModel
 {

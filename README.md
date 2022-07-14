@@ -1,10 +1,12 @@
-# Compare National Tutoring Options
+# Find a Tuition Partner
 
 ## Introduction
 
-The National Tutoring Programme's Compare National Tutoring Options service supports state-funded schools in their work to help young people who have had their education disrupted by coronavirus (COVID-19).
+The National Tutoring Programme supports state-funded schools in their work to help young people who have had their education disrupted by coronavirus (COVID-19).
 
-The service explains the three funded options for tutoring with two of those options, Academic Mentors and School-Led Tutoring being built by other suppliers. This service concentrates on the Find a Tuition Partner option providing the ability to search the full list of quality assured Tuition Partners using the school's location and tutoring needs.
+There are three funded options for tutoring; engaging Tuition Partners to supply professional tutors, using Academic Mentors and via School-Led Tutoring. Find a tuition partner is the service covering the first option and the remaining two options are being built by other suppliers. The three options will be explained and linked to from a set of GOV.UK pages connecting the programme together.
+
+The code in this repository is for the find a tuition partner service. This service provides the ability to search the full list of quality assured Tuition Partners using the school's location and tutoring needs.
 
 ## Further documentation
 

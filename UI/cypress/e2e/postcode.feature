@@ -1,7 +1,7 @@
 Feature: User enters postcode to begin search
-  Scenario: page url is '/find-a-tuition-partner'
+  Scenario: page url is '/'
     Given a user has started the 'Find a tuition partner' journey
-    Then the page URL ends with '/find-a-tuition-partner'
+    Then the page URL ends with '/'
 
   Scenario: page title is 'Find a tuition partner'
     Given a user has started the 'Find a tuition partner' journey

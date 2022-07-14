@@ -2,9 +2,8 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
-namespace UI.Pages.FindATuitionPartner;
+namespace UI.Pages;
 
 using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;
 

@@ -13,15 +13,15 @@ Given("a user has arrived on the 'Which key stages' page", () => {
 });
 
 Given("a user has arrived on the 'Which key stages' page for postcode {string}", postcode => {
-    cy.visit(`/find-a-tuition-partner/which-key-stages?Postcode=${postcode}`);
+    cy.visit(`/which-key-stages?Postcode=${postcode}`);
 });
 
 Given("a user has arrived on the 'Which subjects' page for Key stage 1", () => {
-    cy.visit("/find-a-tuition-partner/which-subjects?KeyStages=KeyStage1");
+    cy.visit("/which-subjects?KeyStages=KeyStage1");
 });
 
 When("they manually navigate to the 'Which subjects' page", () => {
-    cy.visit("/find-a-tuition-partner/which-subjects");
+    cy.visit("/which-subjects");
 });
 
 When("they select {string}", keystage => {
