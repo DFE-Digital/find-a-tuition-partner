@@ -12,41 +12,11 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     this.$optionsContainer = this.$optionSelect.querySelector('.js-options-container')
     this.$optionList = this.$optionsContainer.querySelector('.js-auto-height-inner')
     this.$allCheckboxes = this.$optionsContainer.querySelectorAll('.govuk-checkboxes__item')
-    this.hasFilter = this.$optionSelect.getAttribute('data-filter-element') || ''
 
     this.checkedCheckboxes = []
   }
 
   OptionSelect.prototype.init = function () {
-    if (this.hasFilter.length) {
-      var filterEl = document.createElement('div')
-      filterEl.innerHTML = this.hasFilter
-
-      var optionSelectFilter = document.createElement('div')
-      optionSelectFilter.classList.add('app-c-option-select__filter')
-      optionSelectFilter.innerHTML = filterEl.childNodes[0].nodeValue
-
-      this.$optionsContainer.parentNode.insertBefore(optionSelectFilter, this.$optionsContainer)
-
-      this.$filter = this.$optionSelect.querySelector('input[name="option-select-filter"]')
-      this.$filterCount = document.getElementById(this.$filter.getAttribute('aria-describedby'))
-      this.filterTextSingle = ' ' + this.$filterCount.getAttribute('data-single')
-      this.filterTextMultiple = ' ' + this.$filterCount.getAttribute('data-multiple')
-      this.filterTextSelected = ' ' + this.$filterCount.getAttribute('data-selected')
-      this.checkboxLabels = []
-      this.filterTimeout = 0
-
-      this.getAllCheckedCheckboxes()
-      for (var i = 0; i < this.$allCheckboxes.length; i++) {
-        this.checkboxLabels.push(this.cleanString(this.$allCheckboxes[i].textContent))
-      }
-
-      this.$filter.addEventListener('keyup', this.typeFilterText.bind(this))
-    }
-
-    // Attach listener to update checked count
-    this.$optionsContainer.querySelector('.gem-c-checkboxes__list').addEventListener('change', this.updateCheckedCount.bind(this))
-
     // Replace div.container-head with a button
     this.replaceHeadingSpanWithButton()
 
@@ -60,28 +30,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     var closedOnLoad = this.$optionSelect.getAttribute('data-closed-on-load')
     if (closedOnLoad === 'true') {
       this.close()
-    } else {
-      this.setupHeight()
-    }
-
-    var checkedString = this.checkedString()
-    if (checkedString) {
-      this.attachCheckedCounter(checkedString)
-    }
-  }
-
-  OptionSelect.prototype.typeFilterText = function (event) {
-    event.stopPropagation()
-    var ENTER_KEY = 13
-
-    if (event.keyCode !== ENTER_KEY) {
-      clearTimeout(this.filterTimeout)
-      this.filterTimeout = setTimeout(
-        function () { this.doFilter(this) }.bind(this),
-        300
-      )
-    } else {
-      event.preventDefault() // prevents finder forms from being submitted when user presses ENTER
     }
   }
 
@@ -100,31 +48,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
         this.checkedCheckboxes.push(i)
       }
     }
-  }
-
-  OptionSelect.prototype.doFilter = function doFilter (obj) {
-    var filterBy = obj.cleanString(obj.$filter.value)
-    var showCheckboxes = obj.checkedCheckboxes.slice()
-    var i = 0
-
-    for (i = 0; i < obj.$allCheckboxes.length; i++) {
-      if (showCheckboxes.indexOf(i) === -1 && obj.checkboxLabels[i].search(filterBy) !== -1) {
-        showCheckboxes.push(i)
-      }
-    }
-
-    for (i = 0; i < obj.$allCheckboxes.length; i++) {
-      obj.$allCheckboxes[i].style.display = 'none'
-    }
-
-    for (i = 0; i < showCheckboxes.length; i++) {
-      obj.$allCheckboxes[showCheckboxes[i]].style.display = 'block'
-    }
-
-    var lenChecked = obj.$optionsContainer.querySelectorAll('.govuk-checkboxes__input:checked').length
-    var len = showCheckboxes.length + lenChecked
-    var html = len + (len === 1 ? obj.filterTextSingle : obj.filterTextMultiple) + ', ' + lenChecked + obj.filterTextSelected
-    obj.$filterCount.innerHTML = html
   }
 
   OptionSelect.prototype.replaceHeadingSpanWithButton = function replaceHeadingSpanWithButton () {
@@ -148,39 +71,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     containerHead.parentNode.replaceChild(button, containerHead)
   }
 
-  OptionSelect.prototype.attachCheckedCounter = function attachCheckedCounter (checkedString) {
-    var element = document.createElement('div')
-    element.setAttribute('class', 'app-c-option-select__selected-counter js-selected-counter')
-    element.innerHTML = checkedString
-    this.$optionSelect.querySelector('.js-container-button').insertAdjacentElement('afterend', element)
-  }
-
-  OptionSelect.prototype.updateCheckedCount = function updateCheckedCount () {
-    var checkedString = this.checkedString()
-    var checkedStringElement = this.$optionSelect.querySelector('.js-selected-counter')
-
-    if (checkedString) {
-      if (checkedStringElement === null) {
-        this.attachCheckedCounter(checkedString)
-      } else {
-        checkedStringElement.textContent = checkedString
-      }
-    } else if (checkedStringElement) {
-      checkedStringElement.parentNode.removeChild(checkedStringElement)
-    }
-  }
-
-  OptionSelect.prototype.checkedString = function checkedString () {
-    this.getAllCheckedCheckboxes()
-    var count = this.checkedCheckboxes.length
-    var checkedString = false
-    if (count > 0) {
-      checkedString = count + ' selected'
-    }
-
-    return checkedString
-  }
-
   OptionSelect.prototype.toggleOptionSelect = function toggleOptionSelect (e) {
     if (this.isClosed()) {
       this.open()
@@ -195,9 +85,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       this.$optionSelect.querySelector('.js-container-button').setAttribute('aria-expanded', true)
       this.$optionSelect.classList.remove('js-closed')
       this.$optionSelect.classList.add('js-opened')
-      if (!this.$optionsContainer.style.height) {
-        this.setupHeight()
-      }
     }
   }
 
@@ -235,34 +122,6 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
       visibleCheckboxes.push(this.$options[visibleCheckboxes.length])
     }
     return visibleCheckboxes
-  }
-
-  OptionSelect.prototype.setupHeight = function setupHeight () {
-    // var initialOptionContainerHeight = this.$optionsContainer.clientHeight
-    // var height = this.$optionList.offsetHeight
-
-    // // check whether this is hidden by progressive disclosure,
-    // // because height calculations won't work
-    // // would use offsetParent === null but for IE10+
-    // var parent = this.$optionSelect.parentElement
-    // var parentIsHidden = !(parent.offsetWidth || parent.offsetHeight || parent.getClientRects().length)
-    // if (parentIsHidden) {
-    //   initialOptionContainerHeight = 200
-    //   height = 200
-    // }
-
-    // // Resize if the list is only slightly bigger than its container
-    // if (height < initialOptionContainerHeight + 50) {
-    //   this.setContainerHeight(height + 1)
-    //   return
-    // }
-
-    // // Resize to cut last item cleanly in half
-    // var visibleCheckboxes = this.getVisibleCheckboxes()
-
-    // var lastVisibleCheckbox = visibleCheckboxes[visibleCheckboxes.length - 1]
-    // var position = lastVisibleCheckbox.parentNode.offsetTop // parent element is relative
-    // this.setContainerHeight(position + (lastVisibleCheckbox.clientHeight / 1.5))
   }
 
   Modules.OptionSelect = OptionSelect

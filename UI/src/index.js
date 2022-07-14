@@ -50,7 +50,7 @@ var resultsFilter = new ResultsFilter()
 resultsFilter.init()
 
 import OptionSelect from './javascript/option-select'
-var $optionsSelect = document.querySelector('[data-module="option-select"]')
+var $optionsSelect = document.querySelectorAll('[data-module="option-select"]')
 if ($optionsSelect) {
-    new window.GOVUK.Modules.OptionSelect($optionsSelect).init()
+    $optionsSelect.forEach(el => new window.GOVUK.Modules.OptionSelect(el).init())
 }
