@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UI.Pages.FindATuitionPartner;
+using UI.Pages;
 
 namespace Tests;
 

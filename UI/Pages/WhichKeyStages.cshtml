@@ -1,0 +1,34 @@
+﻿@page
+@model WhichKeyStages
+@{
+    ViewData["Title"] = "Which key stages do you need tutoring support for?";
+}
+
+<govuk-back-link asp-page="@nameof(Index)" asp-all-route-data="Model.Data.ToRouteData()" />
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.KeyStages" />
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">Which key stages do you need tutoring support for?</h1>
+        <p class="govuk-body">Select all of the key stages that apply</p>
+
+        <form method="post">
+            <govuk-checkboxes asp-for="Data.KeyStages">
+                @foreach (var item in Model.Data.AllKeyStages)
+                {
+                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected" data-testid="key-stage-name">@item.Name.DisplayName()</govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+            </div>
+
+            <input asp-for="Data.Postcode" hidden />
+            <input asp-for="Data.Subjects" hidden />
+        </form>
+    </div>
+</div>

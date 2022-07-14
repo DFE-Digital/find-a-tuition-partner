@@ -1,59 +1,38 @@
 ﻿@page
+@model Index
 @{
-	Layout = "_Layout";
-    ViewData["Title"] = "The National Tutoring Programme";
+    ViewData["Title"] = "Find a tuition partner";
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">The National Tutoring Programme</h1>
-        <p class="govuk-body">The National Tutoring Programme gives state-funded schools additional funding to help young people who have had their education disrupted by coronavirus (COVID-19).</p>
-	    <p class="govuk-body">Schools can choose high-quality subsidised tutoring from 3 routes:</p>
-	    <ul class="govuk-list govuk-list--bullet">
-		    <li>
-			    <a asp-fragment="find-a-tuition-partner" class="govuk-link">Find a Tuition Partner</a>
-		    </li>
-		    <li>
-			    <a asp-fragment="academic-mentors" class="govuk-link">Academic Mentors</a>
-		    </li>
-		    <li>
-			    <a asp-fragment="school-led-tutoring" class="govuk-link">School-Led Tutoring</a>
-		    </li>
-	    </ul>
-	    <a asp-page="/Options" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button" data-testid="call-to-action">
-		    Start now
-		    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-			    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-		    </svg>
-	    </a>
-        
-	    <h2 class="govuk-heading-m">Before you start</h2>
-	    <p class="govuk-body">You must:</p>
-	    <ul class="govuk-list govuk-list--bullet">
-		    <li>
-			    be a state-funded school or academy
-		    </li>
-		    <li>
-			    know your school’s postcode
-		    </li>
-	    </ul>
-		
-	    <h2 id="find-a-tuition-partner" class="govuk-heading-m">Find a Tuition Partner</h2>
-	    <p class="govuk-body">Schools can access the full list of quality assured tuition partners through the ‘Find a Tuition Partner’ service. The tuition partners offer a wide range of subjects and options for how to deliver tutoring to schools.</p>
-	    <p class="govuk-body">The cost of tuition partners is 60% subsidised.</p>
-		
-	    <h2 id="academic-mentors" class="govuk-heading-m">Academic Mentors</h2>
-	    <p class="govuk-body">Academic mentors are an ‘in class’ resource to work alongside teachers to help with a range of interventions. Academic mentors are typically employed to work in 15 hour blocks of support to provide intensive support where needed.</p>
-	    <p class="govuk-body">The cost of academic mentors is 60% subsidised.</p>
-		
-	    <h2 id="school-led-tutoring" class="govuk-heading-m">School-Led Tutoring</h2>
-	    <p class="govuk-body">School-Led Tutoring lets schools use existing staff or external tutoring resources they trust to deliver tutoring to their pupils. This route offers flexibility for schools to identify their own tutors.</p>
-	    <p class="govuk-body">School-Led Tutoring’s funding is based on the number of pupil premium students.</p>
-	    <p class="govuk-body">The cost of School-Led Tutoring is 60% subsidised.</p>
-    </div>
+	<div class="govuk-grid-column-two-thirds">
+		<govuk-error-summary>
+			<govuk-error-summary-item asp-for="Data.Postcode" />
+		</govuk-error-summary>
 
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Related content</h2>
-		<p class="govuk-body"><a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp" class="govuk-link">National Tutoring Programme guidance</a></p>
+		<h1 class="govuk-heading-l">Find a tuition partner</h1>
+		
+		<p class="govuk-body">Find a tuition partner will help match you with the best partner from the full list of quality assured tuition partners. A tuition partner will help you deliver all of your tutoring needs online and in person.</p>
+		<govuk-details data-testid="qatp-details">
+			<govuk-details-summary>
+				What is a quality assured tuition partner?
+			</govuk-details-summary>
+			<govuk-details-text>
+				The tuition partners shown on this service have been through a quality assurance process by the Department for Education. This process is to ensure quality tuition is delivered and includes safeguarding checks.
+			</govuk-details-text>
+		</govuk-details>
+
+		<p class="govuk-body">Understand how your funding can cover 60% of the cost of your tutoring with our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" class="govuk-link">funding guidance</a>.</p>
+
+		<form method="post">
+			<govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
+				<govuk-input-label class="govuk-label--m">What is your school’s postcode?</govuk-input-label>
+				<govuk-input-hint>Enter your school’s postcode</govuk-input-hint>
+			</govuk-input>
+
+			<div class="govuk-button-group">
+				<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+			</div>
+		</form>
 	</div>
 </div>

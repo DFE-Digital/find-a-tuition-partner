@@ -3,6 +3,7 @@
 public class Subject
 {
     public int Id { get; set; }
+    public string SeoUrl { get; set; } = null!;
     public int KeyStageId { get; set; }
     public KeyStage KeyStage { get; set; } = null!;
     public string Name { get; set; } = null!;

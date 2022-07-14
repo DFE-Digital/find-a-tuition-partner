@@ -33,9 +33,7 @@ public class SearchTuitionPartnerHandler
 
         public async Task<TuitionPartnerSearchResultsPage> Handle(Command request, CancellationToken cancellationToken)
         {
-            var coverageQueryable = _dbContext.TuitionPartnerCoverage.AsQueryable();
-
-            var returnAll = true;
+            var queryable = _dbContext.TuitionPartners.AsQueryable();
 
             LocalAuthorityDistrict? lad = null;
 
@@ -47,8 +45,7 @@ public class SearchTuitionPartnerHandler
 
                 if (lad != null)
                 {
-                    coverageQueryable = coverageQueryable.Where(e => e.LocalAuthorityDistrictId == lad.Id);
-                    returnAll = false;
+                    queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == lad.Id && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
                 }
             }
 
@@ -56,53 +53,10 @@ public class SearchTuitionPartnerHandler
             {
                 foreach (var subjectId in request.SubjectIds)
                 {
-                    switch (subjectId)
-                    {
-                        case Subjects.Id.PrimaryLiteracy: coverageQueryable = coverageQueryable.Where(e => e.PrimaryLiteracy == true); break;
-                        case Subjects.Id.PrimaryNumeracy: coverageQueryable = coverageQueryable.Where(e => e.PrimaryNumeracy == true); break;
-                        case Subjects.Id.PrimaryScience: coverageQueryable = coverageQueryable.Where(e => e.PrimaryScience == true); break;
-                        case Subjects.Id.SecondaryEnglish: coverageQueryable = coverageQueryable.Where(e => e.SecondaryEnglish == true); break;
-                        case Subjects.Id.SecondaryHumanities: coverageQueryable = coverageQueryable.Where(e => e.SecondaryHumanities == true); break;
-                        case Subjects.Id.SecondaryMaths: coverageQueryable = coverageQueryable.Where(e => e.SecondaryMaths == true); break;
-                        case Subjects.Id.SecondaryModernForeignLanguages: coverageQueryable = coverageQueryable.Where(e => e.SecondaryModernForeignLanguages == true); break;
-                        case Subjects.Id.SecondaryScience: coverageQueryable = coverageQueryable.Where(e => e.SecondaryScience == true); break;
-                    }
+                    // Must support all selected subjects for the tuition type if selected
+                    // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising either via pulling the data back and querying in memory or denormalising the data
+                    queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (request.TuitionTypeId == null || x.TuitionTypeId == request.TuitionTypeId)));
                 }
-
-                returnAll = false;
-            }
-
-            if (request.TuitionTypeId != null)
-            {
-                returnAll = false;
-            }
-
-            IQueryable<TuitionPartner> queryable;
-
-            if (returnAll)
-            {
-                queryable = _dbContext.TuitionPartners.AsQueryable();
-            }
-            else
-            {
-                var groupQueryable = coverageQueryable.GroupBy(e => e.TuitionPartnerId);
-
-                if (request.TuitionTypeId != null)
-                {
-                    switch (request.TuitionTypeId)
-                    {
-                        case (int)TuitionTypes.Online:
-                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.Online));
-                            break;
-                        case (int)TuitionTypes.InSchool:
-                            groupQueryable = groupQueryable.Where(g => g.Any(e => e.TuitionTypeId == (int)TuitionTypes.InSchool));
-                            break;
-                    }
-                }
-
-                var tuitionPartnerIds = await groupQueryable.Select(g => g.Key).ToArrayAsync(cancellationToken);
-
-                queryable = _dbContext.TuitionPartners.Where(e => tuitionPartnerIds.Contains(e.Id));
             }
 
             switch (request.OrderBy)

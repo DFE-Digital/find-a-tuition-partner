@@ -1,0 +1,123 @@
+﻿@page
+@model SearchResults
+@{
+    ViewData["Title"] = "Search results";
+}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		
+		<govuk-error-summary>
+			<govuk-error-summary-item asp-for="Data.Postcode" />
+			<govuk-error-summary-item asp-for="Data.Subjects" />
+		</govuk-error-summary>
+		
+		<h1 class="govuk-heading-l">Search results</h1>
+
+		@if (Model.Data.Results != null)
+		{
+			<p class="govuk-body govuk-!-font-size-27"><strong>@(Model.Data.Results.Count == 0 ? "No" : Model.Data.Results.Count)</strong> @(Model.Data.Results.Count != 1 ? "results" : "result") for @Model.Data.LocalAuthority</p>
+		}
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	
+	<form>
+
+		<div class="govuk-grid-column-one-third">
+			<div class="app-results-filter" data-module="results-filter">
+				<h2 class="govuk-heading-m">Filter results</h2>
+				
+				@foreach (var item in Model.Data.AllSubjects.Keys)
+				{
+					<govuk-checkboxes asp-for="Data.Subjects" class="govuk-checkboxes--small govuk-!-margin-0">
+						<govuk-checkboxes-fieldset>
+							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+								@item.DisplayName()
+							</govuk-checkboxes-fieldset-legend>
+						</govuk-checkboxes-fieldset>
+							@foreach (var subject in Model.Data.AllSubjects[item])
+							{
+								var value = $"{item}-{subject.Name}";
+								<govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
+							}
+					</govuk-checkboxes>
+				}
+					
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+				<govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small">
+					<govuk-radios-fieldset>
+						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+							Type of tuition
+						</govuk-radios-fieldset-legend>
+					</govuk-radios-fieldset>
+					@foreach (var item in Model.Data.AllTuitionTypes)
+					{
+						<govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+					}
+				</govuk-radios>
+
+				<div class="govuk-button-group" data-module="results-filter-button">
+					<govuk-button type="submit">Apply filters</govuk-button>
+				</div>
+			</div>
+		</div>
+
+		<div class="govuk-grid-column-two-thirds">
+			<div class="govuk-form-group">
+				<div asp-validation-group-for="Data.Postcode" data-testid="postcode">
+					<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
+						Postcode
+					</label>
+					<span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
+					<input asp-for="Data.Postcode" class="govuk-input govuk-input--width-10" type="text">
+					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0" data-testid="call-to-action">Search again</govuk-button>
+				</div>
+			</div>
+
+			@if (Model.Data.Results != null)
+			{
+				foreach (var item in Model.Data.Results.Results)
+				{
+					<div>
+						<h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
+						<govuk-summary-list>
+							<govuk-summary-list-row class="govuk-body-s">
+								<govuk-summary-list-row-key>
+									Subjects covered
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									<ul class="govuk-list govuk-body-s">
+									@foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
+									{
+										<li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
+									}
+									</ul>
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
+								<govuk-summary-list-row-key>
+									Type of tuition
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
+								<govuk-summary-list-row-key>
+									Provider information
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@item.Description
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+						</govuk-summary-list>
+					</div>
+				}
+			}
+		</div>
+	
+	</form>
+</div>

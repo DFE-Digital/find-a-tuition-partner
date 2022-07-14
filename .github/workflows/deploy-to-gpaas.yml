@@ -60,10 +60,12 @@ jobs:
         run: |
           npm ci
           npm run build
+
       - name: Install the CF CLI
         run: |
           wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
           sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+
       - name: Authenticate
         env:
           CF_USERNAME: ${{ secrets.CF_USERNAME }}
@@ -73,9 +75,11 @@ jobs:
           cf api "${CF_API}"
           cf auth
           cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
       - name: Deploy to PaaS
         run: |
           cf push --strategy rolling --vars-file vars-${{ inputs.environment }}.yml
+
       - name: Run database migrations and import data
         if: ${{ inputs.run_database_migrations_and_import_data == true }}
         run: |

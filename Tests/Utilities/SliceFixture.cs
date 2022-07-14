@@ -1,4 +1,5 @@
 using Application;
+using Domain.Search;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -32,7 +33,19 @@ public class SliceFixture : IAsyncLifetime
     private class NtpApplicationFactory
         : WebApplicationFactory<Program>
     {
-        public ILocationFilterService LocationFilter { get; } = Substitute.For<ILocationFilterService>();
+        public NtpApplicationFactory()
+        {
+            LocationFilter = Substitute.For<ILocationFilterService>();
+            LocationFilter
+                .GetLocationFilterParametersAsync(Arg.Any<string>())
+                .Returns(new LocationFilterParameters
+                {
+                    Country = "England",
+                    LocalAuthorityDistrictCode = "E06000011",
+                });
+        }
+
+        public ILocationFilterService LocationFilter { get; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -9,7 +9,7 @@ public class LocalAuthorityConfiguration : IEntityTypeConfiguration<LocalAuthori
 {
     public void Configure(EntityTypeBuilder<LocalAuthority> builder)
     {
-        builder.HasIndex(e => e.Code);
+        builder.HasIndex(e => e.Code).IsUnique();
         builder.HasIndex(e => e.Name);
 
         builder.HasData(

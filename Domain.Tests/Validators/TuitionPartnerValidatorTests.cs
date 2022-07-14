@@ -131,8 +131,8 @@ public class TuitionPartnerValidatorTests
   
     public void With_no_valid_price()
     {
-        var ListOfPrices = new List<Price>();
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -142,9 +142,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_but_no_valid_hourly_and_groupsize()
     {
         var price = new Price { HourlyRate = 0, GroupSize = 0 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -154,9 +154,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_and_no_valid_hourlyRate()
     {
         var price = new Price { HourlyRate = 0, GroupSize = 1 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -166,9 +166,9 @@ public class TuitionPartnerValidatorTests
     public void With_price_and_no_valid_groupsize()
     {
         var price = new Price { HourlyRate = 1, GroupSize = 0 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Prices);
     }
@@ -178,9 +178,9 @@ public class TuitionPartnerValidatorTests
     public void With_valid_Price()
     {
         var price = new Price { HourlyRate = 1, GroupSize = 1 };
-        var ListOfPrices = new List<Price>();
-        ListOfPrices.Add(price);
-        var model = new TuitionPartner { Prices = ListOfPrices };
+        var listOfPrices = new List<Price>();
+        listOfPrices.Add(price);
+        var model = new TuitionPartner { Prices = listOfPrices };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Prices);
     }
@@ -189,44 +189,42 @@ public class TuitionPartnerValidatorTests
 
     public void With_no_coverage()
     {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var listOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = listOfCoverage };
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+        result.ShouldHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
     }
 
     [Fact]
 
-    public void With_Coverage_but_no_subject()
+    public void With_no_subject()
     {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict() };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var subjectCoverage = new List<SubjectCoverage>();
+        var model = new TuitionPartner { SubjectCoverage = subjectCoverage };
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+        result.ShouldHaveValidationErrorFor(x => x.SubjectCoverage);
     }
 
     [Fact]
 
-    public void With_Coverage_but_no_local_authority_district()
+    public void With_Valid_Coverage()
     {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { PrimaryLiteracy = true };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var listOfCoverage = new List<LocalAuthorityDistrictCoverage>();
+        var localAuthorityDistrictCoverage = new LocalAuthorityDistrictCoverage();
+        listOfCoverage.Add(localAuthorityDistrictCoverage);
+        var model = new TuitionPartner { LocalAuthorityDistrictCoverage = listOfCoverage };
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Coverage);
+        result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityDistrictCoverage);
     }
 
     [Fact]
-    public void With_valid_Coverage()
+    public void With_valid_Subject()
     {
-        var ListOfCoverage = new List<TuitionPartnerCoverage>();
-        var tuitionPartnerCoverage = new TuitionPartnerCoverage { LocalAuthorityDistrict = new LocalAuthorityDistrict(), PrimaryLiteracy = true };
-        ListOfCoverage.Add(tuitionPartnerCoverage);
-        var model = new TuitionPartner { Coverage = ListOfCoverage };
+        var subjectCoverage = new List<SubjectCoverage>();
+        var tuitionPartnerCoverage = new SubjectCoverage();
+        subjectCoverage.Add(tuitionPartnerCoverage);
+        var model = new TuitionPartner { SubjectCoverage = subjectCoverage };
         var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.Coverage);
+        result.ShouldNotHaveValidationErrorFor(x => x.SubjectCoverage);
     }
 }

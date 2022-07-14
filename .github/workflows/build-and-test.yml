@@ -1,5 +1,10 @@
 name: .NET Build and Test
-on: [push]
+
+on:
+  workflow_call:
+  push:
+    branches-ignore:
+      - main
 
 jobs:
   build-and-test:
@@ -12,11 +17,11 @@ jobs:
       with:
         dotnet-version: '6.0.x'
     - name: Restore
-      run: dotnet restore CompareNationalTutoringOptions.sln
+      run: dotnet restore FindATuitionPartner.sln
     - name: Build
-      run: dotnet build CompareNationalTutoringOptions.sln --no-restore
+      run: dotnet build FindATuitionPartner.sln --no-restore
     - name: Test
-      run: dotnet test CompareNationalTutoringOptions.sln --no-build --logger trx --results-directory TestResults
+      run: dotnet test FindATuitionPartner.sln --no-build --logger trx --results-directory TestResults
     - name: Upload test results
       uses: actions/upload-artifact@v3
       with:

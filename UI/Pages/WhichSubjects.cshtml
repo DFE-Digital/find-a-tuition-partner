@@ -1,0 +1,39 @@
+﻿@page
+@model WhichSubjects
+@{
+    ViewData["Title"] = "Which subjects do you need tutoring support for?";
+}
+
+<govuk-back-link asp-page="@nameof(WhichKeyStages)" asp-all-route-data="Model.AllSearchParams.ToRouteData()" />
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Subjects" />
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
+        <p class="govuk-body">Select all of the subjects that apply</p>
+
+        <form method="post">
+            @foreach (var item in Model.Subjects.Keys)
+            {
+                <div data-testid="@(item)-subjects">
+                    <h2 class="govuk-heading-m">@item.DisplayName() subjects</h2>
+
+                    <govuk-checkboxes asp-for="Subjects">
+                        @foreach (var subject in Model.Subjects[item])
+                        {
+	                        var value = $"{item}-{subject.Name}";
+                            <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
+                        }
+                    </govuk-checkboxes>
+                </div>
+            }
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+            </div>
+        </form>
+    </div>
+</div>

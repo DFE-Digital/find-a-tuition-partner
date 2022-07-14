@@ -1,7 +1,11 @@
 ﻿using System.Text.Json;
 using Application;
+using Application.Extraction;
+using Application.Factories;
 using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
+using Infrastructure.Extraction;
+using Infrastructure.Factories;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +20,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<NtpDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetNtpConnectionString(), action => action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName));
+            options.UseNpgsql(
+                configuration.GetNtpConnectionString(),
+                action =>
+                {
+                    action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName);
+                    action.EnableRetryOnFailure();
+                });
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);
@@ -48,11 +58,8 @@ public static class ServiceCollectionExtensions
         return configuration.GetConnectionString("NtpDatabase");
     }
 
-    public static IServiceCollection AddSearchRequestBuilder(this IServiceCollection services)
+    public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
     {
-        services.AddScoped<ISearchStateRepository, SearchStateRepository>();
-        services.AddScoped<ISearchRequestBuilderRepository, SearchRequestBuilderRepository>();
-
         services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
         {
             client.BaseAddress = new Uri("https://api.postcodes.io");
@@ -66,6 +73,14 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();
         services.AddScoped<ILookupDataRepository, LookupDataRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddDataImporter(this IServiceCollection services)
+    {
+        services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
+        services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
 
         return services;
     }
