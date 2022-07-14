@@ -1,4 +1,6 @@
 environment-postfix: -research
 instances: 3
 memory: 256M
-dotnet-environment: Staging
+dotnet-environment: Research
+default-log-event-level: Information
+override-log-event-level: Warning

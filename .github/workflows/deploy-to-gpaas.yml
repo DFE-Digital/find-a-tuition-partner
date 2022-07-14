@@ -78,7 +78,7 @@ jobs:
 
       - name: Deploy to PaaS
         run: |
-          cf push --strategy rolling --vars-file vars-${{ inputs.environment }}.yml
+          cf push --strategy rolling --vars-file vars-${{ inputs.environment }}.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
 
       - name: Run database migrations and import data
         if: ${{ inputs.run_database_migrations_and_import_data == true }}
