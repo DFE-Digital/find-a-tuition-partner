@@ -1,4 +1,12 @@
 Feature: User enters postcode to begin search
+  Scenario: page url is '/find-a-tuition-partner'
+    Given a user has started the 'Find a tuition partner' journey
+    Then the page URL ends with '/find-a-tuition-partner'
+
+  Scenario: page title is 'Find a tuition partner'
+    Given a user has started the 'Find a tuition partner' journey
+    Then the page's title is 'Find a tuition partner'
+
   Scenario: user clicks service name
     Given a user has started the 'Find a tuition partner' journey
     When they click the 'Find a tuition partner' service name link

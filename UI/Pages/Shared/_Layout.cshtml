@@ -48,8 +48,8 @@
             </a>
         </div>
         <div class="govuk-header__content">
-	        <a asp-page="@(ViewData["Service Home Page"] ?? "Index")" class="govuk-header__link govuk-header__link--service-name" data-testid="service-name-link">
-		        @(ViewData["Service Name"] ?? "Compare national tutoring options")
+	        <a asp-page="@nameof(FindATuitionPartner.Index)" class="govuk-header__link govuk-header__link--service-name" data-testid="service-name-link">
+		        Find a tuition partner
 	        </a>
         </div>
     </div>

@@ -1,4 +1,17 @@
 Feature: User is shown search results
+  Scenario: page url is '/search-results'
+    Given a user has arrived on the 'Search results' page for 'Key stage 1'
+    Then the page URL ends with '/search-results'
+
+  Scenario: page title is 'Search results'
+    Given a user has arrived on the 'Search results' page for 'Key stage 1'
+    Then the page's title is 'Search results'
+
+  Scenario: user clicks service name
+    Given a user has arrived on the 'Search results' page for 'Key stage 1'
+    When they click the 'Find a tuition partner' service name link
+    Then they will be taken to the 'Find a tuition partner' journey start page
+
   Scenario: user does not enter postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1' without a postcode
     When they click 'Continue'

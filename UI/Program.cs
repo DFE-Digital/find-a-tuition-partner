@@ -44,18 +44,28 @@ builder.Services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
     AddImportsToHtml = false
 });
 
-builder.Services.AddControllersWithViews(options =>
+builder.Services.AddControllers(options =>
     {
         options.Conventions.Add(new RouteTokenTransformerConvention(new SeoRouteConvention()));
         options.Filters.Add<FluentValidationExceptionAttribute>();
-    }).AddJsonOptions(options =>
+    })
+    .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     })
     // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
     .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 
-builder.Services.AddRazorPages(options => options.Conventions.Add(new SeoRouteConvention()));
+builder.Services.AddRazorPages(options =>
+    {
+        options.Conventions.Add(new SeoRouteConvention());
+    })
+    .AddViewOptions(options =>
+    {
+        options.HtmlHelperOptions.ClientValidationEnabled = false;
+    })
+    // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
+    .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -84,9 +94,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllers();
 
 app.MapRazorPages();
 
