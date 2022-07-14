@@ -71,6 +71,8 @@ builder.Services.AddRazorPages(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Host.AddLogging(builder.Configuration);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
