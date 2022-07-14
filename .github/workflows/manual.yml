@@ -1,0 +1,55 @@
+name: Manual Deploy To GOV.UK PaaS
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
+          - sandbox
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "dfe"
+      CF_SPACE: ntp-${{ github.event.inputs.environment }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: set-up-environment
+        uses: DFE-Digital/github-actions/set-up-environment@master
+
+      - name: Setup Environment Variables
+        id:  variables
+        shell: bash
+        run: |
+             if [ "${{inputs.environment }}" == "Development" ]
+             then
+                 echo ::set-output name=docker_image::"${{env.DOCKER_REPOSITORY}}:sha-${{ steps.sha.outputs.short}}"
+
+      - name: Terraform ( ${{inputs.environment}} )
+        shell: bash
+        run: |
+            cd terraform/paas && pwd
+            terraform init
+            terraform apply -auto-approve
+        env:
+          TF_VAR_username: ${{ secrets.CF_USERNAME }}
+          TF_VAR_password: ${{ secrets.CF_PASSWORD }}
+

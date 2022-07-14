@@ -1,4 +1,4 @@
-resource "cloudfoundry_app" "find-a-tuition-partner-sandbox" {
+resource "cloudfoundry_app" "find-a-tuition-partner-sandbox-test" {
   name         = var.paas_application_name
   space        = data.cloudfoundry_space.space.id
   instances    = var.application_instances
