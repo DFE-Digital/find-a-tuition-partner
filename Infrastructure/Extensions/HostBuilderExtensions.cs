@@ -13,7 +13,7 @@ public static class HostBuilderExtensions
 
         hostBuilder.UseSerilog((context, config) =>
         {
-            var appLogging = configuration.GetSection("AppLogging").Get<AppLogging>();
+            var appLogging = configuration.GetSection("AppLogging").Get<AppLogging>() ?? new AppLogging();
             
             config
                 .MinimumLevel.Is(appLogging.DefaultLogEventLevel)
