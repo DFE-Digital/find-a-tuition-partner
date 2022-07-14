@@ -1,0 +1,4 @@
+  DOCKER_REPOSITORY:     ghcr.io/dfe-digital/find-a-tuition-partner
+  DOMAIN:                london.cloudapps.digital
+  APPLICATION:           find-a-tuition-partner
+  PAAS_APPLICATION_NAME: find-a-tuition-partner
