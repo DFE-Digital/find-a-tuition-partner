@@ -33,7 +33,7 @@ dotnet tool update -g dotnet-ef
 The service uses Postgres 13 for the database backing service. It is recommended that you use a pre built docker image for local development. Run the following command to start the container.
 
 ```
-docker run --name ntp -e POSTGRES_PASSWORD=<LOCAL_DEV_PASSWORD> -p 5432:5432 -d postgres:13
+docker run --name find-a-tuition-partner-postgres-db -e POSTGRES_PASSWORD=<LOCAL_DEV_PASSWORD> -p 5432:5432 -d postgres:13
 ```
 
 Please note that you will need to start the container from the Docker Desktop container tab every time you restart your machine.
@@ -41,7 +41,7 @@ Please note that you will need to start the container from the Docker Desktop co
 You will need to register the database connection string for local development as a .NET user secret with the following command.
 
 ```
-dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=ntp" -p UI
+dotnet user-secrets set "ConnectionStrings:FatpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=fatp" -p UI
 ```
 
 You will also need to set the current data encryption key used to encrypt the data files in order to import them locally. Ask the other developers for the latest encryption key and add it as a .NET user secret with the following command.
