@@ -111,6 +111,16 @@ If you need to test logit.io integration from your development environment, use 
 dotnet user-secrets set "AppLogging:TcpSinkUri" "<TLS_URL>" -p UI
 ```
 
+### Google Analytics (GA4)
+
+Google Analytics is used to track service traffic and usage. There is a separate property per environment with an associated data stream and therefore measurement id.
+
+If you need to test Google Analytics integration from your development environment, use the following command to add the neccessary user secret:
+
+```
+dotnet user-secrets set "GoogleAnalytics:MeasurementId" "<MEASUREMENT_ID>" -p UI
+```
+
 ## Testing
 
 ### End To End Testing
