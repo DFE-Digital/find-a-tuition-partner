@@ -26,38 +26,3 @@ public class Subject
         return HashCode.Combine(Id, KeyStageId);
     }
 }
-
-
-public class Employee
-{
-    public string? FirstName { get; set; }
-    public virtual EmployeeSkills GetSkills()
-    {
-        return new EmployeeSkills
-        {
-            CanSendEmails = true
-        };
-    }
-}
-
-public class EmployeeSkills
-{
-    public bool CanSendEmails { get; set; }
-}
-
-public class DeveloperSkills : EmployeeSkills
-{
-    public bool KnowsDotNet { get; set; }
-}
-
-public class Developer : Employee
-{
-    public override EmployeeSkills GetSkills()
-    {
-        return new DeveloperSkills
-        {
-            CanSendEmails = true,
-            KnowsDotNet = true
-        };
-    }
-}
