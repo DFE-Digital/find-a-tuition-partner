@@ -1,8 +1,8 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
-!include FONTAWESOME/users.puml
+!define FONTAWESOME_5 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include FONTAWESOME_5/users.puml
 
 Person(schoolStaff, "School Staff", "Member of the school team that has identified a set of pupils with tutoring needs", $sprite="users")
 System_Ext(govUkNtp, "GOV.UK National Tutoring programme pages", "Static content explaining the purpose of the programme and the three tutoring options")
