@@ -56,6 +56,6 @@ variable "username" {
 }
 
 variable "password" {
-  description = "The Password for the cf password"
+  description = "The password for the cf password"
   type        = string
 }
