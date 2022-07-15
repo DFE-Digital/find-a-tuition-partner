@@ -84,6 +84,16 @@ dotnet run --project UI
 
 You can then access the application on [https://localhost:7036/](https://localhost:7036/)
 
+## Logging and Metrics
+
+The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a TCP sink for logit.io data source integration.
+
+### logit.io
+
+[logit.io](logit.io) provides the ELK stack (Elasticsearch, Logstash, and Kibana) and Grafana as a service. The service ships logs to the find a tuition partner stack in the NTP account which is what new developers and analysts should request access to.
+
+Log interrogation is provided by OpenSearch and metrics dashboards are configured in Grafana. logit.io provides alerting within its service however Grafana can also be configured to send alerts if required.
+
 ## Testing
 
 ### End To End Testing
