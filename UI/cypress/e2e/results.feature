@@ -52,7 +52,8 @@ Feature: User is shown search results
 
   Scenario: All key stages are shown
     Given a user has arrived on the 'Search results' page for 'Key stage 1'
-    Then they will see all the subjects for 'Key stage 1'
+    Then they will see an expanded subject filter for 'Key stage 1'
+    And they will see all the subjects for 'Key stage 1'
     And they will see a collapsed subject filter for 'Key stage 2, Key stage 3, Key stage 4'
 
   Scenario: Key stage can be collapsed
