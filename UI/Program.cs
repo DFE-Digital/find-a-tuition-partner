@@ -22,6 +22,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
+        .AddLogging()
         .Build();
 
     await host.RunAsync();
@@ -71,7 +72,7 @@ builder.Services.AddRazorPages(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Host.AddLogging(builder.Configuration);
+builder.Host.AddLogging();
 
 var app = builder.Build();
 

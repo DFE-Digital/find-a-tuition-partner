@@ -8,12 +8,11 @@ namespace Infrastructure.Extensions;
 
 public static class HostBuilderExtensions
 {
-    public static IHostBuilder AddLogging(this IHostBuilder hostBuilder, IConfiguration configuration)
+    public static IHostBuilder AddLogging(this IHostBuilder hostBuilder)
     {
-
         hostBuilder.UseSerilog((context, config) =>
         {
-            var appLogging = configuration.GetSection("AppLogging").Get<AppLogging>() ?? new AppLogging();
+            var appLogging = context.Configuration.GetSection("AppLogging").Get<AppLogging>() ?? new AppLogging();
             
             config
                 .MinimumLevel.Is(appLogging.DefaultLogEventLevel)
