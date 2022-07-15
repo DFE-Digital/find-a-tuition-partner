@@ -12,6 +12,17 @@ The code in this repository is for the find a tuition partner service. This serv
 
 * [Architectural Decision Records (ADR)](docs/decisions)
 * [Runbooks](docs/runbooks)
+* [C4 Diagrams](docs/uml)
+
+## Architecture
+
+### C1 System Context Diagram
+
+![C1 System Context Diagram](docs/uml/images/c1_system_context.png)
+
+### C2 Container Level Diagram
+
+![C2 Container Level Diagram](docs/uml/images/c2_container.png)
 
 ## Development environment setup
 

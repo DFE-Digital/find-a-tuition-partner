@@ -1,0 +1,41 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome
+!define FONTAWESOME_5 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/dotnet.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/google_analytics.puml
+!include FONTAWESOME/file_text.puml
+!include FONTAWESOME_5/users.puml
+!include FONTAWESOME_5/cloud.puml
+!include FONTAWESOME_5/map_marked.puml
+!include FONTAWESOME_5/file_excel.puml
+
+Person(schoolStaff, "School Staff", "Member of the school team that has identified a set of pupils with tutoring needs", $sprite="users")
+
+Person_Ext(tuitionPartners, "Tuition Partners", "Companies that can supply tutors to schools", $sprite="users")
+System(tpQaProcess, "Tuition Partner QA Process", "Currently performed by delivery team, will be performed by external Tuition Partner QA", $sprite="file_excel")
+
+System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Service") {
+    Container(app, "Web Application", "C#, ASP.NET Core 6.0 Razor Pages", "Search for quality assured Tuition Partners that offer services in a specified location", $sprite="dotnet")
+    ContainerDb(db, "Database", "PostgreSQL", "Holds Tuition Partner service coverage and ONS location data", $sprite="postgresql")
+    Container(dataImporter, "Data Importer", "C#, .NET 6.0 console app", "Decrypts and imports Tuition Partner data files. Run as Cloud Foundry task", $sprite="dotnet")
+}
+
+System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="file_text")
+System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
+System_Ext(postcodesIo, "postcodes.io", "Maps postcode to Local Authority District code", $sprite="map_marked")
+
+Rel_Down(schoolStaff, app, "Uses", "HTTPS")
+Rel_Down(tuitionPartners, tpQaProcess, "Suplies data directly to delivery team", "Excel")
+Rel_Down(tpQaProcess, dataImporter, "Tuition Partner data in Excel format", "Encrypted via AES")
+Rel_Right(app, db, "Reads")
+Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
+Rel_Down(app, logitIo, "TCP Sink", "TLS")
+Rel_Down(app, googleAnalytics, "JavaScript", "HTTPS")
+Rel_Down(app, postcodesIo, "REST API", "HTTPS")
+
+SHOW_LEGEND()
+@enduml
