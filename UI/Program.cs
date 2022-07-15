@@ -22,6 +22,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
+        .AddLogging()
         .Build();
 
     await host.RunAsync();
@@ -70,6 +71,8 @@ builder.Services.AddRazorPages(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Host.AddLogging();
 
 var app = builder.Build();
 

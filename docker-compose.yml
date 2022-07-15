@@ -9,6 +9,8 @@ services:
       - db
     environment:
       - ConnectionStrings:NtpDatabase=Host=db;Username=postgres;Password=password
+      - AppLogging:DefaultLogEventLevel=Information
+      - AppLogging:OverrideLogEventLevel=Warning
 
   db:
     image: postgres:13

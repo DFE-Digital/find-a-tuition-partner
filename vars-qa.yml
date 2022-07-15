@@ -1,4 +1,6 @@
 environment-postfix: -qa
 instances: 3
 memory: 256M
-dotnet-environment: Development
+dotnet-environment: QA
+default-log-event-level: Debug
+override-log-event-level: Information

@@ -9,3 +9,6 @@ applications:
   memory: ((memory))
   env:
     ASPNETCORE_ENVIRONMENT: ((dotnet-environment))
+    AppLogging:DefaultLogEventLevel: ((default-log-event-level))
+    AppLogging:OverrideLogEventLevel: ((override-log-event-level))
+    AppLogging:TcpSinkUri: ((tcp-sink-uri))

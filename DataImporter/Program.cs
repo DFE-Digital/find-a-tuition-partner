@@ -23,6 +23,7 @@ if (args.Any(x => x == "encrypt"))
             services.AddOptions();
             services.AddHostedService<DataEncryptionService>();
         })
+        .AddLogging()
         .Build();
 
     await host.RunAsync();
