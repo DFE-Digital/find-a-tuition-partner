@@ -1,9 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace Application.Extensions;
 
 public static class StringExtensions
 {
+    [return: NotNullIfNotNull("value")]
     public static string? ToSeoUrl(this string? value)
     {
         if (value == null) return null;
