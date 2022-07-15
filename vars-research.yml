@@ -4,3 +4,4 @@ memory: 256M
 dotnet-environment: Research
 default-log-event-level: Information
 override-log-event-level: Warning
+google-analytics-measurement-id: G-VFDS3WSTQM

@@ -12,3 +12,4 @@ applications:
     AppLogging:DefaultLogEventLevel: ((default-log-event-level))
     AppLogging:OverrideLogEventLevel: ((override-log-event-level))
     AppLogging:TcpSinkUri: ((tcp-sink-uri))
+    GoogleAnalytics:MeasurementId: ((google-analytics-measurement-id))

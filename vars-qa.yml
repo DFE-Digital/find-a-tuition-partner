@@ -4,3 +4,4 @@ memory: 256M
 dotnet-environment: QA
 default-log-event-level: Debug
 override-log-event-level: Information
+google-analytics-measurement-id: G-R32QZSL32G
