@@ -94,6 +94,12 @@ The service uses [Serilog](https://github.com/serilog/serilog) to support loggin
 
 Log interrogation is provided by OpenSearch and metrics dashboards are configured in Grafana. logit.io provides alerting within its service however Grafana can also be configured to send alerts if required.
 
+If you need to test logit.io integration from your development environment, use the following command to add the neccessary user secret:
+
+```
+dotnet user-secrets set "AppLogging:TcpSinkUri" "<TLS_URL>" -p UI
+```
+
 ## Testing
 
 ### End To End Testing
