@@ -124,38 +124,39 @@
 					    <a href="@Model.Data.Website" class="govuk-link" target="_blank">@Model.Data.Website</a>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
-			    <govuk-summary-list-row>
-				    <govuk-summary-list-row-key>
-					    Phone number
-				    </govuk-summary-list-row-key>
-				    <govuk-summary-list-row-value>
-						@Model.Data.PhoneNumber
-				    </govuk-summary-list-row-value>
-			    </govuk-summary-list-row>
-			    <govuk-summary-list-row>
-				    <govuk-summary-list-row-key>
-					    Email address
-				    </govuk-summary-list-row-key>
-				    <govuk-summary-list-row-value>
-					    <a href="mailto:@(Model.Data.EmailAddress)" class="govuk-link">@Model.Data.EmailAddress</a>
-				    </govuk-summary-list-row-value>
-			    </govuk-summary-list-row>
-			    <govuk-summary-list-row>
-				    <govuk-summary-list-row-key>
-					    Address
-				    </govuk-summary-list-row-key>
-				    <govuk-summary-list-row-value>
-
-				    </govuk-summary-list-row-value>
-			    </govuk-summary-list-row>
-			    <govuk-summary-list-row>
-				    <govuk-summary-list-row-key>
-					    Office hours
-				    </govuk-summary-list-row-key>
-				    <govuk-summary-list-row-value>
-
-				    </govuk-summary-list-row-value>
-			    </govuk-summary-list-row>
+				@if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
+				{
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Phone number
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+							<a href="tel:@Model.Data.PhoneNumber">@Model.Data.PhoneNumber</a>
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				}
+				@if (!String.IsNullOrEmpty(@Model.Data.EmailAddress))
+				{
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Email address
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+							<a href="mailto:@(Model.Data.EmailAddress)" class="govuk-link">@Model.Data.EmailAddress</a>
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				}
+				@if(!String.IsNullOrEmpty(@Model.Data.Address)){
+					<govuk-summary-list-row>
+						<govuk-summary-list-row-key>
+							Address
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+							@Model.Data.Address
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				}
+			   
 		    </govuk-summary-list>
 	    </div>
     </div>
