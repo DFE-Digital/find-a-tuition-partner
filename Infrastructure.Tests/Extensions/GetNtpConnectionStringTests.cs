@@ -34,7 +34,7 @@ public class GetNtpConnectionStringTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
-                {$"ConnectionStrings:{EnvironmentVariables.NtpDatabaseConnectionString}", expected},
+                {$"ConnectionStrings:{EnvironmentVariables.FatpDatabaseConnectionString}", expected},
                 {EnvironmentVariables.VcapServices, ScenarioConstants.VcapServicesInvalidJson}
             })
             .Build();
@@ -52,7 +52,7 @@ public class GetNtpConnectionStringTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
-                {$"ConnectionStrings:{EnvironmentVariables.NtpDatabaseConnectionString}", expected}
+                {$"ConnectionStrings:{EnvironmentVariables.FatpDatabaseConnectionString}", expected}
             })
             .Build();
 
