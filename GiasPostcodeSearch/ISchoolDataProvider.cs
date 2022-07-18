@@ -2,5 +2,5 @@
 
 public interface ISchoolDataProvider
 {
-    Task<IEnumerable<SchoolDatum>> GetSchoolDataAsync();
+    Task<IEnumerable<SchoolDatum>> GetSchoolDataAsync(CancellationToken cancellationToken);
 }

@@ -21,11 +21,14 @@ if (!argsValid) return;
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
+        services.AddHttpClient<ISchoolDataProvider, GiasSchoolDataProvider>(client =>
+        {
+            client.BaseAddress = new Uri("https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/");
+        });
         services.AddHttpClient<IHostedService, GiasPostcodeSearchService>(client =>
         {
             client.BaseAddress = new Uri(url);
         });
-        services.AddHostedService<GiasPostcodeSearchService>();
     })
     .Build();
 

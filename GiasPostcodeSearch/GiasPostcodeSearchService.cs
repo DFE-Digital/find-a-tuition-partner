@@ -21,7 +21,7 @@ public class GiasPostcodeSearchService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var schoolData = await _schoolDataProvider.GetSchoolDataAsync();
+        var schoolData = await _schoolDataProvider.GetSchoolDataAsync(cancellationToken);
 
         var count = 0;
         var totalElapsedMilliseconds = 0L;
@@ -35,9 +35,9 @@ public class GiasPostcodeSearchService : IHostedService
             var requestUri = $"search-results?Postcode={schoolDatum.Postcode}";
             
             var stopWatch = new Stopwatch();
-            stopWatch.Stop();
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
             stopWatch.Start();
+            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
+            stopWatch.Stop();
             totalElapsedMilliseconds += stopWatch.ElapsedMilliseconds;
             minElapsedMilliseconds = Math.Min(minElapsedMilliseconds, stopWatch.ElapsedMilliseconds);
             maxElapsedMilliseconds = Math.Max(minElapsedMilliseconds, stopWatch.ElapsedMilliseconds);
@@ -52,10 +52,12 @@ public class GiasPostcodeSearchService : IHostedService
             }
 
             count++;
+
+            if (count == 10) break;
         }
 
         var averageElapsedMilliseconds = (int)(totalElapsedMilliseconds / (double)count);
-        _logger.LogInformation($"{count} searches run. Average response time {averageElapsedMilliseconds} min {minElapsedMilliseconds} max {maxElapsedMilliseconds}");
+        _logger.LogInformation($"{count} searches run. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms max {maxElapsedMilliseconds}ms");
 
         _host.StopApplication();
     }

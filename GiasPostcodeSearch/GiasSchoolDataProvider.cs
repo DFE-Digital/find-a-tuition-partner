@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Globalization;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace GiasPostcodeSearch;
 
 public class GiasSchoolDataProvider : ISchoolDataProvider
 {
-    private const string GiasUrl = "https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public";
-
     private readonly ILogger<GiasSchoolDataProvider> _logger;
     private readonly HttpClient _httpClient;
 
@@ -15,8 +16,28 @@ public class GiasSchoolDataProvider : ISchoolDataProvider
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<SchoolDatum>> GetSchoolDataAsync()
+    public async Task<IEnumerable<SchoolDatum>> GetSchoolDataAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var dateFilename = DateTime.Today.ToString("yyyyMMdd");
+
+        await using var response = await _httpClient.GetStreamAsync($"edubaseallstatefunded{dateFilename}.csv", cancellationToken);
+        using var reader = new StreamReader(response);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        csv.Context.RegisterClassMap<SchoolDatumMap>();
+        var records = csv.GetRecords<SchoolDatum>().ToArray();
+
+        return records;
+    }
+
+    private class SchoolDatumMap : ClassMap<SchoolDatum>
+    {
+        public SchoolDatumMap()
+        {
+            Map(m => m.Urn).Name("URN");
+            Map(m => m.Name).Name("EstablishmentName");
+            Map(m => m.Postcode).Name("Postcode");
+            Map(m => m.LocalAuthorityCode).Name("LA (code)");
+            //Map(m => m.LocalAuthorityDistrictCode).Name("EstablishmentName");
+        }
     }
 }
