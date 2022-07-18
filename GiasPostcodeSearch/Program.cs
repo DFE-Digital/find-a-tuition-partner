@@ -1,4 +1,7 @@
-﻿using GiasPostcodeSearch;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using GiasPostcodeSearch;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +21,22 @@ else
 
 if (!argsValid) return;
 
+var username = "";
+var usernameParam = args.FirstOrDefault(a => a.Contains("username"));
+if (usernameParam != null && usernameParam.Contains("="))
+{
+    username = usernameParam.Split("=")[1];
+}
+
+var password = "";
+var passwordParam = args.FirstOrDefault(a => a.Contains("password"));
+if (passwordParam != null && passwordParam.Contains("="))
+{
+    password = passwordParam.Split("=")[1];
+}
+
+ServicePointManager.DefaultConnectionLimit = 32;
+
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
@@ -28,6 +47,13 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddHttpClient<IHostedService, GiasPostcodeSearchService>(client =>
         {
             client.BaseAddress = new Uri(url);
+
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+            {
+                var authenticationString = $"{username}:{password}";
+                var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.UTF8.GetBytes(authenticationString));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
+            }
         });
     })
     .Build();

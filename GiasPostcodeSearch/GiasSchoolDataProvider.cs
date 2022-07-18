@@ -18,7 +18,7 @@ public class GiasSchoolDataProvider : ISchoolDataProvider
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<SchoolDatum>> GetSchoolDataAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<SchoolDatum>> GetSchoolDataAsync(CancellationToken cancellationToken)
     {
         var dateFilename = DateTime.Today.ToString("yyyyMMdd");
 

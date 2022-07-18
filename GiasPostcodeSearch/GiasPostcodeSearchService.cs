@@ -21,63 +21,88 @@ public class GiasPostcodeSearchService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var schoolData = await _schoolDataProvider.GetSchoolDataAsync(cancellationToken);
+        var schoolData = (await _schoolDataProvider.GetSchoolDataAsync(cancellationToken)).Where(x =>
+            new[]
+            {
+                PhaseOfEducation.Primary, PhaseOfEducation.MiddleDeemedPrimary, PhaseOfEducation.Secondary,
+                PhaseOfEducation.MiddleDeemedSecondary, PhaseOfEducation.AllThrough
+            }.Contains(x.PhaseOfEducation)).ToArray();
 
         var count = 0;
-        var totalElapsedMilliseconds = 0L;
+        var totalCount = schoolData.Length;
         var minElapsedMilliseconds = long.MaxValue;
         var maxElapsedMilliseconds = 0L;
-        string fastestRequestUri = "";
-        string slowestRequestUri = "";
+        var fastestRequestUri = "";
+        var slowestRequestUri = "";
+        long averageElapsedMilliseconds;
+        decimal searchesPerSecond;
 
         var runStopWatch = new Stopwatch();
         runStopWatch.Start();
 
-        foreach (var schoolDatum in schoolData)
+        var options = new ParallelOptions
         {
-            _logger.LogDebug($"Searching for Tuition Partners covering School {schoolDatum}");
+            MaxDegreeOfParallelism = 32,
+            CancellationToken = cancellationToken
+        };
 
+        await Parallel.ForEachAsync(schoolData.Take(1000), options, async (schoolDatum, ct) => {
             var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
             if (subjectsQueryString == null)
             {
-                _logger.LogInformation($"School {schoolDatum} is not valid for this service");
-            }
-
-            var requestUri = $"search-results?Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
-            
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            var response = await _httpClient.GetAsync(requestUri, cancellationToken);
-            stopWatch.Stop();
-            totalElapsedMilliseconds += stopWatch.ElapsedMilliseconds;
-            if (stopWatch.ElapsedMilliseconds < minElapsedMilliseconds)
-            {
-                minElapsedMilliseconds = stopWatch.ElapsedMilliseconds;
-                fastestRequestUri = requestUri;
-            }
-            if (stopWatch.ElapsedMilliseconds > maxElapsedMilliseconds)
-            {
-                maxElapsedMilliseconds = stopWatch.ElapsedMilliseconds;
-                slowestRequestUri = requestUri;
-            }
-
-            if (response.IsSuccessStatusCode)
-            {
-                _logger.LogDebug($"Response status code {response.StatusCode} returned after {stopWatch.ElapsedMilliseconds}ms");
+                _logger.LogDebug($"School {schoolDatum} is not valid for this service");
             }
             else
             {
-                _logger.LogError($"Search request {requestUri} resulted in non success status code {response.StatusCode}");
+                _logger.LogDebug($"Searching for Tuition Partners covering School {schoolDatum}");
+                
+                var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
+                
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                var response = await _httpClient.GetAsync(requestUri, ct);
+                stopWatch.Stop();
+
+                if (count > 100)
+                {
+                    // Only update fastest and slowest response after the first 100 requests to give service time to warm up
+                    if (stopWatch.ElapsedMilliseconds < minElapsedMilliseconds)
+                    {
+                        minElapsedMilliseconds = stopWatch.ElapsedMilliseconds;
+                        fastestRequestUri = requestUri;
+                    }
+
+                    if (stopWatch.ElapsedMilliseconds > maxElapsedMilliseconds)
+                    {
+                        maxElapsedMilliseconds = stopWatch.ElapsedMilliseconds;
+                        slowestRequestUri = requestUri;
+                    }
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogDebug($"Response status code {response.StatusCode} returned after {stopWatch.ElapsedMilliseconds}ms");
+                }
+                else
+                {
+                    _logger.LogError($"Search request {requestUri} resulted in non success status code {response.StatusCode}");
+                }
+
+                count++;
+
+                if (count % 100 == 0)
+                {
+                    averageElapsedMilliseconds = (int)(runStopWatch.ElapsedMilliseconds / (double)count);
+                    searchesPerSecond = (int)((double)count / (runStopWatch.ElapsedMilliseconds / 1000));
+                    _logger.LogInformation($"{count} searches of {totalCount} run in {runStopWatch.ElapsedMilliseconds / 1000}s. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+                }
             }
-
-            count++;
-
-            if (count == 10) break;
-        }
+        });
 
         runStopWatch.Stop();
-        var averageElapsedMilliseconds = (int)(runStopWatch.ElapsedMilliseconds / (double)count);
-        _logger.LogInformation($"{count} searches run in {runStopWatch.ElapsedMilliseconds/1000}s. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+        averageElapsedMilliseconds = (int)(runStopWatch.ElapsedMilliseconds / (double)count);
+        searchesPerSecond = (int)((double)count / runStopWatch.ElapsedMilliseconds);
+        _logger.LogInformation($"Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds/1000}s. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
 
         _host.StopApplication();
     }
