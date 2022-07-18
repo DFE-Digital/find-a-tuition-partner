@@ -30,7 +30,7 @@ public class GiasPostcodeSearchService : IHostedService
 
         foreach (var schoolDatum in schoolData)
         {
-            _logger.LogDebug($"Searching for Tuition Partners covering {schoolDatum.Name}'s postcode {schoolDatum.Postcode}");
+            _logger.LogDebug($"Searching for Tuition Partners covering School {schoolDatum}");
 
             var requestUri = $"search-results?Postcode={schoolDatum.Postcode}";
             
