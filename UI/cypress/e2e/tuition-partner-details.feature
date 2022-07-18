@@ -20,15 +20,12 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: Don’t show empty fields where TP has not provided information
     Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
-    When the page URL ends with '/connex-education-partnership'
     Then TP has not provided the information in the 'Address' section
 
   Scenario: Don’t show empty fields where TP has not provided information
     Given a user has arrived on the 'Tuition Partner' page for 'lancashire-county-council'
-    When the page URL ends with '/lancashire-county-council'
     Then TP has not provided the information in the 'Phone Number' section
 
   Scenario: Show Contact Details where TP has provided information
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-    When the page URL ends with '/bright-heart-education'
     Then TP has provided full contact details
