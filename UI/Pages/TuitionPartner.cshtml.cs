@@ -52,7 +52,7 @@ public class TuitionPartner : PageModel
     public record Command(
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
-        string Website, string PhoneNumber, string EmailAddress);
+        string Website, string PhoneNumber, string EmailAddress, string Address);
 
     public record SubjectPrice(string Subject, decimal Price);
 
@@ -101,7 +101,8 @@ public class TuitionPartner : PageModel
                 prices.ToArray(),
                 tp.Website,
                 tp.PhoneNumber,
-                tp.Email
+                tp.Email,
+                tp.Address
                 );
         }
     }
