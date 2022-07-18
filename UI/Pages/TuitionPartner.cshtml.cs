@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using UI.Extensions;
 
 namespace UI.Pages;
 
@@ -20,8 +21,12 @@ public class TuitionPartner : PageModel
 
     public Command? Data { get; set; }
 
+    public SearchModel? AllSearchData { get; set; }
+
     public async Task<IActionResult> OnGetAsync(Query query)
     {
+        AllSearchData = TempData.Get<SearchModel>("AllSearchData");
+
         if (string.IsNullOrWhiteSpace(query.Id))
         {
             _logger.LogWarning("Null or whitespace id '{Id}' provided", query.Id);
