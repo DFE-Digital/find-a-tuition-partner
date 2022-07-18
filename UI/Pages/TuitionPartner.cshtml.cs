@@ -1,4 +1,5 @@
 using Application.Extensions;
+using Domain;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -47,12 +48,19 @@ public class TuitionPartner : PageModel
         return Page();
     }
 
-    public record Query(string Id, bool ShowLocationsCovered = false, bool ShowFullPricing = false) : IRequest<Command?>;
+    public record Query(
+        string Id,
+        [FromQuery(Name = "show-locations-covered")]
+        bool ShowLocationsCovered = false,
+        [FromQuery(Name = "show-full-pricing")]
+        bool ShowFullPricing = false)
+        : IRequest<Command?>;
 
     public record Command(
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
-        string Website, string PhoneNumber, string EmailAddress, string Address);
+        string Website, string PhoneNumber, string EmailAddress, string Address,
+        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts);
 
     public record SubjectPrice(string Subject, decimal Price);
 
@@ -74,7 +82,7 @@ public class TuitionPartner : PageModel
                 .ThenInclude(x => x.KeyStage);
 
             Domain.TuitionPartner? tp;
-            
+
             if (int.TryParse(request.Id, out var id))
             {
                 tp = await queryable.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -89,8 +97,10 @@ public class TuitionPartner : PageModel
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
             var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = tp.Prices.Where(x => x.GroupSize == 3).GroupBy(x => x.Subject).Select(x => 
+            var prices = tp.Prices.Where(x => x.GroupSize == 3).GroupBy(x => x.Subject).Select(x =>
                 new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0));
+
+            var lads = GetLocalAuthorityDistricts(request, tp.Id);
 
             return new(
                 tp.Name,
@@ -102,8 +112,29 @@ public class TuitionPartner : PageModel
                 tp.Website,
                 tp.PhoneNumber,
                 tp.Email,
-                tp.Address
+                tp.Address,
+                lads
                 );
+        }
+
+        private Dictionary<Domain.TuitionType, string[]> GetLocalAuthorityDistricts(Query request, int tpId)
+        {
+            if (!request.ShowLocationsCovered) return new();
+
+            return _db.LocalAuthorityDistrictCoverage
+                .Include(x => x.LocalAuthorityDistrict)
+                .Where(x => x.TuitionPartnerId == tpId)
+                .Where(cov => cov.LocalAuthorityDistrict != null
+                           && cov.LocalAuthorityDistrict.Name != null)
+                .AsEnumerable()
+                .GroupBy(x => x.TuitionType)
+                .ToDictionary(
+                    key => key.Key,
+                    value => value
+                        .Select(cov => cov.LocalAuthorityDistrict.Name)
+                        .Distinct()
+                        .OrderBy(x => x)
+                        .ToArray());
         }
     }
 }

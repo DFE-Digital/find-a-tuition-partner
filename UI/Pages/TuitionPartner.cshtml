@@ -63,6 +63,17 @@
 					    </ul>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
+				@foreach (var item in Model.Data.LocalAuthorityDistricts)
+				{
+					<govuk-summary-list-row data-testid="locations-covered-table">
+						<govuk-summary-list-row-key>
+							Local authority district(s) @item.Key.Name
+						</govuk-summary-list-row-key>
+						<govuk-summary-list-row-value>
+							@string.Join(", ", item.Value)
+						</govuk-summary-list-row-value>
+					</govuk-summary-list-row>
+				}
 		    </govuk-summary-list>
 	    </div>
 
