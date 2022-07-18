@@ -30,6 +30,7 @@ public class GiasPostcodeSearchService : IHostedService
 
         var count = 0;
         var totalCount = schoolData.Length;
+        var elapsedMilliseconds = 0L;
         var minElapsedMilliseconds = long.MaxValue;
         var maxElapsedMilliseconds = 0L;
         var fastestRequestUri = "";
@@ -42,11 +43,10 @@ public class GiasPostcodeSearchService : IHostedService
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = 32,
             CancellationToken = cancellationToken
         };
 
-        await Parallel.ForEachAsync(schoolData.Take(1000), options, async (schoolDatum, ct) => {
+        await Parallel.ForEachAsync(schoolData, options, async (schoolDatum, ct) => {
             var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
             if (subjectsQueryString == null)
             {
@@ -62,6 +62,7 @@ public class GiasPostcodeSearchService : IHostedService
                 stopWatch.Start();
                 var response = await _httpClient.GetAsync(requestUri, ct);
                 stopWatch.Stop();
+                elapsedMilliseconds += stopWatch.ElapsedMilliseconds;
 
                 if (count > 100)
                 {
@@ -90,17 +91,23 @@ public class GiasPostcodeSearchService : IHostedService
 
                 count++;
 
-                if (count % 100 == 0)
+                if (count % 500 == 0)
                 {
-                    averageElapsedMilliseconds = (int)(runStopWatch.ElapsedMilliseconds / (double)count);
+                    averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
                     searchesPerSecond = (int)((double)count / (runStopWatch.ElapsedMilliseconds / 1000));
                     _logger.LogInformation($"{count} searches of {totalCount} run in {runStopWatch.ElapsedMilliseconds / 1000}s. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+                    
+                    // Reset metrics for next run
+                    minElapsedMilliseconds = long.MaxValue;
+                    maxElapsedMilliseconds = 0L;
+                    fastestRequestUri = "";
+                    slowestRequestUri = "";
                 }
             }
         });
 
         runStopWatch.Stop();
-        averageElapsedMilliseconds = (int)(runStopWatch.ElapsedMilliseconds / (double)count);
+        averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
         searchesPerSecond = (int)((double)count / runStopWatch.ElapsedMilliseconds);
         _logger.LogInformation($"Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds/1000}s. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
 

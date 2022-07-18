@@ -2,8 +2,13 @@
 using System.Net.Http.Headers;
 using System.Text;
 using GiasPostcodeSearch;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Network;
 
 var argsValid = true;
 
@@ -35,8 +40,6 @@ if (passwordParam != null && passwordParam.Contains("="))
     password = passwordParam.Split("=")[1];
 }
 
-ServicePointManager.DefaultConnectionLimit = 32;
-
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
@@ -55,6 +58,14 @@ var host = Host.CreateDefaultBuilder(args)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
             }
         });
+    })
+    .UseSerilog((context, config) =>
+    {
+        config
+            .MinimumLevel.Is(LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .WriteTo.Console();
     })
     .Build();
 
