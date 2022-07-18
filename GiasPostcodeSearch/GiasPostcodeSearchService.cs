@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -27,6 +27,8 @@ public class GiasPostcodeSearchService : IHostedService
                 PhaseOfEducation.Primary, PhaseOfEducation.MiddleDeemedPrimary, PhaseOfEducation.Secondary,
                 PhaseOfEducation.MiddleDeemedSecondary, PhaseOfEducation.AllThrough
             }.Contains(x.PhaseOfEducation)).ToArray();
+
+        _logger.LogInformation($"GIAS dataset loaded. {schoolData.Length} eligible schools");
 
         var count = 0;
         var totalCount = schoolData.Length;
