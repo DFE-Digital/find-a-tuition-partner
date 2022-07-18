@@ -29,3 +29,14 @@ Feature: User can view full details of a Tuition Parner
   Scenario: Show Contact Details where TP has provided information
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
     Then TP has provided full contact details
+
+  Scenario: Home page is selected 
+    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    When the home page is selected
+    Then they will be taken to the 'Find a tuition partner' journey start page
+
+  Scenario: Back is selected return to search results page
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after entering search details
+    When they click 'Back'
+    Then the page URL ends with '/search-results'
+    And the search details are correct

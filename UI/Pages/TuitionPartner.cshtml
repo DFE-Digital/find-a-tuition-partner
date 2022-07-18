@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = Model.Data.Name;
 }
+<a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a><br/>
 
 <govuk-back-link asp-page="@nameof(SearchResults)" asp-all-route-data="@Model.AllSearchData?.ToRouteData()" />
 
