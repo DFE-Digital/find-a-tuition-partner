@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using Application.Extensions;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.Hosting;
