@@ -1,6 +1,10 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IHostEnvironment HostEnvironment
+@inject IConfiguration Configuration
 
 @{
+	// Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
+	var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
+
 	var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
 	var enableGoogleAnalytics = !string.IsNullOrWhiteSpace(measurementId);
 }
@@ -26,6 +30,11 @@
     <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
 
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+	
+    @if (!allowIndexing)
+    {
+	    <meta name="robots" content="noindex"/>
+    }
     
     @if (enableGoogleAnalytics)
     {
