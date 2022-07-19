@@ -25,7 +25,7 @@ Then("TP has provided full contact details", () => {
 });
 
 Then("the search details are correct", () => {
-    cy.location('search').should('eq', '?Postcode=sk11eb&TuitionType=Any&Subjects=KeyStage1-English')
+    cy.location('search').should('eq', '?Postcode=sk11eb&TuitionType=Any&Subjects=KeyStage1-English');
 });
 
 
