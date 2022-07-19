@@ -161,10 +161,19 @@ public class TuitionPartner : PageModel
                     );
 
             static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
-                => value.Where(x => x.TuitionType.Id == (int)tuitionType).MinBy(x => x.HourlyRate)?.HourlyRate;
+                => MinMaxPrice(value, tuitionType, Enumerable.MinBy);
 
             static decimal? MaxPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
-                => value.Where(x => x.TuitionType.Id == (int)tuitionType).MaxBy(x => x.HourlyRate)?.HourlyRate;
+                => MinMaxPrice(value, tuitionType, Enumerable.MaxBy);
+
+            static decimal? MinMaxPrice(
+                IEnumerable<Price> value, TuitionTypes tuitionType,
+                Func<IEnumerable<Price>, Func<Price, decimal>, Price?> minMax)
+            {
+                var pricesForTuition = value.Where(x => x.TuitionType.Id == (int)tuitionType);
+                var minMaxForTuition = minMax(pricesForTuition, x => x.HourlyRate);
+                return minMaxForTuition?.HourlyRate;
+            }
         }
     }
 }
