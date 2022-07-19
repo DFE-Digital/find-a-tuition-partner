@@ -60,7 +60,8 @@ public class TuitionPartner : PageModel
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address,
-        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts);
+        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts,
+        Dictionary<int, (decimal? schoolMin, decimal? schoolMax, decimal? onlineMin, decimal? onlineMax)> AllPrices);
 
     public record SubjectPrice(string Subject, decimal Price);
 
@@ -102,6 +103,8 @@ public class TuitionPartner : PageModel
 
             var lads = GetLocalAuthorityDistricts(request, tp.Id);
 
+            var allprices = GetFullPricing(request, tp.Prices);
+
             return new(
                 tp.Name,
                 tp.Description,
@@ -113,7 +116,8 @@ public class TuitionPartner : PageModel
                 tp.PhoneNumber,
                 tp.Email,
                 tp.Address,
-                lads
+                lads,
+                allprices
                 );
         }
 
@@ -135,6 +139,23 @@ public class TuitionPartner : PageModel
                         .Distinct()
                         .OrderBy(x => x)
                         .ToArray());
+        }
+
+        private static Dictionary<int, (decimal?, decimal?, decimal?, decimal?)> GetFullPricing(Query request, ICollection<Price> prices)
+        {
+            if (!request.ShowFullPricing) return new();
+
+            var grouped = prices.GroupBy(x => x.GroupSize);
+            return grouped.ToDictionary(
+                key => key.Key,
+                value =>
+                {
+                    var onlineMin = value.MinBy(x => x.TuitionType.Id == 1);
+                    var onlineMax = value.MaxBy(x => x.TuitionType.Id == 1);
+                    var inSchoolMin = value.MinBy(x => x.TuitionType.Id == 2);
+                    var inSchoolMax = value.MaxBy(x => x.TuitionType.Id == 2);
+                    return (onlineMin?.HourlyRate, onlineMax?.HourlyRate, inSchoolMin?.HourlyRate, inSchoolMax?.HourlyRate);
+                });
         }
     }
 }

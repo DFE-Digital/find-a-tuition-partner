@@ -167,8 +167,28 @@
 						</govuk-summary-list-row-value>
 					</govuk-summary-list-row>
 				}
-			   
 		    </govuk-summary-list>
 	    </div>
+
+		<table class="govuk-table" data-testid="full-pricing-table" show-if="@Model.Data.AllPrices.Any()">
+			<caption class="govuk-table__caption govuk-table__caption--m">Full pricing information</caption>
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">Tuition group size</th>
+					<th scope="col" class="govuk-table__header">In school</th>
+					<th scope="col" class="govuk-table__header">Online</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+			@foreach (var item in Model.Data.AllPrices)
+			{
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header">1 to @item.Key</th>
+					<td class="govuk-table__cell">@Html.FormatValue(item.Value.schoolMin, "{0:C}") to @Html.FormatValue(item.Value.schoolMax, "{0:C}")</td>
+					<td class="govuk-table__cell">@Html.FormatValue(item.Value.onlineMin, "{0:C}") to @Html.FormatValue(item.Value.onlineMax, "{0:C}")</td>
+				</tr>
+			}
+			</tbody>
+		</table>
     </div>
 </div>
