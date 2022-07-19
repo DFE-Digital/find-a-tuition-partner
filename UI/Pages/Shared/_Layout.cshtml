@@ -1,4 +1,4 @@
-﻿@inject IHostEnvironment HostEnvironment
+@inject IHostEnvironment HostEnvironment
 @inject IConfiguration Configuration
 
 @{
@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
 
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+	
+    <meta content="Search the full list of quality assured Tuition Partners using your school's location and tutoring needs." name="description" />
 	
     @if (!allowIndexing)
     {
