@@ -1,5 +1,6 @@
 using Application.Extensions;
 using Domain;
+using Domain.Constants;
 using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +62,9 @@ public class TuitionPartner : PageModel
         string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address,
         Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts,
-        Dictionary<int, (decimal? schoolMin, decimal? schoolMax, decimal? onlineMin, decimal? onlineMax)> AllPrices);
+        Dictionary<int, GroupPrice> AllPrices);
+
+    public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax);
 
     public record SubjectPrice(string Subject, decimal Price);
 
@@ -141,21 +144,27 @@ public class TuitionPartner : PageModel
                         .ToArray());
         }
 
-        private static Dictionary<int, (decimal?, decimal?, decimal?, decimal?)> GetFullPricing(Query request, ICollection<Price> prices)
+        private static Dictionary<int, GroupPrice> GetFullPricing(Query request, ICollection<Price> prices)
         {
             if (!request.ShowFullPricing) return new();
 
-            var grouped = prices.GroupBy(x => x.GroupSize);
-            return grouped.ToDictionary(
-                key => key.Key,
-                value =>
-                {
-                    var onlineMin = value.MinBy(x => x.TuitionType.Id == 1);
-                    var onlineMax = value.MaxBy(x => x.TuitionType.Id == 1);
-                    var inSchoolMin = value.MinBy(x => x.TuitionType.Id == 2);
-                    var inSchoolMax = value.MaxBy(x => x.TuitionType.Id == 2);
-                    return (onlineMin?.HourlyRate, onlineMax?.HourlyRate, inSchoolMin?.HourlyRate, inSchoolMax?.HourlyRate);
-                });
+            return prices
+                .GroupBy(x => x.GroupSize)
+                .ToDictionary(
+                    key => key.Key,
+                    value => new GroupPrice
+                            ( MinPrice(value, TuitionTypes.InSchool)
+                            , MaxPrice(value, TuitionTypes.InSchool)
+                            , MinPrice(value, TuitionTypes.Online)
+                            , MaxPrice(value, TuitionTypes.Online)
+                            )
+                    );
+
+            static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
+                => value.Where(x => x.TuitionType.Id == (int)tuitionType).MinBy(x => x.HourlyRate)?.HourlyRate;
+
+            static decimal? MaxPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
+                => value.Where(x => x.TuitionType.Id == (int)tuitionType).MaxBy(x => x.HourlyRate)?.HourlyRate;
         }
     }
 }

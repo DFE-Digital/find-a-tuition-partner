@@ -119,4 +119,17 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.PhoneNumber.Should().Be("0123456789");
         result.EmailAddress.Should().Be("ntp@a-tuition-partner.testdata");
     }
+
+    [Fact]
+    public async Task Shows_all_prices()
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("a-tuition-partner", ShowFullPricing: true));
+
+        result.Should().NotBeNull();
+        result!.AllPrices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
+        {
+            { 2, new (12.34m, 56.78m, null, null) },
+            { 3, new (12.34m, 56.78m, null, null) }
+        });
+    }
 }
