@@ -2,3 +2,6 @@ environment-postfix: "-production"
 instances: 3
 memory: 1G
 dotnet-environment: Production
+default-log-event-level: Information
+override-log-event-level: Warning
+google-analytics-measurement-id: G-SDYZ8PH0R0

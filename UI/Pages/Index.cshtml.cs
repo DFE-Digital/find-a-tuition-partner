@@ -10,8 +10,14 @@ namespace UI.Pages;
 
 public partial class Index : PageModel
 {
+    private readonly ILogger<Index> _logger;
     private readonly IMediator _mediator;
-    public Index(IMediator mediator) => _mediator = mediator;
+
+    public Index(ILogger<Index> logger, IMediator mediator)
+    {
+        _logger = logger;
+        _mediator = mediator;
+    }
 
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new Command();

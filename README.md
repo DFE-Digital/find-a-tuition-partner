@@ -12,6 +12,17 @@ The code in this repository is for the find a tuition partner service. This serv
 
 * [Architectural Decision Records (ADR)](docs/decisions)
 * [Runbooks](docs/runbooks)
+* [C4 Diagrams](docs/uml)
+
+## Architecture
+
+### C1 System Context Diagram
+
+![C1 System Context Diagram](docs/uml/images/c1_system_context.png)
+
+### C2 Container Level Diagram
+
+![C2 Container Level Diagram](docs/uml/images/c2_container.png)
 
 ## Development environment setup
 
@@ -33,7 +44,7 @@ dotnet tool update -g dotnet-ef
 The service uses Postgres 13 for the database backing service. It is recommended that you use a pre built docker image for local development. Run the following command to start the container.
 
 ```
-docker run --name ntp -e POSTGRES_PASSWORD=<LOCAL_DEV_PASSWORD> -p 5432:5432 -d postgres:13
+docker run --name find-a-tuition-partner-postgres-db -e POSTGRES_PASSWORD=<LOCAL_DEV_PASSWORD> -p 5432:5432 -d postgres:13
 ```
 
 Please note that you will need to start the container from the Docker Desktop container tab every time you restart your machine.
@@ -41,7 +52,7 @@ Please note that you will need to start the container from the Docker Desktop co
 You will need to register the database connection string for local development as a .NET user secret with the following command.
 
 ```
-dotnet user-secrets set "ConnectionStrings:NtpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=ntp" -p UI
+dotnet user-secrets set "ConnectionStrings:FatpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=fatp" -p UI
 ```
 
 You will also need to set the current data encryption key used to encrypt the data files in order to import them locally. Ask the other developers for the latest encryption key and add it as a .NET user secret with the following command.
@@ -83,6 +94,32 @@ dotnet run --project UI
 ```
 
 You can then access the application on [https://localhost:7036/](https://localhost:7036/)
+
+## Logging and Metrics
+
+The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a TCP sink for logit.io data source integration.
+
+### logit.io
+
+[logit.io](logit.io) provides the ELK stack (Elasticsearch, Logstash, and Kibana) and Grafana as a service. The service ships logs to the find a tuition partner stack in the NTP account which is what new developers and analysts should request access to.
+
+Log interrogation is provided by OpenSearch and metrics dashboards are configured in Grafana. logit.io provides alerting within its service however Grafana can also be configured to send alerts if required.
+
+If you need to test logit.io integration from your development environment, use the following command to add the neccessary user secret:
+
+```
+dotnet user-secrets set "AppLogging:TcpSinkUri" "<TLS_URL>" -p UI
+```
+
+### Google Analytics (GA4)
+
+Google Analytics is used to track service traffic and usage. There is a separate property per environment with an associated data stream and therefore measurement id.
+
+If you need to test Google Analytics integration from your development environment, use the following command to add the neccessary user secret:
+
+```
+dotnet user-secrets set "GoogleAnalytics:MeasurementId" "<MEASUREMENT_ID>" -p UI
+```
 
 ## Testing
 

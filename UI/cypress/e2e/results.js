@@ -23,8 +23,10 @@ Then("they will see all the subjects for {string}", keystage => {
 
         const subjects = allSubjects[element]
 
-        cy.get(`[data-testid=${kebabCase(keystage)}]`)
-        .parent().parent()
+        cy.get(`[data-testid=${kebabCase(element)}]`)
+            .should('not.have.class', 'js-closed')
+
+        cy.get(`[data-testid=${kebabCase(element)}]`)
         .within(() =>
         {
             cy.get('[data-testid="subject-name"]').each((item, index) => {
@@ -35,25 +37,29 @@ Then("they will see all the subjects for {string}", keystage => {
     });
 });
 
-Then("they will see a collapsed subject filter for {string}}", keystage => {
+Then("they will see a collapsed subject filter for {string}", keystage => {
     const stages = keystage.split(',').map(s => s.trim());
-    
     stages.forEach(element => {
+        cy.get(`[data-testid=${kebabCase(element)}]`).
+            should('have.class', 'js-closed')
+    });
+});
 
-        const subjects = allSubjects[element]
-
-        cy.get(`[data-testid=${kebabCase(keystage)}]`)
-        .parent().parent()
-        .within(() =>
-        {
-            cy.get('[data-testid="subject-name"]').each((item, index) => {
-                cy.wrap(item).should('contain.text', subjects[index])
-            });
-        });
-
+Then("they will see an expanded subject filter for {string}", keystage => {
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`[data-testid=${kebabCase(element)}]`).
+            should('not.have.class', 'js-closed')
     });
 });
 
 Then("they will see the tuition type {string} is selected", tutionType => {
     cy.get(`input[id="${kebabCase(tutionType)}"]`).should('be.checked');
 });
+
+When("they click on the option heading for {string}", keystage => {
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`#option-select-title-${kebabCase(element)}`).click()
+    });
+})

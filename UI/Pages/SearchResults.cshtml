@@ -1,4 +1,5 @@
 ﻿@page
+@using UI.Pages.Shared
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
@@ -29,24 +30,16 @@
 			<div class="app-results-filter" data-module="results-filter">
 				<h2 class="govuk-heading-m">Filter results</h2>
 				
+
 				@foreach (var item in Model.Data.AllSubjects.Keys)
 				{
-					<govuk-checkboxes asp-for="Data.Subjects" class="govuk-checkboxes--small govuk-!-margin-0">
-						<govuk-checkboxes-fieldset>
-							<govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-								@item.DisplayName()
-							</govuk-checkboxes-fieldset-legend>
-						</govuk-checkboxes-fieldset>
-							@foreach (var subject in Model.Data.AllSubjects[item])
-							{
-								var value = $"{item}-{subject.Name}";
-								<govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected">@subject.Name</govuk-checkboxes-item>
-							}
-					</govuk-checkboxes>
+					<partial name="_OptionsSelect" model="@(new OptionsSelectModel(
+						item.ToString().ToSeoUrl(),
+						item.DisplayName(),
+						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected))
+						)) "/>
 				}
-					
-				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
+				
 				<govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small">
 					<govuk-radios-fieldset>
 						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">

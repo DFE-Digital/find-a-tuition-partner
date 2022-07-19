@@ -4,6 +4,7 @@ using Application.Extraction;
 using Application.Factories;
 using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
+using Infrastructure.Constants;
 using Infrastructure.Extraction;
 using Infrastructure.Factories;
 using Infrastructure.Repositories;
@@ -55,7 +56,7 @@ public static class ServiceCollectionExtensions
             }
         }
 
-        return configuration.GetConnectionString("NtpDatabase");
+        return configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString);
     }
 
     public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
