@@ -22,7 +22,7 @@
                     <h2 class="govuk-heading-m">@item.DisplayName() subjects</h2>
 
                     <govuk-checkboxes asp-for="Subjects">
-                        @foreach (var subject in Model.Subjects[item])
+                        @foreach (var subject in Model.Subjects[item].OrderBy(x=> x.Name))
                         {
 	                        var value = $"{item}-{subject.Name}";
                             <govuk-checkboxes-item id="@value.ToSeoUrl()" value="@value" checked="@subject.Selected" data-testid="subject-name">@subject.Name</govuk-checkboxes-item>
