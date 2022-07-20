@@ -36,12 +36,20 @@ Then("the tuition partner pricing table is displayed", () => {
         .should('exist');
 });
 
-Then("the tuition partner full pricing table is not displayed", () => {
-    cy.get('[data-testid="full-pricing-table"]')
-        .should('not.exist');
+Then("the tuition partner full pricing tables are not displayed", () => {
+    for (let i = 1; i < 5; i++) {
+        cy.get(`[data-testid="full-pricing-table-in-school-key-stage-${i}"]`)
+            .should('not.exist');
+        cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`)
+            .should('not.exist');
+    }    
 });
 
-Then("the tuition partner full pricing table is displayed", () => {
-    cy.get('[data-testid="full-pricing-table"]')
-        .should('exist');
+Then("the tuition partner full pricing tables are displayed", () => {
+    for (let i = 1; i < 5; i++) {
+        cy.get(`[data-testid="full-pricing-table-in-school-key-stage-${i}"]`)
+            .should('exist');
+        cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`)
+            .should('exist');
+    }
 });

@@ -34,7 +34,7 @@ public class TuitionPartner : PageModel
         if (query.Id != seoUrl)
         {
             _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
-            return RedirectToPage(new { Id = seoUrl });
+            return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
         Data = await _mediator.Send(query);
@@ -50,12 +50,32 @@ public class TuitionPartner : PageModel
     }
 
     public record Query(
-        string Id,
-        [FromQuery(Name = "show-locations-covered")]
-        bool ShowLocationsCovered = false,
-        [FromQuery(Name = "show-full-pricing")]
-        bool ShowFullPricing = false)
-        : IRequest<Command?>;
+            string Id,
+            [FromQuery(Name = "show-locations-covered")]
+            bool ShowLocationsCovered = false,
+            [FromQuery(Name = "show-full-pricing")]
+            bool ShowFullPricing = false)
+        : IRequest<Command?>
+    {
+        public Dictionary<string, string> ToRouteData()
+        {
+            var dictionary = new Dictionary<string, string>();
+
+            dictionary[nameof(Id)] = Id;
+
+            if (ShowLocationsCovered)
+            {
+                dictionary["show-locations-covered"] = "true";
+            }
+
+            if (ShowFullPricing)
+            {
+                dictionary["show-full-pricing"] = "true";
+            }
+
+            return dictionary;
+        }
+    }
 
     public record Command(
         string Name, string Description, string[] Subjects,
