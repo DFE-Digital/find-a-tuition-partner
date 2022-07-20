@@ -63,21 +63,35 @@
 					    </ul>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
-				@foreach (var item in Model.Data.LocalAuthorityDistricts)
-				{
-					<govuk-summary-list-row data-testid="locations-covered-table">
-						<govuk-summary-list-row-key>
-							Local authority district(s) @item.Key.Name
-						</govuk-summary-list-row-key>
-						<govuk-summary-list-row-value>
-							@string.Join(", ", item.Value)
-						</govuk-summary-list-row-value>
-					</govuk-summary-list-row>
-				}
 		    </govuk-summary-list>
 	    </div>
-
-	    <div>
+		
+	    <table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
+		    <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
+		    <thead class="govuk-table__head">
+		    <tr class="govuk-table__row">
+			    <th scope="col" class="govuk-table__header">Region</th>
+			    <th scope="col" class="govuk-table__header">LAD code</th>
+			    <th scope="col" class="govuk-table__header">LAD name</th>
+			    <th scope="col" class="govuk-table__header">In school</th>
+			    <th scope="col" class="govuk-table__header">Online</th>
+		    </tr>
+		    </thead>
+		    <tbody class="govuk-table__body">
+		    @foreach (var item in Model.Data.LocalAuthorityDistricts)
+		    {
+			    <tr class="govuk-table__row">
+				    <td class="govuk-table__cell">@item.Region</td>
+				    <td class="govuk-table__cell">@item.Code</td>
+				    <td class="govuk-table__cell">@item.Name</td>
+				    <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
+				    <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
+			    </tr>
+		    }
+		    </tbody>
+	    </table>
+    
+		<div>
 		    <h2 class="govuk-heading-m">Tuition cost information</h2>
 
 			<p class="govuk-body">

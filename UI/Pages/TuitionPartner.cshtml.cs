@@ -81,12 +81,12 @@ public class TuitionPartner : PageModel
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address,
-        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts,
+        LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
         Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices);
 
     public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax);
 
-    public record SubjectPrice(string Subject, decimal SchoolPrice, decimal OnlinePrice);
+    public record struct LocalAuthorityDistrictCoverage(string Region, string Code, string Name, bool InSchool, bool Online);
 
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
@@ -123,7 +123,7 @@ public class TuitionPartner : PageModel
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = GetPricing(tp.Prices);
 
-            var lads = GetLocalAuthorityDistricts(request, tp.Id);
+            var lads = await GetLocalAuthorityDistricts(request, tp.Id);
 
             var allPrices = await GetFullPricing(request, tp.Prices);
 
@@ -143,24 +143,35 @@ public class TuitionPartner : PageModel
                 );
         }
 
-        private Dictionary<Domain.TuitionType, string[]> GetLocalAuthorityDistricts(Query request, int tpId)
+        private async Task<LocalAuthorityDistrictCoverage[]> GetLocalAuthorityDistricts(Query request, int tpId)
         {
-            if (!request.ShowLocationsCovered) return new();
+            if (!request.ShowLocationsCovered) return Array.Empty<LocalAuthorityDistrictCoverage>();
 
-            return _db.LocalAuthorityDistrictCoverage
-                .Include(x => x.LocalAuthorityDistrict)
-                .Where(x => x.TuitionPartnerId == tpId)
-                .Where(cov => cov.LocalAuthorityDistrict != null
-                           && cov.LocalAuthorityDistrict.Name != null)
-                .AsEnumerable()
-                .GroupBy(x => x.TuitionType)
-                .ToDictionary(
-                    key => key.Key,
-                    value => value
-                        .Select(cov => cov.LocalAuthorityDistrict.Name)
-                        .Distinct()
-                        .OrderBy(x => x)
-                        .ToArray());
+            var coverage = await _db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
+                .ToArrayAsync();
+
+            var coverageDictionary = coverage
+                .GroupBy(e => e.TuitionTypeId)
+                .ToDictionary(e => (TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
+
+            var regions = await _db.Regions
+                .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
+                .OrderBy(e => e.Name)
+                .ToDictionaryAsync(e => e, e => e.LocalAuthorityDistricts);
+
+            var result = new Dictionary<int, LocalAuthorityDistrictCoverage>();
+
+            foreach (var (region, lads) in regions)
+            {
+                foreach (var lad in lads)
+                {
+                    var inSchool = coverageDictionary.ContainsKey(TuitionType.InSchool) && coverageDictionary[TuitionType.InSchool].ContainsKey(lad.Id);
+                    var online = coverageDictionary.ContainsKey(TuitionType.Online) && coverageDictionary[TuitionType.Online].ContainsKey(lad.Id);
+                    result[lad.Id] = new LocalAuthorityDistrictCoverage(region.Name, lad.Code, lad.Name, inSchool, online);
+                }
+            }
+
+            return result.Values.ToArray();
         }
 
         private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
