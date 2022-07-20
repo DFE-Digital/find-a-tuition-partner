@@ -1,14 +1,33 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
+import { kebabCase, camelCaseKeyStage } from "../support/utils";
+
+const KeyStageSubjects = input => 
+    input.split(',')
+         .map(s => s.trim())
+         .map(s =>
+        {
+            const endOfKs = s.lastIndexOf(' ');
+            const ks = camelCaseKeyStage(s.slice(0, endOfKs));
+            const subj = s.slice(endOfKs + 1, s.length);
+            return `${ks}-${subj}`;
+        })
+        .join(',');
 
 Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
     cy.visit(`/tuition-partner/${name}`);
 });
 
-Given("a user has arrived on the 'Tuition Partner' page for {string} after entering search details", name => {
-    cy.visit(`/search-results?Data.Subjects=KeyStage1-English&Data.TuitionType=Any&Data.Postcode=sk11eb`);
+Given("a user has arrived on the 'Tuition Partner' page for {string} after searching for {string}", (name, subjects) => {
+
+    cy.visit(`/search-results?Data.Subjects=${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=sk11eb`);
     cy.get('.govuk-link').contains(name).click();
 });
-  
+
+Given("a user has arrived on the 'Tuition Partner' page for {string} after entering search details for multiple subjects", name => {
+    cy.visit(`/search-results?Data.Subjects=KeyStage1-English&Data.Subjects=KeyStage1-Maths&Data.TuitionType=Any&Data.Postcode=sk11eb`);
+    cy.get('.govuk-link').contains(name).click();
+});
+
 When("the home page is selected", () => {
     cy.get('[data-testid="home-link"]').click();
 });
@@ -30,6 +49,10 @@ Then("TP has provided full contact details", () => {
 
 Then("the search details are correct", () => {
     cy.location('search').should('eq', '?Postcode=sk11eb&TuitionType=Any&Subjects=KeyStage1-English');
+});
+
+Then("the search details include {string}", subjects => {
+    cy.location('search').should('eq', `?Postcode=sk11eb&TuitionType=Any&Subjects=${KeyStageSubjects(subjects)}`);
 });
 
 Then("the quality assured tuition partner details are hidden", () => {

@@ -1,22 +1,11 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase } from "../support/utils";
+import { kebabCase, camelCaseKeyStage } from "../support/utils";
         
 const allSubjects = {
     "Key stage 1": [ "English", "Maths", "Science"],
     "Key stage 2": [ "English", "Maths", "Science"],
     "Key stage 3": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"],
     "Key stage 4": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"]
-}
-
-function CamelCaseKeyStage(s)
-{
-    switch (s) {
-    case 'Key stage 1': return 'KeyStage1';
-    case 'Key stage 2': return 'KeyStage2';
-    case 'Key stage 3': return 'KeyStage3';
-    case 'Key stage 4': return 'KeyStage4';
-    default: return '';
-    }
 }
 
 Given("a user has arrived on the 'Which key stages' page", () => {
@@ -28,7 +17,7 @@ Given("a user has arrived on the 'Which key stages' page for postcode {string}",
 });
 
 Given("a user has arrived on the 'Which subjects' page for {string}", keystage => {
-    const query = keystage.split(',').map(s => `KeyStages=${CamelCaseKeyStage(s.trim())}`).join('&');
+    const query = keystage.split(',').map(s => `KeyStages=${camelCaseKeyStage(s.trim())}`).join('&');
     cy.visit(`/which-subjects?${query}`);
 });
 
