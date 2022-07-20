@@ -7,6 +7,7 @@ using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
@@ -91,7 +92,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
+    }
+});
 
 app.UseRouting();
 

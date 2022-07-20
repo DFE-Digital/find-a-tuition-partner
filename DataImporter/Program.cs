@@ -42,6 +42,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
+        .AddLogging()
         .Build();
 
     await host.RunAsync();
