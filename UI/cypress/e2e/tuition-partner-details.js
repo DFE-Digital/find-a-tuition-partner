@@ -49,7 +49,12 @@ Then("the tuition partners website link exist", () => {
 });
 
 Then("the funding guidance page is accessible", () => {
-    cy.get('[data-testid=funding-guidance]').then(function ($a) {
+    cy.get('[data-testid=funding-guidance-1]').then(function ($a) {
+        const href = $a.prop('href');
+        cy.request(href).its('body').should('include', '</html>');
+    })
+
+    cy.get('[data-testid=funding-guidance-2]').then(function ($a) {
         const href = $a.prop('href');
         cy.request(href).its('body').should('include', '</html>');
     })
