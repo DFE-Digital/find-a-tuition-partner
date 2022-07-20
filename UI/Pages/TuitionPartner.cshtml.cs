@@ -59,10 +59,9 @@ public class TuitionPartner : PageModel
 
     public record Command(
         string Name, string Description, string[] Subjects,
-        string[] TuitionTypes, string[] Ratios, SubjectPrice[] Prices,
+        string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address,
-        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts,
-        Dictionary<int, GroupPrice> AllPrices);
+        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts);
 
     public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax);
 
@@ -101,12 +100,10 @@ public class TuitionPartner : PageModel
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
             var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = tp.Prices.Where(x => x.GroupSize == 3).GroupBy(x => x.Subject).Select(x =>
-                new SubjectPrice($"{x.Key.KeyStage.Name} - {x.Key.Name}", x.MaxBy(y => y.HourlyRate)?.HourlyRate ?? 0));
+            var prices = GetPricing(tp.Prices);
 
             var lads = GetLocalAuthorityDistricts(request, tp.Id);
 
-            var allprices = GetFullPricing(request, tp.Prices);
 
             return new(
                 tp.Name,
@@ -114,13 +111,12 @@ public class TuitionPartner : PageModel
                 subjects.ToArray(),
                 types.ToArray(),
                 ratios.ToArray(),
-                prices.ToArray(),
+                prices,
                 tp.Website,
                 tp.PhoneNumber,
                 tp.Email,
                 tp.Address,
-                lads,
-                allprices
+                lads
                 );
         }
 
@@ -144,10 +140,8 @@ public class TuitionPartner : PageModel
                         .ToArray());
         }
 
-        private static Dictionary<int, GroupPrice> GetFullPricing(Query request, ICollection<Price> prices)
+        private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
         {
-            if (!request.ShowFullPricing) return new();
-
             return prices
                 .GroupBy(x => x.GroupSize)
                 .ToDictionary(

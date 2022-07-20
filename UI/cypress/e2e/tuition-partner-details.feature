@@ -21,6 +21,7 @@ Feature: User can view full details of a Tuition Parner
   Scenario: Don’t show empty fields where TP has not provided information
     Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
     Then TP has not provided the information in the 'Address' section
+
   Scenario: locations covered table is not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
     Then the tuition partner locations covered table is not displayed
@@ -32,6 +33,7 @@ Feature: User can view full details of a Tuition Parner
   Scenario: Show Contact Details where TP has provided information
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
     Then TP has provided full contact details
+
   Scenario: locations covered table is displayed when show-locations-covered=true
     Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
     When they set the 'show-locations-covered' query string parameter value to 'true'
@@ -40,9 +42,11 @@ Feature: User can view full details of a Tuition Parner
   Scenario: full pricing table is not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
     Then the tuition partner full pricing table is not displayed
+    And the tuition partner pricing table is displayed
 
   Scenario: full pricing table is displayed when show-full-pricing=true
     Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
     When they set the 'show-full-pricing' query string parameter value to 'true'
     Then the tuition partner full pricing table is displayed
+    And the tuition partner pricing table is displayed
 

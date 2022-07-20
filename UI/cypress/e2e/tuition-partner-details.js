@@ -26,6 +26,16 @@ Then("the tuition partner locations covered table is displayed", () => {
         .should('exist');
 });
 
+Then("the tuition partner pricing table is not displayed", () => {
+    cy.get('[data-testid="pricing-table"]')
+        .should('not.exist');
+});
+
+Then("the tuition partner pricing table is displayed", () => {
+    cy.get('[data-testid="pricing-table"]')
+        .should('exist');
+});
+
 Then("the tuition partner full pricing table is not displayed", () => {
     cy.get('[data-testid="full-pricing-table"]')
         .should('not.exist');
