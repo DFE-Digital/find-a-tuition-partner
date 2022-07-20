@@ -60,9 +60,5 @@ public static class SearchModelAsQueryStringDictionary
         };
 
     private static string BuildQueryString<T>(IEnumerable<T> data, string name)
-    {
-        var first = data.Take(1).Select(x => x?.ToString());
-        var rest = data.Skip(1).Select(x => $"{name}={x}");
-        return string.Join("&", first.Union(rest));
-    }
+        => string.Join(",", data);
 }

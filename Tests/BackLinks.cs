@@ -35,7 +35,7 @@ public class BackLinks
         var result = model.ToRouteData();
 
         result.Should().ContainKey("KeyStages")
-            .WhoseValue.Should().Be("KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3");
+            .WhoseValue.Should().Be("KeyStage1,KeyStage2,KeyStage3");
     }
 
     [Fact]

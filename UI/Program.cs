@@ -51,6 +51,7 @@ builder.Services.AddControllers(options =>
     {
         options.Conventions.Add(new RouteTokenTransformerConvention(new SeoRouteConvention()));
         options.Filters.Add<FluentValidationExceptionAttribute>();
+        options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory(","));
     })
     .AddJsonOptions(options =>
     {
