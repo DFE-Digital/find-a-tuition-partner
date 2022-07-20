@@ -31,6 +31,10 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 Description = "A Tuition Partner Description",
                 PhoneNumber = "0123456789",
                 Email = "ntp@a-tuition-partner.testdata",
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, LocalAuthorityDistrictId = 1 }
+                },
                 SubjectCoverage = new List<SubjectCoverage>
                 {
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English },
@@ -120,6 +124,17 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
         result.PhoneNumber.Should().Be("0123456789");
         result.EmailAddress.Should().Be("ntp@a-tuition-partner.testdata");
+    }
+
+    [Fact]
+    public async Task Shows_all_locations()
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("a-tuition-partner", ShowLocationsCovered: true));
+
+        result.Should().NotBeNull();
+        var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
+        coverage.InSchool.Should().BeTrue();
+        coverage.Online.Should().BeFalse();
     }
 
     [Fact]
