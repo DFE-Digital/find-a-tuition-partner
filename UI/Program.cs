@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
@@ -109,6 +110,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapRazorPages();
+
+// Ensure all date and currency formatting is set to UK/GB
+var cultureInfo = new CultureInfo("en-GB");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 app.Run();
 
