@@ -61,11 +61,12 @@ public class TuitionPartner : PageModel
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address,
-        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts);
+        Dictionary<Domain.TuitionType, string[]> LocalAuthorityDistricts,
+        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices);
 
     public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax);
 
-    public record SubjectPrice(string Subject, decimal Price);
+    public record SubjectPrice(string Subject, decimal SchoolPrice, decimal OnlinePrice);
 
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
@@ -104,6 +105,7 @@ public class TuitionPartner : PageModel
 
             var lads = GetLocalAuthorityDistricts(request, tp.Id);
 
+            var allPrices = await GetFullPricing(request, tp.Prices);
 
             return new(
                 tp.Name,
@@ -116,7 +118,8 @@ public class TuitionPartner : PageModel
                 tp.PhoneNumber,
                 tp.Email,
                 tp.Address,
-                lads
+                lads,
+                allPrices
                 );
         }
 
@@ -168,6 +171,39 @@ public class TuitionPartner : PageModel
                 var minMaxForTuition = minMax(pricesForTuition, x => x.HourlyRate);
                 return minMaxForTuition?.HourlyRate;
             }
+        }
+
+        private async Task<Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>>> GetFullPricing(Query request, ICollection<Price> prices)
+        {
+            if (!request.ShowFullPricing) return new();
+
+            var fullPricing = new Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>>();
+
+            foreach (var tuitionType in new[] { TuitionType.InSchool, TuitionType.Online })
+            {
+                fullPricing[tuitionType] = new Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>();
+                foreach (var keyStage in new[] { KeyStage.KeyStage1, KeyStage.KeyStage2, KeyStage.KeyStage3, KeyStage.KeyStage4 })
+                {
+                    fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
+
+                    var keyStageSubjects = await _db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
+                    foreach (var subject in keyStageSubjects)
+                    {
+                        fullPricing[tuitionType][keyStage][subject.Name] = new Dictionary<int, decimal>();
+                    }
+                }
+            }
+
+            foreach (var price in prices)
+            {
+                var tuitionType = (TuitionType)price.TuitionTypeId;
+                var keyStage = (KeyStage)price.Subject.KeyStageId;
+                var subjectName = price.Subject.Name;
+
+                fullPricing[tuitionType][keyStage][subjectName][price.GroupSize] = price.HourlyRate;
+            }
+
+            return fullPricing;
         }
     }
 }
