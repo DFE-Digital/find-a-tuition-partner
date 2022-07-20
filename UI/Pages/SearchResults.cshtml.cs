@@ -8,6 +8,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using UI.Extensions;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
@@ -19,9 +20,11 @@ public class SearchResults : PageModel
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
-
+    
     public async Task OnGet(Query Data)
     {
+        TempData.Set("AllSearchData", Data);
+
         Data.TuitionType ??= TuitionType.Any; 
         this.Data = await mediator.Send(Data);
         if (!this.Data.Validation.IsValid)
