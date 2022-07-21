@@ -24,10 +24,9 @@
 				The tuition partners shown on this service have been through a quality assurance process by the Department for Education. This process is to ensure quality tuition is delivered and includes safeguarding checks.
 			</govuk-details-text>
 		</govuk-details>
-		<form method="post"  style="background-color:#E8E8E8 !important;">
-			<div class="govuk-grid-column-full" style="background-color:#E8E8E8 !important;">
-				<BR>
-		    <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
+		<form method="post" >
+			<div class="app-option-card">
+				    <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
 			<govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
 				<govuk-input-label></govuk-input-label>
 				<govuk-input-hint>Enter your school’s postcode</govuk-input-hint>
@@ -35,23 +34,24 @@
 			<div class="govuk-button-group">
 				<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
 			</div>
-			</div>
+				</div>
 		</form>
 		 <h2 class="govuk-heading-m">Other tutoring options</h2>
 		 	<p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options. </p>
-			 	<div class="govuk-grid-column-one-half" style="background-color:#E8E8E8 !important;">
-					 <BR>
-					  <h2 class="govuk-heading-m">Academic mentors</h2>
+			 	<div class="govuk-grid-column-one-third govuk-!-padding-0">
+					 <div class="app-option-card">
+		<h2 class="govuk-heading-m">Academic mentors</h2>
 					  <p class="govuk-body">Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition. </p>
-					  <govuk-button type="submit" >Read more</govuk-button>
+		<a class="govuk-button govuk-!-margin-bottom-0" href="/academic-mentors">Read more</a>
+		</div>
 					 </div>
-					<div class="govuk-grid-column-one-half" style="background-color:#E8E8E8 !important;">
-					 <BR>
-					  <h2 class="govuk-heading-m">School-led tutoring</h2>
+					 	 	<div class="govuk-grid-column-one-third govuk-!-padding-0">
+					 <div class="app-option-card">
+		  <h2 class="govuk-heading-m">School-led tutoring</h2>
 					  <p class="govuk-body">Select and employ teaching staff as tutors, including current members of staff, retired teachers, returning teachers or supply teachers. </p>
-					  <govuk-button type="submit" >Read more</govuk-button>
+		<a class="govuk-button govuk-!-margin-bottom-0" href="/school-led-tutoring">Read more</a>
+		</div>
 					 </div>
-
 	</div>
 	<div class="govuk-grid-column-one-third">
 			<h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
