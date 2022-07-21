@@ -45,7 +45,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("KeyStage");
+                    b.ToTable("KeyStage", (string)null);
 
                     b.HasData(
                         new
@@ -102,7 +102,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("LocalAuthority");
+                    b.ToTable("LocalAuthority", (string)null);
 
                     b.HasData(
                         new
@@ -1204,7 +1204,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("LocalAuthorityDistricts");
+                    b.ToTable("LocalAuthorityDistricts", (string)null);
 
                     b.HasData(
                         new
@@ -3708,7 +3708,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId");
 
-                    b.ToTable("LocalAuthorityDistrictCoverage");
+                    b.ToTable("LocalAuthorityDistrictCoverage", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -3744,7 +3744,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionTypeId");
 
-                    b.ToTable("Prices");
+                    b.ToTable("Prices", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Region", b =>
@@ -3770,7 +3770,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("Regions");
+                    b.ToTable("Regions", (string)null);
 
                     b.HasData(
                         new
@@ -3857,22 +3857,22 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
                             KeyStageId = 1,
-                            Name = "English",
-                            SeoUrl = "key-stage-1-english"
+                            Name = "Literacy",
+                            SeoUrl = "key-stage-1-literacy"
                         },
                         new
                         {
                             Id = 2,
                             KeyStageId = 1,
-                            Name = "Maths",
-                            SeoUrl = "key-stage-1-maths"
+                            Name = "Numeracy",
+                            SeoUrl = "key-stage-1-numeracy"
                         },
                         new
                         {
@@ -3885,21 +3885,21 @@ namespace Infrastructure.Migrations
                         {
                             Id = 4,
                             KeyStageId = 2,
-                            Name = "English",
-                            SeoUrl = "key-stage-2-english"
+                            Name = "Literacy",
+                            SeoUrl = "key-stage-2-literacy"
                         },
                         new
                         {
                             Id = 5,
                             KeyStageId = 2,
-                            Name = "Maths",
-                            SeoUrl = "key-stage-2-maths"
+                            Name = "Numeracy",
+                            SeoUrl = "key-stage-2-numeracy"
                         },
                         new
                         {
                             Id = 6,
                             KeyStageId = 2,
-                            Name = "English",
+                            Name = "Literacy",
                             SeoUrl = "key-stage-2-science"
                         },
                         new
@@ -4001,7 +4001,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "TuitionTypeId", "SubjectId");
 
-                    b.ToTable("SubjectCoverage");
+                    b.ToTable("SubjectCoverage", (string)null);
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
@@ -4065,7 +4065,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionPartners");
+                    b.ToTable("TuitionPartners", (string)null);
                 });
 
             modelBuilder.Entity("Domain.TuitionType", b =>
@@ -4091,7 +4091,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionTypes");
+                    b.ToTable("TuitionTypes", (string)null);
 
                     b.HasData(
                         new
@@ -4124,7 +4124,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("DataProtectionKeys", (string)null);
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
