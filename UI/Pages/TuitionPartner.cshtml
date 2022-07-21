@@ -13,7 +13,7 @@
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
         <p class="govuk-body">@Model.Data.Description</p>
 
-		<govuk-details>
+		<govuk-details data-testid="qatp-details">
 			<govuk-details-summary>
 				What is a quality assured tuition partner?
 			</govuk-details-summary>
@@ -98,18 +98,20 @@
 			<p class="govuk-body">
 				Each Pupil Premium (PP) eligible student will receive £162. This funding cost has been calculated
 				so you will have 60% of the cost covered for up to £18 per pupil per hour. For more information on
-				tuition cost, you can see our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" class="govuk-link">funding guidance</a>.
+				tuition cost, you can see our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" class="govuk-link" data-testid="funding-guidance-1">funding guidance</a>.
 			</p>
 
 			<p>
-				<govuk-details>
+				<govuk-details data-testid="payment-details">
 					<govuk-details-summary>
 						How much will I pay?
 					</govuk-details-summary>
 					<govuk-details-text>
-						<p class="govuk-body"><strong>Example:</strong></p>
-						<p class="govuk-body">If you spend £15 per pupil per hour, the government will cover 60% of the cost.</p>
-						<p class="govuk-body">If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest.</p>
+						<strong>Example:</strong>
+						 <ul class="govuk-list govuk-list--bullet">
+						   <li>If you spend £15 per pupil per hour, the government will cover 60% of the cost</li>
+						   <li>If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest</li>
+					    </ul>
 					</govuk-details-text>
 				</govuk-details>
 			</p>
@@ -196,7 +198,7 @@
 				Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
 			</p>
 			<p class="govuk-body">
-				For help on how to report your tuition costs and get your 60% subsidy, you can see our <link>funding guidance.
+				For help on how to report your tuition costs and get your 60% subsidy, you can see our <a href="https://www.gov.uk/government/publications/national-tutoring-programme-ntp/national-tutoring-programme-ntp#ntp-funding-for-2022-to-2023" class="govuk-link" data-testid="funding-guidance-2">funding guidance</a>.
 			</p>
 
 		    <govuk-summary-list data-testid="contact-details">
@@ -205,7 +207,7 @@
 					    Website
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    <a href="@Model.Data.Website" class="govuk-link" target="_blank">@Model.Data.Website</a>
+					    <a href="@Model.Data.Website" class="govuk-link" target="_blank" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
 				@if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
@@ -236,7 +238,12 @@
 							Address
 						</govuk-summary-list-row-key>
 						<govuk-summary-list-row-value>
-							@Model.Data.Address
+							<ul class="govuk-list govuk-body-s">
+								@foreach (var addressItem in @Model.Data.Address.Split(','))
+								{
+									<li class="govuk-body">@addressItem</li>
+								}
+							</ul>
 						</govuk-summary-list-row-value>
 					</govuk-summary-list-row>
 				}
