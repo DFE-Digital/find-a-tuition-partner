@@ -35,13 +35,13 @@ Feature: User can view full details of a Tuition Parner
     When the home page is selected
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: Back is selected return to search results page
+  Scenario: back is selected return to search results page
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English'
     When they click 'Back'
     Then the page URL ends with '/search-results'
     And the search details include 'Key stage 1 English'
 
-  Scenario: Back is selected return to search results page with multiple subjects
+  Scenario: back is selected return to search results page with multiple subjects
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English, Key stage 2 Maths'
     When they click 'Back'
     Then the page URL ends with '/search-results'
