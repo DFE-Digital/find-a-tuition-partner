@@ -1,5 +1,3 @@
-using System.Globalization;
-using System.Text.Json.Serialization;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
@@ -8,7 +6,8 @@ using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.StaticFiles.Infrastructure;
+using System.Globalization;
+using System.Text.Json.Serialization;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
@@ -118,4 +117,5 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{ }

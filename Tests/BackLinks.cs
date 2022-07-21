@@ -9,16 +9,16 @@ public class BackLinks
     public void Construct_querystring_from_string_property()
     {
         var model = new SearchModel { Postcode = "AB1 2CD" };
-        var result = model.ToRouteData();
-        result.Should().ContainKey("Postcode").WhoseValue.Should().Be("AB1 2CD");
+        var result = model.ToQueryString();
+        result.Should().Be("Postcode=AB1 2CD");
     }
 
     [Fact]
     public void Construct_querystring_from_array_property_with_one_item()
     {
         var model = new SearchModel { Subjects = new[] { "first" } };
-        var result = model.ToRouteData();
-        result.Should().ContainKey("Subjects").WhoseValue.Should().Be("first");
+        var result = model.ToQueryString();
+        result.Should().Be("Subjects=first");
     }
 
     [Fact]
@@ -32,17 +32,16 @@ public class BackLinks
             }
         };
 
-        var result = model.ToRouteData();
+        var result = model.ToQueryString();
 
-        result.Should().ContainKey("KeyStages")
-            .WhoseValue.Should().Be("KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3");
+        result.Should().Be("KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3");
     }
 
     [Fact]
     public void Construct_querystring_from_array_property_with_null_item()
     {
         var model = new SearchModel { Subjects = new string[] { null! } };
-        var result = model.ToRouteData();
+        var result = model.ToQueryString();
         result.Should().BeEmpty();
     }
 
@@ -56,20 +55,16 @@ public class BackLinks
             Subjects = null,
         };
 
-        var result = model.ToRouteData();
+        var result = model.ToQueryString();
 
-        result.Should().BeEquivalentTo(new Dictionary<string, string>
-        {
-            { "Postcode", "AB1 2CD" },
-            { "KeyStages", "KeyStage1" },
-        });
+        result.Should().Be("Postcode=AB1 2CD&KeyStages=KeyStage1");
     }
 
     [Fact]
     public void Construct_querystring_from_tutor_type()
     {
         var model = new SearchModel { TuitionType = TuitionType.Online };
-        var result = model.ToRouteData();
-        result.Should().ContainKey("TuitionType").WhoseValue.Should().Be("Online");
+        var result = model.ToQueryString();
+        result.Should().Be("TuitionType=Online");
     }
 }

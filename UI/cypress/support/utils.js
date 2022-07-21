@@ -5,3 +5,14 @@ export const kebabCase = string => string
 
 export const removeWhitespace = string =>
         string.trim().replace(/\s/, '')
+
+export const  camelCaseKeyStage = s => {
+        switch (s) {
+        case 'Key stage 1': return 'KeyStage1';
+        case 'Key stage 2': return 'KeyStage2';
+        case 'Key stage 3': return 'KeyStage3';
+        case 'Key stage 4': return 'KeyStage4';
+        default: return '';
+        }
+}
+        
