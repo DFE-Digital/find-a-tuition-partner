@@ -9,9 +9,9 @@ const KeyStageSubjects = input =>
             const endOfKs = s.lastIndexOf(' ');
             const ks = camelCaseKeyStage(s.slice(0, endOfKs));
             const subj = s.slice(endOfKs + 1, s.length);
-            return `${ks}-${subj}`;
+            return `Data.Subjects=${ks}-${subj}`;
         })
-        .join(',');
+        .join('&');
 
 Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
     cy.visit(`/tuition-partner/${name}`);
@@ -19,7 +19,7 @@ Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
 
 Given("a user has arrived on the 'Tuition Partner' page for {string} after searching for {string}", (name, subjects) => {
 
-    cy.visit(`/search-results?Data.Subjects=${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=sk11eb`);
+    cy.visit(`/search-results?${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=sk11eb`);
     cy.get('.govuk-link').contains(name).click();
 });
 
@@ -52,7 +52,9 @@ Then("the search details are correct", () => {
 });
 
 Then("the search details include {string}", subjects => {
-    cy.location('search').should('eq', `?Postcode=sk11eb&TuitionType=Any&Subjects=${KeyStageSubjects(subjects)}`);
+    subjects.split(',').forEach(element => {
+        cy.get(`input[id="${kebabCase(element.trim())}"]`).should('be.checked');
+    });
 });
 
 Then("the quality assured tuition partner details are hidden", () => {

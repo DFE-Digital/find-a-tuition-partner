@@ -4,7 +4,7 @@
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
 }
 
-<govuk-back-link asp-page="@nameof(Index)" asp-all-route-data="Model.Data.ToRouteData()" />
+<govuk-back-link href="/?@Model.Data.ToQueryString()" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
