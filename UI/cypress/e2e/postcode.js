@@ -5,7 +5,7 @@ Given("a user has tried to continue without entering a postcode", () => {
   Step(this, "they click 'Continue'");
 });
 
-When("they click 'What is a quality assured tuition partner?'", () => {
+When("they click 'What is a quality-assured tuition partner?'", () => {
   cy.get('[data-testid="qatp-details"]').click();
 });
 

@@ -5,8 +5,7 @@
 	ViewData["AllowIndexing"] = true;
 }
 
-<div class="govuk-width-container">
-<main class="govuk-main-wrapper">
+
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<govuk-error-summary>
@@ -27,8 +26,7 @@
 			<div class="app-option-card">
 				    <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
 			<govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
-				<govuk-input-label></govuk-input-label>
-				<govuk-input-hint>Enter your school’s postcode</govuk-input-hint>
+				<govuk-input-label>Enter your school’s postcode</govuk-input-label>
 			</govuk-input>
 			<div class="govuk-button-group">
 				<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
@@ -56,6 +54,4 @@
 			<h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
 			<p class="govuk-body"><a href="#" class="govuk-link">Funding and reporting</a>.</p>
 			</div>
-</div>
- </main>
 </div>
