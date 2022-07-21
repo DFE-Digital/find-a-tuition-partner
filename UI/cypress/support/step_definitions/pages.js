@@ -1,7 +1,19 @@
-import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
     cy.visit("/");
+});
+
+When("they set the {string} query string parameter value to {string}", (key, value) => {
+    cy.location('pathname').then((pathName) => {
+        const separator = pathName.includes('?') === true ? '&' : '?';
+        const url = `${pathName}${separator}${key}=${value}`;
+        cy.visit(url);
+    });
+});
+
+Then("they will be taken to the 'Compare national tutoring options' page", () => {
+    cy.location('pathname').should('eq', '/options');
 });
 
 Then("they will be taken to the 'Find a tuition partner' journey start page", () => {

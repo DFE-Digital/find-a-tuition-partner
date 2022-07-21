@@ -57,7 +57,25 @@ Feature: User can view full details of a Tuition Parner
   
   Scenario: user has access to funding guidance page
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-    Then the funding guidance page is accessible
+    Then the funding guidance page is accessible  
   
-  
-  
+  Scenario: locations covered table is not displayed as default
+    Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
+    Then the tuition partner locations covered table is not displayed
+
+  Scenario: locations covered table is displayed when show-locations-covered=true
+    Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
+    When they set the 'show-locations-covered' query string parameter value to 'true'
+    Then the tuition partner locations covered table is displayed
+
+  Scenario: full pricing tables are not displayed as default
+    Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
+    Then the tuition partner full pricing tables are not displayed
+    And the tuition partner pricing table is displayed
+
+  Scenario: full pricing tables are displayed when show-full-pricing=true
+    Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
+    When they set the 'show-full-pricing' query string parameter value to 'true'
+    Then the tuition partner full pricing tables are displayed
+    And the tuition partner pricing table is not displayed
+

@@ -18,7 +18,7 @@ public class SubjectConfiguration : IEntityTypeConfiguration<Subject>
             new Subject {Id = Subjects.Id.KeyStage1Science, SeoUrl = "key-stage-1-science", KeyStageId = KeyStages.Id.One, Name = "Science"},
             new Subject {Id = Subjects.Id.KeyStage2English, SeoUrl = "key-stage-2-english", KeyStageId = KeyStages.Id.Two, Name = "English"},
             new Subject {Id = Subjects.Id.KeyStage2Maths, SeoUrl = "key-stage-2-maths", KeyStageId = KeyStages.Id.Two, Name = "Maths"},
-            new Subject {Id = Subjects.Id.KeyStage2Science, SeoUrl = "key-stage-2-science", KeyStageId = KeyStages.Id.Two, Name = "English"},
+            new Subject {Id = Subjects.Id.KeyStage2Science, SeoUrl = "key-stage-2-science", KeyStageId = KeyStages.Id.Two, Name = "Science" },
             new Subject {Id = Subjects.Id.KeyStage3English, SeoUrl = "key-stage-3-english", KeyStageId = KeyStages.Id.Three, Name = "English"},
             new Subject {Id = Subjects.Id.KeyStage3Humanities, SeoUrl = "key-stage-3-humanities", KeyStageId = KeyStages.Id.Three, Name = "Humanities"},
             new Subject {Id = Subjects.Id.KeyStage3Maths, SeoUrl = "key-stage-3-maths", KeyStageId = KeyStages.Id.Three, Name = "Maths"},

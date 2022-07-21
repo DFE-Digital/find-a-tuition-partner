@@ -66,8 +66,33 @@
 			    </govuk-summary-list-row>
 		    </govuk-summary-list>
 	    </div>
-
-	    <div>
+		
+	    <table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
+		    <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
+		    <thead class="govuk-table__head">
+		    <tr class="govuk-table__row">
+			    <th scope="col" class="govuk-table__header">Region</th>
+			    <th scope="col" class="govuk-table__header">LAD code</th>
+			    <th scope="col" class="govuk-table__header">LAD name</th>
+			    <th scope="col" class="govuk-table__header">In school</th>
+			    <th scope="col" class="govuk-table__header">Online</th>
+		    </tr>
+		    </thead>
+		    <tbody class="govuk-table__body">
+		    @foreach (var item in Model.Data.LocalAuthorityDistricts)
+		    {
+			    <tr class="govuk-table__row">
+				    <td class="govuk-table__cell">@item.Region</td>
+				    <td class="govuk-table__cell">@item.Code</td>
+				    <td class="govuk-table__cell">@item.Name</td>
+				    <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
+				    <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
+			    </tr>
+		    }
+		    </tbody>
+	    </table>
+    
+		<div>
 		    <h2 class="govuk-heading-m">Tuition cost information</h2>
 
 			<p class="govuk-body">
@@ -92,22 +117,80 @@
 			</p>
 		</div>
 
-	    <div>
-		    <h2 class="govuk-heading-m">Cost per subject</h2>
-		    <govuk-summary-list>
-				@foreach(var (subject, price) in Model.Data.Prices)
-				{
-					<govuk-summary-list-row>
-						<govuk-summary-list-row-key>
-							@subject
-						</govuk-summary-list-row-key>
-						<govuk-summary-list-row-value>
-							<strong>£@price.ToString("0.00")</strong> per hour per pupil
-						</govuk-summary-list-row-value>
-					</govuk-summary-list-row>
-				}
-		    </govuk-summary-list>
-		</div>
+	    <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
+		    <caption class="govuk-table__caption govuk-table__caption--m">Tuition cost information</caption>
+		    <thead class="govuk-table__head">
+		    <tr class="govuk-table__row">
+			    <th scope="col" class="govuk-table__header">Tuition group size</th>
+			    <th scope="col" class="govuk-table__header">In school</th>
+			    <th scope="col" class="govuk-table__header">Online</th>
+		    </tr>
+		    </thead>
+		    <tbody class="govuk-table__body">
+		    @foreach (var item in Model.Data.Prices)
+		    {
+			    <tr class="govuk-table__row">
+				    <th scope="row" class="govuk-table__header">1 to @item.Key</th>
+				    @if (item.Value.SchoolMin == item.Value.SchoolMax)
+				    {
+					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.SchoolMin, "{0:C}")</td>
+				    }
+				    else
+				    {
+					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.SchoolMin, "{0:C}") to @Html.FormatValue(item.Value.SchoolMax, "{0:C}")</td>
+				    }
+				    @if (item.Value.OnlineMin == item.Value.OnlineMax)
+				    {
+					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.OnlineMin, "{0:C}")</td>
+				    }
+				    else
+				    {
+					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.OnlineMin, "{0:C}") to @Html.FormatValue(item.Value.OnlineMax, "{0:C}")</td>
+				    }
+			    </tr>
+		    }
+		    </tbody>
+	    </table>
+
+		<h2 class="govuk-heading-m" show-if="@Model.Data.AllPrices.Any()">Tuition cost information</h2>
+
+		@foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
+		{
+		    foreach (var (keyStage, subjects) in keyStages)
+		    {
+			    <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+				    <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
+				    <thead class="govuk-table__head">
+				    <tr class="govuk-table__row">
+					    <th scope="col" class="govuk-table__header">Tuition group size</th>
+					    @foreach (var (subjectName, _) in subjects)
+					    {
+						    <th scope="col" class="govuk-table__header">@subjectName</th>
+					    }
+				    </tr>
+				    </thead>
+				    <tbody class="govuk-table__body">
+				    @for (var groupSize = 1; groupSize < 7; groupSize++)
+				    {
+					    <tr class="govuk-table__row">
+						    <th scope="row" class="govuk-table__header">1 to @groupSize</th>
+						    @foreach (var (_, prices) in subjects)
+						    {
+							    if (prices.TryGetValue(groupSize, out var price))
+							    {
+								    <td class="govuk-table__cell">@Html.FormatValue(price, "{0:C}")</td>
+							    }
+							    else
+							    {
+								    <td class="govuk-table__cell"></td>
+							    }
+						    }
+					    </tr>
+				    }
+				    </tbody>
+			    </table>
+		    }
+		}
 
 	    <div>
 		    <h2 class="govuk-heading-m">Next steps</h2>
@@ -164,7 +247,6 @@
 						</govuk-summary-list-row-value>
 					</govuk-summary-list-row>
 				}
-			   
 		    </govuk-summary-list>
 	    </div>
     </div>

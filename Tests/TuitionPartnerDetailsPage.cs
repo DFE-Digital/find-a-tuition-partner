@@ -2,7 +2,9 @@
 using Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using KeyStage = UI.Pages.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
+using TuitionType = UI.Pages.TuitionType;
 
 namespace Tests;
 
@@ -29,6 +31,10 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 Description = "A Tuition Partner Description",
                 PhoneNumber = "0123456789",
                 Email = "ntp@a-tuition-partner.testdata",
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, LocalAuthorityDistrictId = 1 }
+                },
                 SubjectCoverage = new List<SubjectCoverage>
                 {
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English },
@@ -110,13 +116,44 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Subjects.Should().BeEquivalentTo("Key stage 3 - English and Maths");
         result.TuitionTypes.Should().BeEquivalentTo("In School");
         result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");
-        result.Prices.Should().BeEquivalentTo(new[]
+        result.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
         {
-            new TuitionPartner.SubjectPrice("Key stage 3 - English", 12.34m),
-            new TuitionPartner.SubjectPrice("Key stage 3 - Maths", 56.78m),
+            { 2, new (12.34m, 56.78m, null, null) },
+            { 3, new (12.34m, 56.78m, null, null) }
         });
         result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
         result.PhoneNumber.Should().Be("0123456789");
         result.EmailAddress.Should().Be("ntp@a-tuition-partner.testdata");
+    }
+
+    [Fact]
+    public async Task Shows_all_locations()
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("a-tuition-partner", ShowLocationsCovered: true));
+
+        result.Should().NotBeNull();
+        var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
+        coverage.InSchool.Should().BeTrue();
+        coverage.Online.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Shows_all_prices()
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("a-tuition-partner", ShowFullPricing: true));
+
+        result.Should().NotBeNull();
+        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
+            new Dictionary<int, decimal>
+            {
+                { 2, 12.34m },
+                { 3, 12.34m }
+            });
+        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
+            new Dictionary<int, decimal>
+            {
+                { 2, 56.78m },
+                { 3, 56.78m }
+            });
     }
 }
