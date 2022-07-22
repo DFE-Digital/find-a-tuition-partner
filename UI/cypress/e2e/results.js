@@ -88,5 +88,15 @@ Then("the subjects in the filter displayed in alphabetical order", () => {
     });
 });
 
+Then("the subjects covered by a tuition partner are in alphabetical order", () => {
+   
+    const stages = ['Key stage 1 - English, Maths and Science', 
+                    'Key stage 2 - English, Maths and Science', 
+                    'Key stage 3 - English, Humanities, Maths, Modern Foreign Languages and Science',
+                    'Key stage 4 - English, Humanities, Maths, Modern Foreign Languages and Science'];
 
+    stages.forEach(element => {
+        cy.get('.govuk-list').first().contains(element);
+    });
+});
 

@@ -85,3 +85,6 @@ Feature: User can view full details of a Tuition Parner
     Then the tuition partner full pricing tables are displayed
     And the tuition partner pricing table is not displayed
 
+Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
+    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Then the subjects covered by a tuition partner are in alphabetical order 

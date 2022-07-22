@@ -69,3 +69,7 @@ Feature: User is shown search results
 Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
     Given a user has arrived on the 'Search results' page
     Then the subjects in the filter displayed in alphabetical order 
+
+Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
+    Given a user has arrived on the 'Search results' page
+    Then the subjects covered by a tuition partner are in alphabetical order 
