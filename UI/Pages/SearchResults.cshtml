@@ -36,7 +36,7 @@
 					<partial name="_OptionsSelect" model="@(new OptionsSelectModel(
 						item.ToString().ToSeoUrl(),
 						item.DisplayName(),
-						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected))
+						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name)
 						)) "/>
 				}
 				

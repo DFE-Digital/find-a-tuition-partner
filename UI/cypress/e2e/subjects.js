@@ -4,8 +4,8 @@ import { kebabCase, camelCaseKeyStage } from "../support/utils";
 const allSubjects = {
     "Key stage 1": [ "English", "Maths", "Science"],
     "Key stage 2": [ "English", "Maths", "Science"],
-    "Key stage 3": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"],
-    "Key stage 4": [ "English", "Maths", "Science", "Humanities", "Modern foreign languages"]
+    "Key stage 3": [ "English", "Humanities", "Maths", "Modern foreign languages", "Science"],
+    "Key stage 4": [ "English", "Humanities", "Maths", "Modern foreign languages", "Science"]
 }
 
 Given("a user has arrived on the 'Which key stages' page", () => {
@@ -19,6 +19,10 @@ Given("a user has arrived on the 'Which key stages' page for postcode {string}",
 Given("a user has arrived on the 'Which subjects' page for {string}", keystage => {
     const query = keystage.split(',').map(s => `KeyStages=${camelCaseKeyStage(s.trim())}`).join('&');
     cy.visit(`/which-subjects?${query}`);
+});
+
+Given("the 'Which subjects' page is displayed", () => {
+    cy.visit("/which-subjects?Postcode=sk11eb&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4");
 });
 
 When("they manually navigate to the 'Which subjects' page", () => {
@@ -46,7 +50,6 @@ Then("they will see all the keys stages as options", () => {
 Then("they are shown the subjects for {string}", keystage => {
     
     const stages = keystage.split(',').map(s => s.trim());
-    
     stages.forEach(element => {
 
         const subjects = allSubjects[element]
@@ -80,4 +83,12 @@ Then("they will see {string} selected", keystages => {
     stages.forEach(element => {
         cy.get(`input[id="${kebabCase(element)}"]`).should('be.checked');
     });
+});
+
+
+Then("the subjects are displayed in alphabetical order", () => {
+    Step(this, "they are shown the subjects for 'Key stage 1'")
+    Step(this, "they are shown the subjects for 'Key stage 2'")
+    Step(this, "they are shown the subjects for 'Key stage 3'")
+    Step(this, "they are shown the subjects for 'Key stage 4'")
 });
