@@ -5,6 +5,12 @@ namespace UI.Models;
 
 public static class SearchModelAsQueryStringDictionary
 {
+    public static string ToQueryString(this SearchModel? model)
+    {
+        var routes = model?.ToRouteData() ?? new();
+        return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
+    }
+
     public static Dictionary<string, string> ToRouteData(this SearchModel model)
     {
         var dictionary = new Dictionary<string, string>();
