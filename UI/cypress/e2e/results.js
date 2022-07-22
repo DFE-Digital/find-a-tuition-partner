@@ -1,5 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, removeWhitespace } from "../support/utils";
+import { kebabCase, KeyStageSubjects2 } from "../support/utils";
         
 const allSubjects = {
     "Key stage 1": [ "English", "Maths", "Science"],
@@ -14,6 +14,11 @@ Given("a user has arrived on the 'Search results' page for {string}", keyStage =
 
 Given("a user has arrived on the 'Search results' page for {string} without a postcode", keyStage => {
     cy.visit(`/search-results?key-subjects=KeyStage1&subjects=KeyStage1-English`);
+});
+
+Given("a user has arrived on the 'Search results' page for {string} for postcode {string}", (keystages, postcode) => {
+    const query = keystages.split(',').map(s => KeyStageSubjects2('subjects', s.trim())).join('&');
+    cy.visit(`/search-results?Postcode=${postcode}&${query}`);
 });
 
 Given("a user has arrived on the 'Search results' page", () => {
@@ -86,6 +91,14 @@ Then("the subjects in the filter displayed in alphabetical order", () => {
         });
 
     });
+});
+
+When("they select {string} tuition type", tuition => {
+    cy.get(`input[id="${kebabCase(tuition)}"]`).should('be.checked');
+});
+
+Then("they will see the tuition partner {string}", tp => {
+    cy.contains('a', tp)
 });
 
 Then("the subjects covered by a tuition partner are in alphabetical order", () => {

@@ -1,17 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, camelCaseKeyStage } from "../support/utils";
-
-const KeyStageSubjects = input => 
-    input.split(',')
-         .map(s => s.trim())
-         .map(s =>
-        {
-            const endOfKs = s.lastIndexOf(' ');
-            const ks = camelCaseKeyStage(s.slice(0, endOfKs));
-            const subj = s.slice(endOfKs + 1, s.length);
-            return `Data.Subjects=${ks}-${subj}`;
-        })
-        .join('&');
+import { kebabCase, camelCaseKeyStage, KeyStageSubjects } from "../support/utils";
 
 Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
     cy.visit(`/tuition-partner/${name}`);
