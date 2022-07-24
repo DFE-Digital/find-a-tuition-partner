@@ -28,6 +28,7 @@ public class TuitionPartner : PageModel
     public async Task<IActionResult> OnGetAsync(Query query)
     {
         AllSearchData = TempData.Get<SearchModel>("AllSearchData");
+        var ladc = TempData.Get<string>("LocalAuthorityDistrictCode");
 
         if (string.IsNullOrWhiteSpace(query.Id))
         {
@@ -42,7 +43,7 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        Data = await _mediator.Send(query);
+        Data = await _mediator.Send(query with { LocalAuthorityDistrictCode = ladc });
 
         if (Data == null)
         {
@@ -56,6 +57,7 @@ public class TuitionPartner : PageModel
 
     public record Query(
             string Id,
+            string? LocalAuthorityDistrictCode = null,
             [FromQuery(Name = "show-locations-covered")]
             bool ShowLocationsCovered = false,
             [FromQuery(Name = "show-full-pricing")]
@@ -124,7 +126,26 @@ public class TuitionPartner : PageModel
             if (tp == null) return null;
 
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-            var types = tp.Prices.Select(x => x.TuitionType.Name).Distinct();
+
+            Domain.LocalAuthorityDistrictCoverage[]? coverage;
+            if(request.LocalAuthorityDistrictCode == null)
+            {
+                coverage = await _db.LocalAuthorityDistrictCoverage.Include(x => x.TuitionType)
+                    .Where(e => e.TuitionPartnerId == tp.Id)
+                    .ToArrayAsync(cancellationToken);
+            }
+            else 
+            {
+                coverage = await _db
+                    .LocalAuthorityDistrictCoverage
+                    .Include(x => x.LocalAuthorityDistrict)
+                    .Include(x => x.TuitionType)
+                    .Where(e => e.TuitionPartnerId == tp.Id
+                             && e.LocalAuthorityDistrict.Code == request.LocalAuthorityDistrictCode)
+                    .ToArrayAsync(cancellationToken);
+            }
+
+            var types = coverage.Select(x => x.TuitionType.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = GetPricing(tp.Prices);
 

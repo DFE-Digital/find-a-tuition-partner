@@ -1,21 +1,6 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase, camelCaseKeyStage, KeyStageSubjects } from "../support/utils";
 
-Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
-    cy.visit(`/tuition-partner/${name}`);
-});
-
-Given("a user has arrived on the 'Tuition Partner' page for {string} after searching for {string}", (name, subjects) => {
-
-    cy.visit(`/search-results?${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=sk11eb`);
-    cy.get('.govuk-link').contains(name).click();
-});
-
-Given("a user has arrived on the 'Tuition Partner' page for {string} after entering search details for multiple subjects", name => {
-    cy.visit(`/search-results?Data.Subjects=KeyStage1-English&Data.Subjects=KeyStage1-Maths&Data.TuitionType=Any&Data.Postcode=sk11eb`);
-    cy.get('.govuk-link').contains(name).click();
-});
-
 When("the home page is selected", () => {
     cy.get('[data-testid="home-link"]').click();
 });
