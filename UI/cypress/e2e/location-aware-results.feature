@@ -8,4 +8,10 @@ Feature: Tuition Partner provides online but not in-school tuition in an area
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     When they select 'any' tuition type
     And they select the tuition partner 'Action Tutoring'
-    Then they see only tuition types available for postcode 'SK1 1EB'
+    Then they see the tuition types 'Online'
+
+  Scenario: Show all tuition types on TP information page when the TP supports them all for the postcode’s location
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'S1 2PP'
+    When they select 'any' tuition type
+    And they select the tuition partner 'Action Tutoring'
+    Then they see the tuition types 'In School, Online'

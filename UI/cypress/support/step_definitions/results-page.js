@@ -47,8 +47,11 @@ When("they select the tuition partner {string}", name => {
     cy.get('.govuk-link').contains(name).click();
 });
 
-Then("they see only tuition types available for postcode 'SK1 1EB'", () => {
+Then("they see the tuition types {string}", tuitionTypes => {
+    const tuitionArray = tuitionTypes.split(',').map(s => s.trim())
+
     cy.get("[data-testid='type-of-tuition']").invoke('text').then(text => {
-        expect(text.trim()).to.eq('Online')
+        var listedTuitionTypes = text.split('\n').map(s => s.trim()).filter(s => s)
+        expect(listedTuitionTypes).to.deep.equal(tuitionArray)
     });
 })
