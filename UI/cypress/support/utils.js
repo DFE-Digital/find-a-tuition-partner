@@ -16,9 +16,7 @@ export const  camelCaseKeyStage = s => {
         }
 }
 
-export const KeyStageSubjects = input => KeyStageSubjects2('Data.Subjects', input);
-
-export const KeyStageSubjects2 = (prefix, input) => 
+export const KeyStageSubjects = (prefix, input) => 
     input.split(',')
          .map(s => s.trim())
          .map(s =>

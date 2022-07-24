@@ -1,5 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, KeyStageSubjects, KeyStageSubjects2 } from "../utils";
+import { kebabCase, KeyStageSubjects } from "../utils";
 
 Given("a user has arrived on the 'Search results' page for {string}", keyStage => {
     cy.visit(`/search-results?postcode=AB12CD&key-subjects=KeyStage1&subjects=KeyStage1-English`);
@@ -10,7 +10,7 @@ Given("a user has arrived on the 'Search results' page for {string} without a po
 });
 
 Given("a user has arrived on the 'Search results' page for {string} for postcode {string}", (keystages, postcode) => {
-    const query = keystages.split(',').map(s => KeyStageSubjects2('subjects', s.trim())).join('&');
+    const query = keystages.split(',').map(s => KeyStageSubjects('subjects', s.trim())).join('&');
     cy.visit(`/search-results?Postcode=${postcode}&${query}`);
 });
 
@@ -35,7 +35,7 @@ Given("a user has arrived on the 'Tuition Partner' page for {string} after enter
 });
 
 Given("a user has arrived on the 'Tuition Partner' page for {string} after searching for {string} in postcode {string}", (name, subjects, postcode) => {
-    cy.visit(`/search-results?${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=${postcode}`);
+    cy.visit(`/search-results?${KeyStageSubjects('Data.Subjects', subjects)}&Data.TuitionType=Any&Data.Postcode=${postcode}`);
     cy.get('.govuk-link').contains(name).click();
 });
 

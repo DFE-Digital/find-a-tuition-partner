@@ -1,5 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, KeyStageSubjects2 } from "../support/utils";
+import { kebabCase, KeyStageSubjects } from "../support/utils";
         
 const allSubjects = {
     "Key stage 1": [ "English", "Maths", "Science"],
