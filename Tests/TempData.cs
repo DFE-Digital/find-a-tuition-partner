@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using UI.Extensions;
 
 namespace Tests;
@@ -10,7 +11,7 @@ public class TempData
     {
         var data = new TestableTempDataDictionary();
         data.Set("Bananas", "this is a string");
-        data.Get<string>("Bananas").Should().Be("this is a string");
+        data.Peek<string>("Bananas").Should().Be("this is a string");
     }
 
     [Fact]
@@ -22,7 +23,7 @@ public class TempData
     [Fact]
     public void No_exception_when_getting_null_temp_data()
     {
-        ((ITempDataDictionary?)null).Get<string>("Bananas").Should().BeNull();
+        ((ITempDataDictionary?)null).Peek<string>("Bananas").Should().BeNull();
     }
 
     [Fact]
@@ -30,18 +31,27 @@ public class TempData
     {
         var data = new TestableTempDataDictionary();
         data.Set("Bananas", "this is a string");
-        data.Get<SomeClass>("Bananas").Should().BeNull();
+        data.Peek<SomeClass>("Bananas").Should().BeNull();
     }
 
+    internal class SomeClass
+    { }
 
-    internal class SomeClass { }
-
-    internal class TestableTempDataDictionary : Dictionary<string, object?>, ITempDataDictionary
+    internal class TestableTempDataDictionary : TempDataDictionary
     {
-        public void Keep() => throw new NotImplementedException();
-        public void Keep(string key) => throw new NotImplementedException();
-        public void Load() => throw new NotImplementedException();
-        public object? Peek(string key) => throw new NotImplementedException();
-        public void Save() => throw new NotImplementedException();
+        public TestableTempDataDictionary()
+            : base(new DefaultHttpContext(), new TestableTempDataProvider())
+        {
+        }
+
+        private class TestableTempDataProvider : ITempDataProvider
+        {
+            public IDictionary<string, object> LoadTempData(HttpContext context)
+                => new Dictionary<string, object>();
+
+            public void SaveTempData(HttpContext context, IDictionary<string, object> values)
+            {
+            }
+        }
     }
 }

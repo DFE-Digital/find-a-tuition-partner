@@ -27,9 +27,8 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnGetAsync(Query query)
     {
-        AllSearchData = TempData.Get<SearchModel>("AllSearchData");
-        var ladc = TempData.Get<string>("LocalAuthorityDistrictCode");
-
+        AllSearchData = TempData.Peek<SearchModel>("AllSearchData");
+        
         if (string.IsNullOrWhiteSpace(query.Id))
         {
             _logger.LogWarning("Null or whitespace id '{Id}' provided", query.Id);
@@ -43,7 +42,10 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        Data = await _mediator.Send(query with { LocalAuthorityDistrictCode = ladc });
+        Data = await _mediator.Send(query with 
+        {
+            LocalAuthorityDistrictCode = TempData.Peek<string>("LocalAuthorityDistrictCode")
+        });
 
         if (Data == null)
         {
