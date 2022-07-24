@@ -128,26 +128,7 @@ public class TuitionPartner : PageModel
             if (tp == null) return null;
 
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-
-            Domain.LocalAuthorityDistrictCoverage[]? coverage;
-            if(request.LocalAuthorityDistrictCode == null)
-            {
-                coverage = await _db.LocalAuthorityDistrictCoverage.Include(x => x.TuitionType)
-                    .Where(e => e.TuitionPartnerId == tp.Id)
-                    .ToArrayAsync(cancellationToken);
-            }
-            else 
-            {
-                coverage = await _db
-                    .LocalAuthorityDistrictCoverage
-                    .Include(x => x.LocalAuthorityDistrict)
-                    .Include(x => x.TuitionType)
-                    .Where(e => e.TuitionPartnerId == tp.Id
-                             && e.LocalAuthorityDistrict.Code == request.LocalAuthorityDistrictCode)
-                    .ToArrayAsync(cancellationToken);
-            }
-
-            var types = coverage.Select(x => x.TuitionType.Name).Distinct();
+            var types = await GetTuitionTypesCovered(request.LocalAuthorityDistrictCode, tp, cancellationToken);
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = GetPricing(tp.Prices);
 
@@ -169,6 +150,29 @@ public class TuitionPartner : PageModel
                 lads,
                 allPrices
                 );
+        }
+
+        private async Task<IEnumerable<string>> GetTuitionTypesCovered(
+            string? localAuthorityDistrictCode,
+            Domain.TuitionPartner tp,
+            CancellationToken cancellationToken)
+        {
+            var coverageQuery = _db
+                .LocalAuthorityDistrictCoverage
+                .Where(e => e.TuitionPartnerId == tp.Id);
+
+            if (localAuthorityDistrictCode != null)
+            {
+                coverageQuery = coverageQuery
+                    .Where(e => e.LocalAuthorityDistrict.Code == localAuthorityDistrictCode);
+            }
+
+            var types = await coverageQuery
+                .Select(x => x.TuitionType.Name)
+                .Distinct()
+                .ToArrayAsync(cancellationToken);
+
+            return types;
         }
 
         private async Task<LocalAuthorityDistrictCoverage[]> GetLocalAuthorityDistricts(Query request, int tpId)
