@@ -16,12 +16,18 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         
     }
 
+    private Dictionary<string, string> LocalAuthorityDistrictCodes = new();
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
 
         await Fixture.ExecuteDbContextAsync(async db =>
         {
+            LocalAuthorityDistrictCodes["East Riding of Yorkshire"] = db.LocalAuthorityDistricts.Find(1)!.Code;
+            LocalAuthorityDistrictCodes["North East Lincolnshire"] = db.LocalAuthorityDistricts.Find(2)!.Code;
+            LocalAuthorityDistrictCodes["Ryedale"] = db.LocalAuthorityDistricts.Find(9)!.Code;
+
             db.TuitionPartners.Add(new Domain.TuitionPartner
             {
                 Id = 1,
@@ -33,12 +39,15 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 Email = "ntp@a-tuition-partner.testdata",
                 LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
                 {
-                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, LocalAuthorityDistrictId = 1 }
+                    new() { LocalAuthorityDistrictId = 1, TuitionTypeId = (int)TuitionTypes.InSchool },
+                    new() { LocalAuthorityDistrictId = 2, TuitionTypeId = (int)TuitionTypes.InSchool },
+                    new() { LocalAuthorityDistrictId = 2, TuitionTypeId = (int)TuitionTypes.Online   },
+                    new() { LocalAuthorityDistrictId = 9, TuitionTypeId = (int)TuitionTypes.Online   },
                 },
                 SubjectCoverage = new List<SubjectCoverage>
                 {
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English },
-                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths }
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths },
                 },
                 Prices = new List<Price>
                 {
@@ -114,7 +123,6 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Name.Should().Be("A Tuition Partner");
         result.Description.Should().Be("A Tuition Partner Description");
         result.Subjects.Should().BeEquivalentTo("Key stage 3 - English and Maths");
-        result.TuitionTypes.Should().BeEquivalentTo("In School");
         result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");
         result.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
         {
@@ -124,6 +132,37 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
         result.PhoneNumber.Should().Be("0123456789");
         result.EmailAddress.Should().Be("ntp@a-tuition-partner.testdata");
+    }
+
+    [Fact]
+    public async Task Shows_all_tuition_types_no_district_specified()
+    {
+        var result = await Fixture.SendAsync(
+            new TuitionPartner.Query("a-tuition-partner"));
+
+        result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
+    }
+
+    [Fact]
+    public async Task Shows_all_tuition_types_when_provided_in_district()
+    {
+        var result = await Fixture.SendAsync(
+            new TuitionPartner.Query(
+                "a-tuition-partner",
+                LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["North East Lincolnshire"]));
+
+        result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
+    }
+
+    [Fact]
+    public async Task Shows_only_tuition_types_provided_in_district()
+    {
+        var result = await Fixture.SendAsync(
+            new TuitionPartner.Query(
+                "a-tuition-partner", 
+                LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["Ryedale"]));
+
+        result!.TuitionTypes.Should().BeEquivalentTo("Online");
     }
 
     [Fact]

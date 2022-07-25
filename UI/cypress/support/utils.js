@@ -15,4 +15,15 @@ export const  camelCaseKeyStage = s => {
         default: return '';
         }
 }
-        
+
+export const KeyStageSubjects = (prefix, input) => 
+    input.split(',')
+         .map(s => s.trim())
+         .map(s =>
+        {
+            const endOfKs = s.lastIndexOf(' ');
+            const ks = camelCaseKeyStage(s.slice(0, endOfKs));
+            const subj = s.slice(endOfKs + 1, s.length);
+            return `${prefix}=${ks}-${subj}`;
+        })
+        .join('&');
