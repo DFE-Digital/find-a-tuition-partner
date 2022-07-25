@@ -1,7 +1,11 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase, KeyStageSubjects } from "../utils";
 
-Given("a user has arrived on the 'Search results' page for {string}", keyStage => {
+Given("a user has arrived on the 'Search results' page for {string}", keyStageSubject => {
+    cy.visit(`/search-results?postcode=sk11eb&${KeyStageSubjects('subjects', keyStageSubject)}`);
+});
+
+Given("a user has arrived on the 'Search results' page for 'Key stage 1'", keyStage => {
     cy.visit(`/search-results?postcode=AB12CD&key-subjects=KeyStage1&subjects=KeyStage1-English`);
 });
 
