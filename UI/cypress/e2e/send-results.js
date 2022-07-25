@@ -6,3 +6,7 @@ Given("the SEND status is {string} for tuition partner {string}", (send, tuition
         cy.get('div').contains('SEND support').parent().contains(send)
     });
 });
+
+Given("the SEND status is {string}", (send, tuitionPartnerName) => {
+    cy.get('div').contains('SEND support').parent().contains(send)
+});

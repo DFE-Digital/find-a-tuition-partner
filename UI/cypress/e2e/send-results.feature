@@ -6,3 +6,11 @@ Feature: Display SEND information
     | SEND | partner                |
     | No   | Action Tutoring        |
     | Yes  | Bright Heart Education |
+
+  Scenario: Show tuition partners' SEND status on the information page
+    Given a user has arrived on the 'Tuition Partner' page for '<partner>'
+    Then the SEND status is '<SEND>'
+    Examples:
+    | SEND | partner                |
+    | No   | Action Tutoring        |
+    | Yes  | Bright Heart Education |
