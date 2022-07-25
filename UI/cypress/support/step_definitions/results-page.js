@@ -5,10 +5,6 @@ Given("a user has arrived on the 'Search results' page for {string}", keyStageSu
     cy.visit(`/search-results?postcode=sk11eb&${KeyStageSubjects('subjects', keyStageSubject)}`);
 });
 
-Given("a user has arrived on the 'Search results' page for 'Key stage 1'", keyStage => {
-    cy.visit(`/search-results?postcode=AB12CD&key-subjects=KeyStage1&subjects=KeyStage1-English`);
-});
-
 Given("a user has arrived on the 'Search results' page for {string} without a postcode", keyStage => {
     cy.visit(`/search-results?key-subjects=KeyStage1&subjects=KeyStage1-English`);
 });
