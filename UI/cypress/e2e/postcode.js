@@ -13,6 +13,14 @@ Then("the quality assured tuition partner details are hidden", () => {
   cy.get('[data-testid="qatp-details"]').should("not.have.attr", "open");
 });
 
+Then("they will see phase banner", () => {
+    cy.get('[data-testid="phase-banner-title"]').should('contain.text', "private beta")
+});
+
+Then("the user should redirected to feedback form", () => {
+    cy.get('[data-testid="feedback-link"]').should('have.attr', 'href', 'https://docs.google.com/document/d/1Iybtc7c9IVMVNUE2Hkj85WF8csEIdhD6XNZ0hd4ozOs/edit')
+});
+
 Then("the quality assured tuition partner details are shown", () => {
   cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
 });
