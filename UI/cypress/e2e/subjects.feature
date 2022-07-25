@@ -76,3 +76,10 @@ Feature: User can choose Key Stage and Subject
     When they click 'Back'
     Then they will be taken to the 'Which key stages' page
     And they will see 'Key stage 1, Key stage 2' selected
+
+
+  Scenario: Subjects are displayed in alphabetical order in 'Which subjects' page
+    Given the 'Which subjects' page is displayed
+    Then the subjects are displayed in alphabetical order 
+
+ 
