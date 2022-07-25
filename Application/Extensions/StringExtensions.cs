@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Application.Extensions;
@@ -17,4 +16,7 @@ public static class StringExtensions
 
         return spacesToDash.ToLower();
     }
+
+    public static string ToYesNoString(this bool value)
+            => value ? "Yes" : "No";
 }

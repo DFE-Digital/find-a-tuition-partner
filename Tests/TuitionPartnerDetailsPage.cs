@@ -37,6 +37,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 Description = "A Tuition Partner Description",
                 PhoneNumber = "0123456789",
                 Email = "ntp@a-tuition-partner.testdata",
+                HasSenProvision = false,
                 LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
                 {
                     new() { LocalAuthorityDistrictId = 1, TuitionTypeId = (int)TuitionTypes.InSchool },
@@ -56,6 +57,18 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 2, HourlyRate = 56.78m },
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 3, HourlyRate = 56.78m },
                 }
+            });
+
+            db.TuitionPartners.Add(new Domain.TuitionPartner
+            {
+                Id = 2,
+                SeoUrl = "bravo-learning",
+                Name = "Bravo Learning",
+                Website = "https://bravo.learning.testdata/ntp",
+                Description = "Bravo Learning Description",
+                PhoneNumber = "0123456789",
+                Email = "ntp@bravo.learning.testdata",
+                HasSenProvision = true,
             });
 
             await db.SaveChangesAsync();
@@ -194,5 +207,14 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 { 2, 56.78m },
                 { 3, 56.78m }
             });
+    }
+
+    [Theory]
+    [InlineData("a-tuition-partner", false)]
+    [InlineData("bravo-learning", true)]
+    public async Task Shows_send_status(string tuitionPartner, bool supportsSend)
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query(tuitionPartner, ShowFullPricing: true));
+        result!.HasSenProvision.Should().Be(supportsSend);
     }
 }
