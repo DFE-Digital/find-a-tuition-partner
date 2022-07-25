@@ -1,0 +1,63 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpcontext
+@inject IConfiguration Configuration
+
+@{
+    var cookieValue = httpcontext?.HttpContext?.Request.Cookies["GoogleAnalyticsConsent"];
+    var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
+}
+
+@if (cookieValue == null)
+{
+    <div id="cookie-banner" class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on Google Analytics">
+        <div class="govuk-cookie-banner__message govuk-width-container">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on Google Analytics</h2>
+
+                    <div class="govuk-cookie-banner__content">
+                        <p class="govuk-body">We use some essential cookies to make this service work.</p>
+                        <p class="govuk-body">We’d also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-button-group">
+                <button id="accept-cookies" value="accept" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Accept analytics cookies
+                </button>
+                <button value="reject" id="reject-cookies" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Reject analytics cookies
+                </button>
+                <a class="govuk-link" href="https://docs.google.com/document/d/1UUkpfkyhyg12aQDF17--H0eMRYB3IlMmmh7hT3QA2SI/edit#heading=h.ns60qtm90eqj" target="_blank">View cookies</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            var button = document.querySelector("#accept-cookies");
+            button.addEventListener("click", function(event) {
+                document.cookie = setCookie("GoogleAnalyticsConsent", "true", 365);
+                location.reload();
+                document.querySelector("#cookie-banner").remove();            
+            });
+        })();
+
+        (function() {
+            var button = document.querySelector("#reject-cookies");
+            button.addEventListener("click", function(event) {
+                document.cookie = setCookie("GoogleAnalyticsConsent", "false", 365);
+                document.querySelector("#cookie-banner").remove();
+            });
+        })();
+
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+    </script>
+}
