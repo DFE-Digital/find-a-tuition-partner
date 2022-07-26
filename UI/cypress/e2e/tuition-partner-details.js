@@ -78,6 +78,13 @@ Then("the tuition partner pricing table is displayed", () => {
         .should('exist');
 });
 
+Then("the tuition partner pricing table is displayed for {string}", tuitionTypes => {
+    tuitionTypes.split(',').forEach(tuitionType => {
+        cy.get('[data-testid="pricing-table"]')
+            .should('contain.text', tuitionType);
+    });
+});
+
 Then("the tuition partner full pricing tables are not displayed", () => {
     for (let i = 1; i < 5; i++) {
         cy.get(`[data-testid="full-pricing-table-in-school-key-stage-${i}"]`)

@@ -74,6 +74,15 @@ Feature: User can view full details of a Tuition Parner
     When they set the 'show-locations-covered' query string parameter value to 'true'
     Then the tuition partner locations covered table is displayed
 
+  Scenario: tuition cost table shows available tuition types
+    Given a user has arrived on the 'Tuition Partner' page for '<tution-partner>'
+    Then the tuition partner pricing table is displayed for '<tuition-types>'
+    Examples:
+    | tution-partner | tuition-types |
+    | Fledge Tuition Ltd | Online |
+    | FFT Education | In school |
+    | Nudge | In school, Online |
+
   Scenario: full pricing tables are not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
     Then the tuition partner full pricing tables are not displayed

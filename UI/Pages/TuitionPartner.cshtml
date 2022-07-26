@@ -132,8 +132,8 @@
 		    <thead class="govuk-table__head">
 		    <tr class="govuk-table__row">
 			    <th scope="col" class="govuk-table__header">Tuition group size</th>
-			    <th scope="col" class="govuk-table__header">In school</th>
-			    <th scope="col" class="govuk-table__header">Online</th>
+			    <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+			    <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
 		    </tr>
 		    </thead>
 		    <tbody class="govuk-table__body">
@@ -141,22 +141,13 @@
 		    {
 			    <tr class="govuk-table__row">
 				    <th scope="row" class="govuk-table__header">1 to @item.Key</th>
-				    @if (item.Value.SchoolMin == item.Value.SchoolMax)
-				    {
-					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.SchoolMin, "{0:C}")</td>
-				    }
-				    else
-				    {
-					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.SchoolMin, "{0:C}") to @Html.FormatValue(item.Value.SchoolMax, "{0:C}")</td>
-				    }
-				    @if (item.Value.OnlineMin == item.Value.OnlineMax)
-				    {
-					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.OnlineMin, "{0:C}")</td>
-				    }
-				    else
-				    {
-					    <td class="govuk-table__cell">@Html.FormatValue(item.Value.OnlineMin, "{0:C}") to @Html.FormatValue(item.Value.OnlineMax, "{0:C}")</td>
-				    }
+				    <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+						@item.Value.FormatFor(Domain.Constants.TuitionTypes.InSchool)
+					</td>
+
+				    <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+						@item.Value.FormatFor(Domain.Constants.TuitionTypes.Online)
+					</td>
 			    </tr>
 		    }
 		    </tbody>
@@ -188,7 +179,7 @@
 						    {
 							    if (prices.TryGetValue(groupSize, out var price))
 							    {
-								    <td class="govuk-table__cell">@Html.FormatValue(price, "{0:C}")</td>
+								    <td class="govuk-table__cell">@price.FormatPrice()</td>
 							    }
 							    else
 							    {
