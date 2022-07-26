@@ -7,14 +7,6 @@ Feature: User enters postcode to begin search
     Given a user has started the 'Find a tuition partner' journey
     Then the page's title is 'Find a tuition partner'
 
-  Scenario: page banner is 'Private beta'
-       Given a user has started the 'Find a tuition partner' journey
-       Then they will see phase banner 
-
-  Scenario: display feedback form 
-    Given a user has started the 'Find a tuition partner' journey
-    Then the user should redirected to feedback form
-
   Scenario: user clicks service name
     Given a user has started the 'Find a tuition partner' journey
     When they click the 'Find a tuition partner' service name link
