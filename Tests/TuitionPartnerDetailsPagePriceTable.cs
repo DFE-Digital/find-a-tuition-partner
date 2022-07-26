@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using System.Globalization;
 using UI.Extensions;
 using GroupPrice = UI.Pages.TuitionPartner.GroupPrice;
 
@@ -6,6 +7,11 @@ namespace Tests;
 
 public class TuitionPartnerDetailsPagePriceTable
 {
+    public TuitionPartnerDetailsPagePriceTable()
+    {
+        Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
+    }
+
     [Theory]
     [MemberData(nameof(PriceData))]
     public void Prices_are_hidden_when_there_are_none_for_a_tuition_type(
