@@ -33,12 +33,12 @@
 					data-testid="postcode">
 					<govuk-input-label>Enter your school’s postcode</govuk-input-label>
 				</govuk-input>
-				<div class="govuk-button-group">
-					<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
-				</div>
+				<div class="govuk-button-group govuk-!-margin-bottom-0">
+					<govuk-button type="submit" class="govuk-!-margin-bottom-0" data-testid="call-to-action">Continue</govuk-button>
+                </div>
 			</div>
 		</form>
-		<h2 class="govuk-heading-m">Other tutoring options</h2>
+		<h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
 		<p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.
 		</p>
 		<div class="govuk-grid-column-one-half govuk-!-padding-0">
@@ -46,7 +46,7 @@
 				<h2 class="govuk-heading-m">Academic mentors</h2>
 				<p class="govuk-body">Select your own candidate or apply to a central agency for an academic mentor.
 					You’ll employ them full-time to focus on individual and small-group tuition. </p>
-				<a class="govuk-button govuk-!-margin-bottom-0" href="/academic-mentors">Read more</a>
+				<a class="govuk-button govuk-!-margin-bottom-0" asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</a>
 			</div>
 		</div>
 		<div class="govuk-grid-column-one-half govuk-!-padding-0">
@@ -54,7 +54,7 @@
 				<h2 class="govuk-heading-m">School-led tutoring</h2>
 				<p class="govuk-body">Select and employ teaching staff as tutors, including current members of staff,
 					retired teachers, returning teachers or supply teachers. </p>
-				<a class="govuk-button govuk-!-margin-bottom-0" href="/school-led-tutoring">Read more</a>
+				<a class="govuk-button govuk-!-margin-bottom-0" asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</a>
 			</div>
 		</div>
 	</div>

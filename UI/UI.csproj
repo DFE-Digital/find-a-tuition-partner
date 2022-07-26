@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\AcademicMentors.cshtml" />
+    <Content Remove="Pages\SchoolLedTutoring.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.5.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.6">
@@ -29,6 +34,24 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\AcademicMentors.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\AcademicMentors.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\SchoolLedTutoring.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\AcademicMentors.cshtml" />
+    <None Include="Pages\SchoolLedTutoring.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\SchoolLedTutoring.cshtml" />
   </ItemGroup>
 
 </Project>
