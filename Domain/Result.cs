@@ -43,7 +43,7 @@ public class SuccessResult<T> : SuccessResult, IResult<T>
     public override string ToString() => Data?.ToString() ?? $"Success<{typeof(T).Name}>";
 }
 
-public interface IErrorResult : IResult 
+public interface IErrorResult : IResult
 {
     public IErrorResult<TCast> Cast<TCast>();
 }
@@ -79,7 +79,7 @@ public class ValidationResult : ErrorResult
 {
     public ValidationResult(params FluentValidation.Results.ValidationFailure[] failures)
         => Failures = failures;
-    
+
     public ValidationResult(IEnumerable<FluentValidation.Results.ValidationFailure> failures)
         => Failures = failures;
 

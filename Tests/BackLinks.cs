@@ -49,7 +49,7 @@ public class BackLinks
     public void Construct_querystring_from_non_null_search_model_properties()
     {
         var model = new SearchModel
-        { 
+        {
             Postcode = "AB1 2CD",
             KeyStages = new[] { KeyStage.KeyStage1 },
             Subjects = null,

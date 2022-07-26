@@ -16,7 +16,7 @@ public class RegionConfiguration : IEntityTypeConfiguration<Region>
             new Region { Id = Regions.Id.NorthEast, Code = "E12000001", Name = "North East" },
             new Region { Id = Regions.Id.NorthWest, Code = "E12000002", Name = "North West" },
             new Region { Id = Regions.Id.YorkshireandTheHumber, Code = "E12000003", Name = "Yorkshire and The Humber" },
-            new Region { Id = Regions.Id.EastMidlands, Code = "E12000004", Name = "East Midlands" }, 
+            new Region { Id = Regions.Id.EastMidlands, Code = "E12000004", Name = "East Midlands" },
             new Region { Id = Regions.Id.WestMidlands, Code = "E12000005", Name = "West Midlands" },
             new Region { Id = Regions.Id.EastofEngland, Code = "E12000006", Name = "East of England" },
             new Region { Id = Regions.Id.London, Code = "E12000007", Name = "London" },

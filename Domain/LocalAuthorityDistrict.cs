@@ -1,12 +1,12 @@
 ﻿namespace Domain;
 
-public  class LocalAuthorityDistrict
+public class LocalAuthorityDistrict
 {
     public int Id { get; set; }
     public string Code { get; set; } = null!;
     public string Name { get; set; } = null!;
-    public int RegionId { get; set; } 
+    public int RegionId { get; set; }
     public Region Region { get; set; } = null!;
-    public int LocalAuthorityId { get; set; } 
+    public int LocalAuthorityId { get; set; }
     public LocalAuthority LocalAuthority { get; set; } = null!;
 }

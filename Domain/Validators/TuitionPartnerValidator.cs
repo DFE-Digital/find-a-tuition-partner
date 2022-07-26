@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 
 namespace Domain.Validators;
 
@@ -54,7 +54,7 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         }
         return prices.Any(x => x.GroupSize > 0 && x.HourlyRate > 0);
     }
-   
+
     private static bool CheckRegex(string property, string regex)
     {
         return Regex.IsMatch(property,

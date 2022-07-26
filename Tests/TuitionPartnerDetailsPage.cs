@@ -13,7 +13,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 {
     public TuitionPartnerDetailsPage(SliceFixture fixture) : base(fixture)
     {
-        
+
     }
 
     private Dictionary<string, string> LocalAuthorityDistrictCodes = new();
@@ -172,7 +172,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         var result = await Fixture.SendAsync(
             new TuitionPartner.Query(
-                "a-tuition-partner", 
+                "a-tuition-partner",
                 LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["Ryedale"]));
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online");

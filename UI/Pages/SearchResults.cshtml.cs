@@ -20,12 +20,12 @@ public class SearchResults : PageModel
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
-    
+
     public async Task OnGet(Query Data)
     {
         TempData.Set("AllSearchData", Data);
 
-        Data.TuitionType ??= TuitionType.Any; 
+        Data.TuitionType ??= TuitionType.Any;
         this.Data = await mediator.Send(Data);
 
         TempData.Set("LocalAuthorityDistrictCode", this.Data.LocalAuthorityDistrictCode ?? "");
@@ -159,7 +159,7 @@ public class SearchResults : PageModel
                         location.Data.LocalAuthorityDistrictCode,
                         request,
                         cancellationToken);
-            
+
             return Result.Success(results);
         }
 

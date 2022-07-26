@@ -1,6 +1,6 @@
-﻿using Domain.Validators;
+﻿using System.Collections.Generic;
+using Domain.Validators;
 using FluentValidation.TestHelper;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Domain.Tests.Validators;
@@ -128,7 +128,7 @@ public class TuitionPartnerValidatorTests
     }
 
     [Fact]
-  
+
     public void With_no_valid_price()
     {
         var listOfPrices = new List<Price>();

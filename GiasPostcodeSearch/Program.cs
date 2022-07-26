@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using GiasPostcodeSearch;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
