@@ -1,15 +1,10 @@
-﻿@using Microsoft.AspNetCore.Http.Features
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpcontext
-@inject IConfiguration Configuration
-
-@{
-    var cookieValue = httpcontext?.HttpContext?.Request.Cookies["GoogleAnalyticsConsent"];
-    var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
+﻿@{
+    var showBanner = !Context.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent");
 }
 
-@if (cookieValue == null)
+@if (showBanner)
 {
-    <div id="cookie-banner" class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on Google Analytics">
+    <div data-testid="cookie-banner" class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on Google Analytics">
         <div class="govuk-cookie-banner__message govuk-width-container">
 
             <div class="govuk-grid-row">
@@ -24,40 +19,15 @@
             </div>
 
             <div class="govuk-button-group">
-                <button id="accept-cookies" value="accept" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+                <a data-testid="accept-cookies" value="accept" type="button" name="cookies" class="govuk-button" data-module="govuk-button" asp-page="@nameof(Cookies)" asp-route-consent="true" asp-route-returnUrl="@Context.Request.Path">
                     Accept analytics cookies
-                </button>
-                <button value="reject" id="reject-cookies" type="button" name="cookies" class="govuk-button" data-module="govuk-button">
+
+                </a>
+                <a button value="reject" data-testid="reject-cookies" type="button" name="cookies" class="govuk-button" data-module="govuk-button" asp-page="@nameof(Cookies)" asp-route-consent="false" asp-route-returnUrl="@Context.Request.Path">           
                     Reject analytics cookies
-                </button>
-                <a class="govuk-link" href="https://docs.google.com/document/d/1UUkpfkyhyg12aQDF17--H0eMRYB3IlMmmh7hT3QA2SI/edit#heading=h.ns60qtm90eqj" target="_blank">View cookies</a>
+                </a>
+                <a class="govuk-link" data-testid="view-cookies" a asp-page="@nameof(Cookies)" class="govuk-link">View cookies</a>
             </div>
         </div>
     </div>
-
-    <script>
-        (function() {
-            var button = document.querySelector("#accept-cookies");
-            button.addEventListener("click", function(event) {
-                document.cookie = setCookie("GoogleAnalyticsConsent", "true", 365);
-                location.reload();
-                document.querySelector("#cookie-banner").remove();            
-            });
-        })();
-
-        (function() {
-            var button = document.querySelector("#reject-cookies");
-            button.addEventListener("click", function(event) {
-                document.cookie = setCookie("GoogleAnalyticsConsent", "false", 365);
-                document.querySelector("#cookie-banner").remove();
-            });
-        })();
-
-        function setCookie(cname, cvalue, exdays) {
-            const d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
-    </script>
-}
+} 
