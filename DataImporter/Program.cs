@@ -4,6 +4,7 @@ using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog.Events;
 
 if (args.Any(x => x == "generate-key"))
 {
@@ -42,7 +43,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
-        .AddLogging()
+        .AddLogging(LogEventLevel.Warning)
         .Build();
 
     await host.RunAsync();
