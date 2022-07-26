@@ -57,9 +57,10 @@ Feature: User can view full details of a Tuition Parner
     When they click 'What is a quality assured tuition partner?'
     Then the quality assured tuition partner details are shown
 
-  Scenario: user has access to website link of tution partner
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-    Then the tuition partners website link exist
+  Scenario: tuition partner website link is displayed
+    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
+    Then the tuition partner's website link is displayed
+    And the tuition partners website link starts with 'http://'
   
   Scenario: user has access to funding guidance page
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
@@ -75,12 +76,12 @@ Feature: User can view full details of a Tuition Parner
     Then the tuition partner locations covered table is displayed
 
   Scenario: full pricing tables are not displayed as default
-    Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
+    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
     Then the tuition partner full pricing tables are not displayed
     And the tuition partner pricing table is displayed
 
   Scenario: full pricing tables are displayed when show-full-pricing=true
-    Given a user has arrived on the 'Tuition Partner' page for 'Fleet Education Services'
+    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
     When they set the 'show-full-pricing' query string parameter value to 'true'
     Then the tuition partner full pricing tables are displayed
     And the tuition partner pricing table is not displayed
