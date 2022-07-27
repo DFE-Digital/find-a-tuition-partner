@@ -8,6 +8,7 @@ using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Serilog.Events;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
@@ -23,7 +24,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
-        .AddLogging()
+        .AddLogging(LogEventLevel.Warning)
         .Build();
 
     await host.RunAsync();

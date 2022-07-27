@@ -15,9 +15,9 @@ Then("TP has not provided the information in the {string} section", details => {
 
 Then("TP has provided full contact details", () => {
     cy.get('[data-testid="contact-details"]').should('contain.text', 'Website', { matchCase: true })
-    .and('contain.text', 'Phone number', { matchCase: true })
-    .and('contain.text', 'Email address', { matchCase: true })
-    .and('contain.text', 'Address', { matchCase: true });
+        .and('contain.text', 'Phone number', { matchCase: true })
+        .and('contain.text', 'Email address', { matchCase: true })
+        .and('contain.text', 'Address', { matchCase: true });
 });
 
 Then("the search details are correct", () => {
@@ -40,10 +40,16 @@ Then("the payment details are hidden", () => {
 
 Then("the quality assured tuition partner details are shown", () => {
     cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
-  });
+});
 
-Then("the tuition partners website link exist", () => {
-    cy.get('[data-testid=tuition-partner-website-link]').should('have.prop', 'href');
+Then("the tuition partner's website link is displayed", () => {
+    cy.get('[data-testid=tuition-partner-website-link]').should('exist');
+});
+
+Then("the tuition partners website link starts with {string}", (prefix) => {
+    cy.get('[data-testid=tuition-partner-website-link]')
+        .invoke('attr', 'href')
+        .should('match', new RegExp(`^${prefix}`));
 });
 
 Then("the funding guidance page is accessible", () => {
@@ -84,7 +90,7 @@ Then("the tuition partner full pricing tables are not displayed", () => {
             .should('not.exist');
         cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`)
             .should('not.exist');
-    }    
+    }
 });
 
 Then("the tuition partner full pricing tables are displayed", () => {

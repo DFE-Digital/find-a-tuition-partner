@@ -44,7 +44,7 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         }
 
         return CheckRegex(website,
-                             @"^(www|http|http(s)?://)?([\w-]+\.)+[\w-]+[.com|.org]+(\[\?%&=]*)?");
+                             @"^https?://([\w-]+\.)+[\w-]+[.com|.org]+(\[\?%&=]*)?");
     }
     private bool HasValidPrice(ICollection<Price> prices)
     {

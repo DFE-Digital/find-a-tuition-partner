@@ -67,6 +67,10 @@ public class TuitionPartnerValidatorTests
 
     [Theory]
     [InlineData("website")]
+    [InlineData("www.something.com")]
+    [InlineData("www.something.org")]
+    [InlineData("something.com")]
+    [InlineData("something.org")]
     [InlineData("http\\www.something.org")]
     [InlineData("https\\www.something.org")]
     [InlineData("http//www.something.org")]
@@ -82,10 +86,6 @@ public class TuitionPartnerValidatorTests
     }
 
     [Theory]
-    [InlineData("www.something.com")]
-    [InlineData("www.something.org")]
-    [InlineData("something.com")]
-    [InlineData("something.org")]
     [InlineData("http://www.something.org")]
     [InlineData("https://www.something.org")]
 

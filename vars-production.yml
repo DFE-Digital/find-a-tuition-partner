@@ -3,5 +3,5 @@ instances: 3
 memory: 1G
 dotnet-environment: Production
 default-log-event-level: Information
-override-log-event-level: Warning
+override-log-event-level: Information
 google-analytics-measurement-id: G-SDYZ8PH0R0
