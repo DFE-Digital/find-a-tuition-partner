@@ -132,7 +132,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             var region = await _dbContext.Regions
                 .Include(e => e.LocalAuthorityDistricts)
                 .FirstOrDefaultAsync(e => e.Id == regionId, cancellationToken);
-            
+
             if (region == null)
             {
                 throw new Exception($"Region with id {regionId} from initial {regionInitials} was not found");
@@ -155,7 +155,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         {
             var lad = await _dbContext.LocalAuthorityDistricts
                 .FirstOrDefaultAsync(e => e.Code == ladCode, cancellationToken);
-            
+
             if (lad == null)
             {
                 throw new Exception($"Local Authority District with code {ladCode} was not found");

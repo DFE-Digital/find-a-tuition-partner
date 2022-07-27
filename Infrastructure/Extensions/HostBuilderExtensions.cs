@@ -13,7 +13,7 @@ public static class HostBuilderExtensions
         hostBuilder.UseSerilog((context, config) =>
         {
             var appLogging = context.Configuration.GetSection("AppLogging").Get<AppLogging>() ?? new AppLogging();
-            
+
             config
                 .MinimumLevel.Is(appLogging.DefaultLogEventLevel)
                 .MinimumLevel.Override("Microsoft", appLogging.OverrideLogEventLevel)

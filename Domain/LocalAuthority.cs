@@ -1,6 +1,6 @@
 ﻿namespace Domain;
 
-public  class LocalAuthority
+public class LocalAuthority
 {
     public LocalAuthority()
     {

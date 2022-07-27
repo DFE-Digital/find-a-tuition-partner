@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
-using Infrastructure.Extensions;
-using Microsoft.Extensions.Hosting;
 using Infrastructure;
 using Infrastructure.Configuration;
+using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 if (args.Any(x => x == "generate-key"))
 {

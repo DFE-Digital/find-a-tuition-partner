@@ -35,7 +35,7 @@ public partial class Index : PageModel
             return RedirectToPage(nameof(WhichKeyStages), Data);
         }
 
-        if(validation is ErrorResult error)
+        if (validation is ErrorResult error)
             ModelState.AddModelError("Data.Postcode", error.ToString());
 
         return Page();

@@ -17,9 +17,9 @@ public record SearchModel
     public string? Postcode { get; set; }
 
     public string[]? Subjects { get; set; }
-        
+
     public TuitionType? TuitionType { get; set; }
-    
+
     public KeyStage[]? KeyStages { get; set; }
 }
 
@@ -34,7 +34,7 @@ public record KeyStageSubject(KeyStage KeyStage, string Subject)
     public static KeyStageSubject Parse(string value)
     {
         var re = new Regex(@"(KeyStage[\d])-(.*)").Match(value);
-        
+
         if (!re.Success)
             throw new ArgumentException("Subject must be of the form KS1-English");
 
@@ -46,7 +46,7 @@ public record KeyStageSubject(KeyStage KeyStage, string Subject)
 
     public static bool TryParse(string value, [MaybeNullWhen(false)] out KeyStageSubject parsed)
     {
-        if(value == null)
+        if (value == null)
         {
             parsed = default;
             return false;
@@ -77,13 +77,13 @@ public enum KeyStage
 
     [Description("Key stage 1")]
     KeyStage1 = 1,
-    
+
     [Description("Key stage 2")]
     KeyStage2,
-    
+
     [Description("Key stage 3")]
     KeyStage3,
-    
+
     [Description("Key stage 4")]
     KeyStage4,
 }

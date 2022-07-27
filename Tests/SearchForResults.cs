@@ -5,8 +5,8 @@ using FluentValidation.TestHelper;
 using NSubstitute;
 using Tests.TestData;
 using UI.Pages;
-using KeyStage = UI.Pages.KeyStage;
 using Index = UI.Pages.Index;
+using KeyStage = UI.Pages.KeyStage;
 
 namespace Tests;
 
