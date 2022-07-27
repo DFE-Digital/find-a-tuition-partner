@@ -42,9 +42,9 @@ builder.Services.AddCqrs();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
-builder.Services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
+builder.Services.AddGovUkFrontend(options =>
 {
-    AddImportsToHtml = false
+    options.AddImportsToHtml = false;
 });
 
 builder.Services.AddControllers(options =>
