@@ -5,9 +5,9 @@
 }
 <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a><br/>
 
-<govuk-back-link href="/search-results?@Model.AllSearchData.ToQueryString()">
+<a href="/search-results?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
 	Back to search results
-</govuk-back-link> 
+</a>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
