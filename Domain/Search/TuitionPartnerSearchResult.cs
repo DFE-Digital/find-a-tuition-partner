@@ -8,4 +8,5 @@ public class TuitionPartnerSearchResult
     public string Description { get; set; } = null!;
     public Subject[] Subjects { get; set; } = null!;
     public TuitionType[] TuitionTypes { get; set; } = null!;
+    public bool HasSenProvision { get; set; }
 }

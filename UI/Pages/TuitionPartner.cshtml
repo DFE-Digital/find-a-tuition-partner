@@ -45,7 +45,7 @@
 					    Type of tuition
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    <ul class="govuk-list">
+					    <ul class="govuk-list" data-testid="type-of-tuition">
 						    @foreach (var item in Model.Data.TuitionTypes)
 						    {
 							    <li>@item</li>
@@ -66,6 +66,14 @@
 					    </ul>
 				    </govuk-summary-list-row-value>
 			    </govuk-summary-list-row>
+				<govuk-summary-list-row>
+					<govuk-summary-list-row-key>
+						SEND support
+					</govuk-summary-list-row-key>
+					<govuk-summary-list-row-value>
+						@Model.Data.HasSenProvision.ToYesNoString()
+					</govuk-summary-list-row-value>
+				</govuk-summary-list-row>
 		    </govuk-summary-list>
 	    </div>
 		
