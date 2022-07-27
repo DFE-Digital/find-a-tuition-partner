@@ -12,6 +12,18 @@ Feature: User enters postcode to begin search
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
+  Scenario: Check other options tab displayed
+    Given a user has started the 'Find a tuition partner' journey
+    Then check other tutoring options text is displayed
+
+  Scenario: Check academic mentors link
+     Given a user has started the 'Find a tuition partner' journey
+     Then the other options academic links to '/academic-mentors'
+
+  Scenario: Check School led tutoring link
+     Given a user has started the 'Find a tuition partner' journey
+     Then the other options school-led tutoring links to '/school-led-tutoring'
+
   Scenario: no back link on the 'Find a tuition partner' journey start page
     Given a user has started the 'Find a tuition partner' journey
     Then the 'Back' link is not displayed
@@ -22,7 +34,7 @@ Feature: User enters postcode to begin search
 
   Scenario: user clicks quality assured tuition partner details summary
     Given a user has started the 'Find a tuition partner' journey
-    When they click 'What is a quality assured tuition partner?'
+    When they click 'What is a quality-assured tuition partner?'
     Then the quality assured tuition partner details are shown
 
   Scenario: user does not enter postcode
