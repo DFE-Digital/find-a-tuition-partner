@@ -24,6 +24,10 @@ Then("they will be taken to the 'Which key stages' page", () => {
     cy.location('pathname').should('eq', '/which-key-stages');
 });
 
+Then("they will be taken to the 'Which subjects' page", () => {
+    cy.location('pathname').should('eq', '/which-subjects');
+});
+
 Then("the page URL ends with {string}", url => {
     cy.location('pathname').should('match', new RegExp(`${url}$`));
 });
