@@ -130,6 +130,12 @@
 	    <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
 		    <caption class="govuk-table__caption govuk-table__caption--m">Tuition cost information</caption>
 		    <thead class="govuk-table__head">
+			<tr class="govuk-table__row" colspan="*">
+				<td>The costs shown are per pupil per hour.</td>
+			</tr>
+			<tr class="govuk-table__row" colspan="*">
+				<td>All subjects are the same price but depend on tuition group size.</td>
+			</tr>
 		    <tr class="govuk-table__row">
 			    <th scope="col" class="govuk-table__header">Tuition group size</th>
 			    <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
