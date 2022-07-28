@@ -135,4 +135,14 @@ public class SearchForSubjects : CleanSliceFixture
                 "KeyStage1-English", "KeyStage3-Humanities",
             });
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("This is not a key stage subject")]
+    public void Parses_invalid_KeyStageSubject_without_error(string keyStageSubject)
+    {
+        var parsed = new[] { keyStageSubject }.ParseKeyStageSubjects();
+        parsed.Should().BeEmpty();
+    }
 }
