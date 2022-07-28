@@ -69,14 +69,13 @@
 				</div>
 			</div>
 
-			<div show-if="Model.Data.Results != null" class="govuk-body">
+			<div show-if="Model.Data.Results != null" class="govuk-body" data-testid="results-summary">
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 				@{
 					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
 					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
 				}
-				<strong>@count</strong> @(resultPlural) for <strong>@Model.Data.LocalAuthority</strong>
-				sorted by A-Z
+				<strong>@count</strong> @(resultPlural) for <strong>@Model.Data.LocalAuthority</strong> sorted by A-Z
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 			</div>
 

@@ -81,10 +81,15 @@ Feature: User is shown search results
     And they click on the option heading for 'Key stage 2'
     And they will see an expanded subject filter for 'Key stage 2'
 
-Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
-    Given a user has arrived on the 'Search results' page
-    Then the subjects in the filter displayed in alphabetical order 
+  Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
+      Given a user has arrived on the 'Search results' page
+      Then the subjects in the filter displayed in alphabetical order 
 
-Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
-    Given a user has arrived on the 'Search results' page
-    Then the subjects covered by a tuition partner are in alphabetical order 
+  Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
+      Given a user has arrived on the 'Search results' page
+      Then the subjects covered by a tuition partner are in alphabetical order 
+
+  Scenario: Results summary is shown 
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    Then they will see the results summary for 'Stockport'
+  
