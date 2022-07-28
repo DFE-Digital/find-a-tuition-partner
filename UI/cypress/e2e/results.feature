@@ -92,4 +92,8 @@ Feature: User is shown search results
   Scenario: Results summary is shown 
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     Then they will see the results summary for 'Stockport'
+
+  Scenario: Local Education Authority name is displayed for postcode
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
+    Then they will see the results summary for 'Hertfordshire'
   
