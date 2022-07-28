@@ -121,7 +121,7 @@
 				        <a asp-page="/Accessibility" class="govuk-footer__link">Accessibility</a>
 			        </li>
 			        <li class="govuk-footer__inline-list-item">
-				        <a asp-page="/Cookies" class="govuk-footer__link">Cookies</a>
+						<a data-testid="view-footer-cookies" a asp-page="@nameof(Cookies)" class="govuk-footer__link" asp-page="@nameof(Cookies)"asp-route-consent="" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Cookies</a>
 			        </li>
 			        <li class="govuk-footer__inline-list-item">
 				        <a asp-page="/Privacy" class="govuk-footer__link">Privacy policy</a>

@@ -12,32 +12,25 @@ namespace UI.Pages
 		public string? returnPath { get; set; }
 		public SearchModel? AllSearchData { get; set; }
 
-		public IActionResult OnGet(bool? consent, string returnUrl)
+		public IActionResult OnGet(bool? consent, string returnUrl, bool? viewCookieStatement)
 		{
-			AllSearchData = TempData.Peek<SearchModel>("AllSearchData");
 			returnPath = returnUrl;
 
-			if (consent.HasValue)
-			{
-				var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(12), Secure = true };
-				Response.Cookies.Append(ConsentCookieName, consent.Value.ToString(), cookieOptions);
-				return new RedirectResult(returnUrl);
-			}
+            if (Request.Cookies.ContainsKey(ConsentCookieName))
+            {
+                Consent = bool.Parse(Request.Cookies[ConsentCookieName]);
+            }
 
-			if (consent.HasValue)
+            if (consent.HasValue)
 			{
 				PreferencesSet = true;
-
 				ApplyCookieConsent(consent);
 
 				if (!string.IsNullOrEmpty(returnUrl))
 				{
 					return Redirect(returnUrl);
 				}
-
-				return RedirectToPage(returnUrl);
-			}
-
+            }
 			return Page();
 		}
 
@@ -72,7 +65,7 @@ namespace UI.Pages
 		{
 			if (consent.HasValue)
 			{
-				var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(6), Secure = true };
+				var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(12), Secure = true };
 				Response.Cookies.Append(ConsentCookieName, consent.Value.ToString(), cookieOptions);
 			}
 
