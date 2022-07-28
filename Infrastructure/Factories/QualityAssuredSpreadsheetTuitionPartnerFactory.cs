@@ -70,7 +70,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         {
             LastUpdated = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 5).ParseDateOnly() ?? DateOnly.MinValue,
             Name = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 4),
-            Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 5),
+            Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 5).ParseUrl(),
             Email = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 6),
             PhoneNumber = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 7),
             Address = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 9),
@@ -83,7 +83,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
         if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
         {
-            tuitionPartner.Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 8);
+            tuitionPartner.Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 8).ParseUrl();
         }
 
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
@@ -132,7 +132,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             var region = await _dbContext.Regions
                 .Include(e => e.LocalAuthorityDistricts)
                 .FirstOrDefaultAsync(e => e.Id == regionId, cancellationToken);
-            
+
             if (region == null)
             {
                 throw new Exception($"Region with id {regionId} from initial {regionInitials} was not found");
@@ -155,7 +155,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         {
             var lad = await _dbContext.LocalAuthorityDistricts
                 .FirstOrDefaultAsync(e => e.Code == ladCode, cancellationToken);
-            
+
             if (lad == null)
             {
                 throw new Exception($"Local Authority District with code {ladCode} was not found");

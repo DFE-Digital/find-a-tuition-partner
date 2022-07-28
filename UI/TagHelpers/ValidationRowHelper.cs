@@ -24,7 +24,7 @@ public class ValidationRowHelper : TagHelper
 
     private bool PropertyIsInvalid()
     {
-        return 
+        return
             ViewContext.ModelState.TryGetValue(PropertyName, out var modelState)
             && modelState.ValidationState == ModelValidationState.Invalid;
     }

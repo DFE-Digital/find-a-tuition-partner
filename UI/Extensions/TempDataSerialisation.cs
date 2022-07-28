@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace UI.Extensions;
 
@@ -16,7 +16,7 @@ public static class TempDataSerialisation
         try
         {
             var data = tempData?.Peek(key);
-            if(data is string json) return JsonSerializer.Deserialize<T>(json);
+            if (data is string json) return JsonSerializer.Deserialize<T>(json);
         }
         catch
         {

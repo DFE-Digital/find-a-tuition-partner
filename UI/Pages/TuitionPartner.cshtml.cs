@@ -28,7 +28,7 @@ public class TuitionPartner : PageModel
     public async Task<IActionResult> OnGetAsync(Query query)
     {
         AllSearchData = TempData.Peek<SearchModel>("AllSearchData");
-        
+
         if (string.IsNullOrWhiteSpace(query.Id))
         {
             _logger.LogWarning("Null or whitespace id '{Id}' provided", query.Id);
@@ -42,7 +42,7 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        Data = await _mediator.Send(query with 
+        Data = await _mediator.Send(query with
         {
             LocalAuthorityDistrictCode = TempData.Peek<string>("LocalAuthorityDistrictCode")
         });
@@ -214,7 +214,7 @@ public class TuitionPartner : PageModel
                 .ToDictionary(
                     key => key.Key,
                     value => new GroupPrice
-                            ( MinPrice(value, TuitionTypes.InSchool)
+                            (MinPrice(value, TuitionTypes.InSchool)
                             , MaxPrice(value, TuitionTypes.InSchool)
                             , MinPrice(value, TuitionTypes.Online)
                             , MaxPrice(value, TuitionTypes.Online)

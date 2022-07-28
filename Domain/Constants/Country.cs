@@ -2,7 +2,7 @@
 
 public class Country
 {
-    public class Name 
+    public class Name
     {
         public const string England = "England";
         public const string Wales = "Wales";

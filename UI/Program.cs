@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.Json.Serialization;
 using Application.Extensions;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
@@ -6,8 +8,7 @@ using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using System.Globalization;
-using System.Text.Json.Serialization;
+using Serilog.Events;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
@@ -23,7 +24,7 @@ if (args.Any(x => x == "import"))
             services.AddDataImporter();
             services.AddHostedService<DataImporterService>();
         })
-        .AddLogging()
+        .AddLogging(LogEventLevel.Warning)
         .Build();
 
     await host.RunAsync();
@@ -41,9 +42,9 @@ builder.Services.AddCqrs();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 
-builder.Services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
+builder.Services.AddGovUkFrontend(options =>
 {
-    AddImportsToHtml = false
+    options.AddImportsToHtml = false;
 });
 
 builder.Services.AddControllers(options =>

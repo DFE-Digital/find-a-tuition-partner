@@ -72,4 +72,29 @@ public class SpreadsheetExtensionsTests
     {
         value.ParseDateOnly().Should().BeNull();
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Parse_url_with_null_or_whitespace(string? url)
+    {
+        url.ParseUrl().Should().Be("");
+    }
+
+    [Theory]
+    [InlineData("www.tuitionpartner.testdata")]
+    [InlineData("tuitionpartner.testdata")]
+    public void Parse_url_with_no_http_protocol(string url)
+    {
+        url.ParseUrl().Should().StartWith("http://");
+    }
+
+    [Theory]
+    [InlineData("http://www.tuitionpartner.testdata")]
+    [InlineData("https://tuitionpartner.testdata")]
+    public void Parse_url_with_http_protocol(string url)
+    {
+        url.ParseUrl().Should().Be(url);
+    }
 }

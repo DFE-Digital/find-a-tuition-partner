@@ -22,10 +22,7 @@ module.exports = {
     rules: [
       {
         test: /\.mjs$/,
-        type: 'javascript/auto',
-        resolve: {
-          fullySpecified: false
-        }
+        type: 'javascript/auto'
       },
       {
         test: /\.s[ac]ss$/i,

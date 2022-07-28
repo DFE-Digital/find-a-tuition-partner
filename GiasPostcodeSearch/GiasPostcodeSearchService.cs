@@ -49,7 +49,8 @@ public class GiasPostcodeSearchService : IHostedService
             CancellationToken = cancellationToken
         };
 
-        await Parallel.ForEachAsync(schoolData, options, async (schoolDatum, ct) => {
+        await Parallel.ForEachAsync(schoolData, options, async (schoolDatum, ct) =>
+        {
             var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
             if (subjectsQueryString == null)
             {
@@ -58,9 +59,9 @@ public class GiasPostcodeSearchService : IHostedService
             else
             {
                 _logger.LogDebug($"Searching for Tuition Partners covering School {schoolDatum}");
-                
+
                 var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
-                
+
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 var response = await _httpClient.GetAsync(requestUri, ct);
@@ -100,7 +101,7 @@ public class GiasPostcodeSearchService : IHostedService
                     averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
                     searchesPerSecond = (int)((double)count / (runStopWatch.ElapsedMilliseconds / 1000));
                     _logger.LogInformation($"{count} searches of {totalCount} run in {runStopWatch.ElapsedMilliseconds / 1000}s. Error count {errorCount}. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
-                    
+
                     // Reset metrics for next run
                     minElapsedMilliseconds = long.MaxValue;
                     maxElapsedMilliseconds = 0L;
@@ -113,7 +114,7 @@ public class GiasPostcodeSearchService : IHostedService
         runStopWatch.Stop();
         averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
         searchesPerSecond = (int)((double)count / runStopWatch.ElapsedMilliseconds);
-        _logger.LogInformation($"Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds/1000}s. Error count {errorCount}. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+        _logger.LogInformation($"Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds / 1000}s. Error count {errorCount}. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
 
         _host.StopApplication();
     }

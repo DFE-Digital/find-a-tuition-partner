@@ -1,4 +1,6 @@
-﻿namespace Application.Extensions;
+﻿using System.Text.RegularExpressions;
+
+namespace Application.Extensions;
 
 public static class SpreadsheetExtensions
 {
@@ -30,5 +32,14 @@ public static class SpreadsheetExtensions
         }
 
         return null;
+    }
+
+    public static string ParseUrl(this string? cellValue)
+    {
+        if (string.IsNullOrWhiteSpace(cellValue)) return "";
+
+        if (Regex.IsMatch(cellValue, @"^https?://", RegexOptions.IgnoreCase)) return cellValue;
+
+        return $"http://{cellValue}";
     }
 }
