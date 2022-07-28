@@ -16,6 +16,7 @@ $govuk-page-width: 1180px;
 @import "node_modules/govuk-frontend/govuk/components/back-link/index";
 @import "node_modules/govuk-frontend/govuk/components/button/index";
 @import "node_modules/govuk-frontend/govuk/components/checkboxes/index";
+@import "node_modules/govuk-frontend/govuk/components/cookie-banner/index";
 @import "node_modules/govuk-frontend/govuk/components/details/index";
 @import "node_modules/govuk-frontend/govuk/components/error-message/index";
 @import "node_modules/govuk-frontend/govuk/components/error-summary/index";
@@ -24,6 +25,7 @@ $govuk-page-width: 1180px;
 @import "node_modules/govuk-frontend/govuk/components/radios/index";
 @import "node_modules/govuk-frontend/govuk/components/summary-list/index";
 @import "node_modules/govuk-frontend/govuk/components/table/index";
+
 
 @import "src/sass/options-card";
 @import "src/sass/option-select";
