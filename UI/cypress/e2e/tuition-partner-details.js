@@ -1,32 +1,5 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, camelCaseKeyStage } from "../support/utils";
-
-const KeyStageSubjects = input => 
-    input.split(',')
-         .map(s => s.trim())
-         .map(s =>
-        {
-            const endOfKs = s.lastIndexOf(' ');
-            const ks = camelCaseKeyStage(s.slice(0, endOfKs));
-            const subj = s.slice(endOfKs + 1, s.length);
-            return `Data.Subjects=${ks}-${subj}`;
-        })
-        .join('&');
-
-Given("a user has arrived on the 'Tuition Partner' page for {string}", name => {
-    cy.visit(`/tuition-partner/${name}`);
-});
-
-Given("a user has arrived on the 'Tuition Partner' page for {string} after searching for {string}", (name, subjects) => {
-
-    cy.visit(`/search-results?${KeyStageSubjects(subjects)}&Data.TuitionType=Any&Data.Postcode=sk11eb`);
-    cy.get('.govuk-link').contains(name).click();
-});
-
-Given("a user has arrived on the 'Tuition Partner' page for {string} after entering search details for multiple subjects", name => {
-    cy.visit(`/search-results?Data.Subjects=KeyStage1-English&Data.Subjects=KeyStage1-Maths&Data.TuitionType=Any&Data.Postcode=sk11eb`);
-    cy.get('.govuk-link').contains(name).click();
-});
+import { kebabCase, camelCaseKeyStage, KeyStageSubjects } from "../support/utils";
 
 When("the home page is selected", () => {
     cy.get('[data-testid="home-link"]').click();
@@ -42,9 +15,9 @@ Then("TP has not provided the information in the {string} section", details => {
 
 Then("TP has provided full contact details", () => {
     cy.get('[data-testid="contact-details"]').should('contain.text', 'Website', { matchCase: true })
-    .and('contain.text', 'Phone number', { matchCase: true })
-    .and('contain.text', 'Email address', { matchCase: true })
-    .and('contain.text', 'Address', { matchCase: true });
+        .and('contain.text', 'Phone number', { matchCase: true })
+        .and('contain.text', 'Email address', { matchCase: true })
+        .and('contain.text', 'Address', { matchCase: true });
 });
 
 Then("the search details are correct", () => {
@@ -67,10 +40,16 @@ Then("the payment details are hidden", () => {
 
 Then("the quality assured tuition partner details are shown", () => {
     cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
-  });
+});
 
-Then("the tuition partners website link exist", () => {
-    cy.get('[data-testid=tuition-partner-website-link]').should('have.prop', 'href');
+Then("the tuition partner's website link is displayed", () => {
+    cy.get('[data-testid=tuition-partner-website-link]').should('exist');
+});
+
+Then("the tuition partners website link starts with {string}", (prefix) => {
+    cy.get('[data-testid=tuition-partner-website-link]')
+        .invoke('attr', 'href')
+        .should('match', new RegExp(`^${prefix}`));
 });
 
 Then("the funding guidance page is accessible", () => {
@@ -111,7 +90,7 @@ Then("the tuition partner full pricing tables are not displayed", () => {
             .should('not.exist');
         cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`)
             .should('not.exist');
-    }    
+    }
 });
 
 Then("the tuition partner full pricing tables are displayed", () => {

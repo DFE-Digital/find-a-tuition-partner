@@ -1,5 +1,4 @@
 ﻿@page
-@using UI.Pages.Shared
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
@@ -11,6 +10,7 @@
 		<govuk-error-summary>
 			<govuk-error-summary-item asp-for="Data.Postcode" />
 			<govuk-error-summary-item asp-for="Data.Subjects" />
+			<govuk-error-summary-item asp-for="Data.TuitionType" />
 		</govuk-error-summary>
 		
 		<h1 class="govuk-heading-l">Search results</h1>
@@ -29,7 +29,6 @@
 		<div class="govuk-grid-column-one-third">
 			<div class="app-results-filter" data-module="results-filter">
 				<h2 class="govuk-heading-m">Filter results</h2>
-				
 
 				@foreach (var item in Model.Data.AllSubjects.Keys)
 				{
@@ -45,11 +44,11 @@
 						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
 							Type of tuition
 						</govuk-radios-fieldset-legend>
+						@foreach (var item in Model.Data.AllTuitionTypes)
+						{
+							<govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+						}
 					</govuk-radios-fieldset>
-					@foreach (var item in Model.Data.AllTuitionTypes)
-					{
-						<govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
-					}
 				</govuk-radios>
 
 				<div class="govuk-button-group" data-module="results-filter-button">
@@ -96,6 +95,14 @@
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
 									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+								</govuk-summary-list-row-value>
+							</govuk-summary-list-row>
+							<govuk-summary-list-row class="govuk-body-s">
+								<govuk-summary-list-row-key>
+									SEND support
+								</govuk-summary-list-row-key>
+								<govuk-summary-list-row-value>
+									@item.HasSenProvision.ToYesNoString()
 								</govuk-summary-list-row-value>
 							</govuk-summary-list-row>
 							<govuk-summary-list-row class="govuk-body-s">

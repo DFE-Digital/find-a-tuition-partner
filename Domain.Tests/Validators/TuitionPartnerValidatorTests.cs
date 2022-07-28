@@ -1,6 +1,6 @@
-﻿using Domain.Validators;
+﻿using System.Collections.Generic;
+using Domain.Validators;
 using FluentValidation.TestHelper;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Domain.Tests.Validators;
@@ -67,6 +67,10 @@ public class TuitionPartnerValidatorTests
 
     [Theory]
     [InlineData("website")]
+    [InlineData("www.something.com")]
+    [InlineData("www.something.org")]
+    [InlineData("something.com")]
+    [InlineData("something.org")]
     [InlineData("http\\www.something.org")]
     [InlineData("https\\www.something.org")]
     [InlineData("http//www.something.org")]
@@ -82,10 +86,6 @@ public class TuitionPartnerValidatorTests
     }
 
     [Theory]
-    [InlineData("www.something.com")]
-    [InlineData("www.something.org")]
-    [InlineData("something.com")]
-    [InlineData("something.org")]
     [InlineData("http://www.something.org")]
     [InlineData("https://www.something.org")]
 
@@ -128,7 +128,7 @@ public class TuitionPartnerValidatorTests
     }
 
     [Fact]
-  
+
     public void With_no_valid_price()
     {
         var listOfPrices = new List<Price>();

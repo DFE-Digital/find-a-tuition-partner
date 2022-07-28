@@ -20,19 +20,22 @@ public class SearchResults : PageModel
     public SearchResults(IMediator mediator) => this.mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
-    
+
     public async Task OnGet(Query Data)
     {
         TempData.Set("AllSearchData", Data);
 
-        Data.TuitionType ??= TuitionType.Any; 
+        Data.TuitionType ??= TuitionType.Any;
         this.Data = await mediator.Send(Data);
+
+        TempData.Set("LocalAuthorityDistrictCode", this.Data.LocalAuthorityDistrictCode ?? "");
+
         if (!this.Data.Validation.IsValid)
             foreach (var error in this.Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public record Query : SearchModel, IRequest<ResultsModel> { }
+    public record Query : SearchModel, IRequest<ResultsModel>;
 
     public record ResultsModel : SearchModel
     {
@@ -44,6 +47,7 @@ public class SearchResults : PageModel
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
+        public string? LocalAuthorityDistrictCode { get; set; }
     }
 
     private class Validator : AbstractValidator<Query>
@@ -96,6 +100,7 @@ public class SearchResults : PageModel
                 {
                     LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.Name,
                     Results = searchResults.Data,
+                    LocalAuthorityDistrictCode = searchResults.Data.Request.LocalAuthorityDistrictCode,
                 },
                 Domain.ValidationResult error => queryResponse with
                 {
@@ -154,7 +159,7 @@ public class SearchResults : PageModel
                         location.Data.LocalAuthorityDistrictCode,
                         request,
                         cancellationToken);
-            
+
             return Result.Success(results);
         }
 
