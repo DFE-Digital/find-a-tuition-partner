@@ -17,13 +17,6 @@
 		
 		<h1 class="govuk-heading-l">Search results</h1>
 
-		<p show-if="Model.Data.Results != null" class="govuk-body govuk-heading-m">
-			@{
-				var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
-				var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
-			}
-			<strong>@count</strong> @(resultPlural) for @Model.Data.LocalAuthority
-		</p>
 	</div>
 </div>
 
@@ -64,6 +57,7 @@
 		</div>
 
 		<div class="govuk-grid-column-two-thirds">
+
 			<div class="govuk-form-group">
 				<div asp-validation-group-for="Data.Postcode" data-testid="postcode">
 					<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
@@ -74,6 +68,18 @@
 					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0" data-testid="call-to-action">Search</govuk-button>
 				</div>
 			</div>
+
+			<div show-if="Model.Data.Results != null" class="govuk-body">
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+				@{
+					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
+					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
+				}
+				<strong>@count</strong> @(resultPlural) for <strong>@Model.Data.LocalAuthority</strong>
+				sorted by A-Z
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+			</div>
+
 
 			@if (Model.Data.Results != null)
 			{
