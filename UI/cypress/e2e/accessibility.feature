@@ -1,23 +1,19 @@
 ﻿Feature: Accessibility page shows users how accessible the website and how to report problems
  Scenario: page as header accessibility statement
     Given a user has arrived on the accessibility page
-    Then they will see the Accessibility statement header
+    Then they will see the accessibility statement header
 
- Scenario: page as header accessibility statement
+ Scenario: page as link to legislation priniciples
     Given a user has arrived on the accessibility page
-    Then they will see the Accessibility statement header
-
- Scenario: page as link to design priniciples
-    Given a user has arrived on the accessibility page
-    Then they will see the design priniciples link
+    Then they will see the legislation link
 
  Scenario: page as header for cannot access part
     Given a user has arrived on the accessibility page
     Then they will see cannot access part header
 
- Scenario: page as link to mail ntp service
+ Scenario: page as link to mail tutoring service
     Given a user has arrived on the accessibility page
-    Then they will see link to ntp mail address
+    Then they will see link to tutoring mail address
 
  Scenario: page as header for reporting accesibility problems
     Given a user has arrived on the accessibility page
@@ -34,3 +30,15 @@
  Scenario: page as header improve accesibility
     Given a user has arrived on the accessibility page
     Then they will see header improve accesibility
+
+ Scenario: page as header accessibility technical
+    Given a user has arrived on the accessibility page
+    Then they will see header accessibility technical header
+
+ Scenario: page as header Compliance status
+    Given a user has arrived on the accessibility page
+    Then they will see header Compliance status
+
+ Scenario: page as header how tested  webiste
+    Given a user has arrived on the accessibility page
+    Then they will see header how we tested website
