@@ -27,6 +27,5 @@ Feature: User handles cookies
   Scenario: The cookies banner is not displayed again after rejecting cookies
     Given a user accesses a service page after rejecting cookies
     Then the cookie banner is not displayed
-
-
-
+  
+ 
