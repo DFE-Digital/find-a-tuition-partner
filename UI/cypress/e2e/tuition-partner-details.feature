@@ -82,7 +82,7 @@ Feature: User can view full details of a Tuition Parner
     | tution-partner | tuition-types |
     | Fledge Tuition Ltd | Online |
     | FFT Education | In school |
-    | Nudge | In school, Online |
+    | career-tree | In school, Online |
 
   Scenario: full pricing tables are not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
