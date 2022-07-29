@@ -1,5 +1,6 @@
 ﻿@inject IHostEnvironment HostEnvironment
 @inject IConfiguration Configuration
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpcontext
 
 @{
 	// Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
@@ -7,6 +8,9 @@
 
 	var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
 	var enableGoogleAnalytics = !string.IsNullOrWhiteSpace(measurementId);
+	var googleAnalyticsConsent = Convert.ToBoolean(httpcontext?.HttpContext?.Request.Cookies[".FindATuitionPartner.Consent"]);
+
+	enableGoogleAnalytics = enableGoogleAnalytics && googleAnalyticsConsent;
 }
 
 <!DOCTYPE html>
@@ -56,6 +60,9 @@
 <script>
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
+
+<div><partial name="_CookiesOptionBanner" /></div>
+  
 
 <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 

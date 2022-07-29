@@ -12,6 +12,21 @@ Feature: User is shown search results
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
+  Scenario: Back click returns to subjects page
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    When they click 'Back'
+    Then they will be taken to the 'Which subjects' page
+    And they are shown the subjects for 'Key stage 1'
+    And they will see 'Key stage 1 English' selected
+
+  Scenario: Back to the start
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    When they click 'Back'
+    And they click 'Back'
+    And they click 'Back'
+    Then they will be taken to the 'Find a tuition partner' journey start page
+    And they will see 'SK1 1EB' entered for the postcode
+
   Scenario: user does not enter postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' without a postcode
     When they click 'Continue'
@@ -66,10 +81,15 @@ Feature: User is shown search results
     And they click on the option heading for 'Key stage 2'
     And they will see an expanded subject filter for 'Key stage 2'
 
-Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
-    Given a user has arrived on the 'Search results' page
-    Then the subjects in the filter displayed in alphabetical order 
+  Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
+      Given a user has arrived on the 'Search results' page
+      Then the subjects in the filter displayed in alphabetical order 
 
-Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
-    Given a user has arrived on the 'Search results' page
-    Then the subjects covered by a tuition partner are in alphabetical order 
+  Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
+      Given a user has arrived on the 'Search results' page
+      Then the subjects covered by a tuition partner are in alphabetical order 
+
+  Scenario: Results summary is shown 
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    Then they will see the results summary for 'Stockport'
+  

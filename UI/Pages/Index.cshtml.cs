@@ -24,6 +24,16 @@ public partial class Index : PageModel
 
     public record Command : SearchModel, IRequest<Domain.IResult> { }
 
+    public IActionResult OnGet()
+    {
+        // The model is being validated on get due to [BindProperty(SupportsGet = true)].
+        // This is not appropriate for this page either when first arriving on this page or using a back link.
+        // Therefore clear any model state validation errors
+        ModelState.Clear();
+
+        return Page();
+    }
+
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid) return Page();

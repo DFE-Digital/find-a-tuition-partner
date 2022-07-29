@@ -11,3 +11,7 @@ When("they click on the postcode error", () => {
 Then("the school's postcode text input is focused", () => {
   cy.focused().should("have.attr", "name", "Data.Postcode");
 });
+
+Then("they will see {string} entered for the postcode", postcode => {
+  cy.get('[data-testid="postcode"]>input').should('contain.value', postcode);
+});
