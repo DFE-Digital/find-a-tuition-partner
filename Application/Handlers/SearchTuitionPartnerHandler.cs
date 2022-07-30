@@ -40,7 +40,7 @@ public class SearchTuitionPartnerHandler
             if (request.LocalAuthorityDistrictCode != null)
             {
                 lad = await _dbContext.LocalAuthorityDistricts
-                    .Include(e => e.Region)
+                    .Include(e => e.LocalAuthority)
                     .SingleOrDefaultAsync(e => e.Code == request.LocalAuthorityDistrictCode, cancellationToken);
 
                 if (lad != null)

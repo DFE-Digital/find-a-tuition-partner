@@ -133,7 +133,7 @@ public class SearchForResults : CleanSliceFixture
         // Given
         await Fixture.ExecuteDbContextAsync(async db =>
         {
-            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E06000011");
+            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E07000096");
             var tuitionType = await db.TuitionTypes.FirstAsync();
 
             db.TuitionPartners.Add(new Domain.TuitionPartner
@@ -182,7 +182,7 @@ public class SearchForResults : CleanSliceFixture
         // Given
         await Fixture.ExecuteDbContextAsync(async db =>
         {
-            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E06000011");
+            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E07000096");
             var tuitionType = await db.TuitionTypes.FirstAsync();
 
             var tp = db.TuitionPartners.Add(new Domain.TuitionPartner
@@ -218,7 +218,7 @@ public class SearchForResults : CleanSliceFixture
         var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
 
         // Then
-        result.LocalAuthority.Should().Be("East Riding of Yorkshire");
+        result.LocalAuthority.Should().Be("Hertfordshire");
     }
 
     [Fact]
