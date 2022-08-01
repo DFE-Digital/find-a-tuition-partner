@@ -14,6 +14,18 @@ Given("a user has arrived on the 'Search results' page for {string} for postcode
     cy.visit(`/search-results?Postcode=${postcode}&${query}`);
 });
 
+Given("a user has arrived on the 'Search results' page without subjects", ()  => {
+    Step(this, "a user has arrived on the 'Search results' page without subjects for postcode 'sk11eb'")
+});
+
+Given("a user has arrived on the 'Search results' page without subjects for postcode {string}", postcode => {
+    cy.visit(`/search-results?Postcode=${postcode}`);
+});
+
+Given("a user has arrived on the 'Search results' page without subjects or postcode", ()  => {
+    cy.visit(`/search-results`);
+});
+
 Given("a user has arrived on the 'Search results' page", () => {
     cy.visit(`/search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&Subjects=KeyStage2-English&Subjects=KeyStage2-Maths&Subjects=KeyStage2-Science&Subjects=KeyStage3-English&Subjects=KeyStage3-Humanities&Subjects=KeyStage3-Maths&Subjects=KeyStage3-Modern%20foreign%20languages&Subjects=KeyStage3-Science&Subjects=KeyStage4-English&Subjects=KeyStage4-Humanities&Subjects=KeyStage4-Maths&Subjects=KeyStage4-Modern%20foreign%20languages&Subjects=KeyStage4-Science&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4`);
 });
