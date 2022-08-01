@@ -98,7 +98,7 @@ public class SearchResults : PageModel
             {
                 SuccessResult => queryResponse with
                 {
-                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.Name,
+                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.LocalAuthority.Name,
                     Results = searchResults.Data,
                     LocalAuthorityDistrictCode = searchResults.Data.Request.LocalAuthorityDistrictCode,
                 },

@@ -39,7 +39,7 @@ Given("the 'view cookies' page is displayed", () => {
 Given("opt-in is selected", () => {
   cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
 });
- 
+  
 When("cookies are accepted", () => {
     cy.get('[data-testid="accept-cookies"]').click();
   });
@@ -105,7 +105,7 @@ Then("a Success Banner is displayed", () => {
 Then("the previous page is displayed correctly", () => {
   cy.location('search').should('eq', '?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1');
 });
-
+  
 Then("the privacy policy is accessible in a new tab", () => {
   cy.get('[data-testid="privacy-page"]').then(function ($a) {
     const href = $a.prop('href');

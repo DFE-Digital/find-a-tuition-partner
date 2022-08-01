@@ -4,6 +4,8 @@
     ViewData["Title"] = "Search results";
 }
 
+<a href="/which-subjects?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
+
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
 		
@@ -15,10 +17,6 @@
 		
 		<h1 class="govuk-heading-l">Search results</h1>
 
-		@if (Model.Data.Results != null)
-		{
-			<p class="govuk-body govuk-!-font-size-27"><strong>@(Model.Data.Results.Count == 0 ? "No" : Model.Data.Results.Count)</strong> @(Model.Data.Results.Count != 1 ? "results" : "result") for @Model.Data.LocalAuthority</p>
-		}
 	</div>
 </div>
 
@@ -58,16 +56,28 @@
 		</div>
 
 		<div class="govuk-grid-column-two-thirds">
+
 			<div class="govuk-form-group">
 				<div asp-validation-group-for="Data.Postcode" data-testid="postcode">
 					<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
-						Postcode
+						Enter your school's postcode
 					</label>
 					<span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
 					<input asp-for="Data.Postcode" class="govuk-input govuk-input--width-10" type="text">
-					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0" data-testid="call-to-action">Search again</govuk-button>
+					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0" data-testid="call-to-action">Search</govuk-button>
 				</div>
 			</div>
+
+			<div show-if="Model.Data.Results != null" class="govuk-body" data-testid="results-summary">
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+				@{
+					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
+					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
+				}
+				<strong>@count</strong> @(resultPlural) for <strong>@Model.Data.LocalAuthority</strong> sorted by A-Z
+				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+			</div>
+
 
 			@if (Model.Data.Results != null)
 			{

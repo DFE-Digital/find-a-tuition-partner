@@ -26,7 +26,9 @@ public record SearchModel
 public static class ModelExtensions
 {
     public static KeyStageSubject[] ParseKeyStageSubjects(this string[] keyStageSubjects)
-        => keyStageSubjects.Select(KeyStageSubject.Parse).ToArray();
+        => keyStageSubjects.Select(KeyStageSubject.TryParse)
+        .OfType<KeyStageSubject>()
+        .ToArray();
 }
 
 public record KeyStageSubject(KeyStage KeyStage, string Subject)
@@ -44,6 +46,9 @@ public record KeyStageSubject(KeyStage KeyStage, string Subject)
         return new KeyStageSubject(ks, re.Groups[2].Value);
     }
 
+    public static KeyStageSubject? TryParse(string value) =>
+        TryParse(value, out var parsed) ? parsed : null;
+
     public static bool TryParse(string value, [MaybeNullWhen(false)] out KeyStageSubject parsed)
     {
         if (value == null)
@@ -55,13 +60,13 @@ public record KeyStageSubject(KeyStage KeyStage, string Subject)
         var re = new Regex(@"(KeyStage[\d])-(.*)").Match(value);
 
         if (!re.Success)
-        {
+        {  // Subject must be of the form KS1-English
             parsed = default;
             return false;
         }
 
         if (!Enum.TryParse<KeyStage>(re.Groups[1].Value, out var ks))
-        {
+        { // Value is not a valid key stage
             parsed = default;
             return false;
         }

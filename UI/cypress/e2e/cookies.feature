@@ -27,7 +27,7 @@ Feature: User handles cookies
   Scenario: The cookies banner is not displayed again after rejecting cookies
     Given a user accesses a service page after rejecting cookies
     Then the cookie banner is not displayed
-  
+
  Scenario: The cookie banner is not displayed when ‘cookie statement' is selected when entering for the first time
     Given a user has started the 'Find a tuition partner' journey
     When the ‘cookies' is selected from footer 
@@ -69,4 +69,4 @@ Scenario: Allow users to opt out once they have reached the cookies page for fir
     And a Success Banner is displayed
     And user session is not tracked
 
-    
+

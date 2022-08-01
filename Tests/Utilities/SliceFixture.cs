@@ -41,7 +41,7 @@ public class SliceFixture : IAsyncLifetime
                 .Returns(new LocationFilterParameters
                 {
                     Country = "England",
-                    LocalAuthorityDistrictCode = "E06000011",
+                    LocalAuthorityDistrictCode = "E07000096",
                 });
         }
 

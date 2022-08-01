@@ -88,3 +88,9 @@ Then("the subjects covered by a tuition partner are in alphabetical order", () =
     });
 });
 
+Then("they will see the results summary for {string}", location => {
+    var expected = new RegExp(`\\d+ results for ${location} sorted by A-Z`)
+    cy.get('[data-testid="results-summary"]')
+        .invoke("text").invoke("trim")
+        .should('match', expected)
+});
