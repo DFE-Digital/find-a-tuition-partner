@@ -29,8 +29,8 @@ Feature: User is shown search results
 
   Scenario: user does not enter postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' without a postcode
-    When they click 'Continue'
-    Then they will see 'Enter a postcode' as an error message for the 'postcode'
+    Then display all correct tuition partners that provide the selected subjects in any location
+    And they will not see an error message
 
   Scenario: user enters an invalid postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -57,7 +57,7 @@ Feature: User is shown search results
     Then they will see 'This service covers England only' as an error message for the 'postcode'
 
   Scenario: user clicks postcode error
-    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' without a postcode
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'invalid'
     When they click on the postcode error
     Then the school's postcode text input is focused
 

@@ -55,12 +55,9 @@ public class SearchResults : PageModel
         public Validator()
         {
             RuleFor(m => m.Postcode)
-                .NotEmpty()
-                .WithMessage("Enter a postcode");
-
-            RuleFor(m => m.Postcode)
                 .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
-                .WithMessage("Enter a valid postcode");
+                .WithMessage("Enter a valid postcode")
+                .When(m => !string.IsNullOrEmpty(m.Postcode));
 
             RuleFor(m => m.Subjects)
                 .NotEmpty()
@@ -166,6 +163,9 @@ public class SearchResults : PageModel
         private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
         {
             var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
+
+            if (string.IsNullOrEmpty(request.Postcode))
+                return Result.Success(new LocationFilterParameters { });
 
             if (!validationResults.IsValid)
             {

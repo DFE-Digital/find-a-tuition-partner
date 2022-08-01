@@ -94,3 +94,7 @@ Then("they will see the results summary for {string}", location => {
         .invoke("text").invoke("trim")
         .should('match', expected)
 });
+
+Then("display all correct tuition partners that provide the selected subjects in any location", () => {
+    cy.get('[data-testid="results-list-item"]').should("exist")
+});
