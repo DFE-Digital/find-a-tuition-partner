@@ -8,8 +8,6 @@
 
 
 <div class="govuk-grid-row">
-
-
     <div class="govuk-grid-column-two-thirds">
 
         @if (Model.PreferencesSet)
@@ -69,13 +67,13 @@
                     </legend>
                     <div class="govuk-radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" data-testid="cookie-consent-accept" name="consent" type="radio" value="true" checked="@Model.Consent">
+                            <input class="govuk-radios__input"  data-testid="cookie-consent-accept" id="cookie-consent-accept" name="consent" type="radio" value="true" checked="@Model.Consent">
                             <label class="govuk-label govuk-radios__label" for="cookie-consent-accept">
                                 Yes, opt-in to analytics cookies
                             </label>
                         </div>
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" data-testid="cookie-consent-deny" name="consent" type="radio" value="false" checked="@(Model.Consent == false)">
+                            <input class="govuk-radios__input" data-testid="cookie-consent-deny" id="cookie-consent-deny" name="consent" type="radio" value="false" checked="@(Model.Consent == false)">
                             <label class="govuk-label govuk-radios__label" for="cookie-consent-deny">
                                 No, do not use cookies to track my website usage
                             </label>
@@ -83,7 +81,7 @@
                     </div>
                 </fieldset>
             </div>
-            <input type="submit" data-testid="save-changes" name="commit" value="Save changes" class="govuk-button" data-qa="submit" data-module="govuk-button" data-disable-with="Save changes">
+            <input type="submit" data-testid="save-changes" value="Save changes" class="govuk-button" data-module="govuk-button">
         </form>
         <p class="govuk-body">Google Analytics sets the following cookies:</p>
         <table class="govuk-table">

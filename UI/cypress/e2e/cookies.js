@@ -50,7 +50,7 @@ When("a user opts-in", () => {
   cy.get(`input[data-testid="cookie-consent-accept"]`).click();
   });
 
-When("  a user opts-out", () => {
+When("a user opts-out", () => {
     cy.get(`input[data-testid="cookie-consent-deny"]`).click();
     });
 
@@ -99,3 +99,8 @@ Then("the privacy policy is accessible in a new tab", () => {
     const href = $a.prop('href');
     cy.request(href).its('body').should('include', '</html>');
 })});
+
+Given("opt-in is selected", () => {
+  cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
+});
+
