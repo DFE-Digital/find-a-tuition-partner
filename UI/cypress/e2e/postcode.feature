@@ -76,3 +76,8 @@ Feature: User enters postcode to begin search
     When they enter 'SK1 1EB' as the school's postcode
     And they click 'Continue'
     Then they will be taken to the 'Which key stages' page
+
+  Scenario: accessiblity link to page
+    Given a user has started the 'Find a tuition partner' journey
+    Then the accessibility link 'Accessibility' links to '/Accessibility'
+    And the accessibility link opens in a new window
