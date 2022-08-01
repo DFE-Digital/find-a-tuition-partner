@@ -15,6 +15,10 @@ When("they click on the option heading for {string}", keystage => {
     });
 })
 
+When("they clear all the filters", () => {
+    cy.get('[type="checkbox"]').uncheck()
+})
+
 Then("they will see all the subjects for {string}", keystage => {
     const stages = keystage.split(',').map(s => s.trim());
     
