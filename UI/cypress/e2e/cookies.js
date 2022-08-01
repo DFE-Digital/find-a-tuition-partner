@@ -7,14 +7,15 @@ Given("a user accesses a service page after accepting cookies", () => {
     Step(this, "the banner disappears");
   });
 
-Given("a user accesses a service page after rejecting cookies", () => {Step(this, "a user has started the 'Find a tuition partner' journey");
+Given("a user accesses a service page after rejecting cookies", () => {
+    Step(this, "a user has started the 'Find a tuition partner' journey");
     Step(this, "cookies are rejected");
     Step(this, "the 'Which subjects' page is displayed");
     Step(this, "the banner disappears");
   });
 
 Given("the 'Which subjects' page is displayed", () => {
-    cy.visit("/which-subjects?Postcode=sk11eb&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4");
+    cy.visit("search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1");
 });
 
 Given("nothing is selected", () => {
@@ -29,6 +30,15 @@ Given("the success banner has been displayed", () => {
   Step(this, "Saves Changes");
   Step(this, "a Success Banner is displayed");
 });
+
+Given("the 'view cookies' page is displayed", () => {
+  Step(this, "the 'Which subjects' page is displayed");
+  Step(this, "the ‘cookies' is selected from footer");
+});
+
+Given("opt-in is selected", () => {
+  cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
+});
  
 When("cookies are accepted", () => {
     cy.get('[data-testid="accept-cookies"]').click();
@@ -42,7 +52,7 @@ When("the ‘view cookies’ is selected", () => {
     cy.get('[data-testid="view-cookies"]').click();
   });
 
-  When("the ‘cookies' is selected from footer", () => {
+When("the ‘cookies' is selected from footer", () => {
     cy.get('[data-testid="view-footer-cookies"]').click();
   });
 
@@ -67,6 +77,7 @@ Then("the cookies banner is displayed", () => {
   });
 
 Then("user session is tracked", () => {
+    cy.visit("search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1");
     cy.get('head script').should('contain', 'gtag')
   });
 
@@ -75,6 +86,7 @@ Then("the banner disappears", () => {
   });
   
 Then("user session is not tracked", () => {
+    cy.visit("search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1");
     cy.contains('gtag').should('not.exist');;
   });
 
@@ -87,11 +99,11 @@ Then("the cookie banner is not displayed", () => {
   });
 
 Then("a Success Banner is displayed", () => {
-    cy.contains('[data-testid="success-banner""]').should('exist');;
+    cy.get('[data-testid="success-banner"]').should('exist');;
   });
 
-Then("the previous page is displayed correctly (any previous settings are maintained)", () => {
-    cy.location('search').should('eq', '/which-subjects?Postcode=sk11eb&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4');
+Then("the previous page is displayed correctly", () => {
+  cy.location('search').should('eq', '?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1');
 });
 
 Then("the privacy policy is accessible in a new tab", () => {
@@ -100,7 +112,6 @@ Then("the privacy policy is accessible in a new tab", () => {
     cy.request(href).its('body').should('include', '</html>');
 })});
 
-Given("opt-in is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
+Given("opt-out is selected", () => {
+  cy.get(`input[data-testid="cookie-consent-deny"]`).should('be.checked');
 });
-

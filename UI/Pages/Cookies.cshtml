@@ -20,7 +20,7 @@
                 </div>
                 <div class="govuk-notification-banner__content">
                     <p class="govuk-notification-banner__heading">
-                        You’ve set your cookie preferences. <a data-testid="view-previous-page-link" class="govuk-notification-banner__link" data-test="success-banner-return-link" href="@Model.returnPath">Go back to the page you were looking at</a>.
+                        You’ve set your cookie preferences. <a data-testid="view-previous-page-link" class="govuk-notification-banner__link" href="@Model.returnPath">Go back to the page you were looking at</a>.
                     </p>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </legend>
                     <div class="govuk-radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input"  data-testid="cookie-consent-accept" id="cookie-consent-accept" name="consent" type="radio" value="true" checked="@Model.Consent">
+                            <input class="govuk-radios__input" data-testid="cookie-consent-accept" id="cookie-consent-accept" name="consent" type="radio" value="true" checked="@Model.Consent">
                             <label class="govuk-label govuk-radios__label" for="cookie-consent-accept">
                                 Yes, opt-in to analytics cookies
                             </label>
