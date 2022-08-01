@@ -38,3 +38,13 @@ Then("the other options school-led tutoring links to {string}", (href) => {
     cy.get('[data-testid="school-led-tutoring-link"]')
         .should('have.attr', 'href', href)
 });
+
+Then("the accessibility link {string} links to {string}", (text, href) => {
+    cy.get('[data-testid="accessibility-link"]')
+        .should('contain.text', text)
+        .should('have.attr', 'href', href)
+});
+
+Then("the accessibility link opens in a new window", () => {
+    cy.get('[data-testid="accessibility-link"]').should('have.attr', 'target', '_blank')
+});
