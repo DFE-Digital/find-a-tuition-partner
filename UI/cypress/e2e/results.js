@@ -95,6 +95,14 @@ Then("they will see the results summary for {string}", location => {
         .should('match', expected)
 });
 
+Then("show all correct tuition partners that provide tuition in the postcode's location", () => {
+    cy.get('[data-testid="results-list-item"]').should("exist")
+});
+
 Then("display all correct tuition partners that provide the selected subjects in any location", () => {
+    cy.get('[data-testid="results-list-item"]').should("exist")
+});
+
+Then("display all correct tuition partners in any location", () => {
     cy.get('[data-testid="results-list-item"]').should("exist")
 });

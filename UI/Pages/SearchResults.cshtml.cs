@@ -48,6 +48,11 @@ public class SearchResults : PageModel
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
         public string? LocalAuthorityDistrictCode { get; set; }
+
+        public bool IsAnySubjectSelected
+            => AllSubjects.SelectMany(x => x.Value).Any(x => x.Selected);
+
+        public bool? ForceOpenAllSubjectFilters => IsAnySubjectSelected ? null : false;
     }
 
     private class Validator : AbstractValidator<Query>
@@ -58,10 +63,6 @@ public class SearchResults : PageModel
                 .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
                 .WithMessage("Enter a valid postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
-
-            RuleFor(m => m.Subjects)
-                .NotEmpty()
-                .WithMessage("Select the subject or subjects");
 
             RuleForEach(m => m.Subjects)
                 .Must(x => KeyStageSubject.TryParse(x, out var _));

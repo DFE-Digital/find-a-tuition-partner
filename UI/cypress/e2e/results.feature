@@ -61,6 +61,22 @@ Feature: User is shown search results
     When they click on the postcode error
     Then the school's postcode text input is focused
 
+  Scenario: lands on search results page without filter boxes selected
+    Given a user has arrived on the 'Search results' page without subjects
+    Then display all correct tuition partners that provide the selected subjects in any location
+
+  Scenario: lands on search results with blank URL
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    Then display all correct tuition partners in any location
+    And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
+
+  Scenario: unselects all boxes on the filters 
+    Given a user has arrived on the 'Search results' page
+    When they enter '' as the school's postcode
+    And they clear all the filters
+    Then display all correct tuition partners in any location
+    And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
+
   Scenario: results default to any tuition type
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     Then they will see the tuition type 'Any' is selected
