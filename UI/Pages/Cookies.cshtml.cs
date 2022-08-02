@@ -11,13 +11,17 @@ namespace UI.Pages
         public bool PreferencesSet { get; set; } = false;
         public string? returnPath { get; set; }
 
-        public IActionResult OnGet(bool? consent, string returnUrl, bool? viewCookieStatement)
+        public IActionResult OnGet(bool? consent, string returnUrl)
         {
             returnPath = returnUrl;
 
             if (Request.Cookies.ContainsKey(ConsentCookieName))
             {
-                Consent = bool.Parse(Request.Cookies[ConsentCookieName]);
+                var value = Request.Cookies[ConsentCookieName];
+                if (value != null)
+                {
+                    Consent = bool.Parse(value);
+                }
             }
 
             if (consent.HasValue)
@@ -39,7 +43,11 @@ namespace UI.Pages
 
             if (Request.Cookies.ContainsKey(ConsentCookieName))
             {
-                Consent = bool.Parse(Request.Cookies[ConsentCookieName]);
+                var value = Request.Cookies[ConsentCookieName];
+                if (value != null)
+                {
+                    Consent = bool.Parse(value);
+                }
             }
 
             if (consent.HasValue)
@@ -66,15 +74,15 @@ namespace UI.Pages
             {
                 var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(12), Secure = true };
                 Response.Cookies.Append(ConsentCookieName, consent.Value.ToString(), cookieOptions);
-            }
 
-            if (!consent.Value)
-            {
-                foreach (var cookie in Request.Cookies.Keys)
+                if (!consent.Value)
                 {
-                    if (cookie.StartsWith("_ga") || cookie.Equals("_gid"))
+                    foreach (var cookie in Request.Cookies.Keys)
                     {
-                        Response.Cookies.Delete(cookie);
+                        if (cookie.StartsWith("_ga") || cookie.Equals("_gid"))
+                        {
+                            Response.Cookies.Delete(cookie);
+                        }
                     }
                 }
             }
