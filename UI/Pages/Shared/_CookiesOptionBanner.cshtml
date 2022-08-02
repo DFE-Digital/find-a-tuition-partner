@@ -33,7 +33,7 @@
                 <a button value="reject" data-testid="reject-cookies" type="button" name="cookies" class="govuk-button" data-module="govuk-button" asp-page="@nameof(Cookies)" asp-route-consent="false" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">           
                     Reject analytics cookies
                 </a>
-                <a class="govuk-link" data-testid="view-cookies" a asp-page="@nameof(Cookies)" class="govuk-link">View cookies</a>
+                <a class="govuk-link" data-testid="view-cookies" a asp-page="@nameof(Cookies)" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">View cookies</a>
             </div>
         </div>
     </div>
