@@ -51,15 +51,6 @@ Scenario: User selects cookie statement and then selects the 'privacy policy' li
     When the link to previous page is clicked
     Then the previous page is displayed correctly
 
-Scenario: Allow users to opt in once they have reached the cookies page for first time
-    Given the 'view cookies' page is displayed
-    And nothing is selected
-    When a user opts-in 
-    And Saves Changes
-    Then opt-in is selected
-    And a Success Banner is displayed
-    And user session is tracked
-
 Scenario: Allow users to opt out once they have reached the cookies page for first time
     Given the 'view cookies' page is displayed
     And nothing is selected

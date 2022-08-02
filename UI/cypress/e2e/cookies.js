@@ -77,7 +77,6 @@ Then("the cookies banner is displayed", () => {
   });
 
 Then("user session is tracked", () => {
-    cy.visit("search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1");
     cy.get('head script').should('contain', 'gtag')
   });
 
