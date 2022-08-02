@@ -19,7 +19,6 @@ Feature: User enters postcode to begin search
   Scenario: Check academic mentors link
      Given a user has started the 'Find a tuition partner' journey
      Then the other options academic links to '/academic-mentors'
-     And the academic mentors link opens in a new window
 
   Scenario: Check School led tutoring link
      Given a user has started the 'Find a tuition partner' journey

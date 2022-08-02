@@ -34,10 +34,6 @@ Then("the other options academic links to {string}", (href) => {
         .should('have.attr', 'href', href)
 });
 
-Then("the academic mentors link opens in a new window", () => {
-    cy.get('[data-testid="academic-mentors-link"]').should('have.attr', 'target', '_blank')
-});
-
 Then("the other options school-led tutoring links to {string}", (href) => {
     cy.get('[data-testid="school-led-tutoring-link"]')
         .should('have.attr', 'href', href)
