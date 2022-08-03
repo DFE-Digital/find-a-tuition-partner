@@ -6,6 +6,7 @@
  Scenario: page as link to login link
      Given a user has arrived on the academic mentors page
      Then they will see the login link
+     And the login link opens in a new window
 
  Scenario: page as link to funding allocation link
      Given a user has arrived on the academic mentors page
