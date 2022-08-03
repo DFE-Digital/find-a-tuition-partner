@@ -42,3 +42,4 @@
  Scenario: page as header how tested  webiste
     Given a user has arrived on the accessibility page
     Then they will see header how we tested website
+ 
