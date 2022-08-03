@@ -5,7 +5,7 @@ Given("a user has arrived on the accessibility page", () => {
 });
 
 Then("they will see the accessibility statement header", () => {
-    cy.get('[data-testid="accessibility-header"]').should('contain.text', "Accessibility statement for Find a partner")
+    cy.get('[data-testid="accessibility-header"]').should('contain.text', "Accessibility statement for Find a tution partner")
 });
 
 Then("they will see the legislation link", () => {
