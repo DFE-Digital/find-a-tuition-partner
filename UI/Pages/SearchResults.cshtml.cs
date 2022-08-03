@@ -48,6 +48,11 @@ public class SearchResults : PageModel
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
         public string? LocalAuthorityDistrictCode { get; set; }
+
+        public bool IsAnySubjectSelected
+            => AllSubjects.SelectMany(x => x.Value).Any(x => x.Selected);
+
+        public bool? ForceOpenAllSubjectFilters => IsAnySubjectSelected ? null : false;
     }
 
     private class Validator : AbstractValidator<Query>
@@ -55,16 +60,9 @@ public class SearchResults : PageModel
         public Validator()
         {
             RuleFor(m => m.Postcode)
-                .NotEmpty()
-                .WithMessage("Enter a postcode");
-
-            RuleFor(m => m.Postcode)
                 .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
-                .WithMessage("Enter a valid postcode");
-
-            RuleFor(m => m.Subjects)
-                .NotEmpty()
-                .WithMessage("Select the subject or subjects");
+                .WithMessage("Enter a valid postcode")
+                .When(m => !string.IsNullOrEmpty(m.Postcode));
 
             RuleForEach(m => m.Subjects)
                 .Must(x => KeyStageSubject.TryParse(x, out var _));
@@ -166,6 +164,9 @@ public class SearchResults : PageModel
         private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
         {
             var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
+
+            if (string.IsNullOrEmpty(request.Postcode))
+                return Result.Success(new LocationFilterParameters { });
 
             if (!validationResults.IsValid)
             {

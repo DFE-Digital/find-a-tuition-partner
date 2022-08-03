@@ -79,6 +79,23 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
+    public async void With_a_blank_postcode()
+    {
+        // Given
+        await SetupTuitionPartner();
+
+        // When
+        var result = await Fixture.SendAsync(
+            Basic.SearchResultsQuery with { Postcode = "" });
+
+        // Then
+        new TestValidationResult<SearchResults.Query>(result.Validation)
+            .ShouldNotHaveValidationErrorFor(x => x.Postcode);
+
+        result.Results!.Results.Should().NotBeEmpty();
+    }
+
+    [Fact]
     public async Task Displays_all_subjects_after_validation_failure()
     {
         var query = new SearchResults.Query
@@ -180,36 +197,7 @@ public class SearchForResults : CleanSliceFixture
     public async Task Displays_local_authority()
     {
         // Given
-        await Fixture.ExecuteDbContextAsync(async db =>
-        {
-            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E07000096");
-            var tuitionType = await db.TuitionTypes.FirstAsync();
-
-            var tp = db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Alpha",
-                SeoUrl = "a",
-                Website = "-",
-                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
-                {
-                    new()
-                    {
-                        TuitionType = tuitionType,
-                        LocalAuthorityDistrict = lad,
-                    }
-                },
-                SubjectCoverage = new List<SubjectCoverage>
-                {
-                    new()
-                    {
-                        TuitionType = db.TuitionTypes.First(),
-                        SubjectId = Subjects.Id.KeyStage1English
-                    }
-                }
-            });
-
-            await db.SaveChangesAsync();
-        });
+        await SetupTuitionPartner();
 
         var subject = await Fixture.ExecuteDbContextAsync(db =>
             db.Subjects.FindAsync(Subjects.Id.KeyStage1English));
@@ -254,5 +242,39 @@ public class SearchForResults : CleanSliceFixture
                 new { Name = "Maths", Selected = false },
                 new { Name = "Science", Selected = false },
             });
+    }
+
+    private async Task SetupTuitionPartner()
+    {
+        await Fixture.ExecuteDbContextAsync(async db =>
+        {
+            var lad = await db.LocalAuthorityDistricts.FirstAsync(x => x.Code == "E07000096");
+            var tuitionType = await db.TuitionTypes.FirstAsync();
+
+            var tp = db.TuitionPartners.Add(new Domain.TuitionPartner
+            {
+                Name = "Alpha",
+                SeoUrl = "a",
+                Website = "-",
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new()
+                    {
+                        TuitionType = tuitionType,
+                        LocalAuthorityDistrict = lad,
+                    }
+                },
+                SubjectCoverage = new List<SubjectCoverage>
+                {
+                    new()
+                    {
+                        TuitionType = db.TuitionTypes.First(),
+                        SubjectId = Subjects.Id.KeyStage1English
+                    }
+                }
+            });
+
+            await db.SaveChangesAsync();
+        });
     }
 }

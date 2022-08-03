@@ -30,10 +30,13 @@
 
 				@foreach (var item in Model.Data.AllSubjects.Keys)
 				{
+					var forceOpenAllSubjectFilters = Model.Data.ForceOpenAllSubjectFilters;
+
 					<partial name="_OptionsSelect" model="@(new OptionsSelectModel(
 						item.ToString().ToSeoUrl(),
 						item.DisplayName(),
-						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name)
+						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name),
+						ClosedOnLoad: forceOpenAllSubjectFilters
 						)) "/>
 				}
 				
@@ -74,7 +77,7 @@
 					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
 					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
 				}
-				<strong>@count</strong> @(resultPlural) for <strong>@Model.Data.LocalAuthority</strong> sorted by A-Z
+				<strong>@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong></span> sorted by A-Z
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 			</div>
 
@@ -83,7 +86,7 @@
 			{
 				foreach (var item in Model.Data.Results.Results)
 				{
-					<div>
+					<div data-testid="results-list-item">
 						<h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
 						<govuk-summary-list>
 							<govuk-summary-list-row class="govuk-body-s">

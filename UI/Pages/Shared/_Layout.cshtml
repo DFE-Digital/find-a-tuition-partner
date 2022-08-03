@@ -11,6 +11,8 @@
 	var googleAnalyticsConsent = Convert.ToBoolean(httpcontext?.HttpContext?.Request.Cookies[".FindATuitionPartner.Consent"]);
 
 	enableGoogleAnalytics = enableGoogleAnalytics && googleAnalyticsConsent;
+
+	var supportEmailAddress = "tutoring.support@service.education.gov.uk";
 }
 
 <!DOCTYPE html>
@@ -116,12 +118,16 @@
 	        <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
 		        <h2 class="govuk-visually-hidden">Support links</h2>
 
+				<p class="govuk-footer__list-item" data-testid="support-link">
+					Report a problem: <a href="mailto:@supportEmailAddress" class="govuk-footer__link">@supportEmailAddress</a>
+				</p>
+
 		        <ul class="govuk-footer__inline-list">
 			        <li class="govuk-footer__inline-list-item">
 				        <a href="/Accessibility" target="_blank" class="govuk-footer__link" data-testid="accessibility-link">Accessibility</a>
 			        </li>
 			        <li class="govuk-footer__inline-list-item">
-				        <a asp-page="/Cookies" class="govuk-footer__link">Cookies</a>
+						<a data-testid="view-footer-cookies" a asp-page="@nameof(Cookies)" class="govuk-footer__link" asp-page="@nameof(Cookies)"asp-route-consent="" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Cookies</a>
 			        </li>
 			        <li class="govuk-footer__inline-list-item">
 				        <a asp-page="/Privacy" class="govuk-footer__link">Privacy policy</a>
