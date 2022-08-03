@@ -12,6 +12,10 @@ Then("they will see the login link", () => {
     cy.get('[data-testid="login-link"]').should('have.attr', 'href', 'https://tuitionhub.nationaltutoring.org.uk/NTP/s/login/')
 });
 
+Then("the login link opens in a new window", () => {
+    cy.get('[data-testid="login-link"]').should('have.attr', 'target', '_blank')
+});
+
 Then("they will see the funding allocation link", () => {
     cy.get('[data-testid="funding-allocation-link"]').should('have.attr', 'href', '/funding-and-reporting')
 });
