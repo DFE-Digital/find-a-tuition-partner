@@ -27,7 +27,7 @@ public static class HostBuilderExtensions
 
             if (!string.IsNullOrWhiteSpace(appLogging.TcpSinkUri))
             {
-               // config.WriteTo.TCPSink(appLogging.TcpSinkUri);
+                config.WriteTo.TCPSink(appLogging.TcpSinkUri);
             }
         });
 
