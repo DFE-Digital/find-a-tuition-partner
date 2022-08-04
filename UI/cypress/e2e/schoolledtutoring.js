@@ -1,6 +1,6 @@
 ﻿import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the academic mentors page", () => {
+Given("a user has arrived on the school led page", () => {
     cy.visit(`/school-led-tutoring`);
 });
 
@@ -14,4 +14,8 @@ Then("they will see the dbs check link", () => {
 
 Then("they will see the funding allocation link", () => {
     cy.get('[data-testid="funding-allocation-link"]').should('have.attr', 'href', '/funding-and-reporting')
+});
+
+Then("they will see the home link", () => {
+    cy.get('[data-testid="home-link"]').should('have.attr', 'href', '/')
 });
