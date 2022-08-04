@@ -5,100 +5,12 @@ using Domain.Search;
 namespace Tests;
 
 [Collection(nameof(SliceFixture))]
-public class RandomnessFixture : IAsyncLifetime
+public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixture>
 {
-    public RandomnessFixture(SliceFixture fixture)
-    {
-        Fixture = fixture;
-    }
+    private readonly SliceFixture Fixture;
 
-    public SliceFixture Fixture { get; }
-
-    public async Task InitializeAsync()
-    {
-        await Fixture.ExecuteDbContextAsync(async db =>
-        {
-            List<LocalAuthorityDistrictCoverage> CreateAreaCoverage() =>
-                (from ladc in db.LocalAuthorityDistricts
-                 from tt in db.TuitionTypes
-                 select new LocalAuthorityDistrictCoverage
-                 {
-                     LocalAuthorityDistrictId = ladc.Id,
-                     TuitionTypeId = tt.Id,
-                 })
-                 .ToList();
-
-            List<SubjectCoverage> CreateSubjectCoverage() =>
-                (from tt in db.TuitionTypes
-                 from s in db.Subjects
-                 select new SubjectCoverage { TuitionTypeId = tt.Id, SubjectId = s.Id }
-                 ).ToList();
-
-            db.Prices.RemoveRange(db.Prices);
-            db.SubjectCoverage.RemoveRange(db.SubjectCoverage);
-            db.TuitionPartners.RemoveRange(db.TuitionPartners);
-            await db.SaveChangesAsync();
-
-            db.TuitionPartners.Add(new TuitionPartner
-            {
-                Id = 1,
-                SeoUrl = "a-tuition-partner",
-                Name = "Alpha",
-                Website = "https://a-tuition-partner.testdata/ntp",
-                Description = "A Tuition Partner Description",
-                LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
-                SubjectCoverage = CreateSubjectCoverage(),
-            });
-
-            db.TuitionPartners.Add(new TuitionPartner
-            {
-                Id = 2,
-                SeoUrl = "bravo-learning",
-                Name = "Bravo",
-                Website = "https://bravo.learning.testdata/ntp",
-                Description = "Bravo Learning Description",
-                PhoneNumber = "0123456789",
-                Email = "ntp@bravo.learning.testdata",
-                HasSenProvision = true,
-                LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
-                SubjectCoverage = CreateSubjectCoverage(),
-            });
-
-            db.TuitionPartners.Add(new TuitionPartner
-            {
-                Id = 3,
-                SeoUrl = "charlie-learning",
-                Name = "Charlie",
-                Website = "https://charlie.learning.testdata/ntp",
-                Description = "Charlie Learning Description",
-                LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
-                SubjectCoverage = CreateSubjectCoverage(),
-            });
-
-            db.TuitionPartners.Add(new TuitionPartner
-            {
-                Id = 4,
-                SeoUrl = "delta-learning",
-                Name = "Delta",
-                Website = "https://delta.learning.testdata/ntp",
-                Description = "Delta Learning Description",
-                LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
-                SubjectCoverage = CreateSubjectCoverage(),
-            });
-
-            await db.SaveChangesAsync();
-        });
-    }
-
-    public Task DisposeAsync() => Task.CompletedTask;
-
-}
-
-public class RandomiseSearchResults : RandomnessFixture
-{
-    public RandomiseSearchResults(SliceFixture fixture) : base(fixture)
-    {
-    }
+    public RandomiseSearchResults(RandomiseSearchResultsFixture fixture)
+        => Fixture = fixture.Fixture;
 
     [Fact]
     public void LAD_randomness()
@@ -155,7 +67,8 @@ public class RandomiseSearchResults : RandomnessFixture
 
     [Theory]
     [MemberData(nameof(SearchData))]
-    public async void Search_results_can_be_randomised(SearchTuitionPartnerHandler.Command search, string[] order)
+    public async void Search_results_can_be_randomised(
+        SearchTuitionPartnerHandler.Command search, string[] order)
     {
         search.OrderBy = TuitionPartnerOrderBy.Random;
 
@@ -241,4 +154,57 @@ public class RandomiseSearchResults : RandomnessFixture
             new []{ "Delta", "Bravo", "Charlie", "Alpha", }
         };
     }
+}
+
+public class RandomiseSearchResultsFixture : IAsyncLifetime
+{
+    public RandomiseSearchResultsFixture(SliceFixture fixture) => Fixture = fixture;
+
+    public SliceFixture Fixture { get; }
+
+    public async Task InitializeAsync()
+    {
+        await Fixture.ExecuteDbContextAsync(async db =>
+        {
+            db.Prices.RemoveRange(db.Prices);
+            db.SubjectCoverage.RemoveRange(db.SubjectCoverage);
+            db.TuitionPartners.RemoveRange(db.TuitionPartners);
+            await db.SaveChangesAsync();
+
+            db.TuitionPartners.Add(CreateTuitionPartner("Alpha"));
+            db.TuitionPartners.Add(CreateTuitionPartner("Bravo"));
+            db.TuitionPartners.Add(CreateTuitionPartner("Charlie"));
+            db.TuitionPartners.Add(CreateTuitionPartner("Delta"));
+
+            await db.SaveChangesAsync();
+
+            TuitionPartner CreateTuitionPartner(string name) => new TuitionPartner
+            {
+                SeoUrl = $"{name.ToLower()}-tuition-partner",
+                Name = name,
+                Website = $"https://tuition-partner.testdata/{name}",
+                Description = $"{name} Description",
+                LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
+                SubjectCoverage = CreateSubjectCoverage(),
+            };
+
+            List<LocalAuthorityDistrictCoverage> CreateAreaCoverage() =>
+            (from ladc in db.LocalAuthorityDistricts
+             from tt in db.TuitionTypes
+             select new LocalAuthorityDistrictCoverage
+             {
+                 LocalAuthorityDistrictId = ladc.Id,
+                 TuitionTypeId = tt.Id,
+             })
+             .ToList();
+
+            List<SubjectCoverage> CreateSubjectCoverage() =>
+                (from tt in db.TuitionTypes
+                 from s in db.Subjects
+                 select new SubjectCoverage { TuitionTypeId = tt.Id, SubjectId = s.Id }
+                 ).ToList();
+        });
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
 }
