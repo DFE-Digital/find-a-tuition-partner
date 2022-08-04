@@ -18,7 +18,7 @@ public class TuitionPartnerOrdering
 
             case TuitionPartnerOrderBy.Random:
                 var random = new Random(RandomSeed());
-                return results.OrderByDescending(e => e.Id).OrderBy(x => random.Next());
+                return results.OrderByDescending(e => e.SeoUrl).OrderBy(x => random.Next());
 
             default:
                 return results.OrderByDescending(e => e.Id);
