@@ -10,6 +10,7 @@
   Scenario: page as link to dbs check link
      Given a user has arrived on the school led page
      Then they will see the dbs check link
+     And the dbs check link opens in a new window
 
    Scenario: page as link to home link
      Given a user has arrived on the school led page
