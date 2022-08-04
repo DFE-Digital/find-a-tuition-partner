@@ -29,11 +29,8 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
         new TuitionPartnerOrdering(search).RandomSeed().Should().Be(total);
     }
 
-    [Theory]
-    [InlineData(0, 0, 1, 1)]
-    [InlineData(1, 2, 3, 6)]
-    [InlineData(8, 12, 23, 43)]
-    public void TuitionType_randomness(int a, int b, int c, int total)
+    [Fact]
+    public void TuitionType_randomness()
     {
         var search = new TuitionPartnerSearchRequest { TuitionTypeId = 5 };
         new TuitionPartnerOrdering(search).RandomSeed().Should().Be(5);

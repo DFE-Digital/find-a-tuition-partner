@@ -39,7 +39,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
             results.Add(result);
         }
-        
+
         return ordering.Order(results);
     }
 }
