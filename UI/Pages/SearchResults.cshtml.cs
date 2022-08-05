@@ -191,7 +191,7 @@ public class SearchResults : PageModel
 
             return await mediator.Send(new SearchTuitionPartnerHandler.Command
             {
-                OrderBy = TuitionPartnerOrderBy.Name,
+                OrderBy = TuitionPartnerOrderBy.Random,
                 LocalAuthorityDistrictCode = localAuthorityDisctict,
                 SubjectIds = subjects.Select(x => x.Id),
                 TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,

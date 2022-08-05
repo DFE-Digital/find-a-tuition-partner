@@ -68,9 +68,11 @@ public class SearchTuitionPartnerHandler
                     break;
             }
 
+            var ordering = new TuitionPartnerOrdering(request);
+
             var count = await queryable.CountAsync(cancellationToken);
             var ids = await queryable.Skip(request.Page * request.PageSize).Take(request.PageSize).Select(e => e.Id).ToArrayAsync(cancellationToken);
-            var results = (await _repository.GetSearchResultsDictionaryAsync(ids, lad?.Id, request.OrderBy, request.Direction, cancellationToken)).Values.ToArray();
+            var results = (await _repository.GetSearchResultsDictionaryAsync(ids, lad?.Id, ordering, cancellationToken)).ToArray();
 
             return new TuitionPartnerSearchResultsPage(request, count, results, lad);
         }

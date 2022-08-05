@@ -1,5 +1,5 @@
-﻿using Domain.Constants;
-using System.Globalization;
+﻿using System.Globalization;
+using Domain.Constants;
 using UI.Extensions;
 using GroupPrice = UI.Pages.TuitionPartner.GroupPrice;
 
