@@ -23,3 +23,7 @@ Then("they will see the funding allocation link", () => {
 Then("they will see the home link", () => {
     cy.get('[data-testid="home-link"]').should('have.attr', 'href', '/')
 });
+
+Then("they will see the funding and reporting link", () => {
+    cy.get('[data-testid="funding-reporting-link"]').should('have.attr', 'href', '/funding-and-reporting')
+});

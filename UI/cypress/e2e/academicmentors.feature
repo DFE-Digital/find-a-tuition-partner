@@ -20,3 +20,7 @@
      Given a user has arrived on the academic mentors page
      Then they will see the dbs check link
      And the dbs check link opens in a new window
+
+ Scenario: page as link to funding and reporting link
+     Given a user has arrived on the academic mentors page
+     Then they will see the funding and reporting link

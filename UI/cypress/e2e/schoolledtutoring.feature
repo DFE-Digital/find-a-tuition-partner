@@ -16,3 +16,7 @@
      Given a user has arrived on the school led page
      Then they will see the home link
 
+    Scenario: page as link to funding and reporting link
+     Given a user has arrived on the school led page
+     Then they will see the funding and reporting link
+

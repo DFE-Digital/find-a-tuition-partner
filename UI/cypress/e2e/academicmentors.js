@@ -32,3 +32,7 @@ Then("they will see the dbs check link", () => {
 Then("the dbs check link opens in a new window", () => {
     cy.get('[data-testid="dbs-check-link"]').should('have.attr', 'target', '_blank')
 });
+
+Then("they will see the funding and reporting link", () => {
+    cy.get('[data-testid="funding-reporting-link"]').should('have.attr', 'href', '/funding-and-reporting')
+});
