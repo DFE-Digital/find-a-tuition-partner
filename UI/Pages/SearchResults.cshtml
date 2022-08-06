@@ -77,7 +77,8 @@
 					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
 					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
 				}
-				<strong>@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong></span> sorted randomly
+				<strong>@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong>.</span><br/>
+				Your results are in a random order.
 				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 			</div>
 
