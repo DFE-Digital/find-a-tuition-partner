@@ -1,5 +1,5 @@
 {
-  "name": "compare-national-tutoring-options",
+  "name": "find-a-tuition-partner",
   "version": "0.1.0",
   "description": "National Tuition Programme Compare National Tutoring Options",
   "main": "index.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DFE-Digital/national-tutoring-programme.git"
+    "url": "git+https://github.com/DFE-Digital/find-a-tuition-partner.git"
   },
   "author": "The Department for Education",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/DFE-Digital/national-tutoring-programme/issues"
+    "url": "https://github.com/DFE-Digital/find-a-tuition-partner/issues"
   },
-  "homepage": "https://github.com/DFE-Digital/national-tutoring-programme#readme",
+  "homepage": "https://github.com/DFE-Digital/find-a-tuition-partner#readme",
   "dependencies": {
     "govuk-frontend": "^4.1.0"
   },

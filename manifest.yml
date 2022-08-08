@@ -1,8 +1,8 @@
 ---
 applications:
-- name: national-tutoring((environment-postfix))
+- name: find-a-tuition-partner((environment-postfix))
   services:
-    - national-tutoring((environment-postfix))-postgres-db
+    - find-a-tuition-partner((environment-postfix))-postgres-db
   buildpacks:
     - dotnet_core_buildpack
   instances: ((instances))
