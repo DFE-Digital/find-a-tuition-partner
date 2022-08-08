@@ -114,15 +114,15 @@
 			</p>
 		</div>
 
-	    <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
-		    <caption class="govuk-table__caption govuk-table__caption--m">Tuition cost information</caption>
+        <h2 class="govuk-heading-m">Tuition cost information</h2>
+        <p class="govuk-body">
+            The costs shown are per pupil per hour.<br/>
+            All subjects are the same price but depend on tuition group size.
+            <span show-if="@Model.Data.IsVatCharged"><br/>Prices shown include VAT.</span>
+        </p>
+
+        <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
 		    <thead class="govuk-table__head">
-			<tr class="govuk-table__row" colspan="*">
-				<td>The costs shown are per pupil per hour.</td>
-			</tr>
-			<tr class="govuk-table__row" colspan="*">
-				<td>All subjects are the same price but depend on tuition group size.</td>
-			</tr>
 		    <tr class="govuk-table__row">
 			    <th scope="col" class="govuk-table__header">Tuition group size</th>
 			    <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
@@ -145,8 +145,6 @@
 		    }
 		    </tbody>
 	    </table>
-
-		<h2 class="govuk-heading-m" show-if="@Model.Data.AllPrices.Any()">Tuition cost information</h2>
 
 		@foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
 		{
