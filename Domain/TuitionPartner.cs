@@ -22,6 +22,7 @@ public class TuitionPartner
     public string LegalStatus { get; set; } = string.Empty;
     public bool HasSenProvision { get; set; }
     public string AdditionalServiceOfferings { get; set; } = string.Empty;
+    public bool IsVatCharged { get; set; }
 
     public ICollection<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }
     public ICollection<SubjectCoverage> SubjectCoverage { get; set; }
