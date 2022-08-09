@@ -19,8 +19,8 @@ Given("the 'Which subjects' page is displayed", () => {
 });
 
 Given("nothing is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).should('not.be.checked');
-  cy.get(`input[data-testid="cookie-consent-deny"]`).should('not.be.checked');
+  cy.get(`[data-testid="cookie-consent-accept"]`).should('not.be.checked');
+  cy.get(`[data-testid="cookie-consent-deny"]`).should('not.be.checked');
 });
 
 Given("the success banner has been displayed", () => {
@@ -37,7 +37,7 @@ Given("the 'view cookies' page is displayed", () => {
 });
 
 Given("opt-in is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
+  cy.get(`[data-testid="cookie-consent-accept"]`).get(`input[id="Consent"]`).should('be.checked');
 });
   
 When("cookies are accepted", () => {
@@ -57,15 +57,15 @@ When("the ‘cookies' is selected from footer", () => {
   });
 
 When("a user opts-in", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).click();
+  cy.get(`[data-testid="cookie-consent-accept"]`).click();
   });
 
 When("a user opts-out", () => {
-    cy.get(`input[data-testid="cookie-consent-deny"]`).click();
+    cy.get(`[data-testid="cookie-consent-deny"]`).click();
     });
 
 When("Saves Changes", () => {
-    cy.get(`[data-testid="save-changes"]`).click();
+    cy.get(`[data-testid="call-to-action"]`).click();
     });
 
 When("the link to previous page is clicked", () => {
@@ -111,6 +111,12 @@ Then("the privacy policy is accessible in a new tab", () => {
     cy.request(href).its('body').should('include', '</html>');
 })});
 
-Given("opt-out is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-deny"]`).should('be.checked');
+Then("opt-out is selected", () => {
+  cy.get(`[data-testid="cookie-consent-deny"]`).get(`input[id="Consent-2"]`).should('be.checked');
 });
+
+Then("the error banner is displayed", () => {
+  cy.get(`[id=error-summary-title]`).should('exist')
+});
+
+

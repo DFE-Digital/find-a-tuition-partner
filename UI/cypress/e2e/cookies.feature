@@ -70,5 +70,11 @@ Scenario: Allow users to opt out once they have reached the cookies page for fir
     And a Success Banner is displayed
     And user session is not tracked
 
+Scenario: Error banner appears if no option is selected
+    Given the 'view cookies' page is displayed
+    And nothing is selected
+    When Saves Changes
+    And Saves Changes
+    Then the error banner is displayed
 
 
