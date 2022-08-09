@@ -56,6 +56,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English, GroupSize = 3, HourlyRate = 12.34m },
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 2, HourlyRate = 56.78m },
                     new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 3, HourlyRate = 56.78m },
+                    new() { TuitionTypeId = (int)TuitionTypes.Online, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 3, HourlyRate = 56.78m },
                 }
             });
 
@@ -140,7 +141,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
         {
             { 2, new (12.34m, 56.78m, null, null) },
-            { 3, new (12.34m, 56.78m, null, null) }
+            { 3, new (12.34m, 56.78m, 56.78m, 56.78m) }
         });
         result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
         result.PhoneNumber.Should().Be("0123456789");
@@ -176,6 +177,35 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["Ryedale"]));
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online");
+    }
+
+    [Fact]
+    public async Task Shows_all_tuition_types_prices_when_provided_in_district()
+    {
+        var result = await Fixture.SendAsync(
+            new TuitionPartner.Query(
+                "a-tuition-partner",
+                LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["North East Lincolnshire"]));
+
+        result!.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
+        {
+            { 2, new (12.34m, 56.78m, null, null) },
+            { 3, new (12.34m, 56.78m, 56.78m, 56.78m) },
+        });
+    }
+
+    [Fact]
+    public async Task Shows_only_tuition_type_prices_provided_in_district()
+    {
+        var result = await Fixture.SendAsync(
+            new TuitionPartner.Query(
+                "a-tuition-partner",
+                LocalAuthorityDistrictCode: LocalAuthorityDistrictCodes["Ryedale"]));
+
+        result!.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
+        {
+            { 3, new (null, null, 56.78m, 56.78m) }
+        });
     }
 
     [Fact]
