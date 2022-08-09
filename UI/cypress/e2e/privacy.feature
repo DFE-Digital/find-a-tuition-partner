@@ -38,4 +38,8 @@
     Then they will see contact secure dfe online form link
     And the contact secure dfe online form link opens in a new window
 
+  Scenario: page as link to home link
+     Given a user has arrived on the privacy page
+     Then they will see the home link
+
 

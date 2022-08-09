@@ -48,3 +48,8 @@ Then("the accessibility link {string} links to {string}", (text, href) => {
 Then("the accessibility link opens in a new window", () => {
     cy.get('[data-testid="accessibility-link"]').should('have.attr', 'target', '_blank')
 });
+
+Then("the privacy link opens privacy page", () => {
+    cy.get('[data-testid="privacy-link"]')
+        .should('have.attr', 'href', '/privacy')
+});

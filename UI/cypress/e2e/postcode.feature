@@ -81,3 +81,8 @@ Feature: User enters postcode to begin search
     Given a user has started the 'Find a tuition partner' journey
     Then the accessibility link 'Accessibility' links to '/Accessibility'
     And the accessibility link opens in a new window
+
+   Scenario: privacy link to page
+    Given a user has started the 'Find a tuition partner' journey
+    Then the privacy link opens privacy page
+ 
