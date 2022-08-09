@@ -83,7 +83,7 @@ jobs:
       - name: Run database migrations and import data
         if: ${{ inputs.run_database_migrations_and_import_data == true }}
         run: |
-          cf run-task national-tutoring-${{ inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name national-tutoring-${{ inputs.environment }}-data-import
+          cf run-task find-a-tuition-partner-${{ inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name find-a-tuition-partner-${{ inputs.environment }}-data-import
       
       - name: Logout
         run: cf logout

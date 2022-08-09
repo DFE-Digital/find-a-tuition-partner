@@ -33,7 +33,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           working-directory: ./UI
-          config: baseUrl=https://national-tutoring-${{ inputs.environment }}.london.cloudapps.digital/
+          config: baseUrl=https://find-a-tuition-partner-${{ inputs.environment }}.london.cloudapps.digital/
         env:
           CYPRESS_username: ${{ inputs.username }}
           CYPRESS_password: ${{ inputs.password }}

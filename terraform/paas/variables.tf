@@ -35,7 +35,7 @@ variable "paas_space" {
 }
 
 variable "paas_database_common_name" {
-  default = "national-tutoring-sandbox-postgres-db"
+  default = "find-a-tuition-partner-sandbox-postgres-db"
 }
 
 variable "paas_application_name" {

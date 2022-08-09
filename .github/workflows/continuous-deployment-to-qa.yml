@@ -31,7 +31,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           working-directory: ./UI
-          config: baseUrl=https://national-tutoring-qa.london.cloudapps.digital/
+          config: baseUrl=https://find-a-tuition-partner-qa.london.cloudapps.digital/
         env:
           CYPRESS_username: ${{ secrets.QA_HTTP_AUTH_USERNAME }}
           CYPRESS_password: ${{ secrets.QA_HTTP_AUTH_PASSWORD }}

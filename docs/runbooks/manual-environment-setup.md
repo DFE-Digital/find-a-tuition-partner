@@ -18,13 +18,13 @@ You will also need the current LTS version of [NodeJS](https://nodejs.org/en/dow
 
 ### Naming conventions
 
-The service's domain name is `national-tutoring` and that is used as the prefix for all deployed applications and backing services. This is followed by the environment abbreviation on all non production environments e.g. `national-tutoring-qa`, `national-tutoring-research` etc.
+The service's domain name is `find-a-tuition-partner` and that is used as the prefix for all deployed applications and backing services. This is followed by the environment abbreviation on all non production environments e.g. `find-a-tuition-partner-qa`, `find-a-tuition-partner-research` etc.
 
 The guide uses the production names for all applications and backing services. Add the environment abbreviation as appropriate.
 
 ### Scaling
 
-The production environment is scheduled to use a `medium-ha-13` plan for the postgres backing service. Each environment will also have a minimum of three application instances. This guide uses the `small-13` plan to prevent accidentally creating multiple expensive backing services. Replace the plan with the one appropriate for the environment in question.
+The production environment is scheduled to use a `medium-13` plan for the postgres backing service. Each environment will also have a minimum of three application instances. This guide uses the `small-13` plan to prevent accidentally creating multiple expensive backing services. Replace the plan with the one appropriate for the environment in question.
 
 ## Runbook
 
@@ -41,13 +41,13 @@ The service uses [PostgreSQL](https://docs.cloud.service.gov.uk/deploying_servic
 Check if the service has already been created
 
 ```
-cf service national-tutoring-postgres-db
+cf service find-a-tuition-partner-<ENVIRONMENT>-postgres-db
 ```
 
 If not, create the service. This will take around ten minutes
 
 ```
-cf create-service postgres small-13 national-tutoring-<ENVIRONMENT>-postgres-db --wait
+cf create-service postgres small-13 find-a-tuition-partner-<ENVIRONMENT>-postgres-db --wait
 ```
 
 ### Application
@@ -74,7 +74,7 @@ cf push --strategy rolling --vars-file vars-<ENVIRONMENT>.yml
 Run the data import task which will also run the migrations against the database
 
 ```
-cf run-task national-tutoring-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key <BASE64_ENCRYPTION_KEY>" --name national-tutoring-<ENVIRONMENT>-data-import
+cf run-task find-a-tuition-partner-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key <BASE64_ENCRYPTION_KEY>" --name find-a-tuition-partner-<ENVIRONMENT>-data-import
 ```
 
 ### Basic HTTP Authentication
@@ -86,25 +86,25 @@ Clone and deploy the basic HTTP authentication route application
 ```
 git clone https://github.com/alphagov/paas-cf_basic_auth_route_service
 cd paas-cf_basic_auth_route_service
-cf push national-tutoring-<ENVIRONMENT>-auth-service-app --no-start
+cf push find-a-tuition-partner-<ENVIRONMENT>-auth-service-app --no-start
 ```
 
 Configure chosen username and password for environment and start the service
 
 ```
-cf set-env national-tutoring-<ENVIRONMENT>-auth-service-app AUTH_USERNAME <USERNAME>
-cf set-env national-tutoring-<ENVIRONMENT>-auth-service-app AUTH_PASSWORD <PASSWORD>
-cf start national-tutoring-<ENVIRONMENT>-auth-service-app
+cf set-env find-a-tuition-partner-<ENVIRONMENT>-auth-service-app AUTH_USERNAME <USERNAME>
+cf set-env find-a-tuition-partner-<ENVIRONMENT>-auth-service-app AUTH_PASSWORD <PASSWORD>
+cf start find-a-tuition-partner-<ENVIRONMENT>-auth-service-app
 ```
 
 Create the basic HTTP authentication backing service
 
 ```
-cf create-user-provided-service national-tutoring-<ENVIRONMENT>-auth-service -r https://national-tutoring-<ENVIRONMENT>-auth-service-app.london.cloudapps.digital
+cf create-user-provided-service find-a-tuition-partner-<ENVIRONMENT>-auth-service -r https://find-a-tuition-partner-<ENVIRONMENT>-auth-service-app.london.cloudapps.digital
 ```
 
 Bind the National Tutoring application's route to the basic HTTP authentication application
 
 ```
-cf bind-route-service london.cloudapps.digital national-tutoring-<ENVIRONMENT>-auth-service --hostname national-tutoring-<ENVIRONMENT>
+cf bind-route-service london.cloudapps.digital find-a-tuition-partner-<ENVIRONMENT>-auth-service --hostname find-a-tuition-partner-<ENVIRONMENT>
 ```
