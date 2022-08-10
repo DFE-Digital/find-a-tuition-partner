@@ -67,7 +67,6 @@
                     <govuk-radios-item value="@false" data-testid="cookie-consent-deny">No, do not use cookies to track my website usage</govuk-radios-item>
                 </govuk-radios-fieldset>
             </govuk-radios>
-
             <govuk-button type="submit" data-testid="call-to-action">Save my choice</govuk-button>
         </form>
         <p class="govuk-body">Google Analytics sets the following cookies:</p>
@@ -94,7 +93,7 @@
         </table>
         <h2 class="govuk-heading-m">Essential cookies</h2>
         <p class="govuk-body">
-            These cookies need to be on to allow you to use this service. They don’t store your personal data. For more information read our <a data-testid="privacy-page" asp-page="./Privacy" class="govuk-link" data-testid="privact-policy-link">privacy policy</a>.
+            These cookies need to be on to allow you to use this service. They don’t store your personal data. For more information read our <a asp-page="./Privacy" class="govuk-link" data-testid="privacy-policy-link">privacy policy</a>.
         </p>
         <table class="govuk-table">
             <thead class="govuk-table__header">

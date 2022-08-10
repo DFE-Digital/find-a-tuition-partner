@@ -17,7 +17,6 @@ namespace UI.Pages
         [BindProperty(SupportsGet = true)]
         public string? ReturnUrl { get; set; }
 
-
         public IActionResult OnGet(bool? consent)
         {
             Consent = consent;

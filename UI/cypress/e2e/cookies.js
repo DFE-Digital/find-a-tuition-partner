@@ -106,7 +106,7 @@ Then("the previous page is displayed correctly", () => {
 });
   
 Then("the privacy policy is accessible in a new tab", () => {
-  cy.get('[data-testid="privacy-page"]').then(function ($a) {
+  cy.get('[data-testid="privacy-policy-link"]').then(function ($a) {
     const href = $a.prop('href');
     cy.request(href).its('body').should('include', '</html>');
 })});
@@ -118,7 +118,6 @@ Then("opt-out is selected", () => {
 Then("the error banner is displayed", () => {
   cy.get(`[id=error-summary-title]`).should('exist');
   cy.get('.govuk-error-summary__list').first().should('contain.text', 'You must select an option');
-
 });
 
 
