@@ -89,7 +89,7 @@ public class TuitionPartner : PageModel
     public record Command(
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
-        string Website, string PhoneNumber, string EmailAddress, string Address, bool HasSenProvision,
+        string Website, string PhoneNumber, string EmailAddress, string Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
         Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices);
 
@@ -152,6 +152,7 @@ public class TuitionPartner : PageModel
                 tp.Email,
                 tp.Address,
                 tp.HasSenProvision,
+                tp.IsVatCharged,
                 lads,
                 allPrices
                 );

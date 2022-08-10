@@ -78,7 +78,8 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             Experience = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 13),
             LegalStatus = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "D", 13),
             HasSenProvision = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 13).ParseBoolean(),
-            AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13)
+            AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13),
+            IsVatCharged = _spreadsheetExtractor.GetCellValue(PricingSheetName, "K", 2).ParseBoolean(),
         };
 
         if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
