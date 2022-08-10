@@ -29,6 +29,8 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
 
         if (cell == null) return string.Empty;
 
+        if (cell.CellFormula != null && cell.CellValue != null) return cell.CellValue.InnerText;
+
         var value = cell.InnerText;
         if (cell.DataType?.Value == CellValues.SharedString && int.TryParse(value, out var stringTableIndex))
         {
