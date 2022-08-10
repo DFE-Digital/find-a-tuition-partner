@@ -84,6 +84,14 @@ Feature: User can view full details of a Tuition Parner
     | FFT Education | In school |
     | career-tree | In school, Online |
 
+  Scenario: tuition cost blurb states pricing uniformity
+    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    Then the tuition cost information states declares no differences
+
+  Scenario: tuition cost blurb states pricing differences
+    Given a user has arrived on the 'Tuition Partner' page for 'Reed Tutors'
+    Then the tuition cost information states declares differences
+
   Scenario: full pricing tables are not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
     Then the tuition partner full pricing tables are not displayed
