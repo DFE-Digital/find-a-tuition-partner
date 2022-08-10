@@ -16,7 +16,7 @@ namespace UI.Pages
 
         [BindProperty(SupportsGet = true)]
         public string? ReturnUrl { get; set; }
-      
+
 
         public IActionResult OnGet(bool? consent)
         {
@@ -31,8 +31,8 @@ namespace UI.Pages
                 }
             }
 
-           if(consent.HasValue)
-           { 
+            if (consent.HasValue)
+            {
                 ApplyCookieConsent(consent);
                 if (!string.IsNullOrEmpty(ReturnUrl))
                 {
@@ -45,10 +45,10 @@ namespace UI.Pages
         public IActionResult OnPost()
         {
             if (!ModelState.IsValid) return Page();
-           
+
             PreferencesSet = true;
             ApplyCookieConsent(Consent);
-   
+
             return Page();
         }
 
