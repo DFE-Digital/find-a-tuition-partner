@@ -116,7 +116,9 @@ Then("opt-out is selected", () => {
 });
 
 Then("the error banner is displayed", () => {
-  cy.get(`[id=error-summary-title]`).should('exist')
+  cy.get(`[id=error-summary-title]`).should('exist');
+  cy.get('.govuk-error-summary__list').first().should('contain.text', 'You must select an option');
+
 });
 
 

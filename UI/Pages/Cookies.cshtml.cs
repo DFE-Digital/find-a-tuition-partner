@@ -10,7 +10,7 @@ namespace UI.Pages
         private const string ConsentCookieName = ".FindATuitionPartner.Consent";
 
         [BindProperty]
-        [Required(ErrorMessage = "Please select an option")]
+        [Required(ErrorMessage = "You must select an option")]
         public bool? Consent { get; set; }
         public bool PreferencesSet { get; set; } = false;
 
