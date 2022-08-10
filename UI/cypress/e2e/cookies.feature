@@ -74,7 +74,6 @@ Scenario: Error banner appears if no option is selected
     Given the 'view cookies' page is displayed
     And nothing is selected
     When Saves Changes
-    And Saves Changes
     Then the error banner is displayed
 
 
