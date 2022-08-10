@@ -25,7 +25,7 @@ Given("nothing is selected", () => {
 
 Given("the success banner has been displayed", () => {
   Step(this, "the 'Which subjects' page is displayed");
-  Step(this, "the ‘cookies' is selected from footer");
+  Step(this, "the 'cookies' is selected from footer");
   Step(this, "a user opts-in");
   Step(this, "Saves Changes");
   Step(this, "a Success Banner is displayed");
@@ -33,7 +33,7 @@ Given("the success banner has been displayed", () => {
 
 Given("the 'view cookies' page is displayed", () => {
   Step(this, "the 'Which subjects' page is displayed");
-  Step(this, "the ‘cookies' is selected from footer");
+  Step(this, "the 'cookies' is selected from footer");
 });
 
 Given("opt-in is selected", () => {
@@ -48,11 +48,11 @@ When("cookies are rejected", () => {
     cy.get('[data-testid="reject-cookies"]').click();
   });
 
-When("the ‘view cookies’ is selected", () => {
+When("the 'view cookies' is selected", () => {
     cy.get('[data-testid="view-cookies"]').click();
   });
 
-When("the ‘cookies' is selected from footer", () => {
+When("the 'cookies' is selected from footer", () => {
     cy.get('[data-testid="view-footer-cookies"]').click();
   });
 

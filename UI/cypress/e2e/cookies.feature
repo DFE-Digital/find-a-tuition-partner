@@ -17,7 +17,7 @@ Feature: User handles cookies
 
   Scenario: 'View cookies' is selected
     Given a user has started the 'Find a tuition partner' journey
-    When the ‘view cookies’ is selected
+    When the 'view cookies' is selected
     Then the 'view cookies' page is loaded
 
   Scenario: The cookies banner is not displayed again after accepting cookies
@@ -30,19 +30,19 @@ Feature: User handles cookies
 
  Scenario: The cookie banner is not displayed when ‘cookie statement' is selected when entering for the first time
     Given a user has started the 'Find a tuition partner' journey
-    When the ‘cookies' is selected from footer 
+    When the 'cookies' is selected from footer 
     Then the 'view cookies' page is loaded
     And the cookie banner is not displayed
 
 Scenario: The cookie banner is not displayed when ‘cookie statement' is selected when cookies have already been set
     Given a user accesses a service page after accepting cookies
-    When the ‘cookies' is selected from footer
+    When the 'cookies' is selected from footer
     Then the 'view cookies' page is loaded
     And the cookie banner is not displayed
 
 Scenario: User selects cookie statement and then selects the 'privacy policy' link on that page
     Given a user has started the 'Find a tuition partner' journey
-    When the ‘cookies' is selected from footer 
+    When the 'cookies' is selected from footer 
     Then the 'view cookies' page is loaded
     And the privacy policy is accessible in a new tab
 
@@ -75,5 +75,3 @@ Scenario: Error banner appears if no option is selected
     And nothing is selected
     When Saves Changes
     Then the error banner is displayed
-
-
