@@ -67,3 +67,14 @@ Then("they see the tuition types {string}", tuitionTypes => {
         expect(listedTuitionTypes).to.deep.equal(tuitionArray)
     });
 })
+
+Then("they see the cost for tuition type {string}", tuitionTypes => {
+    const tuitionArray = tuitionTypes.split(',').map(s => s.trim())
+
+    tuitionArray.forEach(element => {
+        cy.get("[data-testid='pricing-table'] thead").contains('th', element);
+    });
+
+    cy.get("[data-testid='pricing-table'] thead th")
+        .should('have.length', tuitionArray.length + 1)
+})

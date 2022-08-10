@@ -1,7 +1,7 @@
 {
   "name": "find-a-tuition-partner",
   "version": "0.1.0",
-  "description": "National Tuition Programme Compare National Tutoring Options",
+  "description": "National Tuition Programme Find a Tuition Partner",
   "main": "index.js",
   "directories": {
     "doc": "docs"

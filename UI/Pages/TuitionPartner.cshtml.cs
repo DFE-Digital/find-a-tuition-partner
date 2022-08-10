@@ -89,11 +89,15 @@ public class TuitionPartner : PageModel
     public record Command(
         string Name, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
-        string Website, string PhoneNumber, string EmailAddress, string Address, bool HasSenProvision,
+        string Website, string PhoneNumber, string EmailAddress, string Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
         Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices);
 
-    public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax);
+    public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax)
+    {
+        public bool HasAtLeastOnePrice =>
+            OnlineMin != null || OnlineMax != null || SchoolMin != null || SchoolMax != null;
+    }
 
     public record struct LocalAuthorityDistrictCoverage(string Region, string Code, string Name, bool InSchool, bool Online);
 
@@ -130,7 +134,7 @@ public class TuitionPartner : PageModel
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
             var types = await GetTuitionTypesCovered(request.LocalAuthorityDistrictCode, tp, cancellationToken);
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = GetPricing(tp.Prices);
+            var prices = GetPricing(types, tp.Prices);
 
             var lads = await GetLocalAuthorityDistricts(request, tp.Id);
 
@@ -148,6 +152,7 @@ public class TuitionPartner : PageModel
                 tp.Email,
                 tp.Address,
                 tp.HasSenProvision,
+                tp.IsVatCharged,
                 lads,
                 allPrices
                 );
@@ -207,19 +212,31 @@ public class TuitionPartner : PageModel
             return result.Values.ToArray();
         }
 
-        private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
+        private static Dictionary<int, GroupPrice> GetPricing(IEnumerable<string> types, ICollection<Price> prices)
         {
+            (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) online =
+                types.Contains("Online")
+                ? (prices => MinPrice(prices, TuitionTypes.Online), prices => MaxPrice(prices, TuitionTypes.Online))
+                : (prices => null, prices => null);
+
+            (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) inSchool =
+                types.Contains("In School")
+                ? (prices => MinPrice(prices, TuitionTypes.InSchool), prices => MaxPrice(prices, TuitionTypes.InSchool))
+                : (prices => null, prices => null);
+
             return prices
                 .GroupBy(x => x.GroupSize)
                 .ToDictionary(
                     key => key.Key,
                     value => new GroupPrice
-                            (MinPrice(value, TuitionTypes.InSchool)
-                            , MaxPrice(value, TuitionTypes.InSchool)
-                            , MinPrice(value, TuitionTypes.Online)
-                            , MaxPrice(value, TuitionTypes.Online)
+                            (inSchool.min(value)
+                            , inSchool.max(value)
+                            , online.min(value)
+                            , online.max(value)
                             )
-                    );
+                    )
+                .Where(x => x.Value.HasAtLeastOnePrice)
+                .ToDictionary(k => k.Key, v => v.Value);
 
             static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
                 => MinMaxPrice(value, tuitionType, Enumerable.MinBy);
