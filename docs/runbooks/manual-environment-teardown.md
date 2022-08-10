@@ -16,7 +16,7 @@ The service is deployed to [GOV.UK PaaS](https://www.cloud.service.gov.uk/) and 
 
 ### Naming conventions
 
-The service's domain name is `national-tutoring` and that is used as the prefix for all deployed applications and backing services. This is followed by the environment abbreviation on all non production environments e.g. `national-tutoring-qa`, `national-tutoring-research` etc.
+The service's domain name is `find-a-tuition-partner` and that is used as the prefix for all deployed applications and backing services. This is followed by the environment abbreviation on all non production environments e.g. `find-a-tuition-partner-qa`, `find-a-tuition-partner-research` etc.
 
 The guide uses the production names for all applications and backing services. Add the environment abbreviation as appropriate.
 
@@ -33,7 +33,7 @@ cf login -a api.london.cloud.service.gov.uk -u USERNAME
 Remove the application first to prevent any access to it.
 
 ```
-cf delete national-tutoring-<ENVIRONMENT> -r
+cf delete find-a-tuition-partner-<ENVIRONMENT> -r
 ```
 
 ### Database
@@ -41,7 +41,7 @@ cf delete national-tutoring-<ENVIRONMENT> -r
 Remove the backing database service. 
 
 ```
-cf delete-service national-tutoring-<ENVIRONMENT>-postgres-db
+cf delete-service find-a-tuition-partner-<ENVIRONMENT>-postgres-db
 ```
 
 ### Basic HTTP Authentication
@@ -51,11 +51,11 @@ Remove the basic authentication application and backing service if the environme
 Remove the basic HTTP authentication route app
 
 ```
-cf delete national-tutoring-<ENVIRONMENT>-auth-service-app -r
+cf delete find-a-tuition-partner-<ENVIRONMENT>-auth-service-app -r
 ```
 
 Remove the basic HTTP authentication backing service
 
 ```
-cf delete-service national-tutoring-<ENVIRONMENT>-auth-service
+cf delete-service find-a-tuition-partner-<ENVIRONMENT>-auth-service
 ```

@@ -25,7 +25,7 @@ All environments use three nodes for resiliance and to confirm that there are no
 Change the number of nodes used to one on the target environment by issuing the following cf command
 
 ```
-cf scale national-tutoring-<ENVIRONMENT> -i 1
+cf scale find-a-tuition-partner-<ENVIRONMENT> -i 1
 ```
 
 ### Performance Testing

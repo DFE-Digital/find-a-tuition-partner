@@ -12,10 +12,6 @@ When("they set the {string} query string parameter value to {string}", (key, val
     });
 });
 
-Then("they will be taken to the 'Compare national tutoring options' page", () => {
-    cy.location('pathname').should('eq', '/options');
-});
-
 Then("they will be taken to the 'Find a tuition partner' journey start page", () => {
     cy.location('pathname').should('eq', '/');
 });
