@@ -1,6 +1,6 @@
 ﻿@inject IHostEnvironment HostEnvironment
 @inject IConfiguration Configuration
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpcontext
+@inject IHttpContextAccessor HttpContext
 
 @{
 	// Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
@@ -8,9 +8,8 @@
 
 	var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
 	var enableGoogleAnalytics = !string.IsNullOrWhiteSpace(measurementId);
-	var googleAnalyticsConsent = Convert.ToBoolean(httpcontext?.HttpContext?.Request.Cookies[".FindATuitionPartner.Consent"]);
-
-	enableGoogleAnalytics = enableGoogleAnalytics && googleAnalyticsConsent;
+    var requestCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
+    var googleAnalyticsConsent = Convert.ToBoolean(requestCookie);
 
 	var supportEmailAddress = "tutoring.support@service.education.gov.uk";
 }
@@ -46,6 +45,24 @@
     
     @if (enableGoogleAnalytics)
     {
+        @if (!googleAnalyticsConsent)
+        {
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'analytics_storage': 'denied',
+                    'functionality_storage': 'denied',
+                    'personalization_storage': 'denied',
+                    'security_storage': 'denied'
+                });
+
+                gtag('set', 'ads_data_redaction', true);
+            </script>
+        }
+
 	    <!-- Global site tag (gtag.js) - Google Analytics -->
 	    <script async src="https://www.googletagmanager.com/gtag/js?id=@measurementId"></script>
 	    <script>
