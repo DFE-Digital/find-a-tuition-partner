@@ -40,6 +40,7 @@ builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
+builder.Services.LogKeyMetrics();
 
 builder.Services.AddMediatR(typeof(AssemblyReference));
 

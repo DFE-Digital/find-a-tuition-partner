@@ -5,7 +5,7 @@ using Domain;
 using Domain.Search;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure;
+namespace Infrastructure.MetricLogging;
 
 public class LoggingLocationFilterService : ILocationFilterService
 {
