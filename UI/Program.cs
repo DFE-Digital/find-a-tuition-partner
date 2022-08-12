@@ -80,6 +80,8 @@ builder.Host.AddLogging();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionLoggingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
