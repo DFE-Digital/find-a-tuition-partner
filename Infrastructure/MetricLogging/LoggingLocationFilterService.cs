@@ -27,12 +27,12 @@ public class LoggingLocationFilterService : ILocationFilterService
         switch (result.TryValidate())
         {
             case SuccessResult:
-                _logger.LogInformation("Searching for postcode {Postcode} found {LocalAuthorityCode} results in {time}ms",
-                    postcode, result?.LocalAuthorityCode, stopwatch.ElapsedMilliseconds);
+                _logger.LogInformation("Searching for postcode {Postcode} found {LocalAuthorityDistrictCode} results in {Elapsed}ms",
+                    postcode, result?.LocalAuthorityDistrictCode, stopwatch.ElapsedMilliseconds);
                 break;
 
             case ErrorResult e:
-                _logger.LogWarning("Could not find postcode {Postcode} in {time}ms - {reason}",
+                _logger.LogWarning("Could not find postcode {Postcode} in {Elapsed}ms - {Reason}",
                     postcode, stopwatch.ElapsedMilliseconds, e.GetType().Name);
                 break;
         }

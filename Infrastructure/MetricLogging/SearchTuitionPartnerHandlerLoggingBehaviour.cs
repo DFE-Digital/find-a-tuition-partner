@@ -33,7 +33,7 @@ public class SearchTuitionPartnerHandlerLoggingBehaviour
 
         using (_logger.BeginScope("{@TuitionPartners}", names))
         {
-            _logger.Log(logLevel, "Found {Count} results in {time}ms",
+            _logger.Log(logLevel, "Found {Count} results in {Elapsed}ms",
                     response.Count, stopwatch.ElapsedMilliseconds);
         }
 
