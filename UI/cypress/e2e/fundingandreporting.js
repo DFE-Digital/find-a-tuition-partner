@@ -10,7 +10,7 @@ Then("they will see the funding and report header", () => {
 
 
 Then("they will see the back link", () => {
-    cy.get('[data-testid="back-link"]').should('have.attr', 'href', 'javascript:history.go(-1)')
+    cy.get('[data-testid="back-link"]').should('have.attr', 'href', '')
 });
 
 Then("the academic mentor tutoring rates details are hidden", () => {

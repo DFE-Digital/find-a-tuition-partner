@@ -60,3 +60,8 @@ Then("they will click the back link", () => {
 Then("they redirects to postcode page", () => {
     cy.location('pathname').should('eq', '/');
 });
+
+Then("the privacy link opens privacy page", () => {
+    cy.get('[data-testid="privacy-link"]')
+        .should('have.attr', 'href', '/privacy')
+}); 
