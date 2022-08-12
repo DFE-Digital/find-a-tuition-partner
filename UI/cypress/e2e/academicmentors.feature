@@ -44,4 +44,3 @@
     Then they will see the funding reporting header
     And  they will click the back link
     Then they redirects to academic mentors page
-
