@@ -91,12 +91,18 @@ public class TuitionPartner : PageModel
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
-        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices);
+        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices)
+    {
+        public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
+    }
 
     public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax)
     {
         public bool HasAtLeastOnePrice =>
             OnlineMin != null || OnlineMax != null || SchoolMin != null || SchoolMax != null;
+
+        public bool HasVariation =>
+            (OnlineMin != OnlineMax) || (SchoolMin != SchoolMax);
     }
 
     public record struct LocalAuthorityDistrictCoverage(string Region, string Code, string Name, bool InSchool, bool Online);

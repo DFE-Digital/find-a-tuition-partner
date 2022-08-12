@@ -61,10 +61,13 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
     Then the tuition partner's website link is displayed
     And the tuition partners website link starts with 'http://'
-  
-  Scenario: user has access to funding guidance page
+
+  Scenario: user has access to funding link page
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-    Then the funding guidance page is accessible  
+    When they click funding and reporting link
+    Then they will see the funding reporting header
+    And  they will click the back link
+    Then they redirects to the tuition partners website link with bright-heart-education
   
   Scenario: locations covered table is not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
@@ -83,6 +86,14 @@ Feature: User can view full details of a Tuition Parner
     | Fledge Tuition Ltd | Online |
     | FFT Education | In school |
     | career-tree | In school, Online |
+
+  Scenario: tuition cost blurb states pricing uniformity
+    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    Then the tuition cost information states declares no differences
+
+  Scenario: tuition cost blurb states pricing differences
+    Given a user has arrived on the 'Tuition Partner' page for 'Reed Tutors'
+    Then the tuition cost information states declares differences
 
   Scenario: full pricing tables are not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'

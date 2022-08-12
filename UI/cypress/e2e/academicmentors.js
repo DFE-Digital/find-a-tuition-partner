@@ -1,4 +1,4 @@
-﻿import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
+﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("a user has arrived on the academic mentors page", () => {
     cy.visit(`/academic-mentors`);
@@ -35,4 +35,20 @@ Then("the dbs check link opens in a new window", () => {
 
 Then("they will see the funding and reporting link", () => {
     cy.get('[data-testid="funding-reporting-link"]').should('have.attr', 'href', '/funding-and-reporting')
+});
+
+When("they click funding and reporting link", () => {
+    cy.get('[data-testid="funding-reporting-link"]').click();
+});
+
+Then("they will see the funding reporting header", () => {
+    cy.get('[data-testid="funding-reporting-header"]').should('contain.text', "Funding and Reporting")
+});
+
+Then("they will click the back link", () => {
+    cy.get('[data-testid="back-link"]').click();
+});
+
+Then("they redirects to academic mentors page", () => {
+    cy.location('pathname').should('eq', '/academic-mentors');
 });
