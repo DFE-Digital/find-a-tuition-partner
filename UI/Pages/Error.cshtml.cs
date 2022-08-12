@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,6 +10,9 @@ namespace UI.Pages
     public class ErrorModel : PageModel
     {
         public string? RequestId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public HttpStatusCode Status { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
