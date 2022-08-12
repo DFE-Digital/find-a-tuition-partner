@@ -45,7 +45,23 @@ Then("the accessibility link {string} links to {string}", (text, href) => {
         .should('have.attr', 'href', href)
 });
 
+When("they click funding and reporting link", () => {
+    cy.get('[data-testid="funding-reporting-link"]').click();
+});
+
+Then("they will see the funding reporting header", () => {
+    cy.get('[data-testid="funding-reporting-header"]').should('contain.text', "Funding and Reporting")
+});
+
+Then("they will click the back link", () => {
+    cy.get('[data-testid="back-link"]').click();
+});
+
+Then("they redirects to postcode page", () => {
+    cy.location('pathname').should('eq', '/');
+});
+
 Then("the privacy link opens privacy page", () => {
     cy.get('[data-testid="privacy-link"]')
         .should('have.attr', 'href', '/privacy')
-});
+}); 
