@@ -12,29 +12,29 @@
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
     
-  Scenario: page as header Academic Mentors
+  Scenario: page has header Academic Mentors
     Given a user has arrived on the academic mentors page
     Then they will see the academic mentor header
 
-  Scenario: page as link to login link
+  Scenario: page has link to login link
      Given a user has arrived on the academic mentors page
      Then they will see the login link
      And the login link opens in a new window
 
-  Scenario: page as link to funding allocation link
+  Scenario: page has link to funding allocation link
      Given a user has arrived on the academic mentors page
      Then they will see the funding allocation link
 
-  Scenario: page as link to home link
+  Scenario: page has link to home link
      Given a user has arrived on the academic mentors page
      Then they will see the home link
  
-  Scenario: page as link to dbs check link
+  Scenario: page has link to dbs check link
      Given a user has arrived on the academic mentors page
      Then they will see the dbs check link
      And the dbs check link opens in a new window
 
-  Scenario: page as link to funding and reporting link
+  Scenario: page has link to funding and reporting link
      Given a user has arrived on the academic mentors page
      Then they will see the funding and reporting link
 
