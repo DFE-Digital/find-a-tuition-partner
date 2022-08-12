@@ -19,13 +19,13 @@ Given("the 'Which subjects' page is displayed", () => {
 });
 
 Given("nothing is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).should('not.be.checked');
-  cy.get(`input[data-testid="cookie-consent-deny"]`).should('not.be.checked');
+  cy.get('[data-testid="cookie-consent-accept"]').should('not.be.checked');
+  cy.get('[data-testid="cookie-consent-deny"]').should('not.be.checked');
 });
 
 Given("the success banner has been displayed", () => {
   Step(this, "the 'Which subjects' page is displayed");
-  Step(this, "the ‘cookies' is selected from footer");
+  Step(this, "the 'cookies' is selected from footer");
   Step(this, "a user opts-in");
   Step(this, "Saves Changes");
   Step(this, "a Success Banner is displayed");
@@ -33,11 +33,11 @@ Given("the success banner has been displayed", () => {
 
 Given("the 'view cookies' page is displayed", () => {
   Step(this, "the 'Which subjects' page is displayed");
-  Step(this, "the ‘cookies' is selected from footer");
+  Step(this, "the 'cookies' is selected from footer");
 });
 
 Given("opt-in is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).should('be.checked');
+  cy.get('[data-testid="cookie-consent-accept"]').get('input[id="Consent"]').should('be.checked');
 });
   
 When("cookies are accepted", () => {
@@ -48,28 +48,28 @@ When("cookies are rejected", () => {
     cy.get('[data-testid="reject-cookies"]').click();
   });
 
-When("the ‘view cookies’ is selected", () => {
+When("the 'view cookies' is selected", () => {
     cy.get('[data-testid="view-cookies"]').click();
   });
 
-When("the ‘cookies' is selected from footer", () => {
+When("the 'cookies' is selected from footer", () => {
     cy.get('[data-testid="view-footer-cookies"]').click();
   });
 
 When("a user opts-in", () => {
-  cy.get(`input[data-testid="cookie-consent-accept"]`).click();
+  cy.get('[data-testid="cookie-consent-accept"]').click();
   });
 
 When("a user opts-out", () => {
-    cy.get(`input[data-testid="cookie-consent-deny"]`).click();
+    cy.get('[data-testid="cookie-consent-deny"]').click();
     });
 
 When("Saves Changes", () => {
-    cy.get(`[data-testid="save-changes"]`).click();
+    cy.get('[data-testid="call-to-action"]').click();
     });
 
 When("the link to previous page is clicked", () => {
-      cy.get(`[data-testid="view-previous-page-link"]`).click();
+      cy.get('[data-testid="view-previous-page-link"]').click();
       });
 
 Then("the cookies banner is displayed", () => {
@@ -106,11 +106,18 @@ Then("the previous page is displayed correctly", () => {
 });
   
 Then("the privacy policy is accessible in a new tab", () => {
-  cy.get('[data-testid="privacy-page"]').then(function ($a) {
+  cy.get('[data-testid="privacy-policy-link"]').then(function ($a) {
     const href = $a.prop('href');
     cy.request(href).its('body').should('include', '</html>');
 })});
 
-Given("opt-out is selected", () => {
-  cy.get(`input[data-testid="cookie-consent-deny"]`).should('be.checked');
+Then("opt-out is selected", () => {
+  cy.get('[data-testid="cookie-consent-deny"]').get('input[id="Consent-2"]').should('be.checked');
 });
+
+Then("the error banner is displayed", () => {
+  cy.get('[id=error-summary-title]').should('exist');
+  cy.get('.govuk-error-summary__list').first().should('contain.text', 'You must select an option');
+});
+
+
