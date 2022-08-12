@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Serilog.Events;
 using UI.Filters;
 using UI.Routing;
+using static System.Net.Mime.MediaTypeNames;
 using AssemblyReference = UI.AssemblyReference;
 
 if (args.Any(x => x == "import"))
@@ -87,10 +88,15 @@ if (app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Handle runtime exceptions withing the application
+app.UseExceptionHandler("/Error");
+
+// Handle status code exceptions like page not found
+app.UseStatusCodePagesWithReExecute("/Error", "?Status={0}");
 
 app.UseHttpsRedirection();
 

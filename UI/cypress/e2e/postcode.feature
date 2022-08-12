@@ -80,3 +80,16 @@ Feature: User enters postcode to begin search
   Scenario: accessiblity link to page
     Given a user has started the 'Find a tuition partner' journey
     Then the accessibility link 'Accessibility' links to '/accessibility'
+
+  Scenario: funding link to page
+    Given a user has started the 'Find a tuition partner' journey
+    When they click funding and reporting link
+    Then they will see the funding reporting header
+    And  they will click the back link
+    Then they redirects to postcode page
+
+
+   Scenario: privacy link to page
+    Given a user has started the 'Find a tuition partner' journey
+    Then the privacy link opens privacy page
+ 

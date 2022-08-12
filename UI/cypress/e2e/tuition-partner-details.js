@@ -52,16 +52,20 @@ Then("the tuition partners website link starts with {string}", (prefix) => {
         .should('match', new RegExp(`^${prefix}`));
 });
 
-Then("the funding guidance page is accessible", () => {
-    cy.get('[data-testid=funding-guidance-1]').then(function ($a) {
-        const href = $a.prop('href');
-        cy.request(href).its('body').should('include', '</html>');
-    })
+When("they click funding and reporting link", () => {
+    cy.get('[data-testid="funding-guidance-1"]').click();
+});
 
-    cy.get('[data-testid=funding-guidance-2]').then(function ($a) {
-        const href = $a.prop('href');
-        cy.request(href).its('body').should('include', '</html>');
-    })
+Then("they will see the funding reporting header", () => {
+    cy.get('[data-testid="funding-reporting-header"]').should('contain.text', "Funding and Reporting")
+});
+
+Then("they will click the back link", () => {
+    cy.get('[data-testid="back-link"]').click();
+});
+
+Then("they redirects to the tuition partners website link with bright-heart-education", () => {
+    cy.location('pathname').should('eq', `/tuition-partner/bright-heart-education`);
 });
 
 Then("the tuition partner locations covered table is not displayed", () => {
