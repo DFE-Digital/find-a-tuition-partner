@@ -65,6 +65,7 @@ public static class ServiceCollectionExtensions
         {
             client.BaseAddress = new Uri("https://api.postcodes.io");
         });
+        services.Decorate<ILocationFilterService, LoggingLocationFilterService>();
 
         return services;
     }
