@@ -1,10 +1,10 @@
 ﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the school led page", () => {
+Given("a user has arrived on the school led tutoring page", () => {
     cy.visit(`/school-led-tutoring`);
 });
 
-Then("they will see the school led header", () => {
+Then("they will see the school led tutoring header", () => {
     cy.get('[data-testid="school-led-header"]').should('contain.text', "Employ your own tutor")
 });
 
