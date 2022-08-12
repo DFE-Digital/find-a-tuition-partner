@@ -1,4 +1,4 @@
-﻿Feature: Academic Mentors Page Tests
+﻿Feature: School Led Tutoring Page Tests
   Scenario: school led tutoring page url is '/school-led-tutoring'
     Given a user has arrived on the school led tutoring page
     Then the page URL ends with '/school-led-tutoring'
@@ -34,7 +34,7 @@
     Then they will see the funding and reporting link
 
   Scenario: funding link to page
-    Given a user has arrived on the school led page
+    Given a user has arrived on the school led tutoring page
     When they click funding and reporting link
     Then they will see the funding reporting header
     And  they will click the back link
