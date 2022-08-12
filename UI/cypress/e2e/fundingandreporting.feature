@@ -16,15 +16,6 @@
     When they click academic mentor tutoring rates
     Then the academic mentor tutoring rates are shown
 
- Scenario: page as example1 shown inset class
+ Scenario: page as example1 shown moj class
     Given a user has arrived on the funding and reporting page
-    Then they will see example 1 rates in inset text class
-
- Scenario: page as example2 shown inset class
-    Given a user has arrived on the funding and reporting page
-    Then they will see example 2 rates in inset text class
-
-
- Scenario: page as example3 shown inset class
-    Given a user has arrived on the funding and reporting page
-    Then they will see example 3 rates in inset text class
+    Then they will see example 1 rates in moj ticket panel
