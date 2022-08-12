@@ -124,4 +124,3 @@ Then("the subjects covered by a tuition partner are in alphabetical order", () =
         cy.get('.govuk-list').first().contains(element);
     });
 });
-
