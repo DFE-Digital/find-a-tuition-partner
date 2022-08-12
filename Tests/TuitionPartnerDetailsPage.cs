@@ -70,6 +70,20 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 PhoneNumber = "0123456789",
                 Email = "ntp@bravo.learning.testdata",
                 HasSenProvision = true,
+                LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
+                {
+                    new() { LocalAuthorityDistrictId = 1, TuitionTypeId = (int)TuitionTypes.InSchool },
+                },
+                SubjectCoverage = new List<SubjectCoverage>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths },
+                },
+                Prices = new List<Price>
+                {
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3English, GroupSize = 2, HourlyRate = 12m },
+                    new() { TuitionTypeId = (int)TuitionTypes.InSchool, SubjectId = Subjects.Id.KeyStage3Maths, GroupSize = 2, HourlyRate = 12m },
+                },
             });
 
             await db.SaveChangesAsync();
@@ -244,7 +258,19 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     [InlineData("bravo-learning", true)]
     public async Task Shows_send_status(string tuitionPartner, bool supportsSend)
     {
-        var result = await Fixture.SendAsync(new TuitionPartner.Query(tuitionPartner, ShowFullPricing: true));
+        var result = await Fixture.SendAsync(new TuitionPartner.Query(tuitionPartner));
         result!.HasSenProvision.Should().Be(supportsSend);
+    }
+
+    [Theory]
+    [InlineData("a-tuition-partner", 2, true)]
+    [InlineData("a-tuition-partner", 3, true)]
+    [InlineData("bravo-learning", 2, false)]
+    public async Task Shows_price_variant_text(string tuitionPartner, int groupSize, bool hasVariation)
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query(tuitionPartner));
+
+        result.Should().NotBeNull();
+        result!.Prices.Should().ContainKey(groupSize).WhoseValue.HasVariation.Should().Be(hasVariation);
     }
 }

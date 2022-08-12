@@ -124,3 +124,13 @@ Then("the subjects covered by a tuition partner are in alphabetical order", () =
         cy.get('.govuk-list').first().contains(element);
     });
 });
+
+Then("the tuition cost information states declares no differences", () => {
+    cy.get('[data-testid="pricing-same-for-subjects').should('exist');
+    cy.get('[data-testid="pricing-differences-for-subjects').should('not.exist');
+})
+
+Then("the tuition cost information states declares differences", () => {
+    cy.get('[data-testid="pricing-differences-for-subjects').should('exist');
+    cy.get('[data-testid="pricing-same-for-subjects').should('not.exist');
+})

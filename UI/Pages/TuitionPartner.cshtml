@@ -117,7 +117,12 @@
         <h2 class="govuk-heading-m">Tuition cost information</h2>
         <p class="govuk-body">
             The costs shown are per pupil per hour.<br/>
-            All subjects are the same price but depend on tuition group size.
+			<span show-if="!@Model.Data.HasPricingVariation" data-testid="pricing-same-for-subjects">
+				All subjects are the same price but depend on tuition group size.
+			</span>
+			<span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
+				Some prices are different depending on key stage or subject.  Please contact @Model.Data.Name for more information.
+			</span>
             <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br/>Prices shown include VAT.</span>
         </p>
 
