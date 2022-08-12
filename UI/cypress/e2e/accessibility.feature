@@ -1,5 +1,5 @@
 ﻿Feature: Accessibility page shows users how accessible the website and how to report problems
-  Scenario: accessibility statement page url is '/accessibilitys'
+  Scenario: accessibility statement page url is '/accessibility'
     Given a user has arrived on the accessibility page
     Then the page URL ends with '/accessibility'
 
