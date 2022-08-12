@@ -44,3 +44,8 @@ Then("the accessibility link {string} links to {string}", (text, href) => {
         .should('contain.text', text)
         .should('have.attr', 'href', href)
 });
+
+Then("the privacy link opens privacy page", () => {
+    cy.get('[data-testid="privacy-link"]')
+        .should('have.attr', 'href', '/privacy')
+});
