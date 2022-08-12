@@ -4,8 +4,8 @@
 }
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-			<a href="javascript:history.go(-1)" data-testid="home-link" class="govuk-back-link">Back</a>
-		<h1 class="govuk-heading-xl">Funding and Reporting</h1>
+		<a href="javascript:history.go(-1)" data-testid="back-link" class="govuk-back-link">Back</a>
+		<h1 class="govuk-heading-xl" data-testid="funding-reporting-header">Funding and Reporting</h1>
 
 		<p class="govuk-body">Your school will get the following funding for each pupil premium-eligible pupil in a:
 		</p>
@@ -53,8 +53,9 @@
 			<li> Multiply the number of tutoring hours by the number of pupils to give total pupil-hours.</li>
 			<li>Divide the total cost of tutoring by the number of pupil-hours. </li>
 		</ol>
-		<details class="govuk-details" data-module="govuk-details">
-			<summary class="govuk-details__summary">
+		<details class="govuk-details" data-module="govuk-details"
+			data-testid="academic-mentor-tutoring-rates-details-link">
+			<summary class="govuk-details__summary" data-testid="academic-mentor-tutoring-rates-details">
 				<span class="govuk-details__summary-text">
 					Academic mentor tutoring rates
 				</span>
@@ -82,7 +83,7 @@
 			</div>
 		</details>
 		<h3 class="govuk-heading-m">Funding calculation examples</h3>
-		<div class="govuk-inset-text">
+		<div class="govuk-inset-text" data-testid="inset-text-example1">
 			<p class="govuk-body"><b>Example 1</b></p>
 			<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
 				<li>Your mainstream school has 250 pupil premium-eligible pupils, giving you an allocation of £40,500.
@@ -98,7 +99,7 @@
 			<p class="govuk-body">Because your rate is below the £18 maximum, your funding covers 60% of the cost -
 				£39,060. You’ll pay the remaining £26,040 from other funding.</p>
 		</div>
-		<div class="govuk-inset-text">
+		<div class="govuk-inset-text" data-testid="inset-text-example2">
 			<p class="govuk-body"><b>Example 2</b></p>
 			<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
 				<li>Your non-mainstream school has 38 pupil premium-eligible pupils, so your allocation is £16,074.
@@ -112,7 +113,7 @@
 			<p class="govuk-body">Because your rate is below the £47 maximum, your funding covers 60% of the cost -
 				£13,200. You’ll pay the remaining £8,800 from other funding.</p>
 		</div>
-		<div class="govuk-inset-text">
+		<div class="govuk-inset-text" data-testid="inset-text-example3">
 			<p class="govuk-body"><b>Example 3</b></p>
 			<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
 				<li>Your mainstream school has 67 pupil premium-eligible pupils which means your allocation is £9,514.

@@ -24,3 +24,11 @@
  Scenario: page as link to funding and reporting link
      Given a user has arrived on the academic mentors page
      Then they will see the funding and reporting link
+
+  Scenario: funding link to page
+    Given a user has arrived on the academic mentors page
+    When they click funding and reporting link
+    Then they will see the funding reporting header
+    And  they will click the back link
+    Then they redirects to academic mentors page
+
