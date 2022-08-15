@@ -1,4 +1,20 @@
 Feature: User handles cookies
+  Scenario: cookies page url is '/cookies'
+    Given a user has started the 'Find a tuition partner' journey
+    When the 'view cookies' is selected
+    Then the page URL ends with '/cookies'
+
+  Scenario: cookies page title is 'Cookies'
+    Given a user has started the 'Find a tuition partner' journey
+    When the 'view cookies' is selected
+    Then the page's title is 'Cookies'
+
+  Scenario: user clicks service name on cookies page
+    Given a user has started the 'Find a tuition partner' journey
+    When the 'view cookies' is selected
+    And they click the 'Find a tuition partner' service name link
+    Then they will be taken to the 'Find a tuition partner' journey start page
+
   Scenario: The cookies banner is displayed when application is accessed for first time
     Given a user has started the 'Find a tuition partner' journey
     Then the cookies banner is displayed
