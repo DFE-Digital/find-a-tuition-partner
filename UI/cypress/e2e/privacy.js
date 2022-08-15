@@ -5,7 +5,7 @@ Given("a user has arrived on the privacy page", () => {
 });
 
 Then("they will see the privacy notice header", () => {
-    cy.get('[data-testid="privacy-header"]').should('contain.text', "Find a tuition partner Privacy Notice")
+    cy.get('[data-testid="privacy-header"]').should('contain.text', "Find a tuition partner privacy notice")
 });
 
 Then("they will see personal information link", () => {
