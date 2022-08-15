@@ -8,4 +8,5 @@ When("a service page has not been found", () => {
 
 Then("the 'page not found' error page is displayed", () => {
     cy.get('[data-testid="error-page"').should('exist');
+    cy.get('head title').should('contain', 'Page not found')
 });

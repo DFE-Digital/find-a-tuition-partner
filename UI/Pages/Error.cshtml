@@ -3,7 +3,14 @@
 
 @model ErrorModel
 @{
-    ViewData["Title"] = "Find a tuition partner";
+    @if (Model.Status == HttpStatusCode.NotFound)
+    {
+         ViewData["Title"] = "Page not found";
+    }
+    else
+    {
+         ViewData["Title"] = "Problem with the service";
+    }
 }
 
 <div class="govuk-width-container">
