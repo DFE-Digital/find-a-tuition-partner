@@ -133,7 +133,7 @@ app.Use(async (context, next) =>
     {
         context.Response.Headers.Add("X-XSS-Protection", "0");
     }
-    
+
     if (!context.Response.Headers.ContainsKey("X-Content-Type-Options"))
     {
         context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
