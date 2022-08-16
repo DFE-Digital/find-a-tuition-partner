@@ -1,0 +1,39 @@
+name: Pull Request Teardown Deployment
+
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  PR_NUMBER: pr-${{ github.event.number }}
+  CF_API: "https://api.london.cloud.service.gov.uk"
+  CF_ORG: "dfe"
+  CF_SPACE: ntp-qa
+
+jobs:
+  teardown_deployment:
+    name: Teardown Deployment
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install the CF CLI
+      run: |
+        wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+
+    - name: Authenticate
+      env:
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+      run: |
+        echo "Logging into $CF_ORG/$CF_SPACE..."
+        cf api "${CF_API}"
+        cf auth
+        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+    - name: Delete database backing service
+      run: |
+        cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db
+
+    - name: Delete application
+      run: |
+        cf delete find-a-tuition-partner-$PR_NUMBER
