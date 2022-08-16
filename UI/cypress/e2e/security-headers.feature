@@ -7,7 +7,7 @@ Feature: Security headers
         Given a user has started the 'Find a tuition partner' journey
         Then header 'Content-Security-Policy' is added to the displayed page
 
-    Scenario: Security header X-Xss-Protection added to page
+    Scenario: Security header X-X-Protection added to page
         Given a user has started the 'Find a tuition partner' journey
         Then header 'X-XSS-Protection' is added to the displayed page
 
