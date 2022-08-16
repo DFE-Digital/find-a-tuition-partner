@@ -6,3 +6,22 @@
 		background-color: govuk-colour('white');
 	}
 }
+
+.app-form-group-inline {
+	.govuk-button {
+		margin-top: govuk-spacing(3);
+	}
+
+	@include govuk-media-query($from: tablet) {
+		.govuk-input {
+			max-width: 20ex + 3ex;
+		}
+
+		.govuk-button {
+			display: inline !important;
+			margin-top: govuk-spacing(0);
+			margin-bottom: govuk-spacing(0);
+			margin-left: govuk-spacing(1);
+		}
+	}
+}

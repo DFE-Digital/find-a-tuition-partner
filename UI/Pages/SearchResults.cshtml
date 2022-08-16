@@ -60,14 +60,14 @@
 
 		<div class="govuk-grid-column-two-thirds">
 
-			<div class="govuk-form-group">
+			<div class="govuk-form-group app-form-group-inline">
 				<div asp-validation-group-for="Data.Postcode" data-testid="postcode">
 					<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
 						Enter your school's postcode
 					</label>
 					<span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
-					<input asp-for="Data.Postcode" class="govuk-input govuk-input--width-10" type="text">
-					<govuk-button type="submit" class="govuk-!-display-inline govuk-!-margin-0" data-testid="call-to-action">Search</govuk-button>
+					<input asp-for="Data.Postcode" class="govuk-input" type="text">
+					<govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
 				</div>
 			</div>
 
