@@ -7,6 +7,7 @@ on:
 
 env:
   PR_NUMBER: pr-${{ github.event.number }}
+  BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
   CF_API: "https://api.london.cloud.service.gov.uk"
   CF_ORG: "dfe"
   CF_SPACE: ntp-qa
@@ -62,15 +63,15 @@ jobs:
     - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
       uses: cygnetdigital/wait_for_response@v2.0.0
       with:
-        url: 'https://find-a-tuition-partner-$PR_NUMBER.london.cloudapps.digital/tuition-partner/action-tutoring'
-        timeout: 120000
+        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
+        timeout: 180000
         interval: 15000
 
     - name: End to End Testing
       uses: cypress-io/github-action@v4
       with:
         working-directory: ./UI
-        config: baseUrl=https://find-a-tuition-partner-$PR_NUMBER.london.cloudapps.digital/
+        config: baseUrl="${{ env.BASE_URL }}/"
 
     - name: Store screenshots on test failure
       uses: actions/upload-artifact@v2
@@ -84,3 +85,11 @@ jobs:
       with:
         name: cypress-videos
         path: UI/cypress/videos
+
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_MESSAGE: "${{ env.BASE_URL }}"
+        SLACK_TITLE: PR Deployment
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
