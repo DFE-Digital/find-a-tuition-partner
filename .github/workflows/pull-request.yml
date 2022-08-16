@@ -5,6 +5,9 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
+env:
+  PR_NUMBER: pr-${{ github.event.number }}
+
 jobs:
   docker_compose_test:
     name: Start Service and run End to End Testing
@@ -23,17 +26,41 @@ jobs:
         npm ci
         npm run build
 
-    - name: Docker Compose Up
-      run: docker compose up --build -d
+    - name: Install the CF CLI
+      run: |
+        wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+
+    - name: Authenticate
+      env:
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+      run: |
+        echo "Logging into $CF_ORG/$CF_SPACE..."
+        cf api "${CF_API}"
+        cf auth
+        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+    - name: Create database backing service
+      run: |
+        cf create-service postgres small-13 find-a-tuition-partner-${{ env.PR_NUMBER }}-postgres-db --wait
+
+    - name: Deploy to PaaS
+      run: |
+        cf push --strategy rolling --vars-file vars-${{ env.PR_NUMBER }}.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
 
     - name: Run database migrations and import data
-      run: docker compose run -e DataEncryption:Key=${{ secrets.DATA_ENCRYPTION_KEY }} web ./UI import
+      run: |
+        cf run-task find-a-tuition-partner-${{ env.PR_NUMBER }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name find-a-tuition-partner-${{ env.PR_NUMBER }}-data-import
+    
+    - name: Logout
+      run: cf logout
 
     - name: End to End Testing
       uses: cypress-io/github-action@v4
       with:
         working-directory: ./UI
-        config: baseUrl=http://localhost:8080/
+        config: baseUrl=https://find-a-tuition-partner-${{ env.PR_NUMBER }}.london.cloudapps.digital/
 
     - name: Store screenshots on test failure
       uses: actions/upload-artifact@v2
@@ -47,11 +74,3 @@ jobs:
       with:
         name: cypress-videos
         path: UI/cypress/videos
-
-    - name: Logs on failure
-      if: failure()
-      run: docker compose logs --since 1m
-
-    - name: Docker Compose Down
-      if: always()
-      run: docker compose down
