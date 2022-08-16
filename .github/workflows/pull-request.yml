@@ -1,4 +1,4 @@
-name: Pull Request .NET Build, Test and End to End Testing
+name: Pull Request Deployment and End to End Testing
 
 on:
   workflow_dispatch:
@@ -7,10 +7,13 @@ on:
 
 env:
   PR_NUMBER: pr-${{ github.event.number }}
+  CF_API: "https://api.london.cloud.service.gov.uk"
+  CF_ORG: "dfe"
+  CF_SPACE: ntp-staging
 
 jobs:
-  docker_compose_test:
-    name: Start Service and run End to End Testing
+  build_deploy_test:
+    name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -43,15 +46,15 @@ jobs:
 
     - name: Create database backing service
       run: |
-        cf create-service postgres small-13 find-a-tuition-partner-${{ env.PR_NUMBER }}-postgres-db --wait
+        cf create-service postgres small-13 find-a-tuition-partner-$PR_NUMBER-postgres-db --wait
 
     - name: Deploy to PaaS
       run: |
-        cf push --strategy rolling --vars-file vars-${{ env.PR_NUMBER }}.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
+        cf push --strategy rolling --vars-file vars-$PR_NUMBER.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
 
     - name: Run database migrations and import data
       run: |
-        cf run-task find-a-tuition-partner-${{ env.PR_NUMBER }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name find-a-tuition-partner-${{ env.PR_NUMBER }}-data-import
+        cf run-task find-a-tuition-partner-$PR_NUMBER --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name find-a-tuition-partner-$PR_NUMBER-data-import
     
     - name: Logout
       run: cf logout
@@ -60,7 +63,7 @@ jobs:
       uses: cypress-io/github-action@v4
       with:
         working-directory: ./UI
-        config: baseUrl=https://find-a-tuition-partner-${{ env.PR_NUMBER }}.london.cloudapps.digital/
+        config: baseUrl=https://find-a-tuition-partner-$PR_NUMBER.london.cloudapps.digital/
 
     - name: Store screenshots on test failure
       uses: actions/upload-artifact@v2
