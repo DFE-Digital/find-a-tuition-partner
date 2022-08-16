@@ -7,6 +7,7 @@ using Infrastructure;
 using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Serilog.Events;
 using UI.Filters;
@@ -76,6 +77,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Host.AddLogging();
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = ".FindATuitionPartner.Antiforgery";
+});
+
+builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = ".FindATuitionPartner.Mvc.CookieTempDataProvider");
+
 
 var app = builder.Build();
 
