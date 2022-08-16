@@ -9,7 +9,7 @@ env:
   PR_NUMBER: pr-${{ github.event.number }}
   CF_API: "https://api.london.cloud.service.gov.uk"
   CF_ORG: "dfe"
-  CF_SPACE: ntp-staging
+  CF_SPACE: ntp-qa
 
 jobs:
   build_deploy_test:
@@ -50,7 +50,7 @@ jobs:
 
     - name: Deploy to PaaS
       run: |
-        cf push --strategy rolling --vars-file vars-$PR_NUMBER.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
+        cf push --strategy rolling --vars-file vars-qa.yml --var environment-postfix=-$PR_NUMBER --var instances=1 --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
 
     - name: Run database migrations and import data
       run: |
