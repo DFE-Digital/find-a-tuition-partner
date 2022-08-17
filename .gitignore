@@ -410,3 +410,5 @@ UI/cypress/screenshots
 # NCrunch 
 *.ncrunchsolution
 Tests/Tests.v3.ncrunchproject
+**/appsettings.Development.json
+
