@@ -11,7 +11,11 @@ public class GiasPostcodeSearchService : IHostedService
     private readonly HttpClient _httpClient;
     private readonly ISchoolDataProvider _schoolDataProvider;
 
-    public GiasPostcodeSearchService(IHostApplicationLifetime host, ILogger<GiasPostcodeSearchService> logger, HttpClient httpClient, ISchoolDataProvider schoolDataProvider)
+    public GiasPostcodeSearchService(
+        IHostApplicationLifetime host,
+        ILogger<GiasPostcodeSearchService> logger,
+        HttpClient httpClient,
+        ISchoolDataProvider schoolDataProvider)
     {
         _host = host;
         _logger = logger;
@@ -28,7 +32,7 @@ public class GiasPostcodeSearchService : IHostedService
                 PhaseOfEducation.MiddleDeemedSecondary, PhaseOfEducation.AllThrough
             }.Contains(x.PhaseOfEducation)).ToArray();
 
-        _logger.LogInformation($"GIAS dataset loaded. {schoolData.Length} eligible schools");
+        _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schoolData.Length);
 
         var count = 0;
         var errorCount = 0;
@@ -54,11 +58,11 @@ public class GiasPostcodeSearchService : IHostedService
             var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
             if (subjectsQueryString == null)
             {
-                _logger.LogDebug($"School {schoolDatum} is not valid for this service");
+                _logger.LogDebug("School {SchoolName} is not valid for this service", schoolDatum?.Name);
             }
             else
             {
-                _logger.LogDebug($"Searching for Tuition Partners covering School {schoolDatum}");
+                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum?.Name);
 
                 var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
 
@@ -86,11 +90,11 @@ public class GiasPostcodeSearchService : IHostedService
 
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogDebug($"Response status code {response.StatusCode} returned after {stopWatch.ElapsedMilliseconds}ms");
+                    _logger.LogDebug("Response status code {StatusCode} returned after {ElapsedMilliseconds}ms", response.StatusCode, stopWatch.ElapsedMilliseconds);
                 }
                 else
                 {
-                    _logger.LogError($"Search request {requestUri} resulted in non success status code {response.StatusCode}");
+                    _logger.LogError("Search request {RequestUri} resulted in non success status code {StatusCode}", requestUri, response.StatusCode);
                     errorCount++;
                 }
 
@@ -100,7 +104,12 @@ public class GiasPostcodeSearchService : IHostedService
                 {
                     averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
                     searchesPerSecond = (int)((double)count / (runStopWatch.ElapsedMilliseconds / 1000));
-                    _logger.LogInformation($"{count} searches of {totalCount} run in {runStopWatch.ElapsedMilliseconds / 1000}s. Error count {errorCount}. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+                    _logger.LogInformation(
+                        "{SearchCount} searches of {TotalCount} run in {ElapsedSeconds}s. " +
+                        "Error count {ErrorCount}. {SearchesPerSecond} searches per second. " +
+                        "Average response time {AverageElapsedMilliseconds}ms min {MinElapsedMilliseconds}ms ({FastestRequestUri}) max {MaxElapsedMilliseconds}ms ({slowestRequestUri})",
+                        count, totalCount, runStopWatch.Elapsed / 1000, errorCount, searchesPerSecond,
+                        averageElapsedMilliseconds, minElapsedMilliseconds, fastestRequestUri, maxElapsedMilliseconds, slowestRequestUri);
 
                     // Reset metrics for next run
                     minElapsedMilliseconds = long.MaxValue;
@@ -114,7 +123,13 @@ public class GiasPostcodeSearchService : IHostedService
         runStopWatch.Stop();
         averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
         searchesPerSecond = (int)((double)count / runStopWatch.ElapsedMilliseconds);
-        _logger.LogInformation($"Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds / 1000}s. Error count {errorCount}. {searchesPerSecond} searches per second. Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms ({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})");
+        _logger.LogInformation(
+            "Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds / 1000}s. " +
+            "Error count {errorCount}. {searchesPerSecond} searches per second. " +
+            "Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms " +
+            "({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})",
+            count, runStopWatch.ElapsedMilliseconds / 1000, errorCount, searchesPerSecond,
+            averageElapsedMilliseconds, minElapsedMilliseconds, fastestRequestUri, maxElapsedMilliseconds, slowestRequestUri);
 
         _host.StopApplication();
     }
