@@ -1,13 +1,20 @@
-name: Pull Request .NET Build, Test and End to End Testing
+name: Pull Request Deployment and End to End Testing
 
 on:
   workflow_dispatch:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
+env:
+  PR_NUMBER: pr-${{ github.event.number }}
+  BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
+  CF_API: "https://api.london.cloud.service.gov.uk"
+  CF_ORG: "dfe"
+  CF_SPACE: ntp-qa
+
 jobs:
-  docker_compose_test:
-    name: Start Service and run End to End Testing
+  build_deploy_test:
+    name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -23,17 +30,48 @@ jobs:
         npm ci
         npm run build
 
-    - name: Docker Compose Up
-      run: docker compose up --build -d
+    - name: Install the CF CLI
+      run: |
+        wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+
+    - name: Authenticate
+      env:
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+      run: |
+        echo "Logging into $CF_ORG/$CF_SPACE..."
+        cf api "${CF_API}"
+        cf auth
+        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+    - name: Create database backing service
+      run: |
+        cf create-service postgres small-13 find-a-tuition-partner-$PR_NUMBER-postgres-db --wait
+
+    - name: Deploy to PaaS
+      run: |
+        cf push --strategy rolling --vars-file vars-qa.yml --var environment-postfix=-$PR_NUMBER --var instances=1 --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
 
     - name: Run database migrations and import data
-      run: docker compose run -e DataEncryption:Key=${{ secrets.DATA_ENCRYPTION_KEY }} web ./UI import
+      run: |
+        cf run-task find-a-tuition-partner-$PR_NUMBER --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key ${{ secrets.DATA_ENCRYPTION_KEY }}" --name find-a-tuition-partner-$PR_NUMBER-data-import
+    
+    - name: Logout
+      run: cf logout
+
+    - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
+      uses: cygnetdigital/wait_for_response@v2.0.0
+      with:
+        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
+        timeout: 180000
+        interval: 15000
 
     - name: End to End Testing
       uses: cypress-io/github-action@v4
       with:
         working-directory: ./UI
-        config: baseUrl=http://localhost:8080/
+        config: baseUrl="${{ env.BASE_URL }}/"
 
     - name: Store screenshots on test failure
       uses: actions/upload-artifact@v2
@@ -48,10 +86,10 @@ jobs:
         name: cypress-videos
         path: UI/cypress/videos
 
-    - name: Logs on failure
-      if: failure()
-      run: docker compose logs --since 1m
-
-    - name: Docker Compose Down
-      if: always()
-      run: docker compose down
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_MESSAGE: "${{ env.BASE_URL }}"
+        SLACK_TITLE: PR Deployment
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

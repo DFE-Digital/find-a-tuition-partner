@@ -189,9 +189,9 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
     private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetRegionInitialsCovered()
     {
-        var regionCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "E", 6, 14);
-        var inSchoolRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "G", 6, 14);
-        var onlineRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "H", 6, 14);
+        var regionCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "E", 6, 15);
+        var inSchoolRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "G", 6, 15);
+        var onlineRegionsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "H", 6, 15);
 
         var regionCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
         var index = 0;
@@ -212,9 +212,9 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
     private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetLadCodesCovered()
     {
-        var ladCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "K", 6, 314);
-        var inSchoolLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "M", 6, 314);
-        var onlineLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "N", 6, 314);
+        var ladCodes = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "K", 6, 315);
+        var inSchoolLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "M", 6, 315);
+        var onlineLadsCovered = _spreadsheetExtractor.GetColumnValues(LocationSheetName, "N", 6, 315);
 
         var ladCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
         var index = 0;
