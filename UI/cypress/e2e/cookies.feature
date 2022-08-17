@@ -24,12 +24,14 @@ Feature: User handles cookies
     When cookies are accepted
     Then user session is tracked
     And the banner disappears
+    And cookie '.FindATuitionPartner.Consent' is added with value 'True'
 
   Scenario: User rejects cookies
     Given a user has started the 'Find a tuition partner' journey
     When cookies are rejected
     Then user session is not tracked
     And the banner disappears
+    And cookie '.FindATuitionPartner.Consent' is added with value 'False'
 
   Scenario: 'View cookies' is selected
     Given a user has started the 'Find a tuition partner' journey
@@ -91,3 +93,12 @@ Scenario: Error banner appears if no option is selected
     And nothing is selected
     When Saves Changes
     Then the error banner is displayed
+
+Scenario: The cookie '.FindATuitionPartner.Antiforgery' is added when a user has started the 'Find a tuition partner' journey
+    Given a user has started the 'Find a tuition partner' journey
+    Then cookie '.FindATuitionPartner.Antiforgery' is added with value 'null'
+
+Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added when a user has reached the search page
+    Given the search result page is displayed
+    Then cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added with value 'null'
+

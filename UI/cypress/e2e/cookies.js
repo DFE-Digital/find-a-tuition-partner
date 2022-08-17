@@ -39,6 +39,14 @@ Given("the 'view cookies' page is displayed", () => {
 Given("opt-in is selected", () => {
   cy.get('[data-testid="cookie-consent-accept"]').get('input[id="Consent"]').should('be.checked');
 });
+
+Given("a user accessed the search result page", () => {
+  cy.get('[data-testid="cookie-consent-accept"]').get('input[id="Consent"]').should('be.checked');
+});
+
+Given("the search result page is displayed", () => {
+  cy.visit("search-results?Postcode=SK1%201EB&Subjects=KeyStage1-English&KeyStages=KeyStage1")
+});
   
 When("cookies are accepted", () => {
     cy.get('[data-testid="accept-cookies"]').click();
@@ -120,4 +128,15 @@ Then("the error banner is displayed", () => {
   cy.get('.govuk-error-summary__list').first().should('contain.text', 'You must select an option');
 });
 
-
+Then("cookie {string} is added with value {string}", (cookie, value) => {
+  if (value != 'null')
+  {
+    cy.getCookie(cookie)
+    .should('have.property', 'value', value)
+  }
+  else
+  {
+    cy.getCookie(cookie).should('exist')
+  }
+  
+});
