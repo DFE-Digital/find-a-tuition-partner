@@ -1,6 +1,5 @@
 ﻿using Application.Repositories;
 using Domain;
-using Domain.Constants;
 using Domain.Search;
 using Domain.Validators;
 using MediatR;
@@ -12,12 +11,10 @@ public class SearchTuitionPartnerHandler
 {
     public class CommandValidator : TuitionPartnerSearchRequestValidator<Command>
     {
-
     }
 
     public class Command : TuitionPartnerSearchRequest, IRequest<TuitionPartnerSearchResultsPage>
     {
-
     }
 
     public class Handler : IRequestHandler<Command, TuitionPartnerSearchResultsPage>

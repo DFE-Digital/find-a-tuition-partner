@@ -4,7 +4,9 @@ using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NSubstitute;
 
 namespace Tests.Utilities;
@@ -49,6 +51,16 @@ public class SliceFixture : IAsyncLifetime
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseEnvironment("Testing");
+
+            builder.ConfigureAppConfiguration(configure =>
+            {
+                configure.AddInMemoryCollection(new Dictionary<string, string>
+                {
+                   {"AppLogging:TcpSinkUri", ""},
+                });
+            });
+
             builder.ConfigureTestServices(services =>
             {
                 services.Remove<DbContextOptions<NtpDbContext>>();
