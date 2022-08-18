@@ -62,7 +62,7 @@
             <li>what you enter into pages on this site</li>
         </ul>
 
-        <form method="post" PostBackUrl="/cookies">
+        <form method="post">
             <input asp-for="ReturnUrl" value="@Model.ReturnUrl" hidden=true />
             <govuk-radios asp-for="Consent">
                 <govuk-radios-fieldset>
