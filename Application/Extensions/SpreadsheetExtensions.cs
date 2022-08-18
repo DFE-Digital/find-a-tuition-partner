@@ -24,6 +24,11 @@ public static class SpreadsheetExtensions
         return 0;
     }
 
+    public static decimal ParsePrice(this string? cellValue)
+    {
+        return Math.Round(cellValue.ParseDecimal(), 2);
+    }
+
     public static DateOnly? ParseDateOnly(this string? cellValue)
     {
         if (double.TryParse(cellValue, out var doubleValue))

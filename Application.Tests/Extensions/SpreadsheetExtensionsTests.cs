@@ -47,6 +47,18 @@ public class SpreadsheetExtensionsTests
     }
 
     [Theory]
+    [InlineData("18.161", 18.16)]
+    [InlineData("18.169", 18.17)]
+    [InlineData("£17.6767", 17.68)]
+    [InlineData("12,999", 12999)]
+    [InlineData("15.408000000000001", 15.41)]
+    [InlineData("15.407999999999999", 15.41)]
+    public void Parse_price_rounds_to_two_decimal_places(string value, decimal expected)
+    {
+        value.ParsePrice().Should().Be(expected);
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
