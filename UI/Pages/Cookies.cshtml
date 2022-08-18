@@ -11,7 +11,8 @@
 
         @if (Model.PreferencesSet)
         {
-            <div data-testid="success-banner" class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div data-testid="success-banner" class="govuk-notification-banner govuk-notification-banner--success"
+            role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__header">
                     <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                         Success
@@ -19,14 +20,17 @@
                 </div>
                 <div class="govuk-notification-banner__content">
                     <p class="govuk-notification-banner__heading">
-                        You’ve set your cookie preferences. <a data-testid="view-previous-page-link" class="govuk-notification-banner__link" href="@Model.ReturnUrl">Go back to the page you were looking at</a>.
+                        You’ve set your cookie preferences. <a data-testid="view-previous-page-link"
+                        class="govuk-notification-banner__link" href="@Model.ReturnUrl">Go back to the page you were
+                            looking at</a>.
                     </p>
                 </div>
             </div>
         }
         <h1 class="govuk-heading-l">Cookies</h1>
         <p class="govuk-body">
-            We put small files known as ‘cookies’ onto your computer or mobile device when you use this service so we can:
+            We put small files known as ‘cookies’ onto your computer or mobile device when you use this service so we
+            can:
         </p>
         <ul class="govuk-list govuk-list--bullet">
             <li>measure how you use the service </li>
@@ -39,7 +43,9 @@
         <h1 class="govuk-heading-l">Analytics cookies to help improve this service</h1>
 
         <p class="govuk-body">
-            If you give permission, we use Google Analytics to measure how you use this service. This means we can update and improve it more effectively. We do not allow Google to use or share the data about how you use it.
+            If you give permission, we use Google Analytics to measure how you use this service. This means we can
+            update and improve it more effectively. We do not allow Google to use or share the data about how you use
+            it.
         </p>
 
         <p class="govuk-body">Google Analytics stores information about:</p>
@@ -56,15 +62,18 @@
             <li>what you enter into pages on this site</li>
         </ul>
 
-        <form method="post">
-
+        <form method="post" PostBackUrl="/cookies">
+            <input asp-for="ReturnUrl" value="@Model.ReturnUrl" hidden=true />
             <govuk-radios asp-for="Consent">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend>
-                        Do you agree to the Department for Education using Google Analytics to help improve the Find a tuition partner service?
+                        Do you agree to the Department for Education using Google Analytics to help improve the Find a
+                        tuition partner service?
                     </govuk-radios-fieldset-legend>
-                    <govuk-radios-item value="@true" data-testid="cookie-consent-accept">Yes, opt-in to analytics cookies</govuk-radios-item>
-                    <govuk-radios-item value="@false" data-testid="cookie-consent-deny">No, do not use cookies to track my website usage</govuk-radios-item>
+                    <govuk-radios-item value="@true" data-testid="cookie-consent-accept">Yes, opt-in to analytics
+                        cookies</govuk-radios-item>
+                    <govuk-radios-item value="@false" data-testid="cookie-consent-deny">No, do not use cookies to track
+                        my website usage</govuk-radios-item>
                 </govuk-radios-fieldset>
             </govuk-radios>
             <govuk-button type="submit" data-testid="call-to-action">Save my choice</govuk-button>
@@ -81,26 +90,31 @@
             <tbody class="govuk-table__body">
                 <tr>
                     <td class="govuk-table__cell">_ga</td>
-                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This helps us count how many people use it.</td>
+                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This
+                        helps us count how many people use it.</td>
                     <td class="govuk-table__cell">Up to 2 years</td>
                 </tr>
                 <tr>
                     <td class="govuk-table__cell">_gid</td>
-                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This helps us count how many people use it.</td>
+                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This
+                        helps us count how many people use it.</td>
                     <td class="govuk-table__cell">24 hours</td>
                 </tr>
                 <tr>
                     <td class="govuk-table__cell">_ga_&lt;container&#8209;id&gt;</td>
-                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This helps us count how many people use it.</td>
+                    <td class="govuk-table__cell">Checks if you’ve signed in to / accessed the service before. This
+                        helps us count how many people use it.</td>
                     <td class="govuk-table__cell">2 years</td>
                 </tr>
             </tbody>
         </table>
         <h2 class="govuk-heading-m">Essential cookies</h2>
         <p class="govuk-body">
-            These cookies need to be on to allow you to use this service. They don’t store your personal data. For more information read our <a asp-page="./Privacy" class="govuk-link" data-testid="privacy-policy-link">privacy policy</a>.
+            These cookies need to be on to allow you to use this service. They don’t store your personal data. For more
+            information read our <a asp-page="./Privacy" class="govuk-link" data-testid="privacy-policy-link">privacy
+                policy</a>.
         </p>
-        <table class="govuk-table" >
+        <table class="govuk-table">
             <thead class="govuk-table__header">
                 <tr>
                     <th class="govuk-table__header">Name</th>
@@ -111,7 +125,8 @@
             <tbody class="govuk-table__body">
                 <tr>
                     <td class="govuk-table__cell">.FindATuitionPartner.Antiforgery</td>
-                    <td class="govuk-table__cell">Stops someone tricking you into changing personal information on this website which they could use to exploit your identity</td>
+                    <td class="govuk-table__cell">Stops someone tricking you into changing personal information on this
+                        website which they could use to exploit your identity</td>
                     <td class="govuk-table__cell">When the browser is closed</td>
                 </tr>
                 <tr>
@@ -119,7 +134,7 @@
                     <td class="govuk-table__cell">Saves your cookie consent settings</td>
                     <td class="govuk-table__cell">1 year</td>
                 </tr>
-                   <tr>
+                <tr>
                     <td class="govuk-table__cell">.FindATuitionPartner.Mvc.CookieTempDataProvider</td>
                     <td class="govuk-table__cell">Stores your search parameters</td>
                     <td class="govuk-table__cell">When the browser is closed</td>
