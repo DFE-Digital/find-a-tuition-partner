@@ -138,7 +138,7 @@ app.Use(async (context, next) =>
     }
     if (!context.Response.Headers.ContainsKey("Content-Security-Policy"))
     {
-        context.Response.Headers.Add("Content-Security-Policy", "base-uri 'self'; block-all-mixed-content; default-src 'self'; img-src data: https:; object-src 'none'; script-src 'self' https://www.google-analytics.com http://www.googletagmanager.com/gtag/ 'unsafe-inline'; style-src 'self'; connect-src 'self' wss://localhost:* https://region1.google-analytics; upgrade-insecure-requests;");
+        context.Response.Headers.Add("Content-Security-Policy", "base-uri 'self'; block-all-mixed-content; default-src 'self'; img-src data: https:; object-src 'none'; script-src 'self' https://www.google-analytics.com http://www.googletagmanager.com/gtag/ 'unsafe-inline'; style-src 'self'; connect-src 'self' wss://localhost:* https://www.google-analytics.com http://www.googletagmanager.com/gtag/; upgrade-insecure-requests;");
     }
     if (!context.Response.Headers.ContainsKey("X-XSS-Protection"))
     {
