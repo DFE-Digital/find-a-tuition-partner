@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
+using UI.Extensions;
 
 namespace UI.Pages;
 
@@ -24,9 +24,7 @@ public class Cookies : PageModel
         if (preferencesSet.HasValue)
         {
             PreferencesSet = preferencesSet.Value;
-            if (!string.IsNullOrEmpty(ReturnUrl) && IsBase64String(ReturnUrl))
-                ReturnUrl = Encoding.UTF8.GetString(Convert.FromBase64String(ReturnUrl));
-            if (!string.IsNullOrEmpty(ReturnUrl) && !IsBase64String(ReturnUrl)) ReturnUrl = null;
+            ReturnUrl = TempData.Peek<string>("ReturnUrl");
         }
         else
         {
@@ -52,12 +50,12 @@ public class Cookies : PageModel
     public IActionResult OnPost()
     {
         if (!ModelState.IsValid) return Page();
+        ReturnUrl = ReturnUrl;
 
-        if (!string.IsNullOrEmpty(ReturnUrl)) ReturnUrl = Convert.ToBase64String(Encoding.UTF8.GetBytes(ReturnUrl));
-
+        if (!string.IsNullOrEmpty(ReturnUrl)) TempData.Set("ReturnUrl", ReturnUrl);
         ApplyCookieConsent(Consent);
 
-        return RedirectToPage(new { preferencesSet = true, returnUrl = ReturnUrl, });
+        return RedirectToPage(new { preferencesSet = true });
     }
 
     private void ApplyCookieConsent(bool? consent)
@@ -78,11 +76,5 @@ public class Cookies : PageModel
                 }
             }
         }
-    }
-
-    private bool IsBase64String(string base64)
-    {
-        base64 = base64.Trim();
-        return (base64.Length % 4 == 0) && Regex.IsMatch(base64, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
     }
 }
