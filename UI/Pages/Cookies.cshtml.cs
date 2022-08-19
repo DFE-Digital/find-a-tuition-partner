@@ -24,7 +24,9 @@ public class Cookies : PageModel
         if (preferencesSet.HasValue)
         {
             PreferencesSet = preferencesSet.Value;
-            if (!string.IsNullOrEmpty(ReturnUrl) && IsBase64String(ReturnUrl)) ReturnUrl = Encoding.UTF8.GetString(Convert.FromBase64String(ReturnUrl));
+            if (!string.IsNullOrEmpty(ReturnUrl) && IsBase64String(ReturnUrl))
+                ReturnUrl = Encoding.UTF8.GetString(Convert.FromBase64String(ReturnUrl));
+            if (!string.IsNullOrEmpty(ReturnUrl) && !IsBase64String(ReturnUrl)) ReturnUrl = null;
         }
         else
         {
