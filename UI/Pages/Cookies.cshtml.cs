@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -23,7 +24,7 @@ public class Cookies : PageModel
         if (preferencesSet.HasValue)
         {
             PreferencesSet = preferencesSet.Value;
-            if (!string.IsNullOrEmpty(ReturnUrl)) ReturnUrl = Encoding.UTF8.GetString(Convert.FromBase64String(ReturnUrl));
+            if (!string.IsNullOrEmpty(ReturnUrl) && IsBase64String(ReturnUrl)) ReturnUrl = Encoding.UTF8.GetString(Convert.FromBase64String(ReturnUrl));
         }
         else
         {
@@ -75,5 +76,11 @@ public class Cookies : PageModel
                 }
             }
         }
+    }
+
+    private bool IsBase64String(string base64)
+    {
+        base64 = base64.Trim();
+        return (base64.Length % 4 == 0) && Regex.IsMatch(base64, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
     }
 }
