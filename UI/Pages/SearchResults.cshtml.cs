@@ -35,6 +35,11 @@ public class SearchResults : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
+    public async Task OnGetClearAllFilters(string postcode)
+    {
+        this.Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+    }
+
     public record Query : SearchModel, IRequest<ResultsModel>;
 
     public record ResultsModel : SearchModel
