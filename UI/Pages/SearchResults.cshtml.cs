@@ -53,11 +53,6 @@ public class SearchResults : PageModel
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
         public string? LocalAuthorityDistrictCode { get; set; }
-
-        public bool IsAnySubjectSelected
-            => AllSubjects.SelectMany(x => x.Value).Any(x => x.Selected);
-
-        public bool? ForceOpenAllSubjectFilters => IsAnySubjectSelected ? null : false;
     }
 
     private class Validator : AbstractValidator<Query>
