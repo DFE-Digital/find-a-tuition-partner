@@ -5,4 +5,4 @@ dotnet-environment: QA
 default-log-event-level: Debug
 override-log-event-level: Information
 google-tag-manager-container-id: GTM-WL2NBRD
-google-analytics-measurement-id: G-R32QZSL32G
+google-analytics-measurement-id: 
