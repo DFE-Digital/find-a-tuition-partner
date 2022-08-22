@@ -7,6 +7,7 @@ using Infrastructure;
 using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Serilog.Events;
 using UI.Filters;
@@ -34,6 +35,15 @@ if (args.Any(x => x == "import"))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Rename add and rename cookies for application
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = ".FindATuitionPartner.Antiforgery";
+});
+
+builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = ".FindATuitionPartner.Mvc.CookieTempDataProvider");
+
 
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
@@ -119,6 +129,27 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapRazorPages();
+
+app.Use(async (context, next) =>
+{
+    if (!context.Response.Headers.ContainsKey("X-Frame-Options"))
+    {
+        context.Response.Headers.Add("X-Frame-Options", "DENY");
+    }
+    if (!context.Response.Headers.ContainsKey("Content-Security-Policy"))
+    {
+        context.Response.Headers.Add("Content-Security-Policy", "base-uri 'self'; block-all-mixed-content; default-src 'self'; img-src data: https:; object-src 'none'; script-src 'self' https://www.google-analytics.com http://www.googletagmanager.com/gtag/ 'unsafe-inline'; style-src 'self'; connect-src 'self' wss://localhost:* *.google-analytics.com *.analytics.google.com; upgrade-insecure-requests;");
+    }
+    if (!context.Response.Headers.ContainsKey("X-XSS-Protection"))
+    {
+        context.Response.Headers.Add("X-XSS-Protection", "0");
+    }
+    if (!context.Response.Headers.ContainsKey("X-Content-Type-Options"))
+    {
+        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    }
+    await next();
+});
 
 // Ensure all date and currency formatting is set to UK/GB
 var cultureInfo = new CultureInfo("en-GB");

@@ -238,7 +238,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         foreach (var ((tuitionType, subjectId), (column, row)) in SubjectPricesCellReferences)
         {
             var subjectHourlyRates = _spreadsheetExtractor.GetColumnValues(PricingSheetName, column, row, row + 6)
-                .Select(x => x.ParseDecimal())
+                .Select(x => x.ParsePrice())
                 .ToArray();
 
             var isSubjectSupported = subjectHourlyRates.Any(x => x > 0);
