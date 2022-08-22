@@ -42,6 +42,10 @@ public class Cookies : PageModel
         if (consent.HasValue)
         {
             ApplyCookieConsent(consent);
+            if (!string.IsNullOrEmpty(ReturnUrl))
+            {
+                return Redirect(ReturnUrl);
+            }
         }
 
         return Page();
@@ -50,7 +54,6 @@ public class Cookies : PageModel
     public IActionResult OnPost()
     {
         if (!ModelState.IsValid) return Page();
-        ReturnUrl = ReturnUrl;
 
         if (!string.IsNullOrEmpty(ReturnUrl)) TempData.Set("ReturnUrl", ReturnUrl);
         ApplyCookieConsent(Consent);
