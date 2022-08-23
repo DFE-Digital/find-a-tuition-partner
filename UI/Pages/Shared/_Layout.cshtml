@@ -25,9 +25,9 @@
     
     @if (!consentGranted)
     {
-        <script asp-add-nonce>
+        <script asp-add-nonce data-testid="consent-denied">
             window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
+            function gtag(){dataLayer.push(arguments);}
 
             gtag('consent', 'default', {
                 'ad_storage': 'denied',
@@ -44,7 +44,7 @@
     @if (enableGoogleTagManager)
     {
         <!-- Google Tag Manager -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        <script data-testid="google-tag-manager">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -80,7 +80,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @if (enableGoogleAnalytics)
     {
         <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=@measurementId"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=@measurementId" data-testid="google-analytics"></script>
         <script asp-add-nonce>
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
