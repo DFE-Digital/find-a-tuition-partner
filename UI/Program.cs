@@ -79,6 +79,17 @@ builder.Services.AddRazorPages(options =>
     {
         options.HtmlHelperOptions.ClientValidationEnabled = false;
     })
+    .AddMvcOptions(options =>
+    {
+        options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"The value is invalid.");
+        options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor(s => "The value is invalid.");
+        options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(x => "The value is invalid.");
+        options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(x => "The value is invalid.");
+        options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(x => "The value is invalid.");
+        options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor(x => "The value is invalid.");
+        options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(x => "The value is invalid.");
+
+    })
     // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
     .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
 

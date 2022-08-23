@@ -102,3 +102,13 @@ Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added 
     Given the search result page is displayed
     Then cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added with value 'null'
 
+Scenario: User Select Accept Option from banner Should Stay on Same Page 
+   Given a user has arrived on the funding and reporting page
+   When cookies are accepted
+   And the user redirected to funding page
+
+Scenario: User Select Reject Option from banner Should Stay on Same Page 
+   Given a user has arrived on the funding and reporting page
+   When cookies are rejected
+   And the user redirected to funding page
+

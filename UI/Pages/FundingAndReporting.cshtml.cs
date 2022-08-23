@@ -5,19 +5,19 @@ namespace UI.Pages
 {
     public class FundingAndReporting : PageModel
     {
-        public string? returnPath { get; set; }
+        public string? ReturnPath { get; set; }
 
 
         public IActionResult OnGet()
         {
-            returnPath = Request.Headers["Referer"].ToString();
+            ReturnPath = Request.Headers["Referer"].ToString();
 
             return Page();
         }
 
         public IActionResult OnPost(string returnUrl)
         {
-            returnPath = Request.Headers["Referer"].ToString();
+            ReturnPath = Request.Headers["Referer"].ToString();
 
             return Page();
         }
