@@ -37,10 +37,10 @@
 						)) " />
                 }
 
-                <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small">
+                <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-                            Type of tuitio
+                            Type of tuition
                         </govuk-radios-fieldset-legend>
                         @foreach (var item in Model.Data.AllTuitionTypes)
                         {
@@ -53,7 +53,7 @@
                     <govuk-button type="submit">Apply filters</govuk-button>
                 </div>
 
-                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline govuk-!-margin-bottom-3" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
+                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
 
             </div>
         </div>
