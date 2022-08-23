@@ -100,7 +100,7 @@ public class SearchForResults : CleanSliceFixture
     public async void Clear_filters_resets_all_bar_postcode()
     {
         const string postcode = "SK1 1EB";
-        
+
         var result = await Fixture.GetPage<SearchResults>()
             .Execute(async page =>
             {
@@ -115,9 +115,9 @@ public class SearchForResults : CleanSliceFixture
                 };
 
                 page.Data.TuitionType = UI.Pages.TuitionType.Online;
-                
+
                 await page.OnGetClearAllFilters(postcode);
-                
+
                 return page;
             });
 
