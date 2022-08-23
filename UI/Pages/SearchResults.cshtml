@@ -53,7 +53,7 @@
                     <govuk-button type="submit">Apply filters</govuk-button>
                 </div>
 
-                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
+                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline govuk-!-margin-bottom-3" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
 
             </div>
         </div>
@@ -66,7 +66,7 @@
                         Enter your school's postcode
                     </label>
                     <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
-                    <input asp-for="Data.Postcode" class="govuk-input" type="text">
+                    <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
                     <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
                 </div>
             </div>

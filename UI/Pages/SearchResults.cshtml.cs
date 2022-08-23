@@ -25,7 +25,7 @@ public class SearchResults : PageModel
     {
         TempData.Set("AllSearchData", Data);
 
-        Data.TuitionType ??= TuitionType.Any;
+        Data.TuitionType ??= TuitionType.Both;
         this.Data = await mediator.Send(Data);
 
         TempData.Set("LocalAuthorityDistrictCode", this.Data.LocalAuthorityDistrictCode ?? "");
@@ -37,7 +37,7 @@ public class SearchResults : PageModel
 
     public async Task OnGetClearAllFilters(string postcode)
     {
-        this.Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+        this.Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Both, KeyStages = null });
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -130,7 +130,7 @@ public class SearchResults : PageModel
         private static List<TuitionType> AllTuitionTypes =>
             new()
             {
-                TuitionType.Any,
+                TuitionType.Both,
                 TuitionType.InSchool,
                 TuitionType.Online,
             };

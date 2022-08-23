@@ -130,16 +130,19 @@ Then("all subject filters are collapsed", () => {
 )});
 
 Then("results are updated after filters are cleared", () => {
-    
     let countOfElements = 0;
     cy.get('[data-testid="results-list-item"]').then($elements => {
     countOfElements = $elements.length;
-
     cy.get('[data-testid="clear-all-filters"]').click();
-
     cy.get('[data-testid="results-list-item"]').should('have.length.greaterThan', countOfElements)
-  });
+    })
 });
+
+Then("the postcode search parameter remains", () => {
+    cy.get('[data-testid="postcode-input-box"]').should('not.be.null');
+});
+
+
 
 
 
