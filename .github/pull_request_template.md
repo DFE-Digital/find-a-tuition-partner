@@ -25,3 +25,4 @@
 - [ ] Database migrations can be applied to the current codebase in main without causing exceptions
 - [ ] Debug logging has been added after all logic decision points
 - [ ] All [automated testing](/README.md#testing) including accessibility and security has been run against your code
+- [ ] **PR deployment has been signed off by wider team**
