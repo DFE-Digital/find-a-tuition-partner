@@ -97,25 +97,34 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async void With_postcode_only_and_filters_null()
+    public async void Clear_filters_resets_all_bar_postcode()
     {
-        var result = await Fixture.GetPage<SearchResults>().
-        Execute(page =>
-        {
-            page.Data.KeyStages = new[]
+        const string postcode = "SK1 1EB";
+        
+        var result = await Fixture.GetPage<SearchResults>()
+            .Execute(async page =>
             {
-                KeyStage.KeyStage1
-            };
+                page.Data.KeyStages = new[]
+                {
+                    KeyStage.KeyStage1
+                };
 
-            page.Data.Subjects = new[]
-            {
-                $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
-            };
+                page.Data.Subjects = new[]
+                {
+                    $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
+                };
 
-            page.Data.TuitionType = UI.Pages.TuitionType.Online;
-            return page.OnGetClearAllFilters("SK1 1EB");
-        });
-        result.Should().BeOfType<PageResult>();
+                page.Data.TuitionType = UI.Pages.TuitionType.Online;
+                
+                await page.OnGetClearAllFilters(postcode);
+                
+                return page;
+            });
+
+        result.Data.Postcode.Should().Be(postcode);
+        result.Data.KeyStages.Should().BeNull();
+        result.Data.Subjects.Should().BeNull();
+        result.Data.TuitionType.Should().Be(UI.Pages.TuitionType.Any);
     }
 
     [Fact]
