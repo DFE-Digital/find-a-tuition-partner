@@ -64,4 +64,12 @@ Then("they redirects to postcode page", () => {
 Then("the privacy link opens privacy page", () => {
     cy.get('[data-testid="privacy-link"]')
         .should('have.attr', 'href', '/privacy')
-}); 
+});
+
+
+Then("the contact us link opens contactus page", () => {
+    cy.get('[data-testid="contact-us-link"]')
+        .should('have.attr', 'href', '/Contactus')
+});
+
+
