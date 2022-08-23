@@ -6,7 +6,7 @@ namespace UI.Pages
     public class ContactusModel : PageModel
     {
         public string? ReturnPath { get; set; }
-        
+
         public IActionResult OnGet()
         {
             ReturnPath = Request.Headers["Referer"].ToString();
