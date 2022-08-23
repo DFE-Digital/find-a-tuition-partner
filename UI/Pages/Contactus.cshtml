@@ -1,0 +1,23 @@
+﻿@page
+@model ContactusModel
+@{
+	ViewData["Title"] = "Contactus";
+}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<a href="@Model.ReturnPath" data-testid="back-link" class="govuk-back-link">Back</a>
+		<h1 class="govuk-heading-l" data-testid="accessibility-header"> Contact us
+		</h1>
+		<p class="govuk-body">
+			To give feedback on how our service worked, you can fill in our feedback form.
+		</p>
+			<h2 class="govuk-heading-m">For support about tuition partners </h2>
+			<p class="govuk-body">
+				If you have any questions or need support on our service, please email <a href="mailto:tutoring.support@service.education.gov.uk" data-testid="mailto-ntp-link" class="govuk-link">tutoring.support@service.education.gov.uk.</a>
+			</p>
+		   <h2 class="govuk-heading-m">For issues with your tuition partner </h2>
+		   <p class="govuk-body">
+			   For help on how to handle an issue with your tuition partner, you can read our guidance.
+		   </p>
+		</div>
+		</div>

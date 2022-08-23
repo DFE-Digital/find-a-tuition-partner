@@ -3,13 +3,14 @@
 @inject IHttpContextAccessor HttpContext
 
 @{
-	// Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
-	var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
+    // Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
+    var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
 
-	var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
-	var enableGoogleAnalytics = !string.IsNullOrWhiteSpace(measurementId);
+    var measurementId = Configuration["GoogleAnalytics:MeasurementId"];
+    var enableGoogleAnalytics = !string.IsNullOrWhiteSpace(measurementId);
     var requestCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
     var googleAnalyticsConsent = Convert.ToBoolean(requestCookie);
+    var showContactus = Context.Request.HttpContext.Request.Path != "/Contactus";
 
 	var supportEmailAddress = "tutoring.support@service.education.gov.uk";
 }
@@ -127,8 +128,16 @@
 	<main class="govuk-main-wrapper " id="main-content" role="main">
 		@RenderBody()
 	</main>
+    @if(showContactus)
+        {
+               <div class="govuk-grid-row">
+  <div class="govuk-grid-column-full app-contact-banner">
+    <p class="govuk-body app-contact-banner">For any questions or problems you can <a href="/Contactus" class="govuk-footer__link app-contact-banner">contact us</a></p>
+  </div>
 </div>
-
+        }
+        </div>
+     
 <footer class="govuk-footer " role="contentinfo">
     <div class="govuk-width-container ">
         <div class="govuk-footer__meta">
