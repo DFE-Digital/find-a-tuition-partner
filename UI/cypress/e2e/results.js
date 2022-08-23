@@ -8,6 +8,8 @@ const allSubjects = {
     "Key stage 4": [ "English", "Humanities", "Maths", "Modern foreign languages", "Science"]
 }
 
+const stages = ['Key stage 1', 'Key stage 2', 'Key stage 3', 'Key stage 4'];
+
 When("they click on the option heading for {string}", keystage => {
     const stages = keystage.split(',').map(s => s.trim());
     stages.forEach(element => {
@@ -18,6 +20,10 @@ When("they click on the option heading for {string}", keystage => {
 When("they clear all the filters", () => {
     cy.get('[type="checkbox"]').uncheck()
 })
+
+Then("the ‘clear filters’ button as been selected", () => {
+    cy.get('[data-testid="clear-all-filters"]').click();
+});
 
 Then("they will see all the subjects for {string}", keystage => {
     const stages = keystage.split(',').map(s => s.trim());
@@ -36,7 +42,6 @@ Then("they will see all the subjects for {string}", keystage => {
                 cy.wrap(item).should('contain.text', subjects[index])
             });
         });
-
     });
 });
 
@@ -76,7 +81,6 @@ Then("the subjects in the filter displayed in alphabetical order", () => {
                 cy.wrap(item).should('contain.text', subjects[index])
             });
         });
-
     });
 });
 
@@ -110,3 +114,41 @@ Then("display all correct tuition partners that provide the selected subjects in
 Then("display all correct tuition partners in any location", () => {
     cy.get('[data-testid="results-list-item"]').should("exist")
 });
+
+Then("the ‘clear filters’ button is displayed at the bottom of the filters section", () => {
+    cy.get('[data-testid="clear-all-filters"]').should("exist").should('contain.text', 'Clear all filters');
+});
+
+Then("no subject should be shown as selected", () => {
+    cy.get('.app-results-filter').contains('text', 'checked').should('not.exist');
+});
+
+Then("all subject filters are collapsed", () => {
+    stages.forEach(element => 
+        cy.get(`[data-testid=${kebabCase(element)}]`).
+            should('have.class', 'js-closed')
+)});
+
+Then("results are updated after filters are cleared", () => {
+    
+    let countOfElements = 0;
+    cy.get('[data-testid="results-list-item"]').then($elements => {
+    countOfElements = $elements.length;
+
+    cy.get('[data-testid="clear-all-filters"]').click();
+
+    cy.get('[data-testid="results-list-item"]').should('have.length.greaterThan', countOfElements)
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+

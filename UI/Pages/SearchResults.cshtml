@@ -53,7 +53,7 @@
                     <govuk-button type="submit">Apply filters</govuk-button>
                 </div>
 
-                <a asp-page-handler="ClearAllFilters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
+                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
 
             </div>
         </div>
