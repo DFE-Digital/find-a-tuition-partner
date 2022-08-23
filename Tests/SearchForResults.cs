@@ -100,16 +100,18 @@ public class SearchForResults : CleanSliceFixture
     public async void With_postcode_only_and_filters_null()
     {
         var result = await Fixture.GetPage<SearchResults>().
-        Execute(page => {
+        Execute(page =>
+        {
+            page.Data.KeyStages = new[]
+            {
+                KeyStage.KeyStage1
+            };
 
-        page.Data.KeyStages = new[]
-        {
-            KeyStage.KeyStage1
-        };
             page.Data.Subjects = new[]
-        {
-            $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
-        };
+            {
+                $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
+            };
+
             page.Data.TuitionType = UI.Pages.TuitionType.Online;
             return page.OnGetClearAllFilters("SK1 1EB");
         });
