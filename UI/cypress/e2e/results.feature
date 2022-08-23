@@ -77,9 +77,9 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
 
-  Scenario: results default to both tuition type
+  Scenario: results default to Any tuition type
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
-    Then they will see the tuition type 'Both' is selected
+    Then they will see the tuition type 'Any' is selected
 
   Scenario: All key stages are shown
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -121,7 +121,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page
     When the ‘clear filters’ button as been selected
     Then no subject should be shown as selected
-    And they will see the tuition type 'Both' is selected
+    And they will see the tuition type 'Any' is selected
 
    Scenario: All subject filters are collapsed when clear all filters is clicked
     Given a user has arrived on the 'Search results' page

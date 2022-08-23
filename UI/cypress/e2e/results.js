@@ -139,5 +139,5 @@ Then("results are updated after filters are cleared", () => {
 });
 
 Then("the postcode search parameter remains", () => {
-    cy.get('[data-testid="postcode-input-box"]').should('not.be.null');
+    cy.get('[data-testid="postcode-input-box"]').should('have.value', 'sk11eb');
 });

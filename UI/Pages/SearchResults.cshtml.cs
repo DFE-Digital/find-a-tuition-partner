@@ -6,6 +6,7 @@ using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UI.Extensions;
@@ -25,7 +26,7 @@ public class SearchResults : PageModel
     {
         TempData.Set("AllSearchData", Data);
 
-        Data.TuitionType ??= TuitionType.Both;
+        Data.TuitionType ??= TuitionType.Any;
         this.Data = await mediator.Send(Data);
 
         TempData.Set("LocalAuthorityDistrictCode", this.Data.LocalAuthorityDistrictCode ?? "");
@@ -35,9 +36,10 @@ public class SearchResults : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public async Task OnGetClearAllFilters(string postcode)
+    public async Task<IActionResult> OnGetClearAllFilters(string postcode)
     {
-        this.Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Both, KeyStages = null });
+        this.Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+        return Page();
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -130,7 +132,7 @@ public class SearchResults : PageModel
         private static List<TuitionType> AllTuitionTypes =>
             new()
             {
-                TuitionType.Both,
+                TuitionType.Any,
                 TuitionType.InSchool,
                 TuitionType.Online,
             };

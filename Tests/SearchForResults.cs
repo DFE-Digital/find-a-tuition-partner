@@ -2,6 +2,7 @@
 using Domain.Constants;
 using Domain.Search;
 using FluentValidation.TestHelper;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using NSubstitute;
 using Tests.TestData;
 using UI.Pages;
@@ -93,6 +94,26 @@ public class SearchForResults : CleanSliceFixture
             .ShouldNotHaveValidationErrorFor(x => x.Postcode);
 
         result.Results!.Results.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async void With_postcode_only_and_filters_null()
+    {
+        var result = await Fixture.GetPage<SearchResults>().
+        Execute(page => {
+
+        page.Data.KeyStages = new[]
+        {
+            KeyStage.KeyStage1
+        };
+            page.Data.Subjects = new[]
+        {
+            $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
+        };
+            page.Data.TuitionType = UI.Pages.TuitionType.Online;
+            return page.OnGetClearAllFilters("SK1 1EB");
+        });
+        result.Should().BeOfType<PageResult>();
     }
 
     [Fact]

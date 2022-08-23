@@ -107,8 +107,8 @@ public enum Subject
 
 public enum TuitionType
 {
-    [Description("Both")]
-    Both = 0,
+    [Description("Any")]
+    Any = 0,
 
     [Description("Online")]
     Online = 1,
