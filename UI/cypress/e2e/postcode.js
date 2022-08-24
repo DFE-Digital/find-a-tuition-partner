@@ -67,7 +67,7 @@ Then("the privacy link opens privacy page", () => {
 });
 
 
-Then("the contact us link opens contactus page", () => {
+Then("the contact us link opens contact us page", () => {
     cy.get('[data-testid="contact-us-link"]')
         .should('have.attr', 'href', '/contact-us')
 });
