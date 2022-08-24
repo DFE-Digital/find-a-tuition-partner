@@ -116,7 +116,7 @@ Feature: User is shown search results
   Scenario: Results page  contact us back link redirects to right page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
     Then they will click the contact us link
-    And the user clicks on back link
+    When they click 'Back'
     Then they will see the results summary for 'Hertfordshire'
 
   

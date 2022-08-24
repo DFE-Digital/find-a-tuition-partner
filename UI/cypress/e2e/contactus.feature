@@ -4,7 +4,7 @@
     Then the page URL ends with '/contact-us'
 
    Scenario: contact us page title is 'Contact us'
-    GGiven a user has arrived on the contact us page
+    Given a user has arrived on the contact us page
     Then the page's title is 'Contact us'
     
   Scenario: user clicks service name

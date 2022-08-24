@@ -35,3 +35,8 @@ Then("the heading should say {string}", (heading) => {
 Then("the page's title is {string}", (title) => {
     cy.title().should("eq", title);
 });
+
+Then("they will click the contact us link", () => {
+    cy.get('[data-testid="contact-us-link"]').click();
+});
+
