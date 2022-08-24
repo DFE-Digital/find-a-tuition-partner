@@ -109,13 +109,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
 // Handle runtime exceptions withing the application
 app.UseExceptionHandler("/Error");
 
@@ -141,26 +134,23 @@ app.MapControllers();
 
 app.MapRazorPages();
 
-app.Use(async (context, next) =>
-{
-    if (!context.Response.Headers.ContainsKey("X-Frame-Options"))
-    {
-        context.Response.Headers.Add("X-Frame-Options", "DENY");
-    }
-    if (!context.Response.Headers.ContainsKey("Content-Security-Policy"))
-    {
-        context.Response.Headers.Add("Content-Security-Policy", "base-uri 'self'; block-all-mixed-content; default-src 'self'; img-src data: https:; object-src 'none'; script-src 'self' https://www.google-analytics.com http://www.googletagmanager.com/gtag/ 'unsafe-inline'; style-src 'self'; connect-src 'self' wss://localhost:* *.google-analytics.com *.analytics.google.com; upgrade-insecure-requests;");
-    }
-    if (!context.Response.Headers.ContainsKey("X-XSS-Protection"))
-    {
-        context.Response.Headers.Add("X-XSS-Protection", "0");
-    }
-    if (!context.Response.Headers.ContainsKey("X-Content-Type-Options"))
-    {
-        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    }
-    await next();
-});
+var policyCollection = new HeaderPolicyCollection()
+    .AddContentTypeOptionsNoSniff()
+    .AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365) // maxage = one year in seconds
+    .AddFrameOptionsDeny()
+    .AddXssProtectionBlock()
+    .AddReferrerPolicyStrictOriginWhenCrossOrigin()
+    .RemoveServerHeader()
+    .AddContentSecurityPolicy(builder =>
+        {
+            // configure policies
+            builder.AddUpgradeInsecureRequests(); // upgrade-insecure-requests
+            builder.AddBlockAllMixedContent(); // block-all-mixed-content
+            builder.AddDefaultSrc() // default-src 'self' http://testUrl.com
+                .Self();
+        },
+        asReportOnly: true); // report-only
+app.UseSecurityHeaders(policyCollection);
 
 // Ensure all date and currency formatting is set to UK/GB
 var cultureInfo = new CultureInfo("en-GB");
