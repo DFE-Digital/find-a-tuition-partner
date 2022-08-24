@@ -94,7 +94,7 @@ Feature: User enters postcode to begin search
     
    Scenario: contact us link to page
     Given a user has started the 'Find a tuition partner' journey
-    Then the contact us link opens contactus page
+    Then the contact us link opens contact us page
 
    Scenario: contact us back link redirects to page
     Given a user has started the 'Find a tuition partner' journey
