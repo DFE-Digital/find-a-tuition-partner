@@ -1,7 +1,7 @@
-﻿@media(max-width: 40.0625em) {
+﻿@include govuk-media-query($until: tablet) {
 
     .govuk-list-bullets-mobile-view {
         list-style-type: disc;
-        padding-left: 25px
+        padding-left: govuk-spacing(5)
     }
 }

@@ -1,15 +1,18 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 
 Then("a user is using a {string}", (device) => {
-    cy.viewport(428, 926);
-});
-
-When("the search result page is displayed", () => {
-     cy.visit('/search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&Subjects=KeyStage2-English&Subjects=KeyStage2-Maths&Subjects=KeyStage2-Science&Subjects=KeyStage3-English&Subjects=KeyStage3-Humanities&Subjects=KeyStage3-Maths&Subjects=KeyStage3-Modern%20foreign%20languages&Subjects=KeyStage3-Science&Subjects=KeyStage4-English&Subjects=KeyStage4-Humanities&Subjects=KeyStage4-Maths&Subjects=KeyStage4-Modern%20foreign%20languages&Subjects=KeyStage4-Science&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4');
-});
-
-When("a tuition partner page is displayed", () => {
-    cy.visit("/tuition-partner/bright-heart-education");
+   
+    if (device == 'phone'){
+        cy.viewport(321, 640);
+    }
+    else if (device == 'tablet')
+    {
+        cy.viewport(642, 1024);
+    }
+    else if (device == 'desktop')
+    {
+        cy.viewport(770, 1024);
+    }
 });
 
 Then("the subject list is bullet pointed", () => {
