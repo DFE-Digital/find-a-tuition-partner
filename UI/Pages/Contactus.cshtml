@@ -1,7 +1,7 @@
 ﻿@page
-@model ContactusModel
+@model ContactUsModel
 @{
-	ViewData["Title"] = "Contactus";
+	ViewData["Title"] = "Contact us";
 }
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
@@ -9,7 +9,9 @@
 		<h1 class="govuk-heading-l" data-testid="contact-us-header"> Contact us
 		</h1>
 		<p class="govuk-body">
-			To give feedback on how our service worked, you can fill in our feedback form.
+			To give feedback on how our service worked, you can fill in our <a
+				href="https://forms.gle/44KfQyg1YUidrDCi7" data-testid="feedback-form-link"
+				class="govuk-link" target="_blank">feedback form.</a>
 		</p>
 		<h2 class="govuk-heading-m">For support about tuition partners </h2>
 		<p class="govuk-body">
@@ -19,7 +21,9 @@
 		</p>
 		<h2 class="govuk-heading-m">For issues with your tuition partner </h2>
 		<p class="govuk-body">
-			For help on how to handle an issue with your tuition partner, you can read our guidance.
+			For help on how to handle an issue with your tuition partner, you can <a
+				href="https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023" data-testid="read-guidance-link"
+				class="govuk-link" target="_blank">read our guidance.</a>
 		</p>
 	</div>
 </div>

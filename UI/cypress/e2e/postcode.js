@@ -69,7 +69,18 @@ Then("the privacy link opens privacy page", () => {
 
 Then("the contact us link opens contactus page", () => {
     cy.get('[data-testid="contact-us-link"]')
-        .should('have.attr', 'href', '/Contactus')
+        .should('have.attr', 'href', '/contact-us')
 });
 
+Then("they will click the contact us link", () => {
+    cy.get('[data-testid="contact-us-link"]').click();
+});
+
+Then("the user clicks on back link", () => {
+    cy.get('[data-testid="back-link"]').click();
+});
+
+Then("the user redirected to postcode page", () => {
+    cy.location('pathname').should('eq', '/');
+});
 

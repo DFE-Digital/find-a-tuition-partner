@@ -110,3 +110,11 @@ Then("display all correct tuition partners that provide the selected subjects in
 Then("display all correct tuition partners in any location", () => {
     cy.get('[data-testid="results-list-item"]').should("exist")
 });
+
+Then("they will click the contact us link", () => {
+    cy.get('[data-testid="contact-us-link"]').click();
+});
+
+Then("the user clicks on back link", () => {
+    cy.get('[data-testid="back-link"]').click();
+});

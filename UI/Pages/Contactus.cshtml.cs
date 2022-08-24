@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace UI.Pages
 {
-    public class ContactusModel : PageModel
+    public class ContactUsModel : PageModel
     {
         public string? ReturnPath { get; set; }
 
