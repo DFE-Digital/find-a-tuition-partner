@@ -1,0 +1,8 @@
+environment-postfix: 
+instances: 1
+memory: 256M
+dotnet-environment: 
+default-log-event-level: Debug
+override-log-event-level: Information
+google-tag-manager-container-id: GTM-P3QSX72
+google-analytics-measurement-id: 
