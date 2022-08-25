@@ -112,10 +112,6 @@ Feature: User is shown search results
   Scenario: Local Education Authority name is displayed for postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
     Then they will see the results summary for 'Hertfordshire'
-  
-  Scenario: Display ‘clear filters; button when 'Search results' page is displayed
-    Given a user has arrived on the 'Search results' page
-    Then the ‘clear filters’ button is displayed at the bottom of the filters section
 
   Scenario: Nothing is selected if when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
@@ -136,3 +132,9 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page
     When the ‘clear filters’ button as been selected
     Then the postcode search parameter remains
+
+ Scenario: Results page  contact us back link redirects to right page
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
+    Then they will click the contact us link
+    When they click 'Back'
+    Then they will see the results summary for 'Hertfordshire'
