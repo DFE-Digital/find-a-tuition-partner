@@ -95,7 +95,7 @@
 									Subjects covered
 								</govuk-summary-list-row-key>
 								<govuk-summary-list-row-value>
-									<ul class="govuk-list govuk-body-s">
+									<ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view">
 									@foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
 									{
 										<li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
