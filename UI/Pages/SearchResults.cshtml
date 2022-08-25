@@ -7,80 +7,80 @@
 <a href="/which-subjects?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-full">
-		
-		<govuk-error-summary>
-			<govuk-error-summary-item asp-for="Data.Postcode" />
-			<govuk-error-summary-item asp-for="Data.Subjects" />
-			<govuk-error-summary-item asp-for="Data.TuitionType" />
-		</govuk-error-summary>
-		
-		<h1 class="govuk-heading-l">Find a tuition partner</h1>
+    <div class="govuk-grid-column-full">
 
-	</div>
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.Postcode" />
+            <govuk-error-summary-item asp-for="Data.Subjects" />
+            <govuk-error-summary-item asp-for="Data.TuitionType" />
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">Find a tuition partner</h1>
+
+    </div>
 </div>
 
 <div class="govuk-grid-row">
-	
-	<form>
 
-		<div class="govuk-grid-column-one-third">
-			<div class="app-results-filter" data-module="results-filter">
-				<h2 class="govuk-heading-m">Filter results</h2>
+    <form>
 
-				@foreach (var item in Model.Data.AllSubjects.Keys)
-				{
-					var forceOpenAllSubjectFilters = Model.Data.ForceOpenAllSubjectFilters;
+        <div class="govuk-grid-column-one-third">
+            <div class="app-results-filter" data-module="results-filter">
+                <h2 class="govuk-heading-m">Filter results</h2>
 
-					<partial name="_OptionsSelect" model="@(new OptionsSelectModel(
+                @foreach (var item in Model.Data.AllSubjects.Keys)
+                {
+                    <partial name="_OptionsSelect" model="@(new OptionsSelectModel(
 						item.ToString().ToSeoUrl(),
 						item.DisplayName(),
-						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name),
-						ClosedOnLoad: forceOpenAllSubjectFilters
-						)) "/>
-				}
-				
-				<govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small">
-					<govuk-radios-fieldset>
-						<govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-							Type of tuition
-						</govuk-radios-fieldset-legend>
-						@foreach (var item in Model.Data.AllTuitionTypes)
-						{
-							<govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
-						}
-					</govuk-radios-fieldset>
-				</govuk-radios>
+						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name)
+						)) " />
+                }
 
-				<div class="govuk-button-group" data-module="results-filter-button">
-					<govuk-button type="submit">Apply filters</govuk-button>
-				</div>
-			</div>
-		</div>
+                <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                            Type of tuition
+                        </govuk-radios-fieldset-legend>
+                        @foreach (var item in Model.Data.AllTuitionTypes)
+                        {
+                            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+                        }
+                    </govuk-radios-fieldset>
+                </govuk-radios>
 
-		<div class="govuk-grid-column-two-thirds">
+                <div class="govuk-button-group" data-module="results-filter-button">
+                    <govuk-button type="submit">Apply filters</govuk-button>
+                </div>
 
-			<div class="govuk-form-group app-form-group-inline">
-				<div asp-validation-group-for="Data.Postcode" data-testid="postcode">
-					<label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
-						Enter your school's postcode
-					</label>
-					<span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
-					<input asp-for="Data.Postcode" class="govuk-input" type="text">
-					<govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
-				</div>
-			</div>
+                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
 
-			<div show-if="Model.Data.Results != null" class="govuk-body" data-testid="results-summary">
-				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-				@{
-					var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
-					var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
-				}
-				<span class="govuk-!-font-size-24"><strong>@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong></span></span><br/>
-				Your results are in a random order.
-				<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-			</div>
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-form-group app-form-group-inline">
+                <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
+                    <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
+                        Enter your school's postcode
+                    </label>
+                    <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
+                    <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
+                    <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
+                </div>
+            </div>
+
+            <div show-if="Model.Data.Results != null" class="govuk-body" data-testid="results-summary">
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                @{
+                    var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
+                    var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
+                }
+                <span class="govuk-!-font-size-24"><strong>@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong></span></span><br />
+                Your results are in a random order.
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+            </div>
 
 
 			@if (Model.Data.Results != null)

@@ -68,7 +68,7 @@ Feature: User is shown search results
   Scenario: lands on search results with blank URL
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then display all correct tuition partners in any location
-    And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
+    And all subject filters are collapsed
 
   Scenario: unselects all boxes on the filters 
     Given a user has arrived on the 'Search results' page
@@ -77,7 +77,7 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
 
-  Scenario: results default to any tuition type
+  Scenario: results default to Any tuition type
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     Then they will see the tuition type 'Any' is selected
 
@@ -113,3 +113,26 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
     Then they will see the results summary for 'Hertfordshire'
   
+  Scenario: Display ‘clear filters; button when 'Search results' page is displayed
+    Given a user has arrived on the 'Search results' page
+    Then the ‘clear filters’ button is displayed at the bottom of the filters section
+
+  Scenario: Nothing is selected if when clear all filters is clicked
+    Given a user has arrived on the 'Search results' page
+    When the ‘clear filters’ button as been selected
+    Then no subject should be shown as selected
+    And they will see the tuition type 'Any' is selected
+
+   Scenario: All subject filters are collapsed when clear all filters is clicked
+    Given a user has arrived on the 'Search results' page
+    When the ‘clear filters’ button as been selected
+    Then all subject filters are collapsed
+
+  Scenario: Results are updated when clear all filters is clicked
+    Given a user has arrived on the 'Search results' page
+    Then results are updated after filters are cleared
+
+  Scenario: Postcode is retained after clear filters is selected
+    Given a user has arrived on the 'Search results' page
+    When the ‘clear filters’ button as been selected
+    Then the postcode search parameter remains

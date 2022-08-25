@@ -6,6 +6,7 @@ using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UI.Extensions;
@@ -35,6 +36,11 @@ public class SearchResults : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
+    public async Task OnGetClearAllFilters(string postcode)
+    {
+        Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+    }
+
     public record Query : SearchModel, IRequest<ResultsModel>;
 
     public record ResultsModel : SearchModel
@@ -48,11 +54,6 @@ public class SearchResults : PageModel
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
         public string? LocalAuthorityDistrictCode { get; set; }
-
-        public bool IsAnySubjectSelected
-            => AllSubjects.SelectMany(x => x.Value).Any(x => x.Selected);
-
-        public bool? ForceOpenAllSubjectFilters => IsAnySubjectSelected ? null : false;
     }
 
     private class Validator : AbstractValidator<Query>
