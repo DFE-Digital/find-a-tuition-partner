@@ -2,17 +2,17 @@
 
 public class TuitionPartnerOrdering
 {
-    private readonly TuitionPartnerSearchRequest request;
+    private readonly TuitionPartnerSearchRequest _request;
 
     public TuitionPartnerOrdering(TuitionPartnerSearchRequest searchRequest)
-        => request = searchRequest;
+        => _request = searchRequest;
 
     public IEnumerable<TuitionPartnerSearchResult> Order(List<TuitionPartnerSearchResult> results)
     {
-        switch (request.OrderBy)
+        switch (_request.OrderBy)
         {
             case TuitionPartnerOrderBy.Name:
-                return request.Direction == OrderByDirection.Descending
+                return _request.Direction == OrderByDirection.Descending
                     ? results.OrderByDescending(e => e.Name)
                     : results.OrderBy(e => e.Name);
 
@@ -28,8 +28,9 @@ public class TuitionPartnerOrdering
     public int RandomSeed()
     {
         return
-            (request.LocalAuthorityDistrictCode?.Sum(x => x) ?? 0)
-            + (request.SubjectIds?.Sum() ?? 0)
-            + (request.TuitionTypeId ?? 0);
+            (_request.LocalAuthorityDistrictCode?.Sum(x => x) ?? 0)
+            + (_request.Postcode?.Sum(x => x) ?? 0)
+            + (_request.SubjectIds?.Sum() ?? 0)
+            + (_request.TuitionTypeId ?? 0);
     }
 }
