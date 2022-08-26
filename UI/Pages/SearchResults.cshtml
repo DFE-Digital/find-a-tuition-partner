@@ -28,20 +28,20 @@
     <form>
 
         <div class="govuk-grid-column-one-third">
-            <div class="app-results-filter" data-module="results-filter">
-                <div class="app-results-filter-overlay--not-visible">
+            <div class="app-results-filter" data-module="results-filter" data-testid="results-filter">
+                <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
                     <h2 class="govuk-heading-m">Filter results</h2>
                 </div>
-                <div class="app-results-filter-overlay--visible">
+                <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
                     <div class="app-results-filter-overlay--heading">
                         <div class="app-results-filter-overlay--heading-left">
                             <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
                         </div>
                         <div class="app-results-filter-overlay--heading-right">
-                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline" data-module="return-to-results-link">Return to results</a>
+                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline" data-module="return-to-results-link" data-testid="return-to-results-link">Return to results</a>
                         </div>
                     </div>
-                    <p show-if="Model.Data.Results != null" class="govuk-body">
+                    <p show-if="Model.Data.Results != null" class="govuk-body" data-testid="overlay-filter-results-count">
                         @{
                             var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
                             var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
@@ -79,17 +79,17 @@
                         <govuk-button type="submit">Apply filters</govuk-button>
                     </div>
                     <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
-                        <govuk-button type="submit">Show search results</govuk-button>
+                        <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
                     </div>
                 </div>
-            </div>
-
-            <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
-                <govuk-button class="govuk-button--secondary">Show filters</govuk-button>
             </div>
         </div>
 
         <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
+                <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
+            </div>
 
             <div class="govuk-form-group app-form-group-inline">
                 <div asp-validation-group-for="Data.Postcode" data-testid="postcode">

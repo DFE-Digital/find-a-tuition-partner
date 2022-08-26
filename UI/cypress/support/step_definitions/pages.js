@@ -39,7 +39,3 @@ Then("the page's title is {string}", (title) => {
 Then("they will click the contact us link", () => {
     cy.get('[data-testid="contact-us-link"]').click();
 });
-
-Then("the search results page heading should be {string}", (heading) => {
-    cy.get("h1").find('span').filter(':visible').should("have.text", heading);
-});

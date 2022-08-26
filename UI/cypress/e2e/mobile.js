@@ -39,4 +39,40 @@ Then("the subject list is not bullet pointed", () => {
             })
         })
     })
-}); 
+});
+
+Then("the search filters, postcode and results sections are all displayed", () => {
+    Step(this, "the search filters are displayed");
+    Step(this, "the postcode search is displayed");
+    Step(this, "the search results are displayed");
+});
+
+Then("only the postcode and results sections are displayed", () => {
+    Step(this, "the search filters are not displayed");
+    Step(this, "the postcode search is displayed");
+    Step(this, "the search results are displayed");
+});
+
+Then("the search results filter heading is displayed", () => {
+    cy.get('[data-testid="filter-results-heading"]').should('be.visible');
+});
+
+Then("the search results filter heading is {string}", (heading) => {
+    cy.get('[data-testid="filter-results-heading"]').should("contain.text", heading);
+});
+
+Then("the overlay search results filter heading is displayed", () => {
+    cy.get('[data-testid="filter-results-heading"]').should('be.visible');
+});
+
+Then("the overlay search results filter heading is be displayed", () => {
+    cy.get('[data-testid="overlay-filter-results-heading"]').should('not.be.visible');
+});
+
+Then("the show filters button is displayed", () => {
+    cy.get('[data-testid="show-filters-button"]').should('be.visible');
+});
+
+Then("the show filters button is not displayed", () => {
+    cy.get('[data-testid="show-filters-button"]').should('not.be.visible');
+});
