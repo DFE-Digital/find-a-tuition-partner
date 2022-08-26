@@ -30,8 +30,14 @@
                     <h2 class="govuk-heading-m">Filter results</h2>
                 </div>
                 <div class="app-results-filter-overlay--visible">
-                    <h1 class="govuk-heading-l">Filters</h1>
-                    <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link" data-module="return-to-results-link">Return to results</a>
+                    <div class="app-results-filter-overlay--heading">
+                        <div class="app-results-filter-overlay--heading-left">
+                            <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
+                        </div>
+                        <div class="app-results-filter-overlay--heading-right">
+                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link" data-module="return-to-results-link">Return to results</a>
+                        </div>
+                    </div>
                     <p show-if="Model.Data.Results != null" class="govuk-body">
                         @{
                             var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
@@ -68,7 +74,7 @@
                 <div class="govuk-button-group app-results-filter--apply-filters">
                     <govuk-button type="submit">Apply filters</govuk-button>
                 </div>
-                <div class="govuk-button-group app-results-filter-overlay--visible">
+                <div class="govuk-button-group app-results-filter-overlay--visible govuk-!-margin-top-7">
                     <govuk-button type="submit">Show search results</govuk-button>
                 </div>
             </div>

@@ -33,6 +33,19 @@
   }
 }
 
+.app-results-filter-overlay--heading{
+  display: grid;
+}
+
+.app-results-filter-overlay--heading-left {
+  grid-column: 1;
+}
+
+.app-results-filter-overlay--heading-right {
+  grid-column: 2;
+  text-align: right;
+}
+
 .app-results-filter-overlay--visible {
   display: none;
 }
