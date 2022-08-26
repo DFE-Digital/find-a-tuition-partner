@@ -44,11 +44,30 @@ Then("starting the journey again the postcode is correct in the Find a tuition p
   cy.get('[data-testid="postcode-input-box"]').should('have.value', 'SK1 1EB');
 });
 
-Then("And the key stages are correct in the key stages page", () => {
+Then("the key stages are correct in the key stages page", () => {
   Step(this, "they click 'Continue'");
   Step(this, "stages 'Key stage 1, Key stage 2' are selected");
   Step(this, "they click 'Continue'");
 });
 
+Then("stages 'Key stage 1, Key stage 2' are selected", () => {
   
+  const subjects = ['Key stage 1', 'Key stage 2'];
+  subjects.forEach(element => {
+      cy.get(`input[id=${kebabCase(element)}]`).check();
+  });
+});
+
+Then("the subjects are correct in the subjects page", () => {
+  const subjects = ['Key stage 1 English', 'Key stage 2 Maths','Key stage 2 English', 'Key stage 2 Maths'];
+  subjects.forEach(element => {
+      cy.get(`input[id=${kebabCase(element)}]`).check();
+  });
+});
+
+Then("the filter selections are correct in the search results page", () => {
+  Step(this, "they click 'Back'");
+  Step(this, "stages 'Key stage 1, Key stage 2' are selected");
+});
+
 
