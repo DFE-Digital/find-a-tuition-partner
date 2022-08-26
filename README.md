@@ -14,6 +14,7 @@ The code in this repository is for the find a tuition partner service. This serv
 * [Runbooks](docs/runbooks)
 * [C4 Diagrams](docs/uml)
 * [Release Process](docs/release-process.md)
+* [Disaster Recovery](docs/runbooks/disaster-recovery.md)
 
 ## Architecture
 
