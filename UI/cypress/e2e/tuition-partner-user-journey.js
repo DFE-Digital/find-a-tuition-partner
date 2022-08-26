@@ -1,6 +1,17 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase, camelCaseKeyStage, KeyStageSubjects } from "../support/utils";
 
+When("the key stages are edited in the key stages page", () => {
+  Step(this, "they click 'Continue'");
+  Step(this, "they select 'Key stage 1, Key stage 2, Key stage 3'");
+  Step(this, "they click 'Continue'");
+});
+
+When("the subjects are edited in the subjects page after key stage has been edited", () => {
+  Step(this, "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths, Key stage 3 Science'");
+  Step(this, "they click 'Continue'");
+});
+
 Then("they will be able journey forward to a selected tuition partner page", () => {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
@@ -18,13 +29,11 @@ Then("they will be able journey forward to a selected tuition partner page", () 
     Step(this, "the page's title is 'Tute Education'");
   });
 
-  Then("the filter section will be correctly displayed", () => {
-
+Then("the filter section will be correctly displayed", () => {
     const subjects = ['Key stage 1 English', 'Key stage 1 Maths', 'Key stage 2 English', 'Key stage 2 Maths'];
     subjects.forEach(element => {
         cy.get(`input[id=${kebabCase(element)}]`).check();
     });
-
     cy.get('[data-testid="postcode-input-box"]').should('have.value', 'SK1 1EB');
     cy.get(`input[id="any"]`).should('be.checked');
 });
@@ -69,5 +78,17 @@ Then("the filter selections are correct in the search results page", () => {
   Step(this, "they click 'Back'");
   Step(this, "stages 'Key stage 1, Key stage 2' are selected");
 });
+
+Then("the filter selections are correct in the search results page with the edited selections", () => {
+  const subjects = ['Key stage 1 English', 'Key stage 1 Maths', 'Key stage 2 English', 'Key stage 2 Maths', 'Key stage 3 Science'];
+  subjects.forEach(element => {
+      cy.get(`input[id=${kebabCase(element)}]`).check();
+  });
+  cy.get('[data-testid="postcode-input-box"]').should('have.value', 'SK1 1EB');
+  cy.get(`input[id="any"]`).should('be.checked');
+});
+
+
+
 
 
