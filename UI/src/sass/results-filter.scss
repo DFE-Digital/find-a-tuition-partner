@@ -1,3 +1,19 @@
+.js-enabled .app-results-filter--desktop {
+  @include govuk-media-query($until: tablet) {
+    display: none;
+  }
+}
+
+.app-results-filter--non-desktop {
+  display: none;
+}
+
+.js-enabled .app-results-filter--non-desktop {
+  @include govuk-media-query($until: tablet) {
+    display: block;
+  }
+}
+
 .app-results-filter {
   padding: govuk-spacing(3);
   background-color: govuk-colour("light-grey");
@@ -8,6 +24,10 @@
 }
 
 .js-enabled .app-results-filter--apply-filters {
+  display: none;
+}
+
+.app-results-filter-overlay--show-filters {
   display: none;
 }
 
@@ -25,10 +45,6 @@
       left: 0;
       margin: 0;
       overflow-y: auto;
-    }
-
-    .app-results-filter-overlay--show-filters {
-      display: block;
     }
   }
 }
@@ -61,8 +77,8 @@
 }
 
 .js-enabled .app-results-filter-overlay--show-filters {
-  @include govuk-media-query($from: tablet) {
-    display: none;
+  @include govuk-media-query($until: tablet) {
+    display: block;
   }
 }
 

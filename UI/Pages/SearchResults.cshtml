@@ -15,7 +15,10 @@
             <govuk-error-summary-item asp-for="Data.TuitionType" />
         </govuk-error-summary>
 
-        <h1 class="govuk-heading-l">Find a tuition partner</h1>
+        <h1 class="govuk-heading-l">
+            <span class="app-results-filter--desktop">Find a tuition partner</span>
+            <span class="app-results-filter--non-desktop">Search results</span>
+        </h1>
 
     </div>
 </div>
@@ -35,7 +38,7 @@
                             <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
                         </div>
                         <div class="app-results-filter-overlay--heading-right">
-                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link" data-module="return-to-results-link">Return to results</a>
+                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline" data-module="return-to-results-link">Return to results</a>
                         </div>
                     </div>
                     <p show-if="Model.Data.Results != null" class="govuk-body">
@@ -70,17 +73,19 @@
                 </govuk-radios>
 
                 <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
-
-                <div class="govuk-button-group app-results-filter--apply-filters">
-                    <govuk-button type="submit">Apply filters</govuk-button>
-                </div>
-                <div class="govuk-button-group app-results-filter-overlay--visible govuk-!-margin-top-7">
-                    <govuk-button type="submit">Show search results</govuk-button>
+                
+                <div class="govuk-!-margin-top-7">
+                    <div class="govuk-button-group app-results-filter--apply-filters">
+                        <govuk-button type="submit">Apply filters</govuk-button>
+                    </div>
+                    <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
+                        <govuk-button type="submit">Show search results</govuk-button>
+                    </div>
                 </div>
             </div>
 
             <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
-                <govuk-button>Show filters</govuk-button>
+                <govuk-button class="govuk-button--secondary">Show filters</govuk-button>
             </div>
         </div>
 
