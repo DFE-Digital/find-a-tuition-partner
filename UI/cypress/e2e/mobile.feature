@@ -35,7 +35,7 @@ Feature: Tuition partner details mobile view page tests
         And a user is using a 'tablet'
         Then the search results filter heading is displayed
         And the search results filter heading is 'Filter results'
-        And the overlay search results filter heading is be displayed
+        And the overlay search results filter heading is not displayed
     
     Scenario: Search results page shows filters and results in tablet and above view
         Given a user has arrived on the 'Search results' page
@@ -56,3 +56,20 @@ Feature: Tuition partner details mobile view page tests
         Given a user has arrived on the 'Search results' page
         And a user is using a 'phone'
         Then the show filters button is displayed
+    
+    Scenario: Clicking show filters overlays filters in mobile phone view
+        Given a user has arrived on the 'Search results' page
+        And a user is using a 'phone'
+        When they click 'Show filters'
+        Then the search filters are displayed
+    
+    Scenario: Mobile filters overlay displays filters heading, results count and subjects header
+        Given a mobile user has opened the mobile filters overlay
+        Then the overlay search results filter heading is 'Filters'
+        And the overlay search results filter heading has the results count
+        And the overlay search results filter heading has the subjects header
+    
+    Scenario: Mobile filters overlay displays return to results link and show search results button
+        Given a mobile user has opened the mobile filters overlay
+        Then the return to results link is displayed
+        And the show search results button is displayed

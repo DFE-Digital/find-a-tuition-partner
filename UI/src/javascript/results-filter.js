@@ -43,7 +43,6 @@ ResultsFilter.prototype.showFiltersEvent = function (e) {
   this.$body.style.position = 'fixed'
 
   this.$filters.classList.add('app-results-filter-overlay')
-  this.$filters.setAttribute('aria-modal', true)
   this.$filters.setAttribute('tabindex', 0)
   this.$filters.focus()
 }
