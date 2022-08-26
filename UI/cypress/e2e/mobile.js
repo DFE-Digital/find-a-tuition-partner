@@ -1,5 +1,23 @@
 import { Given, When, Then, Step } from "@badeball/cypress-cucumber-preprocessor";
 
+Given("a mobile user has opened the mobile filters overlay", () => {
+    Step(this, "a user has arrived on the 'Search results' page for 'Key stage 1 English'");
+    Step(this, "a user is using a 'phone'");
+    Step(this, "they click 'Show filters'");
+});
+
+When("they click 'Show filters'", () => {
+    cy.get('[data-testid="show-filters-button"]').click();
+});
+
+When("they select 'Return to results'", () => {
+    cy.get('[data-testid="return-to-results-link"]').click();
+});
+
+When("they select 'Show search results'", () => {
+    cy.get('[data-testid="show-search-results-button"]').click();
+});
+
 Then("a user is using a {string}", (device) => {
    
     if (device == 'phone'){
@@ -79,16 +97,6 @@ Then("the show filters button is not displayed", () => {
     cy.get('[data-testid="show-filters-button"]').should('not.be.visible');
 });
 
-When("they click 'Show filters'", () => {
-    cy.get('[data-testid="show-filters-button"]').click();
-});
-
-Given("a mobile user has opened the mobile filters overlay", () => {
-    Step(this, "a user has arrived on the 'Search results' page");
-    Step(this, "a user is using a 'phone'");
-    Step(this, "they click 'Show filters'");
-});
-
 Then("the overlay search results filter heading is {string}", (heading) => {
     cy.get('[data-testid="overlay-filter-results-heading"]').find('h1').should('have.text', heading);
 });
@@ -107,4 +115,12 @@ Then("the return to results link is displayed", () => {
 
 Then("the show search results button is displayed", () => {
     cy.get('[data-testid="show-search-results-button"]').scrollIntoView().should('be.visible');
+});
+
+Then("subject {string} is selected", (subject) => {
+    cy.url().should('contain', subject);
+});
+
+Then("subject {string} is no longer selected", (subject) => {
+    cy.url().should('not.contain', subject);
 });

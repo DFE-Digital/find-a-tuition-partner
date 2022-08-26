@@ -51,8 +51,12 @@ Given("a user has arrived on the 'Tuition Partner' page for {string} after searc
     cy.get('.govuk-link').contains(name).click();
 });
 
+When("they select subject {string}", subject => {
+    cy.get(`input[id="${kebabCase(subject)}"]`).click();
+});
+
 When("they select {string} tuition type", tuition => {
-    cy.get(`input[id="${kebabCase(tuition)}"]`).should('be.checked');
+    cy.get(`input[id="${kebabCase(tuition)}"]`).click();
 });
 
 When("they select the tuition partner {string}", name => {

@@ -73,3 +73,17 @@ Feature: Tuition partner details mobile view page tests
         Given a mobile user has opened the mobile filters overlay
         Then the return to results link is displayed
         And the show search results button is displayed
+
+    Scenario: Selecting return to results link cancels filter changes
+        Given a mobile user has opened the mobile filters overlay
+        When they select subject 'Key stage 1 Maths'
+        And they select 'Return to results'
+        Then subject 'KeyStage1-Maths' is no longer selected
+        And only the postcode and results sections are displayed
+
+    Scenario: Selecting show search results button applies filter changes
+        Given a mobile user has opened the mobile filters overlay
+        When they select subject 'Key stage 1 Maths'
+        And they select 'Show search results'
+        Then subject 'KeyStage1-Maths' is selected
+        And only the postcode and results sections are displayed
