@@ -156,6 +156,7 @@ public class SearchResults : PageModel
 
             var results = await FindSubjectsMatchingFilter(
                         location.Data.LocalAuthorityDistrictCode,
+                        location.Data.Postcode,
                         request,
                         cancellationToken);
 
@@ -180,7 +181,8 @@ public class SearchResults : PageModel
         }
 
         private async Task<TuitionPartnerSearchResultsPage> FindSubjectsMatchingFilter(
-            string? localAuthorityDisctict,
+            string? localAuthorityDistrict,
+            string? postcode,
             Query request,
             CancellationToken cancellationToken)
         {
@@ -193,7 +195,8 @@ public class SearchResults : PageModel
             return await mediator.Send(new SearchTuitionPartnerHandler.Command
             {
                 OrderBy = TuitionPartnerOrderBy.Random,
-                LocalAuthorityDistrictCode = localAuthorityDisctict,
+                LocalAuthorityDistrictCode = localAuthorityDistrict,
+                Postcode = postcode,
                 SubjectIds = subjects.Select(x => x.Id),
                 TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
             }, cancellationToken);

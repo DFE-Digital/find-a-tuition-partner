@@ -19,6 +19,13 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
         new TuitionPartnerOrdering(search).RandomSeed().Should().Be('b' + 'o' + 'b');
     }
 
+    [Fact]
+    public void Postcode_randomness()
+    {
+        var search = new TuitionPartnerSearchRequest { Postcode = "ts1 10n" };
+        new TuitionPartnerOrdering(search).RandomSeed().Should().Be('t' + 's' + '1' + ' ' + '1' + '0' + 'n');
+    }
+
     [Theory]
     [InlineData(0, 0, 1, 1)]
     [InlineData(1, 2, 3, 6)]
@@ -42,11 +49,12 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
         var search = new TuitionPartnerSearchRequest
         {
             LocalAuthorityDistrictCode = "ab12",
+            Postcode = "ts1 10n",
             SubjectIds = new[] { 5, 9, 22, 65 },
             TuitionTypeId = 5,
         };
         new TuitionPartnerOrdering(search).RandomSeed()
-            .Should().Be('a' + 'b' + '1' + '2' + 5 + 9 + 22 + 65 + 5);
+            .Should().Be('a' + 'b' + '1' + '2' + 't' + 's' + '1' + ' ' + '1' + '0' + 'n' + 5 + 9 + 22 + 65 + 5);
     }
 
     [Fact]
