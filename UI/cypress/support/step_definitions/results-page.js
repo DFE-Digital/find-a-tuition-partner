@@ -78,3 +78,9 @@ Then("they see the cost for tuition type {string}", tuitionTypes => {
     cy.get("[data-testid='pricing-table'] thead th")
         .should('have.length', tuitionArray.length + 1)
 })
+
+Then("all tuition partner parameters are populated correctly", () => {
+    cy.get('[data-testid="results-subjects"] > li:first').first().should('contain.text', 'Key');
+    cy.get('[data-testid="type-of-tuition"]').first().should('not.be.empty');
+    cy.get('[data-testid="results-description"]').first().should('not.be.empty');
+});
