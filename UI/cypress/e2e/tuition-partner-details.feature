@@ -109,3 +109,7 @@ Feature: User can view full details of a Tuition Parner
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
     Then the subjects covered by a tuition partner are in alphabetical order 
+
+  Scenario: Tuition partner details are displayed correctly when arriving on the results page
+     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+     Then all tuition partner parameters are populated correctly
