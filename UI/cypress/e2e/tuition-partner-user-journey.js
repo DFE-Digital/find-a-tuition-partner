@@ -20,7 +20,7 @@ When("the tuition type is changed", () => {
   cy.get(`input[id="in-school"]`).check();
 });
 
-Then("they will be able journey forward to a selected tuition partner page", () => {
+Then("user has journeyed forward to a selected tuition partner page", () => {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
