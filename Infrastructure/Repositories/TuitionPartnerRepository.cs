@@ -21,6 +21,8 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         CancellationToken cancellationToken = default)
     {
         var entities = await _dbContext.TuitionPartners.AsNoTracking()
+            .Include(e => e.LocalAuthorityDistrictCoverage.Where(lad => lad.LocalAuthorityDistrictId == localAuthorityDistrictId))
+            .ThenInclude(e => e.TuitionType)
             .Include(e => e.SubjectCoverage)
             .ThenInclude(e => e.Subject)
             .Where(e => ids.Distinct().Contains(e.Id))
@@ -30,10 +32,14 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         foreach (var entity in entities)
         {
             var result = entity.Adapt<TuitionPartnerSearchResult>();
+
             result.Subjects = entity.SubjectCoverage.OrderBy(e => e.Id).Select(e => e.Subject).Distinct().ToArray();
-            result.TuitionTypes = _dbContext.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == entity.Id).Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
+
+            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
+
             results.Add(result);
         }
+
         return ordering.Order(results);
     }
 }
