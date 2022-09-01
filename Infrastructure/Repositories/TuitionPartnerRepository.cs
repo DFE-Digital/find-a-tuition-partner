@@ -38,7 +38,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             {
                 result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
             }
-            else 
+            else
             {
                 result.TuitionTypes = _dbContext.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
             }
