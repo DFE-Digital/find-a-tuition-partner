@@ -1,7 +1,7 @@
 Feature: User can view full details of a Tuition Parner
   Scenario: page title is 'Name of Tuition Partner'
-    Given a user has arrived on the 'Tuition Partner' page for 'Connex Education Partnership'
-    Then the page's title is 'Connex Education Partnership'
+    Given a user has arrived on the 'Tuition Partner' page for 'Toranj Tuition'
+    Then the page's title is 'Toranj Tuition'
 
   Scenario: user clicks service name
     Given a user has started the 'Find a tuition partner' journey
@@ -19,7 +19,7 @@ Feature: User can view full details of a Tuition Parner
     And the heading should say 'Bright Heart Education'
 
   Scenario: don’t show empty fields where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
+    Given a user has arrived on the 'Tuition Partner' page for 'seven-springs-education'
     Then TP has not provided the information in the 'Address' section
 
   Scenario: don’t show empty fields where TP has not provided information
@@ -58,7 +58,7 @@ Feature: User can view full details of a Tuition Parner
     Then the quality assured tuition partner details are shown
 
   Scenario: tuition partner website link is displayed
-    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
+    Given a user has arrived on the 'Tuition Partner' page for 'tlc-live'
     Then the tuition partner's website link is displayed
     And the tuition partners website link starts with 'http://'
 
