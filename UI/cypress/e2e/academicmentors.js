@@ -8,12 +8,12 @@ Then("they will see the academic mentor header", () => {
     cy.get('[data-testid="academic-mentors-header"]').should('contain.text', "Employ an academic mentor")
 });
 
-Then("they will see the login link", () => {
-    cy.get('[data-testid="login-link"]').should('have.attr', 'href', 'https://tuitionhub.nationaltutoring.org.uk/NTP/s/login/')
+Then("they will see the book training link", () => {
+    cy.get('[data-testid="book-training"]').should('have.attr', 'href', 'http://nominations.tutortraining.co.uk')
 });
 
-Then("the login link opens in a new window", () => {
-    cy.get('[data-testid="login-link"]').should('have.attr', 'target', '_blank')
+Then("the book training link opens in a new window", () => {
+    cy.get('[data-testid="book-training"]').should('have.attr', 'target', '_blank')
 });
 
 Then("they will see the funding allocation link", () => {
