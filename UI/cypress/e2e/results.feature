@@ -133,33 +133,8 @@ Feature: User is shown search results
     When the ‘clear filters’ button as been selected
     Then the postcode search parameter remains
 
-  Scenario: Results page  contact us back link redirects to right page
+ Scenario: Results page  contact us back link redirects to right page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
     Then they will click the contact us link
     When they click 'Back'
     Then they will see the results summary for 'Hertfordshire'
-
-  Scenario: Tuition partner details are displayed correctly when no postcode entered or filters selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter '' as the school's postcode
-    Then all tuition partner parameters are populated correctly
-
-  Scenario: Tuition partner details are displayed correctly when postcode entered and no filters are selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter 'SK1 1EB' as the school's postcode
-    Then all tuition partner parameters are populated correctly
-
-  Scenario: Tuition partner details are displayed correctly when postcode entered and filters are selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter 'SK1 1EB' as the school's postcode
-      And 'Key stage 1 English' is selected
-    Then all tuition partner parameters are populated correctly
-
-  Scenario: Tuition partner details are displayed correctly after clear filters is selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When the ‘clear filters’ button as been selected
-    Then all tuition partner parameters are populated correctly
-
-  Scenario: Tuition partner details are displayed correctly when arriving on the results page
-    Given a user has arrived on the 'Search results' page
-    Then all tuition partner parameters are populated correctly

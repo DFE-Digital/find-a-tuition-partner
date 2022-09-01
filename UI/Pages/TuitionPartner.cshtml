@@ -13,7 +13,7 @@
     <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
-        <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
+        <p class="govuk-body">@Model.Data.Description</p>
 
 		<govuk-details data-testid="qatp-details">
 			<govuk-details-summary>
@@ -32,7 +32,7 @@
 					    Subjects covered
 				    </govuk-summary-list-row-key>
 				    <govuk-summary-list-row-value>
-					    <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
+					    <ul class="govuk-list govuk-list-bullets-mobile-view">
 						    @foreach (var item in Model.Data.Subjects)
 						    {
 							    <li>@item</li>
