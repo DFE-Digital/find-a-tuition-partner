@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
+using UI.Extensions;
 
 namespace UI.Pages;
 
@@ -22,8 +24,12 @@ public class Cookies : PageModel
         if (preferencesSet.HasValue)
         {
             PreferencesSet = preferencesSet.Value;
+            ReturnUrl = TempData.Peek<string>("ReturnUrl");
         }
-
+        else
+        {
+            ReturnUrl = Request.Headers["Referer"].ToString();
+        }
         if (Request.Cookies.ContainsKey(ConsentCookieName))
         {
             var value = Request.Cookies[ConsentCookieName];
@@ -49,9 +55,10 @@ public class Cookies : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
+        if (!string.IsNullOrEmpty(ReturnUrl)) TempData.Set("ReturnUrl", ReturnUrl);
         ApplyCookieConsent(Consent);
 
-        return RedirectToPage(new { returnUrl = ReturnUrl, preferencesSet = true });
+        return RedirectToPage(new { preferencesSet = true });
     }
 
     private void ApplyCookieConsent(bool? consent)

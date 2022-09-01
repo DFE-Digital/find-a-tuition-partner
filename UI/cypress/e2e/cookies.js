@@ -140,3 +140,12 @@ Then("cookie {string} is added with value {string}", (cookie, value) => {
   }
   
 });
+
+Given("a user has arrived on the funding and reporting page", () => {
+    cy.visit(`/funding-and-reporting`);
+});
+
+Then("the user redirected to funding page", () => {
+    cy.location('pathname').should('eq', '/funding-and-reporting');
+});
+

@@ -91,3 +91,13 @@ Feature: User enters postcode to begin search
    Scenario: privacy link to page
     Given a user has started the 'Find a tuition partner' journey
     Then the privacy link opens privacy page
+    
+   Scenario: contact us link to page
+    Given a user has started the 'Find a tuition partner' journey
+    Then the contact us link opens contact us page
+
+   Scenario: contact us back link redirects to page
+    Given a user has started the 'Find a tuition partner' journey
+    Then they will click the contact us link
+    When they click 'Back'
+    Then the user redirected to postcode page

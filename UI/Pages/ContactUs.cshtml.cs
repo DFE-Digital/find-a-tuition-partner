@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace UI.Pages
 {
-    public class FundingAndReporting : PageModel
+    public class ContactUsModel : PageModel
     {
         public string? ReturnPath { get; set; }
-
 
         public IActionResult OnGet()
         {
