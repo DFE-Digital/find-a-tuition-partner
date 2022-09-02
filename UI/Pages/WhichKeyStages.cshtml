@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model WhichKeyStages
 @{
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
@@ -8,7 +8,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post">
+        <form method="get">
             <h1 class="govuk-heading-l">Which key stages do you need tutoring support for?</h1>
             <p class="govuk-body">Select all of the key stages that apply</p>
 
@@ -23,6 +23,7 @@
                 <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
             </div>
 
+            <input type="hidden" name="handler" value="Submit" />
             @if (Model.Data.Postcode != null)
             {
                 <input asp-for="Data.Postcode" hidden />
