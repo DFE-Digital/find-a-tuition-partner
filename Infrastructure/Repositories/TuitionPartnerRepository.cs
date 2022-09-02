@@ -2,6 +2,7 @@
 using Domain.Search;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Repositories;
 
@@ -21,11 +22,12 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         CancellationToken cancellationToken = default)
     {
         var entities = await _dbContext.TuitionPartners.AsNoTracking()
-            .Include(e => e.LocalAuthorityDistrictCoverage.Where(lad => lad.LocalAuthorityDistrictId == localAuthorityDistrictId))
+            .IncludeTuitionForLocalDistrict(localAuthorityDistrictId)
             .ThenInclude(e => e.TuitionType)
             .Include(e => e.SubjectCoverage)
             .ThenInclude(e => e.Subject)
             .Where(e => ids.Distinct().Contains(e.Id))
+            .AsSplitQuery()
             .ToListAsync(cancellationToken);
 
         var results = new List<TuitionPartnerSearchResult>(entities.Count);
@@ -34,17 +36,21 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             var result = entity.Adapt<TuitionPartnerSearchResult>();
             result.Subjects = entity.SubjectCoverage.OrderBy(e => e.Id).Select(e => e.Subject).Distinct().ToArray();
 
-            if (entity.LocalAuthorityDistrictCoverage.Count != 0)
-            {
-                result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
-            }
-            else
-            {
-                result.TuitionTypes = _dbContext.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
-            }
+            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
 
             results.Add(result);
         }
         return ordering.Order(results);
+    }
+}
+
+public static class LocalAuthorityDistrictCoverageQueryExtension
+{
+    public static IIncludableQueryable<Domain.TuitionPartner, IEnumerable<Domain.LocalAuthorityDistrictCoverage>>
+    IncludeTuitionForLocalDistrict(this IQueryable<Domain.TuitionPartner> tuitionPartners, int? localAuthorityDistrictId)
+    {
+        return localAuthorityDistrictId == null
+            ? tuitionPartners.Include(e => e.LocalAuthorityDistrictCoverage)
+            : tuitionPartners.Include(e => e.LocalAuthorityDistrictCoverage.Where(lad => lad.LocalAuthorityDistrictId == localAuthorityDistrictId));
     }
 }
