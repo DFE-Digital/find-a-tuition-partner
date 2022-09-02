@@ -9,7 +9,7 @@ Then("they will see the academic mentor header", () => {
 });
 
 Then("they will see the book training link", () => {
-    cy.get('[data-testid="book-training"]').should('have.attr', 'href', 'http://nominations.tutortraining.co.uk')
+    cy.get('[data-testid="book-training"]').should('have.attr', 'href', 'http://nominations.tutortraining.co.uk/registration')
 });
 
 Then("the book training link opens in a new window", () => {
