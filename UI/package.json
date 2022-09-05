@@ -9,7 +9,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "watch": "webpack --watch --mode development"
+    "watch": "webpack --watch --mode development",
+    "format": "npx prettier --write ."
   },
   "repository": {
     "type": "git",

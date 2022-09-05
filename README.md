@@ -86,6 +86,7 @@ From a command prompt, change to the `UI` directory and run `npm install` to ins
 * `npm run build` to bundle the assets using webpack 5 in production mode
 * `npm run build:dev` to bundle the assets using webpack 5 in development mode
 * `npm run watch` to bundle the assets using webpack 5 in development mode and apply changes immediately when developing
+* `npm run format` to apply prettier formatting to the web asset source files (js and sass) along with the cypress step definitions
 
 ### Running the application
 
