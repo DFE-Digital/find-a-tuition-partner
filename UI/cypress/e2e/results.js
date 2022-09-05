@@ -21,6 +21,11 @@ When("they clear all the filters", () => {
     cy.get('[type="checkbox"]').uncheck()
 })
 
+When("'Key stage 1 English' is selected", () => {
+    cy.get('[id="option-select-title-key-stage-1"]').click()
+    cy.get('[id="key-stage-1-english"]').check()
+})
+
 Then("the ‘clear filters’ button as been selected", () => {
     cy.get('[data-testid="clear-all-filters"]').click();
 });

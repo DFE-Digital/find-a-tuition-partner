@@ -103,3 +103,9 @@ Then("the search results are displayed", () => {
 Then("the search results page heading is {string}", (heading) => {
     cy.get("h1").find('span').filter(':visible').should("have.text", heading);
 });
+
+Then("all tuition partner parameters are populated correctly", () => {
+    cy.get('[data-testid="results-subjects"] > li:first').first().should('contain.text', 'Key');
+    cy.get('[data-testid="type-of-tuition"]').first().should('not.be.empty');
+    cy.get('[data-testid="results-description"]').first().should('not.be.empty');
+});
