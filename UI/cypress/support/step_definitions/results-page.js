@@ -51,8 +51,12 @@ Given("a user has arrived on the 'Tuition Partner' page for {string} after searc
     cy.get('.govuk-link').contains(name).click();
 });
 
+When("they select subject {string}", subject => {
+    cy.get(`input[id="${kebabCase(subject)}"]`).click();
+});
+
 When("they select {string} tuition type", tuition => {
-    cy.get(`input[id="${kebabCase(tuition)}"]`).should('be.checked');
+    cy.get(`input[id="${kebabCase(tuition)}"]`).click();
 });
 
 When("they select the tuition partner {string}", name => {
@@ -78,6 +82,27 @@ Then("they see the cost for tuition type {string}", tuitionTypes => {
     cy.get("[data-testid='pricing-table'] thead th")
         .should('have.length', tuitionArray.length + 1)
 })
+
+Then("the search filters are displayed", () => {
+    cy.get('[data-testid="results-filter"]').should('be.visible');
+});
+
+Then("the search filters are not displayed", () => {
+    cy.get('[data-testid="results-filter"]').should('not.be.visible');
+});
+
+Then("the postcode search is displayed", () => {
+    cy.get('[data-testid="postcode"]').should('be.visible');
+});
+
+Then("the search results are displayed", () => {
+    cy.get('[data-testid="results-summary"]').should('be.visible');
+    cy.get('[data-testid="results-list-item"]').should('be.visible');
+});
+
+Then("the search results page heading is {string}", (heading) => {
+    cy.get("h1").find('span').filter(':visible').should("have.text", heading);
+});
 
 Then("all tuition partner parameters are populated correctly", () => {
     cy.get('[data-testid="results-subjects"] > li:first').first().should('contain.text', 'Key');

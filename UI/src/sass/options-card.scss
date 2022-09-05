@@ -1,24 +1,24 @@
 .app-option-card {
-	margin-bottom: govuk-spacing(3);
-	padding: govuk-spacing(4);
-	background-color: govuk-colour("light-grey");
+  margin-bottom: govuk-spacing(3);
+  padding: govuk-spacing(4);
+  background-color: govuk-colour("light-grey");
 
-	.govuk-button {
-		margin-bottom: govuk-spacing(1);
-	}
+  .govuk-button {
+    margin-bottom: govuk-spacing(1);
+  }
 }
 
 @include govuk-media-query($from: tablet) {
-	.app-option-card-left {
-		margin-right: govuk-spacing(2);
-	}
+  .app-option-card-left {
+    margin-right: govuk-spacing(2);
+  }
 
-	.app-option-card-middle {
-		margin-left: govuk-spacing(2);
-		margin-right: govuk-spacing(2);
-	}
+  .app-option-card-middle {
+    margin-left: govuk-spacing(2);
+    margin-right: govuk-spacing(2);
+  }
 
-	.app-option-card-right {
-		margin-left: govuk-spacing(2);
-	}
+  .app-option-card-right {
+    margin-left: govuk-spacing(2);
+  }
 }

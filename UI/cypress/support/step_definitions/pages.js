@@ -43,4 +43,3 @@ Then("the page's title is {string}", (title) => {
 Then("they will click the contact us link", () => {
     cy.get('[data-testid="contact-us-link"]').click();
 });
-
