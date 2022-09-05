@@ -23,24 +23,6 @@ When("they manually navigate to the 'Which subjects' page", () => {
     cy.visit("/which-subjects");
 });
 
-When("they select {string}", keystage => {
-    const stages = keystage.split(',').map(s => s.trim());
-    stages.forEach(element => {
-        cy.get(`input[id=${kebabCase(element)}]`).check();
-    });
-});
-
-Then("they will see all the keys stages as options", () => {
-    const keyStages = Object.keys(allSubjects)
-
-    cy.get('[data-testid="key-stage-name"]')
-        .should('have.length', keyStages.length);
-
-    cy.get('[data-testid="key-stage-name"]').each((item, index) => {
-        cy.wrap(item).should('contain.text', keyStages[index])
-    })
-});
-
 Then("they are shown all the subjects under all the keys stages", () => {
     Step(this, "they are shown the subjects for 'Key stage 1'")
     Step(this, "they are shown the subjects for 'Key stage 2'")

@@ -1,7 +1,7 @@
 Feature: User can view full details of a Tuition Parner
   Scenario: page title is 'Name of Tuition Partner'
-    Given a user has arrived on the 'Tuition Partner' page for 'Connex Education Partnership'
-    Then the page's title is 'Connex Education Partnership'
+    Given a user has arrived on the 'Tuition Partner' page for 'Toranj Tuition'
+    Then the page's title is 'Toranj Tuition'
 
   Scenario: user clicks service name
     Given a user has started the 'Find a tuition partner' journey
@@ -58,7 +58,7 @@ Feature: User can view full details of a Tuition Parner
     Then the quality assured tuition partner details are shown
 
   Scenario: tuition partner website link is displayed
-    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
+    Given a user has arrived on the 'Tuition Partner' page for 'tlc-live'
     Then the tuition partner's website link is displayed
     And the tuition partners website link starts with 'http://'
 
@@ -109,3 +109,7 @@ Feature: User can view full details of a Tuition Parner
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
     Then the subjects covered by a tuition partner are in alphabetical order 
+
+  Scenario: Tuition partner details are displayed correctly when arriving on the results page
+     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+     Then all tuition partner parameters are populated correctly

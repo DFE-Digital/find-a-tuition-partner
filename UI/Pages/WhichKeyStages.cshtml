@@ -23,8 +23,22 @@
 			    <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
 		    </div>
 
-		    <input asp-for="Data.Postcode" hidden />
-		    <input asp-for="Data.Subjects" hidden />
+		    @if (Model.Data.Postcode != null)
+			{
+			    <input asp-for="Data.Postcode" hidden/>
+			}
+			@if (Model.Data.Subjects != null)
+			{
+			    foreach (var subject in Model.Data.Subjects)
+			    {
+					<input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+				}
+			}
+            @if (Model.Data.TuitionType.HasValue)
+            {
+                <input asp-for="Data.TuitionType" hidden/>
+            }
+
 	    </form>
     </div>
 </div>

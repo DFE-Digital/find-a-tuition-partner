@@ -15,7 +15,10 @@
             <govuk-error-summary-item asp-for="Data.TuitionType" />
         </govuk-error-summary>
 
-        <h1 class="govuk-heading-l">Find a tuition partner</h1>
+        <h1 class="govuk-heading-l">
+            <span class="app-results-filter--desktop">Find a tuition partner</span>
+            <span class="app-results-filter--non-desktop">Search results</span>
+        </h1>
 
     </div>
 </div>
@@ -25,8 +28,28 @@
     <form>
 
         <div class="govuk-grid-column-one-third">
-            <div class="app-results-filter" data-module="results-filter">
-                <h2 class="govuk-heading-m">Filter results</h2>
+            <div class="app-results-filter" data-module="results-filter" data-testid="results-filter">
+                <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
+                    <h2 class="govuk-heading-m">Filter results</h2>
+                </div>
+                <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
+                    <div class="app-results-filter-overlay--heading">
+                        <div class="app-results-filter-overlay--heading-left">
+                            <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
+                        </div>
+                        <div class="app-results-filter-overlay--heading-right">
+                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline" data-module="return-to-results-link" data-testid="return-to-results-link">Return to results</a>
+                        </div>
+                    </div>
+                    <p show-if="Model.Data.Results != null" class="govuk-body" data-testid="overlay-filter-results-count">
+                        @{
+                            var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
+                            var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
+                        }
+                        <span>@count @resultPlural</span>
+                    </p>
+                    <h2 class="govuk-heading-m">Subjects</h2>
+                </div>
 
                 @foreach (var item in Model.Data.AllSubjects.Keys)
                 {
@@ -49,16 +72,24 @@
                     </govuk-radios-fieldset>
                 </govuk-radios>
 
-                <div class="govuk-button-group" data-module="results-filter-button">
-                    <govuk-button type="submit">Apply filters</govuk-button>
-                </div>
-
                 <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
-
+                
+                <div class="govuk-!-margin-top-7">
+                    <div class="govuk-button-group app-results-filter--apply-filters">
+                        <govuk-button type="submit">Apply filters</govuk-button>
+                    </div>
+                    <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
+                        <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
+                <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
+            </div>
 
             <div class="govuk-form-group app-form-group-inline">
                 <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
@@ -83,47 +114,47 @@
             </div>
 
 
-			@if (Model.Data.Results != null)
-			{
-				foreach (var item in Model.Data.Results.Results)
-				{
-					<div data-testid="results-list-item">
-						<h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
-						<govuk-summary-list>
-							<govuk-summary-list-row class="govuk-body-s">
-								<govuk-summary-list-row-key>
-									Subjects covered
-								</govuk-summary-list-row-key>
-								<govuk-summary-list-row-value>
-									<ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view">
-									@foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
-									{
-										<li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
-									}
-									</ul>
-								</govuk-summary-list-row-value>
-							</govuk-summary-list-row>
-							<govuk-summary-list-row class="govuk-body-s">
-								<govuk-summary-list-row-key>
-									Type of tuition
-								</govuk-summary-list-row-key>
-								<govuk-summary-list-row-value>
-									@string.Join(", ", item.TuitionTypes.Select(e => e.Name))
-								</govuk-summary-list-row-value>
-							</govuk-summary-list-row>
-							<govuk-summary-list-row class="govuk-body-s">
-								<govuk-summary-list-row-key>
-									Tuition partner information
-								</govuk-summary-list-row-key>
-								<govuk-summary-list-row-value>
-									@item.Description
-								</govuk-summary-list-row-value>
-							</govuk-summary-list-row>
-						</govuk-summary-list>
-					</div>
-				}
-			}
-		</div>
-	
-	</form>
+            @if (Model.Data.Results != null)
+            {
+                foreach (var item in Model.Data.Results.Results)
+                {
+                    <div data-testid="results-list-item">
+                        <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
+                        <govuk-summary-list>
+                            <govuk-summary-list-row class="govuk-body-s">
+                                <govuk-summary-list-row-key>
+                                    Subjects covered
+                                </govuk-summary-list-row-key>
+                                <govuk-summary-list-row-value>
+									<ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                                        @foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
+                                        {
+                                            <li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
+                                        }
+                                    </ul>
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                            <govuk-summary-list-row class="govuk-body-s">
+                                <govuk-summary-list-row-key>
+                                    Type of tuition
+                                </govuk-summary-list-row-key>
+								<govuk-summary-list-row-value data-testid="type-of-tuition">
+                                    @string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                            <govuk-summary-list-row class="govuk-body-s">
+                                <govuk-summary-list-row-key>
+                                    Tuition partner information
+                                </govuk-summary-list-row-key>
+								<govuk-summary-list-row-value data-testid="results-description">
+                                    @item.Description
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                        </govuk-summary-list>
+                    </div>
+                }
+            }
+        </div>
+
+    </form>
 </div>
