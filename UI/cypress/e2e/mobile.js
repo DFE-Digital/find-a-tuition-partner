@@ -10,11 +10,11 @@ When("they click 'Show filters'", () => {
     cy.get('[data-testid="show-filters-button"]').click();
 });
 
-When("they select 'Return to results'", () => {
+When("they select the 'Return to results' link", () => {
     cy.get('[data-testid="return-to-results-link"]').click();
 });
 
-When("they select 'Show search results'", () => {
+When("they select the 'Show search results' button", () => {
     cy.get('[data-testid="show-search-results-button"]').click();
 });
 
