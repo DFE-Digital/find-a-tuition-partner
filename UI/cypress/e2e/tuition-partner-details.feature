@@ -19,7 +19,7 @@ Feature: User can view full details of a Tuition Parner
     And the heading should say 'Bright Heart Education'
 
   Scenario: don’t show empty fields where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'seven-springs-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
     Then TP has not provided the information in the 'Address' section
 
   Scenario: don’t show empty fields where TP has not provided information
