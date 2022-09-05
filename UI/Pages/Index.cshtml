@@ -34,6 +34,25 @@
 				<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
 			</div>
 
+			@if (Model.Data.KeyStages != null)
+			{
+			    foreach (var KeyStage in Model.Data.KeyStages)
+			    {
+					<input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
+				}
+			}
+			@if (Model.Data.Subjects != null)
+			{
+			    foreach (var subject in Model.Data.Subjects)
+			    {
+					<input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+				}
+			}
+            @if (Model.Data.TuitionType.HasValue)
+            {
+                <input asp-for="Data.TuitionType" hidden/>
+            }
+
 			<h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
 			<p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
 			<div class="govuk-grid-column-one-half govuk-!-padding-0">

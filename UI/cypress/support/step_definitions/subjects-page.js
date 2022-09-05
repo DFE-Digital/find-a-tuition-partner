@@ -8,6 +8,13 @@ export const allSubjects = {
     "Key stage 4": [ "English", "Humanities", "Maths", "Modern foreign languages", "Science"]
 }
 
+When("they select {string}", keystage => {
+    const stages = keystage.split(',').map(s => s.trim());
+    stages.forEach(element => {
+        cy.get(`input[id=${kebabCase(element)}]`).check();
+    });
+});
+
 Then("they are shown the subjects for {string}", keystage => {
     
     const stages = keystage.split(',').map(s => s.trim());
@@ -34,3 +41,15 @@ Then("they will see {string} selected", keystages => {
         cy.get(`input[id="${kebabCase(element)}"]`).should('be.checked');
     });
 });
+
+Then("they will see all the keys stages as options", () => {
+    const keyStages = Object.keys(allSubjects)
+
+    cy.get('[data-testid="key-stage-name"]')
+        .should('have.length', keyStages.length);
+
+    cy.get('[data-testid="key-stage-name"]').each((item, index) => {
+        cy.wrap(item).should('contain.text', keyStages[index])
+    })
+});
+
