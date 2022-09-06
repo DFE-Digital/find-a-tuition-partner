@@ -8,37 +8,37 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-	    <form method="post">
-		    <h1 class="govuk-heading-l">Which key stages do you need tutoring support for?</h1>
-		    <p class="govuk-body">Select all of the key stages that apply</p>
+        <form method="post">
+            <h1 class="govuk-heading-l">Which key stages do you need tutoring support for?</h1>
+            <p class="govuk-body">Select all of the key stages that apply</p>
 
-		    <govuk-checkboxes asp-for="Data.KeyStages">
-			    @foreach (var item in Model.Data.AllKeyStages)
-			    {
-				    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected" data-testid="key-stage-name">@item.Name.DisplayName()</govuk-checkboxes-item>
-			    }
-		    </govuk-checkboxes>
+            <govuk-checkboxes asp-for="Data.KeyStages">
+                @foreach (var item in Model.Data.AllKeyStages)
+                {
+                    <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected" data-testid="key-stage-name">@item.Name.DisplayName()</govuk-checkboxes-item>
+                }
+            </govuk-checkboxes>
 
-		    <div class="govuk-button-group">
-			    <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
-		    </div>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+            </div>
 
-		    @if (Model.Data.Postcode != null)
-			{
-			    <input asp-for="Data.Postcode" hidden/>
-			}
-			@if (Model.Data.Subjects != null)
-			{
-			    foreach (var subject in Model.Data.Subjects)
-			    {
-					<input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
-				}
-			}
+            @if (Model.Data.Postcode != null)
+            {
+                <input asp-for="Data.Postcode" hidden />
+            }
+            @if (Model.Data.Subjects != null)
+            {
+                foreach (var subject in Model.Data.Subjects)
+                {
+                    <input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+                }
+            }
             @if (Model.Data.TuitionType.HasValue)
             {
-                <input asp-for="Data.TuitionType" hidden/>
+                <input asp-for="Data.TuitionType" hidden />
             }
 
-	    </form>
+        </form>
     </div>
 </div>
