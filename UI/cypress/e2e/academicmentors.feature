@@ -44,3 +44,8 @@
     Then they will see the funding reporting header
     And  they will click the back link
     Then they redirects to academic mentors page
+
+  Scenario: page has link register with cognition
+    Given a user has arrived on the academic mentors page
+    Then they will see the ‘register with cognition’ link
+    And the ‘register with cognition’ link opens in a new window

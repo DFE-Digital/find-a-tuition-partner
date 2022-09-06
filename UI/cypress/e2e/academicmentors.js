@@ -4,6 +4,10 @@ Given("a user has arrived on the academic mentors page", () => {
     cy.visit(`/academic-mentors`);
 });
 
+When("they click funding and reporting link", () => {
+    cy.get('[data-testid="funding-reporting-link"]').click();
+});
+
 Then("they will see the academic mentor header", () => {
     cy.get('[data-testid="academic-mentors-header"]').should('contain.text', "Employ an academic mentor")
 });
@@ -43,10 +47,6 @@ Then("they will see the funding and reporting link", () => {
     cy.get('[data-testid="funding-reporting-link"]').should('have.attr', 'href', '/funding-and-reporting')
 });
 
-When("they click funding and reporting link", () => {
-    cy.get('[data-testid="funding-reporting-link"]').click();
-});
-
 Then("they will see the funding reporting header", () => {
     cy.get('[data-testid="funding-reporting-header"]').should('contain.text', "Funding and Reporting")
 });
@@ -57,4 +57,15 @@ Then("they will click the back link", () => {
 
 Then("they redirects to academic mentors page", () => {
     cy.location('pathname').should('eq', '/academic-mentors');
+});
+
+Then("they will see the ‘register with cognition’ link", () => {
+    cy.get('[data-testid="cognition-registration-link"]').should('exist');
+});
+
+Then("the ‘register with cognition’ link opens in a new window", () => {
+    cy.get('[data-testid="cognition-registration-link"]').should('have.attr', 'target', '_blank')
+    cy.get('[data-testid="cognition-registration-link"]').then(function ($a) {
+        const href = $a.prop('href');
+        cy.request(href).its('body').should('include', '</html>')});
 });
