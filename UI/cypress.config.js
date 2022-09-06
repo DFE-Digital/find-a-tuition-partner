@@ -3,20 +3,19 @@ const webpack = require("@cypress/webpack-preprocessor");
 const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
 
 async function setupNodeEvents(on, config) {
-
-  on('task', {
+  on("task", {
     log(message) {
-      console.log(message)
+      console.log(message);
 
-      return null
+      return null;
     },
     table(message) {
-      console.table(message)
+      console.table(message);
 
-      return null
-    }
+      return null;
+    },
   });
-  
+
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
 
   on(
@@ -58,7 +57,7 @@ async function setupNodeEvents(on, config) {
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'https://localhost:7036/',
+    baseUrl: "https://localhost:7036/",
     specPattern: "**/*.feature",
     setupNodeEvents,
   },
