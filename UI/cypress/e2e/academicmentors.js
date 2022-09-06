@@ -13,7 +13,13 @@ Then("they will see the book training link", () => {
 });
 
 Then("the book training link opens in a new window", () => {
-    cy.get('[data-testid="book-training"]').should('have.attr', 'target', '_blank')
+    cy.get('[data-testid="book-training"]')
+        .should('have.attr', 'target', '_blank')
+        .invoke('attr', 'href')
+        .then(($href) => {
+            cy.request($href).then((resp) => {
+                expect(resp.status).to.eq(200)
+              })});
 });
 
 Then("they will see the funding allocation link", () => {

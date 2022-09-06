@@ -8,6 +8,20 @@ Then("they will see the school led tutoring header", () => {
     cy.get('[data-testid="school-led-header"]').should('contain.text', "Employ your own tutor")
 });
 
+Then("they will see the book training link", () => {
+    cy.get('[data-testid="book-training"]').should('have.attr', 'href', 'http://nominations.tutortraining.co.uk/registration')
+});
+
+Then("the book training link opens in a new window", () => {
+    cy.get('[data-testid="book-training"]')
+        .should('have.attr', 'target', '_blank')
+        .invoke('attr', 'href')
+        .then(($href) => {
+            cy.request($href).then((resp) => {
+                expect(resp.status).to.eq(200)
+              })});
+});
+
 Then("they will see the dbs check link", () => {
     cy.get('[data-testid="dbs-check-link"]').should('have.attr', 'href', 'https://www.gov.uk/find-out-dbs-check/y/caring-for-or-working-with-children-under-18-or-working-in-a-school/teaching-or-caring-for-children/working-in-a-school-nursery-children-s-centre-or-home-detention-service-young-offender-institution-or-childcare-premises/yes')
 });
