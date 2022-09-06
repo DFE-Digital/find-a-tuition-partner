@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Application.Extensions;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure;
@@ -12,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Serilog.Events;
 using UI.Filters;
 using UI.Routing;
-using static System.Net.Mime.MediaTypeNames;
 using AssemblyReference = UI.AssemblyReference;
 
 if (args.Any(x => x == "import"))
@@ -67,9 +67,7 @@ builder.Services.AddControllers(options =>
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    })
-    // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
-    .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
+    });
 
 builder.Services.AddRazorPages(options =>
     {
@@ -81,17 +79,19 @@ builder.Services.AddRazorPages(options =>
     })
     .AddMvcOptions(options =>
     {
-        options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"The value is invalid.");
+        options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => "The value is invalid.");
         options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor(s => "The value is invalid.");
         options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(x => "The value is invalid.");
         options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(x => "The value is invalid.");
         options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(x => "The value is invalid.");
         options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor(x => "The value is invalid.");
         options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(x => "The value is invalid.");
+    });
 
-    })
-    // Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
-    .AddFluentValidation(options => options.RegisterValidatorsFromAssembly(typeof(AssemblyReference).Assembly));
+builder.Services.AddHttpContextAccessor();
+
+// Supports both data annotation based validation as well as more complex cross property validation using the fluent validation library
+builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly).AddFluentValidationAutoValidation();//.AddFluentValidationClientsideAdapters();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
