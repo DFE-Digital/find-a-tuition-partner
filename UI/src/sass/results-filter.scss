@@ -19,7 +19,7 @@
   background-color: govuk-colour("light-grey");
 
   label:before {
-    background-color: govuk-colour('white');
+    background-color: govuk-colour("white");
   }
 }
 
@@ -49,7 +49,7 @@
   }
 }
 
-.app-results-filter-overlay--heading{
+.app-results-filter-overlay--heading {
   display: grid;
 }
 

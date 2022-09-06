@@ -17,26 +17,26 @@
     Then they will see the academic mentor header
 
   Scenario: page has link to book training
-     Given a user has arrived on the academic mentors page
-     Then they will see the book training link
-     And the book training link opens in a new window
+    Given a user has arrived on the academic mentors page
+    Then they will see the book training link
+    And the book training link opens in a new window
 
   Scenario: page has link to funding allocation link
-     Given a user has arrived on the academic mentors page
-     Then they will see the funding allocation link
+    Given a user has arrived on the academic mentors page
+    Then they will see the funding allocation link
 
   Scenario: page has link to home link
-     Given a user has arrived on the academic mentors page
-     Then they will see the home link
+    Given a user has arrived on the academic mentors page
+    Then they will see the home link
  
   Scenario: page has link to dbs check link
-     Given a user has arrived on the academic mentors page
-     Then they will see the dbs check link
-     And the dbs check link opens in a new window
+    Given a user has arrived on the academic mentors page
+    Then they will see the dbs check link
+    And the dbs check link opens in a new window
 
   Scenario: page has link to funding and reporting link
-     Given a user has arrived on the academic mentors page
-     Then they will see the funding and reporting link
+    Given a user has arrived on the academic mentors page
+    Then they will see the funding and reporting link
 
   Scenario: funding link to page
     Given a user has arrived on the academic mentors page
