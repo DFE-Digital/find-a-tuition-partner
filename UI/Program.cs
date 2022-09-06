@@ -177,6 +177,10 @@ var policyCollection = new HeaderPolicyCollection()
                 .StrictDynamic()
                 .WithHashTagHelper(); // Allow whitelisted elements based on their SHA256 hash value
 
+            var connectBuilder = cspBuilder.AddConnectSrc() // connect-src 'self' https://*.google-analytics.com
+                .Self()
+                .From("https://*.google-analytics.com");
+
             if (app.Environment.IsDevelopment())
             {
                 // Support webpack development mode used in npm run build:dev and nom run watch
@@ -187,18 +191,11 @@ var policyCollection = new HeaderPolicyCollection()
                 styleBuilder.WithHash256("tVFibyLEbUGj+pO/ZSi96c01jJCvzWilvI5Th+wLeGE=");
 
                 // For hot reload and similar developer tooling
-                cspBuilder.AddConnectSrc() // connect-src 'self' wss://localhost
-                    .Self()
+                connectBuilder
                     .From("http://localhost:*")
                     .From("https://localhost:*")
                     .From("ws://localhost:*")
                     .From("wss://localhost:*");
-            }
-            else
-            {
-                // service makes no connections when deployed
-                cspBuilder.AddConnectSrc()
-                    .None();
             }
 
             cspBuilder.AddUpgradeInsecureRequests(); // upgrade-insecure-requests
