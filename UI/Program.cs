@@ -141,15 +141,64 @@ var policyCollection = new HeaderPolicyCollection()
     .AddXssProtectionBlock()
     .AddReferrerPolicyStrictOriginWhenCrossOrigin()
     .RemoveServerHeader()
-    .AddContentSecurityPolicy(builder =>
+    .AddContentSecurityPolicy(cspBuilder =>
         {
             // configure policies
-            builder.AddUpgradeInsecureRequests(); // upgrade-insecure-requests
-            builder.AddBlockAllMixedContent(); // block-all-mixed-content
-            builder.AddDefaultSrc() // default-src 'self' http://testUrl.com
+            cspBuilder.AddBaseUri() // base-uri 'self'
                 .Self();
-        },
-        asReportOnly: true); // report-only
+            cspBuilder.AddBlockAllMixedContent(); // block-all-mixed-content
+            cspBuilder.AddDefaultSrc() // default-src 'self'
+                .Self();
+            cspBuilder.AddImgSrc() // img-src 'self'
+                .Self();
+            cspBuilder.AddMediaSrc() // media-src 'none'
+                .None();
+            cspBuilder.AddObjectSrc() // object-src 'none'
+                .None();
+
+            var scriptBuilder = cspBuilder.AddScriptSrc() // script-src 'self' 'https://www.googletagmanager.com'
+                .Self()
+                .From("https://www.googletagmanager.com")
+                .WithNonce();
+
+            cspBuilder.AddFontSrc() // font-src 'self'
+                .Self();
+
+            var styleBuilder = cspBuilder.AddStyleSrc() // style-src 'self' 'strict-dynamic'
+                .Self()
+                .StrictDynamic()
+                .WithHashTagHelper(); // Allow whitelisted elements based on their SHA256 hash value
+
+            if (app.Environment.IsDevelopment())
+            {
+                // Support webpack development mode used in npm run build:dev and nom run watch
+                scriptBuilder.UnsafeEval();
+
+                // Visual Studio Browser Link
+                styleBuilder.WithHash256("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+                styleBuilder.WithHash256("tVFibyLEbUGj+pO/ZSi96c01jJCvzWilvI5Th+wLeGE=");
+
+                // For hot reload and similar developer tooling
+                cspBuilder.AddConnectSrc() // connect-src 'self' wss://localhost
+                    .Self()
+                    .From("http://localhost:*")
+                    .From("https://localhost:*")
+                    .From("ws://localhost:*")
+                    .From("wss://localhost:*");
+            }
+            else
+            {
+                // service makes no connections when deployed
+                cspBuilder.AddConnectSrc()
+                    .None();
+            }
+
+            cspBuilder.AddUpgradeInsecureRequests(); // upgrade-insecure-requests
+            cspBuilder.AddFormAction() // form-action 'self'
+                .Self();
+            cspBuilder.AddFrameAncestors() // frame-ancestors 'none'
+                .None();
+        });
 app.UseSecurityHeaders(policyCollection);
 
 // Ensure all date and currency formatting is set to UK/GB
