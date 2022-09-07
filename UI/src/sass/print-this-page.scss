@@ -1,0 +1,24 @@
+.app-print-this-page--container {
+  display: grid;
+}
+
+.app-print-this-page--container-left {
+  grid-column: 1;
+}
+
+.app-print-this-page--container-right {
+  grid-column: 2;
+  text-align: right;
+}
+
+.app-print-this-page--link {
+  display: none;
+}
+
+.js-enabled .app-print-this-page--link {
+  display: inline;
+  background-image: url("~/src/images/print-this-page.png");
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding: 3px 0 2px 30px;
+}
