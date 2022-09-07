@@ -26,6 +26,31 @@
 }
 
 @media print {
+  .govuk-heading-s,
+  .govuk-heading-m,
+  .govuk-heading-l,
+  .govuk-heading-xl,
+  .govuk-body,
+  .govuk-summary-list,
+  .govuk-table,
+  .govuk-list,
+  .govuk-details {
+    font-size: 100%;
+  }
+
+  a[href]:after {
+    content: none !important;
+  }
+
+  .govuk-link {
+    @include govuk-link-style-no-underline;
+
+    &:link,
+    &:visited {
+      color: govuk-colour("black");
+    }
+  }
+
   .govuk-header__container {
     border-bottom: 0;
   }
@@ -55,6 +80,10 @@
   }
 
   .govuk-footer {
+    display: none;
+  }
+
+  .govuk-details {
     display: none;
   }
 }
