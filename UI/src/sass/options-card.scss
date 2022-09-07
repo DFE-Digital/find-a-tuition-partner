@@ -9,31 +9,31 @@
 }
 
 @include govuk-media-query($from: tablet) {
-    .app-option-card-left {
-        margin-right: govuk-spacing(2);
-    }
+  .app-option-card-left {
+    margin-right: govuk-spacing(2);
+  }
 
-    .app-option-card-middle {
-        margin-left: govuk-spacing(2);
-        margin-right: govuk-spacing(2);
-    }
+  .app-option-card-middle {
+    margin-left: govuk-spacing(2);
+    margin-right: govuk-spacing(2);
+  }
 
-    .app-option-card-right {
-        margin-left: govuk-spacing(2);
-    }
+  .app-option-card-right {
+    margin-left: govuk-spacing(2);
+  }
 
-    .app-align-sibling-div-height-wrapper {
-        display: flex;
-        align-items: stretch;
-        position: relative;
-    }
+  .app-align-sibling-div-height-wrapper {
+    display: flex;
+    align-items: stretch;
+    position: relative;
+  }
 
-    .app-align-height-with-sibling {
-        display: flex;
-    }
+  .app-align-height-with-sibling {
+    display: flex;
+  }
 
-    .app-bottom-left {
-        position: absolute;
-        bottom: 36px;
-    }
+  .app-bottom-left {
+    position: absolute;
+    bottom: 36px;
+  }
 }
