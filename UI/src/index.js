@@ -58,3 +58,7 @@ if ($optionsSelect) {
     new window.GOVUK.Modules.OptionSelect(el).init()
   );
 }
+
+import PrintThisPage from "./javascript/print-this-page";
+var printThisPage = new PrintThisPage();
+printThisPage.init();
