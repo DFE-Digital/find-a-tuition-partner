@@ -9,6 +9,8 @@
 .app-print-this-page--container-right {
   grid-column: 2;
   text-align: right;
+  margin: 0;
+  padding-top: 12px;
 }
 
 .app-print-this-page--link {
@@ -20,5 +22,39 @@
   background-image: url("~/src/images/print-this-page.png");
   background-repeat: no-repeat;
   background-size: 20px;
-  padding: 3px 0 2px 30px;
+  padding-left: 30px;
+}
+
+@media print {
+  .govuk-header__container {
+    border-bottom: 0;
+  }
+
+  .govuk-header__logo {
+    display: none;
+  }
+
+  .govuk-phase-banner {
+    display: none;
+  }
+
+  .govuk-back-link {
+    display: none;
+  }
+
+  .app-print-hide {
+    display: none;
+  }
+
+  .app-print-this-page--container {
+    display: none;
+  }
+
+  .app-contact-banner {
+    display: none;
+  }
+
+  .govuk-footer {
+    display: none;
+  }
 }
