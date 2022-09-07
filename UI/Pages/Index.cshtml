@@ -1,82 +1,91 @@
 ﻿@page
 @model Index
 @{
-	ViewData["Title"] = "Find a tuition partner";
-	ViewData["AllowIndexing"] = true;
+    ViewData["Title"] = "Find a tuition partner";
+    ViewData["AllowIndexing"] = true;
 }
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
-		<form method="post">
-			<h1 class="govuk-heading-l">Find a tuition partner</h1>
-			<p class="govuk-body">
-				You can use your National Tutoring Programme funding to get a tuition partner, who will arrange tutoring for your pupils in school or online.
-			</p>
-			<p class="govuk-body">
-				This service will help match you with a partner who meets your requirements from the full list of quality-assured tuition partners.
-			</p>
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post">
+            <h1 class="govuk-heading-l">Find a tuition partner</h1>
+            <p class="govuk-body">
+                You can use your National Tutoring Programme funding to get a tuition partner, who will arrange tutoring for your pupils in school or online.
+            </p>
+            <p class="govuk-body">
+                This service will help match you with a partner who meets your requirements from the full list of quality-assured tuition partners.
+            </p>
 
-			<govuk-details data-testid="qatp-details">
-				<govuk-details-summary>
-					What is a quality-assured tuition partner?
-				</govuk-details-summary>
-				<govuk-details-text>
-					The tuition partners shown on this service have been through a quality assurance process by the Department for Education.
-					This process is to ensure quality tuition is delivered and includes safeguarding checks.
-				</govuk-details-text>
-			</govuk-details>
+            <govuk-details data-testid="qatp-details">
+                <govuk-details-summary>
+                    What is a quality-assured tuition partner?
+                </govuk-details-summary>
+                <govuk-details-text>
+                    The tuition partners shown on this service have been through a quality assurance process by the Department for Education.
+                    This process is to ensure quality tuition is delivered and includes safeguarding checks.
+                </govuk-details-text>
+            </govuk-details>
 
-			<div class="app-option-card">
-				<h2 class="govuk-heading-m">What is your school’s postcode?</h2>
-				<govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
-					<govuk-input-label>Enter your school’s postcode</govuk-input-label>
-				</govuk-input>
-				<govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
-			</div>
+            <div class="app-option-card">
+                <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
+                <govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
+                    <govuk-input-label>Enter your school’s postcode</govuk-input-label>
+                </govuk-input>
+                <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+            </div>
 
-			@if (Model.Data.KeyStages != null)
-			{
-			    foreach (var KeyStage in Model.Data.KeyStages)
-			    {
-					<input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
-				}
-			}
-			@if (Model.Data.Subjects != null)
-			{
-			    foreach (var subject in Model.Data.Subjects)
-			    {
-					<input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
-				}
-			}
+            @if (Model.Data.KeyStages != null)
+            {
+                foreach (var KeyStage in Model.Data.KeyStages)
+                {
+                    <input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
+                }
+            }
+            @if (Model.Data.Subjects != null)
+            {
+                foreach (var subject in Model.Data.Subjects)
+                {
+                    <input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+                }
+            }
             @if (Model.Data.TuitionType.HasValue)
             {
-                <input asp-for="Data.TuitionType" hidden/>
+                <input asp-for="Data.TuitionType" hidden />
             }
 
-			<h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
-			<p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
-			<div class="govuk-grid-column-one-half govuk-!-padding-0">
-				<div class="app-option-card app-option-card-left">
-					<h2 class="govuk-heading-m">Academic mentors</h2>
-					<p class="govuk-body">
-						Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition.
-					</p>
-					<govuk-button-link asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</govuk-button-link>
-				</div>
-			</div>
-			<div class="govuk-grid-column-one-half govuk-!-padding-0">
-				<div class="app-option-card app-option-card-right">
-					<h2 class="govuk-heading-m">School-led tutoring</h2>
-					<p class="govuk-body">
-						Select and employ your own tutors directly, for example current members of staff, retired teachers, parents or supply teachers.
-					</p>
-					<govuk-button-link asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</govuk-button-link>
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
-		<p class="govuk-body"><a asp-page="/FundingAndReporting" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
-	</div>
+            <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
+            <p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
+            <div class="govuk-wrapper-align-height-with-sibling">
+                <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-align-height-with-sibling">
+                    <div class="app-option-card app-option-card-left">
+                        <div>
+                        <h2 class="govuk-heading-m">Academic mentors</h2>
+                        <p class="govuk-body">
+                            Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition.
+                        </p>
+                        </div>
+                        <div class="govuk-bottom-left-for-button">
+                            <govuk-button-link asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</govuk-button-link>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="govuk-grid-column-one-half govuk-!-padding-0 govuk-align-height-with-sibling">
+                    <div class="app-option-card app-option-card-right">
+                        <h2 class="govuk-heading-m">School-led tutoring</h2>
+                        <p class="govuk-body">
+                            Select and employ your own tutors directly, for example current members of staff, retired teachers, parents or supply teachers.
+                        </p>
+                        <div class="govuk-bottom-left-for-button">
+                            <govuk-button-link asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</govuk-button-link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
+        <p class="govuk-body"><a asp-page="/FundingAndReporting" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
+    </div>
 </div>

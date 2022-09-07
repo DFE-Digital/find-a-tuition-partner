@@ -1,0 +1,26 @@
+﻿@include govuk-media-query($from: tablet) {
+
+    .govuk-wrapper-align-height-with-sibling {
+        display: flex;
+        align-items: stretch;
+    }
+}
+
+@include govuk-media-query($from: tablet) {
+
+    .govuk-align-height-with-sibling {
+        display: flex;
+    }
+}
+
+@include govuk-media-query($from: tablet) {
+
+    .govuk-bottom-left {
+        position: relative;
+        bottom: 0;
+        left: 0;
+    }
+}
+
+
+
