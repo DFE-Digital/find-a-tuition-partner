@@ -12,7 +12,7 @@ services:
       - AppLogging:DefaultLogEventLevel=Information
       - AppLogging:OverrideLogEventLevel=Warning
       - GoogleTagManager:ContainerId=EndToEndTesting
-      - GoogleAnalytics:MeasurementId=EndToEndTesting
+      - GoogleAnalytics:MeasurementId=
 
   db:
     image: postgres:13

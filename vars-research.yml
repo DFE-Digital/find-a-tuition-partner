@@ -5,4 +5,4 @@ dotnet-environment: Research
 default-log-event-level: Information
 override-log-event-level: Information
 google-tag-manager-container-id: GTM-T6MSKJQ
-google-analytics-measurement-id: G-VFDS3WSTQM
+google-analytics-measurement-id: 
