@@ -1,90 +1,91 @@
 @page
 @model FundingAndReporting
 @{
-	ViewData["Title"] = "Funding";
+    ViewData["Title"] = "Funding";
 }
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
-		<a href="@Model.ReturnPath" data-testid="back-link" class="govuk-back-link">Back</a>
-		<h1 class="govuk-heading-l" data-testid="funding-reporting-header">Funding and Reporting</h1>
+    <div class="govuk-grid-column-two-thirds">
+        <a href="@Model.ReturnPath" data-testid="back-link" class="govuk-back-link">Back</a>
+        <h1 class="govuk-heading-l" data-testid="funding-reporting-header">Funding and Reporting</h1>
 
-		<p class="govuk-body">Your school will get the following funding for each pupil premium-eligible pupil in a:
-		</p>
-		<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-			<li>mainstream school - <b>£162</b></li>
-			<li>non-mainstream school - <b>£423</b></li>
-		</ul>
+        <p class="govuk-body">
+            Your school will get the following funding for each pupil premium-eligible pupil in a:
+        </p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>mainstream school - <b>£162</b></li>
+            <li>non-mainstream school - <b>£423</b></li>
+        </ul>
 
-		<p class="govuk-body">
-			Funding can be put towards any of the 3 tutoring options. You can mix and match options in any combination.
-			This funding is intended to subsidise packages of 12 to 15 hours of tutoring for each pupil.
-		</p>
-		<p class="govuk-body">
-			Your school will receive its funding allocation in 3 installments: October 2022, January 2023 and April 2023.
-		</p>
-		<h2 class="govuk-heading-m">How the funding works</h2>
-		<p class="govuk-body">
-			Your funding can be used to cover 60% of your total tutoring costs, subject to a maximum rate per pupil per
-			hour. You’ll pay the remaining 40% from other parts of your budget, for example pupil premium.
-		</p>
-		<p class="govuk-body">
-			You won’t get more funding than you’ve been allocated. If 60% of your costs works out as more than your
-			allocation, you must pay the balance.
-		</p>
-		<p class="govuk-body">
-			Any unspent funding will be deducted from next year’s allocation.
-		</p>
-		<h3 class="govuk-heading-m">Maximum tutoring rate per pupil per hour</h3>
-		<p class="govuk-body">
-			The Department for Education sets maximum rates per pupil per hour (also called pupil-hour). The maximum rate per pupil-hour which you can use your funding for at the full 60% is either:
-		</p>
-		<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-			<li>£18 in a mainstream school </li>
-			<li>£47 in a non-mainstream school </li>
-		</ul>
-		<p class="govuk-body">
-			If you decide to spend more than the agreed maximum rate, you’ll need to pay the balance.
-		</p>
-		<h3 class="govuk-heading-m">How to work out your average rate per pupil per hour </h3>
-		<ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
-			<li> Multiply the number of tutoring hours by the number of pupils to give total pupil-hours.</li>
-			<li>Divide the total cost of tutoring by the number of pupil-hours. </li>
-		</ol>
-		<details class="govuk-details" data-module="govuk-details"
-			data-testid="academic-mentor-tutoring-rates-details-link">
-			<summary class="govuk-details__summary" data-testid="academic-mentor-tutoring-rates-details">
-				<span class="govuk-details__summary-text">
-					Academic mentor tutoring rates
-				</span>
-			</summary>
-			<div class="govuk-details__text">
-				<p class="govuk-body">
-					For academic mentors, the total cost includes their salary and all on-costs.
-				</p>
-				<p class="govuk-body">
-					To get maximum value from employing an academic mentor on a fixed salary, ensure they provide enough
-					pupil-hours to reach the threshold for 60% subsidy. Examples of thresholds in a mainstream school
-					are:
-				</p>
-				<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-					<li>1600 pupil-hours if the total cost is £21,800 </li>
-					<li>1400 pupil-hours if the total cost is £25,200</li>
-				</ul>
-				<p class="govuk-body">
-					In a non-mainstream school examples of thresholds are:
-				</p>
-				<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-					<li>470 pupil-hours if the total cost is £21,800 </li>
-					<li>540 pupil-hours if the total cost is £25,200</li>
-				</ul>
-			</div>
-		</details>
+        <p class="govuk-body">
+            Funding can be put towards any of the 3 tutoring options. You can mix and match options in any combination.
+            This funding is intended to subsidise packages of 12 to 15 hours of tutoring for each pupil.
+        </p>
+        <p class="govuk-body">
+            Your school will receive its funding allocation in 3 installments: October 2022, January 2023 and April 2023.
+        </p>
+        <h2 class="govuk-heading-m">How the funding works</h2>
+        <p class="govuk-body">
+            Your funding can be used to cover 60% of your total tutoring costs, subject to a maximum rate per pupil per
+            hour. You’ll pay the remaining 40% from other parts of your budget, for example pupil premium.
+        </p>
+        <p class="govuk-body">
+            You won’t get more funding than you’ve been allocated. If 60% of your costs works out as more than your
+            allocation, you must pay the balance.
+        </p>
+        <p class="govuk-body">
+            Any unspent funding will be deducted from next year’s allocation.
+        </p>
+        <h3 class="govuk-heading-m">Maximum tutoring rate per pupil per hour</h3>
+        <p class="govuk-body">
+            The Department for Education sets maximum rates per pupil per hour (also called pupil-hour). The maximum rate per pupil-hour which you can use your funding for at the full 60% is either:
+        </p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>£18 in a mainstream school </li>
+            <li>£47 in a non-mainstream school </li>
+        </ul>
+        <p class="govuk-body">
+            If you decide to spend more than the agreed maximum rate, you’ll need to pay the balance.
+        </p>
+        <h3 class="govuk-heading-m">How to work out your average rate per pupil per hour </h3>
+        <ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
+            <li> Multiply the number of tutoring hours by the number of pupils to give total pupil-hours.</li>
+            <li>Divide the total cost of tutoring by the number of pupil-hours. </li>
+        </ol>
+        <details class="govuk-details" data-module="govuk-details"
+                 data-testid="academic-mentor-tutoring-rates-details-link">
+            <summary class="govuk-details__summary" data-testid="academic-mentor-tutoring-rates-details">
+                <span class="govuk-details__summary-text">
+                    Academic mentor tutoring rates
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">
+                    For academic mentors, the total cost includes their salary and all on-costs.
+                </p>
+                <p class="govuk-body">
+                    To get maximum value from employing an academic mentor on a fixed salary, ensure they provide enough
+                    pupil-hours to reach the threshold for 60% subsidy. Examples of thresholds in a mainstream school
+                    are:
+                </p>
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                    <li>1600 pupil-hours if the total cost is £21,800 </li>
+                    <li>1400 pupil-hours if the total cost is £25,200</li>
+                </ul>
+                <p class="govuk-body">
+                    In a non-mainstream school examples of thresholds are:
+                </p>
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                    <li>470 pupil-hours if the total cost is £21,800 </li>
+                    <li>540 pupil-hours if the total cost is £25,200</li>
+                </ul>
+            </div>
+        </details>
         <h3 class="govuk-heading-m">Funding calculation examples</h3>
 
-		<article class="moj-ticket-panel" aria-label="Example 1" data-testid="inset-text-example1">
+        <article class="moj-ticket-panel" aria-label="Example 1" data-testid="inset-text-example1">
 
-			<section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 1 section 1">
-				<h4 class="govuk-heading-s govuk-!-margin-bottom-2">Example 1</h4>
+            <section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 1 section 1">
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-2">Example 1</h4>
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
                     <li>Your mainstream school has 250 pupil premium-eligible pupils, giving you an allocation of £40,500.</li>
                     <li>You provide 2,200 pupil-hours of tutoring using a tuition partner at a total cost of £39,600.</li>
@@ -95,7 +96,7 @@
                     <li><b>Total pupil-hours: </b> 3,700</li>
                     <li><b>Tutoring rate: </b> £17.59 per pupil per hour</li>
                 </ul>
-				<h4 class="govuk-heading-s govuk-!-margin-bottom-2">Funding result</h4>
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-2">Funding result</h4>
                 <p class="govuk-body">
                     Because your rate is below the £18 maximum, your funding covers 60% of the cost - £39,060. You’ll pay the remaining £26,040 from other funding.
                 </p>
@@ -105,16 +106,16 @@
 
         <article class="moj-ticket-panel" aria-label="Example 2" data-testid="inset-text-example1">
 
-			<section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 2 section 1">
+            <section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 2 section 1">
                 <h4 class="govuk-heading-s govuk-!-margin-bottom-2">Example 2</h4>
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-					<li>Your non-mainstream school has 38 pupil premium-eligible pupils, so your allocation is £16,074.</li>
-					<li>You provide 550 pupil-hours of tutoring using a tuition partner at a cost of £22,000.</li>
+                    <li>Your non-mainstream school has 38 pupil premium-eligible pupils, so your allocation is £16,074.</li>
+                    <li>You provide 550 pupil-hours of tutoring using a tuition partner at a cost of £22,000.</li>
                 </ul>
                 <ul class="govuk-list">
-					<li><b>Total cost: </b> £22,000</li>
-					<li><b>Total pupil-hours: </b> 550</li>
-					<li><b>Tutoring rate: </b> £40 per pupil per hour</li>
+                    <li><b>Total cost: </b> £22,000</li>
+                    <li><b>Total pupil-hours: </b> 550</li>
+                    <li><b>Tutoring rate: </b> £40 per pupil per hour</li>
                 </ul>
                 <h4 class="govuk-heading-s govuk-!-margin-bottom-2">Funding result</h4>
                 <p class="govuk-body">
@@ -126,7 +127,7 @@
 
         <article class="moj-ticket-panel" aria-label="Example 3" data-testid="inset-text-example1">
 
-			<section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 3 section 1">
+            <section class="moj-ticket-panel__content moj-ticket-panel__content--blue" aria-label="Example 3 section 1">
                 <h4 class="govuk-heading-s govuk-!-margin-bottom-2">Example 3</h4>
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
                     <li>Your mainstream school has 67 pupil premium-eligible pupils which means your allocation is £10,854.</li>
@@ -148,13 +149,15 @@
 
         </article>
 
-		<h2 class="govuk-heading-m">Reporting how you’ve spent your funding</h2>
-		<p class="govuk-body">You’ll need to report how you have spent your funding in summer 2023 in your year-end
-			statement. You should keep a record of:</p>
-		<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-			<li>how many hours of tutoring pupils have had</li>
-			<li>the total cost of tutoring</li>
-			<li>how many pupils have received tutoring</li>
-		</ul>
-	</div>
+        <h2 class="govuk-heading-m">Reporting how you’ve spent your funding</h2>
+        <p class="govuk-body">
+            You’ll need to report how you have spent your funding in summer 2023 in your year-end
+            statement. You should keep a record of:
+        </p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>how many hours of tutoring pupils have had</li>
+            <li>the total cost of tutoring</li>
+            <li>how many pupils have received tutoring</li>
+        </ul>
+    </div>
 </div>

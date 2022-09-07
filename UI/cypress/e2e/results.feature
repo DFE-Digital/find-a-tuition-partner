@@ -98,12 +98,12 @@ Feature: User is shown search results
     And they will see an expanded subject filter for 'Key stage 2'
 
   Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
-      Given a user has arrived on the 'Search results' page
-      Then the subjects in the filter displayed in alphabetical order 
+    Given a user has arrived on the 'Search results' page
+    Then the subjects in the filter displayed in alphabetical order 
 
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
-      Given a user has arrived on the 'Search results' page
-      Then the subjects covered by a tuition partner are in alphabetical order 
+    Given a user has arrived on the 'Search results' page
+    Then the subjects covered by a tuition partner are in alphabetical order 
 
   Scenario: Results summary is shown 
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
@@ -119,7 +119,7 @@ Feature: User is shown search results
     Then no subject should be shown as selected
     And they will see the tuition type 'Any' is selected
 
-   Scenario: All subject filters are collapsed when clear all filters is clicked
+  Scenario: All subject filters are collapsed when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
     When the ‘clear filters’ button as been selected
     Then all subject filters are collapsed
@@ -152,7 +152,7 @@ Feature: User is shown search results
   Scenario: Tuition partner details are displayed correctly when postcode entered and filters are selected on results page
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When they enter 'SK1 1EB' as the school's postcode
-      And 'Key stage 1 English' is selected
+    And 'Key stage 1 English' is selected
     Then all tuition partner parameters are populated correctly
 
   Scenario: Tuition partner details are displayed correctly after clear filters is selected on results page

@@ -1,86 +1,90 @@
 ﻿@page
 @{
-	Layout = "_Layout";
-	ViewData["Title"] = "Employ mentors";
+    Layout = "_Layout";
+    ViewData["Title"] = "Employ mentors";
 }
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
-		<a href="/" data-testid="home-link" class="govuk-back-link">Home</a>
-		<h1 class="govuk-heading-l" data-testid="academic-mentors-header">Employ an academic mentor</h1>
-		<p class="govuk-body">
-			You can employ an academic mentor for a year at a time as a salaried member of staff. They’ll work alongside
-			teaching staff and provide 1 to 1 and small-group sessions (no more than 6 pupils).
-		</p>
-		<p class="govuk-body">
-			There are 2 ways to find an academic mentor.
-		</p>
-		<ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
-			<li>Register with a central provider to be matched with a suitable academic mentor (the registration site
-				will be available soon). They’re likely to be a recent graduate, a school leaver taking a gap year, or
-				someone considering a career in teaching or education.
-			</li>
-			<li>Select and appoint someone directly.</li>
-		</ol>
-		<p class="govuk-body">
-			Academic mentors will be allocated from the central pool on the basis of suitability and proximity. If there
-			are more requests than people, schools with the greatest proportion of pupil premium-eligible pupils will be
-			given priority.
-		</p>
-		
-		<h2 class="govuk-heading-l" data-testid="training-academic-header">Training for academic mentors you appoint</h2>
-		<p class="govuk-body">
-			New academic mentors must complete intensive training before they start work. This online course is spread
-			over 1 to 2 weeks. You can request that they take additional modules in relevant topics.
-		</p>
-		<p class="govuk-body">
-			Use the Education Development Trust service to <a 
-				href="http://nominations.tutortraining.co.uk/registration" target="_blank"
-				class="govuk-link" data-testid="book-training">book training for tutors you employ directly</a>.
-		</p>
-		
-		<h3 class="govuk-heading-m" data-testid="renewing-contract-header">Training for academic mentors you’ve employed
-			before
-		</h3>
-		<p class="govuk-body">
-			If you’re renewing the contract of an academic mentor you employed in 2021 to 2022, they don’t need to
-			repeat
-			the whole course. But you can request they take a refresher module.
-		</p>
-		<h2 class="govuk-heading-l" data-testid="employment-terms-header">Employment terms</h2>
-		<p class="govuk-body">
-			You need to employ your academic mentor to the end of the 2022 to 2023 academic year, including all school
-			holidays.
-		</p>
-		<p class="govuk-body">
-			If you’re a small school, you can share an academic mentor with other schools in your academy trust or local
-			area.
-		</p>
-		<h3 class="govuk-heading-m" data-testid="salary-onboarding-header">Salary and onboarding costs</h3>
-		<p class="govuk-body">
-			You’re responsible for onboarding costs and paying the academic mentor’s salary. This will be a minimum of:
-		</p>
-		<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-			<li>£21,000 if they have a degree</li>
-			<li>£19,000 if they do not have a degree</li>
-		</ul>
-		<p class="govuk-body">
-			Your funding allocation will cover a proportion of their salary (up to 60%). For more details and examples
-			<a href="/funding-and-reporting" data-testid="funding-allocation-link" class="govuk-link">read the
-				information on funding.</a>
-		</p>
-		<h2 class="govuk-heading-l" data-testid="employment-terms-header">Checks you need to do</h2>
-		<p class="govuk-body">
-			You must carry out the following checks on new academic mentors:
-			</p>
-		<ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-			<li>References</li>
-			<li><a href="https://www.gov.uk/find-out-dbs-check/y/caring-for-or-working-with-children-under-18-or-working-in-a-school/teaching-or-caring-for-children/working-in-a-school-nursery-children-s-centre-or-home-detention-service-young-offender-institution-or-childcare-premises/yes"
-				target="_blank" data-testid="dbs-check-link" class="govuk-link">DBS enhanced check with barred lists</a></li>
-		</ul>
-	</div>
-	<div class="govuk-grid-column-one-third">
-		<h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
-		<p class="govuk-body"><a asp-page="/FundingAndReporting" data-testid="funding-reporting-link" class="govuk-link">Funding and reporting</a></p>
-	</div>
+    <div class="govuk-grid-column-two-thirds">
+        <a href="/" data-testid="home-link" class="govuk-back-link">Home</a>
+        <h1 class="govuk-heading-l" data-testid="academic-mentors-header">Employ an academic mentor</h1>
+        <p class="govuk-body">
+            You can employ an academic mentor for a year at a time as a salaried member of staff. They’ll work alongside
+            teaching staff and provide 1 to 1 and small-group sessions (no more than 6 pupils).
+        </p>
+        <p class="govuk-body">
+            There are 2 ways to find an academic mentor.
+        </p>
+        <ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
+            <li>
+                <a href="https://www.ntpacademicmentors.co.uk/schools/register-your-school" target="_blank" class="govuk-link" data-testid="cognition-registration-link">Register with Cognition</a>, the central provider, to be matched with a suitable academic mentor.
+                They’re likely to be a recent graduate, a school leaver taking a gap year, or someone considering a career in teaching or education.
+            </li>
+            <li>Select and appoint someone directly.</li>
+        </ol>
+        <p class="govuk-body">
+            Academic mentors will be allocated from the central pool on the basis of suitability and proximity. If there
+            are more requests than people, schools with the greatest proportion of pupil premium-eligible pupils will be
+            given priority.
+        </p>
+
+        <h2 class="govuk-heading-l" data-testid="training-academic-header">Training for academic mentors you appoint</h2>
+        <p class="govuk-body">
+            New academic mentors must complete intensive training before they start work. This online course is spread
+            over 1 to 2 weeks. You can request that they take additional modules in relevant topics.
+        </p>
+        <p class="govuk-body">
+            Use the Education Development Trust service to <a href="http://nominations.tutortraining.co.uk/registration" target="_blank"
+                                                              class="govuk-link" data-testid="book-training">book training for your academic mentor</a>.
+        </p>
+
+        <h3 class="govuk-heading-m" data-testid="renewing-contract-header">
+            Training for academic mentors you’ve employed
+            before
+        </h3>
+        <p class="govuk-body">
+            If you’re renewing the contract of an academic mentor you employed in 2021 to 2022, they don’t need to
+            repeat
+            the whole course. But you can request they take a refresher module.
+        </p>
+        <h2 class="govuk-heading-l" data-testid="employment-terms-header">Employment terms</h2>
+        <p class="govuk-body">
+            You need to employ your academic mentor to the end of the 2022 to 2023 academic year, including all school
+            holidays.
+        </p>
+        <p class="govuk-body">
+            If you’re a small school, you can share an academic mentor with other schools in your academy trust or local
+            area.
+        </p>
+        <h3 class="govuk-heading-m" data-testid="salary-onboarding-header">Salary and onboarding costs</h3>
+        <p class="govuk-body">
+            You’re responsible for onboarding costs and paying the academic mentor’s salary. This will be a minimum of:
+        </p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>£21,000 if they have a degree</li>
+            <li>£19,000 if they do not have a degree</li>
+        </ul>
+        <p class="govuk-body">
+            Your funding allocation will cover a proportion of their salary (up to 60%). For more details and examples
+            <a href="/funding-and-reporting" data-testid="funding-allocation-link" class="govuk-link">
+                read the
+                information on funding.
+            </a>
+        </p>
+        <h2 class="govuk-heading-l" data-testid="employment-terms-header">Checks you need to do</h2>
+        <p class="govuk-body">
+            You must carry out the following checks on new academic mentors:
+        </p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>References</li>
+            <li>
+                <a href="https://www.gov.uk/find-out-dbs-check/y/caring-for-or-working-with-children-under-18-or-working-in-a-school/teaching-or-caring-for-children/working-in-a-school-nursery-children-s-centre-or-home-detention-service-young-offender-institution-or-childcare-premises/yes"
+                   target="_blank" data-testid="dbs-check-link" class="govuk-link">DBS enhanced check with barred lists</a>
+            </li>
+        </ul>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
+        <p class="govuk-body"><a asp-page="/FundingAndReporting" data-testid="funding-reporting-link" class="govuk-link">Funding and reporting</a></p>
+    </div>
 </div>
