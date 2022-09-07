@@ -40,10 +40,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAntiforgery(options =>
 {
     options.Cookie.Name = ".FindATuitionPartner.Antiforgery";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
-builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = ".FindATuitionPartner.Mvc.CookieTempDataProvider");
-
+builder.Services.Configure<CookieTempDataProviderOptions>(options =>
+{
+    options.Cookie.Name = ".FindATuitionPartner.Mvc.CookieTempDataProvider";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
 
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
@@ -109,13 +117,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
 // Handle runtime exceptions withing the application
 app.UseExceptionHandler("/Error");
 
@@ -141,26 +142,69 @@ app.MapControllers();
 
 app.MapRazorPages();
 
-app.Use(async (context, next) =>
-{
-    if (!context.Response.Headers.ContainsKey("X-Frame-Options"))
-    {
-        context.Response.Headers.Add("X-Frame-Options", "DENY");
-    }
-    if (!context.Response.Headers.ContainsKey("Content-Security-Policy"))
-    {
-        context.Response.Headers.Add("Content-Security-Policy", "base-uri 'self'; block-all-mixed-content; default-src 'self'; img-src data: https:; object-src 'none'; script-src 'self' https://www.google-analytics.com http://www.googletagmanager.com/gtag/ 'unsafe-inline'; style-src 'self'; connect-src 'self' wss://localhost:* *.google-analytics.com *.analytics.google.com; upgrade-insecure-requests;");
-    }
-    if (!context.Response.Headers.ContainsKey("X-XSS-Protection"))
-    {
-        context.Response.Headers.Add("X-XSS-Protection", "0");
-    }
-    if (!context.Response.Headers.ContainsKey("X-Content-Type-Options"))
-    {
-        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    }
-    await next();
-});
+var policyCollection = new HeaderPolicyCollection()
+    .AddContentTypeOptionsNoSniff()
+    .AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365) // maxage = one year in seconds
+    .AddFrameOptionsDeny()
+    .AddXssProtectionBlock()
+    .AddReferrerPolicyStrictOriginWhenCrossOrigin()
+    .RemoveServerHeader()
+    .AddContentSecurityPolicy(cspBuilder =>
+        {
+            // configure policies
+            cspBuilder.AddBaseUri() // base-uri 'self'
+                .Self();
+            cspBuilder.AddBlockAllMixedContent(); // block-all-mixed-content
+            cspBuilder.AddDefaultSrc() // default-src 'self'
+                .Self();
+            cspBuilder.AddImgSrc() // img-src 'self'
+                .Self();
+            cspBuilder.AddMediaSrc() // media-src 'none'
+                .None();
+            cspBuilder.AddObjectSrc() // object-src 'none'
+                .None();
+
+            var scriptBuilder = cspBuilder.AddScriptSrc() // script-src 'self' 'https://www.googletagmanager.com'
+                .Self()
+                .From("https://www.googletagmanager.com")
+                .WithNonce();
+
+            cspBuilder.AddFontSrc() // font-src 'self'
+                .Self();
+
+            var styleBuilder = cspBuilder.AddStyleSrc() // style-src 'self' 'strict-dynamic'
+                .Self()
+                .StrictDynamic()
+                .WithHashTagHelper(); // Allow whitelisted elements based on their SHA256 hash value
+
+            var connectBuilder = cspBuilder.AddConnectSrc() // connect-src 'self' https://*.google-analytics.com
+                .Self()
+                .From("https://*.google-analytics.com");
+
+            if (app.Environment.IsDevelopment())
+            {
+                // Support webpack development mode used in npm run build:dev and nom run watch
+                scriptBuilder.UnsafeEval();
+
+                // Visual Studio Browser Link
+                styleBuilder.WithHash256("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+                styleBuilder.WithHash256("tVFibyLEbUGj+pO/ZSi96c01jJCvzWilvI5Th+wLeGE=");
+
+                // For hot reload and similar developer tooling
+                connectBuilder
+                    .From("http://localhost:*")
+                    .From("https://localhost:*")
+                    .From("ws://localhost:*")
+                    .From("wss://localhost:*");
+            }
+
+            cspBuilder.AddUpgradeInsecureRequests(); // upgrade-insecure-requests
+            cspBuilder.AddFormAction() // form-action 'self'
+                .Self();
+            cspBuilder.AddFrameAncestors() // frame-ancestors 'none'
+                .None();
+        });
+app.UseSecurityHeaders(policyCollection);
 
 // Ensure all date and currency formatting is set to UK/GB
 var cultureInfo = new CultureInfo("en-GB");

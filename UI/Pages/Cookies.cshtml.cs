@@ -65,7 +65,7 @@ public class Cookies : PageModel
     {
         if (consent.HasValue)
         {
-            var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(12), Secure = true };
+            var cookieOptions = new CookieOptions { Expires = DateTime.Today.AddMonths(12), HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict };
             Response.Cookies.Append(ConsentCookieName, consent.Value.ToString(), cookieOptions);
 
             if (!consent.Value)
