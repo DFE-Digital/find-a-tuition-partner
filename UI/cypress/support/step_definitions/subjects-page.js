@@ -25,6 +25,31 @@ export const allSubjects = {
   ],
 };
 
+Given("a user has arrived on the 'Which key stages' page", () => {
+  Step(
+    this,
+    "a user has arrived on the 'Which key stages' page for postcode 'AB12CD'"
+  );
+});
+
+Given(
+  "a user has arrived on the 'Which key stages' page for postcode {string}",
+  (postcode) => {
+    cy.visit(`/which-key-stages?Postcode=${postcode}`);
+  }
+);
+
+Given(
+  "a user has arrived on the 'Which subjects' page for {string}",
+  (keystage) => {
+    const query = keystage
+      .split(",")
+      .map((s) => `KeyStages=${camelCaseKeyStage(s.trim())}`)
+      .join("&");
+    cy.visit(`/which-subjects?${query}`);
+  }
+);
+
 When("they select {string}", (keystage) => {
   const stages = keystage.split(",").map((s) => s.trim());
   stages.forEach((element) => {

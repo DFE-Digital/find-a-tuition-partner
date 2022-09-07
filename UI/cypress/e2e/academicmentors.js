@@ -1,9 +1,5 @@
 ﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the academic mentors page", () => {
-  cy.visit(`/academic-mentors`);
-});
-
 When("they click funding and reporting link", () => {
   cy.get('[data-testid="funding-reporting-link"]').click();
 });

@@ -1,9 +1,5 @@
 ﻿import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the accessibility page", () => {
-  cy.visit(`/accessibility`);
-});
-
 Then("they will see the accessibility statement header", () => {
   cy.get('[data-testid="accessibility-header"]').should(
     "contain.text",

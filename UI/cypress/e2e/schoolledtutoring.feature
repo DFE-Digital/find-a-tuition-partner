@@ -18,8 +18,8 @@
 
   Scenario: page has link to book training
     Given a user has arrived on the school led tutoring page
-     Then they will see the book training link
-     And the book training link opens in a new window
+    Then they will see the book training link
+    And the book training link opens in a new window
 
   Scenario: page has link to funding allocation link
     Given a user has arrived on the school led tutoring page

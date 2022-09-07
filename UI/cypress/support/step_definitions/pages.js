@@ -4,6 +4,34 @@ Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit("/");
 });
 
+Given("a user has arrived on the funding and reporting page", () => {
+  cy.visit(`/funding-and-reporting`);
+});
+
+Given("a user has arrived on the academic mentors page", () => {
+  cy.visit(`/academic-mentors`);
+});
+
+Given("a user has arrived on the school led tutoring page", () => {
+  cy.visit(`/school-led-tutoring`);
+});
+
+Given("a user has arrived on the contact us page", () => {
+  cy.visit(`/contact-us`);
+});
+
+Given("a user has arrived on the accessibility page", () => {
+  cy.visit(`/accessibility`);
+});
+
+Given("a user has arrived on the cookies page", () => {
+  cy.visit(`/cookies`);
+});
+
+Given("a user has arrived on the privacy page", () => {
+  cy.visit(`/privacy`);
+});
+
 When(
   "they set the {string} query string parameter value to {string}",
   (key, value) => {
