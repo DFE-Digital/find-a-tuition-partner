@@ -124,7 +124,7 @@ public class SearchForSubjects : CleanSliceFixture
                     $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage3}-Humanities",
                 }
             };
-            return page.OnPost(command);
+            return page.OnGetSubmit(command);
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
