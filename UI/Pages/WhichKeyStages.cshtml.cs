@@ -11,8 +11,22 @@ namespace UI.Pages
 
         public WhichKeyStages(IMediator mediator) => this.mediator = mediator;
 
-        [BindProperty]
         public Command Data { get; set; } = new();
+
+        public async Task OnGet(Query query) => Data = await mediator.Send(query);
+
+        public async Task<IActionResult> OnGetSubmit(Command data)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToPage(nameof(WhichSubjects), new SearchModel(data));
+            }
+            else
+            {
+                Data = await mediator.Send(new Query(data));
+                return Page();
+            }
+        }
 
         public record Query : SearchModel, IRequest<Command>
         {
@@ -20,26 +34,11 @@ namespace UI.Pages
             public Query(SearchModel query) : base(query) { }
         }
 
-        public async Task OnGet(Query query)
-        {
-            Data = await mediator.Send(query);
-        }
-
         public record Command : SearchModel, IRequest<SearchModel>
         {
             public Command() { }
             public Command(SearchModel query) : base(query) { }
             public Selectable<KeyStage>[] AllKeyStages { get; set; } = Array.Empty<Selectable<KeyStage>>();
-        }
-
-        public async Task<IActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
-            {
-                Data = await mediator.Send(new Query(Data));
-                return Page();
-            }
-            return RedirectToPage(nameof(WhichSubjects), new SearchModel(Data));
         }
 
         public class Validator : AbstractValidator<Command>
@@ -54,7 +53,7 @@ namespace UI.Pages
 
         public class Handler : IRequestHandler<Query, Command>
         {
-            static readonly IEnumerable<KeyStage> AllKeyStages = new KeyStage[]
+            private static readonly IEnumerable<KeyStage> AllKeyStages = new KeyStage[]
             {
                 KeyStage.KeyStage1, KeyStage.KeyStage2, KeyStage.KeyStage3, KeyStage.KeyStage4
             };
