@@ -50,6 +50,10 @@
     @include govuk-font($size: 16);
   }
 
+  .govuk-body-s {
+    font-size: 12pt;
+  }
+
   a[href]:after {
     content: none !important;
   }
