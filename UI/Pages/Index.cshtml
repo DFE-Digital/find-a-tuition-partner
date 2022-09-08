@@ -55,22 +55,28 @@
 
             <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
             <p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
-            <div class="govuk-grid-column-one-half govuk-!-padding-0">
-                <div class="app-option-card app-option-card-left">
-                    <h2 class="govuk-heading-m">Academic mentors</h2>
-                    <p class="govuk-body">
-                        Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition.
-                    </p>
-                    <govuk-button-link asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</govuk-button-link>
+            <div class="app-align-sibling-div-height-wrapper">
+                <div class="govuk-grid-column-one-half govuk-!-padding-0 app-align-height-with-sibling">
+                    <div class="app-option-card app-option-card-left">
+                        <h2 class="govuk-heading-m">Academic mentors</h2>
+                        <p class="govuk-body">
+                            Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition.
+                        </p>
+                        <div>
+                            <govuk-button-link asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</govuk-button-link>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="govuk-grid-column-one-half govuk-!-padding-0">
-                <div class="app-option-card app-option-card-right">
-                    <h2 class="govuk-heading-m">School-led tutoring</h2>
-                    <p class="govuk-body">
-                        Select and employ your own tutors directly, for example current members of staff, retired teachers, parents or supply teachers.
-                    </p>
-                    <govuk-button-link asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</govuk-button-link>
+                <div class="govuk-grid-column-one-half govuk-!-padding-0 app-align-height-with-sibling">
+                    <div class="app-option-card app-option-card-right">
+                        <h2 class="govuk-heading-m">School-led tutoring</h2>
+                        <p class="govuk-body">
+                            Select and employ your own tutors directly, for example current members of staff, retired teachers, parents or supply teachers.
+                        </p>
+                        <div class="app-bottom-left">
+                            <govuk-button-link asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</govuk-button-link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
