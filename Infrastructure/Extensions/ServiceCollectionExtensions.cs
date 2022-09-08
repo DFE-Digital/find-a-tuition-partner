@@ -7,7 +7,6 @@ using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
 using Infrastructure.Extraction;
 using Infrastructure.Factories;
-using Infrastructure.MetricLogging;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
