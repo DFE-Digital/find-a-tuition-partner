@@ -35,6 +35,7 @@ if (args.Any(x => x == "import"))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddEnvironmentConfiguration();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>
