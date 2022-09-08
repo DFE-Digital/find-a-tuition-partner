@@ -7,31 +7,6 @@ import {
 import { kebabCase, camelCaseKeyStage } from "../support/utils";
 import { allSubjects } from "../support/step_definitions/subjects-page";
 
-Given("a user has arrived on the 'Which key stages' page", () => {
-  Step(
-    this,
-    "a user has arrived on the 'Which key stages' page for postcode 'AB12CD'"
-  );
-});
-
-Given(
-  "a user has arrived on the 'Which key stages' page for postcode {string}",
-  (postcode) => {
-    cy.visit(`/which-key-stages?Postcode=${postcode}`);
-  }
-);
-
-Given(
-  "a user has arrived on the 'Which subjects' page for {string}",
-  (keystage) => {
-    const query = keystage
-      .split(",")
-      .map((s) => `KeyStages=${camelCaseKeyStage(s.trim())}`)
-      .join("&");
-    cy.visit(`/which-subjects?${query}`);
-  }
-);
-
 Given("the 'Which subjects' page is displayed", () => {
   cy.visit(
     "/which-subjects?Postcode=sk11eb&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4"

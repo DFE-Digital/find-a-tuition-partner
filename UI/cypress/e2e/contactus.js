@@ -1,9 +1,5 @@
 ﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the contact us page", () => {
-  cy.visit(`/contact-us`);
-});
-
 Then("they will see the back link", () => {
   cy.get('[data-testid="back-link"]').should("have.attr", "href", "");
 });
