@@ -35,6 +35,7 @@ if (args.Any(x => x == "import"))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddEnvironmentConfiguration();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>
@@ -187,8 +188,7 @@ var policyCollection = new HeaderPolicyCollection()
                 scriptBuilder.UnsafeEval();
 
                 // Visual Studio Browser Link
-                styleBuilder.WithHash256("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
-                styleBuilder.WithHash256("tVFibyLEbUGj+pO/ZSi96c01jJCvzWilvI5Th+wLeGE=");
+                styleBuilder.UnsafeInline();
 
                 // For hot reload and similar developer tooling
                 connectBuilder

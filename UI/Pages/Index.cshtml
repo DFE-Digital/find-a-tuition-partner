@@ -7,7 +7,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post">
+        <form method="get">
             <h1 class="govuk-heading-l">Find a tuition partner</h1>
             <p class="govuk-body">
                 You can use your National Tutoring Programme funding to get a tuition partner, who will arrange tutoring for your pupils in school or online.
@@ -34,6 +34,7 @@
                 <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
             </div>
 
+            <input type="hidden" name="handler" value="Submit" />
             @if (Model.Data.KeyStages != null)
             {
                 foreach (var KeyStage in Model.Data.KeyStages)

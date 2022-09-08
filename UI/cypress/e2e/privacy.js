@@ -1,9 +1,5 @@
 ﻿import { Given, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the privacy page", () => {
-  cy.visit(`/privacy`);
-});
-
 Then("they will see the privacy notice header", () => {
   cy.get('[data-testid="privacy-header"]').should(
     "contain.text",

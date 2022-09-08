@@ -1,9 +1,5 @@
 ﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("a user has arrived on the funding and reporting page", () => {
-  cy.visit(`/funding-and-reporting`);
-});
-
 Then("they will see the funding and report header", () => {
   cy.get('[data-testid="funding-reporting-header"]').should(
     "contain.text",
