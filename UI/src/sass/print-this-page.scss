@@ -26,16 +26,28 @@
 }
 
 @media print {
-  .govuk-heading-s,
-  .govuk-heading-m,
-  .govuk-heading-l,
-  .govuk-heading-xl,
+  .govuk-heading-s {
+    @include govuk-font($size: 16, $weight: bold);
+  }
+
+  .govuk-heading-m {
+    @include govuk-font($size: 19, $weight: bold);
+  }
+
+  .govuk-heading-l {
+    @include govuk-font($size: 24, $weight: bold);
+  }
+
+  .govuk-heading-xl {
+    @include govuk-font($size: 36, $weight: bold);
+  }
+
   .govuk-body,
   .govuk-summary-list,
   .govuk-table,
   .govuk-list,
   .govuk-details {
-    font-size: 100%;
+    @include govuk-font($size: 16);
   }
 
   a[href]:after {
@@ -51,12 +63,20 @@
     }
   }
 
+  .govuk-cookie-banner {
+    display: none;
+  }
+
   .govuk-header__container {
     border-bottom: 0;
   }
 
   .govuk-header__logo {
     display: none;
+  }
+
+  .govuk-header__service-name {
+    @include govuk-font($size: 19, $weight: bold);
   }
 
   .govuk-phase-banner {
