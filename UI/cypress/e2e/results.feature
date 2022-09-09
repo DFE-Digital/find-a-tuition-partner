@@ -173,9 +173,3 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When the user selects tuition type 'in school'
     Then they will see the tuition type 'in school' is selected
-
- Scenario: User is able to select subjects
-   Given a user has arrived on the 'Search results' page without subjects or postcode
-   When a user selects all subject
-   Then all the subjects are shown to be selected
-   And they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
