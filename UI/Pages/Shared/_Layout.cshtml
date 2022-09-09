@@ -11,8 +11,6 @@
     var requestCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
     var googleAnalyticsConsent = Convert.ToBoolean(requestCookie);
     var showContactus = Context.Request.HttpContext.Request.Path != "/contact-us";
-
-    var supportEmailAddress = "tutoring.support@service.education.gov.uk";
 }
 
 <!DOCTYPE html>
