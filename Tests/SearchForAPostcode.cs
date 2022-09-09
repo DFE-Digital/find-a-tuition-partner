@@ -90,8 +90,7 @@ public class SearchForAPostcode
 
         var result = await _fixture.GetPage<Index>().Execute(page =>
         {
-            page.Data.Postcode = postcode;
-            return page.OnPost();
+            return page.OnGetSubmit(new() { Postcode = postcode });
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;

@@ -34,20 +34,21 @@ public partial class Index : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPost()
+    public async Task<IActionResult> OnGetSubmit(Command data)
     {
         if (!ModelState.IsValid) return Page();
 
-        var validation = await _mediator.Send(Data);
+        var validation = await _mediator.Send(data);
 
         if (validation.IsSuccess)
         {
-            return RedirectToPage(nameof(WhichKeyStages), Data);
+            return RedirectToPage(nameof(WhichKeyStages), data);
         }
 
         if (validation is ErrorResult error)
             ModelState.AddModelError("Data.Postcode", error.ToString());
 
+        Data = data;
         return Page();
     }
 

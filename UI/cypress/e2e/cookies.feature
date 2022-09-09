@@ -94,10 +94,6 @@ Feature: User handles cookies
     When Saves Changes
     Then the error banner is displayed
 
-  Scenario: The cookie '.FindATuitionPartner.Antiforgery' is added when a user has started the 'Find a tuition partner' journey
-    Given a user has started the 'Find a tuition partner' journey
-    Then cookie '.FindATuitionPartner.Antiforgery' is added with value 'null'
-
   Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added when a user has reached the search page
     Given the search result page is displayed
     Then cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added with value 'null'
