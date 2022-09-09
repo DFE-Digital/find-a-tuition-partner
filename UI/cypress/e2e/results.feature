@@ -173,7 +173,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When the user selects tuition type 'in school'
     Then they will see the tuition type 'in school' is selected
-
+    
 Scenario: User is able to select subjects
    Given a user has arrived on the 'Search results' page without subjects or postcode
    When a user selects all subject

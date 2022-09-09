@@ -39,15 +39,20 @@ Feature: User can print relevant pages using a 'Print this page' link
     Given a user has arrived on the 'Which subjects' page for 'Key stage 2'
     Then the 'Print this page' link is not displayed
 
-  Scenario: search results page does not have a 'Print this page' link
+  Scenario: search results page has a 'Print this page' link
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths'
-    Then the 'Print this page' link is not displayed
+    Then the 'Print this page' link is displayed
+
+  Scenario: search results page 'Print this page' link opens print dialog
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths'
+    When the 'Print this page' link is clicked
+    Then the print dialog is opened
 
   Scenario: tuition partner details page has a 'Print this page' link
     Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
     Then the 'Print this page' link is displayed
 
-  Scenario: 'Print this page' link opens print dialog
+  Scenario: tuition partner details page 'Print this page' link opens print dialog
     Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
     When the 'Print this page' link is clicked
     Then the print dialog is opened
