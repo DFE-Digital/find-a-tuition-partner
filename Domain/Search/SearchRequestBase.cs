@@ -4,7 +4,7 @@ namespace Domain.Search;
 
 public abstract class SearchRequestBase
 {
-    public const int DefaultPageSize = 50;
+    public const int DefaultPageSize = 1;
     public const int MaxPageSize = 500;
 
     public int Page { get; set; }
