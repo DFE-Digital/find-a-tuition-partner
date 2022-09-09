@@ -163,3 +163,19 @@ Feature: User is shown search results
   Scenario: Tuition partner details are displayed correctly when arriving on the results page
     Given a user has arrived on the 'Search results' page
     Then all tuition partner parameters are populated correctly
+
+  Scenario: All key stages expanded when selected
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    When they click on the option heading for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
+    Then they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
+
+ Scenario: User is able to select a tuition type
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    When the user selects tuition type 'in school'
+    Then they will see the tuition type 'in school' is selected
+
+ Scenario: User is able to select subjects
+   Given a user has arrived on the 'Search results' page without subjects or postcode
+   When a user selects all subject
+   Then all the subjects are shown to be selected
+   And they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
