@@ -1,4 +1,5 @@
 ﻿Feature: Contactus Page Tests
+  
   Scenario: contact us page url is '/contact-us'
     Given a user has arrived on the contact us page
     Then the page URL ends with '/contact-us'
@@ -24,13 +25,15 @@
     Given a user has arrived on the contact us page
     Then they will not see contact us link
 
-  Scenario: page should have a read our guidance link 
+ Scenario: Report issue page is displayed when read our guidance link is selected
     Given a user has arrived on the contact us page
-    Then they will see read our guidance link
-    And the read our guidance link opens in a new window
+    When the link ‘read our guidance’ is selected
+    Then they will be taken to the 'Report issues' page
+    And the page's title is 'Report issues'
 
   Scenario: page should have a feedbackform link 
     Given a user has arrived on the contact us page
     Then they will see feedback form link
     And the feedback form link opens in a new window
 
+ 

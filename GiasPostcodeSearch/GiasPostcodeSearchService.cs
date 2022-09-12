@@ -58,11 +58,11 @@ public class GiasPostcodeSearchService : IHostedService
             var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
             if (subjectsQueryString == null)
             {
-                _logger.LogDebug("School {SchoolName} is not valid for this service", schoolDatum?.Name);
+                _logger.LogDebug("School {SchoolName} is not valid for this service", schoolDatum.Name);
             }
             else
             {
-                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum?.Name);
+                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum.Name);
 
                 var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
 

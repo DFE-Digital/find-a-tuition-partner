@@ -148,7 +148,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         var result = await Fixture.SendAsync(new TuitionPartner.Query(id));
 
-        result.Name.Should().Be("A Tuition Partner");
+        result!.Name.Should().Be("A Tuition Partner");
         result.Description.Should().Be("A Tuition Partner Description");
         result.Subjects.Should().BeEquivalentTo("Key stage 3 - English and Maths");
         result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");

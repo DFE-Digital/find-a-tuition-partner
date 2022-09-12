@@ -73,7 +73,7 @@ public class WhichSubjects : PageModel
             { KeyStage.KeyStage4, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
         };
 
-        public async Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
+        public Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
         {
             request.KeyStages ??= new[]
             {
@@ -95,7 +95,7 @@ public class WhichSubjects : PageModel
                     }).ToArray()
                 );
 
-            return selectable;
+            return Task.FromResult(selectable);
         }
     }
 }
