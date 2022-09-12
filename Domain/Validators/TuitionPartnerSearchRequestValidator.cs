@@ -2,7 +2,7 @@
 
 namespace Domain.Validators;
 
-public abstract class TuitionPartnerSearchRequestValidator<T> : SearchRequestBaseValidator<T> where T : TuitionPartnerSearchRequest
+public abstract class TuitionPartnerSearchRequestValidator<T>
 {
     protected TuitionPartnerSearchRequestValidator()
     {
