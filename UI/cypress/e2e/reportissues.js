@@ -1,19 +1,11 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("the ‘contact us’ page is displayed", () => {
-  cy.visit("/contact-us");
-});
-
 When("the link ‘read our guidance’ is selected", () => {
-  cy.get('[data-testid="complaints-page-link"]').click();
+  cy.get('[data-testid="report-issues-link"]').click();
 });
 
 When("the home link is selected", () => {
   cy.get('[data-testid="home-link"]').click();
-});
-
-Then("the 'complaints page' is displayed", () => {
-  cy.visit("/complaints-page");
 });
 
 Then("page has link to tutoring support email address", () => {
@@ -48,6 +40,9 @@ Then(
   }
 );
 
-Then("they will be taken to the 'complaints' page", () => {
-  cy.location("pathname").should("eq", "/complaints-page");
+Then("they will see the Report issues header", () => {
+  cy.get('[data-testid="report-issues-header"]').should(
+    "contain.text",
+    "If you have an issue with your tuition partner"
+  );
 });

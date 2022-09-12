@@ -1,7 +1,7 @@
 ﻿import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
 When("the link ‘read our guidance’ is selected", () => {
-  cy.get('[data-testid="complaints-page-link"]').click();
+  cy.get('[data-testid="report-issues-link"]').click();
 });
 
 Then("they will see the back link", () => {
@@ -36,6 +36,6 @@ Then("the feedback form link opens in a new window", () => {
   );
 });
 
-Then("they will be taken to the 'complaints' page", () => {
-  cy.location("pathname").should("eq", "/complaints-page");
+Then("they will be taken to the 'Report issues' page", () => {
+  cy.location("pathname").should("eq", "/report-issues");
 });

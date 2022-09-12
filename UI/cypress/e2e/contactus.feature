@@ -25,11 +25,11 @@
     Given a user has arrived on the contact us page
     Then they will not see contact us link
 
- Scenario: Complaints page is displayed when read our guidance link is selected
+ Scenario: Report issue page is displayed when read our guidance link is selected
     Given a user has arrived on the contact us page
     When the link ‘read our guidance’ is selected
-    Then they will be taken to the 'complaints' page
-    And the page's title is 'Complaints Page'
+    Then they will be taken to the 'Report issues' page
+    And the page's title is 'Report issues'
 
   Scenario: page should have a feedbackform link 
     Given a user has arrived on the contact us page
