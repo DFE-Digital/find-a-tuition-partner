@@ -1,9 +1,5 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-When("the link ‘read our guidance’ is selected", () => {
-  cy.get('[data-testid="report-issues-link"]').click();
-});
-
 When("the home link is selected", () => {
   cy.get('[data-testid="home-link"]').click();
 });
