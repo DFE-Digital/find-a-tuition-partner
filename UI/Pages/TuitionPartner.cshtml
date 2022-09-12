@@ -1,7 +1,7 @@
 ﻿@page "{id}"
 @model TuitionPartner
 @{
-    ViewData["Title"] = Model.Data.Name;
+    ViewData["Title"] = Model.Data!.Name;
 }
 <div class="app-print-hide">
     <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
