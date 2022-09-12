@@ -62,9 +62,9 @@ public class GiasPostcodeSearchService : IHostedService
             }
             else
             {
-                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum?.Name);
+                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum.Name);
 
-                var requestUri = $"search-results?Data.Postcode={schoolDatum!.Postcode}&{subjectsQueryString}";
+                var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
 
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
