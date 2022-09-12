@@ -72,15 +72,13 @@ public class SearchTuitionPartnerHandler
             int[] ids;
             if (request.PageSize == 1)
             {
-                 ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
+                ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
             }
             else
             {
-                 ids = await queryable.Skip(request.Page * request.PageSize).Take(request.PageSize).Select(e => e.Id).ToArrayAsync(cancellationToken);
+                ids = await queryable.Skip(request.Page * request.PageSize).Take(request.PageSize).Select(e => e.Id).ToArrayAsync(cancellationToken);
             }
-           
             var results = (await _repository.GetSearchResultsDictionaryAsync(ids, lad?.Id, ordering, cancellationToken)).ToArray();
-
             return new TuitionPartnerSearchResultsPage(request, count, results, lad);
         }
     }
