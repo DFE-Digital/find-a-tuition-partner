@@ -50,6 +50,10 @@
     @include govuk-font($size: 16);
   }
 
+  .govuk-body-s {
+    font-size: 12pt;
+  }
+
   a[href]:after {
     content: none !important;
   }
@@ -105,5 +109,16 @@
 
   .govuk-details {
     display: none;
+  }
+
+  .app-results-filter--non-desktop,
+  .app-results-filter-overlay--visible,
+  .app-results-filter-overlay--show-filters,
+  .app-form-group-inline {
+    display: none;
+  }
+
+  .app-c-option-select__title {
+    color: govuk-colour("black");
   }
 }

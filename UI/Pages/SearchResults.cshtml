@@ -4,9 +4,17 @@
     ViewData["Title"] = "Search results";
 }
 
-<a href="/which-subjects?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
+<div class="app-print-this-page--container">
+    <div class="app-print-this-page--container-left">
+        <a href="/which-subjects?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
+    </div>
 
-<div class="govuk-grid-row">
+    <div class="govuk-body app-print-this-page--container-right">
+        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
+    </div>
+</div>
+
+<div class="govuk-grid-row app-print-hide">
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
