@@ -12,6 +12,10 @@ public class TuitionPartnerConfiguration : IEntityTypeConfiguration<TuitionPartn
         builder.HasIndex(e => e.SeoUrl).IsUnique();
         builder.HasIndex(e => e.Name);
         builder.Property(s => s.SeoUrl).HasColumnName("SeoUrl");
+        builder
+            .Property(x => x.LastUpdated)
+            .HasConversion<DateOnlyConverter>()
+            .HasColumnType("datetime2");
         builder.Property(u => u.HasLogo)
             .HasComputedColumnSql("case when \"Logo\" is null then false else true end", stored: true);
 

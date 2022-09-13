@@ -11,6 +11,10 @@ public class LocalAuthorityDistrictConfiguration : IEntityTypeConfiguration<Loca
     {
         builder.HasIndex(e => e.Code).IsUnique();
         builder.HasIndex(e => e.Name);
+        builder
+            .HasOne(e => e.Region)
+            .WithMany(x => x.LocalAuthorityDistricts)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasData(
             new LocalAuthorityDistrict { Id = 1, Code = "E06000011", Name = "East Riding of Yorkshire", RegionId = Regions.Id.YorkshireandTheHumber, LocalAuthorityId = LocalAuthorities.Id.EastRidingOfYorkshire },

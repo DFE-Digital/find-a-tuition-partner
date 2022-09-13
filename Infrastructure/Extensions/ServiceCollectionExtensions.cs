@@ -1,12 +1,9 @@
-﻿using System.Text.Json;
-using Application;
+﻿using Application;
 using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
 using Application.Repositories;
 using Infrastructure.Configuration;
-using Infrastructure.Configuration.GPaaS;
-using Infrastructure.Constants;
 using Infrastructure.DataImport;
 using Infrastructure.Extraction;
 using Infrastructure.Factories;
@@ -24,13 +21,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<NtpDbContext>(options =>
         {
-            options.UseNpgsql(
-                configuration.GetNtpConnectionString(),
-                action =>
-                {
-                    action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName);
-                    action.EnableRetryOnFailure();
-                });
+            options.UseSqlServer(configuration.GetConnectionString("FatpDatabase"));
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);
@@ -38,28 +29,6 @@ public static class ServiceCollectionExtensions
         services.AddDataProtection().PersistKeysToDbContext<NtpDbContext>();
 
         return services;
-    }
-
-    public static string GetNtpConnectionString(this IConfiguration configuration)
-    {
-        var vcapServicesJson = configuration["VCAP_SERVICES"];
-        if (!string.IsNullOrEmpty(vcapServicesJson))
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var vcapServices = JsonSerializer.Deserialize<VcapServices>(vcapServicesJson, options);
-            var postgresCredentials = vcapServices?.Postgres?.FirstOrDefault()?.Credentials;
-
-            if (postgresCredentials?.IsValid() == true)
-            {
-                return $"Host={postgresCredentials.Host};Port={postgresCredentials.Port};Username={postgresCredentials.Username};Password={postgresCredentials.Password};Database={postgresCredentials.Name}";
-            }
-        }
-
-        return configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString);
     }
 
     public static IServiceCollection AddLocationFilterService(this IServiceCollection services)

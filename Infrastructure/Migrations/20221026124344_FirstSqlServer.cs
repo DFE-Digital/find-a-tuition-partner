@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class FirstSqlServer : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,10 +13,10 @@ namespace Infrastructure.Migrations
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FriendlyName = table.Column<string>(type: "text", nullable: true),
-                    Xml = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FriendlyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Xml = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,13 +24,39 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EstablishmentStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstablishmentStatus", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EstablishmentTypeGroup",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstablishmentTypeGroup", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KeyStage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,13 +64,26 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PhaseOfEducation",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhaseOfEducation", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,20 +94,24 @@ namespace Infrastructure.Migrations
                 name: "TuitionPartners",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Website = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Experience = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    LegalStatus = table.Column<string>(type: "text", nullable: false),
-                    HasSenProvision = table.Column<bool>(type: "boolean", nullable: false),
-                    AdditionalServiceOfferings = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LegalStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasSenProvision = table.Column<bool>(type: "bit", nullable: false),
+                    AdditionalServiceOfferings = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsVatCharged = table.Column<bool>(type: "bit", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileExtension = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HasLogo = table.Column<bool>(type: "bit", nullable: false, computedColumnSql: "case when \"Logo\" is null then false else true end", stored: true)
                 },
                 constraints: table =>
                 {
@@ -80,10 +122,10 @@ namespace Infrastructure.Migrations
                 name: "TuitionTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,11 +136,11 @@ namespace Infrastructure.Migrations
                 name: "Subjects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    KeyStageId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    KeyStageId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,11 +157,11 @@ namespace Infrastructure.Migrations
                 name: "LocalAuthority",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    RegionId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RegionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -136,13 +178,13 @@ namespace Infrastructure.Migrations
                 name: "Prices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SubjectId = table.Column<int>(type: "integer", nullable: false),
-                    GroupSize = table.Column<int>(type: "integer", nullable: false),
-                    HourlyRate = table.Column<decimal>(type: "numeric", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    GroupSize = table.Column<int>(type: "int", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,11 +213,11 @@ namespace Infrastructure.Migrations
                 name: "SubjectCoverage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SubjectId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -204,12 +246,12 @@ namespace Infrastructure.Migrations
                 name: "LocalAuthorityDistricts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    RegionId = table.Column<int>(type: "integer", nullable: false),
-                    LocalAuthorityId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RegionId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,31 +266,30 @@ namespace Infrastructure.Migrations
                         name: "FK_LocalAuthorityDistricts_Regions_RegionId",
                         column: x => x.RegionId,
                         principalTable: "Regions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "LocalAuthorityDistrictCoverage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    LocalAuthorityDistrictId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityDistrictId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LocalAuthorityDistrictCoverage", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocalAuthorityDistrictCoverage_LocalAuthorityDistricts_Loca~",
+                        name: "FK_LocalAuthorityDistrictCoverage_LocalAuthorityDistricts_LocalAuthorityDistrictId",
                         column: x => x.LocalAuthorityDistrictId,
                         principalTable: "LocalAuthorityDistricts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LocalAuthorityDistrictCoverage_TuitionPartners_TuitionPartn~",
+                        name: "FK_LocalAuthorityDistrictCoverage_TuitionPartners_TuitionPartnerId",
                         column: x => x.TuitionPartnerId,
                         principalTable: "TuitionPartners",
                         principalColumn: "Id",
@@ -261,6 +302,84 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Schools",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Urn = table.Column<int>(type: "int", nullable: false),
+                    EstablishmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Postcode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EstablishmentTypeGroupId = table.Column<int>(type: "int", nullable: false),
+                    EstablishmentStatusId = table.Column<int>(type: "int", nullable: false),
+                    PhaseOfEducationId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityDistrictId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schools", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schools_EstablishmentStatus_EstablishmentStatusId",
+                        column: x => x.EstablishmentStatusId,
+                        principalTable: "EstablishmentStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_EstablishmentTypeGroup_EstablishmentTypeGroupId",
+                        column: x => x.EstablishmentTypeGroupId,
+                        principalTable: "EstablishmentTypeGroup",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_LocalAuthority_LocalAuthorityId",
+                        column: x => x.LocalAuthorityId,
+                        principalTable: "LocalAuthority",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_LocalAuthorityDistricts_LocalAuthorityDistrictId",
+                        column: x => x.LocalAuthorityDistrictId,
+                        principalTable: "LocalAuthorityDistricts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_PhaseOfEducation_PhaseOfEducationId",
+                        column: x => x.PhaseOfEducationId,
+                        principalTable: "PhaseOfEducation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstablishmentStatus",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Open" },
+                    { 2, "Closed" },
+                    { 3, "Open but proposed to close" },
+                    { 4, "Proposed to open" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstablishmentTypeGroup",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Colleges" },
+                    { 2, "Universities" },
+                    { 3, "Independent schools" },
+                    { 4, "Local authority maintained schools" },
+                    { 5, "Special schools" },
+                    { 6, "Welsh schools" },
+                    { 9, "Other types" },
+                    { 10, "Academies" },
+                    { 11, "Free schools" }
+                });
+
             migrationBuilder.InsertData(
                 table: "KeyStage",
                 columns: new[] { "Id", "Name", "SeoUrl" },
@@ -270,6 +389,21 @@ namespace Infrastructure.Migrations
                     { 2, "Key stage 2", "key-stage-2" },
                     { 3, "Key stage 3", "key-stage-3" },
                     { 4, "Key stage 4", "key-stage-4" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PhaseOfEducation",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Nursery" },
+                    { 2, "Primary" },
+                    { 3, "Middle deemed primary" },
+                    { 4, "Secondary" },
+                    { 5, "Middle deemed secondary" },
+                    { 6, "16 Plus" },
+                    { 7, "All-through" },
+                    { 9999, "Not Applicable" }
                 });
 
             migrationBuilder.InsertData(
@@ -343,7 +477,14 @@ namespace Infrastructure.Migrations
                     { 335, "E08000030", "Walsall", 5 },
                     { 336, "E08000031", "Wolverhampton", 5 },
                     { 340, "E08000011", "Knowsley", 2 },
-                    { 341, "E08000012", "Liverpool", 2 },
+                    { 341, "E08000012", "Liverpool", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthority",
+                columns: new[] { "Id", "Code", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 342, "E08000013", "St. Helens", 2 },
                     { 343, "E08000014", "Sefton", 2 },
                     { 344, "E08000015", "Wirral", 2 },
@@ -385,7 +526,14 @@ namespace Infrastructure.Migrations
                     { 812, "E06000012", "North East Lincolnshire", 3 },
                     { 813, "E06000013", "North Lincolnshire", 3 },
                     { 815, "E10000023", "North Yorkshire", 3 },
-                    { 816, "E06000014", "York", 3 },
+                    { 816, "E06000014", "York", 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthority",
+                columns: new[] { "Id", "Code", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 821, "E06000032", "Luton", 6 },
                     { 822, "E06000055", "Bedford", 6 },
                     { 823, "E06000056", "Central Bedfordshire", 6 },
@@ -427,7 +575,14 @@ namespace Infrastructure.Migrations
                     { 883, "E06000034", "Thurrock", 6 },
                     { 884, "E06000019", "Herefordshire", 5 },
                     { 885, "E10000034", "Worcestershire", 5 },
-                    { 886, "E10000016", "Kent", 8 },
+                    { 886, "E10000016", "Kent", 8 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthority",
+                columns: new[] { "Id", "Code", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 887, "E06000035", "Medway", 8 },
                     { 888, "E10000017", "Lancashire", 2 },
                     { 889, "E06000008", "Blackburn with Darwen", 2 },
@@ -461,12 +616,12 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "KeyStageId", "Name", "SeoUrl" },
                 values: new object[,]
                 {
-                    { 1, 1, "Literacy", "key-stage-1-literacy" },
-                    { 2, 1, "Numeracy", "key-stage-1-numeracy" },
+                    { 1, 1, "English", "key-stage-1-english" },
+                    { 2, 1, "Maths", "key-stage-1-maths" },
                     { 3, 1, "Science", "key-stage-1-science" },
-                    { 4, 2, "Literacy", "key-stage-2-literacy" },
-                    { 5, 2, "Numeracy", "key-stage-2-numeracy" },
-                    { 6, 2, "Literacy", "key-stage-2-science" },
+                    { 4, 2, "English", "key-stage-2-english" },
+                    { 5, 2, "Maths", "key-stage-2-maths" },
+                    { 6, 2, "Science", "key-stage-2-science" },
                     { 7, 3, "English", "key-stage-3-english" },
                     { 8, 3, "Humanities", "key-stage-3-humanities" },
                     { 9, 3, "Maths", "key-stage-3-maths" },
@@ -525,7 +680,14 @@ namespace Infrastructure.Migrations
                     { 39, "E07000234", 885, "Bromsgrove", 5 },
                     { 40, "E07000235", 885, "Malvern Hills", 5 },
                     { 41, "E07000236", 885, "Redditch", 5 },
-                    { 42, "E07000237", 885, "Worcester", 5 },
+                    { 42, "E07000237", 885, "Worcester", 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 43, "E07000238", 885, "Wychavon", 5 },
                     { 44, "E07000239", 885, "Wyre Forest", 5 },
                     { 45, "E08000025", 330, "Birmingham", 5 },
@@ -567,7 +729,14 @@ namespace Infrastructure.Migrations
                     { 81, "E07000246", 933, "Somerset West and Taunton", 9 },
                     { 82, "E07000181", 931, "West Oxfordshire", 8 },
                     { 83, "E07000207", 936, "Elmbridge", 8 },
-                    { 84, "E07000208", 936, "Epsom and Ewell", 8 },
+                    { 84, "E07000208", 936, "Epsom and Ewell", 8 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 85, "E07000209", 936, "Guildford", 8 },
                     { 86, "E07000210", 936, "Mole Valley", 8 },
                     { 87, "E07000211", 936, "Reigate and Banstead", 8 },
@@ -609,7 +778,14 @@ namespace Infrastructure.Migrations
                     { 123, "E07000088", 850, "Gosport", 8 },
                     { 124, "E07000089", 850, "Hart", 8 },
                     { 125, "E07000090", 850, "Havant", 8 },
-                    { 126, "E07000091", 850, "New Forest", 8 },
+                    { 126, "E07000091", 850, "New Forest", 8 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 127, "E07000092", 850, "Rushmoor", 8 },
                     { 128, "E07000093", 850, "Test Valley", 8 },
                     { 129, "E07000094", 850, "Winchester", 8 },
@@ -651,7 +827,14 @@ namespace Infrastructure.Migrations
                     { 165, "E07000124", 888, "Ribble Valley", 2 },
                     { 166, "E07000125", 888, "Rossendale", 2 },
                     { 167, "E07000126", 888, "South Ribble", 2 },
-                    { 168, "E07000127", 888, "West Lancashire", 2 },
+                    { 168, "E07000127", 888, "West Lancashire", 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 169, "E07000128", 888, "Wyre", 2 },
                     { 170, "E08000001", 350, "Bolton", 2 },
                     { 171, "E08000002", 351, "Bury", 2 },
@@ -693,7 +876,14 @@ namespace Infrastructure.Migrations
                     { 207, "E09000004", 303, "Bexley", 7 },
                     { 208, "E09000005", 304, "Brent", 7 },
                     { 209, "E09000006", 305, "Bromley", 7 },
-                    { 210, "E09000007", 202, "Camden", 7 },
+                    { 210, "E09000007", 202, "Camden", 7 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 211, "E09000008", 306, "Croydon", 7 },
                     { 212, "E09000009", 307, "Ealing", 7 },
                     { 213, "E09000010", 308, "Enfield", 7 },
@@ -735,7 +925,14 @@ namespace Infrastructure.Migrations
                     { 249, "E07000074", 881, "Maldon", 6 },
                     { 250, "E07000075", 881, "Rochford", 6 },
                     { 251, "E07000076", 881, "Tendring", 6 },
-                    { 252, "E07000077", 881, "Uttlesford", 6 },
+                    { 252, "E07000077", 881, "Uttlesford", 6 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 253, "E07000095", 919, "Broxbourne", 6 },
                     { 254, "E07000096", 919, "Dacorum", 6 },
                     { 255, "E07000098", 919, "Hertsmere", 6 },
@@ -777,7 +974,14 @@ namespace Infrastructure.Migrations
                     { 291, "E07000131", 855, "Harborough", 4 },
                     { 292, "E07000132", 855, "Hinckley and Bosworth", 4 },
                     { 293, "E07000133", 855, "Melton", 4 },
-                    { 294, "E07000134", 855, "North West Leicestershire", 4 },
+                    { 294, "E07000134", 855, "North West Leicestershire", 4 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LocalAuthorityDistricts",
+                columns: new[] { "Id", "Code", "LocalAuthorityId", "Name", "RegionId" },
+                values: new object[,]
+                {
                     { 295, "E07000135", 855, "Oadby and Wigston", 4 },
                     { 296, "E07000136", 925, "Boston", 4 },
                     { 297, "E07000137", 925, "East Lindsey", 4 },
@@ -794,6 +998,16 @@ namespace Infrastructure.Migrations
                     { 308, "E07000175", 891, "Newark and Sherwood", 4 },
                     { 309, "E07000176", 891, "Rushcliffe", 4 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EstablishmentStatus_Name",
+                table: "EstablishmentStatus",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EstablishmentTypeGroup_Name",
+                table: "EstablishmentTypeGroup",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KeyStage_Name",
@@ -828,14 +1042,19 @@ namespace Infrastructure.Migrations
                 column: "LocalAuthorityDistrictId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId",
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId_LocalAuthorityDistrictId",
                 table: "LocalAuthorityDistrictCoverage",
-                column: "TuitionPartnerId");
+                columns: new[] { "TuitionPartnerId", "LocalAuthorityDistrictId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalAuthorityDistrictCoverage_TuitionTypeId",
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId_TuitionTypeId_LocalAuthorityDistrictId",
                 table: "LocalAuthorityDistrictCoverage",
-                column: "TuitionTypeId");
+                columns: new[] { "TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionTypeId_LocalAuthorityDistrictId",
+                table: "LocalAuthorityDistrictCoverage",
+                columns: new[] { "TuitionTypeId", "LocalAuthorityDistrictId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_LocalAuthorityDistricts_Code",
@@ -857,6 +1076,16 @@ namespace Infrastructure.Migrations
                 name: "IX_LocalAuthorityDistricts_RegionId",
                 table: "LocalAuthorityDistricts",
                 column: "RegionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhaseOfEducation_Name",
+                table: "PhaseOfEducation",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prices_GroupSize",
+                table: "Prices",
+                column: "GroupSize");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prices_SubjectId",
@@ -885,19 +1114,60 @@ namespace Infrastructure.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Schools_EstablishmentStatusId",
+                table: "Schools",
+                column: "EstablishmentStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_EstablishmentTypeGroupId",
+                table: "Schools",
+                column: "EstablishmentTypeGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_LocalAuthorityDistrictId",
+                table: "Schools",
+                column: "LocalAuthorityDistrictId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_LocalAuthorityId",
+                table: "Schools",
+                column: "LocalAuthorityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_PhaseOfEducationId",
+                table: "Schools",
+                column: "PhaseOfEducationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_Postcode",
+                table: "Schools",
+                column: "Postcode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_Urn",
+                table: "Schools",
+                column: "Urn",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubjectCoverage_SubjectId",
                 table: "SubjectCoverage",
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubjectCoverage_TuitionPartnerId",
+                name: "IX_SubjectCoverage_TuitionPartnerId_SubjectId",
                 table: "SubjectCoverage",
-                column: "TuitionPartnerId");
+                columns: new[] { "TuitionPartnerId", "SubjectId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubjectCoverage_TuitionTypeId",
+                name: "IX_SubjectCoverage_TuitionPartnerId_TuitionTypeId_SubjectId",
                 table: "SubjectCoverage",
-                column: "TuitionTypeId");
+                columns: new[] { "TuitionPartnerId", "TuitionTypeId", "SubjectId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubjectCoverage_TuitionTypeId_SubjectId",
+                table: "SubjectCoverage",
+                columns: new[] { "TuitionTypeId", "SubjectId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subjects_KeyStageId",
@@ -950,10 +1220,22 @@ namespace Infrastructure.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
+                name: "Schools");
+
+            migrationBuilder.DropTable(
                 name: "SubjectCoverage");
 
             migrationBuilder.DropTable(
+                name: "EstablishmentStatus");
+
+            migrationBuilder.DropTable(
+                name: "EstablishmentTypeGroup");
+
+            migrationBuilder.DropTable(
                 name: "LocalAuthorityDistricts");
+
+            migrationBuilder.DropTable(
+                name: "PhaseOfEducation");
 
             migrationBuilder.DropTable(
                 name: "Subjects");
