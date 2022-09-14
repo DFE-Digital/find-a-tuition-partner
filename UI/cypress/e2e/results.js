@@ -47,6 +47,19 @@ When("the user selects tuition type {string}", (tutionType) => {
   cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
 });
 
+When("a user selects all subject", () => {
+  const keystages = "Key stage 1,Key stage 2,Key stage 3,Key stage 4";
+  const stages = keystages.split(",").map((s) => s.trim());
+  stages.forEach((element) => {
+    cy.get(`#option-select-title-${kebabCase(element)}`).click();
+  });
+
+  cy.get('[id="key-stage-1-english"]').check();
+  cy.get('[id="key-stage-2-english"]').check();
+  cy.get('[id="key-stage-3-english"]').check();
+  cy.get('[id="key-stage-4-english"]').check();
+});
+
 Then("the ‘clear filters’ button as been selected", () => {
   cy.get('[data-testid="clear-all-filters"]').click();
 });
@@ -187,4 +200,11 @@ Then("results are updated after filters are cleared", () => {
 
 Then("the postcode search parameter remains", () => {
   cy.get('[data-testid="postcode-input-box"]').should("have.value", "sk11eb");
+});
+
+Then("all the subjects are shown to be selected", () => {
+  cy.get('[id="key-stage-1-english"]').should("be.checked");
+  cy.get('[id="key-stage-2-english"]').should("be.checked");
+  cy.get('[id="key-stage-3-english"]').should("be.checked");
+  cy.get('[id="key-stage-4-english"]').should("be.checked");
 });
