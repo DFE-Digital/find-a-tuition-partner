@@ -4,6 +4,12 @@ using Application.Extensions;
 using Application.Factories;
 using Domain;
 using Domain.Validators;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Download;
+using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3.Data;
+using Google.Apis.Services;
+using Google.Apis.Util.Store;
 using Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +25,10 @@ public class DataImporterService : IHostedService
     private readonly DataEncryption _config;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+
+    static string[] Scopes = { DriveService.Scope.DriveReadonly };
+    static string ApplicationName = "Find a tuition partner";
+    private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     public DataImporterService(IHostApplicationLifetime host, IOptions<DataEncryption> config, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
     {
@@ -61,54 +71,107 @@ public class DataImporterService : IHostedService
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 
-                var assembly = typeof(AssemblyReference).Assembly;
-
-                foreach (var resourceName in assembly.GetManifestResourceNames())
+                UserCredential credential;
+                // Load client secrets.
+                using (var stream =
+                       new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
                 {
-                    if (resourceName.EndsWith("README.md")) break;
+                    /* The file token.json stores the user's access and refresh tokens, and is created
+                     automatically when the authorization flow completes for the first time. */
+                    string credPath = "token.json";
+                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                        GoogleClientSecrets.FromStream(stream).Secrets,
+                        Scopes,
+                        "user",
+                        CancellationToken.None,
+                        new FileDataStore(credPath, true)).Result;
+                    Console.WriteLine("Credential file saved to: " + credPath);
+                }
 
-                    var base64Filename = resourceName.Substring(resourceName.LastIndexOf('.') + 1).FromBase64Filename();
-                    var originalFilename = Encoding.UTF8.GetString(Convert.FromBase64String(base64Filename));
-                    _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename}");
+                // Create Drive API service.
+                var service = new DriveService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = ApplicationName
+                });
 
-                    await using var resourceStream = assembly.GetManifestResourceStream(resourceName);
-                    if (resourceStream == null)
+                // Define parameters of request.
+                FilesResource.ListRequest listRequest = service.Files.List();
+                // List only files in the tuition partner data folder within the school services shared drive
+                listRequest.DriveId = "0ALN4QSSNcSvkUk9PVA";
+                listRequest.Q = "parents in '1uda1n7cWHS4goRuDxhJBHoURAlAgh3YB' and trashed = false";
+                // Following must be set when searching within a shared drive
+                listRequest.IncludeItemsFromAllDrives = true;
+                listRequest.SupportsAllDrives = true;
+                listRequest.Corpora = "drive";
+
+                listRequest.OrderBy = "name";
+                listRequest.Fields = "nextPageToken, files(id, name, mimeType)";
+                listRequest.PageSize = 50;
+
+                while (true)
+                {
+                    var fileList = await listRequest.ExecuteAsync(cancellationToken);
+                    var files = fileList.Files;
+                    Console.WriteLine("Files:");
+                    if (files == null || files.Count == 0)
                     {
-                        _logger.LogError($"Tuition Partner resource name {resourceName} for file {originalFilename} not found");
-                        continue;
+                        Console.WriteLine("No files found.");
+                        return;
+                    }
+                    foreach (var file in files)
+                    {
+                        var originalFilename = file.Name;
+                        _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename} {file.MimeType}");
+
+                        var stream = new MemoryStream();
+                        IDownloadProgress? status;
+
+                        if (file.MimeType == ExcelMimeType)
+                        {
+                            var request = service.Files.Get(file.Id);
+                            status = request.DownloadWithStatus(stream);
+                        }
+                        else
+                        {
+                            var exportRequest = service.Files.Export(file.Id, ExcelMimeType);
+                            status = exportRequest.DownloadWithStatus(stream);
+                        }
+
+                        //exportRequest.DownloadWithStatus()
+
+                        _logger.LogInformation($"{status.Status} {status.BytesDownloaded} {status.Exception}");
+                        _logger.LogInformation($"Attempting create Tuition Partner from file {originalFilename}");
+                        TuitionPartner tuitionPartner;
+                        try
+                        {
+                            tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from file {originalFilename}");
+                            continue;
+                        }
+
+                        var validator = new TuitionPartnerValidator();
+                        var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
+                        if (!results.IsValid)
+                        {
+                            _logger.LogError($"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
+                            continue;
+                        }
+
+                        _logger.LogInformation(tuitionPartner.SeoUrl);
+
+                        dbContext.TuitionPartners.Add(tuitionPartner);
+                        await dbContext.SaveChangesAsync(cancellationToken);
+
+                        _logger.LogInformation($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {originalFilename}");
                     }
 
-                    _logger.LogInformation($"Attempting create Tuition Partner from file {originalFilename}");
-                    TuitionPartner tuitionPartner;
-                    try
-                    {
-                        using var stream = new MemoryStream();
-                        using var crypto = Aes.Create();
-                        var iv = new byte[crypto.IV.Length];
-                        await resourceStream.ReadAsync(iv, 0, iv.Length, cancellationToken);
-                        using var cryptoTransform = crypto.CreateDecryptor(keyBytes, iv);
-                        await using var cryptoStream = new CryptoStream(resourceStream, cryptoTransform, CryptoStreamMode.Read);
-                        await cryptoStream.CopyToAsync(stream, cancellationToken);
-                        tuitionPartner = await factory.GetTuitionPartner(stream, cancellationToken);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from file {originalFilename}");
-                        continue;
-                    }
+                    if (string.IsNullOrEmpty(fileList.NextPageToken)) break;
 
-                    var validator = new TuitionPartnerValidator();
-                    var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
-                    if (!results.IsValid)
-                    {
-                        _logger.LogError($"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
-                        continue;
-                    }
-
-                    dbContext.TuitionPartners.Add(tuitionPartner);
-                    await dbContext.SaveChangesAsync(cancellationToken);
-
-                    _logger.LogInformation($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {originalFilename}");
+                    listRequest.PageToken = fileList.NextPageToken;
                 }
 
                 await transaction.CommitAsync(cancellationToken);
