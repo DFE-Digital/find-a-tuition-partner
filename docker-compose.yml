@@ -11,7 +11,8 @@ services:
       - ConnectionStrings:FatpDatabase=Host=db;Username=postgres;Password=password
       - AppLogging:DefaultLogEventLevel=Information
       - AppLogging:OverrideLogEventLevel=Warning
-      - GoogleAnalytics:MeasurementId=EndToEndTesting
+      - GoogleTagManager:ContainerId=EndToEndTesting
+      - GoogleAnalytics:MeasurementId=
 
   db:
     image: postgres:13

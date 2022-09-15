@@ -18,11 +18,11 @@ Feature: User can view full details of a Tuition Parner
     Then the page URL ends with '/bright-heart-education'
     And the heading should say 'Bright Heart Education'
 
-  Scenario: don’t show empty fields where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'connex-education-partnership'
-    Then TP has not provided the information in the 'Address' section
+  Scenario: don’t show email address where TP has not provided information
+    Given a user has arrived on the 'Tuition Partner' page for 'pearson'
+    Then TP has not provided the information in the 'Email address' section
 
-  Scenario: don’t show empty fields where TP has not provided information
+  Scenario: don’t show phone number where TP has not provided information
     Given a user has arrived on the 'Tuition Partner' page for 'lancashire-county-council'
     Then TP has not provided the information in the 'Phone Number' section
 
@@ -70,11 +70,11 @@ Feature: User can view full details of a Tuition Parner
     Then they redirects to the tuition partners website link with bright-heart-education
   
   Scenario: locations covered table is not displayed as default
-    Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
+    Given a user has arrived on the 'Tuition Partner' page for 'tutor-doctor-(cambridge-tuition-limited)'
     Then the tuition partner locations covered table is not displayed
 
   Scenario: locations covered table is displayed when show-locations-covered=true
-    Given a user has arrived on the 'Tuition Partner' page for 'cambridge-tuition-limited'
+    Given a user has arrived on the 'Tuition Partner' page for 'tutor-doctor-(cambridge-tuition-limited)'
     When they set the 'show-locations-covered' query string parameter value to 'true'
     Then the tuition partner locations covered table is displayed
 

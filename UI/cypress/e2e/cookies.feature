@@ -23,6 +23,7 @@ Feature: User handles cookies
     Given a user has started the 'Find a tuition partner' journey
     When cookies are accepted
     Then user session is tracked
+    And Google Tag Manager is used to track events
     And the banner disappears
     And cookie '.FindATuitionPartner.Consent' is added with value 'True'
 
@@ -30,6 +31,7 @@ Feature: User handles cookies
     Given a user has started the 'Find a tuition partner' journey
     When cookies are rejected
     Then user session is not tracked
+    And Google Tag Manager is used to track events
     And the banner disappears
     And cookie '.FindATuitionPartner.Consent' is added with value 'False'
 
@@ -46,19 +48,19 @@ Feature: User handles cookies
     Given a user accesses a service page after rejecting cookies
     Then the cookie banner is not displayed
 
- Scenario: The cookie banner is not displayed when 'cookie statement' is selected when entering for the first time
+  Scenario: The cookie banner is not displayed when 'cookie statement' is selected when entering for the first time
     Given a user has started the 'Find a tuition partner' journey
     When the 'cookies' is selected from footer 
     Then the 'view cookies' page is loaded
     And the cookie banner is not displayed
 
-Scenario: The cookie banner is not displayed when 'cookie statement' is selected when cookies have already been set
+  Scenario: The cookie banner is not displayed when 'cookie statement' is selected when cookies have already been set
     Given a user accesses a service page after accepting cookies
     When the 'cookies' is selected from footer
     Then the 'view cookies' page is loaded
     And the cookie banner is not displayed
 
-Scenario: User selects cookie statement and then selects the 'privacy policy' link on that page
+  Scenario: User selects cookie statement and then selects the 'privacy policy' link on that page
     Given a user has started the 'Find a tuition partner' journey
     When the 'cookies' is selected from footer 
     Then the 'view cookies' page is loaded
@@ -69,7 +71,7 @@ Scenario: User selects cookie statement and then selects the 'privacy policy' li
     When the link to previous page is clicked
     Then the previous page is displayed correctly
 
-    Scenario: Allow users to opt in once they have reached the cookies page for first time
+  Scenario: Allow users to opt in once they have reached the cookies page for first time
     Given the 'view cookies' page is displayed
     And nothing is selected
     When a user opts-in 
@@ -78,8 +80,9 @@ Scenario: User selects cookie statement and then selects the 'privacy policy' li
     And a Success Banner is displayed
     And the link to previous page is clicked
     And user session is tracked
+    And Google Tag Manager is used to track events
 
-Scenario: Allow users to opt out once they have reached the cookies page for first time
+  Scenario: Allow users to opt out once they have reached the cookies page for first time
     Given the 'view cookies' page is displayed
     And nothing is selected
     When a user opts-out 
@@ -87,28 +90,24 @@ Scenario: Allow users to opt out once they have reached the cookies page for fir
     Then opt-out is selected
     And a Success Banner is displayed
     And user session is not tracked
+    And Google Tag Manager is used to track events
 
-Scenario: Error banner appears if no option is selected
+  Scenario: Error banner appears if no option is selected
     Given the 'view cookies' page is displayed
     And nothing is selected
     When Saves Changes
     Then the error banner is displayed
 
-Scenario: The cookie '.FindATuitionPartner.Antiforgery' is added when a user has started the 'Find a tuition partner' journey
-    Given a user has started the 'Find a tuition partner' journey
-    Then cookie '.FindATuitionPartner.Antiforgery' is added with value 'null'
-
-Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added when a user has reached the search page
+  Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added when a user has reached the search page
     Given the search result page is displayed
     Then cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added with value 'null'
 
-Scenario: User Select Accept Option from banner Should Stay on Same Page 
-   Given a user has arrived on the funding and reporting page
-   When cookies are accepted
-   And the user redirected to funding page
+  Scenario: User Select Accept Option from banner Should Stay on Same Page 
+    Given a user has arrived on the funding and reporting page
+    When cookies are accepted
+    And the user redirected to funding page
 
-Scenario: User Select Reject Option from banner Should Stay on Same Page 
-   Given a user has arrived on the funding and reporting page
-   When cookies are rejected
-   And the user redirected to funding page
-
+  Scenario: User Select Reject Option from banner Should Stay on Same Page 
+    Given a user has arrived on the funding and reporting page
+    When cookies are rejected
+    And the user redirected to funding page

@@ -9,7 +9,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "watch": "webpack --watch --mode development"
+    "watch": "webpack --watch --mode development",
+    "format": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "cypress": "^10.3.0",
     "cypress-axe": "^1.0.0",
     "mini-css-extract-plugin": "^2.6.0",
+    "prettier": "^2.7.1",
     "sass": "1.32.13",
     "sass-loader": "^13.0.0",
     "webpack": "^5.73.0",

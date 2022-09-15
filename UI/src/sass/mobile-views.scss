@@ -1,7 +1,8 @@
-﻿@include govuk-media-query($until: tablet) {
-
+﻿@media not print {
+  @include govuk-media-query($until: tablet) {
     .govuk-list-bullets-mobile-view {
-        list-style-type: disc;
-        padding-left: govuk-spacing(5)
+      list-style-type: disc;
+      padding-left: govuk-spacing(5);
     }
+  }
 }

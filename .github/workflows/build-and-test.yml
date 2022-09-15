@@ -12,6 +12,17 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Bundle web assets
+      working-directory: ./UI
+      run: |
+        npm ci
+        npm run build
+
     - name: Setup dotnet
       uses: actions/setup-dotnet@v2
       with:
@@ -20,6 +31,9 @@ jobs:
       run: dotnet restore FindATuitionPartner.sln
     - name: Format
       run: dotnet format --verify-no-changes --no-restore
+    - name: Format UI
+      working-directory: ./UI
+      run: npx prettier --check .
     - name: Build
       run: dotnet build FindATuitionPartner.sln --no-restore
     - name: Test

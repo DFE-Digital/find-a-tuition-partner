@@ -13,21 +13,24 @@ public class WhichSubjects : PageModel
 
     public WhichSubjects(IMediator mediator) => this.mediator = mediator;
 
-    public KeyStageSubjectDictionary Subjects { get; set; } = new();
+    public Command Data { get; set; } = new();
 
     public async Task OnGet(Query query)
     {
-        Subjects = await mediator.Send(query);
+        Data = new Command(query)
+        {
+            AllSubjects = await mediator.Send(query)
+        };
     }
 
-    [BindProperty(SupportsGet = true)]
-    public SearchModel AllSearchParams { get; set; }
-
-    public async Task<IActionResult> OnPost(Command data)
+    public async Task<IActionResult> OnGetSubmit(Command data)
     {
         if (!ModelState.IsValid)
         {
-            Subjects = await mediator.Send(new Query(data));
+            Data = data with
+            {
+                AllSubjects = await mediator.Send(new Query(data))
+            };
             return Page();
         }
         return RedirectToPage("SearchResults", new SearchModel(data));
@@ -41,6 +44,9 @@ public class WhichSubjects : PageModel
 
     public record Command : SearchModel, IRequest<SearchModel>
     {
+        public Command() { }
+        public Command(SearchModel query) : base(query) { }
+
         public KeyStageSubjectDictionary AllSubjects { get; set; } = new();
     }
 
@@ -67,7 +73,7 @@ public class WhichSubjects : PageModel
             { KeyStage.KeyStage4, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
         };
 
-        public async Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
+        public Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
         {
             request.KeyStages ??= new[]
             {
@@ -89,7 +95,7 @@ public class WhichSubjects : PageModel
                     }).ToArray()
                 );
 
-            return selectable;
+            return Task.FromResult(selectable);
         }
     }
 }

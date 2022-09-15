@@ -1,0 +1,124 @@
+.app-print-this-page--container {
+  display: grid;
+}
+
+.app-print-this-page--container-left {
+  grid-column: 1;
+}
+
+.app-print-this-page--container-right {
+  grid-column: 2;
+  text-align: right;
+  margin: 0;
+  padding-top: 12px;
+}
+
+.app-print-this-page--link {
+  display: none;
+}
+
+.js-enabled .app-print-this-page--link {
+  display: inline;
+  background-image: url("~/src/images/print-this-page.png");
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding-left: 30px;
+}
+
+@media print {
+  .govuk-heading-s {
+    @include govuk-font($size: 16, $weight: bold);
+  }
+
+  .govuk-heading-m {
+    @include govuk-font($size: 19, $weight: bold);
+  }
+
+  .govuk-heading-l {
+    @include govuk-font($size: 24, $weight: bold);
+  }
+
+  .govuk-heading-xl {
+    @include govuk-font($size: 36, $weight: bold);
+  }
+
+  .govuk-body,
+  .govuk-summary-list,
+  .govuk-table,
+  .govuk-list,
+  .govuk-details {
+    @include govuk-font($size: 16);
+  }
+
+  .govuk-body-s {
+    font-size: 12pt;
+  }
+
+  a[href]:after {
+    content: none !important;
+  }
+
+  .govuk-link {
+    @include govuk-link-style-no-underline;
+
+    &:link,
+    &:visited {
+      color: govuk-colour("black");
+    }
+  }
+
+  .govuk-cookie-banner {
+    display: none;
+  }
+
+  .govuk-header__container {
+    border-bottom: 0;
+  }
+
+  .govuk-header__logo {
+    display: none;
+  }
+
+  .govuk-header__service-name {
+    @include govuk-font($size: 19, $weight: bold);
+  }
+
+  .govuk-phase-banner {
+    display: none;
+  }
+
+  .govuk-back-link {
+    display: none;
+  }
+
+  .app-print-hide {
+    display: none;
+  }
+
+  .app-print-this-page--container {
+    display: none;
+  }
+
+  .app-contact-banner {
+    display: none;
+  }
+
+  .govuk-footer {
+    display: none;
+  }
+
+  .govuk-details {
+    display: none;
+  }
+
+  .app-results-filter--non-desktop,
+  .app-results-filter-overlay--visible,
+  .app-results-filter-overlay--show-filters,
+  .app-form-group-inline {
+    display: none;
+  }
+
+  .app-c-option-select__title {
+    color: govuk-colour("black");
+  }
+}
