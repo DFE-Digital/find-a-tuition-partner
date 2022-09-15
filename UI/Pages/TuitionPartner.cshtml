@@ -205,7 +205,7 @@
                         Website
                     </govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>
-                        <a href="@Model.Data.Website" class="govuk-link" target="_blank" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
+                        <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
                 @if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
@@ -215,7 +215,7 @@
                             Phone number
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            <a href="tel:@Model.Data.PhoneNumber" class="govuk-link">@Model.Data.PhoneNumber</a>
+                            <a id="app-tuition-partner-phone-number-link" href="tel:@Model.Data.PhoneNumber" class="govuk-link">@Model.Data.PhoneNumber</a>
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
@@ -226,7 +226,7 @@
                             Email address
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            <a href="mailto:@(Model.Data.EmailAddress)" class="govuk-link">@Model.Data.EmailAddress</a>
+                            <a id="app-tuition-partner-email-link" href="mailto:@(Model.Data.EmailAddress)" class="govuk-link">@Model.Data.EmailAddress</a>
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }

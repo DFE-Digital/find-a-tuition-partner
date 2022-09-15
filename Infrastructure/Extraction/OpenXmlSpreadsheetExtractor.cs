@@ -34,10 +34,10 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
         var value = cell.InnerText;
         if (cell.DataType?.Value == CellValues.SharedString && int.TryParse(value, out var stringTableIndex))
         {
-            return GetSharedStringTable().ElementAt(stringTableIndex).InnerText;
+            return GetSharedStringTable().ElementAt(stringTableIndex).InnerText.Trim();
         }
 
-        return value;
+        return value.Trim();
     }
 
     public string[] GetColumnValues(string sheetName, string column, int startRow, int endRow)

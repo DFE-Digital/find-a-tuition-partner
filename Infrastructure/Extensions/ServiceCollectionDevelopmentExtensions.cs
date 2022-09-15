@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -11,11 +10,11 @@ public static class ServiceCollectionEnvironmentExtensions
     {
         if (builder.Environment.IsDevelopment())
         {
-            builder.Host.ConfigureAppConfiguration((context, config) =>
+            builder.Host.ConfigureAppConfiguration((_, config) =>
             {
                 config.AddInMemoryCollection(new Dictionary<string, string>
                 {
-                    {"GoogleAnalytics:MeasurementId", "testing"},
+                    {"GoogleTagManager:ContainerId", "testing"},
                 });
             });
         }

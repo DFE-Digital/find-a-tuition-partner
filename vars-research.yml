@@ -4,4 +4,5 @@ memory: 256M
 dotnet-environment: Research
 default-log-event-level: Information
 override-log-event-level: Information
-google-analytics-measurement-id: G-VFDS3WSTQM
+google-tag-manager-container-id: GTM-T6MSKJQ
+google-analytics-measurement-id: 
