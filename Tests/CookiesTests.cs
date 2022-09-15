@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
+using Moq;
 using Cookies = UI.Pages.Cookies;
 
 namespace Tests;
@@ -20,29 +21,30 @@ public class CookiesTests
         var httpContext = new DefaultHttpContext();
         var modelState = new ModelStateDictionary();
         var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(), modelState);
-        var modelMetadataProvider = new EmptyModelMetadataProvider();
-        var viewData = new ViewDataDictionary(modelMetadataProvider, modelState);
-        var pageContext = new PageContext(actionContext)
-        {
-            ViewData = viewData
-        };
+        var pageContext = new PageContext(actionContext);
+       
         Cookies cookiePage = new()
         {
-            Consent = true,
-            PageContext = pageContext,
-            Url = new Microsoft.AspNetCore.Mvc.Routing.UrlHelper(actionContext)
+            PageContext = pageContext
         };
-
-
-        var resultPrivacy = cookiePage.OnGet(consent, preferencesSet);
-        resultPrivacy.Should().BeOfType<PageResult>();
+        var result = cookiePage.OnGet(consent, preferencesSet);
+        result.Should().BeOfType<PageResult>();
     }
 
     [Fact]
-    public void Cookies_OnPost_Test()
+    public void Cookies_OnPost_Model_Invalid_Test()
     {
         Cookies cookiePage = new();
-        var resultPrivacy = cookiePage.OnPost();
-        resultPrivacy.Should().BeOfType<RedirectToPageResult>();
+        cookiePage.PageContext.ModelState.AddModelError("Message.Text", "test error");
+        var result = cookiePage.OnPost();
+        result.Should().BeOfType<PageResult>();
+    }
+
+    [Fact]
+    public void Cookies_OnPost_Model_Valid_Test()
+    {
+        Cookies cookiePage = new();
+        var result = cookiePage.OnPost();
+        result.Should().BeOfType<RedirectToPageResult>();
     }
 }
