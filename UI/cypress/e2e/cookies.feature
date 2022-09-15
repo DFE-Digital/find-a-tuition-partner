@@ -23,6 +23,7 @@ Feature: User handles cookies
     Given a user has started the 'Find a tuition partner' journey
     When cookies are accepted
     Then user session is tracked
+    And Google Tag Manager is used to track events
     And the banner disappears
     And cookie '.FindATuitionPartner.Consent' is added with value 'True'
 
@@ -30,6 +31,7 @@ Feature: User handles cookies
     Given a user has started the 'Find a tuition partner' journey
     When cookies are rejected
     Then user session is not tracked
+    And Google Tag Manager is used to track events
     And the banner disappears
     And cookie '.FindATuitionPartner.Consent' is added with value 'False'
 
@@ -78,6 +80,7 @@ Feature: User handles cookies
     And a Success Banner is displayed
     And the link to previous page is clicked
     And user session is tracked
+    And Google Tag Manager is used to track events
 
   Scenario: Allow users to opt out once they have reached the cookies page for first time
     Given the 'view cookies' page is displayed
@@ -87,6 +90,7 @@ Feature: User handles cookies
     Then opt-out is selected
     And a Success Banner is displayed
     And user session is not tracked
+    And Google Tag Manager is used to track events
 
   Scenario: Error banner appears if no option is selected
     Given the 'view cookies' page is displayed

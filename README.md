@@ -114,9 +114,19 @@ If you need to test logit.io integration from your development environment, use 
 dotnet user-secrets set "AppLogging:TcpSinkUri" "<TLS_URL>" -p UI
 ```
 
-### Google Analytics (GA4)
+### Google Tag Manager
 
-Google Analytics is used to track service traffic and usage. There is a separate property per environment with an associated data stream and therefore measurement id.
+Google Tag Manager is used to track service traffic and usage. There is a separate container per environment and therefore container id. The Google Analytics: GA4 Configuration tag type is set up within GTM to track page events via GA4.
+
+If you need to test Google Tag Manager integration from your development environment, use the following command to add the neccessary user secret:
+
+```
+dotnet user-secrets set "GoogleTagManager:ContainerId" "<CONTAINER_ID>" -p UI
+```
+
+### Google Analytics (GA4 - superseded by GTM)
+
+Google Analytics was historically used directly to track service traffic and usage. It is now added via Google Tag Manager as explained above. There is a separate property per environment with an associated data stream and therefore measurement id.
 
 If you need to test Google Analytics integration from your development environment, use the following command to add the neccessary user secret:
 
