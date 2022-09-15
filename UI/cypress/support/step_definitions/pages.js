@@ -20,6 +20,10 @@ Given("a user has arrived on the contact us page", () => {
   cy.visit(`/contact-us`);
 });
 
+Given("a user has arrived on the Report issues page", () => {
+  cy.visit(`/report-issues`);
+});
+
 Given("a user has arrived on the accessibility page", () => {
   cy.visit(`/accessibility`);
 });
