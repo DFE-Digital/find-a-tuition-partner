@@ -46,11 +46,11 @@ public class DataEncryptionService : IHostedService
         var destination = GetDestinationDirectoryInfo();
         var keyBytes = Convert.FromBase64String(_config.Key);
 
-        _logger.LogWarning($"Encrypting files from {source} and replacing all existing files in the {destination} directory");
+        _logger.LogInformation($"Encrypting files from {source} and replacing all existing files in the {destination} directory");
 
         foreach (var fileInfo in destination.GetFiles().Where(x => x.Name != "README.md"))
         {
-            _logger.LogWarning($"Deleting existing file {fileInfo}");
+            _logger.LogInformation($"Deleting existing file {fileInfo}");
             fileInfo.Delete();
         }
 
