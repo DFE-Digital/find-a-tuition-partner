@@ -310,12 +310,12 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Test_Search_Results_Count()
+    public async Task Verify_Search_Results_Count()
     {
         const int numberOfTuitionPartners = 55;
         await Fixture.ExecuteDbContextAsync(async db =>
         {
-            for (int tuitionPartnersAdded = 1; tuitionPartnersAdded < numberOfTuitionPartners; tuitionPartnersAdded++)
+            for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
             {
                 db.TuitionPartners.Add(new Domain.TuitionPartner
                 {
@@ -353,6 +353,6 @@ public class SearchForResults : CleanSliceFixture
         });
         var result = await Fixture.SendAsync(new SearchResults.Query());
         result!.Results.Should().NotBeNull();
-        result!.Results!.Count.Should().Be(54);
+        result!.Results!.Count.Should().Be(numberOfTuitionPartners);
     }
 }
