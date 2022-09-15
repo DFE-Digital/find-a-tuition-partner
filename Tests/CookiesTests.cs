@@ -22,7 +22,6 @@ public class CookiesTests
         var modelState = new ModelStateDictionary();
         var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(), modelState);
         var pageContext = new PageContext(actionContext);
-       
         Cookies cookiePage = new()
         {
             PageContext = pageContext
