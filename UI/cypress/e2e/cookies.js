@@ -98,18 +98,15 @@ Then("the cookies banner is displayed", () => {
 });
 
 Then("user session is tracked", () => {
-  cy.get("head script").should("contain", "gtag");
+  cy.get('[data-testid="consent-denied"]').should("not.exist");
+});
+
+Then("user session is not tracked", () => {
+  cy.get('[data-testid="consent-denied"]').should("exist");
 });
 
 Then("the banner disappears", () => {
   cy.contains('[data-testid="cookie-banner"]').should("not.exist");
-});
-
-Then("user session is not tracked", () => {
-  cy.visit(
-    "search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1"
-  );
-  cy.contains("gtag").should("not.exist");
 });
 
 Then("the 'view cookies' page is loaded", () => {
@@ -161,4 +158,8 @@ Then("cookie {string} is added with value {string}", (cookie, value) => {
 
 Then("the user redirected to funding page", () => {
   cy.location("pathname").should("eq", "/funding-and-reporting");
+});
+
+Then("Google Tag Manager is used to track events", () => {
+  cy.get('[data-testid="google-tag-manager"]').should("exist");
 });
