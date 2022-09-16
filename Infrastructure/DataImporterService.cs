@@ -45,7 +45,7 @@ public class DataImporterService : IHostedService
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
         var factory = scope.ServiceProvider.GetRequiredService<ITuitionPartnerFactory>();
 
-        _logger.LogWarning("Migrating database");
+        _logger.LogInformation("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
@@ -55,7 +55,7 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                _logger.LogWarning("Deleting all existing Tuition Partner data");
+                _logger.LogInformation("Deleting all existing Tuition Partner data");
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
