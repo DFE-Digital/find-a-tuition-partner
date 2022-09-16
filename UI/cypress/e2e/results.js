@@ -202,9 +202,16 @@ Then("the postcode search parameter remains", () => {
   cy.get('[data-testid="postcode-input-box"]').should("have.value", "sk11eb");
 });
 
-Then("all the subjects are shown to be selected", () => {
-  cy.get('[id="key-stage-1-english"]').should("be.checked");
-  cy.get('[id="key-stage-2-english"]').should("be.checked");
-  cy.get('[id="key-stage-3-english"]').should("be.checked");
-  cy.get('[id="key-stage-4-english"]').should("be.checked");
-});
+Then(
+  "the number of tuition partners displayed matches the displayed count",
+  () => {
+    let countOfElements = 0;
+    cy.get('[data-testid="results-list-item"]').then(($elements) => {
+      countOfElements = $elements.length;
+      cy.get('[data-testid="result-count"]')
+        .invoke("text")
+        .then(parseInt)
+        .should("equal", countOfElements);
+    });
+  }
+);

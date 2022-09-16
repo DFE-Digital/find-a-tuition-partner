@@ -2,7 +2,7 @@
 
 namespace Domain.Search;
 
-public class TuitionPartnerSearchRequest : SearchRequestBase
+public class TuitionPartnerSearchRequest
 {
     public string? LocalAuthorityDistrictCode { get; set; }
     public string? Postcode { get; set; }

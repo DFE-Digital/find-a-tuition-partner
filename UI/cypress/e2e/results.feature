@@ -154,11 +154,13 @@ Feature: User is shown search results
     When they enter 'SK1 1EB' as the school's postcode
     And 'Key stage 1 English' is selected
     Then all tuition partner parameters are populated correctly
+     And the number of tuition partners displayed matches the displayed count
 
   Scenario: Tuition partner details are displayed correctly after clear filters is selected on results page
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When the ‘clear filters’ button as been selected
     Then all tuition partner parameters are populated correctly
+    And the number of tuition partners displayed matches the displayed count
 
   Scenario: Tuition partner details are displayed correctly when arriving on the results page
     Given a user has arrived on the 'Search results' page
@@ -174,7 +176,15 @@ Feature: User is shown search results
     When the user selects tuition type 'in school'
     Then they will see the tuition type 'in school' is selected
 
- Scenario: User is able to select subjects
-   Given a user has arrived on the 'Search results' page without subjects or postcode
-   When a user selects all subject
-   Then all the subjects are shown to be selected
+Scenario: Search result matches the displayed count with subjects selected
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    Then the number of tuition partners displayed matches the displayed count
+
+Scenario: Search result matches the displayed count with no subjects selected
+    Given a user has arrived on the 'Search results' page without subjects
+    Then the number of tuition partners displayed matches the displayed count
+
+Scenario: Search result matches the displayed count with no subjects or postcode
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    Then the number of tuition partners displayed matches the displayed count
+
