@@ -230,7 +230,7 @@
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
-                @if (!String.IsNullOrEmpty(@Model.Data.Address))
+                @if (@Model.Data.Address.Any())
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -238,7 +238,7 @@
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
                             <ul class="govuk-list govuk-body-s">
-                                @foreach (var addressItem in @Model.Data.Address.Split(','))
+                                @foreach (var addressItem in @Model.Data.Address)
                                 {
                                     <li class="govuk-body">@addressItem</li>
                                 }

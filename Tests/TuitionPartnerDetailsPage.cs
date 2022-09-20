@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Runtime.Intrinsics.X86;
+using Domain;
 using Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -34,6 +35,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 SeoUrl = "a-tuition-partner",
                 Name = "A Tuition Partner",
                 Website = "https://a-tuition-partner.testdata/ntp",
+                Address = "1 High Street\r\nBeautiful City\rThe County\nPostcode",
                 Description = "A Tuition Partner Description",
                 PhoneNumber = "0123456789",
                 Email = "ntp@a-tuition-partner.testdata",
@@ -272,5 +274,15 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         result.Should().NotBeNull();
         result!.Prices.Should().ContainKey(groupSize).WhoseValue.HasVariation.Should().Be(hasVariation);
+    }
+
+    [Fact]
+    public async Task Shows_address_with_line_breaks()
+    {
+        var result = await Fixture.SendAsync(new TuitionPartner.Query("a-tuition-partner"));
+
+        result.Should().NotBeNull();
+        result!.Address.Should().ContainInOrder(
+            "1 High Street", "Beautiful City", "The County", "Postcode");
     }
 }
