@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Application.Extensions;
@@ -19,4 +19,7 @@ public static class StringExtensions
 
     public static string ToYesNoString(this bool value)
             => value ? "Yes" : "No";
+
+    public static string[] SplitByLineBreaks(this string value)
+        => value.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 }
