@@ -1,15 +1,10 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Application.Extensions;
-using Application.Factories;
+﻿using Application.Factories;
 using Domain;
 using Domain.Validators;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,14 +16,12 @@ namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
+    private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     private readonly IHostApplicationLifetime _host;
     private readonly DataEncryption _config;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-
-    static string[] Scopes = { DriveService.Scope.DriveReadonly };
-    static string ApplicationName = "Find a tuition partner";
-    private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     public DataImporterService(IHostApplicationLifetime host, IOptions<DataEncryption> config, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
     {
@@ -71,28 +64,13 @@ public class DataImporterService : IHostedService
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
                 await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
 
-                UserCredential credential;
-                // Load client secrets.
-                using (var stream =
-                       new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-                {
-                    /* The file token.json stores the user's access and refresh tokens, and is created
-                     automatically when the authorization flow completes for the first time. */
-                    string credPath = "token.json";
-                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        GoogleClientSecrets.FromStream(stream).Secrets,
-                        Scopes,
-                        "user",
-                        CancellationToken.None,
-                        new FileDataStore(credPath, true)).Result;
-                    Console.WriteLine("Credential file saved to: " + credPath);
-                }
+                var credential = (await GoogleCredential.FromFileAsync("credentials.json", cancellationToken))
+                    .CreateScoped(DriveService.Scope.DriveReadonly);
 
                 // Create Drive API service.
                 var service = new DriveService(new BaseClientService.Initializer
                 {
                     HttpClientInitializer = credential,
-                    ApplicationName = ApplicationName
                 });
 
                 // Define parameters of request.
@@ -122,7 +100,7 @@ public class DataImporterService : IHostedService
                     foreach (var file in files)
                     {
                         var originalFilename = file.Name;
-                        _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename} {file.MimeType}");
+                        _logger.LogInformation($"Attempting to import original Tuition Partner spreadsheet {originalFilename}");
 
                         var stream = new MemoryStream();
                         IDownloadProgress? status;
@@ -138,9 +116,12 @@ public class DataImporterService : IHostedService
                             status = exportRequest.DownloadWithStatus(stream);
                         }
 
-                        //exportRequest.DownloadWithStatus()
+                        if (status.Status != DownloadStatus.Completed)
+                        {
+                            _logger.LogWarning($"Could not download file {originalFilename} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded} exception {status.Exception}");
+                            continue;
+                        }
 
-                        _logger.LogInformation($"{status.Status} {status.BytesDownloaded} {status.Exception}");
                         _logger.LogInformation($"Attempting create Tuition Partner from file {originalFilename}");
                         TuitionPartner tuitionPartner;
                         try
