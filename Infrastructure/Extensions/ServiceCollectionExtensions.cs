@@ -1,10 +1,12 @@
 ﻿using System.Text.Json;
 using Application;
+using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
 using Application.Repositories;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
+using Infrastructure.DataImport;
 using Infrastructure.Extraction;
 using Infrastructure.Factories;
 using Infrastructure.Repositories;
@@ -80,8 +82,10 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services)
     {
+        services.AddScoped<IDataFileEnumerable, EncryptedDataFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
+        services.AddHostedService<DataImporterService>();
 
         return services;
     }

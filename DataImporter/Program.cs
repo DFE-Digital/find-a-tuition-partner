@@ -41,7 +41,6 @@ if (args.Any(x => x == "import"))
             services.AddOptions();
             services.AddNtpDbContext(hostContext.Configuration);
             services.AddDataImporter();
-            services.AddHostedService<DataImporterService>();
         })
         .AddLogging(LogEventLevel.Warning)
         .Build();
