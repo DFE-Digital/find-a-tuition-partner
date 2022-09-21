@@ -412,3 +412,4 @@ UI/cypress/screenshots
 Tests/Tests.v3.ncrunchproject
 **/appsettings.Development.json
 
+credentials.json

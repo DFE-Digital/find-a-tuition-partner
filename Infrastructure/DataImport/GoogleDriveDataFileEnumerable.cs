@@ -33,10 +33,12 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
         GoogleCredential credential;
         if (!string.IsNullOrEmpty(googleDrive.ServiceAccountKey))
         {
+            _logger.LogInformation("Loading Google Drive service account key from environment variable");
             credential = GoogleCredential.FromJson(googleDrive.ServiceAccountKey);
         }
         else if (!string.IsNullOrEmpty(googleDrive.ServiceAccountKeyFilePath))
         {
+            _logger.LogInformation($"Loading Google Drive service account key from {googleDrive.ServiceAccountKeyFilePath}");
             credential = GoogleCredential.FromFile(googleDrive.ServiceAccountKeyFilePath);
         }
         else
