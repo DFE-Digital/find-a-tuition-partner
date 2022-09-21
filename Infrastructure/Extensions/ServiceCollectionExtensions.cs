@@ -85,6 +85,7 @@ public static class ServiceCollectionExtensions
     {
         services.Configure<GoogleDrive>(configuration.GetSection(nameof(GoogleDrive)));
         services.AddOptions();
+        services.AddScoped<GoogleDriveServiceFactory>();
         services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();

@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using Application.DataImport;
-using Google.Apis.Auth.OAuth2;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
-using Google.Apis.Services;
-using Infrastructure.Configuration;
+using Infrastructure.Factories;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
@@ -25,47 +22,10 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
     private int _index = -1;
     private bool _initialized;
 
-    public GoogleDriveDataFileEnumerable(IOptions<GoogleDrive> config, ILogger<GoogleDriveDataFileEnumerable> logger)
+    public GoogleDriveDataFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory, ILogger<GoogleDriveDataFileEnumerable> logger)
     {
-        var googleDrive = config.Value;
+        _service = googleDriveServiceFactory.GetDriveService();
         _logger = logger;
-
-        GoogleCredential credential;
-        if (!string.IsNullOrEmpty(googleDrive.ServiceAccountKey))
-        {
-            _logger.LogInformation("Loading Google Drive service account key from environment variable");
-            try
-            {
-                credential = GoogleCredential.FromJson(googleDrive.ServiceAccountKey);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Loading Google Drive service account key from environment variable threw exception");
-                throw;
-            }
-        }
-        else if (!string.IsNullOrEmpty(googleDrive.ServiceAccountKeyFilePath))
-        {
-            _logger.LogInformation($"Loading Google Drive service account key from {googleDrive.ServiceAccountKeyFilePath}");
-            try
-            {
-                credential = GoogleCredential.FromFile(googleDrive.ServiceAccountKeyFilePath);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Loading Google Drive service account key from {googleDrive.ServiceAccountKeyFilePath} threw exception");
-                throw;
-            }
-        }
-        else
-        {
-            throw new InvalidOperationException("Importing files Google Drive requires either the GoogleDrive:ServiceAccountKey (full key JSON) or GoogleDrive:ServiceAccountKeyFilePath (path to key JSON file) configuration value. GoogleDrive:ServiceAccountKey is expected for deployments and has priority. GoogleDrive:ServiceAccountKeyFilePath is used for local development via 'dotnet user-secrets set \"GoogleDrive:ServiceAccountKeyFilePath\" \"<PATH_TO_KEY_JSON_FILE>\" -p UI'");
-        }
-
-        _service = new DriveService(new BaseClientService.Initializer
-        {
-            HttpClientInitializer = credential.CreateScoped(DriveService.Scope.DriveReadonly)
-        });
     }
 
     public IEnumerator<DataFile> GetEnumerator()
