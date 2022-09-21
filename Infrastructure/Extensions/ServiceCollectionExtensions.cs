@@ -83,10 +83,8 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<DataEncryption>(configuration.GetSection(nameof(DataEncryption)));
         services.Configure<GoogleDrive>(configuration.GetSection(nameof(GoogleDrive)));
         services.AddOptions();
-        //services.AddScoped<IDataFileEnumerable, EncryptedDataFileEnumerable>();
         services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
