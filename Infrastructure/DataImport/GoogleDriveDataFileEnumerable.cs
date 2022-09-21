@@ -98,11 +98,19 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
         do
         {
             _logger.LogInformation($"Retrieving page {page} of files from folder with id {TuitionPartnerDataFolderId} in shared Google Drive with id {SchoolServicesSharedDriveId}");
-            fileList = listRequest.Execute();
-            _files.AddRange(fileList.Files);
-            _logger.LogInformation($"Retrieved {fileList.Files.Count} files for this request and {_files.Count} in total");
-            listRequest.PageToken = fileList.NextPageToken;
-            page++;
+            try
+            {
+                fileList = listRequest.Execute();
+                _files.AddRange(fileList.Files);
+                _logger.LogInformation($"Retrieved {fileList.Files.Count} files for this request and {_files.Count} in total");
+                listRequest.PageToken = fileList.NextPageToken;
+                page++;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Retrieving page {page} of files from folder with id {TuitionPartnerDataFolderId} in shared Google Drive with id {SchoolServicesSharedDriveId} caused exception", ex);
+                throw;
+            }
         } while (!string.IsNullOrEmpty(fileList.NextPageToken));
     }
 
