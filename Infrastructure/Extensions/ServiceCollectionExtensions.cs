@@ -4,6 +4,7 @@ using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
 using Application.Repositories;
+using Infrastructure.Configuration;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
 using Infrastructure.DataImport;
@@ -80,9 +81,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddDataImporter(this IServiceCollection services)
+    public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IDataFileEnumerable, EncryptedDataFileEnumerable>();
+        services.Configure<DataEncryption>(configuration.GetSection(nameof(DataEncryption)));
+        services.Configure<GoogleDrive>(configuration.GetSection(nameof(GoogleDrive)));
+        services.AddOptions();
+        //services.AddScoped<IDataFileEnumerable, EncryptedDataFileEnumerable>();
+        services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
         services.AddHostedService<DataImporterService>();

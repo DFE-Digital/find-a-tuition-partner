@@ -4,8 +4,6 @@ using Application.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
-using Infrastructure;
-using Infrastructure.Configuration;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +18,8 @@ if (args.Any(x => x == "import"))
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
-            services.Configure<DataEncryption>(hostContext.Configuration.GetSection(nameof(DataEncryption)));
-            services.AddOptions();
             services.AddNtpDbContext(hostContext.Configuration);
-            services.AddDataImporter();
+            services.AddDataImporter(hostContext.Configuration);
         })
         .AddLogging(LogEventLevel.Warning)
         .Build();
