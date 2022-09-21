@@ -46,7 +46,7 @@ public class CookiesTests : CleanSliceFixture
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
         cookiePage.Request.Cookies[".FindATuitionPartner.Consent"]?.ToString().Should().Be("true");
-        cookiePage.Consent.Should().BeTrue();   
+        cookiePage.Consent.Should().BeTrue();
     }
 
     [Fact]
