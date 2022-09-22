@@ -57,7 +57,7 @@ jobs:
 
     - name: Deploy to PaaS
       run: |
-        cf push --strategy rolling --vars-file vars-pr.yml --var environment-postfix=-$PR_NUMBER --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}"
+        cf push --strategy rolling --vars-file vars-pr.yml --var environment-postfix=-$PR_NUMBER --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
 
     - name: Run database migrations and import data
       run: |

@@ -3,27 +3,29 @@ using Application.DataImport;
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
+using Infrastructure.Configuration;
 using Infrastructure.Factories;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
 
 public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<DataFile>
 {
-    private const string SchoolServicesSharedDriveId = "0ALN4QSSNcSvkUk9PVA";
-    private const string TuitionPartnerDataFolderId = "1uda1n7cWHS4goRuDxhJBHoURAlAgh3YB";
     private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    private readonly ILogger<GoogleDriveDataFileEnumerable> _logger;
+    private readonly GoogleDrive _config;
     private readonly DriveService _service;
+    private readonly ILogger<GoogleDriveDataFileEnumerable> _logger;
     private readonly List<File> _files = new();
     private readonly List<DataFile> _dataFiles = new();
     private int _index = -1;
     private bool _initialized;
 
-    public GoogleDriveDataFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory, ILogger<GoogleDriveDataFileEnumerable> logger)
+    public GoogleDriveDataFileEnumerable(IOptions<GoogleDrive> config, GoogleDriveServiceFactory googleDriveServiceFactory, ILogger<GoogleDriveDataFileEnumerable> logger)
     {
+        _config = config.Value;
         _service = googleDriveServiceFactory.GetDriveService();
         _logger = logger;
     }
@@ -59,8 +61,8 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
     {
         var listRequest = _service.Files.List();
 
-        listRequest.DriveId = SchoolServicesSharedDriveId;
-        listRequest.Q = $"parents in '{TuitionPartnerDataFolderId}' and trashed = false";
+        listRequest.DriveId = _config.SharedDriveId;
+        listRequest.Q = $"parents in '{_config.TuitionPartnerDataFolderId}' and trashed = false";
 
         // Following must be set when searching within a shared drive
         listRequest.IncludeItemsFromAllDrives = true;
@@ -75,7 +77,7 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
         var page = 1;
         do
         {
-            _logger.LogInformation($"Retrieving page {page} of files from folder with id {TuitionPartnerDataFolderId} in shared Google Drive with id {SchoolServicesSharedDriveId}");
+            _logger.LogInformation($"Retrieving page {page} of files from folder with id {_config.TuitionPartnerDataFolderId} in shared Google Drive with id {_config.SharedDriveId}");
             try
             {
                 fileList = listRequest.Execute();
@@ -86,7 +88,7 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Retrieving page {page} of files from folder with id {TuitionPartnerDataFolderId} in shared Google Drive with id {SchoolServicesSharedDriveId} caused exception", ex);
+                _logger.LogError($"Retrieving page {page} of files from folder with id {_config.TuitionPartnerDataFolderId} in shared Google Drive with id {_config.SharedDriveId} caused exception", ex);
                 throw;
             }
         } while (!string.IsNullOrEmpty(fileList.NextPageToken));
