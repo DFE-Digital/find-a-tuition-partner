@@ -57,11 +57,13 @@ You will need to register the database connection string for local development a
 dotnet user-secrets set "ConnectionStrings:FatpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=fatp" -p UI
 ```
 
-You will also need to set the current data encryption key used to encrypt the data files in order to import them locally. Ask the other developers for the latest encryption key and add it as a .NET user secret with the following command.
+#### Google Cloud Service Account Key file
 
-```
-dotnet user-secrets set "DataEncryption:Key" "<DATA_ENCRYPTION_KEY>" -p UI
-```
+The Tuition Partner data is imported from a folder in Google Drive. Configuring your development environment so that the service has access to this drive is covered in the Development Environment Setup -> Google Cloud Service Account Key file section in the developer onboarding document. This document is bookmarked in the dev Slack channel.
+
+**You must get a key and run the four `dotnet user-secrets set` commands in the onboarding document for the import process to work**
+
+#### Data Import
 
 The database migrations, seed data and Tuition Partner data is deployed by and running the data importer project. Either run the project via Visual Studio or with the following command.
 
@@ -152,12 +154,14 @@ From a command prompt, change to the `UI` directory and run `npm install` to ins
 
 ### Docker Compose
 
-It is also possible to test the full stack from within docker using docker compose. This method supports easy setup and teardown of the database and can be a good way to test database migrations and updated data. This is also how the PR builds are tested for rapid feeback. The following commands will run all unit tests, start the stack, run the migrations, import the data and run the end to end tests
+It is also possible to test the full stack from within docker using docker compose. This method supports easy setup and teardown of the database and can be a good way to test database migrations and updated data. The following commands will run all unit tests, start the stack, run the migrations, import the data and run the end to end tests.
+
+Note the key file and ids that need replacing in the following command can be found in the [Google Cloud Service Account Key file](#google-cloud-service-account-key-file) section.
 
 ```
 dotnet test
 docker compose up --build -d
-docker compose run -e DataEncryption:Key=<DATA_ENCRYPTION_KEY> web ./UI import
+docker compose run -v <PATH_TO_SERVICE_ACCOUNT_KEY_FILE>:/app/credentials.json -e GoogleDrive:SharedDriveId=<ID> -e GoogleDrive:TuitionPartnerDataFolderId=<ID> -e GoogleDrive:TuitionPartnerLogosFolderId=<ID> web ./UI import
 cd UI
 npx cypress run --config baseUrl=http://localhost:8080/
 cd ..

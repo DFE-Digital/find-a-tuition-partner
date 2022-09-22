@@ -13,6 +13,7 @@ services:
       - AppLogging:OverrideLogEventLevel=Warning
       - GoogleTagManager:ContainerId=EndToEndTesting
       - GoogleAnalytics:MeasurementId=
+      - GoogleDrive:ServiceAccountKeyFilePath=credentials.json
 
   db:
     image: postgres:13
