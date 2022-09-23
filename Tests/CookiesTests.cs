@@ -45,7 +45,7 @@ public class CookiesTests : CleanSliceFixture
                   return Task.FromResult(page);
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
-        cookiePage.Request.Cookies[".FindATuitionPartner.Consent"]?.ToString().Should().Be("true");
+        cookiePage.Request.Cookies[".FindATuitionPartner.Consent"]?.Should().Be("true");
         cookiePage.Consent.Should().BeTrue();
     }
 
@@ -78,7 +78,7 @@ public class CookiesTests : CleanSliceFixture
                   return Task.FromResult(page);
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
-        cookiePage.Request.Cookies[".FindATuitionPartner.Consent"]?.ToString().Should().Be("true");
+        cookiePage.Request.Cookies[".FindATuitionPartner.Consent"]?.Should().Be("true");
         cookiePage.Response.Headers.TryGetValue("Set-Cookie", out var cookieVariables);
         cookieVariables.ToString().Should().Contain(".FindATuitionPartner.Consent=False");
     }
@@ -153,7 +153,7 @@ public class CookiesTests : CleanSliceFixture
                   page.OnGet(false, null);
                   return Task.FromResult(page);
               });
-        cookiePage?.ReturnUrl?.ToString().Should().Be("https://localhost:7036/");
+        cookiePage?.ReturnUrl?.Should().Be("https://localhost:7036/");
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public class CookiesTests : CleanSliceFixture
                   page.OnGet(false, true);
                   return Task.FromResult(page);
               });
-        cookiePage?.ReturnUrl?.ToString().Should().Be("https://localhost:7036/");
+        cookiePage?.ReturnUrl?.Should().Be("https://localhost:7036/");
     }
 
     [Fact]
