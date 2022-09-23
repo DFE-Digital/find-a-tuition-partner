@@ -1,0 +1,28 @@
+﻿@page
+@model AllQualityAssuredTuitionPartners
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "All quality-assured tuition partners";
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
+        <p>
+            <h1 class="govuk-heading-l" data-testid="all-quality-assured-tuition-partners-header">All quality-assured tuition partners</h1>
+        <p class="govuk-body">
+            National Tutoring Programme funding must be spent on a quality-assured tuition partner. Check the full list of quality-assured tuition partners to find your tuition partner.
+        </p>
+        </p>
+        <div>
+            <label class="govuk-label govuk-label--s" for="search">
+                Search by tuition partner name
+            </label>
+            <input class="govuk-input govuk-!-width-three-quarters" id="Search" data-testid="tuition-partner-name-input-box" type="text">
+            <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
+        </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
+        <p class="govuk-body"><a asp-page="@nameof(FundingAndReporting)" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
+    </div>
+</div>
