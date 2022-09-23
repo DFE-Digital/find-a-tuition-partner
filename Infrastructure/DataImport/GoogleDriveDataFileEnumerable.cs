@@ -123,7 +123,7 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
             throw new Exception($"Could not download file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded} exception {status.Exception}");
         }
 
-        _logger.LogInformation($"Successfully downloaded file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded} exception {status.Exception}");
+        _logger.LogInformation($"Successfully downloaded file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded}{(status.Exception == null ? "" : $" exception {status.Exception}")}");
 
         _dataFiles.Add(dataFile);
 
