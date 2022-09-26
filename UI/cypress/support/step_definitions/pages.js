@@ -36,6 +36,13 @@ Given("a user has arrived on the privacy page", () => {
   cy.visit(`/privacy`);
 });
 
+Given(
+  "a user has arrived on the all quality-assured tuition partners page",
+  () => {
+    cy.visit(`/full-list`);
+  }
+);
+
 When(
   "they set the {string} query string parameter value to {string}",
   (key, value) => {
