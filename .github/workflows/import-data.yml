@@ -44,7 +44,6 @@ jobs:
           cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
       - name: Run database migrations and import data
-        if: ${{ inputs.run_database_migrations_and_import_data == true }}
         run: |
           cf run-task find-a-tuition-partner-${{ inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" --name find-a-tuition-partner-${{ inputs.environment }}-data-import
       
