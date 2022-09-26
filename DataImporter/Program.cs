@@ -37,11 +37,8 @@ if (args.Any(x => x == "import"))
     var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
-            services.Configure<DataEncryption>(hostContext.Configuration.GetSection(nameof(DataEncryption)));
-            services.AddOptions();
             services.AddNtpDbContext(hostContext.Configuration);
-            services.AddDataImporter();
-            services.AddHostedService<DataImporterService>();
+            services.AddDataImporter(hostContext.Configuration);
         })
         .AddLogging(LogEventLevel.Warning)
         .Build();

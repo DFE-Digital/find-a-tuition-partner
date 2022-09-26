@@ -1,0 +1,52 @@
+name: Run Database Migrations and Import Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
+
+jobs:
+  migrate_import_data:
+    name: Migrate Database and Import Data
+    runs-on: ubuntu-latest
+
+    env:
+      CF_API: "https://api.london.cloud.service.gov.uk"
+      CF_ORG: "dfe"
+      CF_SPACE: ntp-${{ inputs.environment }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Install the CF CLI
+        run: |
+          wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+
+      - name: Authenticate
+        env:
+          CF_USERNAME: ${{ secrets.CF_USERNAME }}
+          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        run: |
+          echo "Logging into $CF_ORG/$CF_SPACE..."
+          cf api "${CF_API}"
+          cf auth
+          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+      - name: Run database migrations and import data
+        if: ${{ inputs.run_database_migrations_and_import_data == true }}
+        run: |
+          cf run-task find-a-tuition-partner-${{ inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" --name find-a-tuition-partner-${{ inputs.environment }}-data-import
+      
+      - name: Logout
+        run: cf logout
