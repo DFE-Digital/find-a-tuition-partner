@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Application.Extensions;
 using Domain;
 using Domain.Constants;
@@ -24,6 +25,9 @@ public class TuitionPartner : PageModel
     public Command? Data { get; set; }
 
     public SearchModel? AllSearchData { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public ReferrerList From { get; set; }
 
     public async Task<IActionResult> OnGetAsync(Query query)
     {
@@ -293,4 +297,10 @@ public class TuitionPartner : PageModel
             return fullPricing;
         }
     }
+}
+
+public enum ReferrerList
+{
+    SearchResults = 0,
+    FullList = 1
 }

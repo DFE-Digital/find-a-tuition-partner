@@ -21,7 +21,7 @@
             @foreach (var item in Model.Results!.Results)
             {
                 <div data-testid="tuition-partner-summary">
-                    <h2 class="govuk-heading-s"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
+                    <h2 class="govuk-heading-s"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" asp-route-from="@ReferrerList.FullList" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
                     <govuk-summary-list>
                         <govuk-summary-list-row>
                             <govuk-summary-list-row-key>

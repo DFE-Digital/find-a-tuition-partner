@@ -9,9 +9,18 @@
 
 <div class="app-print-this-page--container">
     <div class="app-print-this-page--container-left">
-        <a href="/search-results?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
-            Back to search results
-        </a>
+        @if (Model.From == ReferrerList.FullList)
+        {
+            <a asp-page="@nameof(FullList)" class="govuk-back-link">
+                Back to tuition partners
+            </a>
+        }
+        else
+        {
+            <a href="/search-results?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
+                Back to search results
+            </a>
+        }
     </div>
     
     <div class="govuk-body app-print-this-page--container-right">

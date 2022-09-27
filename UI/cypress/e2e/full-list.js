@@ -69,7 +69,7 @@ Then("the name of each tuition partner links to their details page", () => {
     cy.wrap($element).should(
       "have.attr",
       "href",
-      `/tuition-partner/${kebabCase($element.text()).replace(/'/g, '%27')}`
+      `/tuition-partner/${kebabCase($element.text()).replace(/'/g, '%27')}?from=FullList`
     );
   });
 });

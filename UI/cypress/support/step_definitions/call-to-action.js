@@ -23,5 +23,5 @@ Then("the 'Back' link is not displayed", () => {
 });
 
 Then("the back link's text is {string}", ($text) => {
-  cy.get(".govuk-back-link").should("have.text", $text);
+  cy.get(".govuk-back-link").should("contain.text", $text);
 });
