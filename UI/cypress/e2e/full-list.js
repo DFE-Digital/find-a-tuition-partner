@@ -69,7 +69,10 @@ Then("the name of each tuition partner links to their details page", () => {
     cy.wrap($element).should(
       "have.attr",
       "href",
-      `/tuition-partner/${kebabCase($element.text()).replace(/'/g, '%27')}?from=FullList`
+      `/tuition-partner/${kebabCase($element.text()).replace(
+        /'/g,
+        "%27"
+      )}?from=FullList`
     );
   });
 });
@@ -99,7 +102,11 @@ Then(
   "the email link for each tuition partner initiates their email client options",
   () => {
     cy.get('a[data-testid="tuition-partner-email-link"]').each(($element) => {
-      cy.wrap($element).should("have.attr", "href", `mailto:${$element.text()}`);
+      cy.wrap($element).should(
+        "have.attr",
+        "href",
+        `mailto:${$element.text()}`
+      );
     });
   }
 );

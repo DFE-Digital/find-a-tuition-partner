@@ -3,9 +3,19 @@
 @{
     ViewData["Title"] = "Full List";
 }
+
+<div class="app-print-this-page--container govuk-!-margin-bottom-3">
+    <div class="app-print-this-page--container-left govuk-!-padding-top-3">
+        <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
+    </div>
+
+    <div class="govuk-body app-print-this-page--container-right">
+        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
+    </div>
+</div>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
         <h1 class="govuk-heading-l" data-testid="full-list-header">All quality-assured tuition partners</h1>
         <p class="govuk-body">
             National Tutoring Programme funding must be spent on a quality-assured tuition partner. Check the full list of quality-assured tuition partners to find your tuition partner.
