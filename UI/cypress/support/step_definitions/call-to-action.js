@@ -21,3 +21,7 @@ When("they click 'Continue'", () => {
 Then("the 'Back' link is not displayed", () => {
   cy.get(".govuk-back-link").should("not.exist");
 });
+
+Then("the back link's text is {string}", ($text) => {
+  cy.get(".govuk-back-link").should("have.text", $text);
+});
