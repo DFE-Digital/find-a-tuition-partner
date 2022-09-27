@@ -32,7 +32,7 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: home page is selected 
     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-    When the home page is selected
+    When they click 'Home'
     Then they will be taken to the 'Find a tuition partner' journey start page
 
   Scenario: back is selected return to search results page

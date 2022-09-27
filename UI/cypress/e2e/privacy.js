@@ -118,7 +118,3 @@ Then("the contact secure dfe online form link opens in a new window", () => {
     "_blank"
   );
 });
-
-Then("they will see the home link", () => {
-  cy.get('[data-testid="home-link"]').should("have.attr", "href", "/");
-});
