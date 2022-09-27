@@ -39,46 +39,58 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                _logger.LogInformation("Deleting all existing Tuition Partner data");
-                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
-                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
-                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
-                await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
+                await RemoveTuitionPartners(dbContext, cancellationToken);
 
-                foreach (var dataFile in dataFileEnumerable)
-                {
-                    var originalFilename = dataFile.Filename;
-
-                    _logger.LogInformation($"Attempting to create Tuition Partner from file {originalFilename}");
-                    TuitionPartner tuitionPartner;
-                    try
-                    {
-                        tuitionPartner = await factory.GetTuitionPartner(dataFile.Stream, cancellationToken);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, $"Exception thrown when creating Tuition Partner from file {originalFilename}");
-                        continue;
-                    }
-
-                    var validator = new TuitionPartnerValidator();
-                    var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
-                    if (!results.IsValid)
-                    {
-                        _logger.LogError($"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}");
-                        continue;
-                    }
-
-                    dbContext.TuitionPartners.Add(tuitionPartner);
-                    await dbContext.SaveChangesAsync(cancellationToken);
-
-                    _logger.LogInformation($"Added Tuition Partner {tuitionPartner.Name} with id of {tuitionPartner.Id} from file {originalFilename}");
-                }
+                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             });
 
         _host.StopApplication();
+    }
+
+    private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Deleting all existing Tuition Partner data");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
+    }
+
+    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)
+    {
+        foreach (var dataFile in dataFileEnumerable)
+        {
+            var originalFilename = dataFile.Filename;
+
+            _logger.LogInformation("Attempting to create Tuition Partner from file {OriginalFilename}", originalFilename);
+            TuitionPartner tuitionPartner;
+            try
+            {
+                tuitionPartner = await factory.GetTuitionPartner(dataFile.Stream, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception thrown when creating Tuition Partner from file {OriginalFilename}", originalFilename);
+                continue;
+            }
+
+            var validator = new TuitionPartnerValidator();
+            var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
+            if (!results.IsValid)
+            {
+                _logger.LogError($"Tuition Partner name {{TuitionPartnerName}} created from file {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                    tuitionPartner.Name, originalFilename, string.Join(Environment.NewLine, results.Errors));
+                continue;
+            }
+
+            dbContext.TuitionPartners.Add(tuitionPartner);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                tuitionPartner.Name, tuitionPartner.Id, originalFilename);
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
