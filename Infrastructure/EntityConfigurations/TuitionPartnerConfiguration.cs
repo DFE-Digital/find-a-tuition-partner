@@ -10,5 +10,7 @@ public class TuitionPartnerConfiguration : IEntityTypeConfiguration<TuitionPartn
     {
         builder.HasIndex(e => e.SeoUrl).IsUnique();
         builder.HasIndex(e => e.Name);
+        builder.Property(u => u.HasLogo)
+            .HasComputedColumnSql("case when \"Logo\" is null then false else true end", stored: true);
     }
 }
