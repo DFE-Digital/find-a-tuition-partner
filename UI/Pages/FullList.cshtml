@@ -87,7 +87,7 @@
                     </div>
                 }
             </div>
-            <p class="govuk-body" show-if="Model.Results == null || Model.Results.Count == 0">
+            <p class="govuk-body" show-if="Model.Results == null || Model.Results.Count == 0" data-testid="no-search-results-message">
                 there are no search results for '@Model.Data.Name'.
             </p>
         </div>

@@ -54,5 +54,37 @@ Feature: Show all quality-assured tuition partners
   Scenario: back link returns to all quality-assured tuition partners page
     Given a user has arrived on the all quality-assured tuition partners page
     When they click on the '21st' tuition partner's name
-    When they click 'Back'
+    And they click 'Back'
     Then they will see the 'All quality-assured tuition partners' page
+
+  Scenario: search by name
+    Given a user has arrived on the all quality-assured tuition partners page
+    When they search by tuition partner name 'tutor'
+    Then they will see the list of quality-assured tuition partners with names containing 'tutor' is in alphabetical order by name
+    And they will not see there are no search results for name
+
+  Scenario: clear search shown when searching by name
+    Given a user has arrived on the all quality-assured tuition partners page
+    When they search by tuition partner name 'tutor'
+    Then the clear search link is displayed
+
+  Scenario: clear search not shown when full list of quality-assured tuition partners is displayed
+    Given a user has arrived on the all quality-assured tuition partners page
+    Then the clear search link is not displayed
+
+  Scenario: clear search returns to all quality-assured tuition partners page
+    Given a user has searched the all quality-assured tuition partners by name 'tutor'
+    When they click on the clear search link
+    Then search by tuition partner name is empty
+
+  Scenario: back link returns to searching all quality-assured tuition partners by name page
+    Given a user has searched the all quality-assured tuition partners by name 'tutor'
+    When they click on the '2nd' tuition partner's name
+    And they click 'Back'
+    Then search by tuition partner name is 'tutor'
+    And they will see the list of quality-assured tuition partners with names containing 'tutor' is in alphabetical order by name
+
+  Scenario: display there are no search results when no results found for name
+    Given a user has arrived on the all quality-assured tuition partners page
+    When they search by tuition partner name 'zzz'
+    Then they will see there are no search results for 'zzz'
