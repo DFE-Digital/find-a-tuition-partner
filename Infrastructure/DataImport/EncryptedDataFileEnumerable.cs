@@ -83,7 +83,7 @@ public class EncryptedDataFileEnumerable : IDataFileEnumerable, IEnumerator<Data
             var cryptoTransform = crypto.CreateDecryptor(_keyBytes, iv);
             using var cryptoStream = new CryptoStream(resourceStream, cryptoTransform, CryptoStreamMode.Read);
             cryptoStream.CopyTo(stream);
-            dataFile = new DataFile(originalFilename, new Lazy<Stream>(stream));
+            dataFile = new DataFile(originalFilename, stream);
             _dataFiles[_index] = dataFile;
             return dataFile;
         }
@@ -99,7 +99,7 @@ public class EncryptedDataFileEnumerable : IDataFileEnumerable, IEnumerator<Data
         _index = -1;
     }
 
-    public DataFile Current { get; private set; } = new("", new Lazy<Stream>(new MemoryStream()));
+    public DataFile Current { get; private set; } = new("");
 
     object IEnumerator.Current => Current;
 

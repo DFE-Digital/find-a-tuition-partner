@@ -1,10 +1,8 @@
 ﻿using Application.DataImport;
 using Application.Factories;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Domain;
 using Domain.Validators;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -42,11 +40,11 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                //await RemoveTuitionPartners(dbContext, cancellationToken);
+                await RemoveTuitionPartners(dbContext, cancellationToken);
 
-                //await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
+                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
-                await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, factory, cancellationToken);
+                await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             });
@@ -73,7 +71,7 @@ public class DataImporterService : IHostedService
             TuitionPartner tuitionPartner;
             try
             {
-                tuitionPartner = await factory.GetTuitionPartner(dataFile.Stream, cancellationToken);
+                tuitionPartner = await factory.GetTuitionPartner(dataFile.Stream.Value, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -98,21 +96,35 @@ public class DataImporterService : IHostedService
         }
     }
 
-    private async Task ImportTutionPartnerLogos(NtpDbContext dbContext, ILogoFileEnumerable logoFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)
+    private async Task ImportTutionPartnerLogos(NtpDbContext dbContext, ILogoFileEnumerable logoFileEnumerable, CancellationToken cancellationToken)
     {
-        var partners = await dbContext.TuitionPartners.Select(x => new { x.Id, x.SeoUrl }).ToListAsync(cancellationToken);
+        var partners = await dbContext.TuitionPartners
+            .Select(x => new { x.Id, x.SeoUrl })
+            .ToListAsync(cancellationToken);
+
+        _logger.LogInformation("Looking for logos for {Count} tuition partners", partners.Count);
+
         var logos = logoFileEnumerable.ToList();
+        _logger.LogInformation("Available logo files are {LogoFiles}",
+            string.Join("\n", logos.Select(x => x.Filename).OrderBy(x => x)));
+
         foreach (var partner in partners)
         {
-            foreach (var dataFile in logos)
+            var dataFile = logos
+                .Where(logo => logo.Filename.Contains(partner.SeoUrl))
+                .FirstOrDefault();
+
+            if (dataFile == null)
             {
-                if (!dataFile.Filename.Contains(partner.SeoUrl)) continue;
-
-                var b64 = Convert.ToBase64String(dataFile.Stream.Value.ReadAllBytes());
-
-                var tp = dbContext.TuitionPartners.Find(partner.Id);
-                tp!.Logo = b64;
+                _logger.LogInformation("No logo file for Tution Partner {Name}", partner.SeoUrl);
+                continue;
             }
+
+            _logger.LogInformation("Retrieving logo file for Tution Partner {Name}", partner.SeoUrl);
+            var b64 = Convert.ToBase64String(dataFile.Stream.Value.ReadAllBytes());
+
+            var tp = dbContext.TuitionPartners.Find(partner.Id);
+            tp!.Logo = b64;
         }
 
         await dbContext.SaveChangesAsync();
