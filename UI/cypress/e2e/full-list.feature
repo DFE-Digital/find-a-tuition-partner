@@ -26,6 +26,10 @@ Feature: Show all quality-assured tuition partners
     Given a user has arrived on the all quality-assured tuition partners page
     Then the full list of quality-assured tuition partners is in alphabetical order by name
 
+  Scenario: full list of quality-assured tuition partners displays result count
+    Given a user has arrived on the all quality-assured tuition partners page
+    Then the number of tuition partners displayed matches the displayed count
+
   Scenario: tuition partner summaries only shows name, website, phone number and email address
     Given a user has arrived on the all quality-assured tuition partners page
     Then the user is only shown the name, website, phone number and email address for each tuition partner
@@ -63,19 +67,9 @@ Feature: Show all quality-assured tuition partners
     Then they will see the list of quality-assured tuition partners with names containing 'tutor' is in alphabetical order by name
     And they will not see there are no search results for name
 
-  Scenario: clear search shown when searching by name
-    Given a user has arrived on the all quality-assured tuition partners page
-    When they search by tuition partner name 'tutor'
-    Then the clear search link is displayed
-
-  Scenario: clear search not shown when full list of quality-assured tuition partners is displayed
-    Given a user has arrived on the all quality-assured tuition partners page
-    Then the clear search link is not displayed
-
-  Scenario: clear search returns to all quality-assured tuition partners page
+  Scenario: search by name displays result count
     Given a user has searched the all quality-assured tuition partners by name 'tutor'
-    When they click on the clear search link
-    Then search by tuition partner name is empty
+    Then the number of tuition partners displayed matches the displayed count
 
   Scenario: back link returns to searching all quality-assured tuition partners by name page
     Given a user has searched the all quality-assured tuition partners by name 'tutor'

@@ -32,13 +32,10 @@
                         <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
                     </div>
                 </div>
-                <p class="govuk-body govuk-!-margin-top-3" show-if="!string.IsNullOrWhiteSpace(Model.Data.Name)">
-                    <a asp-page="@nameof(FullList)" class="govuk-link" data-testid="clear-search-link">Clear search</a>
-                </p>
             </div>
             <div show-if="Model.Results != null && Model.Results.Count > 0">
-                <p show-if="!string.IsNullOrWhiteSpace(Model.Data.Name)" class="govuk-body" data-testid="results-count">
-                    <span>@Model.Results!.Count search @(Model.Results.Count != 1 ? "results" : "result") for '@Model.Data.Name'.</span>
+                <p class="govuk-body">
+                    <span><strong data-testid="result-count">@Model.Results!.Count</strong> @(Model.Results.Count != 1 ? "results" : "result")</span>
                 </p>
                 @foreach (var item in Model.Results!.Results)
                 {
@@ -91,7 +88,7 @@
                 there are no search results for '@Model.Data.Name'.
             </p>
         </div>
-        <div class="govuk-grid-column-one-third">
+        <div class="govuk-grid-column-one-third app-print-hide">
             <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
             <p class="govuk-body"><a asp-page="@nameof(FundingAndReporting)" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
         </div>

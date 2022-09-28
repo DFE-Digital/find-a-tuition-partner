@@ -34,10 +34,6 @@ When("they search by tuition partner name {string}", ($name) => {
   cy.get('[data-testid="call-to-action"]').click();
 });
 
-When("they click on the clear search link", () => {
-  cy.get('[data-testid="clear-search-link"]').click();
-});
-
 Then("they will see the 'All quality-assured tuition partners' page", () => {
   Step(this, "the page URL ends with '/full-list'");
   Step(this, "the page's title is 'Full List'");
@@ -146,16 +142,6 @@ Then(
   }
 );
 
-Then("the clear search link is displayed", () => {
-  cy.get('[data-testid="clear-search-link"]')
-    .should("be.visible")
-    .should("have.text", "Clear search");
-});
-
-Then("the clear search link is not displayed", () => {
-  cy.get('[data-testid="clear-search-link"]').should("not.exist");
-});
-
 Then("search by tuition partner name is empty", () => {
   cy.get('[data-testid="name-input-box"]').should("not.have.value");
 });
@@ -173,3 +159,17 @@ Then("they will see there are no search results for {string}", ($name) => {
 Then("they will not see there are no search results for name", () => {
   cy.get('[data-testid="no-search-results-message"]').should("not.exist");
 });
+
+Then(
+  "the number of tuition partners displayed matches the displayed count",
+  () => {
+    let countOfElements = 0;
+    cy.get('[data-testid="tuition-partner-summary"]').then(($elements) => {
+      countOfElements = $elements.length;
+      cy.get('[data-testid="result-count"]')
+        .invoke("text")
+        .then(parseInt)
+        .should("equal", countOfElements);
+    });
+  }
+);
