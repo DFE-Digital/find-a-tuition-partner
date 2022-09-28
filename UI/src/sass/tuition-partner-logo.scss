@@ -1,4 +1,3 @@
-
 .search-results-logo {
   @include govuk-media-query($until: tablet) {
     background-image: none !important;
@@ -8,5 +7,11 @@
     background-repeat: no-repeat;
     background-position: top right;
     background-size: 90px 60px;
+  }
+}
+
+.tuition-partner-logo {
+  @include govuk-media-query($until: tablet) {
+    display: none;
   }
 }
