@@ -1,0 +1,12 @@
+
+.search-results-logo {
+  @include govuk-media-query($until: tablet) {
+    background-image: none !important;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 90px 60px;
+  }
+}
