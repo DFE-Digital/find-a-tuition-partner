@@ -39,7 +39,7 @@ Given("a user has arrived on the privacy page", () => {
 Given(
   "a user has arrived on the all quality-assured tuition partners page",
   () => {
-    cy.visit(`/full-list`);
+    cy.visit(`/all-tuition-partners`);
   }
 );
 

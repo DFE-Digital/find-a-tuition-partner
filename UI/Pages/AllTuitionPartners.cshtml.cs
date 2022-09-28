@@ -7,11 +7,11 @@ using UI.Extensions;
 
 namespace UI.Pages;
 
-public class FullList : PageModel
+public class AllTuitionPartners : PageModel
 {
     private readonly IMediator _mediator;
 
-    public FullList(IMediator mediator) => _mediator = mediator;
+    public AllTuitionPartners(IMediator mediator) => _mediator = mediator;
 
     [BindProperty(SupportsGet = true)]
     public SearchModel Data { get; set; } = new();

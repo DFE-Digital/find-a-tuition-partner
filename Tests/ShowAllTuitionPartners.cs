@@ -45,7 +45,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         });
 
         // When
-        var page = await Fixture.GetPage<FullList>()
+        var page = await Fixture.GetPage<AllTuitionPartners>()
             .Execute(async page =>
             {
                 await page.OnGet();
@@ -86,7 +86,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         });
 
         // When
-        var page = await Fixture.GetPage<FullList>()
+        var page = await Fixture.GetPage<AllTuitionPartners>()
             .Execute(async page =>
             {
                 page.Data.Name = "LPh";
@@ -105,7 +105,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Sets_from_full_list()
     {
-        var page = await Fixture.GetPage<FullList>()
+        var page = await Fixture.GetPage<AllTuitionPartners>()
             .Execute(async page =>
             {
                 page.Data.From = ReferrerList.SearchResults;
@@ -119,7 +119,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Sets_AllSearchData()
     {
-        var page = await Fixture.GetPage<FullList>()
+        var page = await Fixture.GetPage<AllTuitionPartners>()
             .Execute(async page =>
             {
                 page.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());

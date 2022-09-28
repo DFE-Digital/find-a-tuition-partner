@@ -35,8 +35,8 @@ When("they search by tuition partner name {string}", ($name) => {
 });
 
 Then("they will see the 'All quality-assured tuition partners' page", () => {
-  Step(this, "the page URL ends with '/full-list'");
-  Step(this, "the page's title is 'Full List'");
+  Step(this, "the page URL ends with '/all-tuition-partners'");
+  Step(this, "the page's title is 'All Tuition Partners'");
   cy.get('[data-testid="full-list-header"]').should(
     "have.text",
     "All quality-assured tuition partners"

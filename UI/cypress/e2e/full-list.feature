@@ -1,11 +1,11 @@
 Feature: Show all quality-assured tuition partners
-  Scenario: all quality-assured tuition partners page url is '/full-list'
+  Scenario: all quality-assured tuition partners page url is '/all-tuition-partners'
     Given a user has arrived on the all quality-assured tuition partners page
-    Then the page URL ends with '/full-list'
+    Then the page URL ends with '/all-tuition-partners'
 
-  Scenario: all quality-assured tuition partners page title is 'Full List'
+  Scenario: all quality-assured tuition partners page title is 'All Tuition Partners'
     Given a user has arrived on the all quality-assured tuition partners page
-    Then the page's title is 'Full List'
+    Then the page's title is 'All Tuition Partners'
 
   Scenario: user clicks service name on all quality-assured tuition partners page
     Given a user has arrived on the all quality-assured tuition partners page
