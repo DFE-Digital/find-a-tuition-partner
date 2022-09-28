@@ -148,15 +148,16 @@ public class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<Da
     }
 }
 
-public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumerator<DataFile>
+public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumerator<DataFile2>
 {
     private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private const string SvgMimeType = "image/svg+xml.";
 
     private readonly GoogleDrive _config;
     private readonly DriveService _service;
     private readonly ILogger<GoogleDriveDataFileEnumerable> _logger;
     private readonly List<File> _files = new();
-    private readonly List<DataFile> _dataFiles = new();
+    private readonly List<DataFile2> _dataFiles = new();
     private int _index = -1;
     private bool _initialized;
 
@@ -167,7 +168,7 @@ public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumer
         _logger = logger;
     }
 
-    public IEnumerator<DataFile> GetEnumerator()
+    public IEnumerator<DataFile2> GetEnumerator()
     {
         return this;
     }
@@ -238,7 +239,7 @@ public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumer
         } while (!string.IsNullOrEmpty(fileList.NextPageToken));
     }
 
-    private DataFile GetCurrent()
+    private DataFile2 GetCurrent()
     {
         if (_index >= _files.Count) throw new InvalidOperationException($"Current index {_index} is outside valid range");
 
@@ -246,28 +247,21 @@ public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumer
 
         var file = _files[_index];
 
-        var dataFile = new DataFile(file.Name, new MemoryStream());
+        var dataFile = new DataFile2(file.Name, new Lazy<Stream>(() =>
+        {
+            var df = new MemoryStream();
+            _logger.LogInformation($"Downloading file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive");
+            var request = _service.Files.Get(file.Id);
+            var status = request.DownloadWithStatus(df);
 
-        //IDownloadProgress? status;
-        //if (file.MimeType == ExcelMimeType)
-        //{
-        //    _logger.LogInformation($"Downloading file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive");
-        //    var request = _service.Files.Get(file.Id);
-        //    status = request.DownloadWithStatus(dataFile.Stream);
-        //}
-        //else
-        //{
-        //    _logger.LogInformation($"Exporting file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive");
-        //    var exportRequest = _service.Files.Export(file.Id, ExcelMimeType);
-        //    status = exportRequest.DownloadWithStatus(dataFile.Stream);
-        //}
+            if (status.Status != DownloadStatus.Completed)
+            {
+                throw new Exception($"Could not download file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded} exception {status.Exception}");
+            }
 
-        //if (status.Status != DownloadStatus.Completed)
-        //{
-        //    throw new Exception($"Could not download file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded} exception {status.Exception}");
-        //}
-
-        //_logger.LogInformation($"Successfully downloaded file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded}{(status.Exception == null ? "" : $" exception {status.Exception}")}");
+            _logger.LogInformation($"Successfully downloaded file {file.Name} with id {file.Id} and mime type {file.MimeType} from Google Drive. Status {status.Status} bytes downloaded {status.BytesDownloaded}{(status.Exception == null ? "" : $" exception {status.Exception}")}");
+            return df;
+        }));
 
         //_dataFiles.Add(dataFile);
 
@@ -279,7 +273,7 @@ public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumer
         _index = -1;
     }
 
-    public DataFile Current { get; private set; } = new("", new MemoryStream());
+    public DataFile2 Current { get; private set; } = new("", new Lazy<Stream>());
 
     object IEnumerator.Current => Current;
 
