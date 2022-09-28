@@ -34,6 +34,11 @@ public class SearchTuitionPartnerHandler
 
             LocalAuthorityDistrict? lad = null;
 
+            if (!string.IsNullOrWhiteSpace(request.Name))
+            {
+                queryable = queryable.Where(e => e.Name.ToLower().Contains(request.Name.ToLower()));
+            }
+
             if (request.LocalAuthorityDistrictCode != null)
             {
                 lad = await _dbContext.LocalAuthorityDistricts

@@ -100,5 +100,21 @@
       margin-bottom: govuk-spacing(0);
       margin-left: govuk-spacing(1);
     }
+
+    .app-form-group-inline--full-width {
+      display: flex;
+      width: 100%;
+
+      .govuk-input {
+        flex: 1;
+        max-width: none;
+      }
+
+      .govuk-button {
+        width: 90px;
+        height: 38px;
+        margin-left: govuk-spacing(2);
+      }
+    }
   }
 }
