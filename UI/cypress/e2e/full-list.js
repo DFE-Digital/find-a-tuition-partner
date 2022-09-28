@@ -48,19 +48,24 @@ Then(
 Then(
   "the user is only shown the name, website, phone number and email address for each tuition partner",
   () => {
-    cy.get('[data-testid="tuition-partner-summary"]').each(($element) => {
-      $element = cy.wrap($element);
-      $element.get('[data-testid="tuition-partner-name-link"]').should("exist");
-      $element
-        .get('[data-testid="tuition-partner-website-link"]')
-        .should("exist");
-      $element
-        .get('[data-testid="tuition-partner-phone-number-link"]')
-        .should("exist");
-      $element
-        .get('[data-testid="tuition-partner-email-link"]')
-        .should("exist");
-    });
+    cy.get('[data-testid="tuition-partner-summary"]').each(
+      ($element, $index) => {
+        $element = cy.wrap($element);
+        $element
+          .get('[data-testid="tuition-partner-name-link"]')
+          .should("exist");
+        $element
+          .get('[data-testid="tuition-partner-website-link"]')
+          .should("exist");
+        $element
+          .get('[data-testid="tuition-partner-phone-number-link"]')
+          .should("exist");
+        $element
+          .get('[data-testid="tuition-partner-email-link"]')
+          .should("exist");
+        if ($index >= 5) return false;
+      }
+    );
   }
 );
 
