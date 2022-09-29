@@ -188,3 +188,6 @@ Scenario: Search result matches the displayed count with no subjects or postcode
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then the number of tuition partners displayed matches the displayed count
 
+Scenario: Logos are displayed for tution partners
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    Then logos are shown for tuition partners

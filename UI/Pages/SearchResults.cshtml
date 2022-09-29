@@ -129,7 +129,7 @@
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
 
                     <div data-testid="results-list-item">
-                        <div class="search-results-logo" style="background-image: url(@logoUrl);">
+                        <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl" style="background-image: url(@logoUrl);">
                         <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
                         <govuk-summary-list>
                             <govuk-summary-list-row class="govuk-body-s">

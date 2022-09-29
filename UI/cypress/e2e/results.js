@@ -215,3 +215,9 @@ Then(
     });
   }
 );
+
+Then("logos are shown for tuition partners", () => {
+  cy.get('[data-testid="results-list-item-nudge-education"]')
+    .should("have.css", "background-image")
+    .and("include", "/tuition-partner-logo/nudge-education");
+});
