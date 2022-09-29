@@ -26,9 +26,6 @@ public class TuitionPartner : PageModel
 
     public SearchModel? AllSearchData { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public ReferrerList From { get; set; }
-
     public async Task<IActionResult> OnGetAsync(Query query)
     {
         AllSearchData = TempData.Peek<SearchModel>("AllSearchData");
@@ -297,10 +294,4 @@ public class TuitionPartner : PageModel
             return fullPricing;
         }
     }
-}
-
-public enum ReferrerList
-{
-    SearchResults = 0,
-    FullList = 1
 }

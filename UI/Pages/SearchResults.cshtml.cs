@@ -24,6 +24,7 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query Data)
     {
+        Data.From = ReferrerList.SearchResults;
         TempData.Set("AllSearchData", Data);
 
         Data.TuitionType ??= TuitionType.Any;

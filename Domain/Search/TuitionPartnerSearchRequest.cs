@@ -4,6 +4,7 @@ namespace Domain.Search;
 
 public class TuitionPartnerSearchRequest
 {
+    public string? Name { get; set; }
     public string? LocalAuthorityDistrictCode { get; set; }
     public string? Postcode { get; set; }
     public IEnumerable<int>? SubjectIds { get; set; }

@@ -355,4 +355,17 @@ public class SearchForResults : CleanSliceFixture
         result!.Results.Should().NotBeNull();
         result!.Results!.Count.Should().Be(numberOfTuitionPartners);
     }
+
+    [Fact]
+    public async Task Sets_from_search_results()
+    {
+        var page = await Fixture.GetPage<SearchResults>()
+            .Execute(async page =>
+            {
+                await page.OnGet(new SearchResults.Query { From = ReferrerList.FullList });
+                return page;
+            });
+
+        page.Data.From.Should().Be(ReferrerList.SearchResults);
+    }
 }

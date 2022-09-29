@@ -15,6 +15,7 @@ public static class SearchModelAsQueryStringDictionary
     {
         var dictionary = new Dictionary<string, string>();
 
+        model.Add(x => x.Name, dictionary);
         model.Add(x => x.Postcode, dictionary);
         model.Add(x => x.TuitionType, dictionary);
         model.AddAll(x => x.KeyStages, dictionary);

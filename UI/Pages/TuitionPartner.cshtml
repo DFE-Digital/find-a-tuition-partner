@@ -9,9 +9,9 @@
 
 <div class="app-print-this-page--container">
     <div class="app-print-this-page--container-left">
-        @if (Model.From == ReferrerList.FullList)
+        @if (Model.AllSearchData?.From == ReferrerList.FullList)
         {
-            <a asp-page="@nameof(FullList)" class="govuk-back-link">
+            <a href="/all-tuition-partners?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
                 Back to tuition partners
             </a>
         }

@@ -6,6 +6,17 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase } from "../support/utils";
 
+Given(
+  "a user has searched the all quality-assured tuition partners by name {string}",
+  ($name) => {
+    Step(
+      this,
+      "a user has arrived on the all quality-assured tuition partners page"
+    );
+    Step(this, `they search by tuition partner name '${$name}'`);
+  }
+);
+
 When("they click the 'All quality-assured tuition partners' link", () => {
   cy.get('[data-testid="full-list-link"]')
     .should("exist")
@@ -18,9 +29,14 @@ When("they click on the {string} tuition partner's name", ($position) => {
   cy.get('[data-testid="tuition-partner-name-link"]').eq(index).click();
 });
 
+When("they search by tuition partner name {string}", ($name) => {
+  cy.get('[data-testid="name-input-box"]').type($name);
+  cy.get('[data-testid="call-to-action"]').click();
+});
+
 Then("they will see the 'All quality-assured tuition partners' page", () => {
-  Step(this, "the page URL ends with '/full-list'");
-  Step(this, "the page's title is 'Full List'");
+  Step(this, "the page URL ends with '/all-tuition-partners'");
+  Step(this, "the page's title is 'All Tuition Partners'");
   cy.get('[data-testid="full-list-header"]').should(
     "have.text",
     "All quality-assured tuition partners"
@@ -42,6 +58,19 @@ Then(
         });
         expect(names).to.deep.equal(sortedNames);
       });
+  }
+);
+
+Then(
+  "they will see the list of quality-assured tuition partners with names containing {string} is in alphabetical order by name",
+  ($name) => {
+    cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
+      cy.wrap($element).contains($name, { matchCase: false });
+    });
+    Step(
+      this,
+      "the full list of quality-assured tuition partners is in alphabetical order by name"
+    );
   }
 );
 
@@ -74,10 +103,7 @@ Then("the name of each tuition partner links to their details page", () => {
     cy.wrap($element).should(
       "have.attr",
       "href",
-      `/tuition-partner/${kebabCase($element.text()).replace(
-        /'/g,
-        "%27"
-      )}?from=FullList`
+      `/tuition-partner/${kebabCase($element.text()).replace(/'/g, "%27")}`
     );
   });
 });
@@ -112,6 +138,38 @@ Then(
         "href",
         `mailto:${$element.text()}`
       );
+    });
+  }
+);
+
+Then("search by tuition partner name is empty", () => {
+  cy.get('[data-testid="name-input-box"]').should("not.have.value");
+});
+
+Then("search by tuition partner name is {string}", ($name) => {
+  cy.get('[data-testid="name-input-box"]').should("have.value", $name);
+});
+
+Then("they will see there are no search results for {string}", ($name) => {
+  cy.get('[data-testid="no-search-results-message"]')
+    .should("be.visible")
+    .should("contain.text", `there are no search results for '${$name}'.`);
+});
+
+Then("they will not see there are no search results for name", () => {
+  cy.get('[data-testid="no-search-results-message"]').should("not.exist");
+});
+
+Then(
+  "the number of tuition partners displayed matches the displayed count",
+  () => {
+    let countOfElements = 0;
+    cy.get('[data-testid="tuition-partner-summary"]').then(($elements) => {
+      countOfElements = $elements.length;
+      cy.get('[data-testid="result-count"]')
+        .invoke("text")
+        .then(parseInt)
+        .should("equal", countOfElements);
     });
   }
 );

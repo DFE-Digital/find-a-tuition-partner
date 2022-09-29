@@ -6,13 +6,24 @@ namespace UI.Pages;
 
 public record SearchModel
 {
+    public SearchModel()
+    {
+
+    }
+
     public SearchModel(SearchModel model) : base()
     {
+        From = model.From;
+        Name = model.Name;
         Postcode = model.Postcode;
         Subjects = model.Subjects;
         TuitionType = model.TuitionType;
         KeyStages = model.KeyStages;
     }
+
+    public ReferrerList From { get; set; }
+
+    public string? Name { get; set; }
 
     public string? Postcode { get; set; }
 
@@ -74,6 +85,12 @@ public record KeyStageSubject(KeyStage KeyStage, string Subject)
         parsed = new KeyStageSubject(ks, re.Groups[2].Value);
         return true;
     }
+}
+
+public enum ReferrerList
+{
+    SearchResults = 0,
+    FullList = 1
 }
 
 public enum KeyStage

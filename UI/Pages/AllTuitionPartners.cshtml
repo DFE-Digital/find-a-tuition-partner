@@ -1,0 +1,96 @@
+﻿@page
+@model AllTuitionPartners
+@{
+    ViewData["Title"] = "All Tuition Partners";
+}
+
+<div class="app-print-this-page--container govuk-!-margin-bottom-3">
+    <div class="app-print-this-page--container-left govuk-!-padding-top-3">
+        <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
+    </div>
+
+    <div class="govuk-body app-print-this-page--container-right">
+        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <form method="get">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l" data-testid="full-list-header">All quality-assured tuition partners</h1>
+            <p class="govuk-body">
+                National Tutoring Programme funding must be spent on a quality-assured tuition partner. Check the full list of quality-assured tuition partners to find your tuition partner.
+            </p>
+            <div class="govuk-form-group app-form-group-inline">
+                <div asp-validation-group-for="Data.Name" data-testid="postcode">
+                    <label asp-for="Data.Name" class="govuk-label govuk-label--s">
+                        Search by tuition partner name
+                    </label>
+                    <span asp-validation-for="Data.Name" class="govuk-error-message"></span>
+                    <div class="app-form-group-inline--full-width">
+                        <input asp-for="Data.Name" class="govuk-input" data-testid="name-input-box" type="text">
+                        <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
+                    </div>
+                </div>
+            </div>
+            <div show-if="Model.Results != null && Model.Results.Count > 0">
+                <p class="govuk-body">
+                    <span><strong data-testid="result-count">@Model.Results!.Count</strong> @(Model.Results.Count != 1 ? "results" : "result")</span>
+                </p>
+                @foreach (var item in Model.Results!.Results)
+                {
+                    <div data-testid="tuition-partner-summary">
+                        <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
+                        <govuk-summary-list>
+                            <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                                <govuk-summary-list-row-key>
+                                    Website
+                                </govuk-summary-list-row-key>
+                                <govuk-summary-list-row-value>
+                                    <a href="@item.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@item.Website</a>
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                            <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                                <govuk-summary-list-row-key>
+                                    Phone number
+                                </govuk-summary-list-row-key>
+                                <govuk-summary-list-row-value>
+                                    @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
+                                    {
+                                        <a href="tel:@item.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@item.PhoneNumber</a>
+                                    }
+                                    else
+                                    {
+                                        <span data-testid="tuition-partner-phone-number-link"></span>
+                                    }
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                            <govuk-summary-list-row class="app-print-s">
+                                <govuk-summary-list-row-key>
+                                    Email address
+                                </govuk-summary-list-row-key>
+                                <govuk-summary-list-row-value>
+                                    @if (!string.IsNullOrWhiteSpace(item.Email))
+                                    {
+                                        <a href="mailto:@(item.Email)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@item.Email</a>
+                                    }
+                                    else
+                                    {
+                                        <span data-testid="tuition-partner-email-link"></span>
+                                    }
+                                </govuk-summary-list-row-value>
+                            </govuk-summary-list-row>
+                        </govuk-summary-list>
+                    </div>
+                }
+            </div>
+            <p class="govuk-body" show-if="Model.Results == null || Model.Results.Count == 0" data-testid="no-search-results-message">
+                there are no search results for '@Model.Data.Name'.
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-third app-print-hide">
+            <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
+            <p class="govuk-body"><a asp-page="@nameof(FundingAndReporting)" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
+        </div>
+    </form>
+</div>
