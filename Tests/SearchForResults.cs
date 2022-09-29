@@ -287,7 +287,7 @@ public class SearchForResults : CleanSliceFixture
                 Name = name,
                 SeoUrl = name.ToLower(),
                 Website = "-",
-                Logo = logo,
+                Logo = logo == null ? null : new Domain.TuitionPartnerLogo { Logo = logo },
                 LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
                 {
                     new()

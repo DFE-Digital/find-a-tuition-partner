@@ -23,7 +23,7 @@ public class TuitionPartner
     public bool HasSenProvision { get; set; }
     public string AdditionalServiceOfferings { get; set; } = string.Empty;
     public bool IsVatCharged { get; set; }
-    public string? Logo { get; set; }
+    public TuitionPartnerLogo? Logo { get; set; } = null!;
     public bool HasLogo { get; set; }
 
     public ICollection<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }

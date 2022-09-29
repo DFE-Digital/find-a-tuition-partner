@@ -124,7 +124,7 @@ public class DataImporterService : IHostedService
             var b64 = Convert.ToBase64String(dataFile.Stream.Value.ReadAllBytes());
 
             var tp = dbContext.TuitionPartners.Find(partner.Id);
-            tp!.Logo = b64;
+            tp!.Logo = new TuitionPartnerLogo { Logo = b64 };
         }
 
         await dbContext.SaveChangesAsync();
