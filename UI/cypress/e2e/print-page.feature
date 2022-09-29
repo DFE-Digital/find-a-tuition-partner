@@ -56,3 +56,12 @@ Feature: User can print relevant pages using a 'Print this page' link
     Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
     When the 'Print this page' link is clicked
     Then the print dialog is opened
+
+  Scenario: all quality-assured tuition partners page has a 'Print this page' link
+    Given a user has arrived on the all quality-assured tuition partners page
+    Then the 'Print this page' link is displayed
+
+  Scenario: all quality-assured tuition partners page 'Print this page' link opens print dialog
+    Given a user has arrived on the all quality-assured tuition partners page
+    When the 'Print this page' link is clicked
+    Then the print dialog is opened

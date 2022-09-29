@@ -32,7 +32,8 @@
 
   Scenario: page has link to home link
     Given a user has arrived on the school led tutoring page
-    Then they will see the home link
+    When they click 'Home'
+    Then they will be taken to the 'Find a tuition partner' journey start page
 
   Scenario: page has link to funding and reporting link
     Given a user has arrived on the school led tutoring page

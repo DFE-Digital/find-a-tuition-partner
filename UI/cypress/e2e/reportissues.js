@@ -1,9 +1,5 @@
 import { Given, Then, When } from "@badeball/cypress-cucumber-preprocessor";
 
-When("the home link is selected", () => {
-  cy.get('[data-testid="home-link"]').click();
-});
-
 Then("page has link to tutoring support email address", () => {
   cy.get('[data-testid="mailto-ntp-link"]').should(
     "have.attr",

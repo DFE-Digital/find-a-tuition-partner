@@ -10,10 +10,6 @@ import {
   KeyStageSubjects,
 } from "../support/utils";
 
-When("the home page is selected", () => {
-  cy.get('[data-testid="home-link"]').click();
-});
-
 When("they click 'What is a quality assured tuition partner?'", () => {
   cy.get('[data-testid="qatp-details"]').click();
 });

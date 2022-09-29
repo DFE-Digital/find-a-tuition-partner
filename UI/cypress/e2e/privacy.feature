@@ -53,4 +53,5 @@
 
   Scenario: page as link to home link
     Given a user has arrived on the privacy page
-    Then they will see the home link
+    When they click 'Home'
+    Then they will be taken to the 'Find a tuition partner' journey start page

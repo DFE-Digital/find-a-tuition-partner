@@ -18,9 +18,8 @@ Scenario: Report issues page url is '/report-issues'
 
   Scenario: The home link is selected
     Given a user has arrived on the Report issues page
-    When the home link is selected
+    When they click 'Home'
     Then they will be taken to the 'Find a tuition partner' journey start page
-    And the page's title is 'Find a tuition partner'
 
   Scenario: Local council link is accessible
     Given a user has arrived on the Report issues page
