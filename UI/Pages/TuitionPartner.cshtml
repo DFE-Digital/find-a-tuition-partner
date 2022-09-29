@@ -265,7 +265,7 @@
         </div>
     </div>
     <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
-        <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-testid="tuition-partner-website-link">
+        <a data-module="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-testid="tuition-partner-website-logo-link">
             <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" />
         </a>
     </div>

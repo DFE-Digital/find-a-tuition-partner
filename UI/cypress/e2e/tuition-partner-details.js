@@ -178,3 +178,13 @@ Then("all tuition partner details are populated correctly", () => {
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
   cy.get('[data-testid="organisation-type"]').first().should("not.be.empty");
 });
+
+Then("the logo is shown", () => {
+  cy.get('[data-testid="tuition-partner-website-logo-link')
+    .find("img")
+    .should("be.visible")
+    .and(($img) => {
+      expect($img[0].naturalWidth).to.be.greaterThan(0);
+      expect($img[0].naturalWidth).to.be.equal(180);
+    });
+});
