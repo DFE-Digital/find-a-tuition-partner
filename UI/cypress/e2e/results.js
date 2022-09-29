@@ -47,6 +47,19 @@ When("the user selects tuition type {string}", (tutionType) => {
   cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
 });
 
+When("a user selects all subject", () => {
+  const keystages = "Key stage 1,Key stage 2,Key stage 3,Key stage 4";
+  const stages = keystages.split(",").map((s) => s.trim());
+  stages.forEach((element) => {
+    cy.get(`#option-select-title-${kebabCase(element)}`).click();
+  });
+
+  cy.get('[id="key-stage-1-english"]').check();
+  cy.get('[id="key-stage-2-english"]').check();
+  cy.get('[id="key-stage-3-english"]').check();
+  cy.get('[id="key-stage-4-english"]').check();
+});
+
 Then("the ‘clear filters’ button as been selected", () => {
   cy.get('[data-testid="clear-all-filters"]').click();
 });
@@ -188,3 +201,17 @@ Then("results are updated after filters are cleared", () => {
 Then("the postcode search parameter remains", () => {
   cy.get('[data-testid="postcode-input-box"]').should("have.value", "sk11eb");
 });
+
+Then(
+  "the number of tuition partners displayed matches the displayed count",
+  () => {
+    let countOfElements = 0;
+    cy.get('[data-testid="results-list-item"]').then(($elements) => {
+      countOfElements = $elements.length;
+      cy.get('[data-testid="result-count"]')
+        .invoke("text")
+        .then(parseInt)
+        .should("equal", countOfElements);
+    });
+  }
+);

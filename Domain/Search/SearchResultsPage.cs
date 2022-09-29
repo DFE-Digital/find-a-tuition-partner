@@ -1,6 +1,6 @@
 ﻿namespace Domain.Search;
 
-public class SearchResultsPage<TRequest, TResult> where TRequest : SearchRequestBase
+public class SearchResultsPage<TRequest, TResult>
 {
     public SearchResultsPage(TRequest request, int count, TResult[] results)
     {
