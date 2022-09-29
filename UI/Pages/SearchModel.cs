@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using Google.Apis.Drive.v3.Data;
 
 namespace UI.Pages;
 
@@ -12,9 +13,12 @@ public record SearchModel
         Subjects = model.Subjects;
         TuitionType = model.TuitionType;
         KeyStages = model.KeyStages;
+        LegalStatus = model.LegalStatus;
     }
 
     public string? Postcode { get; set; }
+
+    public string? LegalStatus { get; set; }
 
     public string[]? Subjects { get; set; }
 
