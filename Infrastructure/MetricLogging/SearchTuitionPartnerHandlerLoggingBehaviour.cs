@@ -29,7 +29,7 @@ public class SearchTuitionPartnerHandlerLoggingBehaviour
         stopwatch.Stop();
 
         var names = response.Results.Select(x => x.Name).ToList();
-        var logLevel = response.Count == 0 ? LogLevel.Warning : LogLevel.Information;
+        var logLevel = response.Count == 0 && string.IsNullOrWhiteSpace(request.Name) ? LogLevel.Warning : LogLevel.Information;
 
         using (_logger.BeginScope("{@TuitionPartners}", names))
         {
