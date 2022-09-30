@@ -218,6 +218,11 @@ Then(
 
 Then("logos are shown for tuition partners", () => {
   cy.get('[data-testid="results-list-item-nudge-education"]')
-    .should("have.css", "background-image")
-    .and("include", "/tuition-partner-logo/nudge-education");
+    .find("img")
+    .should("be.visible")
+    .and("have.attr", "src", "/tuition-partner-logo/nudge-education")
+    .and("have.attr", "alt", "The company logo for Nudge Education")
+    .and(($img) => {
+      expect($img[0].width).to.be.equal(90);
+    });
 });
