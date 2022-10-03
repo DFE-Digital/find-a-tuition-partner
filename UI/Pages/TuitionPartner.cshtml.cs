@@ -92,7 +92,7 @@ public class TuitionPartner : PageModel
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
-        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices)
+        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices, string LegalStatus)
     {
         public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
     }
@@ -142,9 +142,7 @@ public class TuitionPartner : PageModel
             var types = await GetTuitionTypesCovered(request.LocalAuthorityDistrictCode, tp, cancellationToken);
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
             var prices = GetPricing(types, tp.Prices);
-
             var lads = await GetLocalAuthorityDistricts(request, tp.Id);
-
             var allPrices = await GetFullPricing(request, tp.Prices);
 
             return new(
@@ -161,8 +159,8 @@ public class TuitionPartner : PageModel
                 tp.HasSenProvision,
                 tp.IsVatCharged,
                 lads,
-                allPrices
-                );
+                allPrices,
+                tp.LegalStatus);
         }
 
         private async Task<IEnumerable<string>> GetTuitionTypesCovered(

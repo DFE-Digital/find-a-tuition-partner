@@ -168,3 +168,13 @@ Then("the tuition cost information states declares differences", () => {
   cy.get('[data-testid="pricing-differences-for-subjects').should("exist");
   cy.get('[data-testid="pricing-same-for-subjects').should("not.exist");
 });
+
+Then("all tuition partner details are populated correctly", () => {
+  cy.get('[data-testid="results-subjects"] > li:first')
+    .first()
+    .invoke("text")
+    .should("match", new RegExp("^Key stage \\d\\s\\-"));
+  cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get('[data-testid="results-description"]').first().should("not.be.empty");
+  cy.get('[data-testid="organisation-type"]').first().should("not.be.empty");
+});

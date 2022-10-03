@@ -116,4 +116,4 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: Tuition partner details are displayed correctly when arriving on the results page
      Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
-     Then all tuition partner parameters are populated correctly
+     Then all tuition partner details are populated correctly
