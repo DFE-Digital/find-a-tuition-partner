@@ -191,3 +191,8 @@ Scenario: Search result matches the displayed count with no subjects or postcode
 Scenario: Logos are displayed for tution partners
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then logos are shown for tuition partners
+
+Scenario: Logos are hidden on mobile for tution partners
+    Given a user is using a 'phone'
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    Then logos are not shown for tuition partners

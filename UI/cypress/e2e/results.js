@@ -226,3 +226,9 @@ Then("logos are shown for tuition partners", () => {
       expect($img[0].width).to.be.equal(90);
     });
 });
+
+Then("logos are not shown for tuition partners", () => {
+  cy.get('[data-testid="results-list-item-nudge-education"]>img').should(
+    "not.be.visible"
+  );
+});

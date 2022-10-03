@@ -180,11 +180,16 @@ Then("all tuition partner details are populated correctly", () => {
 });
 
 Then("the logo is shown", () => {
-  cy.get('[data-testid="tuition-partner-website-logo-link')
-    .find("img")
+  cy.get('[data-testid="tuition-partner-website-logo"]')
     .should("be.visible")
     .and(($img) => {
       expect($img[0].naturalWidth).to.be.greaterThan(0);
       expect($img[0].naturalWidth).to.be.equal(180);
     });
+});
+
+Then("the logo is not shown", () => {
+  cy.get('[data-testid="tuition-partner-website-logo"]').should(
+    "not.be.visible"
+  );
 });

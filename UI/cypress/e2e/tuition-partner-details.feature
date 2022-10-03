@@ -121,3 +121,8 @@ Feature: User can view full details of a Tuition Parner
 Scenario: Logos are displayed for tution partners
     Given a user has arrived on the 'Tuition Partner' page for 'nudge-education'
     Then the logo is shown
+
+Scenario: Logos are not displayed for tution partners
+    Given a user is using a 'phone'
+    Given a user has arrived on the 'Tuition Partner' page for 'nudge-education'
+    Then the logo is not shown

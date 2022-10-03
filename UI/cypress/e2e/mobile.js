@@ -26,16 +26,6 @@ When("they select the 'Show search results' button", () => {
   cy.get('[data-testid="show-search-results-button"]').click();
 });
 
-Then("a user is using a {string}", (device) => {
-  if (device == "phone") {
-    cy.viewport(321, 640);
-  } else if (device == "tablet") {
-    cy.viewport(642, 1024);
-  } else if (device == "desktop") {
-    cy.viewport(770, 1024);
-  }
-});
-
 Then("the subject list is bullet pointed", () => {
   cy.get(".govuk-list-bullets-mobile-view")
     .first()
