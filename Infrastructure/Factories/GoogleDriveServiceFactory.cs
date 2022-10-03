@@ -2,6 +2,7 @@
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Infrastructure.Configuration;
+using Infrastructure.DataImport;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -58,5 +59,10 @@ public class GoogleDriveServiceFactory
         });
 
         return service;
+    }
+
+    public GoogleDriveFileService GetDriveFiles()
+    {
+        return new GoogleDriveFileService(GetDriveService(), _config.SharedDriveId, _logger);
     }
 }

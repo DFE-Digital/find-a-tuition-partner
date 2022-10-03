@@ -5,20 +5,17 @@ using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
 
-public sealed class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<DataFile>
+public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumerator<DataFile>
 {
-    private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private readonly GoogleDriveFileEnumerable _enum;
 
-    public GoogleDriveDataFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory)
+    public GoogleDriveLogoFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory)
     {
-        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, "FINAL Data Responses", DownloadFile);
+        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, "Logos", DownloadFile);
     }
 
     private static Stream DownloadFile(GoogleDriveFileService service, GoogleFile file)
-        => file.MimeType == ExcelMimeType
-            ? service.Download(file.Id, file.Name)
-            : service.Export(file.Id, file.Name, ExcelMimeType);
+        => service.Download(file.Id, file.Name);
 
     public IEnumerator<DataFile> GetEnumerator() => this;
 

@@ -1,0 +1,17 @@
+.search-results-logo > img {
+  @include govuk-media-query($until: tablet) {
+    display: none;
+  }
+
+  @include govuk-media-query($from: tablet) {
+    display: inline;
+    float: right;
+    width: 90px;
+  }
+}
+
+.tuition-partner-logo {
+  @include govuk-media-query($until: tablet) {
+    display: none;
+  }
+}

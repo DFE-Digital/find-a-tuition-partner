@@ -12,4 +12,5 @@ public class TuitionPartnerSearchResult
     public Subject[] Subjects { get; set; } = null!;
     public TuitionType[] TuitionTypes { get; set; } = null!;
     public bool HasSenProvision { get; set; }
+    public bool HasLogo { get; set; }
 }

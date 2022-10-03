@@ -99,7 +99,7 @@ public class EncryptedDataFileEnumerable : IDataFileEnumerable, IEnumerator<Data
         _index = -1;
     }
 
-    public DataFile Current { get; private set; } = new("", new MemoryStream());
+    public DataFile Current { get; private set; } = new("");
 
     object IEnumerator.Current => Current;
 

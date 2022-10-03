@@ -275,7 +275,7 @@ public class SearchForResults : CleanSliceFixture
             });
     }
 
-    private async Task SetupTuitionPartner()
+    private async Task SetupTuitionPartner(string name = "Alpha", string? logo = null)
     {
         await Fixture.ExecuteDbContextAsync(async db =>
         {
@@ -284,9 +284,10 @@ public class SearchForResults : CleanSliceFixture
 
             var tp = db.TuitionPartners.Add(new Domain.TuitionPartner
             {
-                Name = "Alpha",
-                SeoUrl = "a",
+                Name = name,
+                SeoUrl = name.ToLower(),
                 Website = "-",
+                Logo = logo == null ? null : new Domain.TuitionPartnerLogo { Logo = logo },
                 LocalAuthorityDistrictCoverage = new List<LocalAuthorityDistrictCoverage>
                 {
                     new()
@@ -367,5 +368,24 @@ public class SearchForResults : CleanSliceFixture
             });
 
         page.Data.From.Should().Be(ReferrerList.SearchResults);
+    }
+
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("image-data", true)]
+    public async Task Results_show_logos(string? logo, bool hasLogo)
+    {
+        // Given
+        await SetupTuitionPartner(logo: logo);
+
+        // When
+        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
+
+        // Then
+        result!.Results!.Results.Should().ContainEquivalentOf(new
+        {
+            HasLogo = hasLogo,
+        });
+
     }
 }

@@ -88,7 +88,7 @@ public class TuitionPartner : PageModel
     }
 
     public record Command(
-        string Name, string Description, string[] Subjects,
+        string Id, string Name, bool HasLogo, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
@@ -146,7 +146,9 @@ public class TuitionPartner : PageModel
             var allPrices = await GetFullPricing(request, tp.Prices);
 
             return new(
+                request.Id,
                 tp.Name,
+                tp.HasLogo,
                 tp.Description,
                 subjects.ToArray(),
                 types.ToArray(),

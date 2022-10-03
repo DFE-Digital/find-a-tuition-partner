@@ -126,7 +126,11 @@
             {
                 foreach (var item in Model.Data.Results.Results)
                 {
+                    var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
+
                     <div data-testid="results-list-item">
+                        <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl" >
+                        <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name" />
                         <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link">@item.Name</a></h2>
                         <govuk-summary-list>
                             <govuk-summary-list-row class="govuk-body-s">
@@ -159,6 +163,7 @@
                                 </govuk-summary-list-row-value>
                             </govuk-summary-list-row>
                         </govuk-summary-list>
+                        </div>
                     </div>
                 }
             }

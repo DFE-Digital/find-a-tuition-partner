@@ -87,6 +87,7 @@ public static class ServiceCollectionExtensions
         services.AddOptions();
         services.AddScoped<GoogleDriveServiceFactory>();
         services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
+        services.AddScoped<ILogoFileEnumerable, GoogleDriveLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
         services.AddHostedService<DataImporterService>();
