@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220927101400_Logos")]
+    partial class Logos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,160 +23,6 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Domain.EstablishmentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EstablishmentStatus");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Open"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Closed"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Open but proposed to close"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Proposed to open"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.EstablishmentTypeGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("EstablishmentTypeGroup");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Colleges"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Universities"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Independent schools"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Local authority maintained schools"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Special schools"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Welsh schools"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Other types"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Academies"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Free schools"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.GeneralInformationAboutSchools", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("EstablishmentName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("EstablishmentStatusId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("EstablishmentTypeGroupId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LocalAuthorityDistrictId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("LocalEducationAuthorityId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PhaseOfEducationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Urn")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EstablishmentStatusId");
-
-                    b.HasIndex("EstablishmentTypeGroupId");
-
-                    b.HasIndex("LocalAuthorityDistrictId");
-
-                    b.HasIndex("LocalEducationAuthorityId");
-
-                    b.HasIndex("PhaseOfEducationId");
-
-                    b.ToTable("GeneralInformationAboutSchools");
-                });
 
             modelBuilder.Entity("Domain.KeyStage", b =>
                 {
@@ -3865,62 +3713,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("LocalAuthorityDistrictCoverage");
                 });
 
-            modelBuilder.Entity("Domain.PhaseOfEducation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("PhaseOfEducation");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Nursery"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Primary"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Middle deemed primary"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Secondary"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Middle deemed secondary"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "16 Plus"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "All-through"
-                        });
-                });
-
             modelBuilder.Entity("Domain.Price", b =>
                 {
                     b.Property<int>("Id")
@@ -4346,49 +4138,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataProtectionKeys");
-                });
-
-            modelBuilder.Entity("Domain.GeneralInformationAboutSchools", b =>
-                {
-                    b.HasOne("Domain.EstablishmentStatus", "EstablishmentStatus")
-                        .WithMany()
-                        .HasForeignKey("EstablishmentStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.EstablishmentTypeGroup", "EstablishmentTypeGroup")
-                        .WithMany()
-                        .HasForeignKey("EstablishmentTypeGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.LocalAuthorityDistrict", "LocalAuthorityDistrict")
-                        .WithMany()
-                        .HasForeignKey("LocalAuthorityDistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.LocalAuthority", "LocalEducationAuthority")
-                        .WithMany()
-                        .HasForeignKey("LocalEducationAuthorityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.PhaseOfEducation", "PhaseOfEducation")
-                        .WithMany()
-                        .HasForeignKey("PhaseOfEducationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EstablishmentStatus");
-
-                    b.Navigation("EstablishmentTypeGroup");
-
-                    b.Navigation("LocalAuthorityDistrict");
-
-                    b.Navigation("LocalEducationAuthority");
-
-                    b.Navigation("PhaseOfEducation");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>

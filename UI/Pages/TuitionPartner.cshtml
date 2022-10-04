@@ -264,4 +264,7 @@
             </govuk-summary-list>
         </div>
     </div>
+    <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
+        <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo" />
+    </div>
 </div>

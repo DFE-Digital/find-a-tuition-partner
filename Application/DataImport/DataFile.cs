@@ -1,9 +1,14 @@
 ﻿namespace Application.DataImport;
 
-public record DataFile(string Filename, Stream Stream) : IDisposable
+public sealed record DataFile(string Filename, Lazy<Stream> Stream) : IDisposable
 {
+    public DataFile(string filename) : this(filename, new Lazy<Stream>()) { }
+    public DataFile(string filename, Stream stream) : this(filename, new Lazy<Stream>(stream)) { }
+
     public void Dispose()
     {
-        Stream.Dispose();
+        if (Stream.IsValueCreated)
+            Stream.Value.Dispose();
     }
 }
+

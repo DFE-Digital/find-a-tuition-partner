@@ -88,3 +88,13 @@ Then("the page's title is {string}", (title) => {
 Then("they will click the contact us link", () => {
   cy.get('[data-testid="contact-us-link"]').click();
 });
+
+Then("a user is using a {string}", (device) => {
+  if (device == "phone") {
+    cy.viewport(321, 640);
+  } else if (device == "tablet") {
+    cy.viewport(642, 1024);
+  } else if (device == "desktop") {
+    cy.viewport(770, 1024);
+  }
+});

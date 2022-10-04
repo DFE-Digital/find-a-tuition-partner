@@ -38,6 +38,8 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
             result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
 
+            result.HasLogo = entity.HasLogo;
+
             results.Add(result);
         }
         return ordering.Order(results);
