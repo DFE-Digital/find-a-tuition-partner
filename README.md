@@ -161,7 +161,7 @@ Note the key file and ids that need replacing in the following command can be fo
 ```
 dotnet test
 docker compose up --build -d
-docker compose run -v <PATH_TO_SERVICE_ACCOUNT_KEY_FILE>:/app/credentials.json -e GoogleDrive:SharedDriveId=<ID> -e GoogleDrive:TuitionPartnerDataFolderId=<ID> -e GoogleDrive:TuitionPartnerLogosFolderId=<ID> web ./UI import
+docker compose run -v <PATH_TO_SERVICE_ACCOUNT_KEY_FILE>:/app/credentials.json -e GoogleDrive:SharedDriveId=<ID> -e web ./UI import
 cd UI
 npx cypress run --config baseUrl=http://localhost:8080/
 cd ..
