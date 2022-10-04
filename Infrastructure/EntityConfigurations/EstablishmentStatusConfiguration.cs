@@ -10,10 +10,10 @@ public class EstablishmentStatusConfiguration : IEntityTypeConfiguration<Establi
     public void Configure(EntityTypeBuilder<EstablishmentStatus> builder)
     {
         builder.HasData(
-            new EstablishmentStatus { Id = (int)EstablishmentsStatus.Open, Name = "Open"},
-            new EstablishmentStatus { Id = (int)EstablishmentsStatus.Closed, Name = "Closed"},
-            new EstablishmentStatus { Id = (int)EstablishmentsStatus.OpenButProposedToClose, Name = "Open but proposed to close"},
-            new EstablishmentStatus { Id = (int)EstablishmentsStatus.ProposedToOpen, Name = "Proposed to open"}
+            new EstablishmentStatus { Id = (int)EstablishmentsStatus.Open, Name = "Open" },
+            new EstablishmentStatus { Id = (int)EstablishmentsStatus.Closed, Name = "Closed" },
+            new EstablishmentStatus { Id = (int)EstablishmentsStatus.OpenButProposedToClose, Name = "Open but proposed to close" },
+            new EstablishmentStatus { Id = (int)EstablishmentsStatus.ProposedToOpen, Name = "Proposed to open" }
         );
     }
 }
