@@ -13,13 +13,17 @@ We use four priority levels from most to least impactful:
 * P3 - Minor user visible issue that does not directly affect a user journey such as a formatting issue
 * P4 - Issue not visible to the user for example an exception in the logs
 
+## Triage Process
+
+An issue raised by one of the sources below should be triaged to determine the priority. The triage process should be undertaken by one or more of the following diciplines; Business Analyst, Delivery Manager, Product Manager plus a member of the development team. That group should use the impacts associated with the priority list to assign the issue the correct priority.
+
 ## Sources
 
 There are three ways the team can be notified of errors and bugs. In each case the issue should be triaged quickly and either created as a new bug ticket in Jira with a priority or identified as an existing known issue.
 
 ### Via Service Desk
 
-A user contacting the service desk will result in the creation of a service now ticket. That ticket will be assigned to the team for resolution. The ticket should be linked to any resulting bug ticket in Jira and resolved at the same time. Please note that only team members with an education.gov.uk account can access service now.
+A user contacting the service desk will result in the creation of a Zendesk ticket. That ticket will be triaged to the shared inbox. The ticket should be linked to any resulting bug ticket in Jira and resolved at the same time.
 
 ### Via Alerts Posted to Slack
 
