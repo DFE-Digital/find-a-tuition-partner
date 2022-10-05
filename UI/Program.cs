@@ -4,30 +4,17 @@ using Application.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
+using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Serilog.Events;
 using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
 
-if (args.Any(x => x == "import"))
-{
-    var host = Host.CreateDefaultBuilder(args)
-        .ConfigureServices((hostContext, services) =>
-        {
-            services.AddNtpDbContext(hostContext.Configuration);
-            services.AddDataImporter(hostContext.Configuration);
-        })
-        .AddLogging(LogEventLevel.Warning)
-        .Build();
-
-    await host.RunAsync();
-
-    return;
-}
+// Are we running an import for GPaaS?
+if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
