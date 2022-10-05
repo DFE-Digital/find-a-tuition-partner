@@ -1,12 +1,4 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:8857",
-      "sslPort": 44312
-    }
-  },
   "profiles": {
     "FindATuitionPartner": {
       "commandName": "Project",
@@ -17,11 +9,11 @@
       "applicationUrl": "https://localhost:7036;http://localhost:5036",
       "dotnetRunMessages": true
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+    "Import": {
+      "commandName": "Project",
+      "commandLineArgs": "import",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development"
       }
     },
     "Docker": {

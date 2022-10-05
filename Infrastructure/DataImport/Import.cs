@@ -1,4 +1,6 @@
-﻿using Infrastructure.Extensions;
+﻿using System.Reflection;
+using Infrastructure.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog.Events;
@@ -12,6 +14,10 @@ public static class Import
         if (args.Any(x => x == "import"))
         {
             var host = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration(config =>
+                {
+                    config.AddUserSecrets(Assembly.GetExecutingAssembly());
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddNtpDbContext(hostContext.Configuration);

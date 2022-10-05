@@ -68,7 +68,7 @@ The Tuition Partner data is imported from a folder in Google Drive. Configuring 
 The database migrations, seed data and Tuition Partner data is deployed by and running the data importer project. Either run the project via Visual Studio or with the following command.
 
 ```
-dotnet run --project DataImporter import
+dotnet run --project UI import
 ```
 
 #### Migrations
