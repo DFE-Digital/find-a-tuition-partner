@@ -13,7 +13,7 @@ using UI.Filters;
 using UI.Routing;
 using AssemblyReference = UI.AssemblyReference;
 
-// Are we running an import for GPaaS?
+// Data import is a stand-alone process that should terminate once completed
 if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
