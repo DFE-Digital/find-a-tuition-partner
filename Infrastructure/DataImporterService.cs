@@ -1,7 +1,9 @@
 ﻿using Application.DataImport;
 using Application.Factories;
+using Application.Mapping;
 using Domain;
 using Domain.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,7 +51,61 @@ public class DataImporterService : IHostedService
                 await transaction.CommitAsync(cancellationToken);
             });
 
+      
+        var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
+        var giasFactory = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsFactory>();
+
+        await strategy.ExecuteAsync(
+            async () =>
+            {
+                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
+
+                await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            });
+
         _host.StopApplication();
+    }
+
+    private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, IGeneralInformationAboutSchoolsFactory giasFactory, CancellationToken cancellationToken)
+    {
+        var result = generalInformatioAboutSchoolsRecords.GetSchoolDataAsync(cancellationToken);
+
+        foreach(SchoolDatum schoolDatum in result.Result)
+        {
+            var EstablishmentName = schoolDatum.Name;   
+            
+            _logger.LogInformation("Attempting to create General Information About Schools from record {EstablishmentName}", EstablishmentName);
+            GeneralInformationAboutSchools generalInformationAboutSchool;
+            try
+            {
+                generalInformationAboutSchool = giasFactory.GetGeneralInformationAboutSchools(schoolDatum, dbContext, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception thrown when creating General Information About Schools from record {OriginalFilename}", EstablishmentName);
+                continue;
+            }
+
+            var validator = new GeneralInformationAboutSchoolValidator();
+            var results = await validator.ValidateAsync(generalInformationAboutSchool, cancellationToken);
+            if (!results.IsValid)
+            {
+                _logger.LogError($"Establishment name {{TuitionPartnerName}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                    generalInformationAboutSchool.EstablishmentName, generalInformationAboutSchool.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                continue;
+            }
+
+            dbContext.GeneralInformationAboutSchools.Add(generalInformationAboutSchool);
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation("Added General Information About School for {EstablishmentName} with id of {id}",
+                generalInformationAboutSchool.EstablishmentName, generalInformationAboutSchool.Id);
+        }
+        throw new NotImplementedException();
     }
 
     private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)
@@ -59,6 +115,12 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
+    }
+
+    private async Task RemoveGeneralInformationAboutSchools (NtpDbContext dbContext, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Deleting all existing General Information About Schools data");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"GeneralInformationAboutSchools\"", cancellationToken: cancellationToken);
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)

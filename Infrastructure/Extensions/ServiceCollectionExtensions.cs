@@ -77,7 +77,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();
         services.AddScoped<ILookupDataRepository, LookupDataRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
-
         return services;
     }
 
@@ -90,8 +89,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILogoFileEnumerable, GoogleDriveLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
+        services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
+        services.AddScoped<IGeneralInformationAboutSchoolsFactory, GeneralInformatioAboutSchoolsFactory>();
         services.AddHostedService<DataImporterService>();
-
         return services;
     }
 }
