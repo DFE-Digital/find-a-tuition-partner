@@ -4,17 +4,11 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:7036;http://localhost:5036",
       "dotnetRunMessages": true
-    },
-    "Import": {
-      "commandName": "Project",
-      "commandLineArgs": "import",
-      "environmentVariables": {
-        "DOTNET_ENVIRONMENT": "Development"
-      }
     },
     "Docker": {
       "commandName": "Docker",
