@@ -72,9 +72,13 @@ public class DataImporterService : IHostedService
 
     private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, IGeneralInformationAboutSchoolsFactory giasFactory, CancellationToken cancellationToken)
     {
+        var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new {t.Code, t.Id})
+            .ToDictionary(t => t.Code, t => t.Id);
+
         var result = generalInformatioAboutSchoolsRecords.GetSchoolDataAsync(cancellationToken);
 
-        foreach(SchoolDatum schoolDatum in result.Result)
+      
+        foreach (SchoolDatum schoolDatum in result.Result)
         {
             var EstablishmentName = schoolDatum.Name;   
             
@@ -82,7 +86,7 @@ public class DataImporterService : IHostedService
             School school;
             try
             {
-                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, cancellationToken);
+                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, LocalAuthorityDistrictsIds);
             }
             catch (Exception ex)
             {
@@ -98,6 +102,9 @@ public class DataImporterService : IHostedService
                     school.EstablishmentName, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
                 continue;
             }
+
+           
+
 
             //dbContext.GeneralInformationAboutSchools.Add(school);
             //await dbContext.SaveChangesAsync(cancellationToken);

@@ -2,7 +2,6 @@
 
 public enum EstablishmentTypeGroups
 {
-    NotApplicable = 0,
     Colleges = 1,
     Universities = 2,
     IndependentSchools = 3,

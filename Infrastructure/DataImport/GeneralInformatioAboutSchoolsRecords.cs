@@ -34,7 +34,7 @@ namespace Infrastructure.DataImport
                 Map(m => m.EstablishmentStatus).Name("EstablishmentStatus (code)");
                 Map(m => m.PhaseOfEducation).Name("PhaseOfEducation (code)");
                 Map(m => m.LocalAuthorityCode).Name("LA (code)");
-                //Map(m => m.LocalAuthorityDistrictCode).Name("DistrictAdministrative (code)");
+                Map(m => m.LocalAuthorityDistrictCode).Name("DistrictAdministrative (code)");
             }
         }
     }

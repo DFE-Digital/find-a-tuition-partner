@@ -5,5 +5,5 @@ namespace Application.Factories;
 
 public interface IGeneralInformationAboutSchoolsFactory
 {
-    School GetGeneralInformationAboutSchool(SchoolDatum stream, CancellationToken cancellationToken);
+    School GetGeneralInformationAboutSchool(SchoolDatum stream, IDictionary<string, int> localAuthorityDistrictsIds);
 }

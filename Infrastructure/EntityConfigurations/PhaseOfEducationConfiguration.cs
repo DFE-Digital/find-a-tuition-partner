@@ -18,7 +18,8 @@ public class PhaseOfEducationConfiguration : IEntityTypeConfiguration<PhaseOfEdu
             new PhaseOfEducation { Id = (int)PhasesOfEducation.Secondary, Name = "Secondary" },
             new PhaseOfEducation { Id = (int)PhasesOfEducation.MiddleDeemedSecondary, Name = "Middle deemed secondary" },
             new PhaseOfEducation { Id = (int)PhasesOfEducation.SixteenPlus, Name = "16 Plus" },
-            new PhaseOfEducation { Id = (int)PhasesOfEducation.AllThrough, Name = "All-through" }
+            new PhaseOfEducation { Id = (int)PhasesOfEducation.AllThrough, Name = "All-through" },
+            new PhaseOfEducation { Id = (int)PhasesOfEducation.NotApplicable, Name = "Not Applicable" }
         );
     }
 }

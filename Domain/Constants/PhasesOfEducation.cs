@@ -2,7 +2,6 @@
 
 public enum PhasesOfEducation
 {
-    NotApplicable = 0,
     Nursery = 1,
     Primary = 2,
     MiddleDeemedPrimary = 3,
@@ -10,4 +9,5 @@ public enum PhasesOfEducation
     MiddleDeemedSecondary = 5,
     SixteenPlus = 6,
     AllThrough = 7,
+    NotApplicable = 8,
 }
