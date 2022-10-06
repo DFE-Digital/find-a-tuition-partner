@@ -74,7 +74,7 @@ cf push --strategy rolling --vars-file vars-<ENVIRONMENT>.yml
 Run the data import task which will also run the migrations against the database
 
 ```
-cf run-task find-a-tuition-partner-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --DataEncryption:Key <BASE64_ENCRYPTION_KEY>" --name find-a-tuition-partner-<ENVIRONMENT>-data-import
+cf run-task find-a-tuition-partner-<ENVIRONMENT> --command "exec /home/vcap/deps/0/dotnet_publish/UI import --name find-a-tuition-partner-<ENVIRONMENT>-data-import
 ```
 
 ### Basic HTTP Authentication

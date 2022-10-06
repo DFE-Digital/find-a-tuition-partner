@@ -20,7 +20,7 @@ public class GoogleDriveFileService
         var listRequest = _service.Files.List();
 
         listRequest.DriveId = _driveId;
-        listRequest.Q = search;
+        listRequest.Q = $"{search} and trashed = false";
 
         // Following must be set when searching within a shared drive
         listRequest.IncludeItemsFromAllDrives = true;
