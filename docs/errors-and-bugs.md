@@ -23,14 +23,14 @@ There are three ways the team can be notified of errors and bugs. In each case t
 
 ### Via Service Desk
 
-A user contacting the service desk will result in the creation of a Zendesk ticket. That ticket will be triaged to the shared inbox. The ticket should be linked to any resulting bug ticket in Jira and resolved at the same time.
+A user contacting the service desk will result in the creation of a Zendesk ticket. That ticket will be triaged to the shared inbox. The ticket should be linked to any resulting bug ticket in Jira and both should be resolved together.
 
 ### Via Alerts Posted to Slack
 
-Warning and above log entries are posted as alerts to the following Slack channels:
+Warning and above log entries generate alerts from [logit.io](https://dashboard.logit.io/a/11f9b93e-af04-480b-a838-4d3a19e93e39/s/5a330412-9270-4c5b-ba07-0035bf55fe95/elastalert/viewrules). These alerts are posted to the following Slack channels:
 
-* #ntp-find-a-tuition-partner-alerts - alerts from the *Production* environment. **Should be investigated and triaged immediately**
-* #ntp-dev-team - alerts from the non production environment
+* #ntp-find-a-tuition-partner-alerts (via exception_alerts.yaml) - alerts from the *Production* environment. **Should be investigated and triaged immediately**
+* #ntp-dev-team (via exception_alerts_non_production.yaml) - alerts from the non production environment
 
 ### Via Testing
 
