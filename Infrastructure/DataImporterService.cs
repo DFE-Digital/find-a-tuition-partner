@@ -1,4 +1,4 @@
-﻿using Application.DataImport;
+using Application.DataImport;
 using Application.Factories;
 using Domain;
 using Domain.Validators;
@@ -11,6 +11,7 @@ namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
+    private static readonly string[] ImageFileTypes = new[] { ".svg", ".png" };
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -104,7 +105,7 @@ public class DataImporterService : IHostedService
 
         _logger.LogInformation("Looking for logos for {Count} tuition partners", partners.Count);
 
-        var logos = logoFileEnumerable.Where(x => x.Filename.EndsWith(".svg")).ToList();
+        var logos = logoFileEnumerable.ToList();
 
         var matching = (from p in partners
                         from l in logos
@@ -148,9 +149,9 @@ public class DataImporterService : IHostedService
     }
 
     public static bool IsFileLogoForTuitionPartner(string tuitionPartnerName, string logoFilename)
-    {
-        return logoFilename.Equals($"Logo_{tuitionPartnerName}.svg", StringComparison.InvariantCultureIgnoreCase);
-    }
+        => ImageFileTypes.Any(i => logoFilename.Equals(
+            $"Logo_{tuitionPartnerName}{i}",
+            StringComparison.InvariantCultureIgnoreCase));
 
     public Task StopAsync(CancellationToken cancellationToken)
     {

@@ -6,6 +6,7 @@ public class ImportLogoFiles
 {
     [Theory]
     [InlineData("seo-name", "Logo_seo-name.svg")]
+    [InlineData("tuition-partner", "Logo_tuition-partner.png")]
     public void Logo_file_matches_seo_name_exactly(string name, string logoFile)
     {
         DataImporterService.IsFileLogoForTuitionPartner(name, logoFile).Should().BeTrue();
