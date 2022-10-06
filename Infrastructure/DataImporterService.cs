@@ -44,9 +44,9 @@ public class DataImporterService : IHostedService
 
                 await RemoveTuitionPartners(dbContext, cancellationToken);
 
-                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
+                //await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
-                await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
+                //await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             });
@@ -60,7 +60,7 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
+                //await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
 
                 await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
 
@@ -79,10 +79,10 @@ public class DataImporterService : IHostedService
             var EstablishmentName = schoolDatum.Name;   
             
             _logger.LogInformation("Attempting to create General Information About Schools from record {EstablishmentName}", EstablishmentName);
-            GeneralInformationAboutSchools generalInformationAboutSchool;
+            School school;
             try
             {
-                generalInformationAboutSchool = giasFactory.GetGeneralInformationAboutSchools(schoolDatum, dbContext, cancellationToken);
+                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -91,21 +91,20 @@ public class DataImporterService : IHostedService
             }
 
             var validator = new GeneralInformationAboutSchoolValidator();
-            var results = await validator.ValidateAsync(generalInformationAboutSchool, cancellationToken);
+            var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
                 _logger.LogError($"Establishment name {{TuitionPartnerName}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
-                    generalInformationAboutSchool.EstablishmentName, generalInformationAboutSchool.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                    school.EstablishmentName, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
                 continue;
             }
 
-            dbContext.GeneralInformationAboutSchools.Add(generalInformationAboutSchool);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            //dbContext.GeneralInformationAboutSchools.Add(school);
+            //await dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Added General Information About School for {EstablishmentName} with id of {id}",
-                generalInformationAboutSchool.EstablishmentName, generalInformationAboutSchool.Id);
+                school.EstablishmentName, school.Id);
         }
-        throw new NotImplementedException();
     }
 
     private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)

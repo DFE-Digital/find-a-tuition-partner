@@ -1,32 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application;
+﻿using Application;
 using Application.Factories;
 using Application.Mapping;
 using Domain;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Factories
 {
     internal class GeneralInformatioAboutSchoolsFactory : IGeneralInformationAboutSchoolsFactory
     {
-        public GeneralInformationAboutSchools GetGeneralInformationAboutSchools(SchoolDatum schoolDatum, INtpDbContext dbContext, CancellationToken cancellationToken)
+        public School GetGeneralInformationAboutSchool(SchoolDatum schoolDatum, CancellationToken cancellationToken)
         {
-            GeneralInformationAboutSchools generalInformationAboutSchools = new GeneralInformationAboutSchools
+            School generalInformationAboutSchools = new School
             {
                 EstablishmentName = schoolDatum.Name,
-                Urn = Int32.Parse(schoolDatum.Urn),
+                Urn = schoolDatum.Urn,
                 Address = schoolDatum.Address,
-                PhaseOfEducation = new PhaseOfEducation { Id = schoolDatum.PhaseOfEducation },
-                EstablishmentTypeGroup = new EstablishmentTypeGroup { Id = schoolDatum.EstablishmentTypeGroup },
-                EstablishmentStatus = new EstablishmentStatus { Id = schoolDatum.EstablishmentStatus },
-                LocalEducationAuthority = new LocalAuthority { Id = schoolDatum.LocalEducationAuthorityCode },
-                LocalAuthorityDistrict = new LocalAuthorityDistrict { Id = schoolDatum.LocalAuthorityDistrictCode }
+                Postcode = schoolDatum.Postcode,
+                PhaseOfEducationId = schoolDatum.PhaseOfEducation,
+                EstablishmentTypeGroupId = schoolDatum.EstablishmentTypeGroup,
+                EstablishmentStatusId = schoolDatum.EstablishmentStatus,
+                LocalAuthorityId = schoolDatum.LocalAuthorityCode,
+                //LocalAuthorityDistrictId = schoolDatum.LocalAuthorityDistrictCode
             };
-
             return generalInformationAboutSchools;
         }
     }

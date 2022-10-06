@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Domain.Validators;
 
-public class GeneralInformationAboutSchoolValidator : AbstractValidator<GeneralInformationAboutSchools>
+public class GeneralInformationAboutSchoolValidator : AbstractValidator<School>
 {
     public GeneralInformationAboutSchoolValidator()
     {
@@ -19,24 +19,24 @@ public class GeneralInformationAboutSchoolValidator : AbstractValidator<GeneralI
            .NotEmpty()
            .WithMessage("Enter a valid Address");
 
-        RuleFor(m => m.EstablishmentTypeGroup)
+        RuleFor(m => m.EstablishmentTypeGroupId)
            .NotEmpty()
            .WithMessage("Enter a valid EstablishmentTypeGroup");
 
-        RuleFor(m => m.EstablishmentStatus)
+        RuleFor(m => m.EstablishmentStatusId)
            .NotEmpty()
            .WithMessage("Enter a valid EstablishmentStatus");
 
-        RuleFor(m => m.PhaseOfEducation)
+        RuleFor(m => m.PhaseOfEducationId)
           .NotEmpty()
           .WithMessage("Enter a valid EstablishmentStatus");
 
-        RuleFor(m => m.LocalEducationAuthority)
+        RuleFor(m => m.LocalAuthorityId)
           .NotEmpty()
           .WithMessage("Enter a valid LocalEducationAuthority");
 
-        RuleFor(m => m.LocalAuthorityDistrict)
-         .NotEmpty()
-         .WithMessage("Enter a valid LocalAuthorityDistrict");
+        //RuleFor(m => m.LocalAuthorityDistrict)
+        // .NotEmpty()
+        // .WithMessage("Enter a valid LocalAuthorityDistrict");
     }
 }
