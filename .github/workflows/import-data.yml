@@ -1,6 +1,11 @@
 name: Run Database Migrations and Import Data
 
 on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       environment:

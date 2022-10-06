@@ -1,0 +1,16 @@
+name: Run Database Migrations and Import Data Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '1 1 * * *'
+
+jobs:
+  nightly_migrate_import_data:
+    name: Nightly Migrate Database and Import Data
+    strategy:
+      matrix:
+        environment: [qa, research, staging, production]
+    uses: ./.github/workflows/import-data.yml
+    with:
+      environment: ${{ matrix.environment }}
