@@ -119,18 +119,18 @@ public class DataImporterService : IHostedService
         _logger.LogInformation("Matched {Count} logos to tuition partners:\n{Matches}",
             matching.Count, string.Join("\n", matching.Select(x => $"{x.Partner.SeoUrl} => {x.Logo.Filename}")));
 
-        var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner));
+        var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner)).ToList();
         if (partnersWithoutLogos.Any())
         {
             _logger.LogInformation("{Count} tuition partners do not have logos:\n{WithoutLogo}",
-                partnersWithoutLogos.Count(), string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
+                partnersWithoutLogos.Count, string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
         }
 
-        var logosWithoutPartners = logos.Except(matching.Select(x => x.Logo));
+        var logosWithoutPartners = logos.Except(matching.Select(x => x.Logo)).ToList();
         if (logosWithoutPartners.Any())
         {
             _logger.LogWarning("{Count} logos files do not match a tuition partner:\n{UnmatchedLogos}",
-                logosWithoutPartners.Count(), string.Join("\n", logosWithoutPartners.Select(x => x.Filename)));
+                logosWithoutPartners.Count, string.Join("\n", logosWithoutPartners.Select(x => x.Filename)));
         }
 
         foreach (var import in matching)
