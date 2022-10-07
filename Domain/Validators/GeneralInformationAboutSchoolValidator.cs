@@ -46,7 +46,7 @@ public class GeneralInformationAboutSchoolValidator : AbstractValidator<School>
 
     private bool ValidEstablishmentStatusId(int EstablishmentStatusId)
     {
-        return Enum.GetName(typeof(EstablishmentsStatus), EstablishmentStatusId) != null;    
+        return Enum.GetName(typeof(EstablishmentsStatus), EstablishmentStatusId) != null;
     }
 
     private bool ValidEstablishmentTypeGroupId(int EstablishmentTypeGroupId)

@@ -14,6 +14,7 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<LocalAuthorityDistrict> LocalAuthorityDistricts { get; set; } = null!;
     public DbSet<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; } = null!;
+    public DbSet<LocalAuthority> LocalAuthority { get; set; } = null!;
     public DbSet<Price> Prices { get; set; } = null!;
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;

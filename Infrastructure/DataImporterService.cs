@@ -44,14 +44,14 @@ public class DataImporterService : IHostedService
 
                 await RemoveTuitionPartners(dbContext, cancellationToken);
 
-                //await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
+                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
-                //await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
+                await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             });
 
-      
+
         var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
         var giasFactory = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsFactory>();
 
@@ -60,7 +60,7 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                //await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
+                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
 
                 await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
 
@@ -72,21 +72,24 @@ public class DataImporterService : IHostedService
 
     private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, IGeneralInformationAboutSchoolsFactory giasFactory, CancellationToken cancellationToken)
     {
-        var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new {t.Code, t.Id})
+        var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new { t.Code, t.Id })
             .ToDictionary(t => t.Code, t => t.Id);
+
+        var LocalAuthorityIds = dbContext.LocalAuthority.Select(t => new { t.Id, t.Code, })
+           .ToDictionary(t => t.Id, t => t.Code);
 
         var result = generalInformatioAboutSchoolsRecords.GetSchoolDataAsync(cancellationToken);
 
-      
+
         foreach (SchoolDatum schoolDatum in result.Result)
         {
-            var EstablishmentName = schoolDatum.Name;   
-            
+            var EstablishmentName = schoolDatum.Name;
+
             _logger.LogInformation("Attempting to create General Information About Schools from record {EstablishmentName}", EstablishmentName);
             School school;
             try
             {
-                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, LocalAuthorityDistrictsIds);
+                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, LocalAuthorityDistrictsIds, LocalAuthorityIds);
             }
             catch (Exception ex)
             {
@@ -103,11 +106,8 @@ public class DataImporterService : IHostedService
                 continue;
             }
 
-           
-
-
-            //dbContext.GeneralInformationAboutSchools.Add(school);
-            //await dbContext.SaveChangesAsync(cancellationToken);
+            dbContext.GeneralInformationAboutSchools.Add(school);
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Added General Information About School for {EstablishmentName} with id of {id}",
                 school.EstablishmentName, school.Id);
@@ -123,7 +123,7 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
     }
 
-    private async Task RemoveGeneralInformationAboutSchools (NtpDbContext dbContext, CancellationToken cancellationToken)
+    private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting all existing General Information About Schools data");
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"GeneralInformationAboutSchools\"", cancellationToken: cancellationToken);
