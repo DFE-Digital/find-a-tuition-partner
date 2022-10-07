@@ -172,32 +172,52 @@ public class DataImporterService : IHostedService
 
         _logger.LogInformation("Looking for logos for {Count} tuition partners", partners.Count);
 
-        var logos = logoFileEnumerable.ToList();
-        _logger.LogInformation("Available logo files are {LogoFiles}",
-            string.Join("\n", logos.Select(x => x.Filename).OrderBy(x => x)));
+        var logos = logoFileEnumerable.Where(x => x.Filename.EndsWith(".svg")).ToList();
 
-        foreach (var partner in partners)
+        var matching = (from p in partners
+                        from l in logos
+                        where IsFileLogoForTuitionPartner(p.SeoUrl, l.Filename)
+                        select new
+                        {
+                            Partner = p,
+                            Logo = l,
+                        })
+                       .ToList();
+
+        _logger.LogInformation("Matched {Count} logos to tuition partners:\n{Matches}",
+            matching.Count, string.Join("\n", matching.Select(x => $"{x.Partner.SeoUrl} => {x.Logo.Filename}")));
+
+        var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner)).ToList();
+        if (partnersWithoutLogos.Any())
         {
-            var dataFile = logos
-                .Where(logo => logo.Filename.Contains(partner.SeoUrl))
-                .FirstOrDefault();
+            _logger.LogInformation("{Count} tuition partners do not have logos:\n{WithoutLogo}",
+                partnersWithoutLogos.Count, string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
+        }
 
-            if (dataFile == null)
-            {
-                _logger.LogInformation("No logo file for Tution Partner {Name}", partner.SeoUrl);
-                continue;
-            }
+        var logosWithoutPartners = logos.Except(matching.Select(x => x.Logo)).ToList();
+        if (logosWithoutPartners.Any())
+        {
+            _logger.LogWarning("{Count} logos files do not match a tuition partner:\n{UnmatchedLogos}",
+                logosWithoutPartners.Count, string.Join("\n", logosWithoutPartners.Select(x => x.Filename)));
+        }
 
-            _logger.LogInformation("Retrieving logo file for Tution Partner {Name}", partner.SeoUrl);
-            var b64 = Convert.ToBase64String(dataFile.Stream.Value.ReadAllBytes());
+        foreach (var import in matching)
+        {
+            _logger.LogInformation("Retrieving logo file for Tution Partner {Name}", import.Partner.SeoUrl);
+            var b64 = Convert.ToBase64String(import.Logo.Stream.Value.ReadAllBytes());
 
-            var tp = dbContext.TuitionPartners.Find(partner.Id);
+            var tp = dbContext.TuitionPartners.Find(import.Partner.Id);
             tp!.Logo = new TuitionPartnerLogo { Logo = b64 };
         }
 
         await dbContext.SaveChangesAsync();
 
         await Task.CompletedTask;
+    }
+
+    public static bool IsFileLogoForTuitionPartner(string tuitionPartnerName, string logoFilename)
+    {
+        return logoFilename.Equals($"Logo_{tuitionPartnerName}.svg", StringComparison.InvariantCultureIgnoreCase);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

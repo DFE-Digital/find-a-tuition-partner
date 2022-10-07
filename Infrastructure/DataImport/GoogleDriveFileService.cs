@@ -1,4 +1,4 @@
-﻿using Google.Apis.Download;
+using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Microsoft.Extensions.Logging;
@@ -15,12 +15,18 @@ public class GoogleDriveFileService
     public GoogleDriveFileService(DriveService service, string googleDriveId, ILogger logger)
         => (_service, _driveId, _logger) = (service, googleDriveId, logger);
 
+    public List<File> FindAllDirectories(string search)
+        => FindAllEntities($"{search} and mimeType = 'application/vnd.google-apps.folder'");
+
     public List<File> FindAllFiles(string search)
+        => FindAllEntities($"{search} and mimeType != 'application/vnd.google-apps.folder'");
+
+    private List<File> FindAllEntities(string search)
     {
         var listRequest = _service.Files.List();
 
         listRequest.DriveId = _driveId;
-        listRequest.Q = search;
+        listRequest.Q = $"{search} and trashed = false";
 
         // Following must be set when searching within a shared drive
         listRequest.IncludeItemsFromAllDrives = true;
