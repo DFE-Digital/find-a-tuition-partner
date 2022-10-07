@@ -1,9 +1,7 @@
-﻿using Application;
-using Application.Factories;
+﻿using Application.Factories;
 using Application.Mapping;
 using Domain;
 using Domain.Constants;
-using NetTopologySuite.Geometries;
 
 namespace Infrastructure.Factories
 {
@@ -30,7 +28,7 @@ namespace Infrastructure.Factories
             {
                 EstablishmentName = schoolDatum.Name,
                 Urn = schoolDatum.Urn,
-                Address = schoolDatum.Address,
+                Address = CreateAddress(schoolDatum),
                 Postcode = schoolDatum.Postcode,
                 PhaseOfEducationId = schoolDatum.PhaseOfEducation,
                 EstablishmentTypeGroupId = schoolDatum.EstablishmentTypeGroup,
@@ -39,6 +37,37 @@ namespace Infrastructure.Factories
                 LocalAuthorityDistrictId = localAuthorityDistrictCode
             };
             return generalInformationAboutSchools;
+        }
+
+        private static string CreateAddress(SchoolDatum schoolDatum)
+        {
+            List<string> addresses = new();
+
+            if (!string.IsNullOrEmpty(schoolDatum.street))
+            {
+                addresses.Add(schoolDatum.street);
+            }
+            if (!string.IsNullOrEmpty(schoolDatum.Locality))
+            {
+                addresses.Add(schoolDatum.Locality);
+            }
+
+            if (!string.IsNullOrEmpty(schoolDatum.Address3))
+            {
+                addresses.Add(schoolDatum.Address3);
+            }
+
+            if (!string.IsNullOrEmpty(schoolDatum.Town))
+            {
+                addresses.Add(schoolDatum.Town);
+            }
+
+            if (!string.IsNullOrEmpty(schoolDatum.County))
+            {
+                addresses.Add(schoolDatum.County);
+            }
+
+            return String.Join(",", addresses.ToArray());
         }
     }
 }

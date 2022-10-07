@@ -28,7 +28,11 @@ namespace Infrastructure.DataImport
             {
                 Map(m => m.Urn).Name("URN");
                 Map(m => m.Name).Name("EstablishmentName");
-                Map(m => m.Address).Name(new String[] { "Street", "Locality", "Address3", "Town", "County (name)", "Postcode" });
+                Map(m => m.street).Name("Street");
+                Map(m => m.Locality).Name("Locality");
+                Map(m => m.Address3).Name("Address3");
+                Map(m => m.Town).Name("Town");
+                Map(m => m.County).Name("County (name)");
                 Map(m => m.Postcode).Name("Postcode");
                 Map(m => m.EstablishmentTypeGroup).Name("EstablishmentTypeGroup (code)");
                 Map(m => m.EstablishmentStatus).Name("EstablishmentStatus (code)");
