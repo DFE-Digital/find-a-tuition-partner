@@ -10,6 +10,13 @@
       "applicationUrl": "https://localhost:7036;http://localhost:5036",
       "dotnetRunMessages": true
     },
+    "DataImport": {
+      "commandName": "Project",
+      "commandLineArgs": "import",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,

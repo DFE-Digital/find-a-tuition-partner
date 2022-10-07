@@ -44,7 +44,7 @@ public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerat
 
     private void RetrieveFileList()
     {
-        var parents = _service.FindAllFiles($"name = '{_directory}'");
+        var parents = _service.FindAllDirectories($"name = '{_directory}'");
         var logoDir = parents.First();
         var files = _service.FindAllFiles($"parents in '{logoDir.Id}'");
         _files.AddRange(files);
