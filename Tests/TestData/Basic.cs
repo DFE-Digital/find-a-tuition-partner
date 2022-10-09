@@ -11,3 +11,8 @@ public static class Basic
         Subjects = new[] { "KeyStage1-English" },
     };
 }
+
+public static class A
+{
+    public static TuitionPartnerBuilder TuitionPartner => new();
+}
