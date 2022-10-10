@@ -13,4 +13,5 @@ public class TuitionPartnerSearchRequest
     public TuitionPartnerOrderBy OrderBy { get; set; } = TuitionPartnerOrderBy.Random;
     [DefaultValue(OrderByDirection.Ascending)]
     public OrderByDirection Direction { get; set; } = OrderByDirection.Ascending;
+    public School? School { get; set; }
 }
