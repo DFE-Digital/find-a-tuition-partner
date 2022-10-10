@@ -71,6 +71,17 @@ public class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData("apostrophe's", "apostrophes")]
+    [InlineData("special!\"£$%^&*+=chars", "specialchars")]
+    [InlineData("more[];:@#,.<>?special", "morespecial")]
+    [InlineData("chars-for-aspnet-operation-(){}", "chars-for-aspnet-operation-(){}")]
+    [InlineData("unicode६symbols你好", "unicode-symbols")]
+    public void ToSeoUrl_ReturnsKebabCase_Without_UrlEncoded_Characters(string name, string seoName)
+    {
+        name.ToSeoUrl().Should().Be(seoName);
+    }
+
+    [Theory]
     [InlineData("Find/Location", "find/location")]
     [InlineData("find/location", "find/location")]
     [InlineData("FindPage/LocationSearch", "find-page/location-search")]
@@ -79,6 +90,7 @@ public class StringExtensionsTests
     [InlineData("Find/FindATuitionPartner", "find/find-a-tuition-partner")]
     [InlineData("Find/FindATuitionPartner ", "find/find-a-tuition-partner")]
     [InlineData("Find/findATuitionPartner", "find/find-a-tuition-partner")]
+    [InlineData("tuition-partner/A Tuition Co", "tuition-partner/a-tuition-co")]
     public void ToSeoUrl_ReturnsKebabCase_WhenDirectory(string camel, string kebab)
     {
         camel.ToSeoUrl().Should().Be(kebab);
