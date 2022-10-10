@@ -61,7 +61,7 @@ public class SchoolValidatorTests
     [InlineData(-1)]
     public void With_invalid_establishmentTypeGroupId(int id)
     {
-        var model = new School { EstablishmentTypeGroupId =  id};
+        var model = new School { EstablishmentTypeGroupId = id };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.EstablishmentTypeGroupId);
     }
