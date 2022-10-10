@@ -1,4 +1,4 @@
-name: Run Database Migrations and Import Data Nightly
+name: Nightly Database Migrations and Import Data
 
 on:
   workflow_dispatch:
@@ -14,3 +14,4 @@ jobs:
     uses: ./.github/workflows/import-data.yml
     with:
       environment: ${{ matrix.environment }}
+    secrets: inherit
