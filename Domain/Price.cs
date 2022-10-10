@@ -1,5 +1,8 @@
-﻿namespace Domain;
+﻿using System.Diagnostics;
 
+namespace Domain;
+
+[DebuggerDisplay("Price = Tuition = {TuitionTypeId} Subject = {SubjectId} - 1:{GroupSize} £{HourlyRate}")]
 public class Price
 {
     public int Id { get; set; }
