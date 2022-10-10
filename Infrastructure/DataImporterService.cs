@@ -140,7 +140,11 @@ public class DataImporterService : IHostedService
             var b64 = Convert.ToBase64String(import.Logo.Stream.Value.ReadAllBytes());
 
             var tp = dbContext.TuitionPartners.Find(import.Partner.Id);
-            tp!.Logo = new TuitionPartnerLogo { Logo = b64 };
+            tp!.Logo = new TuitionPartnerLogo
+            {
+                Logo = b64,
+                FileExtension = import.Logo.FileExtension
+            };
         }
 
         await dbContext.SaveChangesAsync();
