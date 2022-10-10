@@ -7,8 +7,9 @@ public record TuitionPartnerBuilder
 {
     private static int Ids = 1;
     public int Id { get; private init; } = Ids++;
-    public string SeoName { get; private init; } = "a-tuition-partner";
+    public string SeoName { get; private init; } = $"a-tuition-partner-{Ids}";
     public string Name { get; private init; } = "A Tuition Partner";
+    public string? Logo { get; private init; }
     public string Description { get; private init; } = "A Tuition Partner Description";
     public string Website { get; private init; } = "https://website";
     public string PhoneNumber { get; private init; } = "phonenumber";
@@ -32,6 +33,7 @@ public record TuitionPartnerBuilder
         LocalAuthorityDistrictCoverage = builder.DistrictCoverage,
         SubjectCoverage = builder.Subjects.SubjectCoverage,
         Prices = builder.Subjects.Prices,
+        Logo = builder.Logo == null ? null : new() { Logo = builder.Logo },
     };
 
     public List<LocalAuthorityDistrictCoverage> DistrictCoverage =>
@@ -59,12 +61,15 @@ public record TuitionPartnerBuilder
     internal TuitionPartnerBuilder WithEmailAddress(string email)
         => new TuitionPartnerBuilder(this) with { EmailAddress = email };
 
+    internal TuitionPartnerBuilder WithLogo(string logo)
+        => new TuitionPartnerBuilder(this) with { Logo = logo };
+
     internal TuitionPartnerBuilder TaughtIn(District district, params TuitionTypes[] tuition)
         => new TuitionPartnerBuilder(this) with
         {
             Districts = new Dictionary<int, TuitionTypes[]>(Districts)
             {
-                [district.Id] = tuition
+                [district.Id] = tuition.Any() ? tuition : new[] { TuitionTypes.InSchool }
             }
         };
 

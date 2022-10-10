@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
+using Tests.TestData;
 using UI.Extensions;
 using UI.Pages;
 
@@ -18,31 +19,9 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     public async Task Displays_all_tuition_partners_in_database_in_alphabetical_ordering()
     {
         // Given
-        await Fixture.ExecuteDbContextAsync(async db =>
-        {
-            db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Beta",
-                SeoUrl = "beta",
-                Website = "http://"
-            });
-
-            db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Gamma",
-                SeoUrl = "gamma",
-                Website = "http://"
-            });
-
-            db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Alpha",
-                SeoUrl = "alpha",
-                Website = "http://"
-            });
-
-            await db.SaveChangesAsync();
-        });
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Gamma"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
 
         // When
         var page = await Fixture.GetPage<AllTuitionPartners>()
@@ -66,24 +45,8 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     public async Task Search_by_name()
     {
         // Given
-        await Fixture.ExecuteDbContextAsync(async db =>
-        {
-            db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Alpha",
-                SeoUrl = "alpha",
-                Website = "http://"
-            });
-
-            db.TuitionPartners.Add(new Domain.TuitionPartner
-            {
-                Name = "Beta",
-                SeoUrl = "beta",
-                Website = "http://"
-            });
-
-            await db.SaveChangesAsync();
-        });
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
 
         // When
         var page = await Fixture.GetPage<AllTuitionPartners>()
