@@ -1,54 +1,54 @@
-﻿using Domain.Constants;
+﻿using System.Text.RegularExpressions;
+using Domain.Constants;
 using FluentValidation;
 
 namespace Domain.Validators;
 
-public class GeneralInformationAboutSchoolValidator : AbstractValidator<School>
+public class SchoolValidator : AbstractValidator<School>
 {
-    public GeneralInformationAboutSchoolValidator()
+    public SchoolValidator()
     {
         RuleFor(m => m.EstablishmentName)
             .NotEmpty()
             .WithMessage("Enter a name");
 
         RuleFor(m => m.Urn)
-            .NotEmpty()
+            .GreaterThan(0)
             .WithMessage("Enter a URN");
 
         RuleFor(m => m.Address)
-           .NotEmpty()
-           .WithMessage("Enter a valid Address");
+            .NotEmpty()
+            .WithMessage("Enter a valid Address");
 
         RuleFor(m => m.EstablishmentTypeGroupId)
-           .Must(ValidEstablishmentTypeGroupId)
-           .WithMessage("Enter a valid EstablishmentTypeGroup");
+            .Must(ValidEstablishmentTypeGroupId)
+            .WithMessage("Enter a valid Establishment Type Group Id");
 
         RuleFor(m => m.EstablishmentStatusId)
-           .Must(ValidEstablishmentStatusId)
-           .WithMessage("Enter a valid EstablishmentStatus");
+            .Must(ValidEstablishmentStatusId)
+            .WithMessage("Enter a valid Establishment Status");
 
         RuleFor(m => m.PhaseOfEducationId)
-          .Must(ValidPhaseOfEducationId)
-          .WithMessage("Enter a valid EstablishmentStatus");
+            .Must(ValidPhaseOfEducationId)
+            .WithMessage("Enter a valid Phase of Education id");
 
         RuleFor(m => m.LocalAuthorityId)
-          .NotEmpty()
-          .WithMessage("Enter a valid LocalEducationAuthority");
+            .GreaterThan(0)
+            .WithMessage("Enter a valid Local Education Authority id");
 
         RuleFor(m => m.LocalAuthorityDistrictId)
-         .NotEmpty()
-         .WithMessage("Enter a valid LocalAuthorityDistrict");
+            .GreaterThan(0)
+            .WithMessage("Enter a valid Local Authority District id");
 
         RuleFor(m => m.Postcode)
-        .NotEmpty()
-        .WithMessage("Enter a valid Postcode");
+            .NotEmpty()
+            .WithMessage("Enter a valid Postcode");
     }
 
     private bool ValidEstablishmentStatusId(int EstablishmentStatusId)
     {
         return Enum.GetName(typeof(EstablishmentsStatus), EstablishmentStatusId) != null;
     }
-
     private bool ValidEstablishmentTypeGroupId(int EstablishmentTypeGroupId)
     {
         return Enum.GetName(typeof(EstablishmentTypeGroups), EstablishmentTypeGroupId) != null;
@@ -58,3 +58,4 @@ public class GeneralInformationAboutSchoolValidator : AbstractValidator<School>
         return Enum.GetName(typeof(PhasesOfEducation), PhaseOfEducationId) != null;
     }
 }
+

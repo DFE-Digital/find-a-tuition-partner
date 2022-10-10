@@ -97,7 +97,7 @@ public class DataImporterService : IHostedService
                 continue;
             }
 
-            var validator = new GeneralInformationAboutSchoolValidator();
+            var validator = new SchoolValidator();
             var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
