@@ -1,7 +1,8 @@
-﻿using Application.DataImport;
+using Application.DataImport;
 using Application.Factories;
 using Application.Mapping;
 using Domain;
+using Domain.Constants;
 using Domain.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -78,14 +79,16 @@ public class DataImporterService : IHostedService
         var LocalAuthorityIds = dbContext.LocalAuthority.Select(t => new { t.Id, t.Code, })
            .ToDictionary(t => t.Id, t => t.Code);
 
+        _logger.LogInformation("Retrieving GIAS dataset");
         var result = generalInformatioAboutSchoolsRecords.GetSchoolDataAsync(cancellationToken);
+        _logger.LogInformation("Retrieved {SchoolsCount} schools from GIAS dataset", result.Result.Count);
 
-
-        foreach (SchoolDatum schoolDatum in result.Result)
+        var imported = 0;
+        var failedValidation = 0;
+        foreach (SchoolDatum schoolDatum in result.Result.Where(s => s.IsValidForService()))
         {
             var EstablishmentName = schoolDatum.Name;
 
-            _logger.LogInformation("Attempting to create General Information About Schools from record {EstablishmentName}", EstablishmentName);
             School school;
             try
             {
@@ -101,17 +104,24 @@ public class DataImporterService : IHostedService
             var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
-                _logger.LogError($"Establishment name {{TuitionPartnerName}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
-                    school.EstablishmentName, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                        school.EstablishmentName, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                failedValidation++;
                 continue;
             }
 
             dbContext.GeneralInformationAboutSchools.Add(school);
-            await dbContext.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Added General Information About School for {EstablishmentName} with id of {id}",
-                school.EstablishmentName, school.Id);
+            imported++;
+            if ((imported % 100) == 0)
+            {
+                _logger.LogInformation("Imported {Count} schools from GIAS dataset", imported);
+            }
         }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
     }
 
     private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)

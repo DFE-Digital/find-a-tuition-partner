@@ -34,6 +34,7 @@ namespace Infrastructure.DataImport
                 Map(m => m.Town).Name("Town");
                 Map(m => m.County).Name("County (name)");
                 Map(m => m.Postcode).Name("Postcode");
+                Map(m => m.EstablishmentType).Name("TypeOfEstablishment (code)");
                 Map(m => m.EstablishmentTypeGroup).Name("EstablishmentTypeGroup (code)");
                 Map(m => m.EstablishmentStatus).Name("EstablishmentStatus (code)");
                 Map(m => m.PhaseOfEducation).Name("PhaseOfEducation (code)");
