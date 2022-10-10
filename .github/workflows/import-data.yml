@@ -6,6 +6,11 @@ on:
       environment:
         required: true
         type: string
+    secrets:
+      CF_USERNAME:
+        required: true
+      CF_PASSWORD:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
