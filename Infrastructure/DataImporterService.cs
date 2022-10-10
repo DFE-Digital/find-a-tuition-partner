@@ -1,3 +1,4 @@
+using Application;
 using Application.DataImport;
 using Application.Factories;
 using Domain;
@@ -11,7 +12,6 @@ namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
-    private static readonly string[] ImageFileTypes = new[] { ".svg", ".png" };
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -153,9 +153,9 @@ public class DataImporterService : IHostedService
     }
 
     public static bool IsFileLogoForTuitionPartner(string tuitionPartnerName, string logoFilename)
-        => ImageFileTypes.Any(i => logoFilename.Equals(
-            $"Logo_{tuitionPartnerName}{i}",
-            StringComparison.InvariantCultureIgnoreCase));
+        => SupportedImageFormats.FileExtensions
+            .Select(ext => $"Logo_{tuitionPartnerName}{ext}")
+            .Contains(logoFilename);
 
     public Task StopAsync(CancellationToken cancellationToken)
     {

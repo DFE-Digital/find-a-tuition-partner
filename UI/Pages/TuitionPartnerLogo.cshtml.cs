@@ -28,5 +28,5 @@ public class TuitionPartnerLogo : PageModel
     private static IActionResult FileContent(Domain.TuitionPartnerLogo logo)
         => new FileContentResult(
             Convert.FromBase64String(logo.Logo),
-            MimeTypeFor.Extension(logo.FileExtension));
+            SupportedImageFormats.MimeTypeForExtension(logo.FileExtension));
 }
