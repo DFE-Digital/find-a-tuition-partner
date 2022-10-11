@@ -21,7 +21,7 @@ public class SearchTuitionPartnerHandlerLoggingBehaviour
         RequestHandlerDelegate<TuitionPartnerSearchResultsPage> next)
     {
         using var _ = _logger.BeginScope("{@Search}", request);
-        using var schoolDataScope = _logger.BeginScope("{@School}", request.School);
+        using var schoolDataScope = _logger.BeginScope("{@Urn}", request.Urn);
         _logger.LogInformation("Searching for tuition partners");
 
         var stopwatch = new Stopwatch();

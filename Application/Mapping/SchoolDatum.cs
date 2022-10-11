@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.Constants;
+﻿using Domain.Constants;
 
 namespace Application.Mapping;
 

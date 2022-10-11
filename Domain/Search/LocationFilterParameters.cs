@@ -11,5 +11,5 @@ public class LocationFilterParameters
     public string LocalAuthority { get; set; } = null!;
     public string? LocalAuthorityDistrictCode { get; set; }
     public string LocalAuthorityDistrict { get; set; } = null!;
-    public School? School { get; set; }
+    public int? Urn { get; set; }
 }

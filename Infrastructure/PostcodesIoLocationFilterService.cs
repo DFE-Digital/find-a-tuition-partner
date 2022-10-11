@@ -51,9 +51,8 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthority = lad.LocalAuthority.Name;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
-
-        parameters.School = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
-
+        var school = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
+        parameters.Urn = school?.Urn;
         return parameters;
     }
 }

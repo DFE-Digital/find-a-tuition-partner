@@ -6,7 +6,6 @@ using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UI.Extensions;
@@ -198,7 +197,7 @@ public class SearchResults : PageModel
                 Postcode = parameters.Postcode,
                 SubjectIds = subjects.Select(x => x.Id),
                 TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
-                School = parameters.School
+                Urn = parameters?.Urn
             }, cancellationToken);
         }
     }

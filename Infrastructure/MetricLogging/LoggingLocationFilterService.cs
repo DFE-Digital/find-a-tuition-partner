@@ -27,8 +27,8 @@ public class LoggingLocationFilterService : ILocationFilterService
         switch (result.TryValidate())
         {
             case SuccessResult:
-                _logger.LogInformation("Searching for postcode {Postcode} found {MappedPostcode} mapped to {LocalAuthorityDistrictCode} {URN} {SchoolName} results in {Elapsed}ms",
-                    postcode, result?.Postcode, result?.School?.Urn, result?.School?.EstablishmentName, result?.LocalAuthorityDistrictCode, stopwatch.ElapsedMilliseconds);
+                _logger.LogInformation("Searching for postcode {Postcode} found {MappedPostcode} mapped to {LocalAuthorityDistrictCode} {URN} results in {Elapsed}ms",
+                    postcode, result?.Postcode, result?.Urn, result?.LocalAuthorityDistrictCode, stopwatch.ElapsedMilliseconds);
                 break;
 
             case ErrorResult e:
@@ -36,7 +36,6 @@ public class LoggingLocationFilterService : ILocationFilterService
                     postcode, stopwatch.ElapsedMilliseconds, e.GetType().Name);
                 break;
         }
-
         return result;
     }
 }
