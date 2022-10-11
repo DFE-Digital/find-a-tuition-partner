@@ -20,10 +20,13 @@ public class TuitionPartnerLogo : PageModel
             .Select(x => x.Logo)
             .FirstOrDefaultAsync();
 
-        if (logo?.Logo is null)
-            return NotFound();
-
-        var bytes = Convert.FromBase64String(logo.Logo);
-        return new FileContentResult(bytes, "image/svg+xml");
+        return logo?.Logo is null
+            ? NotFound()
+            : FileContent(logo);
     }
+
+    private static IActionResult FileContent(Domain.TuitionPartnerLogo logo)
+        => new FileContentResult(
+            Convert.FromBase64String(logo.Logo),
+            SupportedImageFormats.MimeTypeForExtension(logo.FileExtension));
 }
