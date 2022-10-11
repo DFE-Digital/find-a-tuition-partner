@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
-    public partial class GeneralInformationAboutSchools : Migration
+    public partial class Schools : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,7 +49,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GeneralInformationAboutSchools",
+                name: "Schools",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -67,33 +66,33 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GeneralInformationAboutSchools", x => x.Id);
+                    table.PrimaryKey("PK_Schools", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GeneralInformationAboutSchools_EstablishmentStatus_Establis~",
+                        name: "FK_Schools_EstablishmentStatus_EstablishmentStatusId",
                         column: x => x.EstablishmentStatusId,
                         principalTable: "EstablishmentStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GeneralInformationAboutSchools_EstablishmentTypeGroup_Estab~",
+                        name: "FK_Schools_EstablishmentTypeGroup_EstablishmentTypeGroupId",
                         column: x => x.EstablishmentTypeGroupId,
                         principalTable: "EstablishmentTypeGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GeneralInformationAboutSchools_LocalAuthority_LocalAuthorit~",
+                        name: "FK_Schools_LocalAuthority_LocalAuthorityId",
                         column: x => x.LocalAuthorityId,
                         principalTable: "LocalAuthority",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GeneralInformationAboutSchools_LocalAuthorityDistricts_Loca~",
+                        name: "FK_Schools_LocalAuthorityDistricts_LocalAuthorityDistrictId",
                         column: x => x.LocalAuthorityDistrictId,
                         principalTable: "LocalAuthorityDistricts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GeneralInformationAboutSchools_PhaseOfEducation_PhaseOfEduc~",
+                        name: "FK_Schools_PhaseOfEducation_PhaseOfEducationId",
                         column: x => x.PhaseOfEducationId,
                         principalTable: "PhaseOfEducation",
                         principalColumn: "Id",
@@ -139,7 +138,7 @@ namespace Infrastructure.Migrations
                     { 5, "Middle deemed secondary" },
                     { 6, "16 Plus" },
                     { 7, "All-through" },
-                    { 8, "Not Applicable" }
+                    { 9999, "Not Applicable" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -148,35 +147,40 @@ namespace Infrastructure.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralInformationAboutSchools_EstablishmentStatusId",
-                table: "GeneralInformationAboutSchools",
+                name: "IX_PhaseOfEducation_Name",
+                table: "PhaseOfEducation",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_EstablishmentStatusId",
+                table: "Schools",
                 column: "EstablishmentStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralInformationAboutSchools_EstablishmentTypeGroupId",
-                table: "GeneralInformationAboutSchools",
+                name: "IX_Schools_EstablishmentTypeGroupId",
+                table: "Schools",
                 column: "EstablishmentTypeGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralInformationAboutSchools_LocalAuthorityDistrictId",
-                table: "GeneralInformationAboutSchools",
+                name: "IX_Schools_LocalAuthorityDistrictId",
+                table: "Schools",
                 column: "LocalAuthorityDistrictId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralInformationAboutSchools_LocalAuthorityId",
-                table: "GeneralInformationAboutSchools",
+                name: "IX_Schools_LocalAuthorityId",
+                table: "Schools",
                 column: "LocalAuthorityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GeneralInformationAboutSchools_PhaseOfEducationId",
-                table: "GeneralInformationAboutSchools",
+                name: "IX_Schools_PhaseOfEducationId",
+                table: "Schools",
                 column: "PhaseOfEducationId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GeneralInformationAboutSchools");
+                name: "Schools");
 
             migrationBuilder.DropTable(
                 name: "EstablishmentStatus");
@@ -186,7 +190,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhaseOfEducation");
-
         }
     }
 }

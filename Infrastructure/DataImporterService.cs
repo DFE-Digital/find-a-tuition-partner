@@ -110,7 +110,7 @@ public class DataImporterService : IHostedService
                 continue;
             }
 
-            dbContext.GeneralInformationAboutSchools.Add(school);
+            dbContext.Schools.Add(school);
 
             imported++;
             if ((imported % 100) == 0)
@@ -136,7 +136,7 @@ public class DataImporterService : IHostedService
     private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting all existing General Information About Schools data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"GeneralInformationAboutSchools\"", cancellationToken: cancellationToken);
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)

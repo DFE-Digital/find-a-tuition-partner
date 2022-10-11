@@ -52,7 +52,7 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
 
-        parameters.School = await _dbContext.GeneralInformationAboutSchools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
+        parameters.School = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
 
         return parameters;
     }

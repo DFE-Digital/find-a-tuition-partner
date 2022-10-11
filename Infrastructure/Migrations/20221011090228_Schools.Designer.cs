@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20221007090720_GeneralInformationAboutSchools")]
-    partial class GeneralInformationAboutSchools
+    [Migration("20221011090228_Schools")]
+    partial class Schools
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -3874,7 +3874,7 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9999,
                             Name = "Not Applicable"
                         });
                 });
@@ -4047,7 +4047,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PhaseOfEducationId");
 
-                    b.ToTable("GeneralInformationAboutSchools");
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("Domain.Subject", b =>

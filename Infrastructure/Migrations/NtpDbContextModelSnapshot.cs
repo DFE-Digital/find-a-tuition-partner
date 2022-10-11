@@ -36,7 +36,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EstablishmentStatus", (string)null);
+                    b.ToTable("EstablishmentStatus");
 
                     b.HasData(
                         new
@@ -77,7 +77,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("EstablishmentTypeGroup", (string)null);
+                    b.ToTable("EstablishmentTypeGroup");
 
                     b.HasData(
                         new
@@ -150,7 +150,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("KeyStage", (string)null);
+                    b.ToTable("KeyStage");
 
                     b.HasData(
                         new
@@ -207,7 +207,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("LocalAuthority", (string)null);
+                    b.ToTable("LocalAuthority");
 
                     b.HasData(
                         new
@@ -1309,7 +1309,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("LocalAuthorityDistricts", (string)null);
+                    b.ToTable("LocalAuthorityDistricts");
 
                     b.HasData(
                         new
@@ -3813,7 +3813,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId");
 
-                    b.ToTable("LocalAuthorityDistrictCoverage", (string)null);
+                    b.ToTable("LocalAuthorityDistrictCoverage");
                 });
 
             modelBuilder.Entity("Domain.PhaseOfEducation", b =>
@@ -3832,7 +3832,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("PhaseOfEducation", (string)null);
+                    b.ToTable("PhaseOfEducation");
 
                     b.HasData(
                         new
@@ -3872,7 +3872,7 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 9999,
                             Name = "Not Applicable"
                         });
                 });
@@ -3910,7 +3910,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionTypeId");
 
-                    b.ToTable("Prices", (string)null);
+                    b.ToTable("Prices");
                 });
 
             modelBuilder.Entity("Domain.Region", b =>
@@ -3936,7 +3936,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("Regions", (string)null);
+                    b.ToTable("Regions");
 
                     b.HasData(
                         new
@@ -4045,7 +4045,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PhaseOfEducationId");
 
-                    b.ToTable("GeneralInformationAboutSchools", (string)null);
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("Domain.Subject", b =>
@@ -4076,7 +4076,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
 
                     b.HasData(
                         new
@@ -4220,7 +4220,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "TuitionTypeId", "SubjectId");
 
-                    b.ToTable("SubjectCoverage", (string)null);
+                    b.ToTable("SubjectCoverage");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
@@ -4333,7 +4333,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionTypes", (string)null);
+                    b.ToTable("TuitionTypes");
 
                     b.HasData(
                         new
@@ -4366,7 +4366,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DataProtectionKeys", (string)null);
+                    b.ToTable("DataProtectionKeys");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
