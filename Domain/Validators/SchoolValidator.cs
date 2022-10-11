@@ -13,7 +13,7 @@ public class SchoolValidator : AbstractValidator<School>
             .WithMessage("Enter a name");
 
         RuleFor(m => m.Urn)
-            .GreaterThan(0)
+            .GreaterThan(9999)
             .WithMessage("Enter a URN");
 
         RuleFor(m => m.Address)

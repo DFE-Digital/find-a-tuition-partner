@@ -54,7 +54,7 @@ public class DataImporterService : IHostedService
 
 
         var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
-        var giasFactory = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsFactory>();
+        var giasFactory = scope.ServiceProvider.GetRequiredService<ISchoolsFactory>();
 
         await strategy.ExecuteAsync(
             async () =>
@@ -71,7 +71,7 @@ public class DataImporterService : IHostedService
         _host.StopApplication();
     }
 
-    private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, IGeneralInformationAboutSchoolsFactory giasFactory, CancellationToken cancellationToken)
+    private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, ISchoolsFactory giasFactory, CancellationToken cancellationToken)
     {
         var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new { t.Code, t.Id })
             .ToDictionary(t => t.Code, t => t.Id);
@@ -92,7 +92,7 @@ public class DataImporterService : IHostedService
             School school;
             try
             {
-                school = giasFactory.GetGeneralInformationAboutSchool(schoolDatum, LocalAuthorityDistrictsIds, LocalAuthorityIds);
+                school = giasFactory.GetSchool(schoolDatum, LocalAuthorityDistrictsIds, LocalAuthorityIds);
             }
             catch (Exception ex)
             {

@@ -5,9 +5,9 @@ using Domain.Constants;
 
 namespace Infrastructure.Factories
 {
-    internal class GeneralInformatioAboutSchoolsFactory : IGeneralInformationAboutSchoolsFactory
+    internal class SchoolsFactory : ISchoolsFactory
     {
-        public School GetGeneralInformationAboutSchool(SchoolDatum schoolDatum, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds)
+        public School GetSchool(SchoolDatum schoolDatum, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds)
         {
             if (!localAuthorityDistrictsIds.TryGetValue(schoolDatum.LocalAuthorityDistrictCode.Trim(), out int localAuthorityDistrictCode))
             {
@@ -19,7 +19,7 @@ namespace Infrastructure.Factories
                 schoolDatum.LocalAuthorityCode = 0;
             }
 
-            if (schoolDatum.PhaseOfEducation == 0)
+            if (schoolDatum.PhaseOfEducation == 0) // Convert from 0 to 9999 as as index 0 cannot be saved in Entity Framework
             {
                 schoolDatum.PhaseOfEducation = (int)PhasesOfEducation.NotApplicable;
             }

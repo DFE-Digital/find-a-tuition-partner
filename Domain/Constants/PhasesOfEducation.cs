@@ -9,5 +9,5 @@ public enum PhasesOfEducation
     MiddleDeemedSecondary = 5,
     SixteenPlus = 6,
     AllThrough = 7,
-    NotApplicable = 8,
+    NotApplicable = 9999,
 }

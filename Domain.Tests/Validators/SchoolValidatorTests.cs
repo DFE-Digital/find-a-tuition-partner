@@ -27,6 +27,7 @@ public class SchoolValidatorTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
+    [InlineData(9998)]
     public void With_invalid_urn(int id)
     {
         var model = new School { Urn = id };
@@ -35,8 +36,7 @@ public class SchoolValidatorTests
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(100)]
+    [InlineData(1000)]
     public void With_valid_urn(int id)
     {
         var model = new School { LocalAuthorityDistrictId = id };
@@ -114,7 +114,7 @@ public class SchoolValidatorTests
     [InlineData(5)]
     [InlineData(6)]
     [InlineData(7)]
-    [InlineData(8)]
+    [InlineData(9999)]
     public void With_valid_phase_of_education_id(int id)
     {
         var model = new School { PhaseOfEducationId = id };
@@ -125,7 +125,7 @@ public class SchoolValidatorTests
     [Theory]
     [InlineData(-1)]
     [InlineData(0)]
-    [InlineData(9)]
+    [InlineData(8)]
     public void With_invalid_phase_of_education_id(int id)
     {
         var model = new School { PhaseOfEducationId = id };

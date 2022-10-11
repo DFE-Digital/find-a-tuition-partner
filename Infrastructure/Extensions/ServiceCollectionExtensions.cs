@@ -90,7 +90,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
-        services.AddScoped<IGeneralInformationAboutSchoolsFactory, GeneralInformatioAboutSchoolsFactory>();
+        services.AddScoped<ISchoolsFactory, SchoolsFactory>();
         services.AddHostedService<DataImporterService>();
         return services;
     }
