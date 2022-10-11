@@ -1,3 +1,4 @@
+using Application;
 using Application.DataImport;
 using Application.Factories;
 using Application.Mapping;
@@ -182,7 +183,7 @@ public class DataImporterService : IHostedService
 
         _logger.LogInformation("Looking for logos for {Count} tuition partners", partners.Count);
 
-        var logos = logoFileEnumerable.Where(x => x.Filename.EndsWith(".svg")).ToList();
+        var logos = logoFileEnumerable.ToList();
 
         var matching = (from p in partners
                         from l in logos
@@ -217,7 +218,11 @@ public class DataImporterService : IHostedService
             var b64 = Convert.ToBase64String(import.Logo.Stream.Value.ReadAllBytes());
 
             var tp = dbContext.TuitionPartners.Find(import.Partner.Id);
-            tp!.Logo = new TuitionPartnerLogo { Logo = b64 };
+            tp!.Logo = new TuitionPartnerLogo
+            {
+                Logo = b64,
+                FileExtension = import.Logo.FileExtension
+            };
         }
 
         await dbContext.SaveChangesAsync();
@@ -226,9 +231,9 @@ public class DataImporterService : IHostedService
     }
 
     public static bool IsFileLogoForTuitionPartner(string tuitionPartnerName, string logoFilename)
-    {
-        return logoFilename.Equals($"Logo_{tuitionPartnerName}.svg", StringComparison.InvariantCultureIgnoreCase);
-    }
+        => SupportedImageFormats.FileExtensions
+            .Select(ext => $"Logo_{tuitionPartnerName}{ext}")
+            .Contains(logoFilename);
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
@@ -240,13 +245,11 @@ public static class StreamExtensions
 {
     public static byte[] ReadAllBytes(this Stream instream)
     {
-        if (instream is MemoryStream)
-            return ((MemoryStream)instream).ToArray();
+        if (instream is MemoryStream stream)
+            return stream.ToArray();
 
-        using (var memoryStream = new MemoryStream())
-        {
-            instream.CopyTo(memoryStream);
-            return memoryStream.ToArray();
-        }
+        using var memoryStream = new MemoryStream();
+        instream.CopyTo(memoryStream);
+        return memoryStream.ToArray();
     }
 }

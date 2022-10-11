@@ -264,6 +264,13 @@ public class SliceFixture : IAsyncLifetime
         _factory?.Dispose();
         return Task.CompletedTask;
     }
+
+    internal async Task AddTuitionPartner(Domain.TuitionPartner partner)
+        => await ExecuteDbContextAsync(db =>
+        {
+            db.TuitionPartners.Add(partner);
+            return db.SaveChangesAsync();
+        });
 }
 
 public class ScopedPageExecutor<T> where T : class
