@@ -1,4 +1,6 @@
-﻿using Domain.Validators;
+﻿using System;
+using Domain.Constants;
+using Domain.Validators;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -7,6 +9,13 @@ namespace Domain.Tests.Validators;
 public class SchoolValidatorTests
 {
     private readonly SchoolValidator _validator;
+
+    private enum ErrorNumber
+    {
+        CannotBeNegative = -1,
+        CannotBeZero = -0,
+
+    }
 
     public SchoolValidatorTests()
     {
@@ -25,8 +34,8 @@ public class SchoolValidatorTests
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [InlineData((int)ErrorNumber.CannotBeZero)]
+    [InlineData((int)ErrorNumber.CannotBeNegative)]
     [InlineData(9998)]
     public void With_invalid_urn(int id)
     {
@@ -36,12 +45,12 @@ public class SchoolValidatorTests
     }
 
     [Theory]
-    [InlineData(1000)]
+    [InlineData(10000)]
     public void With_valid_urn(int id)
     {
-        var model = new School { LocalAuthorityDistrictId = id };
+        var model = new School { Urn = id };
         var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityDistrictId);
+        result.ShouldNotHaveValidationErrorFor(x => x.Urn);
     }
 
     [Theory]
@@ -56,9 +65,8 @@ public class SchoolValidatorTests
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(12)]
-    [InlineData(-1)]
+    [InlineData((int)ErrorNumber.CannotBeZero)]
+    [InlineData((int)ErrorNumber.CannotBeNegative)]
     public void With_invalid_establishmentTypeGroupId(int id)
     {
         var model = new School { EstablishmentTypeGroupId = id };
@@ -66,39 +74,32 @@ public class SchoolValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.EstablishmentTypeGroupId);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
-    [InlineData(5)]
-    [InlineData(6)]
-    [InlineData(9)]
-    [InlineData(10)]
-    [InlineData(11)]
-    public void With_valid_establishment_type_group_id(int id)
+    [Fact]
+    public void With_valid_establishment_type_group_id()
     {
-        var model = new School { EstablishmentTypeGroupId = id };
-        var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.EstablishmentTypeGroupId);
+        foreach (int establishmentType in Enum.GetValues(typeof(EstablishmentTypeGroups)))
+        {
+            var model = new School { EstablishmentTypeGroupId = establishmentType };
+            var result = _validator.TestValidate(model);
+            result.ShouldNotHaveValidationErrorFor(x => x.EstablishmentTypeGroupId);
+        }
+
+    }
+
+    [Fact]
+    public void With_valid_establishment_status_id()
+    {
+        foreach (int establishmentState in Enum.GetValues(typeof(EstablishmentsStatus)))
+        {
+            var model = new School { EstablishmentStatusId = establishmentState };
+            var result = _validator.TestValidate(model);
+            result.ShouldNotHaveValidationErrorFor(x => x.EstablishmentStatusId);
+        }
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
-    public void With_valid_establishment_status_id(int id)
-    {
-        var model = new School { EstablishmentStatusId = id };
-        var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.EstablishmentStatusId);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(5)]
+    [InlineData((int)ErrorNumber.CannotBeZero)]
+    [InlineData((int)ErrorNumber.CannotBeNegative)]
     public void With_invalid_establishment_status_id(int id)
     {
         var model = new School { EstablishmentStatusId = id };
@@ -106,26 +107,20 @@ public class SchoolValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.EstablishmentStatusId);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(4)]
-    [InlineData(5)]
-    [InlineData(6)]
-    [InlineData(7)]
-    [InlineData(9999)]
-    public void With_valid_phase_of_education_id(int id)
+    [Fact]
+    public void With_valid_phase_of_education_id()
     {
-        var model = new School { PhaseOfEducationId = id };
-        var result = _validator.TestValidate(model);
-        result.ShouldNotHaveValidationErrorFor(x => x.PhaseOfEducationId);
+        foreach (int phasesOfEducation in Enum.GetValues(typeof(PhasesOfEducation)))
+        {
+            var model = new School { PhaseOfEducationId = phasesOfEducation };
+            var result = _validator.TestValidate(model);
+            result.ShouldNotHaveValidationErrorFor(x => x.PhaseOfEducationId);
+        }
     }
 
     [Theory]
     [InlineData(-1)]
     [InlineData(0)]
-    [InlineData(8)]
     public void With_invalid_phase_of_education_id(int id)
     {
         var model = new School { PhaseOfEducationId = id };
@@ -134,8 +129,8 @@ public class SchoolValidatorTests
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [InlineData((int)ErrorNumber.CannotBeZero)]
+    [InlineData((int)ErrorNumber.CannotBeNegative)]
     public void With_invalid_local_authority_id(int id)
     {
         var model = new School { LocalAuthorityId = id };
@@ -143,19 +138,17 @@ public class SchoolValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.LocalAuthorityId);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(100)]
-    public void With_valid_local_authority_id(int id)
+    [Fact]
+    public void With_valid_local_authority_id()
     {
-        var model = new School { LocalAuthorityId = id };
+        var model = new School { LocalAuthorityId = 1 };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityId);
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [InlineData((int)ErrorNumber.CannotBeZero)]
+    [InlineData((int)ErrorNumber.CannotBeNegative)]
     public void With_invalid_local_authority_district_id(int id)
     {
         var model = new School { LocalAuthorityDistrictId = id };
@@ -163,12 +156,10 @@ public class SchoolValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.LocalAuthorityDistrictId);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(100)]
-    public void With_valid_local_authority_district_id(int id)
+    [Fact]
+    public void With_valid_local_authority_district_id()
     {
-        var model = new School { LocalAuthorityDistrictId = id };
+        var model = new School { LocalAuthorityDistrictId = 1 };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.LocalAuthorityDistrictId);
     }

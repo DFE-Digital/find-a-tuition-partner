@@ -9,6 +9,7 @@ public class EstablishmentStatusConfiguration : IEntityTypeConfiguration<Establi
 {
     public void Configure(EntityTypeBuilder<EstablishmentStatus> builder)
     {
+        builder.HasIndex(e => e.Name);
         builder.HasData(
             new EstablishmentStatus { Id = (int)EstablishmentsStatus.Open, Name = "Open" },
             new EstablishmentStatus { Id = (int)EstablishmentsStatus.Closed, Name = "Closed" },
