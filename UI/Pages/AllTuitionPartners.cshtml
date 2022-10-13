@@ -41,7 +41,7 @@
                 {
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
 
-                    <div class="tuition-partner-summary" data-testid="tuition-partner-summary">
+                    <div class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
                         <div>
                             <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
                             <govuk-summary-list>

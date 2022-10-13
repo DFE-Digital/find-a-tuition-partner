@@ -1,4 +1,4 @@
-.search-results-logo>img {
+.search-results-logo > img {
   @include govuk-media-query($until: tablet) {
     display: none;
   }
@@ -22,7 +22,7 @@
     grid-template-columns: auto 180px;
   }
 
-  >img {
+  > img {
     @include govuk-media-query($until: desktop) {
       display: none;
     }
