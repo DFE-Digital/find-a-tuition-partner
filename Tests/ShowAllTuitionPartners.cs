@@ -42,6 +42,21 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     }
 
     [Fact]
+    public async Task Displays_logos_when_available()
+    {
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha").WithLogo("alpha-logo"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Bravo"));
+
+        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet());
+
+        page.Results!.Results.Should().BeEquivalentTo(new[]
+        {
+            new { Name = "Alpha", HasLogo = true },
+            new { Name = "Bravo", HasLogo = false },
+        });
+    }
+
+    [Fact]
     public async Task Search_by_name()
     {
         // Given
