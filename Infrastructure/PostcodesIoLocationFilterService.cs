@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using Application;
 using Application.Repositories;
 using Domain.Search;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
@@ -10,11 +11,13 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
 {
     private readonly HttpClient _httpClient;
     private readonly IGeographyLookupRepository _geographyLookupRepository;
+    private readonly INtpDbContext _dbContext;
 
-    public PostcodesIoLocationFilterService(HttpClient httpClient, IGeographyLookupRepository geographyLookupRepository)
+    public PostcodesIoLocationFilterService(HttpClient httpClient, IGeographyLookupRepository geographyLookupRepository, INtpDbContext dbContext)
     {
         _httpClient = httpClient;
         _geographyLookupRepository = geographyLookupRepository;
+        _dbContext = dbContext;
     }
 
     public async Task<LocationFilterParameters?> GetLocationFilterParametersAsync(string postcode)
@@ -48,7 +51,8 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthority = lad.LocalAuthority.Name;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
-
+        var school = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
+        parameters.Urn = school?.Urn;
         return parameters;
     }
 }

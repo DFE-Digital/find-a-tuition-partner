@@ -10,5 +10,6 @@ public interface INtpDbContext
     DbSet<Subject> Subjects { get; set; }
     DbSet<TuitionPartner> TuitionPartners { get; set; }
     DbSet<TuitionType> TuitionTypes { get; set; }
+    DbSet<School> Schools { get; set; }
     Task<int> SaveChangesAsync();
 }

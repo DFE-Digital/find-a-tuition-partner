@@ -1,8 +1,10 @@
 using Application;
 using Application.DataImport;
 using Application.Factories;
+using Application.Mapping;
 using Domain;
 using Domain.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,7 +52,76 @@ public class DataImporterService : IHostedService
                 await transaction.CommitAsync(cancellationToken);
             });
 
+
+        var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
+        var giasFactory = scope.ServiceProvider.GetRequiredService<ISchoolsFactory>();
+
+        await strategy.ExecuteAsync(
+            async () =>
+            {
+                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
+
+                await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            });
+
         _host.StopApplication();
+    }
+
+    private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, ISchoolsFactory giasFactory, CancellationToken cancellationToken)
+    {
+        var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new { t.Code, t.Id })
+            .ToDictionary(t => t.Code, t => t.Id);
+
+        var LocalAuthorityIds = dbContext.LocalAuthority.Select(t => new { t.Id, t.Code, })
+           .ToDictionary(t => t.Id, t => t.Code);
+
+        _logger.LogInformation("Retrieving GIAS dataset");
+        var result = generalInformatioAboutSchoolsRecords.GetSchoolDataAsync(cancellationToken);
+        _logger.LogInformation("Retrieved {SchoolsCount} schools from GIAS dataset", result.Result.Count);
+
+        var imported = 0;
+        var failedValidation = 0;
+        foreach (SchoolDatum schoolDatum in result.Result.Where(s => s.IsValidForService()))
+        {
+            var EstablishmentName = schoolDatum.Name;
+
+            School school;
+            try
+            {
+                school = giasFactory.GetSchool(schoolDatum, LocalAuthorityDistrictsIds, LocalAuthorityIds);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception thrown when creating General Information About Schools from record {OriginalFilename}", EstablishmentName);
+                continue;
+            }
+
+            var validator = new SchoolValidator();
+            var results = await validator.ValidateAsync(school, cancellationToken);
+            if (!results.IsValid)
+            {
+                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                        school.EstablishmentName, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                failedValidation++;
+                continue;
+            }
+
+            dbContext.Schools.Add(school);
+
+            imported++;
+            if ((imported % 100) == 0)
+            {
+                _logger.LogInformation("Imported {Count} schools from GIAS dataset", imported);
+            }
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
     }
 
     private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)
@@ -60,6 +131,12 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
+    }
+
+    private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Deleting all existing General Information About Schools data");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)

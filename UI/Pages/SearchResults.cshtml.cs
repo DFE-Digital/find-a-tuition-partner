@@ -6,7 +6,6 @@ using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UI.Extensions;
@@ -156,8 +155,7 @@ public class SearchResults : PageModel
             }
 
             var results = await FindSubjectsMatchingFilter(
-                        location.Data.LocalAuthorityDistrictCode,
-                        location.Data.Postcode,
+                        location.Data,
                         request,
                         cancellationToken);
 
@@ -182,8 +180,7 @@ public class SearchResults : PageModel
         }
 
         private async Task<TuitionPartnerSearchResultsPage> FindSubjectsMatchingFilter(
-            string? localAuthorityDistrict,
-            string? postcode,
+            LocationFilterParameters parameters,
             Query request,
             CancellationToken cancellationToken)
         {
@@ -196,10 +193,11 @@ public class SearchResults : PageModel
             return await mediator.Send(new SearchTuitionPartnerHandler.Command
             {
                 OrderBy = TuitionPartnerOrderBy.Random,
-                LocalAuthorityDistrictCode = localAuthorityDistrict,
-                Postcode = postcode,
+                LocalAuthorityDistrictCode = parameters.LocalAuthorityDistrictCode,
+                Postcode = parameters.Postcode,
                 SubjectIds = subjects.Select(x => x.Id),
                 TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+                Urn = parameters?.Urn
             }, cancellationToken);
         }
     }

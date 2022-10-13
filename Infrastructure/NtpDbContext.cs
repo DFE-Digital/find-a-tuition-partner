@@ -14,12 +14,17 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<LocalAuthorityDistrict> LocalAuthorityDistricts { get; set; } = null!;
     public DbSet<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; } = null!;
+    public DbSet<LocalAuthority> LocalAuthority { get; set; } = null!;
     public DbSet<Price> Prices { get; set; } = null!;
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
     public DbSet<TuitionType> TuitionTypes { get; set; } = null!;
     public DbSet<SubjectCoverage> SubjectCoverage { get; set; } = null!;
+    public DbSet<School> Schools { get; set; } = null!;
+    public DbSet<PhaseOfEducation> PhaseOfEducation { get; set; } = null!;
+    public DbSet<EstablishmentTypeGroup> EstablishmentTypeGroup { get; set; } = null!;
+    public DbSet<EstablishmentStatus> EstablishmentStatus { get; set; } = null!;
 
     public Task<int> SaveChangesAsync()
     {
