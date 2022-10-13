@@ -26,12 +26,13 @@
 
   @include govuk-media-query($from: desktop) {
     display: grid;
-    grid-template-columns: auto 180px;
+    grid-template-columns: auto 120px;
+  }
 
-    > img {
-      @include govuk-media-query($until: desktop) {
-        display: none;
-      }
+  > img {
+    width: 100%;
+    @include govuk-media-query($until: desktop) {
+      display: none;
     }
   }
 }

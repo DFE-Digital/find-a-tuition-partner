@@ -181,7 +181,7 @@ Then("logos are shown for tuition partners", () => {
     .and("have.attr", "src", "/tuition-partner-logo/nudge-education")
     .and("have.attr", "alt", "The company logo for Nudge Education")
     .and(($img) => {
-      expect($img[0].width).to.be.equal(180);
+      expect($img[0].width).to.be.equal(120);
     });
 });
 
