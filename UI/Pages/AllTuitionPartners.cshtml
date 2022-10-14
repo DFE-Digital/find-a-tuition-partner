@@ -39,48 +39,53 @@
                 </p>
                 @foreach (var item in Model.Results!.Results)
                 {
-                    <div data-testid="tuition-partner-summary">
-                        <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
-                        <govuk-summary-list>
-                            <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
-                                <govuk-summary-list-row-key>
-                                    Website
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value>
-                                    <a href="@item.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@item.Website</a>
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                            <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
-                                <govuk-summary-list-row-key>
-                                    Phone number
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value>
-                                    @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
-                                    {
-                                        <a href="tel:@item.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@item.PhoneNumber</a>
-                                    }
-                                    else
-                                    {
-                                        <span data-testid="tuition-partner-phone-number-link"></span>
-                                    }
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                            <govuk-summary-list-row class="app-print-s">
-                                <govuk-summary-list-row-key>
-                                    Email address
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value>
-                                    @if (!string.IsNullOrWhiteSpace(item.Email))
-                                    {
-                                        <a href="mailto:@(item.Email)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@item.Email</a>
-                                    }
-                                    else
-                                    {
-                                        <span data-testid="tuition-partner-email-link"></span>
-                                    }
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                        </govuk-summary-list>
+                    var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
+
+                    <div class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
+                        <div>
+                            <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
+                            <govuk-summary-list>
+                                <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                                    <govuk-summary-list-row-key>
+                                        Website
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value>
+                                        <a href="@item.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@item.Website</a>
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                                <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                                    <govuk-summary-list-row-key>
+                                        Phone number
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value>
+                                        @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
+                                        {
+                                            <a href="tel:@item.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@item.PhoneNumber</a>
+                                        }
+                                        else
+                                        {
+                                            <span data-testid="tuition-partner-phone-number-link"></span>
+                                        }
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                                <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                                    <govuk-summary-list-row-key>
+                                        Email address
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value>
+                                        @if (!string.IsNullOrWhiteSpace(item.Email))
+                                        {
+                                            <a href="mailto:@(item.Email)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@item.Email</a>
+                                        }
+                                        else
+                                        {
+                                            <span data-testid="tuition-partner-email-link"></span>
+                                        }
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                            </govuk-summary-list>
+                        </div>
+                        <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name" />
                     </div>
                 }
             </div>

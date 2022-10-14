@@ -1,7 +1,9 @@
 using Application;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Search;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -83,6 +85,15 @@ public class SliceFixture : IAsyncLifetime
     public ScopedPageExecutor<TPage> GetPage<TPage>() where TPage : class
     {
         return new(_scopeFactory);
+    }
+
+    public Task<TPage> GetPage<TPage>(Func<TPage, Task> page) where TPage : class
+    {
+        return new ScopedPageExecutor<TPage>(_scopeFactory).Execute(async p =>
+        {
+            await page(p);
+            return p;
+        });
     }
 
     public Task<TResult> GetPage<TPage, TResult>(Func<TPage, Task<TResult>> action) where TPage : class
@@ -275,7 +286,7 @@ public class SliceFixture : IAsyncLifetime
 
 public class ScopedPageExecutor<T> where T : class
 {
-    private IServiceScopeFactory scopeFactory;
+    private readonly IServiceScopeFactory scopeFactory;
 
     public ScopedPageExecutor(IServiceScopeFactory scopeFactory) => this.scopeFactory = scopeFactory;
 
@@ -304,4 +315,11 @@ public class ScopedPageExecutor<T> where T : class
             throw;
         }
     }
+
+    internal Task<T> OnGet(Func<T, Task> page)
+        => Execute(async p =>
+        {
+            await page(p);
+            return p;
+        });
 }

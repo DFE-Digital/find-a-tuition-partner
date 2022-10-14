@@ -15,3 +15,24 @@
     display: none;
   }
 }
+
+.tuition-partner-summary {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #b1b4b6;
+
+  > div > .govuk-summary-list {
+    margin-bottom: 20px;
+  }
+
+  @include govuk-media-query($from: desktop) {
+    display: grid;
+    grid-template-columns: auto 120px;
+  }
+
+  > img {
+    width: 100%;
+    @include govuk-media-query($until: desktop) {
+      display: none;
+    }
+  }
+}
