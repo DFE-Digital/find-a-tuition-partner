@@ -1,10 +1,10 @@
 using System.Diagnostics;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Domain;
 using Domain.Constants;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace GiasPostcodeSearch;
 
