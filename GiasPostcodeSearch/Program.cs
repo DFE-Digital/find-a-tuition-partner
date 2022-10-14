@@ -4,8 +4,6 @@ using GiasPostcodeSearch;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Events;
 
 var argsValid = true;
 
@@ -40,6 +38,7 @@ if (passwordParam != null && passwordParam.Contains("="))
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
+        services.AddNtpDbContext(hostContext.Configuration);
         services.AddHttpClient<IHostedService, GiasPostcodeSearchService>(client =>
         {
             client.BaseAddress = new Uri(url);
@@ -51,16 +50,8 @@ var host = Host.CreateDefaultBuilder(args)
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
             }
         });
-        services.AddNtpDbContext(hostContext.Configuration);
     })
-    .UseSerilog((context, config) =>
-    {
-        config
-            .MinimumLevel.Is(LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .WriteTo.Console();
-    })
+    .AddLogging()
     .Build();
 
 await host.RunAsync();

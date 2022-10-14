@@ -2,7 +2,10 @@
   "profiles": {
     "GiasPostcodeSearch": {
       "commandName": "Project",
-      "commandLineArgs": "--url=\"https://localhost:7036/\""
+      "commandLineArgs": "--url=\"https://localhost:7036/\"",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
     }
   }
 }

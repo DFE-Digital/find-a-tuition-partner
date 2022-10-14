@@ -1,9 +1,10 @@
 using System.Diagnostics;
-using Application;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Domain;
 using Domain.Constants;
+using Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GiasPostcodeSearch;
 
@@ -11,24 +12,27 @@ public class GiasPostcodeSearchService : IHostedService
 {
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger<GiasPostcodeSearchService> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly HttpClient _httpClient;
-    private readonly INtpDbContext _dbContext;
 
     public GiasPostcodeSearchService(
         IHostApplicationLifetime host,
         ILogger<GiasPostcodeSearchService> logger,
-        HttpClient httpClient,
-        INtpDbContext dbContext)
+        IServiceScopeFactory scopeFactory,
+        HttpClient httpClient)
     {
         _host = host;
         _logger = logger;
+        _scopeFactory = scopeFactory;
         _httpClient = httpClient;
-        _dbContext = dbContext;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        List<School> schools = _dbContext.Schools.Select(x => x).ToList();
+        using var scope = _scopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
+
+        var schools = dbContext.Schools.Select(x => x).ToList();
 
         _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schools.Count);
 
