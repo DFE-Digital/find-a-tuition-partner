@@ -1,6 +1,9 @@
 using System.Diagnostics;
+using Application;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Domain;
+using Domain.Constants;
 
 namespace GiasPostcodeSearch;
 
@@ -9,34 +12,29 @@ public class GiasPostcodeSearchService : IHostedService
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger<GiasPostcodeSearchService> _logger;
     private readonly HttpClient _httpClient;
-    private readonly ISchoolDataProvider _schoolDataProvider;
+    private readonly INtpDbContext _dbContext;
 
     public GiasPostcodeSearchService(
         IHostApplicationLifetime host,
         ILogger<GiasPostcodeSearchService> logger,
         HttpClient httpClient,
-        ISchoolDataProvider schoolDataProvider)
+        INtpDbContext dbContext)
     {
         _host = host;
         _logger = logger;
         _httpClient = httpClient;
-        _schoolDataProvider = schoolDataProvider;
+        _dbContext = dbContext;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var schoolData = (await _schoolDataProvider.GetSchoolDataAsync(cancellationToken)).Where(x =>
-            new[]
-            {
-                PhaseOfEducation.Primary, PhaseOfEducation.MiddleDeemedPrimary, PhaseOfEducation.Secondary,
-                PhaseOfEducation.MiddleDeemedSecondary, PhaseOfEducation.AllThrough
-            }.Contains(x.PhaseOfEducation)).ToArray();
+        List<School> schools = _dbContext.Schools.Select(x => x).ToList();
 
-        _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schoolData.Length);
+        _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schools.Count);
 
         var count = 0;
         var errorCount = 0;
-        var totalCount = schoolData.Length;
+        var totalCount = schools.Count;
         var elapsedMilliseconds = 0L;
         var minElapsedMilliseconds = long.MaxValue;
         var maxElapsedMilliseconds = 0L;
@@ -53,18 +51,18 @@ public class GiasPostcodeSearchService : IHostedService
             CancellationToken = cancellationToken
         };
 
-        await Parallel.ForEachAsync(schoolData, options, async (schoolDatum, ct) =>
+        await Parallel.ForEachAsync(schools, options, async (school, ct) =>
         {
-            var subjectsQueryString = GetSubjectsQueryString(schoolDatum);
+            var subjectsQueryString = GetSubjectsQueryString(school);
             if (subjectsQueryString == null)
             {
-                _logger.LogDebug("School {SchoolName} is not valid for this service", schoolDatum.Name);
+                _logger.LogDebug("School {SchoolName} is not valid for this service", school.EstablishmentName);
             }
             else
             {
-                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", schoolDatum.Name);
+                _logger.LogDebug("Searching for Tuition Partners covering School {SchoolName}", school.EstablishmentName);
 
-                var requestUri = $"search-results?Data.Postcode={schoolDatum.Postcode}&{subjectsQueryString}";
+                var requestUri = $"search-results?Data.Postcode={school.Postcode}&{subjectsQueryString}";
 
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
@@ -139,19 +137,20 @@ public class GiasPostcodeSearchService : IHostedService
         return Task.CompletedTask;
     }
 
-    private string? GetSubjectsQueryString(SchoolDatum schoolDatum)
+    private static string? GetSubjectsQueryString(School school)
     {
-        switch (schoolDatum.PhaseOfEducation)
+        switch (school.PhaseOfEducationId)
         {
-            case PhaseOfEducation.Primary:
-            case PhaseOfEducation.MiddleDeemedPrimary:
+            case (int)PhasesOfEducation.Primary:
+            case (int)PhasesOfEducation.MiddleDeemedPrimary:
                 return "Data.Subjects=KeyStage1-English&Data.Subjects=KeyStage2-Maths&Data.Subjects=KeyStage2-Science";
-            case PhaseOfEducation.Secondary:
-            case PhaseOfEducation.MiddleDeemedSecondary:
+            case (int)PhasesOfEducation.Secondary:
+            case (int)PhasesOfEducation.MiddleDeemedSecondary:
                 return "Data.Subjects=KeyStage3-English&Data.Subjects=KeyStage3-Maths&Data.Subjects=KeyStage4-Science";
-            case PhaseOfEducation.AllThrough:
+            case (int)PhasesOfEducation.AllThrough:
                 return "Data.Subjects=KeyStage1-English&Data.Subjects=KeyStage1-Maths&Data.Subjects=KeyStage1-Science&Data.Subjects=KeyStage2-English&Data.Subjects=KeyStage2-Maths&Data.Subjects=KeyStage2-Science&Data.Subjects=KeyStage3-English&Data.Subjects=KeyStage3-Maths&Data.Subjects=KeyStage3-Science&Data.Subjects=KeyStage4-English&Data.Subjects=KeyStage4-Maths&Data.Subjects=KeyStage4-Science";
-            default: return null;
+            default:
+                return null;
         }
     }
 }
