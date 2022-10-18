@@ -4,6 +4,8 @@ using GiasPostcodeSearch;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 
 var argsValid = true;
 
@@ -51,7 +53,14 @@ var host = Host.CreateDefaultBuilder(args)
             }
         });
     })
-    .AddLogging()
+    .UseSerilog((context, config) =>
+    {
+        config
+            .MinimumLevel.Is(LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .WriteTo.Console();
+    })
     .Build();
 
 await host.RunAsync();

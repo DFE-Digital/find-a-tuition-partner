@@ -8,7 +8,7 @@ Last verfied: 2022-07-18
 
 Performance testing for the service has been conducted using a custom .NET console app. We chose to use a custom app because the expected dataset of search parameters is known. It is the list of state funded schools in England which is publicly available from the [Get information about Schools](https://get-information-schools.service.gov.uk/) site.
 
-This means it is possible to download the latest dataset, extract the required school data and run a search for each school. This can be done in parallel for basic performance testing and has the added benefit of testing all possible postcodes to confirm searches using them run without error.
+The service downloads and stores the full GIAS dataset in its database nightly. The `GiasPostcodeSearch` console application uses the postcodes from this dataset and runs a search for each. This can be done in parallel for basic performance testing and has the added benefit of testing all possible postcodes to confirm searches using them run without error.
 
 ## Results
 
