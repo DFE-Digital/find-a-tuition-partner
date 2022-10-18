@@ -28,6 +28,8 @@ Change the number of nodes used to one on the target environment by issuing the 
 cf scale find-a-tuition-partner-<ENVIRONMENT> -i 1
 ```
 
+For reference, the production environment uses 1GB application instances and a medium database wheras the other environments use 256MB application instances and a small database. The performance test should be run against the latter configuration for consistency. This also provides a possible cost saving avenue.
+
 ### Performance Testing
 
 The `GiasPostcodeSearch` console application is the performance testing application. It loads the full GIAS dataset of elligable schools into memory then uses `Parallel.ForEachAsync` and `HttpClient` to request the search results page using each school's postcode and a subject list relevant to their phase of education.
