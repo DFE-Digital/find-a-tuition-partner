@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Domain;
 using Domain.Constants;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -32,13 +33,17 @@ public class GiasPostcodeSearchService : IHostedService
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
 
-        var schools = dbContext.Schools.Select(x => x).ToList();
+        var schools = await dbContext.Schools.Where(e => new[]
+        {
+            (int)PhasesOfEducation.Primary, (int)PhasesOfEducation.MiddleDeemedPrimary, (int)PhasesOfEducation.Secondary,
+            (int)PhasesOfEducation.MiddleDeemedSecondary, (int)PhasesOfEducation.AllThrough
+        }.Contains(e.PhaseOfEducationId)).ToArrayAsync(cancellationToken: cancellationToken);
 
-        _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schools.Count);
+        _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schools.Length);
 
         var count = 0;
         var errorCount = 0;
-        var totalCount = schools.Count;
+        var totalCount = schools.Length;
         var elapsedMilliseconds = 0L;
         var minElapsedMilliseconds = long.MaxValue;
         var maxElapsedMilliseconds = 0L;
@@ -126,7 +131,7 @@ public class GiasPostcodeSearchService : IHostedService
         averageElapsedMilliseconds = (int)(elapsedMilliseconds / (double)count);
         searchesPerSecond = (int)((double)count / runStopWatch.ElapsedMilliseconds);
         _logger.LogInformation(
-            "Run complete. {count} searches run in {runStopWatch.ElapsedMilliseconds / 1000}s. " +
+            "Run complete. {count} searches run in {ElapsedSeconds}s. " +
             "Error count {errorCount}. {searchesPerSecond} searches per second. " +
             "Average response time {averageElapsedMilliseconds}ms min {minElapsedMilliseconds}ms " +
             "({fastestRequestUri}) max {maxElapsedMilliseconds}ms ({slowestRequestUri})",
