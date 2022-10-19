@@ -1,5 +1,4 @@
-﻿using Domain.Constants;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Tests.TestData;
@@ -24,12 +23,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
 
         // When
-        var page = await Fixture.GetPage<AllTuitionPartners>()
-            .Execute(async page =>
-            {
-                await page.OnGet();
-                return page;
-            });
+        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet());
 
         // Then
         page.Results.Should().NotBeNull();
@@ -42,6 +36,21 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     }
 
     [Fact]
+    public async Task Displays_logos_when_available()
+    {
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha").WithLogo("alpha-logo"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Bravo"));
+
+        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet());
+
+        page.Results!.Results.Should().BeEquivalentTo(new[]
+        {
+            new { Name = "Alpha", HasLogo = true },
+            new { Name = "Bravo", HasLogo = false },
+        });
+    }
+
+    [Fact]
     public async Task Search_by_name()
     {
         // Given
@@ -49,13 +58,11 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
 
         // When
-        var page = await Fixture.GetPage<AllTuitionPartners>()
-            .Execute(async page =>
-            {
-                page.Data.Name = "LPh";
-                await page.OnGet();
-                return page;
-            });
+        var page = await Fixture.GetPage<AllTuitionPartners>(page =>
+        {
+            page.Data.Name = "LPh";
+            return page.OnGet();
+        });
 
         // Then
         page.Results.Should().NotBeNull();
@@ -68,13 +75,11 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Sets_from_full_list()
     {
-        var page = await Fixture.GetPage<AllTuitionPartners>()
-            .Execute(async page =>
-            {
-                page.Data.From = ReferrerList.SearchResults;
-                await page.OnGet();
-                return page;
-            });
+        var page = await Fixture.GetPage<AllTuitionPartners>(page =>
+        {
+            page.Data.From = ReferrerList.SearchResults;
+            return page.OnGet();
+        });
 
         page.Data.From.Should().Be(ReferrerList.FullList);
     }
@@ -82,15 +87,13 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Sets_AllSearchData()
     {
-        var page = await Fixture.GetPage<AllTuitionPartners>()
-            .Execute(async page =>
-            {
-                page.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-                page.Data.From = ReferrerList.SearchResults;
-                page.Data.Name = "test";
-                await page.OnGet();
-                return page;
-            });
+        var page = await Fixture.GetPage<AllTuitionPartners>(page =>
+        {
+            page.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
+            page.Data.From = ReferrerList.SearchResults;
+            page.Data.Name = "test";
+            return page.OnGet();
+        });
 
         var data = page.TempData.Peek<SearchModel>("AllSearchData");
         data.Should().NotBeNull();
