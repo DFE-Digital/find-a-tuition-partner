@@ -11,6 +11,11 @@ namespace GiasPostcodeSearch;
 
 public class GiasPostcodeSearchService : IHostedService
 {
+    private static readonly int[] EligiblePhasesOfEducation = {
+        (int)PhasesOfEducation.Primary, (int)PhasesOfEducation.MiddleDeemedPrimary, (int)PhasesOfEducation.Secondary,
+        (int)PhasesOfEducation.MiddleDeemedSecondary, (int)PhasesOfEducation.AllThrough
+    };
+
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger<GiasPostcodeSearchService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -33,11 +38,9 @@ public class GiasPostcodeSearchService : IHostedService
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
 
-        var schools = await dbContext.Schools.Where(e => new[]
-        {
-            (int)PhasesOfEducation.Primary, (int)PhasesOfEducation.MiddleDeemedPrimary, (int)PhasesOfEducation.Secondary,
-            (int)PhasesOfEducation.MiddleDeemedSecondary, (int)PhasesOfEducation.AllThrough
-        }.Contains(e.PhaseOfEducationId)).ToArrayAsync(cancellationToken: cancellationToken);
+        var schools = await dbContext.Schools
+            .Where(e => EligiblePhasesOfEducation.Contains(e.PhaseOfEducationId))
+            .ToArrayAsync(cancellationToken: cancellationToken);
 
         _logger.LogInformation("GIAS dataset loaded. {NumberOfSchools} eligible schools", schools.Length);
 
