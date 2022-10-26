@@ -8,13 +8,14 @@ Last verfied: 2022-07-18
 
 Performance testing for the service has been conducted using a custom .NET console app. We chose to use a custom app because the expected dataset of search parameters is known. It is the list of state funded schools in England which is publicly available from the [Get information about Schools](https://get-information-schools.service.gov.uk/) site.
 
-This means it is possible to download the latest dataset, extract the required school data and run a search for each school. This can be done in parallel for basic performance testing and has the added benefit of testing all possible postcodes to confirm searches using them run without error.
+The service downloads and stores the full GIAS dataset in its database nightly. The `GiasPostcodeSearch` console application uses the postcodes from this dataset and runs a search for each. This can be done in parallel for basic performance testing and has the added benefit of testing all possible postcodes to confirm searches using them run without error.
 
 ## Results
 
-Date       | Searches | Run Time | Searches Per Second | Average Response Time
----------- | -------- |----------|---------------------|----------------------
-18-07-2022 | 20188    | 5m 26s   | 61                  | 258ms                
+Date       | Searches | Run Time | Searches Per Second | Average Response Time | Specifications   |
+---------- | -------- |----------|---------------------|-----------------------|------------------|
+18-07-2022 | 20188    | 5m 26s   | 61                  | 258ms                 | 1x256MB small-13 |
+19-10-2022 | 20031    | 8m 48s   | 37                  | 421ms                 | 1x256MB small-13 |
 
 ## Runbook
 
@@ -27,6 +28,8 @@ Change the number of nodes used to one on the target environment by issuing the 
 ```
 cf scale find-a-tuition-partner-<ENVIRONMENT> -i 1
 ```
+
+For reference, the production environment uses 1GB application instances and a medium database wheras the other environments use 256MB application instances and a small database. The performance test should be run against the latter configuration for consistency. This also provides a possible cost saving avenue.
 
 ### Performance Testing
 

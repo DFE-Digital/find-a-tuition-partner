@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using GiasPostcodeSearch;
+using Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -39,10 +40,7 @@ if (passwordParam != null && passwordParam.Contains("="))
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddHttpClient<ISchoolDataProvider, GiasSchoolDataProvider>(client =>
-        {
-            client.BaseAddress = new Uri("https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/");
-        });
+        services.AddNtpDbContext(hostContext.Configuration);
         services.AddHttpClient<IHostedService, GiasPostcodeSearchService>(client =>
         {
             client.BaseAddress = new Uri(url);
