@@ -42,16 +42,20 @@ public class SearchMetricsMapperService : IHostedService
 
         await foreach (var record in records.WithCancellation(cancellationToken))
         {
-            /*var result = await locationFilterService.GetLocationFilterParametersAsync(record.Postcode);
-            if (result?.LocalAuthorityDistrictCode == null)
+            if (string.IsNullOrWhiteSpace(record.LadCode))
             {
-                _logger.LogWarning("Postcode {Postcode} could not be mapped to a LAD code", record.Postcode);
+                var result = await locationFilterService.GetLocationFilterParametersAsync(record.Postcode);
+                if (result?.LocalAuthorityDistrictCode == null)
+                {
+                    _logger.LogWarning("Postcode {Postcode} could not be mapped to a LAD code", record.Postcode);
 
-                continue;
+                    continue;
+                }
+
+                record.LadCode = result.LocalAuthorityDistrictCode;
             }
 
-            record.LadCode = result.LocalAuthorityDistrictCode;
-            record.Urns = string.Join(',', result.Urns);*/
+            record.Urns = string.Join('|', dbContext.Schools.Where(e => e.Postcode == record.Postcode).OrderBy(e => e.Urn).Select(e => e.Urn));
 
             metrics.Add(record);
         }
@@ -59,6 +63,7 @@ public class SearchMetricsMapperService : IHostedService
         await using var writer = new StreamWriter(config.Output);
         await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
         {
+            csvWriter.Context.RegisterClassMap<SearchMetricMap>();
             await csvWriter.WriteRecordsAsync(metrics.OrderBy(x => x.Timestamp), cancellationToken);
         }
 
