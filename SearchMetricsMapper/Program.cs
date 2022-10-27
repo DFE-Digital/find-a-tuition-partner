@@ -10,6 +10,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.Configure<SearchMetrics>(hostContext.Configuration.GetSection(nameof(SearchMetrics)));
         services.AddNtpDbContext(hostContext.Configuration);
         services.AddLocationFilterService();
+        services.AddRepositories();
         services.AddHostedService<SearchMetricsMapperService>();
     })
     .AddLogging()
