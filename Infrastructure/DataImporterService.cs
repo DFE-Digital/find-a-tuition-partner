@@ -4,7 +4,6 @@ using Application.Factories;
 using Application.Mapping;
 using Domain;
 using Domain.Validators;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

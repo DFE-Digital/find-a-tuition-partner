@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SearchMetricsMapper": {
+      "commandName": "Project",
+      "commandLineArgs": "SearchMetrics:Source=\"~/Downloads/Searched Postcodes.csv\" SearchMetrics:Output=\"~/Downloads/Searched Postcodes Mapped.csv\"",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
