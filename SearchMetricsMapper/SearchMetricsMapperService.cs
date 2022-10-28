@@ -1,14 +1,14 @@
+using System.Globalization;
+using System.Reflection;
+using Application;
 using Application.Mapping;
 using CsvHelper;
-using System.Globalization;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SearchMetricsMapper.Configuration;
-using System.Reflection;
-using Application;
 
 namespace SearchMetricsMapper;
 
