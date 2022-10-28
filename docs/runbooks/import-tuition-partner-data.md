@@ -12,9 +12,11 @@ The data importer also runs the migrations against the database prior to the imp
 
 ## Data files and logos
 
-The Tuition Partner Excel spreadsheets are managed in the 🗀 `NTP` ❱ `Tuition Partner Data & Information` ❱ `TP Data - Beta` ❱ `FINAL Data Responses` folder in Google Drive. The logos are stored in the 🗀 `NTP` > `Tuition Partner Data & Information` ❱ `TP Data - Beta` ❱ `Logos` folder using filenames that contain the kebab cased version of the Tuition Partner's name. The shared drive ID for the drive is stored in the following GitHub Actions secret, which is converted to environment variables when deployed:
+The Tuition Partner Excel spreadsheets are managed in the 🗀 `NTP` ❱ `Tuition Partner Data & Information` ❱ `TP Data - Beta` ❱ `FINAL Data Responses` folder in Google Drive. The logos are stored in the 🗀 `NTP` > `Tuition Partner Data & Information` ❱ `TP Data - Beta` ❱ `Logos` folder using filenames that contain the kebab cased version of the Tuition Partner's name. The ids for the drive and folders are stored in the following GitHub Actions secrets which are converted to environment variables when deployed:
 
 * `GOOGLE_DRIVE_SHARED_DRIVE_ID` - "School Services" drive id
+* `GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID` - Tuition Partner "FINAL Data Responses" folder id
+* `GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID` - Tuition Partner "Logos" folder id
 
 ## Google Cloud project service account key
 

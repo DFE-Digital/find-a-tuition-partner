@@ -17,6 +17,16 @@ public class GoogleDriveServiceFactory
     {
         _config = config.Value;
         _logger = logger;
+
+        if (string.IsNullOrWhiteSpace(_config.TuitionPartnerDataFolderId))
+        {
+            _logger.LogError("GoogleDrive:TuitionPartnerDataFolderId environment variable not set. Tuition Partner data import will fail. Please check dotnet user-secrets if running on a local development environment or the GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID GitHub Action secret");
+        }
+
+        if (string.IsNullOrWhiteSpace(_config.TuitionPartnerLogosFolderId))
+        {
+            _logger.LogError("GoogleDrive:TuitionPartnerLogosFolderId environment variable not set. Tuition Partner logos import will fail. Please check dotnet user-secrets if running on a local development environment or the GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID GitHub Action secret");
+        }
     }
 
     public DriveService GetDriveService()

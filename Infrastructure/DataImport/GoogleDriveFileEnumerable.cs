@@ -7,7 +7,7 @@ namespace Infrastructure.DataImport;
 
 public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerator<DataFile>
 {
-    private readonly string _directory;
+    private readonly string _directoryId;
     private readonly Func<GoogleDriveFileService, GoogleFile, Stream> _downloadFileFn;
     private readonly GoogleDriveFileService _service;
     private readonly List<GoogleFile> _files = new();
@@ -17,11 +17,11 @@ public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerat
 
     public GoogleDriveFileEnumerable(
         GoogleDriveServiceFactory googleDriveServiceFactory,
-        string directory,
+        string directoryId,
         Func<GoogleDriveFileService, GoogleFile, Stream> downloadFile)
     {
         _service = googleDriveServiceFactory.GetDriveFiles();
-        _directory = directory;
+        _directoryId = directoryId;
         _downloadFileFn = downloadFile;
     }
 
@@ -44,9 +44,7 @@ public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerat
 
     private void RetrieveFileList()
     {
-        var parents = _service.FindAllDirectories($"name = '{_directory}'");
-        var logoDir = parents.First();
-        var files = _service.FindAllFiles($"parents in '{logoDir.Id}'");
+        var files = _service.FindAllFiles($"parents in '{_directoryId}'");
         _files.AddRange(files);
     }
 

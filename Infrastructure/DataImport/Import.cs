@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog.Events;
 
@@ -24,7 +23,7 @@ public static class Import
 
             return true;
         }
-        else
-            return false;
+
+        return false;
     }
 }

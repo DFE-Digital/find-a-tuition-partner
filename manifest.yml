@@ -16,3 +16,5 @@ applications:
     GoogleAnalytics:MeasurementId: ((google-analytics-measurement-id))
     GoogleDrive:ServiceAccountKeyFilePath: credentials.json
     GoogleDrive:SharedDriveId: ((google-drive-shared-drive-id))
+    GoogleDrive:TuitionPartnerDataFolderId: ((google-drive-tuition-partner-data-folder-id))
+    GoogleDrive:TuitionPartnerLogosFolderId: ((google-drive-tuition-partner-logo-folder-id))
