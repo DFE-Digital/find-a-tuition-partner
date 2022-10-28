@@ -11,6 +11,10 @@
 }
 
 .tuition-partner-logo {
+  > img {
+    width: 180px;
+  }
+
   @include govuk-media-query($until: tablet) {
     display: none;
   }
