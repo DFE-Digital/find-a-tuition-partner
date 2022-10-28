@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using Application.DataImport;
+using Infrastructure.Configuration;
 using Infrastructure.Factories;
+using Microsoft.Extensions.Options;
 using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
@@ -10,9 +12,9 @@ public sealed class GoogleDriveDataFileEnumerable : IDataFileEnumerable, IEnumer
     private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private readonly GoogleDriveFileEnumerable _enum;
 
-    public GoogleDriveDataFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory)
+    public GoogleDriveDataFileEnumerable(IOptions<GoogleDrive> config, GoogleDriveServiceFactory googleDriveServiceFactory)
     {
-        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, "FINAL Data Responses", DownloadFile);
+        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, config.Value.TuitionPartnerDataFolderId, DownloadFile);
     }
 
     private static Stream DownloadFile(GoogleDriveFileService service, GoogleFile file)

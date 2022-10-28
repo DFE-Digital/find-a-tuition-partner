@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using Application.DataImport;
+using Infrastructure.Configuration;
 using Infrastructure.Factories;
+using Microsoft.Extensions.Options;
 using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
@@ -9,9 +11,9 @@ public sealed class GoogleDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumer
 {
     private readonly GoogleDriveFileEnumerable _enum;
 
-    public GoogleDriveLogoFileEnumerable(GoogleDriveServiceFactory googleDriveServiceFactory)
+    public GoogleDriveLogoFileEnumerable(IOptions<GoogleDrive> config, GoogleDriveServiceFactory googleDriveServiceFactory)
     {
-        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, "Logos", DownloadFile);
+        _enum = new GoogleDriveFileEnumerable(googleDriveServiceFactory, config.Value.TuitionPartnerLogosFolderId, DownloadFile);
     }
 
     private static Stream DownloadFile(GoogleDriveFileService service, GoogleFile file)
