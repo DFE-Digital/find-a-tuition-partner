@@ -49,7 +49,7 @@ public class SliceFixture : IAsyncLifetime
                 { District.Ryedale.Code, District.Ryedale.SamplePostcode }
             };
 
-            foreach(var locationToAdd in locationsToAdd)
+            foreach (var locationToAdd in locationsToAdd)
             {
                 LocationFilter
                     .GetLocationFilterParametersAsync(locationToAdd.Value)
@@ -63,10 +63,10 @@ public class SliceFixture : IAsyncLifetime
             LocationFilter
                 .GetLocationFilterParametersAsync(Arg.Is<string>(x => !locationsToAdd.ContainsValue(x)))
                 .Returns(new LocationFilterParameters
-                 {
-                     Country = "England",
-                     LocalAuthorityDistrictCode = District.Dacorum.Code,
-                 });
+                {
+                    Country = "England",
+                    LocalAuthorityDistrictCode = District.Dacorum.Code,
+                });
         }
 
         public ILocationFilterService LocationFilter { get; }

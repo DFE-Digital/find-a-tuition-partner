@@ -140,7 +140,7 @@ public class TuitionPartner : PageModel
 
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
             string? ladCode = null;
-            if(!string.IsNullOrEmpty(request.Postcode))
+            if (!string.IsNullOrEmpty(request.Postcode))
             {
                 var location = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
                 ladCode = location?.LocalAuthorityDistrictCode;
