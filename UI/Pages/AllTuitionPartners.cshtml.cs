@@ -21,7 +21,6 @@ public class AllTuitionPartners : PageModel
     public async Task OnGet()
     {
         Data.From = ReferrerList.FullList;
-        TempData.Set("AllSearchData", Data);
 
         Results = await _mediator.Send(new SearchTuitionPartnerHandler.Command
         {

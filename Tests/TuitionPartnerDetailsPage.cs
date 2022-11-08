@@ -129,8 +129,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new TuitionPartner.Query(
-                "a-tuition-partner",
-                District.EastRidingOfYorkshire.Code));
+                "a-tuition-partner")
+            { Postcode = District.EastRidingOfYorkshire.SamplePostcode });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
     }
@@ -144,8 +144,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new TuitionPartner.Query(
-                "a-tuition-partner",
-                District.Ryedale.Code));
+                "a-tuition-partner")
+            { Postcode = District.Ryedale.SamplePostcode });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online");
     }
@@ -165,8 +165,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new TuitionPartner.Query(
-                "a-tuition-partner",
-                District.NorthEastLincolnshire.Code));
+                "a-tuition-partner")
+            { Postcode = District.NorthEastLincolnshire.SamplePostcode });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
         {
@@ -189,8 +189,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new TuitionPartner.Query(
-                "a-tuition-partner",
-                District.Ryedale.Code));
+                "a-tuition-partner")
+            { Postcode = District.Ryedale.SamplePostcode });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, TuitionPartner.GroupPrice>
         {

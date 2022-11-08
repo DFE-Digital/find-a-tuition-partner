@@ -8,7 +8,6 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using UI.Extensions;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
@@ -23,13 +22,8 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query Data)
     {
-        Data.From = ReferrerList.SearchResults;
-        TempData.Set("AllSearchData", Data);
-
         Data.TuitionType ??= TuitionType.Any;
         this.Data = await mediator.Send(Data);
-
-        TempData.Set("LocalAuthorityDistrictCode", this.Data.LocalAuthorityDistrictCode ?? "");
 
         if (!this.Data.Validation.IsValid)
             foreach (var error in this.Data.Validation.Errors)

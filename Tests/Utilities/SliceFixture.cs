@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Tests.TestData;
 
 namespace Tests.Utilities;
 
@@ -40,13 +41,32 @@ public class SliceFixture : IAsyncLifetime
         public NtpApplicationFactory()
         {
             LocationFilter = Substitute.For<ILocationFilterService>();
+
+            var locationsToAdd = new Dictionary<string, string>()
+            {
+                { District.EastRidingOfYorkshire.Code, District.EastRidingOfYorkshire.SamplePostcode },
+                { District.NorthEastLincolnshire.Code, District.NorthEastLincolnshire.SamplePostcode },
+                { District.Ryedale.Code, District.Ryedale.SamplePostcode }
+            };
+
+            foreach(var locationToAdd in locationsToAdd)
+            {
+                LocationFilter
+                    .GetLocationFilterParametersAsync(locationToAdd.Value)
+                    .Returns(new LocationFilterParameters
+                    {
+                        Country = "England",
+                        LocalAuthorityDistrictCode = locationToAdd.Key,
+                    });
+            }
+
             LocationFilter
-                .GetLocationFilterParametersAsync(Arg.Any<string>())
+                .GetLocationFilterParametersAsync(Arg.Is<string>(x => !locationsToAdd.ContainsValue(x)))
                 .Returns(new LocationFilterParameters
-                {
-                    Country = "England",
-                    LocalAuthorityDistrictCode = "E07000096",
-                });
+                 {
+                     Country = "England",
+                     LocalAuthorityDistrictCode = District.Dacorum.Code,
+                 });
         }
 
         public ILocationFilterService LocationFilter { get; }

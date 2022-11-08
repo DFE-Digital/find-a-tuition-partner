@@ -43,7 +43,7 @@
 
                     <div class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
                         <div>
-                            <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
+                            <h2 class="govuk-heading-m"><a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" asp-route-name="@Model.Data.Name" asp-route-from="@Model.Data.From" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a></h2>
                             <govuk-summary-list>
                                 <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
                                     <govuk-summary-list-row-key>

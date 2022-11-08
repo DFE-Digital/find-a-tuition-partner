@@ -98,10 +98,6 @@ Feature: User handles cookies
     When Saves Changes
     Then the error banner is displayed
 
-  Scenario: The cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added when a user has reached the search page
-    Given the search result page is displayed
-    Then cookie '.FindATuitionPartner.Mvc.CookieTempDataProvider' is added with value 'null'
-
   Scenario: User Select Accept Option from banner Should Stay on Same Page 
     Given a user has arrived on the funding and reporting page
     When cookies are accepted
