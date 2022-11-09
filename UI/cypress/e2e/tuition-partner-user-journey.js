@@ -166,7 +166,9 @@ Then(
   }
 );
 
-Then("user has entered {string} and journeyed forward to the {string} tuition partner page", (postcode, tp) => {
+Then(
+  "user has entered {string} and journeyed forward to the {string} tuition partner page",
+  (postcode, tp) => {
     Step(this, "they enter '" + postcode + "' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
@@ -175,35 +177,36 @@ Then("user has entered {string} and journeyed forward to the {string} tuition pa
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which subjects' page");
     Step(this, "they are shown the subjects for 'Key stage 2'");
-    Step(
-        this,
-        "they select 'Key stage 2 English'"
-    );
+    Step(this, "they select 'Key stage 2 English'");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they select the tuition partner '" + tp + "'");
     Step(this, "the page's title is '" + tp + "'");
-});
+  }
+);
 
 Then("they journey back to the search page", () => {
-    Step(this, "they click 'Back'");
-    Step(this, "they will be taken to the 'Search Results' page");
+  Step(this, "they click 'Back'");
+  Step(this, "they will be taken to the 'Search Results' page");
 });
 
-Then("they update the postcode on the search page to {string} and go to a selected tuition partner page", (postcode) => {
+Then(
+  "they update the postcode on the search page to {string} and go to a selected tuition partner page",
+  (postcode) => {
     Step(this, "they enter '" + postcode + "' as the school's postcode");
     Step(this, "they click 'Search'");
     Step(this, "they select the tuition partner 'Tute Education'");
-});
+  }
+);
 
 Then("they select the {string} tuition partner page", (tp) => {
-    Step(this, "they select the tuition partner '" + tp + "'");
-    Step(this, "the page's title is '" + tp + "'");
+  Step(this, "they select the tuition partner '" + tp + "'");
+  Step(this, "the page's title is '" + tp + "'");
 });
 
 When("they click the 'All quality-assured tuition partners' link", () => {
-    cy.get('[data-testid="full-list-link"]')
-        .should("exist")
-        .should("have.text", "All quality-assured tuition partners")
-        .click();
+  cy.get('[data-testid="full-list-link"]')
+    .should("exist")
+    .should("have.text", "All quality-assured tuition partners")
+    .click();
 });

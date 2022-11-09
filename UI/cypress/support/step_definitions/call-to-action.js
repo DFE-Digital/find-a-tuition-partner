@@ -19,7 +19,7 @@ When("they click 'Continue'", () => {
 });
 
 When("they click 'Search'", () => {
-    cy.get('[data-testid="call-to-action"]').click();
+  cy.get('[data-testid="call-to-action"]').click();
 });
 
 Then("the 'Back' link is not displayed", () => {
