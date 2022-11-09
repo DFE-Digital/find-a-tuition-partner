@@ -107,11 +107,13 @@ public class TuitionPartner : PageModel
     {
         private readonly ILocationFilterService locationService;
         private readonly INtpDbContext db;
+        private readonly ILogger<TuitionPartner> logger;
 
-        public QueryHandler(ILocationFilterService locationService, INtpDbContext db)
+        public QueryHandler(ILocationFilterService locationService, INtpDbContext db, ILogger<TuitionPartner> logger)
         {
             this.locationService = locationService;
             this.db = db;
+            this.logger = logger;
         }
 
         public async Task<Command?> Handle(Query request, CancellationToken cancellationToken)
@@ -148,7 +150,9 @@ public class TuitionPartner : PageModel
             var types = await GetTuitionTypesCovered(ladCode, tp, cancellationToken);
             if (types == null || types.Count() == 0)
             {
-                //If no data returned then postcode is invalid or issue calling GetLocationFilterParametersAsync, so get all TuitionTypesCovered for TP
+                //If no data returned then postcode is invalid, has been changed so does not apply for the TP
+                //or issue calling GetLocationFilterParametersAsync (calling postcode.io)
+                logger.LogWarning("Issue getting TuitionTypesCovered (invalid postcode, changed postcode or issue calling postcode.io) for postcode '{Postcode}' and TP '{Name}'", request.Postcode, tp.Name);
                 types = await GetTuitionTypesCovered(null, tp, cancellationToken);
             }
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");

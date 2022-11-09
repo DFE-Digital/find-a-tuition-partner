@@ -18,6 +18,10 @@ When("they click 'Continue'", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
 
+When("they click 'Search'", () => {
+    cy.get('[data-testid="call-to-action"]').click();
+});
+
 Then("the 'Back' link is not displayed", () => {
   cy.get(".govuk-back-link").should("not.exist");
 });
