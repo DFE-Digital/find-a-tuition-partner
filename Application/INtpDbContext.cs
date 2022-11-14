@@ -6,6 +6,7 @@ namespace Application;
 public interface INtpDbContext
 {
     DbSet<LocalAuthorityDistrict> LocalAuthorityDistricts { get; set; }
+    DbSet<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }
     DbSet<Region> Regions { get; set; }
     DbSet<Subject> Subjects { get; set; }
     DbSet<TuitionPartner> TuitionPartners { get; set; }
