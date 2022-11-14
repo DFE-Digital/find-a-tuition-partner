@@ -71,37 +71,4 @@ public class ShowAllTuitionPartners : CleanSliceFixture
             new { Name = "Alpha" }
         });
     }
-
-    [Fact]
-    public async Task Sets_from_full_list()
-    {
-        var page = await Fixture.GetPage<AllTuitionPartners>(page =>
-        {
-            page.Data.From = ReferrerList.SearchResults;
-            return page.OnGet();
-        });
-
-        page.Data.From.Should().Be(ReferrerList.FullList);
-    }
-
-    [Fact]
-    public async Task Sets_AllSearchData()
-    {
-        var page = await Fixture.GetPage<AllTuitionPartners>(page =>
-        {
-            page.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-            page.Data.From = ReferrerList.SearchResults;
-            page.Data.Name = "test";
-            return page.OnGet();
-        });
-
-        var data = page.TempData.Peek<SearchModel>("AllSearchData");
-        data.Should().NotBeNull();
-        data!.From.Should().Be(ReferrerList.FullList);
-        data.Name.Should().Be("test");
-        data.Postcode.Should().BeNull();
-        data.Subjects.Should().BeNull();
-        data.TuitionType.Should().BeNull();
-        data.KeyStages.Should().BeNull();
-    }
 }

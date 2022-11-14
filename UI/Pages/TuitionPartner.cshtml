@@ -9,15 +9,15 @@
 
 <div class="app-print-this-page--container">
     <div class="app-print-this-page--container-left">
-        @if (Model.AllSearchData?.From == ReferrerList.FullList)
+        @if (Model.SearchModel?.From == ReferrerList.FullList)
         {
-            <a href="/all-tuition-partners?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
+            <a href="/all-tuition-partners?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
                 Back to tuition partners
             </a>
         }
         else
         {
-            <a href="/search-results?@Model.AllSearchData.ToQueryString()" class="govuk-back-link">
+            <a href="/search-results?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
                 Back to search results
             </a>
         }

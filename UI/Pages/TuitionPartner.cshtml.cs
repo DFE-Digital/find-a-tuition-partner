@@ -1,13 +1,11 @@
-using System.ComponentModel;
+using Application;
 using Application.Extensions;
 using Domain;
 using Domain.Constants;
-using Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using UI.Extensions;
 
 namespace UI.Pages;
 
@@ -24,11 +22,11 @@ public class TuitionPartner : PageModel
 
     public Command? Data { get; set; }
 
-    public SearchModel? AllSearchData { get; set; }
+    public SearchModel? SearchModel { get; set; }
 
     public async Task<IActionResult> OnGetAsync(Query query)
     {
-        AllSearchData = TempData.Peek<SearchModel>("AllSearchData");
+        SearchModel = new SearchModel(query);
 
         if (string.IsNullOrWhiteSpace(query.Id))
         {
@@ -43,10 +41,7 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        Data = await _mediator.Send(query with
-        {
-            LocalAuthorityDistrictCode = TempData.Peek<string>("LocalAuthorityDistrictCode")
-        });
+        Data = await _mediator.Send(query);
 
         if (Data == null)
         {
@@ -60,18 +55,18 @@ public class TuitionPartner : PageModel
 
     public record Query(
             string Id,
-            string? LocalAuthorityDistrictCode = null,
             [FromQuery(Name = "show-locations-covered")]
             bool ShowLocationsCovered = false,
             [FromQuery(Name = "show-full-pricing")]
             bool ShowFullPricing = false)
-        : IRequest<Command?>
+        : SearchModel, IRequest<Command?>
     {
         public Dictionary<string, string> ToRouteData()
         {
-            var dictionary = new Dictionary<string, string>();
-
-            dictionary[nameof(Id)] = Id;
+            var dictionary = new Dictionary<string, string>
+            {
+                [nameof(Id)] = Id
+            };
 
             if (ShowLocationsCovered)
             {
@@ -110,13 +105,20 @@ public class TuitionPartner : PageModel
 
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
-        private readonly NtpDbContext _db;
+        private readonly ILocationFilterService locationService;
+        private readonly INtpDbContext db;
+        private readonly ILogger<TuitionPartner> logger;
 
-        public QueryHandler(NtpDbContext db) => _db = db;
+        public QueryHandler(ILocationFilterService locationService, INtpDbContext db, ILogger<TuitionPartner> logger)
+        {
+            this.locationService = locationService;
+            this.db = db;
+            this.logger = logger;
+        }
 
         public async Task<Command?> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryable = _db.TuitionPartners
+            var queryable = this.db.TuitionPartners
                 .Include(e => e.SubjectCoverage)
                 .ThenInclude(e => e.Subject)
                 .Include(x => x.Prices)
@@ -139,9 +141,22 @@ public class TuitionPartner : PageModel
             if (tp == null) return null;
 
             var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-            var types = await GetTuitionTypesCovered(request.LocalAuthorityDistrictCode, tp, cancellationToken);
+            string? ladCode = null;
+            if (!string.IsNullOrEmpty(request.Postcode))
+            {
+                var location = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
+                ladCode = location?.LocalAuthorityDistrictCode;
+            }
+            var types = await GetTuitionTypesCovered(ladCode, tp, cancellationToken);
+            if (types == null || types.Count() == 0)
+            {
+                //If no data returned then postcode is invalid, has been changed so does not apply for the TP
+                //or issue calling GetLocationFilterParametersAsync (calling postcode.io)
+                logger.LogWarning("Issue getting TuitionTypesCovered (invalid postcode, changed postcode or issue calling postcode.io) for postcode '{Postcode}' and TP '{Name}'", request.Postcode, tp.Name);
+                types = await GetTuitionTypesCovered(null, tp, cancellationToken);
+            }
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = GetPricing(types, tp.Prices);
+            var prices = GetPricing(types!, tp.Prices);
             var lads = await GetLocalAuthorityDistricts(request, tp.Id);
             var allPrices = await GetFullPricing(request, tp.Prices);
 
@@ -151,7 +166,7 @@ public class TuitionPartner : PageModel
                 tp.HasLogo,
                 tp.Description,
                 subjects.ToArray(),
-                types.ToArray(),
+                types!.ToArray(),
                 ratios.ToArray(),
                 prices,
                 tp.Website,
@@ -170,7 +185,7 @@ public class TuitionPartner : PageModel
             Domain.TuitionPartner tp,
             CancellationToken cancellationToken)
         {
-            var coverageQuery = _db
+            var coverageQuery = this.db
                 .LocalAuthorityDistrictCoverage
                 .Where(e => e.TuitionPartnerId == tp.Id);
 
@@ -192,14 +207,14 @@ public class TuitionPartner : PageModel
         {
             if (!request.ShowLocationsCovered) return Array.Empty<LocalAuthorityDistrictCoverage>();
 
-            var coverage = await _db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
+            var coverage = await this.db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
                 .ToArrayAsync();
 
             var coverageDictionary = coverage
                 .GroupBy(e => e.TuitionTypeId)
                 .ToDictionary(e => (TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
 
-            var regions = await _db.Regions
+            var regions = await this.db.Regions
                 .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
                 .OrderBy(e => e.Name)
                 .ToDictionaryAsync(e => e, e => e.LocalAuthorityDistricts);
@@ -274,7 +289,7 @@ public class TuitionPartner : PageModel
                 {
                     fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
 
-                    var keyStageSubjects = await _db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
+                    var keyStageSubjects = await this.db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
                     foreach (var subject in keyStageSubjects)
                     {
                         fullPricing[tuitionType][keyStage][subject.Name] = new Dictionary<int, decimal>();

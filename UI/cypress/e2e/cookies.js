@@ -55,12 +55,6 @@ Given("a user accessed the search result page", () => {
     .should("be.checked");
 });
 
-Given("the search result page is displayed", () => {
-  cy.visit(
-    "search-results?Postcode=SK1%201EB&Subjects=KeyStage1-English&KeyStages=KeyStage1"
-  );
-});
-
 When("cookies are accepted", () => {
   cy.get('[data-testid="accept-cookies"]').click();
 });
