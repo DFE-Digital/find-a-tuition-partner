@@ -70,6 +70,38 @@ public class StringExtensionsTests
         value.ToSeoUrl().Should().Be("search-id");
     }
 
+    [Fact]
+    public void ToSeoUrl_ReturnsKebabCase_WhenHasUnderscore()
+    {
+        const string value = "search_ Id";
+
+        value.ToSeoUrl().Should().Be("search_-id");
+    }
+
+    [Fact]
+    public void ToSeoUrl_ReturnsKebabCase_WhenValueCamelCase_WithNumbers()
+    {
+        const string value = "m2r Education";
+
+        value.ToSeoUrl().Should().Be("m-2r-education");
+    }
+
+    [Fact]
+    public void ToSeoUrl_ReturnsKebabCase_WhenValueCamelCase_WithHypen()
+    {
+        const string value = "PET-Xi Training Limited";
+
+        value.ToSeoUrl().Should().Be("pet-xi-training-limited");
+    }
+
+    [Fact]
+    public void ToSeoUrl_ReturnsKebabCase_WhenValueCamelCase_WithAmpersand()
+    {
+        const string value = "CER, Monarch Education & Sugarman Education (Parent- Affinity Workforce Solutions)";
+
+        value.ToSeoUrl().Should().Be("cer-monarch-education--sugarman-education-(parent--affinity-workforce-solutions)");
+    }
+
     [Theory]
     [InlineData("apostrophe's", "apostrophes")]
     [InlineData("special!\"£$%^&*+=chars", "specialchars")]
