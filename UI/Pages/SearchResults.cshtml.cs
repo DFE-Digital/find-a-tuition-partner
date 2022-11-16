@@ -22,10 +22,10 @@ public class SearchResults : PageModel
 
     public ResultsModel Data { get; set; } = new();
 
-    public async Task OnGet(Query query)
+    public async Task OnGet(Query data)
     {
-        Data.TuitionType ??= Enums.TuitionType.Any;
-        Data = await _mediator.Send(query);
+        data.TuitionType ??= Enums.TuitionType.Any;
+        Data = await _mediator.Send(data);
 
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
