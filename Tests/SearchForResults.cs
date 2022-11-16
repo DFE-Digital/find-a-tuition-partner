@@ -6,7 +6,7 @@ using NSubstitute;
 using Tests.TestData;
 using UI.Pages;
 using Index = UI.Pages.Index;
-using KeyStage = UI.Pages.KeyStage;
+using KeyStage = UI.Enums.KeyStage;
 
 namespace Tests;
 
@@ -112,7 +112,7 @@ public class SearchForResults : CleanSliceFixture
                     $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
                 };
 
-                page.Data.TuitionType = UI.Pages.TuitionType.Online;
+                page.Data.TuitionType = UI.Enums.TuitionType.Online;
 
                 await page.OnGetClearAllFilters(postcode);
 
@@ -122,7 +122,7 @@ public class SearchForResults : CleanSliceFixture
         result.Data.Postcode.Should().Be(postcode);
         result.Data.KeyStages.Should().BeNull();
         result.Data.Subjects.Should().BeNull();
-        result.Data.TuitionType.Should().Be(UI.Pages.TuitionType.Any);
+        result.Data.TuitionType.Should().Be(UI.Enums.TuitionType.Any);
     }
 
     [Fact]

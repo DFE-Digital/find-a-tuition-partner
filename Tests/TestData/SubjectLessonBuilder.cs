@@ -1,5 +1,5 @@
 ﻿using Domain;
-using TuitionType = UI.Pages.TuitionType;
+using TuitionType = UI.Enums.TuitionType;
 
 namespace Tests.TestData;
 

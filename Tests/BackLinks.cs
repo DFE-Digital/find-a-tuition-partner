@@ -1,5 +1,6 @@
-﻿using UI.Models;
-using UI.Pages;
+﻿using UI.Enums;
+using UI.Extensions;
+using UI.Models;
 
 namespace Tests;
 

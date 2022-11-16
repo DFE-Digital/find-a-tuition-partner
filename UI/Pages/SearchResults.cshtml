@@ -51,10 +51,10 @@
                     </div>
                     <p show-if="Model.Data.Results != null" class="govuk-body" data-testid="overlay-filter-results-count">
                         @{
-                            var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
-                            var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
+                            var countInitial = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
+                            var resultPluralInitial = Model.Data.Results.Count != 1 ? "results" : "result";
                         }
-                        <span>@count @resultPlural</span>
+                        <span>@countInitial @resultPluralInitial</span>
                     </p>
                     <h2 class="govuk-heading-m">Subjects</h2>
                 </div>
@@ -121,12 +121,9 @@
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             </div>
 
-            @{
-                var dataQueryString = Model.Data.ToQueryString();
-            }
-
             @if (Model.Data.Results != null)
             {
+                var dataQueryString = Model.Data.ToQueryString();
                 foreach (var item in Model.Data.Results.Results)
                 {
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";

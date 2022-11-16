@@ -8,6 +8,8 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using UI.Extensions;
+using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
@@ -22,7 +24,7 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query query)
     {
-        Data.TuitionType ??= TuitionType.Any;
+        Data.TuitionType ??= Enums.TuitionType.Any;
         Data = await _mediator.Send(query);
 
         if (!Data.Validation.IsValid)
@@ -32,7 +34,7 @@ public class SearchResults : PageModel
 
     public async Task OnGetClearAllFilters(string postcode)
     {
-        Data = await _mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+        Data = await _mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -42,8 +44,8 @@ public class SearchResults : PageModel
         public ResultsModel() { }
         public ResultsModel(SearchModel query) : base(query) { }
         public string? LocalAuthority { get; set; }
-        public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
+        public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
+        public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
 
         public TuitionPartnerSearchResultsPage? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -113,24 +115,24 @@ public class SearchResults : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private static KeyStage[] AllKeyStages =>
+        private static Enums.KeyStage[] AllKeyStages =>
             new[]
             {
-                KeyStage.KeyStage1,
-                KeyStage.KeyStage2,
-                KeyStage.KeyStage3,
-                KeyStage.KeyStage4,
+                Enums.KeyStage.KeyStage1,
+                Enums.KeyStage.KeyStage2,
+                Enums.KeyStage.KeyStage3,
+                Enums.KeyStage.KeyStage4,
             };
 
-        private static List<TuitionType> AllTuitionTypes =>
+        private static List<Enums.TuitionType> AllTuitionTypes =>
             new()
             {
-                TuitionType.Any,
-                TuitionType.InSchool,
-                TuitionType.Online,
+                Enums.TuitionType.Any,
+                Enums.TuitionType.InSchool,
+                Enums.TuitionType.Online,
             };
 
-        private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
+        private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
         {
             return await _mediator.Send(new WhichSubjects.Query
             {

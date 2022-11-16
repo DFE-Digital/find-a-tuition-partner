@@ -183,7 +183,7 @@ public class RandomiseSearchResultsFixture : IAsyncLifetime
 
             await db.SaveChangesAsync();
 
-            TuitionPartner CreateTuitionPartner(string name) => new TuitionPartner
+            TuitionPartner CreateTuitionPartner(string name) => new()
             {
                 SeoUrl = $"{name.ToLower()}-tuition-partner",
                 Name = name,

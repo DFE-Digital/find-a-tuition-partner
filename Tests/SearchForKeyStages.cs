@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UI.Enums;
 using UI.Pages;
 
 namespace Tests;
