@@ -14,25 +14,25 @@ namespace UI.Pages;
 
 public class SearchResults : PageModel
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
-    public SearchResults(IMediator mediator) => this.mediator = mediator;
+    public SearchResults(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
 
-    public async Task OnGet(Query Data)
+    public async Task OnGet(Query query)
     {
         Data.TuitionType ??= TuitionType.Any;
-        this.Data = await mediator.Send(Data);
+        Data = await _mediator.Send(query);
 
-        if (!this.Data.Validation.IsValid)
-            foreach (var error in this.Data.Validation.Errors)
+        if (!Data.Validation.IsValid)
+            foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
     public async Task OnGetClearAllFilters(string postcode)
     {
-        Data = await mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
+        Data = await _mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -66,15 +66,15 @@ public class SearchResults : PageModel
 
     public class Handler : IRequestHandler<Query, ResultsModel>
     {
-        private readonly ILocationFilterService locationService;
-        private readonly INtpDbContext db;
-        private readonly IMediator mediator;
+        private readonly ILocationFilterService _locationService;
+        private readonly INtpDbContext _db;
+        private readonly IMediator _mediator;
 
         public Handler(ILocationFilterService locationService, INtpDbContext db, IMediator mediator)
         {
-            this.locationService = locationService;
-            this.db = db;
-            this.mediator = mediator;
+            _locationService = locationService;
+            _db = db;
+            _mediator = mediator;
         }
 
         public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
@@ -132,7 +132,7 @@ public class SearchResults : PageModel
 
         private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
         {
-            return await mediator.Send(new WhichSubjects.Query
+            return await _mediator.Send(new WhichSubjects.Query
             {
                 KeyStages = AllKeyStages,
                 Subjects = request.Subjects,
@@ -169,7 +169,7 @@ public class SearchResults : PageModel
             }
             else
             {
-                return (await locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
+                return (await _locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
             }
         }
 
@@ -180,11 +180,11 @@ public class SearchResults : PageModel
         {
             var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
 
-            var subjects = await db.Subjects.Where(e =>
+            var subjects = await _db.Subjects.Where(e =>
                 keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
                 .ToListAsync(cancellationToken);
 
-            return await mediator.Send(new SearchTuitionPartnerHandler.Command
+            return await _mediator.Send(new SearchTuitionPartnerHandler.Command
             {
                 OrderBy = TuitionPartnerOrderBy.Random,
                 LocalAuthorityDistrictCode = parameters.LocalAuthorityDistrictCode,

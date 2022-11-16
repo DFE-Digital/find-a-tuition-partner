@@ -9,9 +9,9 @@ using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;
 
 public class WhichSubjects : PageModel
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
-    public WhichSubjects(IMediator mediator) => this.mediator = mediator;
+    public WhichSubjects(IMediator mediator) => _mediator = mediator;
 
     public Command Data { get; set; } = new();
 
@@ -19,7 +19,7 @@ public class WhichSubjects : PageModel
     {
         Data = new Command(query)
         {
-            AllSubjects = await mediator.Send(query)
+            AllSubjects = await _mediator.Send(query)
         };
     }
 
@@ -29,7 +29,7 @@ public class WhichSubjects : PageModel
         {
             Data = data with
             {
-                AllSubjects = await mediator.Send(new Query(data))
+                AllSubjects = await _mediator.Send(new Query(data))
             };
             return Page();
         }

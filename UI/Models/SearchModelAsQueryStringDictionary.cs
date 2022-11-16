@@ -3,6 +3,7 @@ using UI.Pages;
 
 namespace UI.Models;
 
+//TODO - Move to Extensions folder that already exists or to a new Extensions folder under Models and rename class to SearchModelExtensions
 public static class SearchModelAsQueryStringDictionary
 {
     public static string ToQueryString(this SearchModel? model)

@@ -105,20 +105,20 @@ public class TuitionPartner : PageModel
 
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
-        private readonly ILocationFilterService locationService;
-        private readonly INtpDbContext db;
-        private readonly ILogger<TuitionPartner> logger;
+        private readonly ILocationFilterService _locationService;
+        private readonly INtpDbContext _db;
+        private readonly ILogger<TuitionPartner> _logger;
 
         public QueryHandler(ILocationFilterService locationService, INtpDbContext db, ILogger<TuitionPartner> logger)
         {
-            this.locationService = locationService;
-            this.db = db;
-            this.logger = logger;
+            _locationService = locationService;
+            _db = db;
+            _logger = logger;
         }
 
         public async Task<Command?> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryable = this.db.TuitionPartners
+            var queryable = _db.TuitionPartners
                 .Include(e => e.SubjectCoverage)
                 .ThenInclude(e => e.Subject)
                 .Include(x => x.Prices)
@@ -144,7 +144,7 @@ public class TuitionPartner : PageModel
             string? ladCode = null;
             if (!string.IsNullOrEmpty(request.Postcode))
             {
-                var location = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
+                var location = await _locationService.GetLocationFilterParametersAsync(request.Postcode!);
                 ladCode = location?.LocalAuthorityDistrictCode;
             }
             var types = await GetTuitionTypesCovered(ladCode, tp, cancellationToken);
@@ -152,7 +152,7 @@ public class TuitionPartner : PageModel
             {
                 //If no data returned then postcode is invalid, has been changed so does not apply for the TP
                 //or issue calling GetLocationFilterParametersAsync (calling postcode.io)
-                logger.LogWarning("Issue getting TuitionTypesCovered (invalid postcode, changed postcode or issue calling postcode.io) for postcode '{Postcode}' and TP '{Name}'", request.Postcode, tp.Name);
+                _logger.LogWarning("Issue getting TuitionTypesCovered (invalid postcode, changed postcode or issue calling postcode.io) for postcode '{Postcode}' and TP '{Name}'", request.Postcode, tp.Name);
                 types = await GetTuitionTypesCovered(null, tp, cancellationToken);
             }
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
@@ -185,7 +185,7 @@ public class TuitionPartner : PageModel
             Domain.TuitionPartner tp,
             CancellationToken cancellationToken)
         {
-            var coverageQuery = this.db
+            var coverageQuery = _db
                 .LocalAuthorityDistrictCoverage
                 .Where(e => e.TuitionPartnerId == tp.Id);
 
@@ -207,14 +207,14 @@ public class TuitionPartner : PageModel
         {
             if (!request.ShowLocationsCovered) return Array.Empty<LocalAuthorityDistrictCoverage>();
 
-            var coverage = await this.db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
+            var coverage = await _db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
                 .ToArrayAsync();
 
             var coverageDictionary = coverage
                 .GroupBy(e => e.TuitionTypeId)
                 .ToDictionary(e => (TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
 
-            var regions = await this.db.Regions
+            var regions = await _db.Regions
                 .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
                 .OrderBy(e => e.Name)
                 .ToDictionaryAsync(e => e, e => e.LocalAuthorityDistricts);
@@ -289,7 +289,7 @@ public class TuitionPartner : PageModel
                 {
                     fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
 
-                    var keyStageSubjects = await this.db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
+                    var keyStageSubjects = await _db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
                     foreach (var subject in keyStageSubjects)
                     {
                         fullPricing[tuitionType][keyStage][subject.Name] = new Dictionary<int, decimal>();
