@@ -23,7 +23,7 @@ Feature: User can view full details of a Tuition Parner
     Then TP has not provided the information in the 'Email address' section
 
   Scenario: don’t show phone number where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'lancashire-county-council'
+    Given a user has arrived on the 'Tuition Partner' page for 'pearson'
     Then TP has not provided the information in the 'Phone Number' section
 
   Scenario: show Contact Details where TP has provided information
