@@ -1,3 +1,4 @@
+using Application.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -70,10 +71,10 @@ public class WhichSubjects : PageModel
     {
         public Dictionary<KeyStage, string[]> KeyStageSubjects = new()
         {
-            { KeyStage.KeyStage1, new[] { "English", "Maths", "Science" } },
-            { KeyStage.KeyStage2, new[] { "English", "Maths", "Science" } },
-            { KeyStage.KeyStage3, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
-            { KeyStage.KeyStage4, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
+            { KeyStage.KeyStage1, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName() } },
+            { KeyStage.KeyStage2, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName() } },
+            { KeyStage.KeyStage3, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName(), Subject.Humanities.DisplayName(), Subject.ModernForeignLanguages.DisplayName() } },
+            { KeyStage.KeyStage4, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName(), Subject.Humanities.DisplayName(), Subject.ModernForeignLanguages.DisplayName() } },
         };
 
         public Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
