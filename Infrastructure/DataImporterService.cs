@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Application;
 using Application.DataImport;
 using Application.Factories;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace Infrastructure;
 
@@ -144,25 +146,48 @@ public class DataImporterService : IHostedService
         {
             var originalFilename = dataFile.Filename;
 
+            //Use Polly to retry up to 5 times per file read (in case of network issues)
+            int numberOfRetries = 5;
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(numberOfRetries, retryAttempt =>
+                    //Wait 2, 4, 8, 16 and then 32 seconds
+                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    (exception, sleepDuration, retryCount, context) =>
+                    {
+                        _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
+                    });
+
+
             _logger.LogInformation("Attempting to create Tuition Partner from file {OriginalFilename}", originalFilename);
-            TuitionPartner tuitionPartner;
+            TuitionPartner tuitionPartner = new();
             try
             {
-                tuitionPartner = await factory.GetTuitionPartner(dataFile.Stream.Value, cancellationToken);
+                tuitionPartner = await retryPolicy.ExecuteAsync(async () =>
+                {
+                    //Uncomment to test polly
+                    //Random random = new();
+                    //if (random.Next(1, 3) == 1)
+                    //    throw new Exception("Testing Polly");
+
+                    return await factory.GetTuitionPartner(dataFile.Stream.Value, cancellationToken);
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception thrown when creating Tuition Partner from file {OriginalFilename}", originalFilename);
-                continue;
+                //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
+                throw;
             }
 
             var validator = new TuitionPartnerValidator();
             var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
             if (!results.IsValid)
             {
-                _logger.LogError($"Tuition Partner name {{TuitionPartnerName}} created from file {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
-                    tuitionPartner.Name, originalFilename, string.Join(Environment.NewLine, results.Errors));
-                continue;
+                var errorMsg = $"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
+                _logger.LogError(errorMsg);
+                //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
+                throw new ValidationException(errorMsg);
             }
 
             dbContext.TuitionPartners.Add(tuitionPartner);
