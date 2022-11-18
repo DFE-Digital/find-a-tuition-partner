@@ -5,6 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using UI.Models;
 
 namespace UI.Pages;
 
@@ -68,13 +69,13 @@ public partial class Index : PageModel
 
     public class Handler : IRequestHandler<Command, Domain.IResult>
     {
-        private readonly ILocationFilterService locationService;
+        private readonly ILocationFilterService _locationService;
 
-        public Handler(ILocationFilterService location) => locationService = location;
+        public Handler(ILocationFilterService location) => _locationService = location;
 
         public async Task<Domain.IResult> Handle(Command request, CancellationToken cancellationToken)
         {
-            var location = await locationService.GetLocationFilterParametersAsync(request.Postcode!);
+            var location = await _locationService.GetLocationFilterParametersAsync(request.Postcode!);
             return location.TryValidate();
         }
     }

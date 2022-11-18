@@ -2,18 +2,20 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using UI.Enums;
+using UI.Models;
 
 namespace UI.Pages
 {
     public class WhichKeyStages : PageModel
     {
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
-        public WhichKeyStages(IMediator mediator) => this.mediator = mediator;
+        public WhichKeyStages(IMediator mediator) => _mediator = mediator;
 
         public Command Data { get; set; } = new();
 
-        public async Task OnGet(Query query) => Data = await mediator.Send(query);
+        public async Task OnGet(Query query) => Data = await _mediator.Send(query);
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
@@ -23,7 +25,7 @@ namespace UI.Pages
             }
             else
             {
-                Data = await mediator.Send(new Query(data));
+                Data = await _mediator.Send(new Query(data));
                 return Page();
             }
         }

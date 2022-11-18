@@ -3,7 +3,8 @@ using Domain.Search;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using UI.Extensions;
+using UI.Enums;
+using UI.Models;
 
 namespace UI.Pages;
 

@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tests.TestData;
-using KeyStage = UI.Pages.KeyStage;
+using KeyStage = UI.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
-using TuitionType = UI.Pages.TuitionType;
+using TuitionType = UI.Enums.TuitionType;
 
 namespace Tests;
 

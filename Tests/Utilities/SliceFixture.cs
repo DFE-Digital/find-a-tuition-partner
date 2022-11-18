@@ -306,13 +306,13 @@ public class SliceFixture : IAsyncLifetime
 
 public class ScopedPageExecutor<T> where T : class
 {
-    private readonly IServiceScopeFactory scopeFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public ScopedPageExecutor(IServiceScopeFactory scopeFactory) => this.scopeFactory = scopeFactory;
+    public ScopedPageExecutor(IServiceScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
     internal async Task<TResult> Execute<TResult>(Func<T, Task<TResult>> action)
     {
-        using var scope = scopeFactory.CreateScope();
+        using var scope = _scopeFactory.CreateScope();
 
         var page = scope.ServiceProvider.CreateWithDependenciesFromServices<T>()
                 ?? throw new ArgumentException($"Cannot create page {typeof(T).Name}");

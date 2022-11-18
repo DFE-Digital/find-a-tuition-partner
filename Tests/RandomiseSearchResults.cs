@@ -7,10 +7,10 @@ namespace Tests;
 [Collection(nameof(SliceFixture))]
 public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixture>
 {
-    private readonly SliceFixture Fixture;
+    private readonly SliceFixture _fixture;
 
     public RandomiseSearchResults(RandomiseSearchResultsFixture fixture)
-        => Fixture = fixture.Fixture;
+        => _fixture = fixture.Fixture;
 
     [Fact]
     public void LAD_randomness()
@@ -60,7 +60,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     [Fact]
     public async void Search_results_can_be_randomised2()
     {
-        var results = await Fixture.SendAsync(new SearchTuitionPartnerHandler.Command
+        var results = await _fixture.SendAsync(new SearchTuitionPartnerHandler.Command
         {
             OrderBy = TuitionPartnerOrderBy.Random,
         });
@@ -77,7 +77,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     {
         search.OrderBy = TuitionPartnerOrderBy.Random;
 
-        var results = await Fixture.SendAsync(search);
+        var results = await _fixture.SendAsync(search);
 
         results.Results.Should().NotBeEmpty();
         results.Results.Select(x => x.Name)
@@ -183,7 +183,7 @@ public class RandomiseSearchResultsFixture : IAsyncLifetime
 
             await db.SaveChangesAsync();
 
-            TuitionPartner CreateTuitionPartner(string name) => new TuitionPartner
+            TuitionPartner CreateTuitionPartner(string name) => new()
             {
                 SeoUrl = $"{name.ToLower()}-tuition-partner",
                 Name = name,

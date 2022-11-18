@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using UI.Enums;
 using UI.Pages;
 
 namespace Tests.TestData;

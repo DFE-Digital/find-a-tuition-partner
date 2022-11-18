@@ -1,7 +1,11 @@
+using Application.Extensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using UI.Enums;
+using UI.Extensions;
+using UI.Models;
 
 namespace UI.Pages;
 
@@ -9,9 +13,9 @@ using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;
 
 public class WhichSubjects : PageModel
 {
-    private readonly IMediator mediator;
+    private readonly IMediator _mediator;
 
-    public WhichSubjects(IMediator mediator) => this.mediator = mediator;
+    public WhichSubjects(IMediator mediator) => _mediator = mediator;
 
     public Command Data { get; set; } = new();
 
@@ -19,7 +23,7 @@ public class WhichSubjects : PageModel
     {
         Data = new Command(query)
         {
-            AllSubjects = await mediator.Send(query)
+            AllSubjects = await _mediator.Send(query)
         };
     }
 
@@ -29,7 +33,7 @@ public class WhichSubjects : PageModel
         {
             Data = data with
             {
-                AllSubjects = await mediator.Send(new Query(data))
+                AllSubjects = await _mediator.Send(new Query(data))
             };
             return Page();
         }
@@ -67,10 +71,10 @@ public class WhichSubjects : PageModel
     {
         public Dictionary<KeyStage, string[]> KeyStageSubjects = new()
         {
-            { KeyStage.KeyStage1, new[] { "English", "Maths", "Science" } },
-            { KeyStage.KeyStage2, new[] { "English", "Maths", "Science" } },
-            { KeyStage.KeyStage3, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
-            { KeyStage.KeyStage4, new[] { "English", "Maths", "Science", "Humanities", "Modern foreign languages" } },
+            { KeyStage.KeyStage1, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName() } },
+            { KeyStage.KeyStage2, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName() } },
+            { KeyStage.KeyStage3, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName(), Subject.Humanities.DisplayName(), Subject.ModernForeignLanguages.DisplayName() } },
+            { KeyStage.KeyStage4, new[] { Subject.English.DisplayName(), Subject.Maths.DisplayName(), Subject.Science.DisplayName(), Subject.Humanities.DisplayName(), Subject.ModernForeignLanguages.DisplayName() } },
         };
 
         public Task<KeyStageSubjectDictionary> Handle(Query request, CancellationToken cancellationToken)
