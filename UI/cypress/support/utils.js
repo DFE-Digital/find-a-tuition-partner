@@ -1,11 +1,13 @@
 export const kebabCase = (string) =>
   string
     .replace(
-      /((?<=[a-z])[A-Z]|(?<=[^\-\W])[A-Z](?=[a-z])|(?<=[a-z])\d+)/g,
+      /((?<=[a-z])[A-Z]|(?<=[^\-\W])[A-Z](?=[a-z])|(?<=[a-z])\d+|(?<=\d+)[a-z])/g,
       " $1"
     )
+    .trim()
     .replace(/[\s_]+/g, "-")
     .replace(/[^a-zA-Z0-9_{}()\-~/]/g, "")
+    .replace(/[-]{2,}/g, "-")
     .toLowerCase();
 
 export const removeWhitespace = (string) => string.trim().replace(/\s/, "");

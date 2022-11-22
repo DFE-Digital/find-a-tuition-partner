@@ -75,15 +75,19 @@ public class StringExtensionsTests
     {
         const string value = "search_ Id";
 
-        value.ToSeoUrl().Should().Be("search_-id");
+        value.ToSeoUrl().Should().Be("search-id");
     }
 
-    [Fact]
-    public void ToSeoUrl_ReturnsKebabCase_WhenValueCamelCase_WithNumbers()
+    [Theory]
+    [InlineData("m2r Education", "m-2-r-education")]
+    [InlineData("KeyStage1-Science", "key-stage-1-science")]
+    [InlineData("KeyStage1Science", "key-stage-1-science")]
+    [InlineData("Keystage1science", "keystage-1-science")]
+    [InlineData("KeyStage123Science", "key-stage-123-science")]
+    [InlineData("m123r Education", "m-123-r-education")]
+    public void ToSeoUrl_ReturnsKebabCase_WhenValueCamelCase_WithNumbers(string camel, string kebab)
     {
-        const string value = "m2r Education";
-
-        value.ToSeoUrl().Should().Be("m-2r-education");
+        camel.ToSeoUrl().Should().Be(kebab);
     }
 
     [Fact]
@@ -99,7 +103,7 @@ public class StringExtensionsTests
     {
         const string value = "CER, Monarch Education & Sugarman Education (Parent- Affinity Workforce Solutions)";
 
-        value.ToSeoUrl().Should().Be("cer-monarch-education--sugarman-education-(parent--affinity-workforce-solutions)");
+        value.ToSeoUrl().Should().Be("cer-monarch-education-sugarman-education-(parent-affinity-workforce-solutions)");
     }
 
     [Theory]
