@@ -5,8 +5,10 @@ namespace Application.Extensions;
 
 public static class StringExtensions
 {
-    private const string CamelCaseBoundaries = @"((?<=[a-z])[A-Z]|(?<=[^\-\W])[A-Z](?=[a-z])|(?<=[a-z])\d+)";
+    private const string CamelCaseBoundaries = @"((?<=[a-z])[A-Z]|(?<=[^\-\W])[A-Z](?=[a-z])|(?<=[a-z])\d+|(?<=\d+)[a-z])";
+    private const string SpacesAndUnderscore = @"[\s_]+";
     private const string UrlUnsafeCharacters = "[^a-zA-Z0-9_{}()\\-~/]";
+    private const string MultipleUnderscores = @"[-]{2,}";
 
     [return: NotNullIfNotNull("value")]
     public static string? ToSeoUrl(this string? value)
@@ -14,8 +16,9 @@ public static class StringExtensions
         var seo = value?
             .RegexReplace(CamelCaseBoundaries, " $1")
             .Trim()
-            .Replace(' ', '-')
+            .RegexReplace(SpacesAndUnderscore, "-")
             .RegexReplace(UrlUnsafeCharacters, "")
+            .RegexReplace(MultipleUnderscores, "-")
             .ToLower();
 
         return seo;
