@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Domain.Enums;
 
 namespace Domain.Search;
 

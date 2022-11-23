@@ -12,8 +12,9 @@ public static class ServiceCollectionLoggingExtensions
     public static IServiceCollection LogKeyMetrics(this IServiceCollection services)
     {
         services.Decorate<ILocationFilterService, LoggingLocationFilterService>();
+        services.Decorate<ITuitionPartnerService, LoggingTuitionPartnerService>();
         services.AddScoped(
-            typeof(IPipelineBehavior<Command, TuitionPartnerSearchResultsPage>),
+            typeof(IPipelineBehavior<Command, TuitionPartnerSearchResponse>),
             typeof(SearchTuitionPartnerHandlerLoggingBehaviour));
         return services;
     }

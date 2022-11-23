@@ -19,7 +19,7 @@ public class TutoringPartnersController : ControllerBase
     }
 
     [HttpPost("search")]
-    [ProducesResponseType(typeof(SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SearchResponse<TuitionPartnerSearchRequest, TuitionPartner>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Post([FromBody] TuitionPartnerSearchRequest request)
     {
         var command = request.Adapt<SearchTuitionPartnerHandler.Command>();

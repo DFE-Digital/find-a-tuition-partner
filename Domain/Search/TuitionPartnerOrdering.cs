@@ -1,4 +1,6 @@
-﻿namespace Domain.Search;
+﻿using Domain.Enums;
+
+namespace Domain.Search;
 
 public class TuitionPartnerOrdering
 {

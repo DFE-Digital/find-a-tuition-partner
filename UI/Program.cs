@@ -39,6 +39,7 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options =>
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();
+builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();

@@ -1,0 +1,60 @@
+﻿@page
+@model UI.Pages.ShortlistModel
+@{
+    ViewData["Title"] = "Compare my shortlisted tuition partners";
+}
+
+<div class="app-print-this-page--container">
+    <div class="app-print-this-page--container-left">
+        <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
+    </div>
+
+    <div class="govuk-body app-print-this-page--container-right">
+        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <form method="get">
+            <h1 class="govuk-heading-l">Compare my shortlisted tuition partners</h1>
+
+            @if (Model.Data.Results != null)
+            {
+                var dataQueryString = Model.Data.ToQueryString();
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Name</th>
+                    <th scope="col" class="govuk-table__header">Key stages covered</th>
+                    <th scope="col" class="govuk-table__header">Subjects</th>
+                    <th scope="col" class="govuk-table__header">Type of tuition</th>
+                    <th scope="col" class="govuk-table__header">Price range</th>
+                </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+
+                @foreach (var item in Model.Data.Results.Results!)
+                {
+                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header"><a href="@tpUrl" class="govuk-link">@item.Name</a></th>
+                        <td class="govuk-table__cell">
+                            @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
+                        </td>
+                        <td class="govuk-table__cell">
+                            @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
+                        </td>
+                        <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
+                        <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            }
+
+        </form>
+    </div>
+</div>

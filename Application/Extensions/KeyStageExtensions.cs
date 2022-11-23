@@ -2,11 +2,11 @@
 
 namespace Application.Extensions;
 
-public static class SubjectExtensions
+public static class KeyStageExtensions
 {
-    public static string DisplayList(this IEnumerable<Subject> subjects)
+    public static string DisplayList(this IEnumerable<KeyStage> keyStages)
     {
-        var commaSeparated = string.Join(", ", subjects.Distinct().OrderBy(e => e.Id).Select(e => e.Name).Distinct());
+        var commaSeparated = string.Join(", ", keyStages.Select(e => e.Id).Distinct().OrderBy(e => e));
 
         var lastCommaIndex = commaSeparated.LastIndexOf(",", StringComparison.Ordinal);
 

@@ -7,7 +7,7 @@ using static Application.Handlers.SearchTuitionPartnerHandler;
 namespace Infrastructure.MetricLogging;
 
 public class SearchTuitionPartnerHandlerLoggingBehaviour
-    : IPipelineBehavior<Command, TuitionPartnerSearchResultsPage>
+    : IPipelineBehavior<Command, TuitionPartnerSearchResponse>
 {
     private readonly ILogger _logger;
 
@@ -15,10 +15,10 @@ public class SearchTuitionPartnerHandlerLoggingBehaviour
         ILogger<SearchTuitionPartnerHandlerLoggingBehaviour> logger)
         => _logger = logger;
 
-    public async Task<TuitionPartnerSearchResultsPage> Handle(
+    public async Task<TuitionPartnerSearchResponse> Handle(
         Command request,
         CancellationToken cancellationToken,
-        RequestHandlerDelegate<TuitionPartnerSearchResultsPage> next)
+        RequestHandlerDelegate<TuitionPartnerSearchResponse> next)
     {
         using var _ = _logger.BeginScope("{@Search}", request);
         using var schoolDataScope = _logger.BeginScope("{@Urn}", request.Urn);

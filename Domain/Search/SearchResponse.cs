@@ -1,8 +1,8 @@
 ﻿namespace Domain.Search;
 
-public class SearchResultsPage<TRequest, TResult>
+public class SearchResponse<TRequest, TResult>
 {
-    public SearchResultsPage(TRequest request, int count, TResult[] results)
+    public SearchResponse(TRequest request, int count, TResult[] results)
     {
         Request = request;
         Count = count;

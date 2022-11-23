@@ -14,12 +14,11 @@ using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
-
-public class SearchResults : PageModel
+public class ShortlistModel : PageModel
 {
     private readonly IMediator _mediator;
 
-    public SearchResults(IMediator mediator) => _mediator = mediator;
+    public ShortlistModel(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
 
@@ -28,14 +27,10 @@ public class SearchResults : PageModel
         data.TuitionType ??= Enums.TuitionType.Any;
         Data = await _mediator.Send(data);
 
+        //TODO - decide on validation
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
-    }
-
-    public async Task OnGetClearAllFilters(string postcode)
-    {
-        Data = await _mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -45,18 +40,16 @@ public class SearchResults : PageModel
         public ResultsModel() { }
         public ResultsModel(SearchModel query) : base(query) { }
         public string? LocalAuthority { get; set; }
-        public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
 
-        public TuitionPartnerSearchResponse? Results { get; set; }
+        public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
-        public string? LocalAuthorityDistrictCode { get; set; }
     }
 
     private class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
+            //TODO - decide what to validate and what to do if invalid?
             RuleFor(m => m.Postcode)
                 .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
                 .WithMessage("Enter a valid postcode")
@@ -70,23 +63,19 @@ public class SearchResults : PageModel
     public class Handler : IRequestHandler<Query, ResultsModel>
     {
         private readonly ILocationFilterService _locationService;
+        private readonly ITuitionPartnerService _tuitionPartnerService;
         private readonly INtpDbContext _db;
-        private readonly IMediator _mediator;
 
-        public Handler(ILocationFilterService locationService, INtpDbContext db, IMediator mediator)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db)
         {
             _locationService = locationService;
+            _tuitionPartnerService = tuitionPartnerService;
             _db = db;
-            _mediator = mediator;
         }
 
         public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryResponse = new ResultsModel(request) with
-            {
-                AllSubjects = await GetSubjectsList(request, cancellationToken),
-                AllTuitionTypes = AllTuitionTypes,
-            };
+            var queryResponse = new ResultsModel(request);
 
             var searchResults = await GetSearchResults(request, cancellationToken);
 
@@ -94,9 +83,8 @@ public class SearchResults : PageModel
             {
                 SuccessResult => queryResponse with
                 {
-                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.LocalAuthority.Name,
+                    LocalAuthority = searchResults.Data.LocalAuthorityName,
                     Results = searchResults.Data,
-                    LocalAuthorityDistrictCode = searchResults.Data.Request.LocalAuthorityDistrictCode,
                 },
                 Domain.ValidationResult error => queryResponse with
                 {
@@ -116,47 +104,23 @@ public class SearchResults : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private static Enums.KeyStage[] AllKeyStages =>
-            new[]
-            {
-                Enums.KeyStage.KeyStage1,
-                Enums.KeyStage.KeyStage2,
-                Enums.KeyStage.KeyStage3,
-                Enums.KeyStage.KeyStage4,
-            };
-
-        private static List<Enums.TuitionType> AllTuitionTypes =>
-            new()
-            {
-                Enums.TuitionType.Any,
-                Enums.TuitionType.InSchool,
-                Enums.TuitionType.Online,
-            };
-
-        private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
-        {
-            return await _mediator.Send(new WhichSubjects.Query
-            {
-                KeyStages = AllKeyStages,
-                Subjects = request.Subjects,
-            }, cancellationToken);
-        }
-
-        private async Task<IResult<TuitionPartnerSearchResponse>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
             if (location is IErrorResult error)
             {
-                return error.Cast<TuitionPartnerSearchResponse>();
+                return error.Cast<TuitionPartnersResult>();
             }
 
-            var results = await FindSubjectsMatchingFilter(
+            var results = await FindTuitionPartners(
                         location.Data,
                         request,
                         cancellationToken);
 
-            return Result.Success(results);
+            var result = new TuitionPartnersResult(results, results.Count(), location.Data.LocalAuthority);
+
+            return Result.Success(result);
         }
 
         private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
@@ -176,7 +140,7 @@ public class SearchResults : PageModel
             }
         }
 
-        private async Task<TuitionPartnerSearchResponse> FindSubjectsMatchingFilter(
+        private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
             LocationFilterParameters parameters,
             Query request,
             CancellationToken cancellationToken)
@@ -187,15 +151,23 @@ public class SearchResults : PageModel
                 keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
                 .ToListAsync(cancellationToken);
 
-            return await _mediator.Send(new SearchTuitionPartnerHandler.Command
+            var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
             {
-                OrderBy = TuitionPartnerOrderBy.Random,
-                LocalAuthorityDistrictCode = parameters.LocalAuthorityDistrictCode,
-                Postcode = parameters.Postcode,
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
                 SubjectIds = subjects.Select(x => x.Id),
-                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
+                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null
+            }, cancellationToken);
+
+            var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
+            {
+                TuitionPartnerIds = tuitionPartnersIds,
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
                 Urn = parameters?.Urn
             }, cancellationToken);
+
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners);
+
+            return tuitionPartners;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Domain.Search;
+﻿namespace Domain.Enums;
 
 public enum OrderByDirection
 {

@@ -12,7 +12,7 @@ namespace Infrastructure.DataImport
         {
             var dateFilename = DateTime.Today.AddDays(-1).ToString("yyyyMMdd");
 
-            HttpClient _httpClient = new HttpClient();
+            HttpClient _httpClient = new();
             await using var response = await _httpClient.GetStreamAsync($"https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata{dateFilename}.csv", cancellationToken);
             using var reader = new StreamReader(response);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -28,7 +28,7 @@ namespace Infrastructure.DataImport
             {
                 Map(m => m.Urn).Name("URN");
                 Map(m => m.Name).Name("EstablishmentName");
-                Map(m => m.street).Name("Street");
+                Map(m => m.Street).Name("Street");
                 Map(m => m.Locality).Name("Locality");
                 Map(m => m.Address3).Name("Address3");
                 Map(m => m.Town).Name("Town");

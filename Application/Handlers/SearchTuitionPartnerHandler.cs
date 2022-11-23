@@ -1,5 +1,6 @@
 ﻿using Application.Repositories;
 using Domain;
+using Domain.Enums;
 using Domain.Search;
 using Domain.Validators;
 using MediatR;
@@ -13,11 +14,11 @@ public class SearchTuitionPartnerHandler
     {
     }
 
-    public class Command : TuitionPartnerSearchRequest, IRequest<TuitionPartnerSearchResultsPage>
+    public class Command : TuitionPartnerSearchRequest, IRequest<TuitionPartnerSearchResponse>
     {
     }
 
-    public class Handler : IRequestHandler<Command, TuitionPartnerSearchResultsPage>
+    public class Handler : IRequestHandler<Command, TuitionPartnerSearchResponse>
     {
         private readonly INtpDbContext _dbContext;
         private readonly ITuitionPartnerRepository _repository;
@@ -28,7 +29,7 @@ public class SearchTuitionPartnerHandler
             _repository = repository;
         }
 
-        public async Task<TuitionPartnerSearchResultsPage> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<TuitionPartnerSearchResponse> Handle(Command request, CancellationToken cancellationToken)
         {
             var queryable = _dbContext.TuitionPartners.AsQueryable();
 
@@ -74,7 +75,7 @@ public class SearchTuitionPartnerHandler
             var count = await queryable.CountAsync(cancellationToken);
             var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
             var results = (await _repository.GetSearchResultsDictionaryAsync(ids, lad?.Id, ordering, cancellationToken)).ToArray();
-            return new TuitionPartnerSearchResultsPage(request, count, results, lad);
+            return new TuitionPartnerSearchResponse(request, count, results, lad);
         }
     }
 }

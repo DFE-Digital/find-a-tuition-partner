@@ -1,4 +1,5 @@
 using Application.Handlers;
+using Domain.Enums;
 using Domain.Search;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class AllTuitionPartners : PageModel
     [BindProperty(SupportsGet = true)]
     public SearchModel Data { get; set; } = new();
 
-    public TuitionPartnerSearchResultsPage? Results { get; private set; }
+    public TuitionPartnerSearchResponse? Results { get; private set; }
 
     public async Task OnGet()
     {
