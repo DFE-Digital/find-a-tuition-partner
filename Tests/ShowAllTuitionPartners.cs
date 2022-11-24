@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using Tests.TestData;
-using UI.Extensions;
+﻿using Tests.TestData;
 using UI.Pages;
 
 namespace Tests;
@@ -23,7 +19,9 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
 
         // When
-        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet());
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet(cancellationToken));
 
         // Then
         page.Results.Should().NotBeNull();
@@ -41,7 +39,9 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha").WithLogo("alpha-logo"));
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Bravo"));
 
-        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet());
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+        var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet(cancellationToken));
 
         page.Results!.Results.Should().BeEquivalentTo(new[]
         {
@@ -61,7 +61,9 @@ public class ShowAllTuitionPartners : CleanSliceFixture
         var page = await Fixture.GetPage<AllTuitionPartners>(page =>
         {
             page.Data.Name = "LPh";
-            return page.OnGet();
+            CancellationTokenSource cts = new();
+            CancellationToken cancellationToken = cts.Token;
+            return page.OnGet(cancellationToken);
         });
 
         // Then

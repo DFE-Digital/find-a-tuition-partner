@@ -39,7 +39,6 @@ public class ShortlistModel : PageModel
     {
         public ResultsModel() { }
         public ResultsModel(SearchModel query) : base(query) { }
-        public string? LocalAuthority { get; set; }
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -83,7 +82,6 @@ public class ShortlistModel : PageModel
             {
                 SuccessResult => queryResponse with
                 {
-                    LocalAuthority = searchResults.Data.LocalAuthorityName,
                     Results = searchResults.Data,
                 },
                 Domain.ValidationResult error => queryResponse with

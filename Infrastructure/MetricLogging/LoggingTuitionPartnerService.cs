@@ -26,7 +26,7 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
 
         var resultCount = result?.Length;
 
-        var logLevel = resultCount == 0 ? LogLevel.Warning : LogLevel.Information;
+        var logLevel = (resultCount == 0 && string.IsNullOrWhiteSpace(filter.Name)) ? LogLevel.Warning : LogLevel.Information;
 
         _logger.Log(logLevel, "Found {Count} TPs in {Elapsed}ms",
                    resultCount, stopwatch.ElapsedMilliseconds);
