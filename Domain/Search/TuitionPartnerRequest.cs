@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using Domain.Enums;
-
-namespace Domain.Search;
+﻿namespace Domain.Search;
 
 public class TuitionPartnerRequest
 {

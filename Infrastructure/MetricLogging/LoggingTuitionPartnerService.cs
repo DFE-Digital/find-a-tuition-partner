@@ -58,17 +58,17 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         return result;
     }
 
-    public IEnumerable<TuitionPartnerResult> OrderTuitionPartners(IEnumerable<TuitionPartnerResult> results, TuitionPartnerOrderBy orderBy = TuitionPartnerOrderBy.Name, OrderByDirection orderByDirection = OrderByDirection.Ascending, int? randomSeed = null)
+    public IEnumerable<TuitionPartnerResult> OrderTuitionPartners(IEnumerable<TuitionPartnerResult> results, TuitionPartnerOrdering ordering)
     {
         _logger.LogInformation("Order tuition partners");
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        var result = _inner.OrderTuitionPartners(results, orderBy, orderByDirection, randomSeed);
+        var result = _inner.OrderTuitionPartners(results, ordering);
         stopwatch.Stop();
 
         _logger.LogInformation("Ordered {Count} TP results by {OrderBy} in {Elapsed}ms",
-                    result.Count(), orderBy.ToString(), stopwatch.ElapsedMilliseconds);
+                    result.Count(), ordering.OrderBy.ToString(), stopwatch.ElapsedMilliseconds);
 
         return result;
     }

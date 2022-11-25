@@ -1,8 +1,6 @@
 using Application;
 using Application.Extensions;
-using Application.Handlers;
 using Domain;
-using Domain.Enums;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
@@ -163,7 +161,7 @@ public class ShortlistModel : PageModel
                 Urn = parameters?.Urn
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners);
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering());
 
             return tuitionPartners;
         }

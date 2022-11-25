@@ -1,6 +1,5 @@
 using Application;
 using Application.Extensions;
-using Application.Handlers;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
@@ -44,13 +43,11 @@ public class SearchResults : PageModel
     {
         public ResultsModel() { }
         public ResultsModel(SearchModel query) : base(query) { }
-        public string? LocalAuthority { get; set; }
         public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
 
-        public TuitionPartnerSearchResponse? Results { get; set; }
+        public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
-        public string? LocalAuthorityDistrictCode { get; set; }
     }
 
     private class Validator : AbstractValidator<Query>
@@ -70,12 +67,14 @@ public class SearchResults : PageModel
     public class Handler : IRequestHandler<Query, ResultsModel>
     {
         private readonly ILocationFilterService _locationService;
-        private readonly INtpDbContext _db;
+        private readonly ITuitionPartnerService _tuitionPartnerService;
         private readonly IMediator _mediator;
+        private readonly INtpDbContext _db;
 
-        public Handler(ILocationFilterService locationService, INtpDbContext db, IMediator mediator)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, IMediator mediator)
         {
             _locationService = locationService;
+            _tuitionPartnerService = tuitionPartnerService;
             _db = db;
             _mediator = mediator;
         }
@@ -94,9 +93,7 @@ public class SearchResults : PageModel
             {
                 SuccessResult => queryResponse with
                 {
-                    LocalAuthority = searchResults.Data.LocalAuthorityDistrict?.LocalAuthority.Name,
                     Results = searchResults.Data,
-                    LocalAuthorityDistrictCode = searchResults.Data.Request.LocalAuthorityDistrictCode,
                 },
                 Domain.ValidationResult error => queryResponse with
                 {
@@ -142,21 +139,23 @@ public class SearchResults : PageModel
             }, cancellationToken);
         }
 
-        private async Task<IResult<TuitionPartnerSearchResponse>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
             if (location is IErrorResult error)
             {
-                return error.Cast<TuitionPartnerSearchResponse>();
+                return error.Cast<TuitionPartnersResult>();
             }
 
-            var results = await FindSubjectsMatchingFilter(
+            var results = await FindTuitionPartners(
                         location.Data,
                         request,
                         cancellationToken);
 
-            return Result.Success(results);
+            var result = new TuitionPartnersResult(results, results.Count(), location.Data.LocalAuthority);
+
+            return Result.Success(result);
         }
 
         private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
@@ -176,7 +175,7 @@ public class SearchResults : PageModel
             }
         }
 
-        private async Task<TuitionPartnerSearchResponse> FindSubjectsMatchingFilter(
+        private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
             LocationFilterParameters parameters,
             Query request,
             CancellationToken cancellationToken)
@@ -187,15 +186,31 @@ public class SearchResults : PageModel
                 keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
                 .ToListAsync(cancellationToken);
 
-            return await _mediator.Send(new SearchTuitionPartnerHandler.Command
+            var subjectFilterIds = subjects.Select(x => x.Id);
+            var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
+
+            var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
+            {
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
+                SubjectIds = subjectFilterIds,
+                TuitionTypeId = tuitionFilterId
+            }, cancellationToken);
+
+            var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
+            {
+                TuitionPartnerIds = tuitionPartnersIds,
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
+                Urn = parameters.Urn
+            }, cancellationToken);
+
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering
             {
                 OrderBy = TuitionPartnerOrderBy.Random,
-                LocalAuthorityDistrictCode = parameters.LocalAuthorityDistrictCode,
-                Postcode = parameters.Postcode,
-                SubjectIds = subjects.Select(x => x.Id),
-                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null,
-                Urn = parameters?.Urn
-            }, cancellationToken);
+                Direction = OrderByDirection.Ascending,
+                RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration(parameters.LocalAuthorityDistrictCode, parameters.Postcode, subjectFilterIds, tuitionFilterId)
+            });
+
+            return tuitionPartners;
         }
     }
 }

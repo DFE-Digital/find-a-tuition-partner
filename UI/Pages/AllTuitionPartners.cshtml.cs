@@ -42,7 +42,7 @@ public class AllTuitionPartners : PageModel
 
         var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest() { TuitionPartnerIds = tuitionPartnersIds }, cancellationToken);
 
-        tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners);
+        tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering());
 
         return tuitionPartners;
     }

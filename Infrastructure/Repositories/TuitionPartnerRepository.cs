@@ -15,36 +15,6 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<TuitionPartnerSearchResult>> GetSearchResultsDictionaryAsync(
-        IEnumerable<int> ids,
-        int? localAuthorityDistrictId,
-        TuitionPartnerOrdering ordering,
-        CancellationToken cancellationToken = default)
-    {
-        var entities = await _dbContext.TuitionPartners.AsNoTracking()
-            .IncludeTuitionForLocalDistrict(localAuthorityDistrictId)
-            .ThenInclude(e => e.TuitionType)
-            .Include(e => e.SubjectCoverage)
-            .ThenInclude(e => e.Subject)
-            .Where(e => ids.Distinct().Contains(e.Id))
-            .AsSplitQuery()
-            .ToListAsync(cancellationToken);
-
-        var results = new List<TuitionPartnerSearchResult>(entities.Count);
-        foreach (var entity in entities)
-        {
-            var result = entity.Adapt<TuitionPartnerSearchResult>();
-            result.Subjects = entity.SubjectCoverage.OrderBy(e => e.Id).Select(e => e.Subject).Distinct().ToArray();
-
-            result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
-
-            result.HasLogo = entity.HasLogo;
-
-            results.Add(result);
-        }
-        return ordering.Order(results);
-    }
-
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _dbContext.TuitionPartners.AsQueryable();
