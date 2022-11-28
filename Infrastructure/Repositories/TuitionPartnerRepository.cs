@@ -19,6 +19,11 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
     {
         var queryable = _dbContext.TuitionPartners.AsQueryable();
 
+        if (!string.IsNullOrWhiteSpace(filter.SeoUrl))
+        {
+            queryable = queryable.Where(e => e.SeoUrl == filter.SeoUrl);
+        }
+
         if (!string.IsNullOrWhiteSpace(filter.Name))
         {
             queryable = queryable.Where(e => e.Name.ToLower().Contains(filter.Name.ToLower()));

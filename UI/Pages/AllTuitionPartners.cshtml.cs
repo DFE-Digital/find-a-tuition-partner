@@ -24,7 +24,7 @@ public class AllTuitionPartners : PageModel
 
         var tuitionPartners = await FindTuitionPartners(Data, cancellationToken);
 
-        Results = new TuitionPartnersResult(tuitionPartners, tuitionPartners.Count(), null);
+        Results = new TuitionPartnersResult(tuitionPartners, null);
     }
 
     private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(SearchModel data, CancellationToken cancellationToken)

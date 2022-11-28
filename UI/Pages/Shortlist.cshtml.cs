@@ -1,4 +1,5 @@
 using Application;
+using Application.Constants;
 using Application.Extensions;
 using Domain;
 using Domain.Search;
@@ -48,7 +49,7 @@ public class ShortlistModel : PageModel
         {
             //TODO - decide what to validate and what to do if invalid?
             RuleFor(m => m.Postcode)
-                .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
+                .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
 
@@ -114,7 +115,7 @@ public class ShortlistModel : PageModel
                         request,
                         cancellationToken);
 
-            var result = new TuitionPartnersResult(results, results.Count(), location.Data.LocalAuthority);
+            var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
 
             return Result.Success(result);
         }
@@ -123,7 +124,7 @@ public class ShortlistModel : PageModel
         {
             var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
 
-            if (string.IsNullOrEmpty(request.Postcode))
+            if (string.IsNullOrWhiteSpace(request.Postcode))
                 return Result.Success(new LocationFilterParameters { });
 
             if (!validationResults.IsValid)

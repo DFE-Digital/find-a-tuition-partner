@@ -6,4 +6,5 @@ public class TuitionPartnersFilter
     public int? LocalAuthorityDistrictId { get; set; }
     public IEnumerable<int>? SubjectIds { get; set; }
     public int? TuitionTypeId { get; set; }
+    public string? SeoUrl { get; set; }
 }

@@ -220,6 +220,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))

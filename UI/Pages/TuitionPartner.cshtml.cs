@@ -1,7 +1,10 @@
 using Application;
+using Application.Constants;
 using Application.Extensions;
 using Domain;
 using Domain.Constants;
+using Domain.Search;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -46,7 +49,6 @@ public class TuitionPartner : PageModel
 
         if (Data == null)
         {
-            _logger.LogInformation("No Tuition Partner found for id '{Id}'", query.Id);
             return NotFound();
         }
 
@@ -104,60 +106,44 @@ public class TuitionPartner : PageModel
 
     public record struct LocalAuthorityDistrictCoverage(string Region, string Code, string Name, bool InSchool, bool Online);
 
+    private class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(m => m.Postcode)
+                .Matches(StringConstants.PostcodeRegExp)
+                .WithMessage("Enter a valid postcode")
+                .When(m => !string.IsNullOrEmpty(m.Postcode));
+        }
+    }
+
     public class QueryHandler : IRequestHandler<Query, Command?>
     {
         private readonly ILocationFilterService _locationService;
+        private readonly ITuitionPartnerService _tuitionPartnerService;
         private readonly INtpDbContext _db;
         private readonly ILogger<TuitionPartner> _logger;
 
-        public QueryHandler(ILocationFilterService locationService, INtpDbContext db, ILogger<TuitionPartner> logger)
+        public QueryHandler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
+            _tuitionPartnerService = tuitionPartnerService;
             _db = db;
             _logger = logger;
         }
 
         public async Task<Command?> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryable = _db.TuitionPartners
-                .Include(e => e.SubjectCoverage)
-                .ThenInclude(e => e.Subject)
-                .Include(x => x.Prices)
-                .ThenInclude(x => x.TuitionType)
-                .Include(x => x.Prices)
-                .ThenInclude(x => x.Subject)
-                .ThenInclude(x => x.KeyStage);
+            var tpResult = GetTPResult(request, cancellationToken);
 
-            Domain.TuitionPartner? tp;
+            if (!tpResult.Result.IsSuccess) return null;
 
-            if (int.TryParse(request.Id, out var id))
-            {
-                tp = await queryable.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-            }
-            else
-            {
-                tp = await queryable.FirstOrDefaultAsync(x => x.SeoUrl == request.Id, cancellationToken);
-            }
+            var tp = tpResult.Result.Data.FirstResult;
 
-            if (tp == null) return null;
-
-            var subjects = tp.SubjectCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-            string? ladCode = null;
-            if (!string.IsNullOrEmpty(request.Postcode))
-            {
-                var location = await _locationService.GetLocationFilterParametersAsync(request.Postcode!);
-                ladCode = location?.LocalAuthorityDistrictCode;
-            }
-            var types = await GetTuitionTypesCovered(ladCode, tp, cancellationToken);
-            if (types == null || !types.Any())
-            {
-                //If no data returned then postcode is invalid, has been changed so does not apply for the TP
-                //or issue calling GetLocationFilterParametersAsync (calling postcode.io)
-                _logger.LogWarning("Issue getting TuitionTypesCovered (invalid postcode, changed postcode or issue calling postcode.io) for postcode '{Postcode}' and TP '{Name}'", request.Postcode, tp.Name);
-                types = await GetTuitionTypesCovered(null, tp, cancellationToken);
-            }
+            var subjects = tp.SubjectsCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
+            var types = tp.TuitionTypes.Select(x => x.Name).Distinct();
             var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = GetPricing(types!, tp.Prices);
+            var prices = GetPricing(tp.Prices);
             var lads = await GetLocalAuthorityDistricts(request, tp.Id);
             var allPrices = await GetFullPricing(request, tp.Prices);
 
@@ -181,27 +167,102 @@ public class TuitionPartner : PageModel
                 tp.LegalStatus);
         }
 
-        private async Task<IEnumerable<string>> GetTuitionTypesCovered(
-            string? localAuthorityDistrictCode,
-            Domain.TuitionPartner tp,
-            CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetTPResult(Query request, CancellationToken cancellationToken)
         {
-            var coverageQuery = _db
-                .LocalAuthorityDistrictCoverage
-                .Where(e => e.TuitionPartnerId == tp.Id);
+            var locationResult = await GetSearchLocation(request, cancellationToken);
 
-            if (localAuthorityDistrictCode != null)
+            LocationFilterParameters location = new();
+
+            if (!locationResult.IsSuccess)
             {
-                coverageQuery = coverageQuery
-                    .Where(e => e.LocalAuthorityDistrict.Code == localAuthorityDistrictCode);
+                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous validation
+                _logger.LogWarning("Invalid postcode '{Postcode}' provided on TP details page", request.Postcode);
+
+                //Set to null and contine to get nationwide data
+                request.Postcode = null;
+            }
+            else
+            {
+                location = locationResult.Data;
             }
 
-            var types = await coverageQuery
-                .Select(x => x.TuitionType.Name)
-                .Distinct()
-                .ToArrayAsync(cancellationToken);
+            var tpResult = await FindTuitionPartner(
+                        location,
+                        request,
+                        cancellationToken);
 
-            return types;
+            if (tpResult is IErrorResult tpError)
+            {
+                return tpError.Cast<TuitionPartnersResult>();
+            }
+
+            var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority);
+
+            return Result.Success(result);
+        }
+
+        private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
+        {
+            var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
+
+            if (string.IsNullOrWhiteSpace(request.Postcode))
+                return Result.Success(new LocationFilterParameters { });
+
+            if (!validationResults.IsValid)
+            {
+                return Result.Invalid<LocationFilterParameters>(validationResults.Errors);
+            }
+            else
+            {
+                return (await _locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
+            }
+        }
+
+        private async Task<IResult<TuitionPartnerResult>> FindTuitionPartner(
+            LocationFilterParameters parameters,
+            Query request,
+            CancellationToken cancellationToken)
+        {
+            int? id = null;
+            if (int.TryParse(request.Id, out var parsedId))
+            {
+                id = parsedId;
+            }
+            else
+            {
+                var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
+                {
+                    LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
+                    SeoUrl = request.Id
+                }, cancellationToken);
+
+                if (tuitionPartnersIds?.Length == 1)
+                {
+                    id = tuitionPartnersIds[0];
+                }
+            }
+
+            if (id == null)
+            {
+                //shouldn't get here, unless manually changed query string
+                _logger.LogWarning("No TP found for the invalid Id '{Id}' provided", request.Id);
+                return Result.Error<TuitionPartnerResult>();
+            }
+
+            var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
+            {
+                TuitionPartnerIds = new int[] { id!.Value },
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
+                Urn = parameters.Urn
+            }, cancellationToken);
+
+            if (tuitionPartners?.Count() != 1)
+            {
+                _logger.LogWarning("Did not return a single TP for the Id '{Id}' and LAD Id {LocalAuthorityDistrictId} provided.  {Count} results were returned", request.Id, parameters.LocalAuthorityDistrictId, tuitionPartners?.Count());
+                return Result.Error<TuitionPartnerResult>();
+            }
+
+            return Result.Success(tuitionPartners.First());
         }
 
         private async Task<LocalAuthorityDistrictCoverage[]> GetLocalAuthorityDistricts(Query request, int tpId)
@@ -235,17 +296,13 @@ public class TuitionPartner : PageModel
             return result.Values.ToArray();
         }
 
-        private static Dictionary<int, GroupPrice> GetPricing(IEnumerable<string> types, ICollection<Price> prices)
+        private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
         {
             (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) online =
-                types.Contains("Online")
-                ? (prices => MinPrice(prices, TuitionTypes.Online), prices => MaxPrice(prices, TuitionTypes.Online))
-                : (prices => null, prices => null);
+                (prices => MinPrice(prices, TuitionTypes.Online), prices => MaxPrice(prices, TuitionTypes.Online));
 
             (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) inSchool =
-                types.Contains("In School")
-                ? (prices => MinPrice(prices, TuitionTypes.InSchool), prices => MaxPrice(prices, TuitionTypes.InSchool))
-                : (prices => null, prices => null);
+                (prices => MinPrice(prices, TuitionTypes.InSchool), prices => MaxPrice(prices, TuitionTypes.InSchool));
 
             return prices
                 .GroupBy(x => x.GroupSize)
