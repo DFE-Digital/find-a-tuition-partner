@@ -34,19 +34,21 @@ public class TuitionPartner : PageModel
             return NotFound();
         }
 
-        var seoUrl = query.Id.ToSeoUrl();
-        if (query.Id != seoUrl)
-        {
-            _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
-            return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
-        }
-
         Data = await _mediator.Send(query);
 
         if (Data == null)
         {
-            _logger.LogInformation("No Tuition Partner found for id '{Id}'", query.Id);
-            return NotFound();
+            var seoUrl = query.Id.ToSeoUrl();
+            if (query.Id != seoUrl)
+            {
+                _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
+                return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
+            }
+            else
+            {
+                _logger.LogInformation("No Tuition Partner found for id '{Id}'", query.Id);
+                return NotFound();
+            }
         }
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
