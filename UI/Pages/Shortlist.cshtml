@@ -19,7 +19,7 @@
         <form method="get">
             <h1 class="govuk-heading-l">Compare my shortlisted tuition partners</h1>
 
-            @if (Model.Data.Results != null)
+            @if (Model.Data.Results != null && Model.Data.Results.Count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
 
@@ -53,6 +53,10 @@
                 }
                 </tbody>
             </table>
+            }
+            else
+            {
+                <p class="govuk-body">There are no tuition partners shortlisted</p>
             }
 
         </form>

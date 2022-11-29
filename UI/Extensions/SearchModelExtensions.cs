@@ -15,6 +15,7 @@ namespace UI.Extensions
         {
             var dictionary = new Dictionary<string, string>();
 
+            model.Add(x => x.From, dictionary);
             model.Add(x => x.Name, dictionary);
             model.Add(x => x.Postcode, dictionary);
             model.Add(x => x.TuitionType, dictionary);

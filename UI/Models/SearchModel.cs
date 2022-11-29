@@ -19,7 +19,7 @@ namespace UI.Models
             KeyStages = model.KeyStages;
         }
 
-        public ReferrerList From { get; set; }
+        public ReferrerList? From { get; set; }
 
         public string? Name { get; set; }
 

@@ -175,7 +175,7 @@ public class TuitionPartner : PageModel
 
             if (!locationResult.IsSuccess)
             {
-                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous validation
+                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
                 _logger.LogWarning("Invalid postcode '{Postcode}' provided on TP details page", request.Postcode);
 
                 //Set to null and contine to get nationwide data

@@ -9,6 +9,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using UI.Enums;
 using UI.Extensions;
 using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
@@ -27,6 +28,7 @@ public class SearchResults : PageModel
     {
         data.TuitionType ??= Enums.TuitionType.Any;
         Data = await _mediator.Send(data);
+        Data.From = ReferrerList.SearchResults;
 
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)

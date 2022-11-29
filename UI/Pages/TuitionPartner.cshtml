@@ -9,18 +9,26 @@
 
 <div class="app-print-this-page--container">
     <div class="app-print-this-page--container-left">
-        @if (Model.SearchModel?.From == ReferrerList.FullList)
-        {
-            <a href="/all-tuition-partners?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
-                Back to tuition partners
-            </a>
+        @{
+            var pageUrl = "all-tuition-partners";
+            var pageName = "Back to tuition partners";
         }
-        else
+        @if (Model.SearchModel?.From == ReferrerList.SearchResults)
         {
-            <a href="/search-results?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
-                Back to search results
-            </a>
+            pageUrl = "search-results";
+            pageName = "Back to search results";
         }
+        else if (Model.SearchModel?.From == ReferrerList.Shortlist)
+        {
+            pageUrl = "shortlist";
+            pageName = "Back to shortlist";
+        }
+        @{
+            pageUrl = "/" + @pageUrl + "?" + Model.SearchModel.ToQueryString();
+        }
+        <a href="@pageUrl" class="govuk-back-link">
+            @pageName
+        </a>
     </div>
     
     <div class="govuk-body app-print-this-page--container-right">

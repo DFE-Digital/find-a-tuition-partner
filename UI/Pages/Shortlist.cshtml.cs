@@ -23,10 +23,9 @@ public class ShortlistModel : PageModel
 
     public async Task OnGet(Query data)
     {
-        data.TuitionType ??= Enums.TuitionType.Any;
+        data.From = Enums.ReferrerList.Shortlist;
         Data = await _mediator.Send(data);
 
-        //TODO - decide on validation
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
@@ -47,14 +46,10 @@ public class ShortlistModel : PageModel
     {
         public Validator()
         {
-            //TODO - decide what to validate and what to do if invalid?
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
-
-            RuleForEach(m => m.Subjects)
-                .Must(x => KeyStageSubject.TryParse(x, out var _));
         }
     }
 
@@ -63,19 +58,21 @@ public class ShortlistModel : PageModel
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
         private readonly INtpDbContext _db;
+        private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
             _db = db;
+            _logger = logger;
         }
 
         public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
             var queryResponse = new ResultsModel(request);
 
-            var searchResults = await GetSearchResults(request, cancellationToken);
+            var searchResults = await GetSearchResults(GetShortlist(), request, cancellationToken);
 
             return searchResults switch
             {
@@ -101,18 +98,36 @@ public class ShortlistModel : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        private int[] GetShortlist()
+        {
+            //TODO - integrate with shortlist selection
+            var tuitionPartnersIds = new int[] { 124, 125, 126, 127, 129, 131 };
+
+            //TODO - Validation that the postcode passed in via query and the cookie saved shortlist TPs are from same LAD
+            //  - can also check that a count of the distinct TP Ids with Any TuitionTypes (from GetTuitionPartnersAsync - before filter) matches the number of TP listed in cookie
+
+            return tuitionPartnersIds;
+        }
+
+        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(int[] tuitionPartnersIds, Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
             if (location is IErrorResult error)
             {
+                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
+                _logger.LogWarning("Invalid postcode '{Postcode}' provided on shortlist page", request.Postcode);
                 return error.Cast<TuitionPartnersResult>();
+            }
+            else if (location.Data.LocalAuthorityDistrictId is null)
+            {
+                _logger.LogError("Unable to get LocalAuthorityDistrictId for supplied postcode '{Postcode}' on TP shortlist page", request.Postcode);
+                return Result.Error<TuitionPartnersResult>("Unable to get LocalAuthorityDistrictId for supplied postcode");
             }
 
             var results = await FindTuitionPartners(
+                        tuitionPartnersIds,
                         location.Data,
-                        request,
                         cancellationToken);
 
             var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
@@ -138,23 +153,10 @@ public class ShortlistModel : PageModel
         }
 
         private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
+            int[] tuitionPartnersIds,
             LocationFilterParameters parameters,
-            Query request,
             CancellationToken cancellationToken)
         {
-            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-
-            var subjects = await _db.Subjects.Where(e =>
-                keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
-                .ToListAsync(cancellationToken);
-
-            var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
-            {
-                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                SubjectIds = subjects.Select(x => x.Id),
-                TuitionTypeId = request.TuitionType > 0 ? (int?)request.TuitionType : null
-            }, cancellationToken);
-
             var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
             {
                 TuitionPartnerIds = tuitionPartnersIds,
