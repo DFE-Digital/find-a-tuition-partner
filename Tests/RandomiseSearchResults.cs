@@ -1,5 +1,5 @@
-﻿using Application.Handlers;
-using Domain;
+﻿using Domain;
+using Domain.Enums;
 using Domain.Search;
 
 namespace Tests;
@@ -15,15 +15,15 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     [Fact]
     public void LAD_randomness()
     {
-        var search = new TuitionPartnerSearchRequest { LocalAuthorityDistrictCode = "bob" };
-        new TuitionPartnerOrdering(search).RandomSeed().Should().Be('b' + 'o' + 'b');
+        var seed = TuitionPartnerOrdering.RandomSeedGeneration(localAuthorityDistrictCode: "bob");
+        seed.Should().Be('b' + 'o' + 'b');
     }
 
     [Fact]
     public void Postcode_randomness()
     {
-        var search = new TuitionPartnerSearchRequest { Postcode = "ts1 10n" };
-        new TuitionPartnerOrdering(search).RandomSeed().Should().Be('t' + 's' + '1' + ' ' + '1' + '0' + 'n');
+        var seed = TuitionPartnerOrdering.RandomSeedGeneration(postcode: "ts1 10n");
+        seed.Should().Be('t' + 's' + '1' + ' ' + '1' + '0' + 'n');
     }
 
     [Theory]
@@ -32,55 +32,66 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     [InlineData(8, 12, 23, 43)]
     public void Subject_randomness(int a, int b, int c, int total)
     {
-        var search = new TuitionPartnerSearchRequest { SubjectIds = new[] { a, b, c } };
-        new TuitionPartnerOrdering(search).RandomSeed().Should().Be(total);
+        var seed = TuitionPartnerOrdering.RandomSeedGeneration(subjectIds: new[] { a, b, c });
+        seed.Should().Be(total);
     }
 
     [Fact]
     public void TuitionType_randomness()
     {
-        var search = new TuitionPartnerSearchRequest { TuitionTypeId = 5 };
-        new TuitionPartnerOrdering(search).RandomSeed().Should().Be(5);
+        var seed = TuitionPartnerOrdering.RandomSeedGeneration(tuitionFilterId: 5);
+        seed.Should().Be(5);
     }
 
     [Fact]
     public void All_randomness()
     {
-        var search = new TuitionPartnerSearchRequest
-        {
-            LocalAuthorityDistrictCode = "ab12",
-            Postcode = "ts1 10n",
-            SubjectIds = new[] { 5, 9, 22, 65 },
-            TuitionTypeId = 5,
-        };
-        new TuitionPartnerOrdering(search).RandomSeed()
-            .Should().Be('a' + 'b' + '1' + '2' + 't' + 's' + '1' + ' ' + '1' + '0' + 'n' + 5 + 9 + 22 + 65 + 5);
+        var seed = TuitionPartnerOrdering.RandomSeedGeneration(localAuthorityDistrictCode: "ab12", postcode: "ts1 10n", subjectIds: new[] { 5, 9, 22, 65 }, tuitionFilterId: 5);
+        seed.Should().Be('a' + 'b' + '1' + '2' + 't' + 's' + '1' + ' ' + '1' + '0' + 'n' + 5 + 9 + 22 + 65 + 5);
     }
 
     [Fact]
     public async void Search_results_can_be_randomised2()
     {
-        var results = await _fixture.SendAsync(new SearchTuitionPartnerHandler.Command
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var results = await _fixture.TuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest(), cancellationToken);
+        results = _fixture.TuitionPartnerService.OrderTuitionPartners(results, new TuitionPartnerOrdering
         {
             OrderBy = TuitionPartnerOrderBy.Random,
+            RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration()
         });
 
-        results.Results.Should().NotBeEmpty();
-        results.Results.Select(x => x.Name).Should()
+        results.Should().NotBeEmpty();
+        results.Select(x => x.Name).Should()
             .ContainInOrder("Alpha", "Delta", "Bravo", "Charlie");
     }
 
     [Theory]
     [MemberData(nameof(SearchData))]
     public async void Search_results_can_be_randomised(
-        SearchTuitionPartnerHandler.Command search, string[] order)
+        TuitionPartnersFilter filter, string[] order, string? localAuthorityDistrictCode = null, string? postcode = null)
     {
-        search.OrderBy = TuitionPartnerOrderBy.Random;
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
 
-        var results = await _fixture.SendAsync(search);
+        var tuitionPartnersIds = await _fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
-        results.Results.Should().NotBeEmpty();
-        results.Results.Select(x => x.Name)
+        var tuitionPartners = await _fixture.TuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
+        {
+            TuitionPartnerIds = tuitionPartnersIds,
+            LocalAuthorityDistrictId = filter.LocalAuthorityDistrictId
+        }, cancellationToken);
+
+        var results = _fixture.TuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering
+        {
+            OrderBy = TuitionPartnerOrderBy.Random,
+            RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration(localAuthorityDistrictCode, postcode, filter.SubjectIds, filter.TuitionTypeId)
+        });
+
+        results.Should().NotBeEmpty();
+        results.Select(x => x.Name)
             .Should().ContainInOrder(order)
             .And.Equal(order);
     }
@@ -89,74 +100,81 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     {
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command { },
+            new TuitionPartnersFilter { },
             new []{ "Alpha", "Delta", "Bravo", "Charlie", }
         };
 
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command { LocalAuthorityDistrictCode = "E06000030" },
-            new []{ "Delta", "Alpha", "Charlie", "Bravo",  }
+            new TuitionPartnersFilter { LocalAuthorityDistrictId = 58 }, //58 = E06000030
+            new []{ "Delta", "Alpha", "Charlie", "Bravo",  },
+            "E06000030"
         };
 
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command { LocalAuthorityDistrictCode = "E07000179" },
-            new []{  "Bravo", "Alpha", "Charlie", "Delta",  }
+            new TuitionPartnersFilter { LocalAuthorityDistrictId = 144 }, //144 = E07000179
+            new []{  "Bravo", "Alpha", "Charlie", "Delta",  },
+            "E07000179"
         };
 
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command
+            new TuitionPartnersFilter
             {
-                LocalAuthorityDistrictCode = "E07000179",
+                LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 1, 2, 3, 4 }
             },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie", }
+            new []{ "Delta", "Bravo", "Alpha", "Charlie", },
+            "E07000179"
         };
 
         // Subject ID order doesn't matter
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command
+            new TuitionPartnersFilter
             {
-                LocalAuthorityDistrictCode = "E07000179",
+                LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 4, 3, 2, 1 }
             },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie", }
+            new []{ "Delta", "Bravo", "Alpha", "Charlie", },
+            "E07000179"
         };
 
         // Subject ID values do matter
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command
+            new TuitionPartnersFilter
             {
-                LocalAuthorityDistrictCode = "E07000179",
+                LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 4, 5, 6, 7, 8, 9 }
             },
-            new []{ "Charlie", "Delta", "Bravo", "Alpha", }
+            new []{ "Charlie", "Delta", "Bravo", "Alpha", },
+            "E07000179"
         };
 
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command
+            new TuitionPartnersFilter
             {
-                LocalAuthorityDistrictCode = "E06000057",
+                LocalAuthorityDistrictId = 191, //191 = E06000057
                 SubjectIds = new[] { 4, 3, 2, 1 },
                 TuitionTypeId = 1,
             },
-            new []{ "Charlie", "Alpha", "Delta", "Bravo", }
+            new []{ "Charlie", "Alpha", "Delta", "Bravo", },
+            "E06000057"
         };
 
         yield return new object[]
         {
-            new SearchTuitionPartnerHandler.Command
+            new TuitionPartnersFilter
             {
-                LocalAuthorityDistrictCode = "E06000057",
+                LocalAuthorityDistrictId = 191, //191 = E06000057
                 SubjectIds = new[] { 4, 3, 2, 1 },
                 TuitionTypeId = 2,
             },
-            new []{ "Delta", "Bravo", "Charlie", "Alpha", }
+            new []{ "Delta", "Bravo", "Charlie", "Alpha", },
+            "E06000057"
         };
     }
 }

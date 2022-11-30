@@ -1,4 +1,5 @@
 using Application;
+using Application.Constants;
 using Application.Extensions;
 using Domain;
 using FluentValidation;
@@ -62,7 +63,7 @@ public partial class Index : PageModel
                 .WithMessage("Enter a postcode");
 
             RuleFor(m => m.Postcode)
-                .Matches(@"[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}")
+                .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode");
         }
     }

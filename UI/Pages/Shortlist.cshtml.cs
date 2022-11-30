@@ -2,42 +2,33 @@ using Application;
 using Application.Constants;
 using Application.Extensions;
 using Domain;
-using Domain.Enums;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using UI.Enums;
 using UI.Extensions;
 using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
-
-public class SearchResults : PageModel
+public class ShortlistModel : PageModel
 {
     private readonly IMediator _mediator;
 
-    public SearchResults(IMediator mediator) => _mediator = mediator;
+    public ShortlistModel(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
 
     public async Task OnGet(Query data)
     {
-        data.TuitionType ??= Enums.TuitionType.Any;
+        data.From = Enums.ReferrerList.Shortlist;
         Data = await _mediator.Send(data);
-        Data.From = ReferrerList.SearchResults;
 
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
-    }
-
-    public async Task OnGetClearAllFilters(string postcode)
-    {
-        Data = await _mediator.Send(new Query { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>;
@@ -46,8 +37,6 @@ public class SearchResults : PageModel
     {
         public ResultsModel() { }
         public ResultsModel(SearchModel query) : base(query) { }
-        public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -61,9 +50,6 @@ public class SearchResults : PageModel
                 .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
-
-            RuleForEach(m => m.Subjects)
-                .Must(x => KeyStageSubject.TryParse(x, out var _));
         }
     }
 
@@ -71,26 +57,22 @@ public class SearchResults : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
-        private readonly IMediator _mediator;
         private readonly INtpDbContext _db;
+        private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, IMediator mediator)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
             _db = db;
-            _mediator = mediator;
+            _logger = logger;
         }
 
         public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryResponse = new ResultsModel(request) with
-            {
-                AllSubjects = await GetSubjectsList(request, cancellationToken),
-                AllTuitionTypes = AllTuitionTypes,
-            };
+            var queryResponse = new ResultsModel(request);
 
-            var searchResults = await GetSearchResults(request, cancellationToken);
+            var searchResults = await GetSearchResults(GetShortlistSeoUrls(), request, cancellationToken);
 
             return searchResults switch
             {
@@ -116,44 +98,36 @@ public class SearchResults : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private static Enums.KeyStage[] AllKeyStages =>
-            new[]
-            {
-                Enums.KeyStage.KeyStage1,
-                Enums.KeyStage.KeyStage2,
-                Enums.KeyStage.KeyStage3,
-                Enums.KeyStage.KeyStage4,
-            };
-
-        private static List<Enums.TuitionType> AllTuitionTypes =>
-            new()
-            {
-                Enums.TuitionType.Any,
-                Enums.TuitionType.InSchool,
-                Enums.TuitionType.Online,
-            };
-
-        private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request, CancellationToken cancellationToken)
+        private string[] GetShortlistSeoUrls()
         {
-            return await _mediator.Send(new WhichSubjects.Query
-            {
-                KeyStages = AllKeyStages,
-                Subjects = request.Subjects,
-            }, cancellationToken);
+            //TODO - integrate with shortlist selection
+            var tuitionPartnersIds = new string[] { "em-tuition", "learning-hive", "equal-education", "m-2-r-education", "tutors-green" };
+
+            //TODO - Validation that the postcode passed in via query and the cookie saved shortlist TPs are from same LAD
+            //  - can also check that a count of the distinct TP Ids with Any TuitionTypes (from GetTuitionPartnersAsync - before filter) matches the number of TP listed in cookie
+
+            return tuitionPartnersIds;
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(string[] tuitionPartnerSeoUrls, Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
             if (location is IErrorResult error)
             {
+                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
+                _logger.LogWarning("Invalid postcode '{Postcode}' provided on shortlist page", request.Postcode);
                 return error.Cast<TuitionPartnersResult>();
+            }
+            else if (location.Data.LocalAuthorityDistrictId is null)
+            {
+                _logger.LogError("Unable to get LocalAuthorityDistrictId for supplied postcode '{Postcode}' on TP shortlist page", request.Postcode);
+                return Result.Error<TuitionPartnersResult>("Unable to get LocalAuthorityDistrictId for supplied postcode");
             }
 
             var results = await FindTuitionPartners(
+                        tuitionPartnerSeoUrls,
                         location.Data,
-                        request,
                         cancellationToken);
 
             var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
@@ -179,39 +153,25 @@ public class SearchResults : PageModel
         }
 
         private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
+            string[] tuitionPartnerSeoUrls,
             LocationFilterParameters parameters,
-            Query request,
             CancellationToken cancellationToken)
         {
-            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-
-            var subjects = await _db.Subjects.Where(e =>
-                keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
-                .ToListAsync(cancellationToken);
-
-            var subjectFilterIds = subjects.Select(x => x.Id);
-            var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
 
             var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
             {
                 LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                SubjectIds = subjectFilterIds,
-                TuitionTypeId = tuitionFilterId
+                SeoUrls = tuitionPartnerSeoUrls
             }, cancellationToken);
 
             var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
             {
                 TuitionPartnerIds = tuitionPartnersIds,
                 LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                Urn = parameters.Urn
+                Urn = parameters?.Urn
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering
-            {
-                OrderBy = TuitionPartnerOrderBy.Random,
-                Direction = OrderByDirection.Ascending,
-                RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration(parameters.LocalAuthorityDistrictCode, parameters.Postcode, subjectFilterIds, tuitionFilterId)
-            });
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering());
 
             return tuitionPartners;
         }

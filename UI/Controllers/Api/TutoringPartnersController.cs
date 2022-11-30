@@ -1,9 +1,6 @@
-﻿using Application.Handlers;
-using Domain;
-using Domain.Search;
-using Mapster;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using UI.Pages;
 
 namespace UI.Controllers.Api;
 
@@ -19,12 +16,12 @@ public class TutoringPartnersController : ControllerBase
     }
 
     [HttpPost("search")]
-    [ProducesResponseType(typeof(SearchResultsPage<TuitionPartnerSearchRequest, TuitionPartner>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Post([FromBody] TuitionPartnerSearchRequest request)
+    [ProducesResponseType(typeof(SearchResults.ResultsModel), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Post([FromBody] SearchResults.Query request)
     {
-        var command = request.Adapt<SearchTuitionPartnerHandler.Command>();
+        request.TuitionType ??= Enums.TuitionType.Any;
 
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(request);
 
         return Ok(result);
     }

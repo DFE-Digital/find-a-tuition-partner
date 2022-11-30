@@ -116,7 +116,7 @@
                     var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
                     var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
                 }
-                <span class="govuk-!-font-size-24"><strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.LocalAuthority != null">for <strong>@Model.Data.LocalAuthority</strong></span></span><br />
+                <span class="govuk-!-font-size-24"><strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span></span><br />
                 Your results are in a random order.
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             </div>
@@ -140,7 +140,7 @@
                                 </govuk-summary-list-row-key>
                                 <govuk-summary-list-row-value>
                                     <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                        @foreach (var keyStageSubjects in item.Subjects.GroupBy(e => e.KeyStageId))
+                                        @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject).Distinct().OrderBy(e => e.KeyStageId).OrderBy(e => e.Name).GroupBy(e => e.KeyStageId))
                                         {
                                             <li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
                                         }

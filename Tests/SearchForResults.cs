@@ -205,7 +205,7 @@ public class SearchForResults : CleanSliceFixture
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
         // Then
-        result.LocalAuthority.Should().Be("Hertfordshire");
+        result?.Results?.LocalAuthorityName.Should().Be("Hertfordshire");
     }
 
     [Fact]

@@ -1,7 +1,8 @@
-﻿namespace Domain.Search;
+﻿namespace Domain.Enums;
 
 public enum TuitionPartnerOrderBy
 {
     Random,
-    Name
+    Name,
+    MinPrice
 }

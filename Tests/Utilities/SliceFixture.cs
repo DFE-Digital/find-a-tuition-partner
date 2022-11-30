@@ -1,9 +1,7 @@
 using Application;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Search;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +32,7 @@ public class SliceFixture : IAsyncLifetime
     }
 
     public ILocationFilterService LocationFilter => _factory.LocationFilter;
+    public ITuitionPartnerService TuitionPartnerService => _factory.Services.GetRequiredService<ITuitionPartnerService>();
 
     private class NtpApplicationFactory
         : WebApplicationFactory<Program>
@@ -42,30 +41,36 @@ public class SliceFixture : IAsyncLifetime
         {
             LocationFilter = Substitute.For<ILocationFilterService>();
 
-            var locationsToAdd = new Dictionary<string, string>()
+            var locationsToAdd = new List<District>()
             {
-                { District.EastRidingOfYorkshire.Code, District.EastRidingOfYorkshire.SamplePostcode },
-                { District.NorthEastLincolnshire.Code, District.NorthEastLincolnshire.SamplePostcode },
-                { District.Ryedale.Code, District.Ryedale.SamplePostcode }
+                District.EastRidingOfYorkshire,
+                District.NorthEastLincolnshire,
+                District.Ryedale
             };
 
             foreach (var locationToAdd in locationsToAdd)
             {
                 LocationFilter
-                    .GetLocationFilterParametersAsync(locationToAdd.Value)
+                    .GetLocationFilterParametersAsync(locationToAdd.SamplePostcode)
                     .Returns(new LocationFilterParameters
                     {
                         Country = "England",
-                        LocalAuthorityDistrictCode = locationToAdd.Key,
+                        LocalAuthorityDistrictCode = locationToAdd.Code,
+                        LocalAuthorityDistrictId = locationToAdd.Id,
+                        LocalAuthorityDistrict = locationToAdd.Name,
+                        LocalAuthority = locationToAdd.LocalAuthorityName
                     });
             }
 
             LocationFilter
-                .GetLocationFilterParametersAsync(Arg.Is<string>(x => !locationsToAdd.ContainsValue(x)))
+                .GetLocationFilterParametersAsync(Arg.Is<string>(x => !locationsToAdd.Any(e => e.SamplePostcode == x)))
                 .Returns(new LocationFilterParameters
                 {
                     Country = "England",
                     LocalAuthorityDistrictCode = District.Dacorum.Code,
+                    LocalAuthorityDistrictId = District.Dacorum.Id,
+                    LocalAuthorityDistrict = District.Dacorum.Name,
+                    LocalAuthority = District.Dacorum.LocalAuthorityName
                 });
         }
 
