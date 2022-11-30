@@ -2,7 +2,4 @@
 
 public abstract class TuitionPartnerSearchRequestValidator<T>
 {
-    protected TuitionPartnerSearchRequestValidator()
-    {
-    }
 }

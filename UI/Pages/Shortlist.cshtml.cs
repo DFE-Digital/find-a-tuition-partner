@@ -72,7 +72,7 @@ public class ShortlistModel : PageModel
         {
             var queryResponse = new ResultsModel(request);
 
-            var searchResults = await GetSearchResults(GetShortlist(), request, cancellationToken);
+            var searchResults = await GetSearchResults(GetShortlistSeoUrls(), request, cancellationToken);
 
             return searchResults switch
             {
@@ -98,10 +98,10 @@ public class ShortlistModel : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private int[] GetShortlist()
+        private string[] GetShortlistSeoUrls()
         {
             //TODO - integrate with shortlist selection
-            var tuitionPartnersIds = new int[] { 124, 125, 126, 127, 129, 131 };
+            var tuitionPartnersIds = new string[] { "em-tuition", "learning-hive", "equal-education", "m-2-r-education", "tutors-green" };
 
             //TODO - Validation that the postcode passed in via query and the cookie saved shortlist TPs are from same LAD
             //  - can also check that a count of the distinct TP Ids with Any TuitionTypes (from GetTuitionPartnersAsync - before filter) matches the number of TP listed in cookie
@@ -109,7 +109,7 @@ public class ShortlistModel : PageModel
             return tuitionPartnersIds;
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(int[] tuitionPartnersIds, Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(string[] tuitionPartnerSeoUrls, Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
@@ -126,7 +126,7 @@ public class ShortlistModel : PageModel
             }
 
             var results = await FindTuitionPartners(
-                        tuitionPartnersIds,
+                        tuitionPartnerSeoUrls,
                         location.Data,
                         cancellationToken);
 
@@ -153,10 +153,17 @@ public class ShortlistModel : PageModel
         }
 
         private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
-            int[] tuitionPartnersIds,
+            string[] tuitionPartnerSeoUrls,
             LocationFilterParameters parameters,
             CancellationToken cancellationToken)
         {
+
+            var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
+            {
+                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
+                SeoUrls = tuitionPartnerSeoUrls
+            }, cancellationToken);
+
             var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
             {
                 TuitionPartnerIds = tuitionPartnersIds,

@@ -233,7 +233,7 @@ public class TuitionPartner : PageModel
                 var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
                 {
                     LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                    SeoUrl = request.Id
+                    SeoUrls = new string[] { request.Id }
                 }, cancellationToken);
 
                 if (tuitionPartnersIds?.Length == 1)
