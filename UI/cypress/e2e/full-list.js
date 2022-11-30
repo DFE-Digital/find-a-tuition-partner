@@ -193,3 +193,14 @@ Then("logos are not shown for tuition partners", () => {
     "not.be.visible"
   );
 });
+
+Then(
+  "they we can visit each TP details page and see the Type of Tuition details",
+  () => {
+    cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
+      cy.visit($element.attr("href"));
+      cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+      cy.get(".govuk-back-link").click();
+    });
+  }
+);
