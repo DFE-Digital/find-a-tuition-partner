@@ -38,6 +38,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        <span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition partner for <strong>@Model.Data.LocalAuthorityName</strong></span>
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
         <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
         <govuk-details data-testid="qatp-details">

@@ -8,7 +8,6 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using UI.Extensions;
 using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
@@ -57,14 +56,12 @@ public class ShortlistModel : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
-        private readonly INtpDbContext _db;
         private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
-            _db = db;
             _logger = logger;
         }
 

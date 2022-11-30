@@ -193,3 +193,11 @@ Then("the logo is not shown", () => {
     "not.be.visible"
   );
 });
+
+Then("the LA name is not shown", () => {
+  cy.get('[data-testid="la-name"]').should("not.exist");
+});
+
+Then("the LA name displayed is {string}", (laName) => {
+  cy.get('[data-testid="la-name"]').should("contain.text", laName);
+});
