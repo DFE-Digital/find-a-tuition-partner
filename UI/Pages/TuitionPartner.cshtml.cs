@@ -93,7 +93,8 @@ public class TuitionPartner : PageModel
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
-        Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices, string LegalStatus)
+        Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
+        string LegalStatus, string? LocalAuthorityName)
     {
         public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
     }
@@ -167,7 +168,8 @@ public class TuitionPartner : PageModel
                 tp.IsVatCharged,
                 lads,
                 allPrices,
-                tp.LegalStatus);
+                tp.LegalStatus,
+                tpResult.Result.Data.LocalAuthorityName);
         }
 
         private async Task<IResult<TuitionPartnersResult>> GetTPResult(Query request, CancellationToken cancellationToken)
