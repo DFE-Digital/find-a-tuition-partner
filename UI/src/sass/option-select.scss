@@ -116,10 +116,19 @@ ul.gem-c-checkboxes__list {
   }
 }
 
+.app-c-option-select__heading {
+  display: none;
+}
+
 .js-enabled {
   .app-c-option-select__heading {
     position: relative;
     padding: 10px 8px 0px 35px;
+    display: block;
+  }
+
+  .app-c-option-select__legend {
+    display: none;
   }
 
   [aria-expanded="true"] ~ .app-c-option-select__icon--up {
