@@ -128,7 +128,7 @@ ul.gem-c-checkboxes__list {
   }
 
   .app-c-option-select__legend {
-    display: none;
+    @extend .govuk-visually-hidden;
   }
 
   [aria-expanded="true"] ~ .app-c-option-select__icon--up {
