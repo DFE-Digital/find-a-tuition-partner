@@ -58,10 +58,33 @@
                 }
                 </tbody>
             </table>
+
+            @if (Model.Data.InvalidTPs is not null)
+                {
+            <details class="govuk-details" data-module="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  Some of your shortlisted partners are not shown
+                </span>
+              </summary>
+              <div class="govuk-details__text">
+                @{
+                    var partnersPluralInvalid = Model.Data.InvalidTPs.Count() > 1 ? "partners are" : "partner is";
+                }
+                The following tuition @partnersPluralInvalid not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
+                <ul class="govuk-list govuk-list--bullet">
+                    @foreach (var item in Model.Data.InvalidTPs)
+                    {
+                    <li>@item.Name</li>
+                    }
+                </ul>
+              </div>
+            </details>
+                }
             }
             else
             {
-                <p class="govuk-body">There are no tuition partners shortlisted</p>
+                <p class="govuk-body">There are no tuition partners shortlisted, return to the <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search page</a> to add tuition partners to the list.</p>
             }
 
         </form>

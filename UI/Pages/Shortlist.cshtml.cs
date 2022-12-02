@@ -2,6 +2,7 @@ using Application;
 using Application.Constants;
 using Application.Extensions;
 using Domain;
+using Domain.Enums;
 using Domain.Search;
 using FluentValidation;
 using FluentValidation.Results;
@@ -23,6 +24,8 @@ public class ShortlistModel : PageModel
     public async Task OnGet(Query data)
     {
         data.From = Enums.ReferrerList.Shortlist;
+        data.OrderBy = TuitionPartnerOrderBy.SeoList;
+
         Data = await _mediator.Send(data);
 
         if (!Data.Validation.IsValid)
@@ -30,7 +33,10 @@ public class ShortlistModel : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
-    public record Query : SearchModel, IRequest<ResultsModel>;
+    public record Query : SearchModel, IRequest<ResultsModel>
+    {
+        public TuitionPartnerOrderBy? OrderBy { get; set; }
+    };
 
     public record ResultsModel : SearchModel
     {
@@ -38,6 +44,9 @@ public class ShortlistModel : PageModel
         public ResultsModel(SearchModel query) : base(query) { }
 
         public TuitionPartnersResult? Results { get; set; }
+
+        public IEnumerable<TuitionPartnerResult>? InvalidTPs { get; set; }
+
         public FluentValidationResult Validation { get; internal set; } = new();
     }
 
@@ -69,13 +78,26 @@ public class ShortlistModel : PageModel
         {
             var queryResponse = new ResultsModel(request);
 
-            var searchResults = await GetSearchResults(GetShortlistSeoUrls(), request, cancellationToken);
+            var seoUrls = GetShortlistSeoUrls();
+
+            var searchResults = await GetShortlistResults(seoUrls, request, cancellationToken);
+
+            IEnumerable<TuitionPartnerResult>? invalidResults = null;
+            if (searchResults.IsSuccess && searchResults.Data.Count != seoUrls.Length)
+            {
+                var invalidSeoUrls = seoUrls.Where(e => !searchResults.Data.Results.Select(x => x.SeoUrl).Contains(e));
+                if (invalidSeoUrls.Any())
+                {
+                    invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), request.OrderBy!.Value, cancellationToken);
+                }
+            }
 
             return searchResults switch
             {
                 SuccessResult => queryResponse with
                 {
                     Results = searchResults.Data,
+                    InvalidTPs = invalidResults,
                 },
                 Domain.ValidationResult error => queryResponse with
                 {
@@ -98,15 +120,12 @@ public class ShortlistModel : PageModel
         private string[] GetShortlistSeoUrls()
         {
             //TODO - integrate with shortlist selection
-            var tuitionPartnersIds = new string[] { "em-tuition", "learning-hive", "equal-education", "m-2-r-education", "tutors-green" };
-
-            //TODO - Validation that the postcode passed in via query and the cookie saved shortlist TPs are from same LAD
-            //  - can also check that a count of the distinct TP Ids with Any TuitionTypes (from GetTuitionPartnersAsync - before filter) matches the number of TP listed in cookie
+            var tuitionPartnersIds = new string[] { "em-tuition", "learning-hive", "capital-tuition-group-ltd", "1-2-1-mentors-ltd", "equal-education", "m-2-r-education", "tutors-green", "action-tutoring" };
 
             return tuitionPartnersIds;
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetSearchResults(string[] tuitionPartnerSeoUrls, Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetShortlistResults(string[] tuitionPartnerSeoUrls, Query request, CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
@@ -124,6 +143,7 @@ public class ShortlistModel : PageModel
 
             var results = await FindTuitionPartners(
                         tuitionPartnerSeoUrls,
+                        request.OrderBy!.Value,
                         location.Data,
                         cancellationToken);
 
@@ -151,6 +171,7 @@ public class ShortlistModel : PageModel
 
         private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
             string[] tuitionPartnerSeoUrls,
+            TuitionPartnerOrderBy orderBy,
             LocationFilterParameters parameters,
             CancellationToken cancellationToken)
         {
@@ -168,7 +189,28 @@ public class ShortlistModel : PageModel
                 Urn = parameters?.Urn
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering());
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, SeoUrlOrderBy = tuitionPartnerSeoUrls });
+
+            return tuitionPartners;
+        }
+
+        private async Task<IEnumerable<TuitionPartnerResult>> FindInvalidTuitionPartners(
+            string[] tuitionPartnerSeoUrls,
+            TuitionPartnerOrderBy orderBy,
+            CancellationToken cancellationToken)
+        {
+
+            var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
+            {
+                SeoUrls = tuitionPartnerSeoUrls
+            }, cancellationToken);
+
+            var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
+            {
+                TuitionPartnerIds = tuitionPartnersIds
+            }, cancellationToken);
+
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, SeoUrlOrderBy = tuitionPartnerSeoUrls });
 
             return tuitionPartners;
         }

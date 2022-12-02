@@ -11,6 +11,8 @@ public class TuitionPartnerOrdering
     [DefaultValue(OrderByDirection.Ascending)]
     public OrderByDirection Direction { get; set; } = OrderByDirection.Ascending;
 
+    public string[]? SeoUrlOrderBy { get; set; }
+
     public int? RandomSeed { get; set; }
 
     public static int RandomSeedGeneration(string? localAuthorityDistrictCode = null, string? postcode = null, IEnumerable<int>? subjectIds = null, int? tuitionFilterId = null)

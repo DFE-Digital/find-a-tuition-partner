@@ -42,6 +42,22 @@ public class TuitionPartnerService : ITuitionPartnerService
                     ? results.OrderBy(e => e.Name).OrderByDescending(e => e.Prices.Min(x => x.HourlyRate))
                     : results.OrderBy(e => e.Name).OrderBy(e => e.Prices.Min(x => x.HourlyRate));
 
+            case TuitionPartnerOrderBy.SeoList:
+                if (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0)
+                {
+                    return results;
+                }
+                var sortedResults = new List<TuitionPartnerResult>();
+                foreach (var item in ordering.SeoUrlOrderBy)
+                {
+                    var matchedResult = results.FirstOrDefault(x => x.SeoUrl == item);
+                    if (matchedResult != null)
+                    {
+                        sortedResults.Add(matchedResult);
+                    }
+                }
+                return sortedResults;
+
             default:
                 return results.OrderByDescending(e => e.Id);
         }
