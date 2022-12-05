@@ -47,16 +47,7 @@ public class TuitionPartnerService : ITuitionPartnerService
                 {
                     return results;
                 }
-                var sortedResults = new List<TuitionPartnerResult>();
-                foreach (var item in ordering.SeoUrlOrderBy)
-                {
-                    var matchedResult = results.FirstOrDefault(x => x.SeoUrl == item);
-                    if (matchedResult != null)
-                    {
-                        sortedResults.Add(matchedResult);
-                    }
-                }
-                return sortedResults;
+                return results.OrderBy(x => Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl));
 
             default:
                 return results.OrderByDescending(e => e.Id);
