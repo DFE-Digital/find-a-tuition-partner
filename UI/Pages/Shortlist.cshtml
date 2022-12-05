@@ -27,59 +27,53 @@
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
-
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Name</th>
-                    <th scope="col" class="govuk-table__header">Key stages covered</th>
-                    <th scope="col" class="govuk-table__header">Subjects</th>
-                    <th scope="col" class="govuk-table__header">Type of tuition</th>
-                    <th scope="col" class="govuk-table__header">Price range</th>
-                </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-
-                @foreach (var item in Model.Data.Results?.Results!)
-                {
-                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
-
+            <div class="govuk-table-container">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header"><a href="@tpUrl" class="govuk-link">@item.Name</a></th>
-                        <td class="govuk-table__cell">
-                            @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
-                        </td>
-                        <td class="govuk-table__cell">
-                            @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
-                        </td>
-                        <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
-                        <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Key stages covered</th>
+                        <th scope="col" class="govuk-table__header">Subjects</th>
+                        <th scope="col" class="govuk-table__header">Type of tuition</th>
+                        <th scope="col" class="govuk-table__header">Price range</th>
                     </tr>
-                }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="govuk-table__body">
+
+                    @foreach (var item in Model.Data.Results?.Results!)
+                    {
+                        var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header"><a href="@tpUrl" class="govuk-link">@item.Name</a></th>
+                            <td class="govuk-table__cell">
+                                @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
+                            </td>
+                            <td class="govuk-table__cell">
+                                @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
+                            </td>
+                            <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
+                            <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
 
             @if (Model.Data.InvalidTPs is not null)
                 {
-            <details class="govuk-details" data-module="govuk-details">
-              <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  Some of your shortlisted partners are not shown
-                </span>
-              </summary>
-              <div class="govuk-details__text">
-                @{
-                    var partnersPluralInvalid = Model.Data.InvalidTPs.Count() > 1 ? "partners are" : "partner is";
+            <div class="govuk-inset-text">
+            @{
+                var partnersPluralInvalid = Model.Data.InvalidTPs.Count() > 1 ? "partners are" : "partner is";
+            }
+            The following tuition @partnersPluralInvalid not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
+            <ul class="govuk-list govuk-list--bullet">
+                @foreach (var item in Model.Data.InvalidTPs)
+                {
+                <li>@item.Name</li>
                 }
-                The following tuition @partnersPluralInvalid not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
-                <ul class="govuk-list govuk-list--bullet">
-                    @foreach (var item in Model.Data.InvalidTPs)
-                    {
-                    <li>@item.Name</li>
-                    }
-                </ul>
-              </div>
-            </details>
+            </ul>
+            </div>
                 }
             }
             else
