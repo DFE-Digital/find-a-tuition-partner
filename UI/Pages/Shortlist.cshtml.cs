@@ -89,6 +89,7 @@ public class ShortlistModel : PageModel
                 if (invalidSeoUrls.Any())
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), request.OrderBy!.Value, cancellationToken);
+                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
 
