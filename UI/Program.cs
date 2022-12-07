@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Application.Extensions;
+using Application.TuitionPartnerShortlistStorage.Implementations;
+using Application.TuitionPartnerShortlistStorage.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
@@ -18,6 +20,8 @@ if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITuitionPartnerShortlistStorage, CookieBasedTuitionPartnerShortlistStorage>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>

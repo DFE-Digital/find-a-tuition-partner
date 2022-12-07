@@ -1,0 +1,39 @@
+.js-enabled .update-my-shortlist-button--apply-visibility {
+  display: none;
+}
+
+.update-my-shortlist-button--top-margin-ne-2 {
+  margin-top: govuk-spacing(-2);
+}
+
+.my-shortlisted-partners-badge {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+}
+
+.my-shortlisted-partners-badge--for-values-greater-than-nineteen {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+.shortlist-tuition-partner-checkbox {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-left: 0;
+}
+
+.shortlist-tuition-partner-checkbox:focus {
+  outline: 3px solid #ffdd00;
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px;
+  background-color: govuk-colour("white");
+}
+.shortlist-tuition-partner-checkbox:checked {
+  accent-color: govuk-colour("white");
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  outline: 1px solid govuk-colour("black");
+}

@@ -20,11 +20,5 @@ public class TuitionPartnersResult
     public int Count { get; set; }
     public string? LocalAuthorityName { get; set; }
 
-    public TuitionPartnerResult FirstResult
-    {
-        get
-        {
-            return Results.Any() ? Results.First() : new TuitionPartnerResult();
-        }
-    }
+    public TuitionPartnerResult FirstResult => Results.Any() ? Results.First() : new TuitionPartnerResult();
 }
