@@ -2,32 +2,18 @@
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
+    if (Model.SearchModel?.From == ReferrerList.FullList)
+    {
+        ViewData["BackLinkHref"] = "/all-tuition-partners?" + Model.SearchModel.ToQueryString();
+        ViewData["BackLinkText"] = "Back to tuition partners";
+    }
+    else
+    {
+        ViewData["BackLinkHref"] = "/search-results?" + Model.SearchModel.ToQueryString();
+        ViewData["BackLinkText"] = "Back to search results";
+    }
+    ViewData["IncludePrintPage"] = true;
 }
-<div class="app-print-hide">
-    <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
-</div>
-
-<div class="app-print-this-page--container">
-    <div class="app-print-this-page--container-left">
-        @if (Model.SearchModel?.From == ReferrerList.FullList)
-        {
-            <a href="/all-tuition-partners?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
-                Back to tuition partners
-            </a>
-        }
-        else
-        {
-            <a href="/search-results?@Model.SearchModel.ToQueryString()" class="govuk-back-link">
-                Back to search results
-            </a>
-        }
-    </div>
-    
-    <div class="govuk-body app-print-this-page--container-right">
-        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
-    </div>
-</div>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
