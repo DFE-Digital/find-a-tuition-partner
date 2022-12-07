@@ -27,12 +27,12 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
         if (!IsTuitionPartnerValid(shortlistedTuitionPartner)) return 0;
         if (_httpContextAccessor.HttpContext == null) return 0;
         var cookieKey = ConstructCookieKey(shortlistedTuitionPartner.SeoUrl,
-            shortlistedTuitionPartner.LocalAuthorityName.Trim().Replace(" ", "_"));
+            shortlistedTuitionPartner.LocalAuthorityName.Trim());
         if (IsTuitionPartnerPresent(cookieKey)) RemoveCookie(cookieKey);
 
         var stringifyTpDetail = StringifyTuitionPartnerDetail(shortlistedTuitionPartner);
         AddTuitionPartnerToCookie(cookieKey, stringifyTpDetail);
-        // _totalShortlistedTuitionPartners++;
+
         return 1;
     }
 
@@ -60,7 +60,6 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     public int RemoveTuitionPartner(string seoUrl, string localAuthorityName)
     {
         RemoveCookie(ConstructCookieKey(seoUrl, localAuthorityName));
-        // _totalShortlistedTuitionPartners = _totalShortlistedTuitionPartners--;
 
         return 1;
     }
@@ -74,7 +73,6 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
         foreach (var cookie in cookies)
             _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookie.Key);
 
-        // _totalShortlistedTuitionPartners = 0;
 
         return 1;
     }
@@ -120,7 +118,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
         if (seoUrl.IndexOfAny(brackets) >= 0)
             seoUrl = $"{ReplaceBracket(seoUrl)}{ContainsBracket}";
 
-        return $"{CookieKeyFormat}{seoUrl}-{localAuthorityName}";
+        return $"{CookieKeyFormat}{seoUrl}-{localAuthorityName.Replace(" ", "_")}";
     }
 
     private string ReplaceBracket(string value) => value.Replace("(", "400028")
