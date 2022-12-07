@@ -27,7 +27,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
         if (!IsTuitionPartnerValid(shortlistedTuitionPartner)) return 0;
         if (_httpContextAccessor.HttpContext == null) return 0;
         var cookieKey = ConstructCookieKey(shortlistedTuitionPartner.SeoUrl,
-            shortlistedTuitionPartner.LocalAuthorityName.Trim());
+            shortlistedTuitionPartner.LocalAuthorityName.Trim().Replace(" ", "_"));
         if (IsTuitionPartnerPresent(cookieKey)) RemoveCookie(cookieKey);
 
         var stringifyTpDetail = StringifyTuitionPartnerDetail(shortlistedTuitionPartner);
