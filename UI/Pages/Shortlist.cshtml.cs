@@ -1,6 +1,7 @@
 using Application;
 using Application.Constants;
 using Application.Extensions;
+using Application.TuitionPartnerShortlistStorage.Interfaces;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
@@ -65,12 +66,14 @@ public class ShortlistModel : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
+        private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
         private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ILogger<TuitionPartner> logger)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
+            _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
             _logger = logger;
         }
 
@@ -120,8 +123,9 @@ public class ShortlistModel : PageModel
 
         private string[] GetShortlistSeoUrls()
         {
-            //TODO - integrate with shortlist selection
-            var tuitionPartnersIds = new string[] { "em-tuition", "learning-hive", "capital-tuition-group-ltd", "1-2-1-mentors-ltd", "equal-education", "m-2-r-education", "tutors-green", "action-tutoring" };
+            var shortlistedTPs = _tuitionPartnerShortlistStorage.GetAllTuitionPartners();
+
+            var tuitionPartnersIds = shortlistedTPs.Select(x => x.SeoUrl).Distinct().ToArray();
 
             return tuitionPartnersIds;
         }
