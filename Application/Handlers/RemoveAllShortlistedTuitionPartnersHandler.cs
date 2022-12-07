@@ -1,7 +1,3 @@
-using Application.Commands;
-using Application.TuitionPartnerShortlistStorage.Interfaces;
-using MediatR;
-
 namespace Application.Handlers;
 
 public class RemoveAllShortlistedTuitionPartnersHandler : IRequestHandler<RemoveAllTuitionPartnersCommand, int>

@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace Application.Commands;
 
-public record RemoveTuitionPartnerCommand(string SeoUrl, string LocalAuthority) : IRequest<int>;
+public record RemoveTuitionPartnerCommand(string SeoUrl, string LocalAuthorityName) : IRequest<int>;

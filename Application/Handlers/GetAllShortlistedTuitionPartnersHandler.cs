@@ -1,7 +1,4 @@
 using Application.Queries;
-using Application.TuitionPartnerShortlistStorage.Interfaces;
-using Domain.Search.ShortlistTuitionPartners;
-using MediatR;
 
 namespace Application.Handlers;
 

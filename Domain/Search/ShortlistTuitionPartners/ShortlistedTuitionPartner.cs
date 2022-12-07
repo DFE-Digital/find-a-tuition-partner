@@ -1,3 +1,3 @@
 namespace Domain.Search.ShortlistTuitionPartners;
 
-public record ShortlistedTuitionPartner(string SeoUrl, string LocalAuthority);
+public record ShortlistedTuitionPartner(string SeoUrl, string LocalAuthorityName);

@@ -18,9 +18,9 @@
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.Postcode" />
-            <govuk-error-summary-item asp-for="Data.Subjects" />
-            <govuk-error-summary-item asp-for="Data.TuitionType" />
+            <govuk-error-summary-item asp-for="Data.Postcode"/>
+            <govuk-error-summary-item asp-for="Data.Subjects"/>
+            <govuk-error-summary-item asp-for="Data.TuitionType"/>
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
@@ -61,11 +61,7 @@
 
                 @foreach (var item in Model.Data.AllSubjects.Keys)
                 {
-                    <partial name="_OptionsSelect" model="@(new OptionsSelectModel(
-						item.ToString().ToSeoUrl(),
-						item.DisplayName(),
-						Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x=> x.Name)
-						)) " />
+                    <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) "/>
                 }
 
                 <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
@@ -116,8 +112,27 @@
                     var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
                     var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
                 }
-                <span class="govuk-!-font-size-24"><strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span></span><br />
+                <span class="govuk-!-font-size-24">
+                    <strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span>
+                    <input type="hidden" name="LocalAuthorityNameHolder" value="@Model.Data.Results.LocalAuthorityName"/>
+                </span><br/>
                 Your results are in a random order.
+                <div class="govuk-grid-row govuk-!-margin-top-2">
+                    <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
+                        <govuk-button type="submit" class="govuk-!-margin-bottom-2">
+                            Update my shortlist
+                        </govuk-button>
+                    </div>
+                    <div class="govuk-grid-column-full">
+                        <a asp-page="/Shortlist" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
+                           module="my-shortlisted-tuition-partners-link" data-testid="my-shortlisted-tuition-partners-link">
+                            View my shortlisted tuition partners
+                            <span id="totalShortlistedTuitionPartners" class="moj-notification-badge my-shortlisted-partners-badge">
+                                @Model.TotalShortlistedTuitionPartners
+                            </span>
+                        </a>
+                    </div>
+                </div>
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             </div>
 
@@ -130,45 +145,70 @@
                     var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
 
                     <div data-testid="results-list-item">
-                        <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl" >
-                        <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name" />
-                        <h2 class="govuk-heading-m"><a href="@tpUrl" class="govuk-link">@item.Name</a></h2>
-                        <govuk-summary-list>
-                            <govuk-summary-list-row class="govuk-body-s">
-                                <govuk-summary-list-row-key>
-                                    Subjects covered
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value>
-                                    <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                        @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject).Distinct().OrderBy(e => e.KeyStageId).OrderBy(e => e.Name).GroupBy(e => e.KeyStageId))
-                                        {
-                                            <li>@(((KeyStage)keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
-                                        }
-                                    </ul>
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                            <govuk-summary-list-row class="govuk-body-s">
-                                <govuk-summary-list-row-key>
-                                    Type of tuition
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value data-testid="type-of-tuition">
-                                    @string.Join(", ", item.TuitionTypes.Select(e => e.Name))
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                            <govuk-summary-list-row class="govuk-body-s">
-                                <govuk-summary-list-row-key>
-                                    Tuition partner information
-                                </govuk-summary-list-row-key>
-                                <govuk-summary-list-row-value data-testid="results-description">
-                                    @item.Description
-                                </govuk-summary-list-row-value>
-                            </govuk-summary-list-row>
-                        </govuk-summary-list>
+                        <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
+                            <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
+                            <h2 class="govuk-heading-m">
+                                <a href="@tpUrl" class="govuk-link">@item.Name</a>
+                            </h2>
+                            <govuk-summary-list>
+                                <govuk-summary-list-row class="govuk-body-s">
+                                    <govuk-summary-list-row-key>
+                                        Subjects covered
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value>
+                                        <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                                            @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject).Distinct().OrderBy(e => e.KeyStageId).OrderBy(e => e.Name).GroupBy(e => e.KeyStageId))
+                                            {
+                                                <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
+                                            }
+                                        </ul>
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                                <govuk-summary-list-row class="govuk-body-s">
+                                    <govuk-summary-list-row-key>
+                                        Type of tuition
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value data-testid="type-of-tuition">
+                                        @string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                                <govuk-summary-list-row class="govuk-body-s">
+                                    <govuk-summary-list-row-key>
+                                        Tuition partner information
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value data-testid="results-description">
+                                        @item.Description
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                                <govuk-summary-list-row class="govuk-body-s">
+                                    @{
+                                        var shortlist = Model.SelectableTuitionPartners
+                                            .First(tp => tp.SeoUrl == item.SeoUrl);
+                                    }
+                                    <govuk-summary-list-row-key>
+                                        <label for="shortlist-cb-@shortlist.SeoUrl">
+                                            Add to my shortlist
+                                        </label>
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value data-testid="results-description">
+                                        <input class="shortlist-tuition-partner-checkbox" id="shortlist-cb-@shortlist.SeoUrl" name="ShortlistedTuitionPartners"
+                                               type="checkbox" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected"
+                                               data-localauthority="@Model.Data.Results.LocalAuthorityName"/>
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
+                            </govuk-summary-list>
                         </div>
                     </div>
                 }
+                <div class="govuk-grid-row update-my-shortlist-button--top-margin-ne-2">
+                    <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
+                        <govuk-button type="submit" class="govuk-!-margin-bottom-2">Update my shortlist</govuk-button>
+                    </div>
+                </div>
             }
         </div>
 
     </form>
 </div>
+
+@section Scripts { <script src="/Pages/SearchResults.cshtml.js"></script> }
