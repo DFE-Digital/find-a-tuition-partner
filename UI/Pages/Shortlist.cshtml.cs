@@ -1,7 +1,6 @@
 using Application;
 using Application.Constants;
 using Application.Extensions;
-using Application.TuitionPartnerShortlistStorage.Interfaces;
 using Domain;
 using Domain.Enums;
 using Domain.Search;

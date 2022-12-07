@@ -1,4 +1,4 @@
-namespace Application.TuitionPartnerShortlistStorage.Implementations;
+namespace UI.Services.TuitionPartnerShortlistStorage;
 
 /// <summary>
 /// The CookieBasedTuitionPartnerShortlistStorage stores ShortlistedTuitionPartner details in a cookie

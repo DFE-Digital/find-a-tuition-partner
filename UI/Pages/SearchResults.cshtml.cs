@@ -6,7 +6,6 @@ using Application.Queries;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
-using Domain.Search.ShortlistTuitionPartners;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
