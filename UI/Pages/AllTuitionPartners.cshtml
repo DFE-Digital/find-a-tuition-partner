@@ -2,17 +2,9 @@
 @model AllTuitionPartners
 @{
     ViewData["Title"] = "All Tuition Partners";
+    ViewData["BackLinkHref"] = "/";
+    ViewData["IncludePrintPage"] = true;
 }
-
-<div class="app-print-this-page--container govuk-!-margin-bottom-3">
-    <div class="app-print-this-page--container-left govuk-!-padding-top-3">
-        <a asp-page="@nameof(Index)" class="govuk-link" data-testid="home-link">Home</a>
-    </div>
-
-    <div class="govuk-body app-print-this-page--container-right">
-        <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
-    </div>
-</div>
 
 <div class="govuk-grid-row">
     <form method="get">

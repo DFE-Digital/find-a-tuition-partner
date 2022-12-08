@@ -14,6 +14,7 @@ $govuk-page-width: 1180px;
 
 // GDS components that we use
 @import "node_modules/govuk-frontend/govuk/components/back-link/index";
+@import "node_modules/govuk-frontend/govuk/components/breadcrumbs/index";
 @import "node_modules/govuk-frontend/govuk/components/button/index";
 @import "node_modules/govuk-frontend/govuk/components/checkboxes/index";
 @import "node_modules/govuk-frontend/govuk/components/cookie-banner/index";
