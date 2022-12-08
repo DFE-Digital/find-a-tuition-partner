@@ -2,9 +2,8 @@
 @model WhichKeyStages
 @{
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
+    ViewData["BackLinkHref"] = "/?" + Model.Data.ToQueryString();
 }
-
-<a href="/?@Model.Data.ToQueryString()" class="govuk-back-link">Back</a>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

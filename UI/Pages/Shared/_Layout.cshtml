@@ -6,6 +6,13 @@
     // Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
     var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
 
+    var includeHomeLink = ViewData["IncludeHomeLink"] as bool? == true; 
+    var backLinkHref = ViewData["BackLinkHref"] as string; 
+    var backLinkText = ViewData["BackLinkText"] as string;
+    backLinkText = backLinkText ?? "Back";
+    var includeBackLink = backLinkHref is not null;
+    var includePrintPage = includeBackLink && ViewData["IncludePrintPage"] as bool? == true; 
+
     var containerId = Configuration["GoogleTagManager:ContainerId"];
     var enableGoogleTagManager = !string.IsNullOrWhiteSpace(containerId);
 
@@ -154,9 +161,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </p>
         </div>
 
+        @if (includeHomeLink)
+        {
+        <div class="govuk-breadcrumbs">
+          <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+              <a asp-page="@nameof(Index)" class="govuk-breadcrumbs__link" data-testid="home-link" >Home</a>
+            </li>
+          </ol>
+        </div>
+        }
+        
+        @if (includePrintPage)
+        {
+            <div class="app-print-this-page--container">
+                <div class="app-print-this-page--container-left">
+                    <a href="@backLinkHref" data-testid="back-link" class="govuk-back-link">@backLinkText</a>
+                </div>
+
+                <div class="govuk-body app-print-this-page--container-right">
+                    <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
+                </div>
+            </div>
+        }
+        else if(includeBackLink)
+        {
+            <a href="@backLinkHref" data-testid="back-link" class="govuk-back-link">@backLinkText</a>
+        }
+
         <main class="govuk-main-wrapper " id="main-content" role="main">
             @RenderBody()
         </main>
+
         @if (showContactus)
         {
             <div class="govuk-grid-row">
