@@ -46,12 +46,13 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         stopwatch.Stop();
 
         var names = result.Select(x => x.Name).ToList();
-        var logLevel = ((request.TuitionPartnerIds == null && !result.Any()) || (request.TuitionPartnerIds?.Length != result.Count())) ?
+        var logLevel = ((request.TuitionPartnerIds == null && !result.Any()) || 
+            (request.TuitionPartnerIds != null && request.TuitionPartnerIds?.Length != result.Count())) ?
             LogLevel.Error : LogLevel.Information;
 
         using (_logger.BeginScope("{@TuitionPartners}", names))
         {
-            _logger.Log(logLevel, "Found {Count} TP results in {Elapsed}ms",
+            _logger.Log(logLevel, "GetTuitionPartnersAsync found {Count} TP results in {Elapsed}ms",
                     result.Count(), stopwatch.ElapsedMilliseconds);
         }
 
