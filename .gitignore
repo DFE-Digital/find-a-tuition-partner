@@ -414,3 +414,6 @@ Tests/Tests.v3.ncrunchproject
 **/appsettings.Development.json
 
 credentials.json
+
+# MacOs
+**/.DS_Store
