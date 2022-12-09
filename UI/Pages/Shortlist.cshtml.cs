@@ -15,7 +15,6 @@ public class ShortlistModel : PageModel
     public async Task OnGet(Query data)
     {
         data.From = Enums.ReferrerList.Shortlist;
-        data.OrderBy = TuitionPartnerOrderBy.SeoList;
 
         Data = await _mediator.Send(data);
 
@@ -73,7 +72,10 @@ public class ShortlistModel : PageModel
 
             var seoUrls = GetShortlistSeoUrls();
 
-            var searchResults = await GetShortlistResults(seoUrls, request, cancellationToken);
+            var shortlistOrderBy = request.ShortlistOrderBy ?? TuitionPartnerOrderBy.SeoList;
+            var shortlistOrderByDirection = request.ShortlistOrderByDirection ?? OrderByDirection.Ascending;
+
+            var searchResults = await GetShortlistResults(seoUrls, request, shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
 
             IEnumerable<TuitionPartnerResult>? invalidResults = null;
             if (searchResults.IsSuccess && searchResults.Data.Count != seoUrls.Length)
@@ -81,7 +83,7 @@ public class ShortlistModel : PageModel
                 var invalidSeoUrls = seoUrls.Where(e => !searchResults.Data.Results.Select(x => x.SeoUrl).Contains(e));
                 if (invalidSeoUrls.Any())
                 {
-                    invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), request.OrderBy!.Value, cancellationToken);
+                    invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
                     _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
@@ -120,7 +122,12 @@ public class ShortlistModel : PageModel
             return tuitionPartnersIds;
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetShortlistResults(string[] tuitionPartnerSeoUrls, Query request, CancellationToken cancellationToken)
+        private async Task<IResult<TuitionPartnersResult>> GetShortlistResults(
+            string[] tuitionPartnerSeoUrls,
+            Query request,
+            TuitionPartnerOrderBy orderBy,
+            OrderByDirection orderByDirection,
+            CancellationToken cancellationToken)
         {
             var location = await GetSearchLocation(request, cancellationToken);
 
@@ -138,7 +145,8 @@ public class ShortlistModel : PageModel
 
             var results = await FindTuitionPartners(
                         tuitionPartnerSeoUrls,
-                        request.OrderBy!.Value,
+                        orderBy,
+                        orderByDirection,
                         location.Data,
                         cancellationToken);
 
@@ -167,6 +175,7 @@ public class ShortlistModel : PageModel
         private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(
             string[] tuitionPartnerSeoUrls,
             TuitionPartnerOrderBy orderBy,
+            OrderByDirection orderByDirection,
             LocationFilterParameters parameters,
             CancellationToken cancellationToken)
         {
@@ -184,7 +193,7 @@ public class ShortlistModel : PageModel
                 Urn = parameters?.Urn
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, SeoUrlOrderBy = tuitionPartnerSeoUrls });
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, Direction = orderByDirection, SeoUrlOrderBy = tuitionPartnerSeoUrls });
 
             return tuitionPartners;
         }
@@ -192,6 +201,7 @@ public class ShortlistModel : PageModel
         private async Task<IEnumerable<TuitionPartnerResult>> FindInvalidTuitionPartners(
             string[] tuitionPartnerSeoUrls,
             TuitionPartnerOrderBy orderBy,
+            OrderByDirection orderByDirection,
             CancellationToken cancellationToken)
         {
 
@@ -205,7 +215,7 @@ public class ShortlistModel : PageModel
                 TuitionPartnerIds = tuitionPartnersIds
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, SeoUrlOrderBy = tuitionPartnerSeoUrls });
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, Direction = orderByDirection, SeoUrlOrderBy = tuitionPartnerSeoUrls });
 
             return tuitionPartners;
         }
