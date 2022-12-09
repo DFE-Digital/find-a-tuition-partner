@@ -1,10 +1,10 @@
 "use strict";
 
-const getAddShortlistTuitionPartnerFetchUrl = (seoUrl, localAuthority) =>
-  `?handler=AddShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}&localAuthority=${localAuthority}`;
+const getAddShortlistTuitionPartnerFetchUrl = (seoUrl) =>
+  `?handler=AddShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}`;
 
-const getRemoveShortlistTuitionPartnerFetchUrl = (seoUrl, localAuthority) =>
-  `?handler=RemoveShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}&localAuthority=${localAuthority}`;
+const getRemoveShortlistTuitionPartnerFetchUrl = (seoUrl) =>
+  `?handler=RemoveShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}`;
 
 const isFetchResponseDataValid = (response) =>
   response &&
@@ -60,10 +60,7 @@ const getSeoUrlFromCheckboxId = (id) => id && id.replace("shortlist-cb-", "");
 
 const onChecked = async (checkbox) => {
   return await fetch(
-    getAddShortlistTuitionPartnerFetchUrl(
-      getSeoUrlFromCheckboxId(checkbox.id),
-      checkbox.dataset.localauthority
-    )
+    getAddShortlistTuitionPartnerFetchUrl(getSeoUrlFromCheckboxId(checkbox.id))
   )
     .then((response) => getFetchResponseData(response))
     .catch((error) => {
@@ -75,8 +72,7 @@ const onChecked = async (checkbox) => {
 const onUnChecked = async (checkbox) => {
   return await fetch(
     getRemoveShortlistTuitionPartnerFetchUrl(
-      getSeoUrlFromCheckboxId(checkbox.id),
-      checkbox.dataset.localauthority
+      getSeoUrlFromCheckboxId(checkbox.id)
     )
   )
     .then((response) => getFetchResponseData(response))

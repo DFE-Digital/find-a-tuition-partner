@@ -1,6 +1,4 @@
-﻿using UI.Models;
-
-namespace UI.Extensions
+﻿namespace UI.Extensions
 {
     public static class KeyStageSubjectExtensions
     {

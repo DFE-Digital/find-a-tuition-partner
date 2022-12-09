@@ -1,3 +1,3 @@
 namespace Application.Commands;
 
-public record RemoveAllTuitionPartnersCommand() : IRequest<int>;
+public record RemoveAllTuitionPartnersCommand() : IRequest;

@@ -1,6 +1,4 @@
-﻿using UI.Enums;
-
-namespace UI.Models
+﻿namespace UI.Models
 {
     public record SearchModel
     {

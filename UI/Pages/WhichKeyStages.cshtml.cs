@@ -1,10 +1,3 @@
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using UI.Enums;
-using UI.Models;
-
 namespace UI.Pages
 {
     public class WhichKeyStages : PageModel

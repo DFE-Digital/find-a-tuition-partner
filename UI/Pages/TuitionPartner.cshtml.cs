@@ -1,15 +1,6 @@
-using Application;
-using Application.Constants;
-using Application.Extensions;
 using Domain;
 using Domain.Constants;
 using Domain.Search;
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using UI.Models;
 
 namespace UI.Pages;
 

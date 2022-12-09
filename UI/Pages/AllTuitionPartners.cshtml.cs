@@ -1,9 +1,4 @@
-using Application;
 using Domain.Search;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using UI.Enums;
-using UI.Models;
 
 namespace UI.Pages;
 

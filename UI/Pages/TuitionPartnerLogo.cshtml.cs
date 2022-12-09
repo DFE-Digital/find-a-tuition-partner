@@ -1,9 +1,4 @@
-﻿using Application;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-
-namespace UI.Pages;
+﻿namespace UI.Pages;
 
 [ResponseCache(Duration = 60 * 60 * 24 * 7, Location = ResponseCacheLocation.Any)]
 public class TuitionPartnerLogo : PageModel

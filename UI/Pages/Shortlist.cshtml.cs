@@ -1,16 +1,6 @@
-using Application;
-using Application.Constants;
-using Application.Extensions;
-using Application.TuitionPartnerShortlistStorage.Interfaces;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
-using FluentValidation;
-using FluentValidation.Results;
-using MediatR;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
@@ -125,7 +115,7 @@ public class ShortlistModel : PageModel
         {
             var shortlistedTPs = _tuitionPartnerShortlistStorage.GetAllTuitionPartners();
 
-            var tuitionPartnersIds = shortlistedTPs.Select(x => x.SeoUrl).Distinct().ToArray();
+            var tuitionPartnersIds = shortlistedTPs.Select(x => x).Distinct().ToArray();
 
             return tuitionPartnersIds;
         }

@@ -1,3 +1,3 @@
 namespace Application.Commands;
 
-public record AddTuitionPartnersToShortlistCommand(IEnumerable<ShortlistedTuitionPartner> ShortlistedTuitionPartners) : IRequest<int>;
+public record AddTuitionPartnersToShortlistCommand(IEnumerable<string> ShortlistedTuitionPartnersSeoUrl) : IRequest;
