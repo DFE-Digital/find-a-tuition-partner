@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using UI.Pages;
+﻿using UI.Pages;
 
 namespace UI.Controllers.Api;
 

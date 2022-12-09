@@ -1,27 +1,12 @@
-using Application;
-using Application.Commands;
-using Application.Constants;
-using Application.Extensions;
-using Application.Queries;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
-using FluentValidation;
-using FluentValidation.Results;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using UI.Enums;
-using UI.Extensions;
-using UI.Models;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
 
 public class SearchResults : PageModel
 {
-    private const string DefaultLocalAuthorityValue = "Not Provided";
     private readonly IMediator _mediator;
     public SearchResults(IMediator mediator) => _mediator = mediator;
 
@@ -29,10 +14,9 @@ public class SearchResults : PageModel
     [BindProperty(SupportsGet = true)] public List<string> ShortlistedTuitionPartners { get; set; } = new();
     public List<SelectableTuitionPartnerModel> SelectableTuitionPartners { get; set; } = new();
     public int TotalShortlistedTuitionPartners { get; set; }
+    [BindProperty(SupportsGet = true)] public string? UpdateMyShortlist { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public string? LocalAuthorityNameHolder { get; set; } = DefaultLocalAuthorityValue;
-
+    // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
 
     public async Task OnGet(Query data)
     {
@@ -44,7 +28,8 @@ public class SearchResults : PageModel
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
 
-        await SetUpShortlistTuitionPartnerFunctionality();
+        // await _mediator.Send(new RemoveAllTuitionPartnersCommand());
+        await SetSelectableTuitionPartners();
     }
 
     public async Task OnGetClearAllFilters(string postcode)
@@ -52,127 +37,118 @@ public class SearchResults : PageModel
         Data = await _mediator.Send(new Query
         { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
 
-        await SetUpShortlistTuitionPartnerFunctionality();
+        await SetSelectableTuitionPartners();
     }
 
-    public async Task<JsonResult> OnGetAddShortlistedTuitionPartner(string tuitionPartnerSeoUrl,
-        string localAuthority)
+    public async Task<JsonResult> OnGetAddShortlistedTuitionPartner(string tuitionPartnerSeoUrl)
     {
         var response = new UpdateTuitionPartnerResult(false, TotalShortlistedTuitionPartners);
 
-        if (!IsParamValid(tuitionPartnerSeoUrl) || !IsParamValid(localAuthority))
-            return new JsonResult(response);
+        if (!IsParamValid(tuitionPartnerSeoUrl)) return new JsonResult(response);
 
-        localAuthority = localAuthority.Trim();
-        TotalShortlistedTuitionPartners = (await GetShortlistedTuitionPartnersByLocalAuthority(localAuthority)).Count();
-
-        tuitionPartnerSeoUrl = tuitionPartnerSeoUrl.Trim();
-        var commandParameter = new ShortlistedTuitionPartner(tuitionPartnerSeoUrl, localAuthority);
-        var result = await _mediator.Send(new AddTuitionPartnerToShortlistCommand(commandParameter));
-
-        //if unable to update storage that keeps track of shortlisted tuition partners
-        if (result <= 0) return new JsonResult(response);
-
+        TotalShortlistedTuitionPartners = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).Count();
+        await _mediator.Send(new AddTuitionPartnerToShortlistCommand(tuitionPartnerSeoUrl.Trim()));
         // if update is successful
         TotalShortlistedTuitionPartners++;
         return GetJsonResult(TotalShortlistedTuitionPartners);
     }
 
 
-    public async Task<JsonResult> OnGetRemoveShortlistedTuitionPartner(string tuitionPartnerSeoUrl,
-        string localAuthority)
+    public async Task<JsonResult> OnGetRemoveShortlistedTuitionPartner(string tuitionPartnerSeoUrl)
     {
         var response = new UpdateTuitionPartnerResult(false, TotalShortlistedTuitionPartners);
 
-        if (!IsParamValid(tuitionPartnerSeoUrl) && !IsParamValid(localAuthority)) return new JsonResult(response);
+        if (!IsParamValid(tuitionPartnerSeoUrl)) return new JsonResult(response);
 
-        localAuthority = localAuthority.Trim();
-        TotalShortlistedTuitionPartners = (await GetShortlistedTuitionPartnersByLocalAuthority(localAuthority)).Count();
-
+        TotalShortlistedTuitionPartners = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).Count();
         tuitionPartnerSeoUrl = tuitionPartnerSeoUrl.Trim();
-        var result = await _mediator.Send(new RemoveTuitionPartnerCommand(tuitionPartnerSeoUrl, localAuthority));
-
-        //if unable to update storage that keeps track of shortlisted tuition partners
-        if (result <= 0) return new JsonResult(response);
-
+        await _mediator.Send(new RemoveTuitionPartnerCommand(tuitionPartnerSeoUrl));
         // if update is successful
         TotalShortlistedTuitionPartners--;
 
         return GetJsonResult(TotalShortlistedTuitionPartners);
     }
 
-    private async Task SetUpShortlistTuitionPartnerFunctionality()
+    private async Task SetSelectableTuitionPartners()
     {
         if (Data.Results != null)
-        {
-            SelectableTuitionPartners = await GetCorrectlySetTuitionPartners(Data, ShortlistedTuitionPartners);
-            TotalShortlistedTuitionPartners = SelectableTuitionPartners.Count(stp => stp.IsSelected);
-        }
+            SelectableTuitionPartners = await GetSelectableTuitionPartners(Data, ShortlistedTuitionPartners);
     }
 
-    private async Task<List<SelectableTuitionPartnerModel>> GetCorrectlySetTuitionPartners(
+    private async Task<List<SelectableTuitionPartnerModel>> GetSelectableTuitionPartners(
         ResultsModel resultsModel, IEnumerable<string> selectedTuitionPartners)
     {
-        var correctlySetTuitionPartners = new List<SelectableTuitionPartnerModel>();
+        var selectableTuitionPartnerModels = new List<SelectableTuitionPartnerModel>();
         selectedTuitionPartners = selectedTuitionPartners.ToList();
 
-        if (selectedTuitionPartners.Any() &&
-            IsSameLocalAuthority(resultsModel.Results?.LocalAuthorityName ?? DefaultLocalAuthorityValue,
-                LocalAuthorityNameHolder ?? DefaultLocalAuthorityValue))
+        var selectableTps = resultsModel.Results?.Results.Select(tp => tp.SeoUrl).ToList();
+        var shortlistedTps = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).ToList();
+        var shortlistedTpsInSelectableTps = new List<string>();
+        if (shortlistedTps.Any() && selectableTps != null && selectableTps.Any())
         {
-            await AddAllSelectedTuitionPartnersToStorage(selectedTuitionPartners);
-            correctlySetTuitionPartners.AddRange(selectedTuitionPartners
+            shortlistedTpsInSelectableTps =
+                GetSelectableTpsPresentInShortlistedTps(selectableTps, shortlistedTps).ToList();
+
+            selectableTuitionPartnerModels.AddRange(shortlistedTpsInSelectableTps
                 .Select(tpSeoUrl => new SelectableTuitionPartnerModel(tpSeoUrl, true)));
         }
 
-        if (!selectedTuitionPartners.Any() && IsSameLocalAuthority(
-                resultsModel.Results?.LocalAuthorityName ?? DefaultLocalAuthorityValue,
-                LocalAuthorityNameHolder ?? DefaultLocalAuthorityValue))
+
+        if (!string.IsNullOrEmpty(UpdateMyShortlist))
         {
-            await _mediator.Send(new RemoveTuitionPartnersByLocalAuthorityCommand(
-                LocalAuthorityNameHolder ?? DefaultLocalAuthorityValue));
+            await UpdateTuitionPartners(selectedTuitionPartners, shortlistedTpsInSelectableTps, shortlistedTps);
+
+            selectableTuitionPartnerModels.Clear();
+            selectableTuitionPartnerModels.AddRange(selectedTuitionPartners
+                .Select(tpSeoUrl => new SelectableTuitionPartnerModel(tpSeoUrl, true)));
         }
 
-        if (!IsSameLocalAuthority(resultsModel.Results?.LocalAuthorityName ?? DefaultLocalAuthorityValue,
-                LocalAuthorityNameHolder ?? DefaultLocalAuthorityValue))
-        {
-            var result = (await GetShortlistedTuitionPartnersByLocalAuthority
-                (resultsModel.Results?.LocalAuthorityName ?? DefaultLocalAuthorityValue));
-            correctlySetTuitionPartners.AddRange(result
-                .Where(tp => tp.LocalAuthorityName == resultsModel.Results?.LocalAuthorityName)
-                .Select(tp => new SelectableTuitionPartnerModel(tp.SeoUrl, true)));
-        }
+        TotalShortlistedTuitionPartners = shortlistedTps.Count;
 
-        var tuitionPartners = resultsModel.Results?.Results.Select(tuitionPartner =>
-            new SelectableTuitionPartnerModel(tuitionPartner.SeoUrl)).ToList();
-
-        if (tuitionPartners == null) return correctlySetTuitionPartners;
-        //Set up returned value to have the selected option set correctly
-        tuitionPartners = tuitionPartners
-            .Except(correctlySetTuitionPartners, new SelectableTuitionPartnerModelComparer()).ToList();
-        //Add to list returned which is what the user eventually sees.
-        correctlySetTuitionPartners.AddRange(tuitionPartners);
-
-        return correctlySetTuitionPartners;
+        return GetSelectableTuitionPartnerModels(selectableTps, selectableTuitionPartnerModels);
     }
 
-    private async Task<IEnumerable<ShortlistedTuitionPartner>> GetShortlistedTuitionPartnersByLocalAuthority(
-        string localAuthority)
-        => (await _mediator.Send(new GetShortlistedTuitionPartnersByLocalAuthorityQuery(
-            localAuthority)));
-
-    private bool IsSameLocalAuthority(string currentLocalAuthority, string previousLocalAuthority) =>
-        currentLocalAuthority == previousLocalAuthority;
+    private IEnumerable<string> GetSelectableTpsPresentInShortlistedTps(List<string> selectableTps,
+        List<string> shortlistedTps) =>
+        selectableTps.Where(tp => shortlistedTps.Any(stp => stp == tp)).ToList();
 
 
-    private async Task AddAllSelectedTuitionPartnersToStorage(IEnumerable<string> shortlistedTuitionPartners)
+    private async Task UpdateTuitionPartners(
+        IEnumerable<string> selectedTuitionPartners, List<string> shortlistedTpsInSelectableTps,
+        List<string> shortlistedTps)
     {
-        var commandParameters = ShortlistedTuitionPartners.Select(selectedTuitionPartner =>
-                new ShortlistedTuitionPartner(selectedTuitionPartner,
-                    Data.Results?.LocalAuthorityName ?? DefaultLocalAuthorityValue))
-            .ToList();
+        if (shortlistedTpsInSelectableTps.Any())
+        {
+            foreach (var tp in shortlistedTpsInSelectableTps)
+            {
+                if (shortlistedTps.Any(stp => stp == tp))
+                    shortlistedTps.RemoveAll(stp => stp == tp);
+            }
+        }
 
-        await _mediator.Send(new AddTuitionPartnersToShortlistCommand(commandParameters));
+        shortlistedTps.AddRange(selectedTuitionPartners);
+
+        if (shortlistedTps.Any())
+            await _mediator.Send(new AddTuitionPartnersToShortlistCommand(shortlistedTps));
+
+        if (!shortlistedTps.Any())
+            await _mediator.Send(new RemoveAllTuitionPartnersCommand());
+    }
+
+    private List<SelectableTuitionPartnerModel> GetSelectableTuitionPartnerModels(
+        List<string>? selectableTps, List<SelectableTuitionPartnerModel> selectableTuitionPartnerModels)
+    {
+        var tuitionPartners = selectableTps?.Select(seoUrl =>
+            new SelectableTuitionPartnerModel(seoUrl)).ToList();
+
+        if (tuitionPartners == null) return selectableTuitionPartnerModels;
+        //Set up returned value to have the selected option set correctly
+        tuitionPartners = tuitionPartners
+            .Except(selectableTuitionPartnerModels, new SelectableTuitionPartnerModelComparer()).ToList();
+        //Add to list returned which is what the user eventually sees.
+        selectableTuitionPartnerModels.AddRange(tuitionPartners);
+
+        return selectableTuitionPartnerModels;
     }
 
     private bool IsParamValid(string value) => !(string.IsNullOrEmpty(value) || value.ToLower().Equals("undefined"));

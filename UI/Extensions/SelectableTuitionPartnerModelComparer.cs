@@ -1,5 +1,3 @@
-using UI.Models;
-
 namespace UI.Extensions;
 
 public class SelectableTuitionPartnerModelComparer : IEqualityComparer<SelectableTuitionPartnerModel>

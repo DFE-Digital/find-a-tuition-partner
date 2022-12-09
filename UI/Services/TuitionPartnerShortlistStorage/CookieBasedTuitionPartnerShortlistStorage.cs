@@ -6,150 +6,148 @@ namespace UI.Services.TuitionPartnerShortlistStorage;
 /// </summary>
 public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlistStorage
 {
-    private const string CookieKeyFormat = "tp-cookie-seoUrl-";
-    private const string ContainsBracket = "-containsBrackets";
+    // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
+    private const string CookieName = ".FindATuitionPartner.search-page.shortlistedTps";
     private readonly IHttpContextAccessor _httpContextAccessor;
-
     private readonly ILogger<CookieBasedTuitionPartnerShortlistStorage> _logger;
-    // private int _totalShortlistedTuitionPartners;
 
     public CookieBasedTuitionPartnerShortlistStorage(
         IHttpContextAccessor httpContextAccessor, ILogger<CookieBasedTuitionPartnerShortlistStorage> logger)
     {
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
-        // _totalShortlistedTuitionPartners = GetAllTuitionPartners().Count();
     }
 
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentNullException"></exception>
     /// <inheritdoc/>
-    public int AddTuitionPartner(ShortlistedTuitionPartner shortlistedTuitionPartner)
+    public void AddTuitionPartner(string shortlistedTuitionPartnerSeoUrl)
     {
-        if (!IsTuitionPartnerValid(shortlistedTuitionPartner)) return 0;
-        if (_httpContextAccessor.HttpContext == null) return 0;
-        var cookieKey = ConstructCookieKey(shortlistedTuitionPartner.SeoUrl,
-            shortlistedTuitionPartner.LocalAuthorityName.Trim());
-        if (IsTuitionPartnerPresent(cookieKey)) RemoveCookie(cookieKey);
+        if (!IsShortlistedTuitionPartnerSeoUrlValid(shortlistedTuitionPartnerSeoUrl))
+            throw new ArgumentException($"{nameof(shortlistedTuitionPartnerSeoUrl)} is invalid");
+        if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
 
-        var stringifyTpDetail = StringifyTuitionPartnerDetail(shortlistedTuitionPartner);
-        AddTuitionPartnerToCookie(cookieKey, stringifyTpDetail);
-
-        return 1;
+        var encodedTuitionPartnerSeoUrl = EncodeShortlistedTuitionPartnerSeoUrl(shortlistedTuitionPartnerSeoUrl);
+        AddTuitionPartnerToCookie(CookieName, encodedTuitionPartnerSeoUrl);
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<ShortlistedTuitionPartner> GetTuitionPartnersByLocalAuthorityName(string localAuthorityName) =>
-        GetAllTuitionPartners().Where(stp => stp.LocalAuthorityName == localAuthorityName.Trim());
+    /// <summary>
+    /// Adds a Shortlisted Tuition Partner to an implemented form of storage.
+    /// Note: The value in the cookie is replaced by the new values passed.
+    /// </summary>
+    /// <param name="shortlistedTuitionPartnersSeoUrls"></param>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="ArgumentNullException"></exception>
+    public void AddTuitionPartners(IEnumerable<string> shortlistedTuitionPartnersSeoUrls)
+    {
+        shortlistedTuitionPartnersSeoUrls = shortlistedTuitionPartnersSeoUrls.ToList();
+        var isFaultyData =
+            shortlistedTuitionPartnersSeoUrls.Any(seoUrl => !IsShortlistedTuitionPartnerSeoUrlValid(seoUrl));
+
+        if (isFaultyData)
+            throw new ArgumentException(
+                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrls)}is invalid");
+        if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
+
+        var encodedShortlistedTuitionPartnersSeoUrls =
+            GetEncodedTuitionPartnersSeoUrls(shortlistedTuitionPartnersSeoUrls);
+
+        AddTuitionPartnersToCookie(CookieName, encodedShortlistedTuitionPartnersSeoUrls);
+    }
 
     ///<inheritdoc/>
-    public IEnumerable<ShortlistedTuitionPartner> GetAllTuitionPartners()
+    public IEnumerable<string> GetAllTuitionPartners()
     {
-        var tuitionPartners = new List<ShortlistedTuitionPartner>();
-        var cookies = GetAllTuitionPartnerCookies();
-        if (cookies == null) return tuitionPartners;
+        var cookie = _httpContextAccessor.HttpContext?.Request.Cookies[$"{CookieName}"];
 
-        foreach (var cookie in cookies)
-        {
-            var tuitionPartner = GetTuitionPartnerFromCookie(cookie.Value);
-            if (tuitionPartner != null) tuitionPartners.Add(tuitionPartner);
-        }
+        if (cookie == null) return new List<string>();
 
-        return tuitionPartners;
+        var tuitionPartnersSeoUrlFromCookie = GetTuitionPartnersSeoUrlFromCookie(cookie);
+
+        return tuitionPartnersSeoUrlFromCookie;
     }
 
     ///<inheritdoc />
-    public int RemoveTuitionPartner(string seoUrl, string localAuthorityName)
+    public void RemoveTuitionPartner(string shortlistedTuitionPartnerSeoUrl)
     {
-        RemoveCookie(ConstructCookieKey(seoUrl, localAuthorityName));
+        var valuesInCookie = GetAllTuitionPartners().ToList();
+        if (!valuesInCookie.Contains(shortlistedTuitionPartnerSeoUrl)) return;
 
-        return 1;
+        valuesInCookie.RemoveAll(v => v == shortlistedTuitionPartnerSeoUrl);
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(CookieName);
+
+        var encodedTuitionPartnersSeoUrls = GetEncodedTuitionPartnersSeoUrls(valuesInCookie).ToList();
+        AddTuitionPartnersToCookie(CookieName, encodedTuitionPartnersSeoUrls);
     }
 
     ///<inheritdoc/>>
-    public int RemoveAllTuitionPartners()
+    public void RemoveAllTuitionPartners() =>
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(CookieName);
+
+    private bool IsShortlistedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
     {
-        var cookies = GetAllTuitionPartnerCookies();
-        if (cookies == null) return 1;
+        if (!string.IsNullOrEmpty(tuitionPartnerSeoUrl)) return true;
 
-        foreach (var cookie in cookies)
-            _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookie.Key);
-
-
-        return 1;
-    }
-
-    ///<inheritdoc/>>
-    public int RemoveAllTuitionPartnersByLocalAuthority(string localAuthorityName)
-    {
-        var totalTuitionPartnersRemoved = 0;
-        var shortlistedTuitionPartners = GetTuitionPartnersByLocalAuthorityName(localAuthorityName).ToList();
-
-        if (!shortlistedTuitionPartners.Any()) return totalTuitionPartnersRemoved;
-
-        foreach (var stp in shortlistedTuitionPartners)
-        {
-            RemoveTuitionPartner(stp.SeoUrl, stp.LocalAuthorityName);
-            totalTuitionPartnersRemoved++;
-        }
-
-        return totalTuitionPartnersRemoved;
-    }
-
-    private bool IsTuitionPartnerValid(ShortlistedTuitionPartner shortlistedTuitionPartner)
-    {
-        var errorCount = 0;
-        if (string.IsNullOrEmpty(shortlistedTuitionPartner.SeoUrl))
-        {
-            errorCount += 1;
-            _logger.LogError(
-                $"An invalid {nameof(ShortlistedTuitionPartner)}.{nameof(shortlistedTuitionPartner.SeoUrl)} was provided");
-        }
-
-        if (!string.IsNullOrEmpty(shortlistedTuitionPartner.LocalAuthorityName)) return errorCount == 0;
-
-        _logger.LogError(
-            $"An invalid {nameof(ShortlistedTuitionPartner)}.{nameof(shortlistedTuitionPartner.LocalAuthorityName)} was provided");
+        _logger.LogError($"An invalid {nameof(tuitionPartnerSeoUrl)} provided");
 
         return false;
     }
 
-    private string ConstructCookieKey(string seoUrl, string localAuthorityName)
-    {
-        char[] brackets = { '(', '[', '{', '}', ']', ')' };
-        if (seoUrl.IndexOfAny(brackets) >= 0)
-            seoUrl = $"{ReplaceBracket(seoUrl)}{ContainsBracket}";
+    private string EncodeShortlistedTuitionPartnerSeoUrl(string shortlistedTuitionPartnerSeoUrl) =>
+        Uri.EscapeDataString(shortlistedTuitionPartnerSeoUrl);
 
-        return $"{CookieKeyFormat}{seoUrl}-{localAuthorityName.Replace(" ", "_")}";
+    private void AddTuitionPartnerToCookie(string cookieName, string encodedTuitionPartnerSeoUrl)
+    {
+        if (!IsCookiePresent(cookieName))
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies
+                .Append(cookieName, encodedTuitionPartnerSeoUrl, GetCookieOptions());
+        }
+        else
+        {
+            var cookieValue = _httpContextAccessor.HttpContext?.Request.Cookies[$"{cookieName}"];
+            cookieValue += string.IsNullOrWhiteSpace(cookieValue)
+                ? $"{encodedTuitionPartnerSeoUrl}"
+                : $"&{encodedTuitionPartnerSeoUrl}";
+            _httpContextAccessor.HttpContext?.Response.Cookies.Append(cookieName, cookieValue, GetCookieOptions());
+        }
     }
 
-    private string ReplaceBracket(string value) => value.Replace("(", "400028")
-        .Replace(")", "410029").Replace("[", "91005B")
-        .Replace("]", "93005D").Replace("{", "123007B")
-        .Replace("}", "125007D");
-
-    private bool IsTuitionPartnerPresent(string cookieName) =>
+    private bool IsCookiePresent(string cookieName) =>
         _httpContextAccessor.HttpContext != null &&
         _httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(cookieName);
 
-    private void RemoveCookie(string cookieKey) =>
-        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookieKey);
+    private IEnumerable<string> GetEncodedTuitionPartnersSeoUrls(IEnumerable<string> shortlistedTuitionPartnersSeoUrls)
+        => shortlistedTuitionPartnersSeoUrls.Select(EncodeShortlistedTuitionPartnerSeoUrl);
 
-    private string StringifyTuitionPartnerDetail(ShortlistedTuitionPartner shortlistedTuitionPartner) =>
-        $"{shortlistedTuitionPartner.SeoUrl}&{shortlistedTuitionPartner.LocalAuthorityName.Trim()}";
+    private ArgumentNullException GetHttpContextException() =>
+        new($"{nameof(_httpContextAccessor.HttpContext)}");
 
-    private void AddTuitionPartnerToCookie(string cookieKey, string stringifyTpDetail)
+    private void AddTuitionPartnersToCookie(string cookieName, IEnumerable<string> encodedTuitionPartnersSeoUrls)
     {
-        var cookieOptions = new CookieOptions();
-        cookieOptions.Expires = DateTime.Now.AddDays(1);
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append(cookieKey, stringifyTpDetail, cookieOptions);
+        encodedTuitionPartnersSeoUrls = encodedTuitionPartnersSeoUrls.ToList();
+        var cookieValueToAdd = new StringBuilder(encodedTuitionPartnersSeoUrls.Count());
+        var counter = 0;
+        foreach (var seoUrl in encodedTuitionPartnersSeoUrls)
+        {
+            cookieValueToAdd.Append(counter < encodedTuitionPartnersSeoUrls.Count() - 1
+                ? $"{seoUrl}&"
+                : $"{seoUrl}");
+        }
+
+        if (string.IsNullOrWhiteSpace(cookieValueToAdd.ToString()))
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete(cookieName);
+
+        _httpContextAccessor.HttpContext?.Response.Cookies
+            .Append(cookieName, $"{cookieValueToAdd}", GetCookieOptions());
     }
 
-    private IEnumerable<KeyValuePair<string, string>>? GetAllTuitionPartnerCookies() =>
-        _httpContextAccessor.HttpContext?.Request.Cookies
-            .Where(c => c.Key.Contains(CookieKeyFormat));
+    private static CookieOptions GetCookieOptions() => new() { Expires = DateTime.Now.AddDays(1) };
 
-    private ShortlistedTuitionPartner? GetTuitionPartnerFromCookie(string cookie)
+    private IEnumerable<string> GetTuitionPartnersSeoUrlFromCookie(string cookie)
     {
-        var tuitionPartnerDetails = cookie.Split("&");
-        return new ShortlistedTuitionPartner(tuitionPartnerDetails[0], tuitionPartnerDetails[1]);
+        var split = cookie.Split("&", StringSplitOptions.RemoveEmptyEntries).ToList();
+
+        return split.Select(Uri.UnescapeDataString).ToList();
     }
 }

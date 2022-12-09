@@ -114,12 +114,11 @@
                 }
                 <span class="govuk-!-font-size-24">
                     <strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span>
-                    <input type="hidden" name="LocalAuthorityNameHolder" value="@Model.Data.Results.LocalAuthorityName"/>
                 </span><br/>
                 Your results are in a random order.
                 <div class="govuk-grid-row govuk-!-margin-top-2">
                     <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
-                        <govuk-button type="submit" class="govuk-!-margin-bottom-2">
+                        <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyShortlist" value="Update my shortlist">
                             Update my shortlist
                         </govuk-button>
                     </div>
@@ -192,8 +191,7 @@
                                     </govuk-summary-list-row-key>
                                     <govuk-summary-list-row-value data-testid="results-description">
                                         <input class="shortlist-tuition-partner-checkbox" id="shortlist-cb-@shortlist.SeoUrl" name="ShortlistedTuitionPartners"
-                                               type="checkbox" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected"
-                                               data-localauthority="@Model.Data.Results.LocalAuthorityName"/>
+                                               type="checkbox" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected"/>
                                     </govuk-summary-list-row-value>
                                 </govuk-summary-list-row>
                             </govuk-summary-list>
@@ -202,7 +200,10 @@
                 }
                 <div class="govuk-grid-row update-my-shortlist-button--top-margin-ne-2">
                     <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
-                        <govuk-button type="submit" class="govuk-!-margin-bottom-2">Update my shortlist</govuk-button>
+                        <govuk-button type="submit" name="UpdateMyShortlist" value="Update my shortlist"
+                                      class="govuk-!-margin-bottom-2">
+                            Update my shortlist
+                        </govuk-button>
                     </div>
                 </div>
             }

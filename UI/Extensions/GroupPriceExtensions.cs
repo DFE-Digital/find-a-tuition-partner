@@ -1,5 +1,4 @@
-﻿using Application.Extensions;
-using Domain.Constants;
+﻿using Domain.Constants;
 using static UI.Pages.TuitionPartner;
 
 namespace UI.Extensions

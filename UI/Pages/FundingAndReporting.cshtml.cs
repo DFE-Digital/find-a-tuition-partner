@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
-namespace UI.Pages
+﻿namespace UI.Pages
 {
     public class FundingAndReporting : PageModel
     {
