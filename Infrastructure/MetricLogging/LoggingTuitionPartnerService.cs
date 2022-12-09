@@ -28,7 +28,7 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
 
         var logLevel = (resultCount == 0 && string.IsNullOrWhiteSpace(filter.Name)) ? LogLevel.Warning : LogLevel.Information;
 
-        _logger.Log(logLevel, "Found {Count} TPs in {Elapsed}ms",
+        _logger.Log(logLevel, "GetTuitionPartnersFilteredAsync found {Count} TPs in {Elapsed}ms",
                    resultCount, stopwatch.ElapsedMilliseconds);
 
         return result;
@@ -46,12 +46,13 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         stopwatch.Stop();
 
         var names = result.Select(x => x.Name).ToList();
-        var logLevel = ((request.TuitionPartnerIds == null && !result.Any()) || (request.TuitionPartnerIds?.Length != result.Count())) ?
+        var logLevel = ((request.TuitionPartnerIds == null && !result.Any()) ||
+            (request.TuitionPartnerIds != null && request.TuitionPartnerIds?.Length != result.Count())) ?
             LogLevel.Error : LogLevel.Information;
 
         using (_logger.BeginScope("{@TuitionPartners}", names))
         {
-            _logger.Log(logLevel, "Found {Count} TP results in {Elapsed}ms",
+            _logger.Log(logLevel, "GetTuitionPartnersAsync found {Count} TP results in {Elapsed}ms",
                     result.Count(), stopwatch.ElapsedMilliseconds);
         }
 
@@ -67,7 +68,7 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         var result = _inner.OrderTuitionPartners(results, ordering);
         stopwatch.Stop();
 
-        _logger.LogInformation("Ordered {Count} TP results by {OrderBy} in {Elapsed}ms",
+        _logger.LogInformation("OrderTuitionPartners ordered {Count} TP results by {OrderBy} in {Elapsed}ms",
                     result.Count(), ordering.OrderBy.ToString(), stopwatch.ElapsedMilliseconds);
 
         return result;

@@ -17,11 +17,6 @@ Scenario: all quality-assured tuition partners page url is '/all-tuition-partner
     When they click the 'All quality-assured tuition partners' link
     Then they will see the 'All quality-assured tuition partners' page
 
-  Scenario: home link returns to service start page
-    Given a user has arrived on the all quality-assured tuition partners page
-    When they click 'Home'
-    Then they will be taken to the 'Find a tuition partner' journey start page
-
   Scenario: full list of quality-assured tuition partners is in alphabetical order by name
     Given a user has arrived on the all quality-assured tuition partners page
     Then the full list of quality-assured tuition partners is in alphabetical order by name
