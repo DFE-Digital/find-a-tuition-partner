@@ -23,14 +23,14 @@
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.ShortlistOrderBy != Domain.Enums.TuitionPartnerOrderBy.Name ? "none" : Model.Data.ShortlistOrderByDirection == Domain.Enums.OrderByDirection.Ascending ? "ascending" : "descending")">
-                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@((Model.Data with { ShortlistOrderBy = Domain.Enums.TuitionPartnerOrderBy.Name, ShortlistOrderByDirection = (Model.Data.ShortlistOrderBy == Domain.Enums.TuitionPartnerOrderBy.Name && Model.Data.ShortlistOrderByDirection == Domain.Enums.OrderByDirection.Ascending) ? Domain.Enums.OrderByDirection.Descending : Domain.Enums.OrderByDirection.Ascending}).ToRouteData())">Name</a>
+                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Name))">
+                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
                         </th>
                         <th scope="col" class="govuk-table__header">Key stages covered</th>
                         <th scope="col" class="govuk-table__header">Subjects</th>
                         <th scope="col" class="govuk-table__header">Type of tuition</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.ShortlistOrderBy != Domain.Enums.TuitionPartnerOrderBy.MinPrice ? "none" : Model.Data.ShortlistOrderByDirection == Domain.Enums.OrderByDirection.Ascending ? "ascending" : "descending")">
-                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@((Model.Data with { ShortlistOrderBy = Domain.Enums.TuitionPartnerOrderBy.MinPrice, ShortlistOrderByDirection = (Model.Data.ShortlistOrderBy == Domain.Enums.TuitionPartnerOrderBy.MinPrice && Model.Data.ShortlistOrderByDirection == Domain.Enums.OrderByDirection.Ascending) ? Domain.Enums.OrderByDirection.Descending : Domain.Enums.OrderByDirection.Ascending}).ToRouteData())">Price</a>
+                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
+                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price</a>
                         </th>
                     </tr>
                     </thead>

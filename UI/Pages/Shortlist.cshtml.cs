@@ -38,6 +38,17 @@ public class ShortlistModel : PageModel
         public IEnumerable<TuitionPartnerResult>? InvalidTPs { get; set; }
 
         public FluentValidationResult Validation { get; internal set; } = new();
+
+        public string GetAriaSort(TuitionPartnerOrderBy matchedOrderBy)
+        {
+            return ShortlistOrderBy != matchedOrderBy ? "none" : ShortlistOrderByDirection == OrderByDirection.Ascending ? "ascending" : "descending";
+        }
+
+        public Dictionary<string, string> GetSortRouteData(TuitionPartnerOrderBy matchedOrderBy)
+        {
+            return (this with { ShortlistOrderBy = matchedOrderBy, ShortlistOrderByDirection = (ShortlistOrderBy == matchedOrderBy && ShortlistOrderByDirection == OrderByDirection.Ascending) ? OrderByDirection.Descending : OrderByDirection.Ascending }).ToRouteData();
+        }
+
     }
 
     private class Validator : AbstractValidator<Query>
