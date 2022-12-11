@@ -1,47 +1,52 @@
-﻿[aria-sort] .table-column-sort,
-[aria-sort] .table-column-sort:hover {
-  background-color: transparent;
-  border-width: 0;
-  -webkit-box-shadow: 0 0 0 0;
-  -moz-box-shadow: 0 0 0 0;
-  box-shadow: 0 0 0 0;
-  color: #005ea5;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  padding: 0 10px 0 0;
-  position: relative;
-  text-align: inherit;
-  font-size: 1em;
-  margin: 0;
-}
+﻿[aria-sort] {
+  :first-child .table-column-sort {
+    right: auto;
+  }
 
-[aria-sort] .table-column-sort:focus {
-  background-color: $govuk-focus-colour;
-  color: $govuk-focus-text-colour;
-  box-shadow: 0 -2px $govuk-focus-colour, 0 4px $govuk-focus-text-colour;
-  outline: none;
-}
+  .table-column-sort,
+  .table-column-sort:hover {
+    background-color: transparent;
+    border-width: 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    box-shadow: 0 0 0 0;
+    color: #005ea5;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 10px 0 0;
+    position: relative;
+    text-align: inherit;
+    font-size: 1em;
+    margin: 0;
+    display: inline-block;
+  }
 
-[aria-sort]:first-child .table-column-sort {
-  right: auto;
-}
+  .table-column-sort {
+    &:focus {
+      background-color: $govuk-focus-colour;
+      color: $govuk-focus-text-colour;
+      box-shadow: 0 -2px $govuk-focus-colour, 0 4px $govuk-focus-text-colour;
+      outline: none;
+    }
 
-[aria-sort] .table-column-sort:before {
-  content: " \25bc";
-  position: absolute;
-  right: -1px;
-  top: 9px;
-  font-size: 0.5em;
-}
+    &:before {
+      content: " \25bc";
+      position: absolute;
+      right: -1px;
+      top: 9px;
+      font-size: 0.5em;
+    }
 
-[aria-sort] .table-column-sort:after {
-  content: " \25b2";
-  position: absolute;
-  right: -1px;
-  top: 1px;
-  font-size: 0.5em;
+    &:after {
+      content: " \25b2";
+      position: absolute;
+      right: -1px;
+      top: 1px;
+      font-size: 0.5em;
+    }
+  }
 }
 
 [aria-sort="ascending"] .table-column-sort:before,
