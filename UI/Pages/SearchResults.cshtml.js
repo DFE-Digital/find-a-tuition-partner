@@ -101,19 +101,6 @@ const onCheckboxClick = async (event) => {
   }
 };
 
-//Prevents user from going to the previous page using the browser's back button
-const preventBrowserBackButtonFunctionality = () => {
-  history.pushState(null, null, document.URL);
-  window.addEventListener("popstate", function () {
-    history.pushState(null, null, document.URL);
-  });
-};
-
-const reloadOnBackNavigation = () => {
-  const perfEntries = performance.getEntriesByType("navigation");
-  if (perfEntries && perfEntries[0].type === "back_forward") location.reload();
-};
-
 const addClickEventListenerToTuitionPartnerCheckboxes = () => {
   const selectableTuitionPartners = document.getElementsByName(
     "ShortlistedTuitionPartners"
@@ -125,6 +112,4 @@ const addClickEventListenerToTuitionPartnerCheckboxes = () => {
   }
 };
 
-// preventBrowserBackButtonFunctionality();
-reloadOnBackNavigation();
 addClickEventListenerToTuitionPartnerCheckboxes();
