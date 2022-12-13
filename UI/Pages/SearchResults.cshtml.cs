@@ -4,7 +4,7 @@ using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
-
+[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
 public class SearchResults : PageModel
 {
     private readonly IMediator _mediator;
@@ -151,7 +151,7 @@ public class SearchResults : PageModel
         return selectableTuitionPartnerModels;
     }
 
-    private bool IsParamValid(string value) => !(string.IsNullOrEmpty(value) || value.ToLower().Equals("undefined"));
+    private bool IsParamValid(string value) => !(string.IsNullOrWhiteSpace(value) || value.ToLower().Equals("undefined"));
 
     private JsonResult GetJsonResult(int totalShortlistedTuitionPartners) =>
         new(new UpdateTuitionPartnerResult(true, totalShortlistedTuitionPartners));
