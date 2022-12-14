@@ -83,3 +83,35 @@ Feature: Tuition Partner shortlist
         And the heading caption is 'Tuition partner for Stockport'
         And they click 'Back'
         And they will be taken to the 'Shortlist' page
+
+    Scenario: User sorts shortlist table by Name
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        And they add 'Reeson Education' to their shortlist on the results page
+        And they add 'Action Tutoring' to their shortlist on the results page
+        And they add '3D Recruit Ltd' to their shortlist on the results page
+        When they choose to view their shortlist from the results page
+        Then there are 3 entries on the shortlist page
+        Then they choose to sort the shortlist by name
+        And '3D Recruit Ltd' is entry 1 on the shortlist page
+        And 'Action Tutoring' is entry 2 on the shortlist page
+        And 'Reeson Education' is entry 3 on the shortlist page
+        Then they choose to sort the shortlist by name
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And 'Action Tutoring' is entry 2 on the shortlist page
+        And '3D Recruit Ltd' is entry 3 on the shortlist page
+
+    Scenario: User sorts shortlist table by Price
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        And they add 'Reeson Education' to their shortlist on the results page
+        And they add 'Action Tutoring' to their shortlist on the results page
+        And they add '3D Recruit Ltd' to their shortlist on the results page
+        When they choose to view their shortlist from the results page
+        Then there are 3 entries on the shortlist page
+        Then they choose to sort the shortlist by price
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And '3D Recruit Ltd' is entry 2 on the shortlist page
+        And 'Action Tutoring' is entry 3 on the shortlist page
+        Then they choose to sort the shortlist by price
+        And 'Action Tutoring' is entry 1 on the shortlist page
+        And '3D Recruit Ltd' is entry 2 on the shortlist page
+        And 'Reeson Education' is entry 3 on the shortlist page

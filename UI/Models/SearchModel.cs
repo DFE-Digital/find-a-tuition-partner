@@ -1,4 +1,7 @@
-﻿namespace UI.Models
+﻿using Domain.Enums;
+using UI.Enums;
+
+namespace UI.Models
 {
     public record SearchModel
     {
@@ -15,6 +18,8 @@
             Subjects = model.Subjects;
             TuitionType = model.TuitionType;
             KeyStages = model.KeyStages;
+            ShortlistOrderBy = model.ShortlistOrderBy;
+            ShortlistOrderByDirection = model.ShortlistOrderByDirection;
         }
 
         public ReferrerList? From { get; set; }
@@ -28,5 +33,9 @@
         public TuitionType? TuitionType { get; set; }
 
         public KeyStage[]? KeyStages { get; set; }
+
+        public TuitionPartnerOrderBy? ShortlistOrderBy { get; set; }
+
+        public OrderByDirection? ShortlistOrderByDirection { get; set; }
     }
 }
