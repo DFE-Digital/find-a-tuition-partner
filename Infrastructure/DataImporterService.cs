@@ -185,7 +185,7 @@ public class DataImporterService : IHostedService
             if (!results.IsValid)
             {
                 var errorMsg = $"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
-                _logger.LogError(errorMsg);
+                _logger.LogError(message: errorMsg);
                 //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
                 throw new ValidationException(errorMsg);
             }

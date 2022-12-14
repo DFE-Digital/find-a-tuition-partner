@@ -1,36 +1,27 @@
-﻿namespace Domain.Search;
+﻿using System.ComponentModel;
+using Domain.Enums;
+
+namespace Domain.Search;
 
 public class TuitionPartnerOrdering
 {
-    private readonly TuitionPartnerSearchRequest _request;
+    [DefaultValue(TuitionPartnerOrderBy.Name)]
+    public TuitionPartnerOrderBy OrderBy { get; set; } = TuitionPartnerOrderBy.Name;
 
-    public TuitionPartnerOrdering(TuitionPartnerSearchRequest searchRequest)
-        => _request = searchRequest;
+    [DefaultValue(OrderByDirection.Ascending)]
+    public OrderByDirection Direction { get; set; } = OrderByDirection.Ascending;
 
-    public IEnumerable<TuitionPartnerSearchResult> Order(List<TuitionPartnerSearchResult> results)
-    {
-        switch (_request.OrderBy)
-        {
-            case TuitionPartnerOrderBy.Name:
-                return _request.Direction == OrderByDirection.Descending
-                    ? results.OrderByDescending(e => e.Name)
-                    : results.OrderBy(e => e.Name);
+    public string[]? SeoUrlOrderBy { get; set; }
 
-            case TuitionPartnerOrderBy.Random:
-                var random = new Random(RandomSeed());
-                return results.OrderByDescending(e => e.SeoUrl).OrderBy(x => random.Next());
+    public int? RandomSeed { get; set; }
 
-            default:
-                return results.OrderByDescending(e => e.Id);
-        }
-    }
-
-    public int RandomSeed()
+    public static int RandomSeedGeneration(string? localAuthorityDistrictCode = null, string? postcode = null, IEnumerable<int>? subjectIds = null, int? tuitionFilterId = null)
     {
         return
-            (_request.LocalAuthorityDistrictCode?.Sum(x => x) ?? 0)
-            + (_request.Postcode?.Sum(x => x) ?? 0)
-            + (_request.SubjectIds?.Sum() ?? 0)
-            + (_request.TuitionTypeId ?? 0);
+            (localAuthorityDistrictCode?.Sum(x => x) ?? 0)
+            + (postcode?.Sum(x => x) ?? 0)
+            + (subjectIds?.Sum() ?? 0)
+            + (tuitionFilterId ?? 0);
     }
+
 }

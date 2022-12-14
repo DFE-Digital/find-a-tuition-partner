@@ -1,16 +1,13 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
-using Application.Extensions;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using UI.Filters;
 using UI.Routing;
+using UI.Services.TuitionPartnerShortlistStorage;
 using AssemblyReference = UI.AssemblyReference;
 
 // Data import is a stand-alone process that should terminate once completed
@@ -18,6 +15,8 @@ if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITuitionPartnerShortlistStorage, CookieBasedTuitionPartnerShortlistStorage>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>
@@ -39,6 +38,7 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options =>
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();
+builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();
@@ -86,7 +86,10 @@ builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly).A
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.CustomSchemaIds(x => x.FullName);
+});
 
 builder.Host.AddLogging();
 

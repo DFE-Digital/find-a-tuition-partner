@@ -72,6 +72,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<ITuitionPartnerService, TuitionPartnerService>();
+
+        return services;
+    }
+
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();

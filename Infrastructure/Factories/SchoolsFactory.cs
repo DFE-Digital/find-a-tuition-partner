@@ -43,9 +43,9 @@ namespace Infrastructure.Factories
         {
             List<string> addresses = new();
 
-            if (!string.IsNullOrEmpty(schoolDatum.street))
+            if (!string.IsNullOrEmpty(schoolDatum.Street))
             {
-                addresses.Add(schoolDatum.street);
+                addresses.Add(schoolDatum.Street);
             }
             if (!string.IsNullOrEmpty(schoolDatum.Locality))
             {

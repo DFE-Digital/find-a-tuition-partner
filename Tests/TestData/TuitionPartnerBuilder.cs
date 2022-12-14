@@ -32,8 +32,8 @@ public record TuitionPartnerBuilder
         Address = builder.PostalAddress,
         HasSenProvision = builder.SupportsSen,
         LocalAuthorityDistrictCoverage = builder.DistrictCoverage,
-        SubjectCoverage = builder.Subjects.SubjectCoverage,
-        Prices = builder.Subjects.Prices,
+        SubjectCoverage = builder.Subjects.SubjectCoverage.Select(x => new { x.SubjectId, x.TuitionTypeId }).Distinct().Select(x => new SubjectCoverage() { SubjectId = x.SubjectId, TuitionTypeId = x.TuitionTypeId }).ToList(),
+        Prices = builder.Subjects.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId, x.GroupSize, x.HourlyRate }).Distinct().Select(x => new Price() { TuitionTypeId = x.TuitionTypeId, SubjectId = x.SubjectId, GroupSize = x.GroupSize, HourlyRate = x.HourlyRate }).ToList(),
         Logo = builder.Logo,
     };
 

@@ -6,7 +6,7 @@ public static class SubjectExtensions
 {
     public static string DisplayList(this IEnumerable<Subject> subjects)
     {
-        var commaSeparated = string.Join(", ", subjects.Distinct().OrderBy(e => e.Id).Select(e => e.Name));
+        var commaSeparated = string.Join(", ", subjects.Distinct().OrderBy(e => e.Id).Select(e => e.Name).Distinct());
 
         var lastCommaIndex = commaSeparated.LastIndexOf(",", StringComparison.Ordinal);
 

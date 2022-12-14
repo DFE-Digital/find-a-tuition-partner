@@ -31,6 +31,7 @@ $govuk-page-width: 1180px;
 
 //MoJ components
 @import "node_modules/@ministryofjustice/frontend/moj/components/ticket-panel/ticket-panel";
+@import "node_modules/@ministryofjustice/frontend/moj/components/notification-badge/notification-badge";
 
 @import "src/sass/options-card";
 @import "src/sass/option-select";
@@ -39,3 +40,4 @@ $govuk-page-width: 1180px;
 @import "src/sass/contact-banner";
 @import "src/sass/print-this-page";
 @import "src/sass/tuition-partner-logo";
+@import "src/sass/search-result-page-shortlist";

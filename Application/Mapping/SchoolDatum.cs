@@ -6,7 +6,7 @@ public class SchoolDatum
 {
     public int Urn { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string street { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
     public string Locality { get; set; } = string.Empty;
     public string Address3 { get; set; } = string.Empty;
     public string Town { get; set; } = string.Empty;

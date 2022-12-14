@@ -121,3 +121,11 @@ Scenario: Logos are not displayed for tution partners
     Given a user is using a 'phone'
     Given a user has arrived on the 'Tuition Partner' page for 'nudge-education'
     Then the logo is not shown
+
+Scenario: No LA label shown if go to TP details via All TP pages
+    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Then the LA name is not shown
+
+Scenario: LA label shown if go to TP details via search results page
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
+    Then the LA name displayed is 'Stockport'

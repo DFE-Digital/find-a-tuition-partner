@@ -2,20 +2,27 @@
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
-    if (Model.SearchModel?.From == ReferrerList.FullList)
+    var pageUrl = "all-tuition-partners";
+    var pageName = "Back to tuition partners";
+
+    if (Model.SearchModel?.From == ReferrerList.SearchResults)
     {
-        ViewData["BackLinkHref"] = "/all-tuition-partners?" + Model.SearchModel.ToQueryString();
-        ViewData["BackLinkText"] = "Back to tuition partners";
+        pageUrl = "search-results";
+        pageName = "Back to search results";
     }
-    else
+    else if (Model.SearchModel?.From == ReferrerList.Shortlist)
     {
-        ViewData["BackLinkHref"] = "/search-results?" + Model.SearchModel.ToQueryString();
-        ViewData["BackLinkText"] = "Back to search results";
+        pageUrl = "shortlist";
+        pageName = "Back to shortlist";
     }
+
+    ViewData["BackLinkHref"] = "/" + pageUrl + "?" + Model.SearchModel.ToQueryString();
+    ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        <span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition partner for <strong>@Model.Data.LocalAuthorityName</strong></span>
         <h1 class="govuk-heading-l">@Model.Data.Name</h1>
         <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
         <govuk-details data-testid="qatp-details">

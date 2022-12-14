@@ -1,31 +1,44 @@
-using Application.Handlers;
 using Domain.Search;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using UI.Extensions;
 
 namespace UI.Pages;
 
 public class AllTuitionPartners : PageModel
 {
-    private readonly IMediator _mediator;
+    private readonly ITuitionPartnerService _tuitionPartnerService;
 
-    public AllTuitionPartners(IMediator mediator) => _mediator = mediator;
+    public AllTuitionPartners(ITuitionPartnerService tuitionPartnerService) => _tuitionPartnerService = tuitionPartnerService;
 
     [BindProperty(SupportsGet = true)]
     public SearchModel Data { get; set; } = new();
 
-    public TuitionPartnerSearchResultsPage? Results { get; private set; }
+    public TuitionPartnersResult? Results { get; private set; }
 
-    public async Task OnGet()
+    public async Task OnGet(CancellationToken cancellationToken)
     {
         Data.From = ReferrerList.FullList;
 
-        Results = await _mediator.Send(new SearchTuitionPartnerHandler.Command
+        var tuitionPartners = await FindTuitionPartners(Data, cancellationToken);
+
+        Results = new TuitionPartnersResult(tuitionPartners, null);
+    }
+
+    private async Task<IEnumerable<TuitionPartnerResult>> FindTuitionPartners(SearchModel data, CancellationToken cancellationToken)
+    {
+        int[]? tuitionPartnersIds = null;
+
+        //Only filter if Name is passed in
+        if (!string.IsNullOrWhiteSpace(data.Name))
         {
-            Name = Data.Name,
-            OrderBy = TuitionPartnerOrderBy.Name
-        });
+            tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
+            {
+                Name = data.Name
+            }, cancellationToken);
+        }
+
+        var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest() { TuitionPartnerIds = tuitionPartnersIds }, cancellationToken);
+
+        tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering());
+
+        return tuitionPartners;
     }
 }

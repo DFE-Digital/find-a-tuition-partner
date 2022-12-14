@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UI.Enums;
 using UI.Pages;
 
 namespace Tests;
@@ -6,17 +7,17 @@ namespace Tests;
 [Collection(nameof(SliceFixture))]
 public class SearchForKeyStages : IAsyncLifetime
 {
-    private readonly SliceFixture fixture;
+    private readonly SliceFixture _fixture;
 
-    public SearchForKeyStages(SliceFixture fixture) => this.fixture = fixture;
+    public SearchForKeyStages(SliceFixture fixture) => _fixture = fixture;
 
-    public Task InitializeAsync() => fixture.ResetDatabase();
+    public Task InitializeAsync() => _fixture.ResetDatabase();
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task Displays_all_key_stages()
     {
-        var result = await fixture.SendAsync(new WhichKeyStages.Query());
+        var result = await _fixture.SendAsync(new WhichKeyStages.Query());
 
         result.AllKeyStages.Should().BeEquivalentTo(new[]
         {
@@ -30,7 +31,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        var result = await fixture.SendAsync(new WhichKeyStages.Query
+        var result = await _fixture.SendAsync(new WhichKeyStages.Query
         {
             KeyStages = new[] { KeyStage.KeyStage1, KeyStage.KeyStage3 }
         });
@@ -52,7 +53,7 @@ public class SearchForKeyStages : IAsyncLifetime
             Postcode = "123456",
         };
 
-        var result = await fixture.SendAsync(query);
+        var result = await _fixture.SendAsync(query);
 
         result.Should().BeEquivalentTo(new
         {
@@ -63,7 +64,7 @@ public class SearchForKeyStages : IAsyncLifetime
     [Fact]
     public async Task Updates_selection()
     {
-        var result = await fixture.GetPage<WhichKeyStages>().Execute(page =>
+        var result = await _fixture.GetPage<WhichKeyStages>().Execute(page =>
         {
             return page.OnGetSubmit(new WhichKeyStages.Command
             {

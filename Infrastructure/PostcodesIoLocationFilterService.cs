@@ -49,6 +49,7 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
 
         parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
         parameters.LocalAuthority = lad.LocalAuthority.Name;
+        parameters.LocalAuthorityDistrictId = lad.Id;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
         var school = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);

@@ -1,0 +1,23 @@
+.js-enabled .update-my-shortlist-button--apply-visibility {
+  display: none;
+}
+
+.update-my-shortlist-button--top-margin-ne-2 {
+  margin-top: govuk-spacing(-2);
+}
+
+.my-shortlisted-partners-badge {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+}
+
+.my-shortlisted-partners-badge--for-values-greater-than-nineteen {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+.shortlist-partner-checkbox-label--font-style {
+  font-size: medium;
+  font-weight: 700;
+}
