@@ -1,6 +1,6 @@
 Feature: User can view full details of a Tuition Parner
   Scenario: page title is 'Name of Tuition Partner'
-    Given a user has arrived on the 'Tuition Partner' page for 'Toranj Tuition'
+    Given a user has arrived on the 'Tuition Partner' page for 'toranj-tuition'
     Then the page's title is 'Toranj Tuition'
 
   Scenario: user clicks service name
@@ -9,7 +9,7 @@ Feature: User can view full details of a Tuition Parner
     Then they will be taken to the 'Find a tuition partner' journey start page
 
   Scenario: user directly accesses details page using the full name
-    Given a user has arrived on the 'Tuition Partner' page for 'Action Tutoring'
+    Given a user has arrived on the 'Tuition Partner' page for 'action-tutoring'
     Then the page URL ends with '/action-tutoring'
     And the heading should say 'Action Tutoring'
 
@@ -87,20 +87,20 @@ Feature: User can view full details of a Tuition Parner
     | career-tree | In school, Online |
 
   Scenario: tuition cost blurb states pricing uniformity
-    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    Given a user has arrived on the 'Tuition Partner' page for 'fledge-tuition-ltd'
     Then the tuition cost information states declares no differences
 
   Scenario: tuition cost blurb states pricing differences
-    Given a user has arrived on the 'Tuition Partner' page for 'Reed Tutors'
+    Given a user has arrived on the 'Tuition Partner' page for 'reed-tutors'
     Then the tuition cost information states declares differences
 
   Scenario: full pricing tables are not displayed as default
-    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    Given a user has arrived on the 'Tuition Partner' page for 'fledge-tuition-ltd'
     Then the tuition partner full pricing tables are not displayed
     And the tuition partner pricing table is displayed
 
   Scenario: full pricing tables are displayed when show-full-pricing=true
-    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    Given a user has arrived on the 'Tuition Partner' page for 'fledge-tuition-ltd'
     When they set the 'show-full-pricing' query string parameter value to 'true'
     Then the tuition partner full pricing tables are displayed
     And the tuition partner pricing table is not displayed
