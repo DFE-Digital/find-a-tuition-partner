@@ -101,14 +101,6 @@ const onCheckboxClick = async (event) => {
   }
 };
 
-//Prevents user from going to the previous page using the browser's back button
-const preventBrowserBackButtonFunctionality = () => {
-  history.pushState(null, null, document.URL);
-  window.addEventListener("popstate", function () {
-    history.pushState(null, null, document.URL);
-  });
-};
-
 const addClickEventListenerToTuitionPartnerCheckboxes = () => {
   const selectableTuitionPartners = document.getElementsByName(
     "ShortlistedTuitionPartners"
@@ -120,5 +112,4 @@ const addClickEventListenerToTuitionPartnerCheckboxes = () => {
   }
 };
 
-preventBrowserBackButtonFunctionality();
 addClickEventListenerToTuitionPartnerCheckboxes();
