@@ -7,7 +7,7 @@ namespace UI.Services.TuitionPartnerShortlistStorage;
 public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlistStorage
 {
     // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
-    private const string CookieName = ".FindATuitionPartner.search-page.shortlistedTps";
+    private const string CookieName = ".FindATuitionPartner.Shortlist";
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<CookieBasedTuitionPartnerShortlistStorage> _logger;
 
