@@ -141,7 +141,7 @@
                             <h2 class="govuk-heading-m">
                                 <a href="@tpUrl" class="govuk-link">@item.Name</a>
                             </h2>
-                            <govuk-summary-list>
+                            <govuk-summary-list class="govuk-!-margin-bottom-0">
                                 <govuk-summary-list-row class="govuk-body-s">
                                     <govuk-summary-list-row-key>
                                         Subjects covered
@@ -171,22 +171,17 @@
                                         @item.Description
                                     </govuk-summary-list-row-value>
                                 </govuk-summary-list-row>
-                                <govuk-summary-list-row class="govuk-body-s">
-                                    @{
-                                        var shortlist = Model.SelectableTuitionPartners
-                                            .First(tp => tp.SeoUrl == item.SeoUrl);
-                                    }
-                                    <govuk-summary-list-row-key class="govuk-summary-list__key-for-checkbox-label">
-                                        <label for="shortlist-cb-@shortlist.SeoUrl">
-                                            Add to my shortlist
-                                        </label>
-                                    </govuk-summary-list-row-key>
-                                    <govuk-summary-list-row-value data-testid="results-description">
-                                        <input class="shortlist-tuition-partner-checkbox" id="shortlist-cb-@shortlist.SeoUrl" name="ShortlistedTuitionPartners"
-                                               type="checkbox" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected"/>
-                                    </govuk-summary-list-row-value>
-                                </govuk-summary-list-row>
                             </govuk-summary-list>
+                            @{
+                                var shortlist = Model.SelectableTuitionPartners
+                                    .First(tp => tp.SeoUrl == item.SeoUrl);
+                            }
+                            <govuk-checkboxes class="govuk-checkboxes--small govuk-!-padding-bottom-0 govuk-!-margin-1" name="ShortlistedTuitionPartners">
+                                <govuk-checkboxes-item id="shortlist-cb-@shortlist.SeoUrl" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected">
+                                    <span class="shortlist-partner-checkbox-label--font-style">Add @item.Name to my shortlist</span>
+                                </govuk-checkboxes-item>
+                            </govuk-checkboxes>
+                            <hr class="govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
                 }
