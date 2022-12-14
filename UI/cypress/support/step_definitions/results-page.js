@@ -179,3 +179,10 @@ Then("all tuition partner parameters are populated correctly", () => {
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
 });
+
+When("they click on the option heading for {string}", (keystage) => {
+  const stages = keystage.split(",").map((s) => s.trim());
+  stages.forEach((element) => {
+    cy.get(`#option-select-title-${kebabCase(element)}`).click();
+  });
+});
