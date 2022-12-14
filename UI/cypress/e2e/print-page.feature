@@ -49,11 +49,11 @@ Feature: User can print relevant pages using a 'Print this page' link
     Then the print dialog is opened
 
   Scenario: tuition partner details page has a 'Print this page' link
-    Given a user has arrived on the 'Tuition Partner' page for 'career-tree'
+    Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
     Then the 'Print this page' link is displayed
 
   Scenario: tuition partner details page 'Print this page' link opens print dialog
-    Given a user has arrived on the 'Tuition Partner' page for 'career-tree'
+    Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
     When the 'Print this page' link is clicked
     Then the print dialog is opened
 
