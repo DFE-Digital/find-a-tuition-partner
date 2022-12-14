@@ -24,13 +24,13 @@
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Name))">
-                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
+                            <a class="table-column-sort" data-testid="shortlist-name-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
                         </th>
                         <th scope="col" class="govuk-table__header">Key stages covered</th>
                         <th scope="col" class="govuk-table__header">Subjects</th>
                         <th scope="col" class="govuk-table__header">Type of tuition</th>
                         <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
-                            <a class="table-column-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price range</a>
+                            <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price range</a>
                         </th>
                     </tr>
                     </thead>
