@@ -27,13 +27,6 @@ const allSubjects = {
 
 const stages = ["Key stage 1", "Key stage 2", "Key stage 3", "Key stage 4"];
 
-When("they click on the option heading for {string}", (keystage) => {
-  const stages = keystage.split(",").map((s) => s.trim());
-  stages.forEach((element) => {
-    cy.get(`#option-select-title-${kebabCase(element)}`).click();
-  });
-});
-
 When("they clear all the filters", () => {
   cy.get('[type="checkbox"]').uncheck();
 });
