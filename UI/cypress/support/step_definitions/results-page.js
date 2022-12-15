@@ -75,7 +75,7 @@ Then("they will see the tuition partner {string}", (tp) => {
 Given(
   "a user has arrived on the 'Tuition Partner' page for {string}",
   (name) => {
-    cy.visit(`/tuition-partner/${name}`);
+    cy.visit(`/tuition-partner/${kebabCase(name)}`);
   }
 );
 
