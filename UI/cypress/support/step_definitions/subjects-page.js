@@ -62,7 +62,7 @@ Then("they are shown the subjects for {string}", (keystage) => {
   stages.forEach((element) => {
     const subjects = allSubjects[element];
 
-    cy.get("h2")
+    cy.get("legend")
       .contains(`${element} subjects`)
       .parent()
       .within(() => {
