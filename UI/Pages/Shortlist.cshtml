@@ -63,7 +63,8 @@
             }
             else
             {
-                <p class="govuk-body">There are no tuition partners shortlisted, return to the <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search page</a> to add tuition partners to the list.</p>
+                <p class="govuk-body">You don’t have any shortlisted tuition partners.</p>
+                <p class="govuk-body">To shortlist tuition partners, go to your <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search results</a>.</p>
             }
 
             @if (Model.Data.InvalidTPs is not null)

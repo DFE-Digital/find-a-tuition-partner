@@ -106,7 +106,7 @@ Then("they choose to click on clear shortlist link", () => {
 });
 
 Then("they are taken to the clear shortlist confirmation page", () => {
-  cy.get("h1").should("have.text", "Confirm clear my shortlist");
+  cy.get("h1").should("have.text", "You're about to clear your shortlist");
 });
 
 Then("they click the cancel link", () => {
