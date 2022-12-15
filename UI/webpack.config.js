@@ -3,7 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: ["./src/index.js", "./src/index.scss"],
+  entry: ['core-js/stable', "./src/index.js", "./src/index.scss"],
   output: {
     path: path.resolve(__dirname, "wwwroot/dist"),
   },

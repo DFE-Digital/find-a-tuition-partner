@@ -24,6 +24,7 @@
   "homepage": "https://github.com/DFE-Digital/find-a-tuition-partner#readme",
   "dependencies": {
     "@ministryofjustice/frontend": "^1.4.2",
+    "core-js": "^3.26.1",
     "govuk-frontend": "^4.1.0"
   },
   "devDependencies": {
