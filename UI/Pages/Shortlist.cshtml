@@ -1,6 +1,7 @@
 ﻿@page
 @model UI.Pages.ShortlistModel
 @{
+    var clearShortlistUrl = "/shortlist-clear-confirm?" + Model.Data.ToQueryString();
     ViewData["Title"] = "Compare my shortlisted tuition partners";
     ViewData["BackLinkHref"] = "/search-results?" + Model.Data.ToQueryString();
     ViewData["IncludePrintPage"] = true;
@@ -8,7 +9,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <form method="get">
+        <form method="post">
             @{
                 var count = Model.Data.Results?.Count;
                 var partnersPlural = count > 1 ? "partners" : "partner";
@@ -32,6 +33,7 @@
                         <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
                             <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price range</a>
                         </th>
+                        <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
                     </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -50,6 +52,9 @@
                             </td>
                             <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
                             <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                            <td class="govuk-table__cell app-print-hide">
+                                <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>
+                            </td>
                         </tr>
                     }
                     </tbody>
@@ -73,6 +78,10 @@
                 </ul>
             </div>
             }
+
+            <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
+                <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my shortlist</a>
+            </div>            
         </form>
     </div>
 </div>

@@ -115,3 +115,54 @@ Feature: Tuition Partner shortlist
         And 'Action Tutoring' is entry 1 on the shortlist page
         And '3D Recruit Ltd' is entry 2 on the shortlist page
         And 'Reeson Education' is entry 3 on the shortlist page
+
+    Scenario: User removes single item from shortlist
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        And they add 'Reeson Education' to their shortlist on the results page
+        And they add 'Action Tutoring' to their shortlist on the results page
+        And they add '3D Recruit Ltd' to their shortlist on the results page
+        When they choose to view their shortlist from the results page
+        Then there are 3 entries on the shortlist page
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And 'Action Tutoring' is entry 2 on the shortlist page
+        And '3D Recruit Ltd' is entry 3 on the shortlist page
+        Then they choose to remove entry 2 on the shortlist page
+        Then there are 2 entries on the shortlist page
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And '3D Recruit Ltd' is entry 2 on the shortlist page
+        Then they click 'Back'
+        And the search results are displayed
+        Then they choose to view their shortlist from the results page
+        Then there are 2 entries on the shortlist page
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And '3D Recruit Ltd' is entry 2 on the shortlist page
+
+    Scenario: User clears full shortlist then cancel
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        And they add 'Reeson Education' to their shortlist on the results page
+        And they add 'Action Tutoring' to their shortlist on the results page
+        And they add '3D Recruit Ltd' to their shortlist on the results page
+        When they choose to view their shortlist from the results page
+        Then there are 3 entries on the shortlist page
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And 'Action Tutoring' is entry 2 on the shortlist page
+        And '3D Recruit Ltd' is entry 3 on the shortlist page
+        Then they choose to click on clear shortlist link
+        And they are taken to the clear shortlist confirmation page
+        Then they click the cancel link
+        Then there are 3 entries on the shortlist page
+
+    Scenario: User clears full shortlist
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        And they add 'Reeson Education' to their shortlist on the results page
+        And they add 'Action Tutoring' to their shortlist on the results page
+        And they add '3D Recruit Ltd' to their shortlist on the results page
+        When they choose to view their shortlist from the results page
+        Then there are 3 entries on the shortlist page
+        And 'Reeson Education' is entry 1 on the shortlist page
+        And 'Action Tutoring' is entry 2 on the shortlist page
+        And '3D Recruit Ltd' is entry 3 on the shortlist page
+        Then they choose to click on clear shortlist link
+        And they are taken to the clear shortlist confirmation page
+        Then they click confirm button
+        Then there are 0 entries on the shortlist page

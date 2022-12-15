@@ -23,9 +23,22 @@ public class ShortlistModel : PageModel
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
     }
 
+    public async Task<IActionResult> OnPostRemoveAsync(Query data)
+    {
+        if (!ModelState.IsValid) return Page();
+
+        if (!string.IsNullOrWhiteSpace(data.RemoveTuitionPartnerSeoUrl))
+        {
+            await _mediator.Send(new RemoveTuitionPartnerCommand(data.RemoveTuitionPartnerSeoUrl));
+        }
+
+        return RedirectToPage(data.ToRouteData());
+    }
+
     public record Query : SearchModel, IRequest<ResultsModel>
     {
         public TuitionPartnerOrderBy? OrderBy { get; set; }
+        public string? RemoveTuitionPartnerSeoUrl { get; set; }
     };
 
     public record ResultsModel : SearchModel

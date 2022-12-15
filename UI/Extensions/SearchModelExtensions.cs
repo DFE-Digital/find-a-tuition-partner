@@ -26,6 +26,18 @@ namespace UI.Extensions
             return dictionary;
         }
 
+        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude)
+        {
+            var dictionary = model.ToRouteData();
+
+            foreach (var itemToInclude in itemsToInclude)
+            {
+                dictionary.Add(itemToInclude.Key, itemToInclude.Value);
+            }
+
+            return dictionary;
+        }
+
         private static void AddAll<T>(
             this SearchModel model,
             Expression<Func<SearchModel, IEnumerable<T>?>> expression,

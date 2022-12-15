@@ -1,0 +1,26 @@
+﻿@page
+@model UI.Pages.ShortlistClearConfirm
+@{
+    var returnUrl = "/shortlist?" + Model.Data.ToQueryString();
+    ViewData["Title"] = "Clear my shortlisted confirmation";
+    ViewData["BackLinkHref"] = returnUrl;
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <form method="post">
+            <h1 class="govuk-heading-l">Confirm clear my shortlist</h1>
+
+            <div class="govuk-inset-text">
+                Please confirm that you wish to remove all the tuition partners from my shortlist.
+            </div>
+
+            <div class="govuk-button-group">
+              <button class="govuk-button" data-testid="call-to-action" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData()">
+                Clear my shortlist
+              </button>
+              <a class="govuk-link" data-testid="cancel-link" href="@returnUrl">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
