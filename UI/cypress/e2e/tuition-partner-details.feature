@@ -14,20 +14,20 @@ Feature: User can view full details of a Tuition Parner
     And the heading should say 'Action Tutoring'
 
   Scenario: user directly accesses details page using the SEO name
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the page URL ends with '/bright-heart-education'
     And the heading should say 'Bright Heart Education'
 
   Scenario: don’t show email address where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'pearson'
+    Given a user has arrived on the 'Tuition Partner' page for 'Pearson'
     Then TP has not provided the information in the 'Email address' section
 
   Scenario: don’t show phone number where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'pearson'
+    Given a user has arrived on the 'Tuition Partner' page for 'Pearson'
     Then TP has not provided the information in the 'Phone Number' section
 
   Scenario: show Contact Details where TP has provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then TP has provided full contact details
 
   Scenario: tuition partner details page linked from search results page has 'Back to search results' back link
@@ -47,33 +47,33 @@ Feature: User can view full details of a Tuition Parner
     And the search details include 'Key stage 1 English, Key stage 2 Maths'
 
   Scenario: quality assured tuition partner and payment details is initially hidden
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the quality assured tuition partner details are hidden
     And the payment details are hidden
 
   Scenario: user clicks quality assured tuition partner details summary
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     When they click 'What is a quality assured tuition partner?'
     Then the quality assured tuition partner details are shown
 
   Scenario: tuition partner website link is displayed
-    Given a user has arrived on the 'Tuition Partner' page for 'tlc-live'
+    Given a user has arrived on the 'Tuition Partner' page for 'TLC LIVE'
     Then the tuition partner's website link is displayed
     And the tuition partners website link starts with 'http://'
 
   Scenario: user has access to funding link page
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     When they click funding and reporting link
     Then they will see the funding reporting header
     And  they will click the back link
     Then they redirects to the tuition partners website link with bright-heart-education
   
   Scenario: locations covered table is not displayed as default
-    Given a user has arrived on the 'Tuition Partner' page for 'tutor-doctor-(cambridge-tuition-limited)'
+    Given a user has arrived on the 'Tuition Partner' page for 'Tutor Doctor (Cambridge Tuition Limited)'
     Then the tuition partner locations covered table is not displayed
 
   Scenario: locations covered table is displayed when show-locations-covered=true
-    Given a user has arrived on the 'Tuition Partner' page for 'tutor-doctor-(cambridge-tuition-limited)'
+    Given a user has arrived on the 'Tuition Partner' page for 'Tutor Doctor (Cambridge Tuition Limited)'
     When they set the 'show-locations-covered' query string parameter value to 'true'
     Then the tuition partner locations covered table is displayed
 
@@ -106,24 +106,24 @@ Feature: User can view full details of a Tuition Parner
     And the tuition partner pricing table is not displayed
 
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the subjects covered by a tuition partner are in alphabetical order 
 
   Scenario: Tuition partner details are displayed correctly when arriving on the results page
-     Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
      Then all tuition partner details are populated correctly
 
 Scenario: Logos are displayed for tution partners
-    Given a user has arrived on the 'Tuition Partner' page for 'nudge-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is shown
 
 Scenario: Logos are not displayed for tution partners
     Given a user is using a 'phone'
-    Given a user has arrived on the 'Tuition Partner' page for 'nudge-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is not shown
 
 Scenario: No LA label shown if go to TP details via All TP pages
-    Given a user has arrived on the 'Tuition Partner' page for 'bright-heart-education'
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the LA name is not shown
 
 Scenario: LA label shown if go to TP details via search results page

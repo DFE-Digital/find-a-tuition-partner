@@ -26,7 +26,15 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
 
         var resultCount = result?.Length;
 
-        var logLevel = (resultCount == 0 && string.IsNullOrWhiteSpace(filter.Name)) ? LogLevel.Warning : LogLevel.Information;
+        //Log warning if no results returned but trying to get all TPs (so no filters) or a single/collection of TPs using the SeoUrls
+        var logLevel = (resultCount == 0 &&
+                            string.IsNullOrWhiteSpace(filter.Name) &&
+                            filter.TuitionTypeId is null &&
+                            filter.SubjectIds is null &&
+                            filter.LocalAuthorityDistrictId is null &&
+                            (filter.SeoUrls is null || filter.SeoUrls.Length > 0)
+                       )
+                       ? LogLevel.Warning : LogLevel.Information;
 
         _logger.Log(logLevel, "GetTuitionPartnersFilteredAsync found {Count} TPs in {Elapsed}ms",
                    resultCount, stopwatch.ElapsedMilliseconds);

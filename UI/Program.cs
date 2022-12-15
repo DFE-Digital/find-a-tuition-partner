@@ -145,6 +145,10 @@ var policyCollection = new HeaderPolicyCollection()
                 .Self();
             cspBuilder.AddImgSrc() // img-src 'self'
                 .Self();
+            cspBuilder.AddFrameSrc() // frame-src 'self' https://www.googletagmanager.com
+                .Self()
+                .From("https://www.googletagmanager.com")
+                .WithNonce();
             cspBuilder.AddMediaSrc() // media-src 'none'
                 .None();
             cspBuilder.AddObjectSrc() // object-src 'none'
