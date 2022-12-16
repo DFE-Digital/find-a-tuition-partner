@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Domain.Constants;
 using UI.Extensions;
-using GroupPrice = UI.Pages.TuitionPartner.GroupPrice;
+using GroupPrice = UI.Structs.GroupPrice;
 
 namespace Tests;
 
