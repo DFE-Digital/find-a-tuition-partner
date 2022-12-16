@@ -1,7 +1,4 @@
-﻿using Domain.Constants;
-using static UI.Pages.TuitionPartner;
-
-namespace UI.Extensions
+﻿namespace UI.Extensions
 {
     public static class GroupPriceExtensions
     {
