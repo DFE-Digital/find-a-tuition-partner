@@ -2,9 +2,14 @@ namespace UI.Pages
 {
     public class ShortlistClearConfirm : PageModel
     {
+        private readonly ILogger<TuitionPartner> _logger;
         private readonly IMediator _mediator;
 
-        public ShortlistClearConfirm(IMediator mediator) => _mediator = mediator;
+        public ShortlistClearConfirm(ILogger<TuitionPartner> logger, IMediator mediator)
+        {
+            _logger = logger;
+            _mediator = mediator;
+        }
 
         public Query Data { get; set; } = new();
 
@@ -19,6 +24,8 @@ namespace UI.Pages
 
             //Remove all TPs
             await _mediator.Send(new RemoveAllTuitionPartnersCommand());
+
+            _logger.LogInformation("Cleared full shortlist");
 
             return RedirectToPage("shortlist", data.ToRouteData());
         }
