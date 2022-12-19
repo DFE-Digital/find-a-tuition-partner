@@ -240,8 +240,7 @@ public class TuitionPartner : PageModel
 
             if (id == null)
             {
-                //shouldn't get here, unless manually changed query string
-                _logger.LogWarning("No TP found for the invalid Id '{Id}' provided", request.Id);
+                //shouldn't get here, unless manually changed query string or is an old bookmarked URL that's no longer valid.  Will be logged as 404 error in ExceptionLoggingMiddleware
                 return Result.Error<TuitionPartnerResult>();
             }
 

@@ -94,3 +94,25 @@ Then("they choose to sort the shortlist by name", () => {
 Then("they choose to sort the shortlist by price", () => {
   cy.get('[data-testid="shortlist-price-sort"]').click();
 });
+
+Then("they choose to remove entry {int} on the shortlist page", (entry) => {
+  cy.get('tbody td [data-testid="remove-tp"]')
+    .eq(entry - 1)
+    .click();
+});
+
+Then("they choose to click on clear shortlist link", () => {
+  cy.get('[data-testid="clear-shortlist-link"]').click();
+});
+
+Then("they are taken to the clear shortlist confirmation page", () => {
+  cy.get("h1").should("have.text", "You're about to clear your shortlist");
+});
+
+Then("they click the cancel link", () => {
+  cy.get('[data-testid="cancel-link"]').click();
+});
+
+Then("they click confirm button", () => {
+  cy.get('[data-testid="call-to-action"]').click();
+});

@@ -1,4 +1,10 @@
-﻿[aria-sort] {
+﻿@media not print {
+  .remove-shortlist-table-button {
+    margin-bottom: 0px;
+  }
+}
+
+[aria-sort] {
   :first-child .table-column-sort {
     right: auto;
   }
