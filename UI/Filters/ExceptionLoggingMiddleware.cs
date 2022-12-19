@@ -14,7 +14,7 @@ public class ExceptionLoggingMiddleware
         {
             await _next(context);
 
-            if(context.Response.StatusCode == 404)
+            if (context.Response.StatusCode == 404)
             {
                 using var _ = _logger.BeginScope("{@Context}", context);
                 var url = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
