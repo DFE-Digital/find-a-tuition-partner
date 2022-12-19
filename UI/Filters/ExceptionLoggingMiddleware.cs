@@ -13,6 +13,20 @@ public class ExceptionLoggingMiddleware
         try
         {
             await _next(context);
+
+            if (context.Response.StatusCode == 404)
+            {
+                var url = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
+                var referrer = context.Request.Headers["Referer"].ToString();
+                var referrerComment = string.Empty;
+                if (!string.IsNullOrWhiteSpace(referrer))
+                {
+                    var referrerUri = new Uri(referrer);
+                    referrerComment = $"  The referrer host is {referrerUri.Host}";
+                }
+                //Log 404 errors so we can review these, if needed
+                _logger.LogInformation("404 Response for {url}.{RerererComment}", url, referrerComment);
+            }
         }
         catch (Exception e)
         {

@@ -58,7 +58,7 @@
     font-size: 12pt;
   }
 
-  a[href]:after {
+  a[href]:not(.table-column-sort):after {
     content: none !important;
   }
 
