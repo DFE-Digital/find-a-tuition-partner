@@ -156,7 +156,8 @@
                                     </govuk-summary-list-row-key>
                                     <govuk-summary-list-row-value>
                                         <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                            @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject).Distinct().OrderBy(e => e.KeyStageId).OrderBy(e => e.Name).GroupBy(e => e.KeyStageId))
+                                            @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject)
+                                                .Distinct().OrderBy(e => e.KeyStageId).ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
                                             {
                                                 <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
                                             }
