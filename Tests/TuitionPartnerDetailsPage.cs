@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tests.TestData;
-using UI.Mediatr.Queries;
+using UI.MediatR.Queries;
 using UI.Structs;
 using KeyStage = UI.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;

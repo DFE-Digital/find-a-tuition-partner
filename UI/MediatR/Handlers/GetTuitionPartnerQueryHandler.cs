@@ -1,8 +1,9 @@
 using Domain;
 using Domain.Search;
+using UI.MediatR.Queries;
 using LocalAuthorityDistrictCoverage = UI.Structs.LocalAuthorityDistrictCoverage;
 
-namespace UI.Mediatr.Handlers;
+namespace UI.MediatR.Handlers;
 
 public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQuery, TuitionPartnerModel?>
 {

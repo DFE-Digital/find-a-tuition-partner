@@ -1,4 +1,4 @@
-namespace UI.Mediatr.Queries;
+namespace UI.MediatR.Queries;
 public record GetTuitionPartnerQuery(
             string Id,
             [FromQuery(Name = "show-locations-covered")]

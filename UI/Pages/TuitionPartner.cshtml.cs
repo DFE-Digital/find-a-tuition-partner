@@ -1,3 +1,5 @@
+using UI.MediatR.Queries;
+
 namespace UI.Pages;
 
 public class TuitionPartner : PageModel

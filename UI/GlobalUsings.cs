@@ -16,6 +16,5 @@ global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.EntityFrameworkCore;
 global using UI.Enums;
 global using UI.Extensions;
-global using UI.Mediatr.Queries;
 global using UI.Models;
 global using UI.Structs;
