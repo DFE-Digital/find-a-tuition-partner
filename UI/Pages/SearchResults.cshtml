@@ -44,7 +44,10 @@
                             <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
                         </div>
                         <div class="app-results-filter-overlay--heading-right">
-                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline" data-module="return-to-results-link" data-testid="return-to-results-link">Return to results</a>
+                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline"
+                               data-module="return-to-results-link" data-testid="return-to-results-link">
+                                Return to results
+                            </a>
                         </div>
                     </div>
                     <p show-if="Model.Data.Results != null" class="govuk-body" data-testid="overlay-filter-results-count">
@@ -74,7 +77,10 @@
                     </govuk-radios-fieldset>
                 </govuk-radios>
 
-                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline" asp-route-postcode=@Model.Data.Postcode>Clear all filters</a>
+                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline"
+                   asp-route-postcode=@Model.Data.Postcode>
+                    Clear all filters
+                </a>
 
                 <div class="govuk-!-margin-top-7">
                     <div class="govuk-button-group app-results-filter--apply-filters">
@@ -111,7 +117,8 @@
                     var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
                 }
                 <span class="govuk-!-font-size-24">
-                    <strong data-testid="result-count">@count</strong> @(resultPlural) <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span>
+                    <strong data-testid="result-count">@count</strong> @(resultPlural)
+                    <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span>
                 </span><br/>
                 Your results are in a random order.
                 <div class="govuk-grid-row govuk-!-margin-top-2">
@@ -156,8 +163,11 @@
                                     </govuk-summary-list-row-key>
                                     <govuk-summary-list-row-value>
                                         <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                            @foreach (var keyStageSubjects in item.SubjectsCoverage.Select(e => e.Subject)
-                                                .Distinct().OrderBy(e => e.KeyStageId).ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
+                                            @foreach (var keyStageSubjects in item.SubjectsCoverage
+                                                .Select(e => e.Subject)
+                                                .Distinct()
+                                                .OrderBy(e => e.KeyStageId)
+                                                .ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
                                             {
                                                 <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
                                             }

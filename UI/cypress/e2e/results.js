@@ -133,10 +133,11 @@ Then(
 );
 
 Then("they will see the results summary for {string}", (location) => {
-  var expected = new RegExp(`\\d+ results for ${location}`);
+  const expected = new RegExp(`\\d+ results for ${location}`);
   cy.get('[data-testid="results-summary"]')
     .invoke("text")
     .invoke("trim")
+    .then((words) => words.replace(/[\r\n]/gm, "").replace(/  +/g, " "))
     .should("match", expected);
 });
 
