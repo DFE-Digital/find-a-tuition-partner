@@ -33,4 +33,11 @@ public interface ITuitionPartnerShortlistStorage
     /// Removes every Shortlisted Tuition Partner present in the implemented storage.
     /// </summary>
     void RemoveAllTuitionPartners();
+
+    /// <summary>
+    /// Check if a tuition partner is shortlisted.
+    /// </summary>
+    /// <param name="tuitionPartnerSeoUrl"></param>
+    /// <returns>Returns true if present or false if not</returns>
+    bool IsTuitionPartnerShortlisted(string tuitionPartnerSeoUrl);
 }

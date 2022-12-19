@@ -1,0 +1,7 @@
+@model ShortlistCheckboxModel
+<govuk-checkboxes class="govuk-checkboxes--small govuk-!-padding-bottom-0 govuk-!-margin-1" name="@Model.CheckboxName">
+    <govuk-checkboxes-item id="@Model.Id" value="@Model.Value" checked="@Model.IsShortlisted">
+        <span class="shortlist-partner-checkbox-label--font-style">Add @Model.Value to my shortlist</span>
+    </govuk-checkboxes-item>
+</govuk-checkboxes>
+<hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">

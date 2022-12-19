@@ -84,6 +84,16 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     public void RemoveAllTuitionPartners() =>
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(CookieName);
 
+    /// <inheritdoc/>
+    public bool IsTuitionPartnerShortlisted(string tuitionPartnerSeoUrl)
+    {
+        if (!IsShortlistedTuitionPartnerSeoUrlValid(tuitionPartnerSeoUrl))
+            throw new ArgumentException($"{nameof(tuitionPartnerSeoUrl)} is invalid");
+
+        var allShortlistedTps = GetAllTuitionPartners().ToList();
+        return allShortlistedTps.Any(tp => tp == tuitionPartnerSeoUrl);
+    }
+
     private bool IsShortlistedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
     {
         if (!string.IsNullOrEmpty(tuitionPartnerSeoUrl)) return true;

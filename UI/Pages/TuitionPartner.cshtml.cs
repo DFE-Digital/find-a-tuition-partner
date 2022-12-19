@@ -16,6 +16,8 @@ public class TuitionPartner : PageModel
     public TuitionPartnerModel? Data { get; set; }
 
     public SearchModel? SearchModel { get; set; }
+    [BindProperty] public string? Shortlisted { get; set; }
+    public ShortlistCheckboxModel ShortlistCheckboxModel = new();
 
     public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQuery query)
     {
@@ -36,6 +38,8 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
+        await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(Shortlisted));
+
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
@@ -44,5 +48,13 @@ public class TuitionPartner : PageModel
     {
         _logger.LogWarning(logMessage);
         return NotFound();
+    }
+
+    private async Task GetShortlistCheckboxModel(string name, string seoUrl, string checkboxName)
+    {
+        ShortlistCheckboxModel.Value = name;
+        ShortlistCheckboxModel.CheckboxName = checkboxName;
+        ShortlistCheckboxModel.IsShortlisted = await _mediator.Send(new IsTuitionPartnerShortlistedQuery(seoUrl));
+        ShortlistCheckboxModel.SeoUrl = $"shortlist-tpInfo-cb-{name}";
     }
 }
