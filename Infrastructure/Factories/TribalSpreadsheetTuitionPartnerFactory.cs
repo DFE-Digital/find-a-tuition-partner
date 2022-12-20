@@ -4,11 +4,13 @@ using Application.Factories;
 using Domain;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Factories;
 
-public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStrategy
+public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStrategy
 {
+    private readonly ILogger _logger;
     private readonly NtpDbContext _dbContext;
 
     private ISpreadsheetExtractor? _spreadsheetExtractor;
@@ -54,14 +56,23 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             { (TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
         };
 
-    public QualityAssuredSpreadsheetTuitionPartnerFactory(NtpDbContext dbContext)
+    public TribalSpreadsheetTuitionPartnerFactory(ILogger logger, NtpDbContext dbContext)
     {
+        _logger = logger;
         _dbContext = dbContext;
     }
 
     public async Task<TuitionPartner> GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, CancellationToken cancellationToken)
     {
         _spreadsheetExtractor = spreadsheetExtractor;
+
+        /*
+         * TODO
+         * Create dictionary from Tribal spreadsheet
+         * Map our properties to the dictionary - any req ones missing throw error, any non-req warning
+         * Have a list of unused Tribal dictionary entried - any new or removed throw warning, so know contents have changed
+         */
+
 
         var tuitionPartner = new TuitionPartner
         {
