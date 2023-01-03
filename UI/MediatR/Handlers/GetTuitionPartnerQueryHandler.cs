@@ -1,6 +1,5 @@
 using Domain;
 using Domain.Search;
-using UI.MediatR.Queries;
 using LocalAuthorityDistrictCoverage = UI.Structs.LocalAuthorityDistrictCoverage;
 
 namespace UI.MediatR.Handlers;

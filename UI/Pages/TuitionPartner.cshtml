@@ -19,17 +19,20 @@
     }
     if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
         isFromSearchResultOrShortlistPage = true;
-    var description = "Tuition partner for ";
+    var localAuthorityHeader = "Tuition partner for ";
     if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
-        description = "Shortlisted tuition partner for ";
+        localAuthorityHeader = "Shortlisted tuition partner for ";
 
     ViewData["BackLinkHref"] = "/" + pageUrl + "?" + Model.SearchModel.ToQueryString();
     ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }
+<form method="POST">
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-two-thirds">
-<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">@description<strong>@Model.Data.LocalAuthorityName</strong></span>
+<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">
+    @localAuthorityHeader<strong>@Model.Data.LocalAuthorityName</strong>
+</span>
 
 <h1 class="govuk-heading-l">@Model.Data.Name</h1>
 <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
@@ -115,10 +118,12 @@
         Each pupil premium eligible student will receive £162. This funding cost has been calculated so you will have 60% of the cost covered for up to £18 per pupil per hour. For help understanding your funding, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-1">funding and reporting</a>.
     </p>
 
-    <p>
+    <div>
         <govuk-details data-testid="payment-details">
             <govuk-details-summary>
-                How much will I pay?
+                <govuk-details-text>
+                    How much will I pay?
+                </govuk-details-text>
             </govuk-details-summary>
             <govuk-details-text>
                 <strong>Example:</strong>
@@ -128,7 +133,7 @@
                 </ul>
             </govuk-details-text>
         </govuk-details>
-    </p>
+    </div>
 </div>
 
 <h2 class="govuk-heading-m">Tuition prices</h2>
@@ -157,11 +162,11 @@
         <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header">1 to @item.Key</th>
             <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Constants.TuitionTypes.InSchool)
+                @item.Value.FormatFor(TuitionTypes.InSchool)
             </td>
 
             <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Constants.TuitionTypes.Online)
+                @item.Value.FormatFor(TuitionTypes.Online)
             </td>
         </tr>
     }
@@ -224,7 +229,7 @@
                 <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
             </govuk-summary-list-row-value>
         </govuk-summary-list-row>
-        @if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
+        @if (!string.IsNullOrEmpty(@Model.Data.PhoneNumber))
         {
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>
@@ -235,7 +240,7 @@
                 </govuk-summary-list-row-value>
             </govuk-summary-list-row>
         }
-        @if (!String.IsNullOrEmpty(@Model.Data.EmailAddress))
+        @if (!string.IsNullOrWhiteSpace(@Model.Data.EmailAddress))
         {
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>
@@ -263,10 +268,18 @@
             </govuk-summary-list-row>
         }
     </govuk-summary-list>
-   <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+    <hr class="govuk-section-break govuk-section-break--visible ">
+    <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+    <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
+        <govuk-button asp-page-handler="UpdateShortlist" asp-route-seoUrl="@Model.Data.Id"class="govuk-!-margin-bottom-2">
+            Update shortlist
+        </govuk-button>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 </div>
 </div>
 <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
     <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo"/>
 </div>
 </div>
+</form>

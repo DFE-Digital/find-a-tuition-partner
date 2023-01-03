@@ -1,11 +1,10 @@
-using UI.MediatR.Queries;
-
 namespace UI.Pages;
 
 public class TuitionPartner : PageModel
 {
     private readonly ILogger<TuitionPartner> _logger;
     private readonly IMediator _mediator;
+    private const string TempDataSearchModelName = "searchModel";
 
     public TuitionPartner(ILogger<TuitionPartner> logger, IMediator mediator)
     {
@@ -14,10 +13,9 @@ public class TuitionPartner : PageModel
     }
 
     public TuitionPartnerModel? Data { get; set; }
-
-    public SearchModel? SearchModel { get; set; }
-    [BindProperty] public string? Shortlisted { get; set; }
+    public SearchModel? SearchModel { get; set; } = new();
     public ShortlistCheckboxModel ShortlistCheckboxModel = new();
+    [BindProperty] public string? ShortlistedCheckbox { get; set; }
 
     public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQuery query)
     {
@@ -38,23 +36,44 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(Shortlisted));
+        TempData[TempDataSearchModelName] = JsonSerializer.Serialize(SearchModel);
+
+        await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(ShortlistedCheckbox));
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
 
+    public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl)
+    {
+        if (TempData.Peek(TempDataSearchModelName) != null)
+        {
+            SearchModel = JsonSerializer.Deserialize<SearchModel>(
+                TempData[TempDataSearchModelName]?.ToString()
+                ?? throw new Exception());
+        }
+
+        if (string.IsNullOrWhiteSpace(ShortlistedCheckbox))
+            await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl));
+
+        if (!string.IsNullOrWhiteSpace(ShortlistedCheckbox))
+            await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl));
+
+        return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
+    }
+
     private IActionResult ReturnNotFound(string logMessage)
     {
-        _logger.LogWarning(logMessage);
+        _logger.LogWarning("{LogMessage}", logMessage);
         return NotFound();
     }
 
     private async Task GetShortlistCheckboxModel(string name, string seoUrl, string checkboxName)
     {
-        ShortlistCheckboxModel.Value = name;
+        ShortlistCheckboxModel.Id = $"shortlist-tpInfo-cb-{seoUrl}";
+        ShortlistCheckboxModel.LabelValue = name;
         ShortlistCheckboxModel.CheckboxName = checkboxName;
         ShortlistCheckboxModel.IsShortlisted = await _mediator.Send(new IsTuitionPartnerShortlistedQuery(seoUrl));
-        ShortlistCheckboxModel.SeoUrl = $"shortlist-tpInfo-cb-{name}";
+        ShortlistCheckboxModel.SeoUrl = seoUrl;
     }
 }

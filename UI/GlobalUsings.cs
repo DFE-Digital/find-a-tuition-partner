@@ -1,6 +1,7 @@
 // Global using directives
 
 global using System.Text;
+global using System.Text.Json;
 global using Application;
 global using Application.Commands;
 global using Application.Constants;
@@ -16,5 +17,6 @@ global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.EntityFrameworkCore;
 global using UI.Enums;
 global using UI.Extensions;
+global using UI.MediatR.Queries;
 global using UI.Models;
 global using UI.Structs;
