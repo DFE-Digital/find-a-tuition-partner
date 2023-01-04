@@ -13,7 +13,7 @@ public class TuitionPartner : PageModel
     }
 
     public TuitionPartnerModel? Data { get; set; }
-    public SearchModel? SearchModel { get; set; } = new();
+    public SearchModel? SearchModel { get; set; }
     public ShortlistCheckboxModel ShortlistCheckboxModel = new();
     [BindProperty] public string? ShortlistedCheckbox { get; set; }
 
@@ -36,22 +36,17 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        TempData[TempDataSearchModelName] = JsonSerializer.Serialize(SearchModel);
-
         await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(ShortlistedCheckbox));
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
 
-    public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl)
+    public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl, string searchModel)
     {
-        if (TempData.Peek(TempDataSearchModelName) != null)
-        {
-            SearchModel = JsonSerializer.Deserialize<SearchModel>(
-                TempData[TempDataSearchModelName]?.ToString()
-                ?? throw new Exception());
-        }
+        if (string.IsNullOrWhiteSpace(searchModel)) throw new ArgumentNullException(nameof(searchModel));
+
+        SearchModel = JsonSerializer.Deserialize<SearchModel>(searchModel);
 
         if (string.IsNullOrWhiteSpace(ShortlistedCheckbox))
             await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl));

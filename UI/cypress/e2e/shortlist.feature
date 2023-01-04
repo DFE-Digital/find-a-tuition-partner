@@ -80,6 +80,6 @@ Feature: Tuition Partner shortlist
         And they choose to view their shortlist from the results page
         When they choose to view the 'Action Tutoring' details from the shortlist
         Then the back link's text is 'Back to shortlist'
-        And the heading caption is 'Tuition partner for Stockport'
+        And the heading caption is 'Shortlisted tuition partner for Stockport'
         And they click 'Back'
         And they will be taken to the 'Shortlist' page

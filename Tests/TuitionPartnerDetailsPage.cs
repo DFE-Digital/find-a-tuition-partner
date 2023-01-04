@@ -1,8 +1,12 @@
 ﻿using Domain.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Tests.TestData;
+using UI.Enums;
 using UI.MediatR.Queries;
+using UI.Models;
 using UI.Structs;
 using KeyStage = UI.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
@@ -38,7 +42,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Should().BeAssignableTo<RedirectToPageResult>()
             .Which.RouteValues.Should().BeEquivalentTo(new Dictionary<string, string>
             {
-                {"Id", "a-tuition-partner" }
+                {"Id", "a-tuition-partner"}
             });
     }
 
@@ -58,6 +62,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(9)
             .WithName("this-tuition-partner", "This Tuition Partner"));
+
         var result = await Fixture.GetPage<TuitionPartner>()
             .Execute(page => page.OnGetAsync(new GetTuitionPartnerQuery(id)));
         result.Should().BeOfType<PageResult>();
@@ -91,7 +96,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
                     .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
-            );
+        );
 
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery(id));
 
@@ -101,8 +106,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");
         result.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {
-            { 2, new (12.34m, 56.78m, null, null) },
-            { 3, new (12.34m, 56.78m, 56.78m, 56.78m) }
+            {2, new(12.34m, 56.78m, null, null)},
+            {3, new(12.34m, 56.78m, 56.78m, 56.78m)}
         });
         result.Website.Should().Be("https://a-tuition-partner.testdata/ntp");
         result.PhoneNumber.Should().Be("0123456789");
@@ -131,7 +136,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
-                "a-tuition-partner")
+                    "a-tuition-partner")
             { Postcode = District.EastRidingOfYorkshire.SamplePostcode });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
@@ -146,7 +151,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
-                "a-tuition-partner")
+                    "a-tuition-partner")
             { Postcode = District.Ryedale.SamplePostcode });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online");
@@ -167,13 +172,13 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
-                "a-tuition-partner")
+                    "a-tuition-partner")
             { Postcode = District.NorthEastLincolnshire.SamplePostcode });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {
-            { 2, new (12.34m, 56.78m, null, null) },
-            { 3, new (12.34m, 56.78m, 56.78m, 56.78m) },
+            {2, new(12.34m, 56.78m, null, null)},
+            {3, new(12.34m, 56.78m, 56.78m, 56.78m)},
         });
     }
 
@@ -191,12 +196,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
-                "a-tuition-partner")
+                    "a-tuition-partner")
             { Postcode = District.Ryedale.SamplePostcode });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {
-            { 3, new (null, null, 56.78m, 56.78m) }
+            {3, new(null, null, 56.78m, 56.78m)}
         });
     }
 
@@ -229,7 +234,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
                     .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
-            );
+        );
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery("a-tuition-partner", ShowFullPricing: true));
@@ -238,19 +243,19 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
-                { 2, 12.34m },
-                { 3, 12.34m }
+                {2, 12.34m},
+                {3, 12.34m}
             });
         result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
-                { 2, 56.78m },
-                { 3, 56.78m }
+                {2, 56.78m},
+                {3, 56.78m}
             });
         result!.AllPrices[TuitionType.Online][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
-                { 3, 56.78m }
+                {3, 56.78m}
             });
     }
 
@@ -262,7 +267,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName(tuitionPartner)
             .WithSen(supportsSen)
-            );
+        );
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery(tuitionPartner));
         result!.HasSenProvision.Should().Be(supportsSen);
     }
@@ -281,7 +286,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
                     .InSchool().Costing(56.78m).ForGroupSizes(2, 3)))
-            );
+        );
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("bravo-learning")
             .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
@@ -290,7 +295,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3)))
-            );
+        );
 
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery(tuitionPartner));
 
