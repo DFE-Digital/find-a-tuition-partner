@@ -11,8 +11,6 @@ public class SpreadsheetTuitionPartnerFactory : ITuitionPartnerFactory
     private readonly ISpreadsheetExtractor _spreadsheetExtractor;
     private readonly NtpDbContext _dbContext;
 
-    private const string TribalGeneralInformationSheetName = "Organisation Details";
-
     public SpreadsheetTuitionPartnerFactory(ILogger<SpreadsheetTuitionPartnerFactory> logger, ISpreadsheetExtractor spreadsheetExtractor, NtpDbContext dbContext)
     {
         _logger = logger;
@@ -20,16 +18,16 @@ public class SpreadsheetTuitionPartnerFactory : ITuitionPartnerFactory
         _dbContext = dbContext;
     }
 
-    public async Task<TuitionPartner> GetTuitionPartner(Stream stream, CancellationToken cancellationToken)
+    public async Task<TuitionPartner> GetTuitionPartner(Stream stream, string filename, CancellationToken cancellationToken)
     {
         _spreadsheetExtractor.SetStream(stream);
 
         //TODO - decide best way to identify the spreadsheet
-        var isTribalSpreadsheet = _spreadsheetExtractor.WorksheetExists(TribalGeneralInformationSheetName);
+        var isTribalSpreadsheet = _spreadsheetExtractor.WorksheetExists(TribalSpreadsheetTuitionPartnerFactory.OrganisationDetailsSheetName);
 
         //Identify which factory to use, with the strategy pattern
         ITuitionPartnerFactoryStrategy tuitionPartnerFactoryStrategy = isTribalSpreadsheet ?
-            new TribalSpreadsheetTuitionPartnerFactory(_logger, _dbContext) :
+            new TribalSpreadsheetTuitionPartnerFactory(_logger, filename, _dbContext) :
             new QualityAssuredSpreadsheetTuitionPartnerFactory(_dbContext);
 
         return await tuitionPartnerFactoryStrategy.GetTuitionPartner(_spreadsheetExtractor, cancellationToken);

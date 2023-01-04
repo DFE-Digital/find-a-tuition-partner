@@ -170,7 +170,7 @@ public class DataImporterService : IHostedService
                     //if (random.Next(1, 3) == 1)
                     //    throw new Exception("Testing Polly");
 
-                    return await factory.GetTuitionPartner(dataFile.Stream.Value, cancellationToken);
+                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, cancellationToken);
                 });
             }
             catch (Exception ex)
