@@ -4,7 +4,6 @@ public class TuitionPartner : PageModel
 {
     private readonly ILogger<TuitionPartner> _logger;
     private readonly IMediator _mediator;
-    private const string TempDataSearchModelName = "searchModel";
 
     public TuitionPartner(ILogger<TuitionPartner> logger, IMediator mediator)
     {
@@ -56,6 +55,27 @@ public class TuitionPartner : PageModel
 
         return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
     }
+
+    public async Task<IActionResult> OnPostAddToShortlist([FromBody] string seoUrl)
+    {
+        if (!IsSeoUrlValid(seoUrl)) return GetShortlistJsonResult(false);
+
+        await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl.Trim()));
+
+        return GetShortlistJsonResult(true);
+    }
+
+    public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] string seoUrl)
+    {
+        if (!IsSeoUrlValid(seoUrl)) return GetShortlistJsonResult(false);
+
+        await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl.Trim()));
+
+        return GetShortlistJsonResult(true);
+    }
+
+    private bool IsSeoUrlValid(string seoUrl) => !string.IsNullOrWhiteSpace(seoUrl);
+    private JsonResult GetShortlistJsonResult(bool status) => new(new { Updated = status });
 
     private IActionResult ReturnNotFound(string logMessage)
     {
