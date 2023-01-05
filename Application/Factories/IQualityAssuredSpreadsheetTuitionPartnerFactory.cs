@@ -3,7 +3,7 @@ using Domain;
 
 namespace Application.Factories;
 
-public interface ITuitionPartnerFactoryStrategy
+public interface IQualityAssuredSpreadsheetTuitionPartnerFactory
 {
     Task<TuitionPartner> GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, CancellationToken cancellationToken);
 }

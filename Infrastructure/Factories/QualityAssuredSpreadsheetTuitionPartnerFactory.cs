@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Factories;
 
-public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStrategy
+public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpreadsheetTuitionPartnerFactory
 {
     private readonly NtpDbContext _dbContext;
 

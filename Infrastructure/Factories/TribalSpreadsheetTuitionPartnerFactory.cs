@@ -4,23 +4,21 @@ using Application.Factories;
 using Domain;
 using Domain.Constants;
 using Infrastructure.Mapping;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Factories;
 
-public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStrategy
+public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionPartnerFactory
 {
     public const string OrganisationDetailsSheetName = "Organisation Details";
-    private const string PricingSheetName = "Pricing";
     private const string DeliverySheetName = "Delivery";
+    private const string PricingSheetName = "Pricing";
     private const int MaxRows = 100000;
 
-    private readonly string _filename;
     private readonly ILogger _logger;
-    private readonly NtpDbContext _dbContext;
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
 
+    private IList<Region>? _regions;
     private ISpreadsheetExtractor? _spreadsheetExtractor;
 
     private readonly List<string> _warnings = new();
@@ -63,11 +61,9 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
         { (TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
     };
 
-    public TribalSpreadsheetTuitionPartnerFactory(ILogger logger, string filename, NtpDbContext dbContext)
+    public TribalSpreadsheetTuitionPartnerFactory(ILogger<TribalSpreadsheetTuitionPartnerFactory> logger)
     {
         _logger = logger;
-        _filename = filename;
-        _dbContext = dbContext;
 
         TuitionPartner tpMapping = new();
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
@@ -75,20 +71,20 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
             { "Organisation_Ref_ID_s", new ImportMap() },
             { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) },
-            { "Organisation_Address2_s", new ImportMap() },
-            { "Organisation_Town_s", new ImportMap() { IsRequired = true } },
-            { "Organisation_County_s", new ImportMap() { IsRequired = true } },
-            { "Organisation_PostCode_s", new ImportMap() { IsRequired = true } },
+            { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true } },
+            { "Organisation_Town_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
+            { "Organisation_County_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
+            { "Organisation_PostCode_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_Tel_s", new ImportMap(tpMapping, nameof(tpMapping.PhoneNumber)) },
             { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
             { "Organisation_Website_s", new ImportMap() },
             { "Organisation_ContactMethodPref_s", new ImportMap() },
-            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.AdditionalServiceOfferings)) },
+            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.AdditionalServiceOfferings)) {IsRequired = false} },
             { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) },
             { "Organisation_LogoVector_s", new ImportMap() },
-            { "Organisation_SENProvision_s", new ImportMap(tpMapping, nameof(tpMapping.HasSenProvision)) },
-            { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) },
+            { "Organisation_SENProvision_s", new ImportMap(tpMapping, nameof(tpMapping.HasSenProvision)) {IsRequired = false} },
+            { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
             { "Organisation_VATIncluded_s", new ImportMap() },
             { "Organisation_SEN_KS12_Support_s", new ImportMap() },
             { "Organisation_SEN_ASD_s", new ImportMap() },
@@ -111,7 +107,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
             { "Organisation_Tutor_RecCriteria_s", new ImportMap() },
             { "Organisation_Tutor_Quals_s", new ImportMap() },
             { "Organisation_Tutor_IfNotQTS_s", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_s", new ImportMap(tpMapping, nameof(tpMapping.Experience)) },//TODO - check this map and all others once confirmed with Tribal
+            { "Organisation_Tutor_LevelExp_s", new ImportMap(tpMapping, nameof(tpMapping.Experience)) },
             { "Organisation_Tutor_LevelExp_Classroom_b", new ImportMap() },
             { "Organisation_Tutor_LevelExp_Teachers_b", new ImportMap() },
             { "Organisation_Tutor_LevelExp_Graduates_b", new ImportMap() },
@@ -133,8 +129,10 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
         };
     }
 
-    public async Task<TuitionPartner> GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, CancellationToken cancellationToken)
+    public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename, IList<Region> regions)
     {
+        _regions = regions;
+
         TuitionPartner tuitionPartner = new();
 
         _spreadsheetExtractor = spreadsheetExtractor;
@@ -156,7 +154,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
         {
             tuitionPartner = GetOrganisationDetails();
 
-            tuitionPartner = await AddLocalAuthorityDistrictCoverage(tuitionPartner, cancellationToken);
+            PopulateLocalAuthorityDistrictCoverage(tuitionPartner);
 
             tuitionPartner = AddSubjectCoverageAndPrice(tuitionPartner);
         }
@@ -164,86 +162,91 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
         //TODO - review how the multiple errors/warnings are logged in logit, ensure looks OK
         if (_warnings.Any())
         {
-            _logger.LogWarning("Issues importing Tribal spreadsheet '{filename}': {warnings}", _filename, string.Join(Environment.NewLine, _warnings));
+            _logger.LogWarning("Issues importing Tribal spreadsheet '{filename}': {warnings}", filename, string.Join(Environment.NewLine, _warnings));
         }
 
         if (_errors.Any())
         {
-            throw new Exception($"Error importing Tribal spreadsheet '{_filename}': {string.Join(Environment.NewLine, _errors)}");
+            throw new Exception($"Error importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _errors)}");
         }
 
         return tuitionPartner;
     }
 
-    private TuitionPartner GetOrganisationDetails()
+    private void ProcessSheet(string sheetName, string tableHeaderColumn, string tableHeader, string dataColumn, Action<ISpreadsheetExtractor?, string, string, int> addRowToDictionary)
     {
-        const string KeyColumn = "A";
-        const string ValueColumn = "C";
-        const string KeyColumnTableHeader = "Title";
-        TuitionPartner tuitionPartner = new();
-
         var completedLoop = false;
         var passedHeader = false;
         int row = 1;
         while (!completedLoop)
         {
-            var key = _spreadsheetExtractor!.GetCellValue(OrganisationDetailsSheetName, KeyColumn, row);
-            if (passedHeader)
+            if (row == MaxRows)
             {
-                if (row == MaxRows)
+                _errors.Add($"Searched '{MaxRows}' rows in '{sheetName}' worksheet");
+                completedLoop = true;
+            }
+            else if (passedHeader)
+            {
+                var data = _spreadsheetExtractor!.GetCellValue(sheetName, dataColumn, row);
+                if (!string.IsNullOrWhiteSpace(data))
                 {
-                    _errors.Add($"Searched '{MaxRows}' rows in '{DeliverySheetName}' worksheet");
-                    completedLoop = true;
-                }
-                else if (!string.IsNullOrWhiteSpace(key))
-                {
-                    var value = _spreadsheetExtractor.GetCellValue(OrganisationDetailsSheetName, ValueColumn, row);
-                    if (_organisationDetailsMapping.ContainsKey(key))
-                    {
-                        if (!_organisationDetailsMapping[key].HasConvertedValue)
-                        {
-                            _organisationDetailsMapping[key].SetValue(value);
-                        }
-                        else
-                        {
-                            _errors.Add($"Duplicate '{key}' in '{DeliverySheetName}' worksheet");
-                        }
-                    }
-                    else
-                    {
-                        _warnings.Add($"Unexpected '{key}' key exists in '{DeliverySheetName}' worksheet");
-                    }
+                    addRowToDictionary(_spreadsheetExtractor, sheetName, data, row);
                 }
                 else
                 {
                     completedLoop = true;
                 }
             }
-            else if (key == KeyColumnTableHeader)
+            else
             {
-                passedHeader = true;
+                passedHeader = _spreadsheetExtractor!.GetCellValue(sheetName, tableHeaderColumn, row) == tableHeader;
             }
 
             row++;
         }
+    }
 
-        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData);
-        if (missingNTPProperties.Any())
-        {
-            _warnings.Add($"The following were expected and not supplied in the '{DeliverySheetName}' worksheet: {string.Join(", ", missingNTPProperties.Select(x => x.Key).ToArray())}");
-        }
-        var missingRequiredNTPProperties = _organisationDetailsMapping.Where(x => x.Value.IsRequired && string.IsNullOrWhiteSpace(x.Value.SourceValue));
-        if (missingRequiredNTPProperties.Any())
-        {
-            _errors.Add($"The following were required and not set in the '{DeliverySheetName}' worksheet: {string.Join(", ", missingRequiredNTPProperties.Select(x => x.Key).ToArray())}");
-        }
+    private TuitionPartner GetOrganisationDetails()
+    {
+        const string KeyColumn = "A";
+        const string ValueColumn = "C";
+        const string TableHeaderColumn = "A";
+        const string TableHeader = "Title";
 
+        TuitionPartner tuitionPartner = new();
+        var sheetName = OrganisationDetailsSheetName;
+
+        //Add the data from the spreadsheet in to the _organisationDetailsMapping dictionary value class
+        ProcessSheet(sheetName, TableHeaderColumn, TableHeader, KeyColumn,
+            (spreadsheetExtractor, sheetName, data, row) =>
+            {
+                var key = data;
+                if (_organisationDetailsMapping.ContainsKey(key))
+                {
+                    if (!_organisationDetailsMapping[key].HasConvertedValue)
+                    {
+                        var value = spreadsheetExtractor!.GetCellValue(sheetName, ValueColumn, row);
+                        _organisationDetailsMapping[key].SetValue(value);
+                    }
+                    else
+                    {
+                        _errors.Add($"Duplicate '{key}' in '{sheetName}' worksheet");
+                    }
+                }
+                else
+                {
+                    _warnings.Add($"Unexpected '{key}' key exists in '{sheetName}' worksheet");
+                }
+            });
+
+        //Use the _organisationDetailsMapping dictionary to push the data in to the TuitionPartner class
         var mappedProperties = _organisationDetailsMapping.Where(x => x.Value.IsStoredInNtp && x.Value.HasConvertedValue);
         foreach (var mappedProperty in mappedProperties)
         {
             mappedProperty.Value.ApplyConvertedValueToProperty(tuitionPartner);
         }
 
+        //Update the TuitionPartner class with specific mapping info
         tuitionPartner.Website = tuitionPartner.Website.ParseUrl();
         //If no TP specific website then use the main website for the company
         if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
@@ -265,148 +268,152 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITuitionPartnerFactoryStra
 
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 
-        return tuitionPartner;
-    }
-
-
-    private async Task<TuitionPartner> AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, CancellationToken cancellationToken)
-    {
-        var isInSchoolNationwide = _spreadsheetExtractor!.GetCellValue(DeliverySheetName, "B", 6).ParseBoolean();
-        var isOnlineNationwide = _spreadsheetExtractor!.GetCellValue(DeliverySheetName, "C", 6).ParseBoolean();
-
-        var regionInitialsCovered = GetRegionInitialsCovered();
-
-        var ladCodesCovered = GetLadCodesCovered();
-
-        var ladsCovered = new Dictionary<(string code, TuitionTypes tuitionType), LocalAuthorityDistrict>();
-
-        if (isInSchoolNationwide)
+        //Deal with warnings and errors
+        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData);
+        if (missingNTPProperties.Any())
         {
-            foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
-            {
-                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
-            }
+            _warnings.Add($"The following were expected and not supplied in the '{sheetName}' worksheet: {string.Join(", ", missingNTPProperties.Select(x => x.Key).ToArray())}");
         }
-
-        if (isOnlineNationwide)
+        var missingRequiredNTPProperties = _organisationDetailsMapping.Where(x => x.Value.IsRequired && string.IsNullOrWhiteSpace(x.Value.SourceValue));
+        if (missingRequiredNTPProperties.Any())
         {
-            foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
-            {
-                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
-            }
-        }
-
-        foreach ((string regionInitials, (bool inSchoolCovered, bool onlineCovered)) in regionInitialsCovered)
-        {
-            if (!Regions.InitialsToId.TryGetValue(regionInitials, out var regionId))
-            {
-                throw new Exception($"Region initial {regionInitials} was not recognised");
-            }
-
-            var region = await _dbContext.Regions
-                .Include(e => e.LocalAuthorityDistricts)
-                .FirstOrDefaultAsync(e => e.Id == regionId, cancellationToken);
-
-            if (region == null)
-            {
-                throw new Exception($"Region with id {regionId} from initial {regionInitials} was not found");
-            }
-
-            foreach (var lad in region.LocalAuthorityDistricts)
-            {
-                if (inSchoolCovered)
-                {
-                    ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
-                }
-                if (onlineCovered)
-                {
-                    ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
-                }
-            }
-        }
-
-        foreach ((string ladCode, (bool inSchoolCovered, bool onlineCovered)) in ladCodesCovered)
-        {
-            //TODO - stop the repeat db hits - do in memory, maybe even in a static list at class level for subsequent files
-            var lad = await _dbContext.LocalAuthorityDistricts
-                .FirstOrDefaultAsync(e => e.Code == ladCode, cancellationToken);
-
-            //TODO - for tribal, do we want to validate the LAD name, Region code or region name as well, maybe as a warning?
-
-            if (lad == null)
-            {
-                throw new Exception($"Local Authority District with code {ladCode} was not found");
-            }
-
-            if (inSchoolCovered)
-            {
-                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
-            }
-            if (onlineCovered)
-            {
-                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
-            }
-        }
-
-        foreach (((_, TuitionTypes tuitionType), LocalAuthorityDistrict lad) in ladsCovered)
-        {
-            var coverage = new LocalAuthorityDistrictCoverage
-            {
-                TuitionPartner = tuitionPartner,
-                TuitionTypeId = (int)tuitionType,
-                LocalAuthorityDistrictId = lad.Id
-            };
-
-            tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+            _errors.Add($"The following were required and not set in the '{sheetName}' worksheet: {string.Join(", ", missingRequiredNTPProperties.Select(x => x.Key).ToArray())}");
         }
 
         return tuitionPartner;
     }
 
-    private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetRegionInitialsCovered()
+    private void PopulateLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner)
     {
-        var regionCodes = _spreadsheetExtractor!.GetColumnValues(DeliverySheetName, "E", 6, 15);
-        var inSchoolRegionsCovered = _spreadsheetExtractor.GetColumnValues(DeliverySheetName, "G", 6, 15);
-        var onlineRegionsCovered = _spreadsheetExtractor.GetColumnValues(DeliverySheetName, "H", 6, 15);
+        const string LADCodeColumn = "A";
+        const string LADNameColumn = "B";
+        const string RegionCodeColumn = "C";
+        const string RegionNameColumn = "D";
+        const string InSchoolColumn = "E";
+        const string OnlineColumn = "F";
 
-        var regionCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
-        var index = 0;
-        foreach (var regionCode in regionCodes)
-        {
-            var inSchoolRegionCovered = inSchoolRegionsCovered[index].ParseBoolean();
-            var onlineRegionCovered = onlineRegionsCovered[index].ParseBoolean();
-            if (inSchoolRegionCovered || onlineRegionCovered)
+        const string TableHeaderColumn = "A";
+        const string TableHeader = "LAD Code";
+
+        var sheetName = DeliverySheetName;
+        var ladsCovered = new Dictionary<string, (int ladId, string ladName, string regionCode, string regionName, bool inSchool, bool online)>();
+        var regionsAndLADs = _regions!
+            .SelectMany(r => r.LocalAuthorityDistricts
+                .Select(l => new { RegionName = r.Name, LocalAuthorityDistrictId = l.Id, LocalAuthorityDistrictCode = l.Code, LocalAuthorityDistrictName = l.Name })
+            );
+
+        //Add the data from the spreadsheet in to the _organisationDetailsMapping dictionary value class
+        ProcessSheet(sheetName, TableHeaderColumn, TableHeader, LADCodeColumn,
+            (spreadsheetExtractor, sheetName, data, row) =>
             {
-                regionCodesCovered[regionCode] = (inSchoolRegionCovered, onlineRegionCovered);
+                var ladCode = data;
+                if (!ladsCovered.ContainsKey(ladCode))
+                {
+                    var ladName = spreadsheetExtractor!.GetCellValue(sheetName, LADNameColumn, row);
+                    var regionCode = spreadsheetExtractor!.GetCellValue(sheetName, RegionCodeColumn, row);
+                    var regionName = spreadsheetExtractor!.GetCellValue(sheetName, RegionNameColumn, row);
+
+                    if (string.IsNullOrWhiteSpace(ladName) ||
+                        string.IsNullOrWhiteSpace(regionCode) ||
+                        string.IsNullOrWhiteSpace(regionName))
+                    {
+                        _warnings.Add($"Missing LAD or Region details on '{sheetName}' worksheet for LAD Code '{ladCode}'");
+                    }
+
+                    var ladId = regionsAndLADs.FirstOrDefault(x => x.LocalAuthorityDistrictCode == ladCode);
+
+                    if (ladId == null)
+                    {
+                        _errors.Add($"Cannot find LAD Id in NTP database for LAD Code '{ladCode}' in '{sheetName}' worksheet");
+                    }
+                    else
+                    {
+                        var inSchool = spreadsheetExtractor!.GetCellValue(sheetName, InSchoolColumn, row).ParseBoolean();
+                        var online = spreadsheetExtractor!.GetCellValue(sheetName, OnlineColumn, row).ParseBoolean();
+
+                        ladsCovered[ladCode] = (ladId.LocalAuthorityDistrictId, ladName, regionCode, regionName, inSchool, online);
+                    }
+                }
+                else
+                {
+                    _errors.Add($"Duplicate '{ladCode}' in '{sheetName}' worksheet");
+                }
+            });
+
+        if (ladsCovered.Count == 0)
+        {
+            _errors.Add($"No entries added in the '{sheetName}' worksheet");
+        }
+        else
+        {
+            foreach ((_, (int ladId, string ladName, string regionCode, string regionName, bool inSchool, bool online)) in ladsCovered)
+            {
+                if (inSchool)
+                {
+                    var coverage = new LocalAuthorityDistrictCoverage
+                    {
+                        TuitionPartner = tuitionPartner,
+                        TuitionTypeId = (int)TuitionTypes.InSchool,
+                        LocalAuthorityDistrictId = ladId
+                    };
+
+                    tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+                }
+                if (online)
+                {
+                    var coverage = new LocalAuthorityDistrictCoverage
+                    {
+                        TuitionPartner = tuitionPartner,
+                        TuitionTypeId = (int)TuitionTypes.Online,
+                        LocalAuthorityDistrictId = ladId
+                    };
+
+                    tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+                }
             }
 
-            index++;
-        }
-
-        return regionCodesCovered;
-    }
-
-    private IDictionary<string, (bool inSchoolCovered, bool onlineCovered)> GetLadCodesCovered()
-    {
-        var ladCodes = _spreadsheetExtractor!.GetColumnValues(DeliverySheetName, "K", 6, 315);
-        var inSchoolLadsCovered = _spreadsheetExtractor.GetColumnValues(DeliverySheetName, "M", 6, 315);
-        var onlineLadsCovered = _spreadsheetExtractor.GetColumnValues(DeliverySheetName, "N", 6, 315);
-
-        var ladCodesCovered = new Dictionary<string, (bool inSchoolCovered, bool onlineCovered)>();
-        var index = 0;
-        foreach (var ladCode in ladCodes)
-        {
-            var inSchoolLadCovered = inSchoolLadsCovered[index].ParseBoolean();
-            var onlineLadCovered = onlineLadsCovered[index].ParseBoolean();
-            if (inSchoolLadCovered || onlineLadCovered)
+            if (!tuitionPartner.LocalAuthorityDistrictCoverage.Any())
             {
-                ladCodesCovered[ladCode] = (inSchoolLadCovered, onlineLadCovered);
+                _errors.Add($"No entries set to True in the '{sheetName}' worksheet");
             }
+            else
+            {
+                //Warn for invalid LAD Name, Region Code and Region Name
+                var invalidLADNames = ladsCovered
+                    .Select(tribalData => tribalData.Value.ladName)
+                    .Distinct()
+                    .Where(tribalData => !string.IsNullOrWhiteSpace(tribalData) && !regionsAndLADs.Any(db => db.LocalAuthorityDistrictName == tribalData));
+                if (invalidLADNames.Any())
+                {
+                    _warnings.Add($"Invalid LAD Names on '{sheetName}' worksheet: {string.Join(", ", invalidLADNames)}");
+                }
 
-            index++;
+                var invalidRegionNames = ladsCovered
+                    .Select(tribalData => tribalData.Value.regionName)
+                    .Distinct()
+                    .Where(tribalData => !string.IsNullOrWhiteSpace(tribalData) && !regionsAndLADs.Any(db => db.RegionName == tribalData));
+                if (invalidRegionNames.Any())
+                {
+                    _warnings.Add($"Invalid Region Names on '{sheetName}' worksheet: {string.Join(", ", invalidRegionNames)}");
+                }
+
+                List<string> invalidRegionCodes = new();
+                var regionCodes = ladsCovered
+                    .Select(tribalData => tribalData.Value.regionCode)
+                    .Distinct();
+                foreach (var regionCode in regionCodes)
+                {
+                    if (!Regions.InitialsToId.TryGetValue(regionCode, out var regionId))
+                    {
+                        invalidRegionCodes.Add(regionCode);
+                    }
+                }
+                if (invalidRegionCodes.Any())
+                {
+                    _warnings.Add($"Invalid Region Codes on '{sheetName}' worksheet: {string.Join(", ", invalidRegionCodes)}");
+                }
+            }
         }
-
-        return ladCodesCovered;
     }
 
     private TuitionPartner AddSubjectCoverageAndPrice(TuitionPartner tuitionPartner)

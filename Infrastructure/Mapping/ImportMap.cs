@@ -17,7 +17,7 @@ namespace Infrastructure.Mapping
         }
 
         public bool IsInSourceData { get; set; } = false;
-        public bool IsStoredInNtp { get; } = false;
+        public bool IsStoredInNtp { get; set; } = false;
         public string? PropertyName { get; }
         public Type? PropertyType { get; }
         public bool IsRequired { get; set; } = false;

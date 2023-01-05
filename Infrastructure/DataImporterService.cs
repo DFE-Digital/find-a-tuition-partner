@@ -32,7 +32,7 @@ public class DataImporterService : IHostedService
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
         var dataFileEnumerable = scope.ServiceProvider.GetRequiredService<IDataFileEnumerable>();
         var logoFileEnumerable = scope.ServiceProvider.GetRequiredService<ILogoFileEnumerable>();
-        var factory = scope.ServiceProvider.GetRequiredService<ITuitionPartnerFactory>();
+        var factory = scope.ServiceProvider.GetRequiredService<ISpreadsheetTuitionPartnerFactory>();
 
         _logger.LogInformation("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
@@ -140,8 +140,12 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
-    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITuitionPartnerFactory factory, CancellationToken cancellationToken)
+    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory, CancellationToken cancellationToken)
     {
+        var regions = await dbContext.Regions
+            .Include(e => e.LocalAuthorityDistricts)
+            .ToListAsync(cancellationToken);
+
         foreach (var dataFile in dataFileEnumerable)
         {
             var originalFilename = dataFile.Filename;
@@ -170,7 +174,7 @@ public class DataImporterService : IHostedService
                     //if (random.Next(1, 3) == 1)
                     //    throw new Exception("Testing Polly");
 
-                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, cancellationToken);
+                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, cancellationToken);
                 });
             }
             catch (Exception ex)
