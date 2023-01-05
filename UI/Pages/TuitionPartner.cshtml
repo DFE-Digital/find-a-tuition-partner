@@ -268,16 +268,19 @@
             </govuk-summary-list-row>
         }
     </govuk-summary-list>
-    <hr class="govuk-section-break govuk-section-break--visible ">
-    <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
-    <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
-        @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
-        <input type="hidden" name="SearchModel" value="@searchModel"/>
-        <govuk-button asp-page-handler="UpdateShortlist" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
-            Update shortlist
-        </govuk-button>
-    </div>
-    <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+    @if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
+    {
+        <hr class="govuk-section-break govuk-section-break--visible ">
+        <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+        <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
+            @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
+            <input type="hidden" name="SearchModel" value="@searchModel"/>
+            <govuk-button asp-page-handler="UpdateShortlist" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
+                Update shortlist
+            </govuk-button>
+        </div>
+        <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+    }
 </div>
 </div>
 <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
@@ -285,4 +288,5 @@
 </div>
 </div>
 </form>
+
 @section Scripts{<script src="/Pages/TuitionPartner.cshtml.js"></script>}
