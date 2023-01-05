@@ -43,14 +43,15 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl, string searchModel)
     {
-        if (string.IsNullOrWhiteSpace(searchModel)) throw new ArgumentNullException(nameof(searchModel));
+        if (IsStringWhitespaceOrNull(seoUrl)) throw GetArgumentException(nameof(seoUrl));
+        if (IsStringWhitespaceOrNull(searchModel)) throw GetArgumentException(nameof(searchModel));
 
         SearchModel = JsonSerializer.Deserialize<SearchModel>(searchModel);
 
-        if (string.IsNullOrWhiteSpace(ShortlistedCheckbox))
+        if (IsStringWhitespaceOrNull(ShortlistedCheckbox))
             await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl));
 
-        if (!string.IsNullOrWhiteSpace(ShortlistedCheckbox))
+        if (!IsStringWhitespaceOrNull(ShortlistedCheckbox))
             await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl));
 
         return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
@@ -58,7 +59,7 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnPostAddToShortlist([FromBody] string seoUrl)
     {
-        if (!IsSeoUrlValid(seoUrl)) return GetShortlistJsonResult(false);
+        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
 
         await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl.Trim()));
 
@@ -67,14 +68,15 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] string seoUrl)
     {
-        if (!IsSeoUrlValid(seoUrl)) return GetShortlistJsonResult(false);
+        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
 
         await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl.Trim()));
 
         return GetShortlistJsonResult(true);
     }
 
-    private bool IsSeoUrlValid(string seoUrl) => !string.IsNullOrWhiteSpace(seoUrl);
+    private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
+    private ArgumentException GetArgumentException(string name) => new($"{name} is null or whitespace");
     private JsonResult GetShortlistJsonResult(bool status) => new(new { Updated = status });
 
     private IActionResult ReturnNotFound(string logMessage)

@@ -1,12 +1,7 @@
 ﻿using Domain.Constants;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using Moq;
 using Tests.TestData;
-using UI.Enums;
 using UI.MediatR.Queries;
-using UI.Models;
 using UI.Structs;
 using KeyStage = UI.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
