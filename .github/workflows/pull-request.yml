@@ -38,12 +38,6 @@ jobs:
         ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
         EOF
 
-    - name: Add credentials.json
-      run: |
-        tee Infrastructure/dfe_analytics_credentials.json << EOF
-        ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
-        EOF
-
     - name: Install the CF CLI
       run: |
         wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
@@ -72,7 +66,7 @@ jobs:
           --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
           --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
           --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}" \
-          --var dfe-analytics-credentials-json="$( cat Infrastructure/dfe_analytics_credentials.json )"
+          --var dfe-analytics-credentials-json="${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}"
 
     - name: Run database migrations and import data
       run: |
