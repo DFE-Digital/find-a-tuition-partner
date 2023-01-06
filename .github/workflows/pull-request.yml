@@ -16,6 +16,8 @@ jobs:
   build_deploy_test:
     name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
+    environment: qa
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -34,6 +36,12 @@ jobs:
       run: |
         tee Infrastructure/credentials.json << EOF
         ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
+        EOF
+
+    - name: Add credentials.json
+      run: |
+        tee Infrastructure/dfe_analytics_credentials.json << EOF
+        ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
         EOF
 
     - name: Install the CF CLI
@@ -57,7 +65,7 @@ jobs:
 
     - name: Deploy to PaaS
       run: |
-        cf push --strategy rolling --vars-file vars-pr.yml --var environment-postfix=-$PR_NUMBER --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
+        cf push --strategy rolling --vars-file vars-pr.yml --var environment-postfix=-$PR_NUMBER --var dotnet-environment=$PR_NUMBER --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}" --var "$( cat Infrastructure/dfe_analytics_credentials.json )"
 
     - name: Run database migrations and import data
       run: |
