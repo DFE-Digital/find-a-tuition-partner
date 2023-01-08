@@ -146,6 +146,9 @@ public class DataImporterService : IHostedService
             .Include(e => e.LocalAuthorityDistricts)
             .ToListAsync(cancellationToken);
 
+        var subjects = await dbContext.Subjects
+            .ToListAsync(cancellationToken);
+
         foreach (var dataFile in dataFileEnumerable)
         {
             var originalFilename = dataFile.Filename;
@@ -174,7 +177,7 @@ public class DataImporterService : IHostedService
                     //if (random.Next(1, 3) == 1)
                     //    throw new Exception("Testing Polly");
 
-                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, cancellationToken);
+                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, subjects, cancellationToken);
                 });
             }
             catch (Exception ex)

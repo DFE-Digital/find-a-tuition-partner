@@ -5,5 +5,5 @@ namespace Application.Factories;
 
 public interface ITribalSpreadsheetTuitionPartnerFactory
 {
-    TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename, IList<Region> regions);
+    TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename, IList<Region> regions, IList<Subject> subjects);
 }

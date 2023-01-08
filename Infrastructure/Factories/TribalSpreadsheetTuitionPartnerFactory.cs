@@ -19,47 +19,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
 
     private IList<Region>? _regions;
+    private IList<Subject>? _subjects;
     private ISpreadsheetExtractor? _spreadsheetExtractor;
 
     private readonly List<string> _warnings = new();
     private readonly List<string> _errors = new();
-
-    private static readonly IDictionary<(TuitionTypes, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(TuitionTypes, int), (string, int)>
-    {
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage1English), ("C", 7) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Maths), ("D", 7) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Science), ("E", 7) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage2English), ("C", 17) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Maths), ("D", 17) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Science), ("E", 17) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage3English), ("C", 27) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 27) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Maths), ("E", 27) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 27) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Science), ("G", 27) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage4English), ("C", 37) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Humanities), ("D", 37) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Maths), ("E", 37) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 37) },
-        { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Science), ("G", 37) },
-
-        { (TuitionTypes.Online, Subjects.Id.KeyStage1English), ("C", 47) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage1Maths), ("D", 47) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 47) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage2English), ("C", 57) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage2Maths), ("D", 57) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("E", 57) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 67) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 67) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage3Maths), ("E", 67) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 67) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage3Science), ("G", 67) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage4English), ("C", 77) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage4Humanities), ("D", 77) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage4Maths), ("E", 77) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 77) },
-        { (TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
-    };
 
     public TribalSpreadsheetTuitionPartnerFactory(ILogger<TribalSpreadsheetTuitionPartnerFactory> logger)
     {
@@ -78,60 +42,24 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             { "Organisation_Tel_s", new ImportMap(tpMapping, nameof(tpMapping.PhoneNumber)) },
             { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
+            { "Organisation_Phone_s", new ImportMap() },
             { "Organisation_Website_s", new ImportMap() },
             { "Organisation_ContactMethodPref_s", new ImportMap() },
-            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.AdditionalServiceOfferings)) {IsRequired = false} },
-            { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) },
+            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
+            { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) }, //TODO - chat over best way to store this going forward (lookup table?) and best way to identify the charities used for filter (in C# or db?)
             { "Organisation_LogoVector_s", new ImportMap() },
             { "Organisation_SENProvision_s", new ImportMap(tpMapping, nameof(tpMapping.HasSenProvision)) {IsRequired = false} },
+            { "Organisation_AdditionalService_s", new ImportMap(tpMapping, nameof(tpMapping.AdditionalServiceOfferings)) {IsRequired = false} },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
-            { "Organisation_VATIncluded_s", new ImportMap() },
-            { "Organisation_SEN_KS12_Support_s", new ImportMap() },
-            { "Organisation_SEN_ASD_s", new ImportMap() },
-            { "Organisation_SEN_HI_s", new ImportMap() },
-            { "Organisation_SEN_MLD_s", new ImportMap() },
-            { "Organisation_SEN_MSI_s", new ImportMap() },
-            { "Organisation_SEN_PD_s", new ImportMap() },
-            { "Organisation_SEN_PMLD_s", new ImportMap() },
-            { "Organisation_SEN_SEMH_s", new ImportMap() },
-            { "Organisation_SEN_SLNC_s", new ImportMap() },
-            { "Organisation_SEN_SLD_s", new ImportMap() },
-            { "Organisation_SEN_SPLD_s", new ImportMap() },
-            { "Organisation_SEN_VI_S", new ImportMap() },
-            { "Organisation_SEN_OTH_s", new ImportMap() },
-            { "Organisation_Tutor_Description_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
-            { "Organisation_Tutor_CriteriaEmpTutor_s", new ImportMap() },
-            { "Organisation_Tutor_Availability_s", new ImportMap() },
-            { "Organisation_Tutor_TuitionSend_s", new ImportMap() },
-            { "Organisation_Tutor_Processes_s", new ImportMap() },
-            { "Organisation_Tutor_RecCriteria_s", new ImportMap() },
-            { "Organisation_Tutor_Quals_s", new ImportMap() },
-            { "Organisation_Tutor_IfNotQTS_s", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_s", new ImportMap(tpMapping, nameof(tpMapping.Experience)) },
-            { "Organisation_Tutor_LevelExp_Classroom_b", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_Teachers_b", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_Graduates_b", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_Undergraduates_b", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_Other_b", new ImportMap() },
-            { "Organisation_Tutor_LevelExp_NoCriteria_b", new ImportMap() },
-            { "Organisaiton_Exam_AQA_b", new ImportMap() },
-            { "Organisation_Exam_OCR_b", new ImportMap() },
-            { "Organisation_Exam_Pearson_b", new ImportMap() },
-            { "Organisation_Exam_WJEC_b", new ImportMap() },
-            { "Organisation_Exam_CAIE_b", new ImportMap() },
-            { "Organisation_Exam_CCEA_b", new ImportMap() },
-            { "Organisation_Exam_Other_b", new ImportMap() },
-            { "Organisation_AddService_Service_s", new ImportMap() },
-            { "Organisation_AddService_FreeService_s", new ImportMap() },
-            { "Organisation_AddService_ChargeService_s", new ImportMap() },
-            { "Organisation_Reference_s", new ImportMap() },
-            { "Organisation_SEN_KS34_Support_s", new ImportMap() }
+            { "Organisation_VATIncluded_s", new ImportMap() }
         };
     }
 
-    public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename, IList<Region> regions)
+    public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename,
+        IList<Region> regions, IList<Subject> subjects)
     {
         _regions = regions;
+        _subjects = subjects;
 
         TuitionPartner tuitionPartner = new();
 
@@ -156,7 +84,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
             PopulateLocalAuthorityDistrictCoverage(tuitionPartner);
 
-            tuitionPartner = AddSubjectCoverageAndPrice(tuitionPartner);
+            PopulateSubjectCoverageAndPrice(tuitionPartner);
         }
 
         //TODO - review how the multiple errors/warnings are logged in logit, ensure looks OK
@@ -208,9 +136,9 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
     private TuitionPartner GetOrganisationDetails()
     {
-        const string KeyColumn = "A";
-        const string ValueColumn = "C";
-        const string TableHeaderColumn = "A";
+        const string KeyColumn = "B";
+        const string ValueColumn = "D";
+        const string TableHeaderColumn = "B";
         const string TableHeader = "Title";
 
         TuitionPartner tuitionPartner = new();
@@ -302,7 +230,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 .Select(l => new { RegionName = r.Name, LocalAuthorityDistrictId = l.Id, LocalAuthorityDistrictCode = l.Code, LocalAuthorityDistrictName = l.Name })
             );
 
-        //Add the data from the spreadsheet in to the _organisationDetailsMapping dictionary value class
+        //Add the data from the spreadsheet in to the ladsCovered dictionary
         ProcessSheet(sheetName, TableHeaderColumn, TableHeader, LADCodeColumn,
             (spreadsheetExtractor, sheetName, data, row) =>
             {
@@ -350,25 +278,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             {
                 if (inSchool)
                 {
-                    var coverage = new LocalAuthorityDistrictCoverage
-                    {
-                        TuitionPartner = tuitionPartner,
-                        TuitionTypeId = (int)TuitionTypes.InSchool,
-                        LocalAuthorityDistrictId = ladId
-                    };
-
-                    tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionTypes.InSchool, ladId);
                 }
                 if (online)
                 {
-                    var coverage = new LocalAuthorityDistrictCoverage
-                    {
-                        TuitionPartner = tuitionPartner,
-                        TuitionTypeId = (int)TuitionTypes.Online,
-                        LocalAuthorityDistrictId = ladId
-                    };
-
-                    tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionTypes.Online, ladId);
                 }
             }
 
@@ -416,47 +330,187 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private TuitionPartner AddSubjectCoverageAndPrice(TuitionPartner tuitionPartner)
+    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, TuitionTypes tuitionType, int ladId)
     {
-        //TODO - if they have no LADs with online or none with in school then shouldn't include them here?  And have warning.
-        foreach (var ((tuitionType, subjectId), (column, row)) in SubjectPricesCellReferences)
+        var coverage = new LocalAuthorityDistrictCoverage
         {
-            var subjectHourlyRates = _spreadsheetExtractor!.GetColumnValues(PricingSheetName, column, row, row + 6)
-                .Select(x => x.ParsePrice())
-                .ToArray();
+            TuitionPartner = tuitionPartner,
+            TuitionTypeId = (int)tuitionType,
+            LocalAuthorityDistrictId = ladId
+        };
 
-            var isSubjectSupported = subjectHourlyRates.Any(x => x > 0);
-            if (isSubjectSupported)
+        tuitionPartner.LocalAuthorityDistrictCoverage.Add(coverage);
+    }
+
+    private void PopulateSubjectCoverageAndPrice(TuitionPartner tuitionPartner)
+    {
+        const string GroupColumn = "A";
+        const string KeyStageColumn = "B";
+        const string SubjectColumn = "C";
+        const string TuitionTypeColumn = "D";
+        const string RateColumn = "F";
+
+        const string TableHeaderColumn = "A";
+        const string TableHeader = "Group";
+
+        var sheetName = PricingSheetName;
+        var subjectCoverageAndPrices = new Dictionary<(int groupSize, Application.Enums.KeyStage keyStage, Application.Enums.Subject subject, int subjectId, Application.Enums.TuitionType tuitionType), decimal>();
+
+        bool castError = false;
+
+        //Add the data from the spreadsheet in to the subjectCoverageAndPrices dictionary
+        ProcessSheet(sheetName, TableHeaderColumn, TableHeader, GroupColumn,
+            (spreadsheetExtractor, sheetName, data, row) =>
             {
-                var coverage = new SubjectCoverage
-                {
-                    TuitionPartner = tuitionPartner,
-                    TuitionTypeId = (int)tuitionType,
-                    SubjectId = subjectId
-                };
+                var groupString = data;
+                var keyStageString = spreadsheetExtractor!.GetCellValue(sheetName, KeyStageColumn, row);
+                var subjectString = spreadsheetExtractor!.GetCellValue(sheetName, SubjectColumn, row);
+                var tuitionTypeString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionTypeColumn, row);
 
-                tuitionPartner.SubjectCoverage.Add(coverage);
+                //Cast to required types
+                var groupStringReplaced = groupString.Replace("1 To ", "", StringComparison.InvariantCultureIgnoreCase);
+                if (!int.TryParse(groupStringReplaced, out int groupSize))
+                {
+                    castError = true;
+                    _errors.Add($"Invalid Group conversion, should be in '1 of x' format.  '{groupString}' is on row {row} on '{sheetName}' worksheet");
+                }
+                if (!keyStageString.TryParse(out Application.Enums.KeyStage keyStage))
+                {
+                    castError = true;
+                    _errors.Add($"Invalid KeyStage conversion, should be in 'Key Stage x' format.  '{keyStageString}' is on row {row} on '{sheetName}' worksheet");
+                }
+                //TODO - confirm this is needed
+                var subjectStringReplaced = subjectString.Replace("Literacy", "Maths", StringComparison.InvariantCultureIgnoreCase);
+                subjectStringReplaced = subjectStringReplaced.Replace("Numeracy", "Maths", StringComparison.InvariantCultureIgnoreCase);
+                subjectStringReplaced = string.Equals(subjectStringReplaced, "Languages", StringComparison.InvariantCultureIgnoreCase) ? "Modern foreign languages" : subjectStringReplaced;
+                subjectStringReplaced = string.Equals(subjectStringReplaced, "Modern Language", StringComparison.InvariantCultureIgnoreCase) ? "Modern foreign languages" : subjectStringReplaced;
+                subjectStringReplaced = subjectStringReplaced.Replace("Physics", "Science", StringComparison.InvariantCultureIgnoreCase);
+                subjectStringReplaced = subjectStringReplaced.Replace("Chemistry", "Science", StringComparison.InvariantCultureIgnoreCase);
+                subjectStringReplaced = subjectStringReplaced.Replace("Biology", "Science", StringComparison.InvariantCultureIgnoreCase);
+                if (!subjectStringReplaced.TryParse(out Application.Enums.Subject subjectEnum))
+                {
+                    castError = true;
+                    _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
+                }
+                var tuitionTypeStringReplaced = tuitionTypeString.Replace("Both", "All", StringComparison.InvariantCultureIgnoreCase);
+                if (!tuitionTypeStringReplaced.TryParse(out Application.Enums.TuitionType tuitionType))
+                {
+                    castError = true;
+                    _errors.Add($"Invalid TuitionType conversion.  '{tuitionTypeString}' is on row {row} on '{sheetName}' worksheet");
+                }
+                int subjectId = 0;
+                if (!castError)
+                {
+                    //Get subject id
+                    var subject = _subjects!.FirstOrDefault(x => x.Name.ToLower() == subjectEnum.DisplayName().ToLower() && x.KeyStageId == (int)keyStage);
+                    if (subject == null)
+                    {
+                        castError = true;
+                        _errors.Add($"Invalid Subject '{subjectString}' for Key Stage '{keyStageString}' on row {row} on '{sheetName}' worksheet");
+                    }
+                    else
+                    {
+                        subjectId = subject.Id;
+                    }
+                }
+
+                if (castError)
+                {
+                    return;
+                }
+
+                var key = (groupSize, keyStage, subjectEnum, subjectId, tuitionType);
+                if (!subjectCoverageAndPrices.ContainsKey(key))
+                {
+                    var rate = spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice();
+                    subjectCoverageAndPrices[key] = rate;
+                }
+                else
+                {
+                    _errors.Add($"Duplicate '{groupString}', '{keyStageString}', '{subjectString}' and '{tuitionTypeString}', in '{sheetName}' worksheet");
+                }
+            });
+
+        if (subjectCoverageAndPrices.Count == 0)
+        {
+            _errors.Add($"No entries added in the '{sheetName}' worksheet");
+        }
+        else
+        {
+            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionTypes.InSchool);
+            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionTypes.Online);
+
+            foreach (((int groupSize, Application.Enums.KeyStage keyStage, Application.Enums.Subject subject, int subjectId, Application.Enums.TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
+            {
+                if (ladHasInSchool && rate > 0 && (tuitionType == Application.Enums.TuitionType.InSchool || tuitionType == Application.Enums.TuitionType.Any))
+                {
+                    AddPrice(tuitionPartner, Application.Enums.TuitionType.InSchool, subjectId, groupSize, rate);
+                }
+                if (ladHasOnline && rate > 0 && (tuitionType == Application.Enums.TuitionType.Online || tuitionType == Application.Enums.TuitionType.Any))
+                {
+                    AddPrice(tuitionPartner, Application.Enums.TuitionType.Online, subjectId, groupSize, rate);
+                }
             }
 
-            for (int i = 0; i < subjectHourlyRates.Length; i++)
+            if (!tuitionPartner.Prices.Any())
             {
-                var subjectHourlyRate = subjectHourlyRates[i];
-
-                if (subjectHourlyRate <= 0) continue;
-
-                var price = new Price
+                _errors.Add($"No Price entries added from '{sheetName}' worksheet");
+            }
+            else
+            {
+                //Add subject coverage
+                var subjectCoverages = tuitionPartner.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId }).Distinct();
+                foreach (var subjectCoverageLoop in subjectCoverages)
                 {
-                    TuitionPartner = tuitionPartner,
-                    TuitionTypeId = (int)tuitionType,
-                    SubjectId = subjectId,
-                    GroupSize = i + 1,
-                    HourlyRate = subjectHourlyRate
-                };
+                    var coverage = new SubjectCoverage
+                    {
+                        TuitionPartner = tuitionPartner,
+                        TuitionTypeId = subjectCoverageLoop.TuitionTypeId,
+                        SubjectId = subjectCoverageLoop.SubjectId
+                    };
 
-                tuitionPartner.Prices.Add(price);
+                    tuitionPartner.SubjectCoverage.Add(coverage);
+                }
+
+                //Error - group must be 1-6
+                var inavlidGroupSizes = subjectCoverageAndPrices
+                    .Where(x => x.Key.groupSize == 0 || x.Key.groupSize > 6)
+                    .Select(x => x.Key.groupSize)
+                    .OrderBy(x => x)
+                    .Distinct();
+                if (inavlidGroupSizes.Any())
+                {
+                    _errors.Add($"Some invalid group sizes on '{sheetName}' worksheet.  Group sizes: {string.Join(", ", inavlidGroupSizes)}");
+                }
+                //Warn - if any £0
+                if (subjectCoverageAndPrices.Any(x => x.Value == 0))
+                {
+                    _warnings.Add($"Some zero rates on '{sheetName}' worksheet");
+                }
+                //Warn - see if any in school or online when not set for LADs
+                if (!ladHasInSchool && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == Application.Enums.TuitionType.InSchool || x.Key.tuitionType == Application.Enums.TuitionType.Any)))
+                {
+                    _warnings.Add($"Some subjects and prices exist for In School on '{sheetName}' worksheet.  But no LADs are In School");
+                }
+                if (!ladHasOnline && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == Application.Enums.TuitionType.Online || x.Key.tuitionType == Application.Enums.TuitionType.Any)))
+                {
+                    _warnings.Add($"Some subjects and prices exist for Online on '{sheetName}' worksheet.  But no LADs are Online");
+                }
             }
         }
+    }
 
-        return tuitionPartner;
+    private static void AddPrice(TuitionPartner tuitionPartner, Application.Enums.TuitionType tuitionType, int subjectId, int groupSize, decimal rate)
+    {
+        var price = new Price
+        {
+            TuitionPartner = tuitionPartner,
+            TuitionTypeId = (int)tuitionType,
+            SubjectId = subjectId,
+            GroupSize = groupSize,
+            HourlyRate = rate
+        };
+
+        tuitionPartner.Prices.Add(price);
     }
 }
