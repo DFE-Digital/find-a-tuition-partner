@@ -106,7 +106,8 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
         <!-- End Google Tag Manager (noscript) -->
     }
     <script asp-add-nonce>
-        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+       var isIE= /MSIE|Trident/.test(navigator.userAgent);
+        document.body.className = ((document.body.className) && !isIE ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
 
     <div>
