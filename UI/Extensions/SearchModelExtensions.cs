@@ -20,6 +20,20 @@ namespace UI.Extensions
             model.Add(x => x.TuitionType, dictionary);
             model.AddAll(x => x.KeyStages, dictionary);
             model.AddAll(x => x.Subjects, dictionary);
+            model.Add(x => x.ShortlistOrderBy, dictionary);
+            model.Add(x => x.ShortlistOrderByDirection, dictionary);
+
+            return dictionary;
+        }
+
+        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude)
+        {
+            var dictionary = model.ToRouteData();
+
+            foreach (var itemToInclude in itemsToInclude)
+            {
+                dictionary.Add(itemToInclude.Key, itemToInclude.Value);
+            }
 
             return dictionary;
         }

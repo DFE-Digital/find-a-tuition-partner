@@ -26,13 +26,13 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
 
         var resultCount = result?.Length;
 
-        //Log warning if no results returned but trying to get all TPs (so no filters) or a single/collection of TPs using the SeoUrls
+        //Log warning if no results returned but trying to get all TPs (so no filters) or a collection of TPs using the SeoUrls
         var logLevel = (resultCount == 0 &&
                             string.IsNullOrWhiteSpace(filter.Name) &&
                             filter.TuitionTypeId is null &&
                             filter.SubjectIds is null &&
                             filter.LocalAuthorityDistrictId is null &&
-                            (filter.SeoUrls is null || filter.SeoUrls.Length > 0)
+                            (filter.SeoUrls is null || filter.SeoUrls.Length > 1)
                        )
                        ? LogLevel.Warning : LogLevel.Information;
 
