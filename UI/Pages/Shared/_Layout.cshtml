@@ -107,7 +107,7 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
     }
     <script asp-add-nonce>
        var isIE= /MSIE|Trident/.test(navigator.userAgent);
-        document.body.className = ((document.body.className) && !isIE ? document.body.className + ' js-enabled' : 'js-enabled');
+        document.body.className = (((document.body.className) && !isIE) ? document.body.className + ' js-enabled' : '');
     </script>
 
     <div>
