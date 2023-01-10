@@ -1,9 +1,10 @@
 ﻿@page
+@using UI.HelperFunctions
 @model UI.Pages.ShortlistModel
 @{
-    var clearShortlistUrl = "/shortlist-clear-confirm?" + Model.Data.ToQueryString();
+    var clearShortlistUrl = $"/shortlist-clear-confirm?{Model.Data.ToQueryString()}";
     ViewData["Title"] = "My shortlisted tuition partners";
-    ViewData["BackLinkHref"] = "/search-results?" + Model.Data.ToQueryString();
+    ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}{ShortlistFunctions.GetJumpToLocation(Request)}";
     ViewData["IncludePrintPage"] = true;
 }
 
@@ -20,46 +21,48 @@
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
-            <div class="govuk-table-container">
-                <table class="govuk-table" data-testid="shortlist-table">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Name))">
-                            <a class="table-column-sort" data-testid="shortlist-name-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
-                        </th>
-                        <th scope="col" class="govuk-table__header">Key stages covered</th>
-                        <th scope="col" class="govuk-table__header">Subjects</th>
-                        <th scope="col" class="govuk-table__header">Type of tuition</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
-                            <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price</a>
-                        </th>
-                        <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-
-                    @foreach (var item in Model.Data.Results?.Results!)
-                    {
-                        var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
-
+                <div class="govuk-table-container">
+                    <table class="govuk-table" data-testid="shortlist-table">
+                        <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header"><a href="@tpUrl" class="govuk-link">@item.Name</a></th>
-                            <td class="govuk-table__cell">
-                                @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
-                            </td>
-                            <td class="govuk-table__cell">
-                                @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
-                            </td>
-                            <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
-                            <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
-                            <td class="govuk-table__cell app-print-hide">
-                                <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>
-                            </td>
+                            <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Name))">
+                                <a class="table-column-sort" data-testid="shortlist-name-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
+                            </th>
+                            <th scope="col" class="govuk-table__header">Key stages covered</th>
+                            <th scope="col" class="govuk-table__header">Subjects</th>
+                            <th scope="col" class="govuk-table__header">Type of tuition</th>
+                            <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
+                                <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price</a>
+                            </th>
+                            <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
                         </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody class="govuk-table__body">
+
+                        @foreach (var item in Model.Data.Results?.Results!)
+                        {
+                            var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">
+                                    <a href="@tpUrl" class="govuk-link">@item.Name</a>
+                                </th>
+                                <td class="govuk-table__cell">
+                                    @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
+                                </td>
+                                <td class="govuk-table__cell">
+                                    @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
+                                </td>
+                                <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
+                                <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                                <td class="govuk-table__cell app-print-hide">
+                                    <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             }
             else
             {
@@ -69,20 +72,20 @@
 
             @if (Model.Data.InvalidTPs is not null)
             {
-            <div class="govuk-inset-text">
-                Some of your shortlisted tuition partners are not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
-                <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
-                    @foreach (var item in Model.Data.InvalidTPs)
-                    {
-                    <li>@item.Name</li>
-                    }
-                </ul>
-            </div>
+                <div class="govuk-inset-text">
+                    Some of your shortlisted tuition partners are not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
+                    <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
+                        @foreach (var item in Model.Data.InvalidTPs)
+                        {
+                            <li>@item.Name</li>
+                        }
+                    </ul>
+                </div>
             }
 
             <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
                 <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my shortlist</a>
-            </div>            
+            </div>
         </form>
     </div>
 </div>

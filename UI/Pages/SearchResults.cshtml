@@ -1,8 +1,9 @@
 ﻿@page
+@using UI.HelperFunctions
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
-    ViewData["BackLinkHref"] = "/which-subjects?" + Model.Data.ToQueryString();
+    ViewData["BackLinkHref"] = $"/which-subjects?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
 }
 
@@ -136,15 +137,15 @@
 
             @if (Model.Data.Results != null)
             {
-                int i = 0;
+                var i = 0;
                 var dataQueryString = Model.Data.ToQueryString();
                 foreach (var item in Model.Data.Results.Results)
                 {
                     i++;
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
-                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{ShortlistFunctions.JumpToLocationQueryName}={@i}";
 
-                    <div data-testid="results-list-item" data-position="@i">
+                    <div id="@i" data-testid="results-list-item" data-position="@i">
                         <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
                             <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
                             <h2 class="govuk-heading-m">

@@ -106,7 +106,7 @@ Then("the name of each tuition partner links to their details page", () => {
       `/tuition-partner/${kebabCase($element.text()).replace(
         /'/g,
         ""
-      )}?from=FullList`
+      )}?from=FullList&jumpToLocation=1`
     );
   });
 });
