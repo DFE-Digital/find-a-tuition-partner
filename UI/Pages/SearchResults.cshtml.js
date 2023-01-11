@@ -102,6 +102,10 @@ const onCheckboxClick = async (event) => {
 };
 
 const addClickEventListenerToTuitionPartnerCheckboxes = () => {
+  // The if statement is to prevent using javascript for the checkboxes,
+  // mainly in the case of if the client is using an IE browsers
+  // as it doesn’t seem to support newer javascript keywords. e.g. 'let'.
+  if (!document.body.className.includes("js-enabled")) return;
   const selectableTuitionPartners = document.getElementsByName(
     "ShortlistedTuitionPartners"
   );
