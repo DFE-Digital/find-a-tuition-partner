@@ -8,7 +8,7 @@ public static class ShortlistFunctions
             ? $"#{request.Query[JumpToLocationQueryName]}"
             : "";
 
-    public static string GetPageUrl(ReferrerList? referrerList, string defaultPageUrl="")
+    public static string GetPageUrl(ReferrerList? referrerList, string defaultPageUrl = "")
     {
         return referrerList switch
         {
@@ -17,8 +17,8 @@ public static class ShortlistFunctions
             _ => defaultPageUrl
         };
     }
-    
-    public static string GetPageName(ReferrerList? referrerList, string defaultPageName="")
+
+    public static string GetPageName(ReferrerList? referrerList, string defaultPageName = "")
     {
         return referrerList switch
         {

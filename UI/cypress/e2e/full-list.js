@@ -99,15 +99,14 @@ Then(
 );
 
 Then("the name of each tuition partner links to their details page", () => {
+  let i = 0;
   cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
-    cy.wrap($element).should(
-      "have.attr",
-      "href",
-      `/tuition-partner/${kebabCase($element.text()).replace(
-        /'/g,
-        ""
-      )}?from=FullList&jumpToLocation=1`
-    );
+    i++;
+    const value = `/tuition-partner/${kebabCase($element.text()).replace(
+      /'/g,
+      ""
+    )}?from=FullList&jumpToLocation=${i}`;
+    cy.wrap($element).should("have.attr", "href").and("contain", value);
   });
 });
 

@@ -38,3 +38,6 @@ export const KeyStageSubjects = (prefix, input) =>
       return `${prefix}=${ks}-${subj}`;
     })
     .join("&");
+export const removeNewLine = (text) => text.trim().replace(/[\r\n]/gm, "");
+export const removeExcessWhitespaces = (text) =>
+  text.trim().replace(/  +/g, " ");
