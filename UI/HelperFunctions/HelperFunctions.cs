@@ -1,6 +1,6 @@
 namespace UI.HelperFunctions;
 
-public static class ShortlistFunctions
+public static class HelperFunctions
 {
     public const string JumpToLocationQueryName = "jumpToLocation";
     public static string GetJumpToLocation(HttpRequest request) =>

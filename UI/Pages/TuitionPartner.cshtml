@@ -3,11 +3,11 @@
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
-    var pageUrl = ShortlistFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
-    var pageName = ShortlistFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
+    var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
+    var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
 
     ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
-                               $"{ShortlistFunctions.GetJumpToLocation(Request)}";
+                               $"{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }

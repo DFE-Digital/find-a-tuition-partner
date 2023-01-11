@@ -32,17 +32,16 @@
                     </span>
                 </p>
                 @{
-                    var i = 0;
                     foreach (var item in Model.Results!.Results)
                     {
-                        i++;
+                     
                         var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
 
-                        <div id="@i" class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
+                        <div id="atp-tp-@item.SeoUrl" class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
                             <div>
                                 <h2 class="govuk-heading-m">
                                     <a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" asp-route-name="@Model.Data.Name"
-                                       asp-route-from="@Model.Data.From" asp-route-jumpToLocation="@i" class="govuk-link"
+                                       asp-route-from="@Model.Data.From" asp-route-jumpToLocation="atp-tp-@item.SeoUrl" class="govuk-link"
                                        data-testid="tuition-partner-name-link">
                                         @item.Name
                                     </a>

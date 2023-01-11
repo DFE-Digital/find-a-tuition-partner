@@ -25,7 +25,6 @@
 </div>
 
 <div class="govuk-grid-row">
-
     <form>
 
         <div class="govuk-grid-column-one-third">
@@ -143,9 +142,9 @@
                 {
                     i++;
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
-                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{ShortlistFunctions.JumpToLocationQueryName}={@i}";
+                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{HelperFunctions.JumpToLocationQueryName}=sr-tp-{@item.SeoUrl}";
 
-                    <div id="@i" data-testid="results-list-item" data-position="@i">
+                    <div id="sr-tp-@item.SeoUrl" data-testid="results-list-item" data-position="@i">
                         <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
                             <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
                             <h2 class="govuk-heading-m">

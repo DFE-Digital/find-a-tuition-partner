@@ -4,7 +4,7 @@
 @{
     var clearShortlistUrl = $"/shortlist-clear-confirm?{Model.Data.ToQueryString()}";
     ViewData["Title"] = "My shortlisted tuition partners";
-    ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}{ShortlistFunctions.GetJumpToLocation(Request)}";
+    ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["IncludePrintPage"] = true;
 }
 
