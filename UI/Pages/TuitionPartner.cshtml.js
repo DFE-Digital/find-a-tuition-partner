@@ -24,6 +24,18 @@ const getFetchResponseData = (response) => {
 const isResultValid = (result) =>
   result && result.updated !== "undefined" && result.updated;
 const getError = (message = "Invalid result") => Error(message);
+
+const setLocalAuthorityHeaderText = (
+  text = "Shortlisted tuition partner for"
+) => {
+  const localAuthName = document.getElementById(
+    "tp-details-page--tp-localAuthName"
+  ).value;
+  const localAuthHeader = document.getElementById(
+    "tp-details-page--tp-localAuthHeader"
+  );
+  localAuthHeader.innerHTML = `${text} ${localAuthName}`;
+};
 const onChecked = async (checkboxId) => {
   return await fetch(
     getAddToShortlistFetchUrl(),
@@ -50,6 +62,14 @@ const onCheckboxClick = async (event) => {
     try {
       const result = await onChecked(checkbox.id);
       if (!isResultValid(result)) throw getError();
+
+      const localAuthName = document.getElementById(
+        "tp-details-page--tp-localAuthName"
+      ).value;
+      const localAuthHeader = document.getElementById(
+        "tp-details-page--tp-localAuthHeader"
+      );
+      localAuthHeader.innerHTML = `Shortlisted tuition partner for ${localAuthName}`;
     } catch (error) {
       //What do we want to do with error?
       checkbox.checked = false;
@@ -58,6 +78,15 @@ const onCheckboxClick = async (event) => {
     try {
       const result = await onUnChecked(checkbox.id);
       if (!isResultValid(result)) throw getError();
+
+      // setLocalAuthorityHeaderText("Tuition partner for");
+      const localAuthName = document.getElementById(
+        "tp-details-page--tp-localAuthName"
+      ).value;
+      const localAuthHeader = document.getElementById(
+        "tp-details-page--tp-localAuthHeader"
+      );
+      localAuthHeader.innerHTML = `Tuition partner for ${localAuthName}`;
     } catch (error) {
       //What do we want to do with error?
       checkbox.checked = true;
