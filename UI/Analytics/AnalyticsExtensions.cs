@@ -1,15 +1,12 @@
-﻿using System;
-using Dfe.Analytics.AspNetCore;
-
-namespace UI.Analytics
+﻿namespace UI.Analytics
 {
     public static class AnalyticsExtensions
     {
-        public static IServiceCollection AddAnalytics(this IServiceCollection services)
+        public static IServiceCollection AddAnalytics(this IServiceCollection services, IConfiguration configuration)
         {
             ArgumentNullException.ThrowIfNull(services);
 
-            AnalyticsConfigurerService.ConfigureServices(services);
+            AnalyticsConfigurerService.ConfigureServices(services, configuration);
 
             services.Add(new ServiceDescriptor(typeof(IAnalyticsConfigurerService), typeof(AnalyticsConfigurerService), ServiceLifetime.Singleton));
 

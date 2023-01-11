@@ -1,5 +1,6 @@
-﻿using System;
-using Dfe.Analytics.AspNetCore;
+﻿using Dfe.Analytics.AspNetCore;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.BigQuery.V2;
 
 namespace UI.Analytics
 {
@@ -21,14 +22,9 @@ namespace UI.Analytics
             this._isConfigured = IsAnalyticsConfigured();
         }
 
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            services.AddDfeAnalytics(ConfigureDfeAnalyticsOptions);
-        }
-
         public void ConfigureApp(IApplicationBuilder app)
         {
-            if (this.IsAnalyticsConfigured())
+            if (_isConfigured)
             {
                 app.UseDfeAnalytics();
             }
@@ -42,15 +38,30 @@ namespace UI.Analytics
         {
             var section = _configuration.GetSection("DfeAnalytics");
 
-            return (!string.IsNullOrEmpty(section["CredentialsJson"]));
+            return (!string.IsNullOrEmpty(section["CredentialsJsonFile"])
+                && !string.IsNullOrEmpty(section["ProjectId"])
+                && !string.IsNullOrEmpty(section["DatasetId"]));
         }
 
-        private static void ConfigureDfeAnalyticsOptions(DfeAnalyticsOptions options)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Unknown";
+            var section = configuration.GetSection("DfeAnalytics");
 
-            options.Environment = environmentName;
-            options.DatasetId = $"fatp_events_{environmentName.ToLower()}";
+            var projectId = section["ProjectId"];
+            var credentialsJsonFile = section["CredentialsJsonFile"];
+
+            services.AddDfeAnalytics(options =>
+            {
+                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Unknown";
+
+                options.Environment = environmentName;
+
+                if (!string.IsNullOrEmpty(credentialsJsonFile))
+                {
+                    var creds = GoogleCredential.FromFile(section["CredentialsJsonFile"]);
+                    options.BigQueryClient = BigQueryClient.Create(projectId, creds);
+                }
+            });
         }
     }
 }

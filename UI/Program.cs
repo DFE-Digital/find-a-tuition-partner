@@ -92,7 +92,7 @@ builder.Services.AddSwaggerGen(c =>
     c.CustomSchemaIds(x => x.FullName);
 });
 
-builder.Services.AddAnalytics();
+builder.Services.AddAnalytics(builder.Configuration);
 
 builder.Host.AddLogging();
 
