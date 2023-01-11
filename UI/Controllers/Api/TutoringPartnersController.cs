@@ -17,7 +17,7 @@ public class TutoringPartnersController : ControllerBase
     [ProducesResponseType(typeof(SearchResults.ResultsModel), StatusCodes.Status200OK)]
     public async Task<IActionResult> Post([FromBody] SearchResults.Query request)
     {
-        request.TuitionType ??= Enums.TuitionType.Any;
+        request.TuitionType ??= Domain.Enums.TuitionType.Any;
 
         var result = await _sender.Send(request);
 

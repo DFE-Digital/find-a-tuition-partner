@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel;
 
-namespace UI.Enums
+namespace Domain.Enums
 {
     public enum TuitionType
     {
+        Unspecified = 0,
+
         [Description("Any")]
-        Any = 0,
+        Any = 99,
 
         [Description("Online")]
         Online = 1,

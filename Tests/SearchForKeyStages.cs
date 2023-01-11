@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UI.Enums;
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
 using UI.Pages;
 
 namespace Tests;

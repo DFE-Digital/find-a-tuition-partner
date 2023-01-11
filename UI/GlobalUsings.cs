@@ -7,6 +7,7 @@ global using Application.Constants;
 global using Application.Extensions;
 global using Application.Queries;
 global using Application.TuitionPartnerShortlistStorage.Interfaces;
+global using Domain.Enums;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using MediatR;
