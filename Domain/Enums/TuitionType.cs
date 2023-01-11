@@ -4,10 +4,8 @@ namespace Domain.Enums
 {
     public enum TuitionType
     {
-        Unspecified = 0,
-
         [Description("Any")]
-        Any = 99,
+        Any = 0,
 
         [Description("Online")]
         Online = 1,
