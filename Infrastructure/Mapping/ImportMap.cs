@@ -45,6 +45,7 @@ namespace Infrastructure.Mapping
                 _convertedValue = (PropertyType == typeof(string)) ? _sourceValue :
                     (PropertyType == typeof(bool)) ? _sourceValue.ParseBoolean() :
                     (PropertyType == typeof(DateOnly)) ? _sourceValue.ParseDateOnly() :
+                    (PropertyType == typeof(DateTime)) ? _sourceValue.ParseDateTime() :
                     (PropertyType == typeof(decimal)) ? _sourceValue.ParsePrice() :
                     null;
             }

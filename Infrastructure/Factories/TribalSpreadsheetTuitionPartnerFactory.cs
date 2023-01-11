@@ -8,12 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Factories;
 
+//TODO - Consider if can refactor this so less code here?  Validation outside here?
+//TODO - No existing unit or cypress tests - write some?  Possibly run tests against test directory?  With invalid files that cover each warning/error scenario below?
 public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionPartnerFactory
 {
     public const string OrganisationDetailsSheetName = "Organisation Details";
     private const string DeliverySheetName = "Delivery";
     private const string PricingSheetName = "Pricing";
     private const int MaxRows = 100000;
+    private const decimal VATRatePercentage = 20;
 
     private readonly ILogger _logger;
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
@@ -33,25 +36,21 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
             { "Organisation_Ref_ID_s", new ImportMap() },
+            { "Organisation_LastUpdated_s", new ImportMap(tpMapping, nameof(tpMapping.LastUpdated)) },
             { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) },
             { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true } },
+            { "Organisation_Address3_s", new ImportMap() { IsStoredInNtp = true } },
             { "Organisation_Town_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_County_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_PostCode_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_Tel_s", new ImportMap(tpMapping, nameof(tpMapping.PhoneNumber)) },
             { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
-            { "Organisation_Phone_s", new ImportMap() },
-            { "Organisation_Website_s", new ImportMap() },
-            { "Organisation_ContactMethodPref_s", new ImportMap() },
             { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
-            { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) }, //TODO - chat over best way to store this going forward (lookup table?) and best way to identify the charities used for filter (in C# or db?)
+            { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) },
             { "Organisation_LogoVector_s", new ImportMap() },
-            { "Organisation_SENProvision_s", new ImportMap(tpMapping, nameof(tpMapping.HasSenProvision)) {IsRequired = false} },
-            { "Organisation_AdditionalService_s", new ImportMap(tpMapping, nameof(tpMapping.AdditionalServiceOfferings)) {IsRequired = false} },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
-            { "Organisation_VATIncluded_s", new ImportMap() }
         };
     }
 
@@ -176,17 +175,13 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         //Update the TuitionPartner class with specific mapping info
         tuitionPartner.Website = tuitionPartner.Website.ParseUrl();
-        //If no TP specific website then use the main website for the company
-        if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
-        {
-            tuitionPartner.Website = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Website_s").Value.SourceValue.ParseUrl();
-        }
 
         //Populate Address from multiple cells
         var addressLines = new string?[]
         {
         tuitionPartner.Address,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Address2_s").Value.SourceValue,
+        _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Address3_s").Value.SourceValue,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Town_s").Value.SourceValue,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_County_s").Value.SourceValue,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_PostCode_s").Value.SourceValue
@@ -348,7 +343,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string KeyStageColumn = "B";
         const string SubjectColumn = "C";
         const string TuitionTypeColumn = "D";
-        const string RateColumn = "F";
+        const string RateColumn = "E";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "Group";
@@ -379,15 +374,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     castError = true;
                     _errors.Add($"Invalid KeyStage conversion, should be in 'Key Stage x' format.  '{keyStageString}' is on row {row} on '{sheetName}' worksheet");
                 }
-
-                var subjectStringReplaced = subjectString.Replace("Literacy", "Maths", StringComparison.InvariantCultureIgnoreCase);
-                subjectStringReplaced = subjectStringReplaced.Replace("Numeracy", "Maths", StringComparison.InvariantCultureIgnoreCase);
-                subjectStringReplaced = string.Equals(subjectStringReplaced, "Languages", StringComparison.InvariantCultureIgnoreCase) ? "Modern foreign languages" : subjectStringReplaced;
-                subjectStringReplaced = string.Equals(subjectStringReplaced, "Modern Language", StringComparison.InvariantCultureIgnoreCase) ? "Modern foreign languages" : subjectStringReplaced;
-                subjectStringReplaced = subjectStringReplaced.Replace("Physics", "Science", StringComparison.InvariantCultureIgnoreCase);
-                subjectStringReplaced = subjectStringReplaced.Replace("Chemistry", "Science", StringComparison.InvariantCultureIgnoreCase);
-                subjectStringReplaced = subjectStringReplaced.Replace("Biology", "Science", StringComparison.InvariantCultureIgnoreCase);
-                if (!subjectStringReplaced.TryParse(out Domain.Enums.Subject subjectEnum))
+                if (!subjectString.TryParse(out Domain.Enums.Subject subjectEnum))
                 {
                     castError = true;
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
@@ -422,7 +409,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var key = (groupSize, keyStage, subjectEnum, subjectId, tuitionType);
                 if (!subjectCoverageAndPrices.ContainsKey(key))
                 {
-                    var rate = spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice();
+                    //If "Is Vat Charged" is true then apply VAT, we store all rates inclusive of VAT
+                    var rate = tuitionPartner.IsVatCharged ?
+                        spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice(VATRatePercentage) :
+                        spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice();
+
                     subjectCoverageAndPrices[key] = rate;
                 }
                 else
