@@ -40,7 +40,7 @@ jobs:
 
     - name: Add DfE Analytics credentials.json
       run: |
-        tee UI/dfe-analytics-credentials.json << EOF
+        tee Infrastructure/dfe-analytics-credentials.json << EOF
         ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
         EOF
 
@@ -75,7 +75,10 @@ jobs:
 
     - name: Run database migrations and import data
       run: |
-        cf run-task find-a-tuition-partner-$PR_NUMBER --command "exec /home/vcap/deps/0/dotnet_publish/UI import --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" --name find-a-tuition-partner-$PR_NUMBER-data-import
+        cf run-task find-a-tuition-partner-$PR_NUMBER \
+          --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
+          --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" \
+          --name find-a-tuition-partner-$PR_NUMBER-data-import
     
     - name: Logout
       run: cf logout

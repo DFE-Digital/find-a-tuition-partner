@@ -66,6 +66,12 @@ jobs:
           ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
           EOF
 
+      - name: Add DfE Analytics credentials.json
+        run: |
+          tee Infrastructure/dfe-analytics-credentials.json << EOF
+          ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
+          EOF
+
       - name: Install the CF CLI
         run: |
           wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
@@ -83,12 +89,19 @@ jobs:
 
       - name: Deploy to PaaS
         run: |
-          cf push --strategy rolling --vars-file vars-${{ inputs.environment }}.yml --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
+          cf push --strategy rolling --vars-file vars-${{ inputs.environment }}.yml \
+            --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
+            --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
+            --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
+            --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
 
       - name: Run database migrations and import data
         if: ${{ inputs.run_database_migrations_and_import_data == true }}
         run: |
-          cf run-task find-a-tuition-partner-${{ inputs.environment }} --command "exec /home/vcap/deps/0/dotnet_publish/UI import --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" --name find-a-tuition-partner-${{ inputs.environment }}-data-import
+          cf run-task find-a-tuition-partner-${{ inputs.environment }} \
+            --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
+            --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" \
+            --name find-a-tuition-partner-${{ inputs.environment }}-data-import
       
       - name: Logout
         run: cf logout
