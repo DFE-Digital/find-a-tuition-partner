@@ -7,4 +7,5 @@ public class TuitionPartnersFilter
     public IEnumerable<int>? SubjectIds { get; set; }
     public int? TuitionTypeId { get; set; }
     public string[]? SeoUrls { get; set; }
+    public bool? IsTypeOfCharity { get; set; }
 }

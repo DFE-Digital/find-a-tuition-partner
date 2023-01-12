@@ -52,6 +52,11 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.TuitionTypeId == filter.TuitionTypeId));
         }
 
+        if (filter.IsTypeOfCharity != null)
+        {
+            queryable = queryable.Where(e => e.OrganisationType.IsTypeOfCharity == filter.IsTypeOfCharity.Value);
+        }
+
         var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
 
         return ids;

@@ -13,6 +13,7 @@
             <govuk-error-summary-item asp-for="Data.Postcode"/>
             <govuk-error-summary-item asp-for="Data.Subjects"/>
             <govuk-error-summary-item asp-for="Data.TuitionType"/>
+            <govuk-error-summary-item asp-for="Data.OrganisationGroupingType"/>
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
@@ -67,6 +68,18 @@
                         @foreach (var item in Model.Data.AllTuitionTypes)
                         {
                             <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+                        }
+                    </govuk-radios-fieldset>
+                </govuk-radios>
+
+                <govuk-radios asp-for="Data.OrganisationGroupingType" class="govuk-radios--small govuk-!-margin-bottom-3">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                            Type of organisation
+                        </govuk-radios-fieldset-legend>
+                        @foreach (var item in Model.Data.AllOrganisationGroupingTypes)
+                        {
+                            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.OrganisationGroupingType">@item.DisplayName()</govuk-radios-item>
                         }
                     </govuk-radios-fieldset>
                 </govuk-radios>

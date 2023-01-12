@@ -68,4 +68,12 @@ public class BackLinks
         var result = model.ToQueryString();
         result.Should().Be("TuitionType=Online");
     }
+
+    [Fact]
+    public void Construct_querystring_from_organisation_grouping_type()
+    {
+        var model = new SearchModel { OrganisationGroupingType = OrganisationGroupingType.Charity };
+        var result = model.ToQueryString();
+        result.Should().Be("OrganisationGroupingType=Charity");
+    }
 }

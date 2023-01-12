@@ -18,6 +18,7 @@ namespace UI.Extensions
             model.Add(x => x.Name, dictionary);
             model.Add(x => x.Postcode, dictionary);
             model.Add(x => x.TuitionType, dictionary);
+            model.Add(x => x.OrganisationGroupingType, dictionary);
             model.AddAll(x => x.KeyStages, dictionary);
             model.AddAll(x => x.Subjects, dictionary);
             model.Add(x => x.ShortlistOrderBy, dictionary);

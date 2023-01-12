@@ -30,6 +30,7 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         var logLevel = (resultCount == 0 &&
                             string.IsNullOrWhiteSpace(filter.Name) &&
                             filter.TuitionTypeId is null &&
+                            filter.IsTypeOfCharity is null &&
                             filter.SubjectIds is null &&
                             filter.LocalAuthorityDistrictId is null &&
                             (filter.SeoUrls is null || filter.SeoUrls.Length > 1)
