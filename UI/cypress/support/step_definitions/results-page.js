@@ -4,7 +4,7 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, KeyStageSubjects } from "../utils";
+import { getJumpToLocationId, kebabCase, KeyStageSubjects } from "../utils";
 
 Given(
   "a user has arrived on the 'Search results' page for {string}",
@@ -186,3 +186,12 @@ When("they click on the option heading for {string}", (keystage) => {
     cy.get(`#option-select-title-${kebabCase(element)}`).click();
   });
 });
+
+Then(
+  "they can visit each TP details page and be returned back to the correct TP location",
+  () => {
+    cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
+      cy.isCorrectJumpToLocation($element);
+    });
+  }
+);
