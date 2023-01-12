@@ -85,7 +85,7 @@ public class TuitionPartner : PageModel
         string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
         Dictionary<Domain.Enums.TuitionType, Dictionary<Domain.Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
-        string LegalStatus, string? LocalAuthorityName)
+        string OrganisationTypeName, string? LocalAuthorityName)
     {
         public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
     }
@@ -159,7 +159,7 @@ public class TuitionPartner : PageModel
                 tp.IsVatCharged,
                 lads,
                 allPrices,
-                tp.LegalStatus,
+                tp.OrganisationTypeName,
                 tpResult.Result.Data.LocalAuthorityName);
         }
 

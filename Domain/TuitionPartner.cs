@@ -19,7 +19,8 @@ public class TuitionPartner
     public string PhoneNumber { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
-    public string LegalStatus { get; set; } = string.Empty;
+    public int OrganisationTypeId { get; set; }
+    public OrganisationType OrganisationType { get; set; } = null!;
     public bool HasSenProvision { get; set; }
     public string AdditionalServiceOfferings { get; set; } = string.Empty;
     public bool IsVatCharged { get; set; }

@@ -5,5 +5,5 @@ namespace Application.Factories;
 
 public interface IQualityAssuredSpreadsheetTuitionPartnerFactory
 {
-    Task<TuitionPartner> GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, CancellationToken cancellationToken);
+    Task<TuitionPartner> GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, IList<OrganisationType> organisationTypes, CancellationToken cancellationToken);
 }

@@ -16,5 +16,5 @@ public class TuitionPartnerResult
     public bool HasLogo { get; set; }
     public string Address { get; set; } = string.Empty;
     public bool IsVatCharged { get; set; }
-    public string LegalStatus { get; set; } = string.Empty;
+    public string OrganisationTypeName { get; set; } = string.Empty;
 }

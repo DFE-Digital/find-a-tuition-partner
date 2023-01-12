@@ -23,6 +23,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
     private IList<Region>? _regions;
     private IList<Subject>? _subjects;
+    private IList<OrganisationType>? _organisationTypes;
     private ISpreadsheetExtractor? _spreadsheetExtractor;
 
     private readonly List<string> _warnings = new();
@@ -48,17 +49,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
             { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
-            { "Organisation_LegalStatus_s", new ImportMap(tpMapping, nameof(tpMapping.LegalStatus)) },
+            { "Organisation_OrganisationType_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_LogoVector_s", new ImportMap() },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
         };
     }
 
     public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename,
-        IList<Region> regions, IList<Subject> subjects)
+        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes)
     {
         _regions = regions;
         _subjects = subjects;
+        _organisationTypes = organisationTypes;
 
         TuitionPartner tuitionPartner = new();
 
@@ -171,6 +173,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         foreach (var mappedProperty in mappedProperties)
         {
             mappedProperty.Value.ApplyConvertedValueToProperty(tuitionPartner);
+        }
+
+        //Get Organisation Type Id
+        var organisationTypeName = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_OrganisationType_s").Value.SourceValue;
+        var organisationType = _organisationTypes!.Where(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+        if (organisationType == null)
+        {
+            _errors.Add($"No matching organisation type in the db for '{organisationTypeName}' in '{sheetName}' worksheet");
+        }
+        else
+        {
+            tuitionPartner.OrganisationTypeId = organisationType!.Id;
         }
 
         //Update the TuitionPartner class with specific mapping info
