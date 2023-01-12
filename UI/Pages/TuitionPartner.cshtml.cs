@@ -82,7 +82,7 @@ public class TuitionPartner : PageModel
     public record Command(
         string Id, string Name, bool HasLogo, string Description, string[] Subjects,
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
-        string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
+        string Website, string PhoneNumber, string EmailAddress, string[] Address, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
         Dictionary<Domain.Enums.TuitionType, Dictionary<Domain.Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
         string OrganisationTypeName, string? LocalAuthorityName)
@@ -155,7 +155,6 @@ public class TuitionPartner : PageModel
                 tp.PhoneNumber,
                 tp.Email,
                 tp.Address.SplitByLineBreaks(),
-                tp.HasSenProvision,
                 tp.IsVatCharged,
                 lads,
                 allPrices,

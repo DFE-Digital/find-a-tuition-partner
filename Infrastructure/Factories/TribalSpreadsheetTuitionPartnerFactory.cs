@@ -37,7 +37,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
             { "Organisation_Ref_ID_s", new ImportMap() },
-            { "Organisation_LastUpdated_s", new ImportMap(tpMapping, nameof(tpMapping.LastUpdated)) },
+            { "Organisation_LastUpdated_s", new ImportMap(tpMapping, nameof(tpMapping.TPLastUpdatedData)) },
             { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) },
             { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true } },

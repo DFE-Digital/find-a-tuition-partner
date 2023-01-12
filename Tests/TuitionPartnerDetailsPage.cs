@@ -253,19 +253,6 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     }
 
     [Theory]
-    [InlineData("a-tuition-partner", false)]
-    [InlineData("bravo-learning", true)]
-    public async Task Shows_send_status(string tuitionPartner, bool supportsSen)
-    {
-        await Fixture.AddTuitionPartner(A.TuitionPartner
-            .WithName(tuitionPartner)
-            .WithSen(supportsSen)
-            );
-        var result = await Fixture.SendAsync(new TuitionPartner.Query(tuitionPartner));
-        result!.HasSenProvision.Should().Be(supportsSen);
-    }
-
-    [Theory]
     [InlineData("a-tuition-partner", 2, true)]
     [InlineData("a-tuition-partner", 3, true)]
     [InlineData("bravo-learning", 2, false)]

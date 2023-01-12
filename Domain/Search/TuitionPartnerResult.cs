@@ -12,7 +12,6 @@ public class TuitionPartnerResult
     public SubjectCoverage[] SubjectsCoverage { get; set; } = null!;
     public TuitionType[] TuitionTypes { get; set; } = null!;
     public Price[] Prices { get; set; } = null!;
-    public bool HasSenProvision { get; set; }
     public bool HasLogo { get; set; }
     public string Address { get; set; } = string.Empty;
     public bool IsVatCharged { get; set; }

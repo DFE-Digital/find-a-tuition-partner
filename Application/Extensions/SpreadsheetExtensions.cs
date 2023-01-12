@@ -48,10 +48,17 @@ public static class SpreadsheetExtensions
     {
         if (double.TryParse(cellValue, out var doubleValue))
         {
-            return DateTime.FromOADate(doubleValue);
+            return SetKindUtc(DateTime.FromOADate(doubleValue));
         }
 
         return null;
+    }
+
+    public static DateTime SetKindUtc(this DateTime dateTime)
+    {
+        //This must be done for postgres timestamp
+        if (dateTime.Kind == DateTimeKind.Utc) { return dateTime; }
+        return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
 
     public static string ParseUrl(this string? cellValue)

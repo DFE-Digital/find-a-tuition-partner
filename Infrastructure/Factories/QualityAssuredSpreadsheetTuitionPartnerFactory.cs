@@ -67,16 +67,13 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
 
         var tuitionPartner = new TuitionPartner
         {
-            LastUpdated = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 5).ParseDateOnly() ?? DateOnly.MinValue,
+            TPLastUpdatedData = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 5).ParseDateTime() ?? DateTime.MinValue,
             Name = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 4),
             Website = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 5).ParseUrl(),
             Email = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 6),
             PhoneNumber = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 7),
             Address = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 9),
             Description = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "B", 13),
-            Experience = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 13),
-            HasSenProvision = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 13).ParseBoolean(),
-            AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13),
             IsVatCharged = _spreadsheetExtractor.GetCellValue(PricingSheetName, "K", 2).ParseBoolean(),
         };
 
