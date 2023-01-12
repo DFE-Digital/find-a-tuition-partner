@@ -1,15 +1,18 @@
 ﻿using Dfe.Analytics.AspNetCore;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.BigQuery.V2;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace UI.Analytics
 {
-    internal interface IAnalyticsConfigurerService
+    interface IAnalyticsConfigurerService
     {
         void ConfigureApp(IApplicationBuilder app);
     }
 
-    internal class AnalyticsConfigurerService : IAnalyticsConfigurerService
+    public class AnalyticsConfigurerService : IAnalyticsConfigurerService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
@@ -38,19 +41,22 @@ namespace UI.Analytics
         {
             var section = _configuration.GetSection("DfeAnalytics");
 
-            return (!string.IsNullOrEmpty(section["CredentialsJsonFile"])
-                && !string.IsNullOrEmpty(section["ProjectId"])
-                && !string.IsNullOrEmpty(section["DatasetId"]));
+            // Do we have the bare minimum of configuration?
+            return (
+                (
+                    !string.IsNullOrEmpty(section["CredentialsJson"])
+                    || (!string.IsNullOrEmpty(section["CredentialsJsonFile"]) && !string.IsNullOrEmpty(section["ProjectId"]))
+                ) && !string.IsNullOrEmpty(section["DatasetId"]));
         }
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureServices(WebApplicationBuilder builder)
         {
-            var section = configuration.GetSection("DfeAnalytics");
+            var section = builder.Configuration.GetSection("DfeAnalytics");
 
             var projectId = section["ProjectId"];
             var credentialsJsonFile = section["CredentialsJsonFile"];
 
-            services.AddDfeAnalytics(options =>
+            builder.Services.AddDfeAnalytics(options =>
             {
                 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Unknown";
 

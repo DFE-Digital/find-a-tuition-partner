@@ -43,10 +43,4 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Analytics\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Analytics\" />
-	</ItemGroup>
 </Project>
