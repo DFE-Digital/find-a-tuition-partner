@@ -12,6 +12,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 {
     private readonly ILogger _logger;
     private readonly ISpreadsheetExtractor _spreadsheetExtractor;
+    private IList<OrganisationType>? _organisationTypes;
     private readonly NtpDbContext _dbContext;
 
     private const string GeneralInformationSheetName = "General information";
@@ -62,8 +63,10 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
         _dbContext = dbContext;
     }
 
-    public async Task<TuitionPartner> GetTuitionPartner(Stream stream, CancellationToken cancellationToken)
+    public async Task<TuitionPartner> GetTuitionPartner(Stream stream, IList<OrganisationType> organisationTypes, CancellationToken cancellationToken)
     {
+        _organisationTypes = organisationTypes;
+
         _spreadsheetExtractor.SetStream(stream);
 
         var tuitionPartner = new TuitionPartner
@@ -76,11 +79,18 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
             Address = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 9),
             Description = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "B", 13),
             Experience = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "C", 13),
-            LegalStatus = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "D", 13),
             HasSenProvision = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "F", 13).ParseBoolean(),
             AdditionalServiceOfferings = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "G", 13),
             IsVatCharged = _spreadsheetExtractor.GetCellValue(PricingSheetName, "K", 2).ParseBoolean(),
         };
+
+        //Get Organisation Type Id
+        var organisationTypeName = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "D", 13);
+        var organisationType = _organisationTypes!.Where(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+        if (organisationType != null)
+        {
+            tuitionPartner.OrganisationTypeId = organisationType!.Id;
+        }
 
         if (string.IsNullOrWhiteSpace(tuitionPartner.Website))
         {
