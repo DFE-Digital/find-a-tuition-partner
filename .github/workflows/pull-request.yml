@@ -16,7 +16,7 @@ jobs:
   build_deploy_test:
     name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
-    environment: qa
+    environment: pr
 
     steps:
     - name: Checkout
