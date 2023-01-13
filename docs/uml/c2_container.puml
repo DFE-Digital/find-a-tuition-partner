@@ -12,6 +12,7 @@
 !include FONTAWESOME_5/cloud.puml
 !include FONTAWESOME_5/map_marked.puml
 !include FONTAWESOME_5/file_excel.puml
+!include FONTAWESOME_5/database.puml
 
 Person(schoolStaff, "School Staff", "Member of the school team that has identified a set of pupils with tutoring needs", $sprite="users")
 
@@ -27,6 +28,7 @@ System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Ser
 System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="file_text")
 System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
 System_Ext(postcodesIo, "postcodes.io", "Maps postcode to Local Authority District code", $sprite="map_marked")
+System_Ext(bigQuery, "Google BigQuery", "Stores web request data for analytics", $sprite="database")
 
 Rel_Down(schoolStaff, app, "Uses", "HTTPS")
 Rel_Down(tuitionPartners, tpQaProcess, "Suplies data directly to delivery team", "Excel")
@@ -36,6 +38,7 @@ Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
 Rel_Down(app, logitIo, "TCP Sink", "TLS")
 Rel_Down(app, googleAnalytics, "JavaScript", "HTTPS")
 Rel_Down(app, postcodesIo, "REST API", "HTTPS")
+Rel_Down(app, bigQuery, "REST API", "HTTPS")
 
 SHOW_LEGEND()
 @enduml

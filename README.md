@@ -137,6 +137,22 @@ If you need to test Google Analytics integration from your development environme
 dotnet user-secrets set "GoogleAnalytics:MeasurementId" "<MEASUREMENT_ID>" -p UI
 ```
 
+### DfE Analytics
+
+The service can also use https://github.com/DFE-Digital/dfe-analytics (via https://github.com/DFE-Digital/dfe-analytics-dotnet) to log all web requests to a Google BigQuery database.
+
+Analytics collection will be disabled if the necessary configuration is not present.
+
+If you need to test the analytics collection from your development environment, you will need the service account credentials with `updateData` rights on the `fatp_events_development` BigQuery dataset (see the https://github.com/DFE-Digital/dfe-analytics setup guide).
+
+You can then use the following commands to add the neccessary user secrets:
+
+```
+dotnet user-secrets set "DfeAnalytics:CredentialsJsonFile" "<PATH_TO_THE_BIGQUERY_APPENDER_SERVICE_ACCOUNT_KEY>" -p UI
+dotnet user-secrets set "DfeAnalytics:ProjectId" "find-a-tuition-partner" -p UI
+dotnet user-secrets set "DfeAnalytics:DatasetId" "fatp_events_development" -p UI
+```
+
 ## Testing
 
 ### End To End Testing
