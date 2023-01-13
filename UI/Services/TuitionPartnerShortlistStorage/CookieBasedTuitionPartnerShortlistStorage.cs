@@ -27,6 +27,8 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             throw new ArgumentException($"{nameof(shortlistedTuitionPartnerSeoUrl)} is invalid");
         if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
 
+        if (GetAllTuitionPartners().ToList().Contains(shortlistedTuitionPartnerSeoUrl.Trim())) return;
+
         var encodedTuitionPartnerSeoUrl = EncodeShortlistedTuitionPartnerSeoUrl(shortlistedTuitionPartnerSeoUrl);
         AddTuitionPartnerToCookie(CookieName, encodedTuitionPartnerSeoUrl);
     }
@@ -46,7 +48,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
 
         if (isFaultyData)
             throw new ArgumentException(
-                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrls)}is invalid");
+                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrls)} is invalid");
         if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
 
         var encodedShortlistedTuitionPartnersSeoUrls =
@@ -70,7 +72,9 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     ///<inheritdoc />
     public void RemoveTuitionPartner(string shortlistedTuitionPartnerSeoUrl)
     {
+        shortlistedTuitionPartnerSeoUrl = shortlistedTuitionPartnerSeoUrl.Trim();
         var valuesInCookie = GetAllTuitionPartners().ToList();
+
         if (!valuesInCookie.Contains(shortlistedTuitionPartnerSeoUrl)) return;
 
         valuesInCookie.RemoveAll(v => v == shortlistedTuitionPartnerSeoUrl);
@@ -91,7 +95,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             throw new ArgumentException($"{nameof(tuitionPartnerSeoUrl)} is invalid");
 
         var allShortlistedTps = GetAllTuitionPartners().ToList();
-        return allShortlistedTps.Any(tp => tp == tuitionPartnerSeoUrl);
+        return allShortlistedTps.Any(tp => tp == tuitionPartnerSeoUrl.Trim());
     }
 
     private bool IsShortlistedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
@@ -104,7 +108,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     }
 
     private string EncodeShortlistedTuitionPartnerSeoUrl(string shortlistedTuitionPartnerSeoUrl) =>
-        Uri.EscapeDataString(shortlistedTuitionPartnerSeoUrl);
+        Uri.EscapeDataString(shortlistedTuitionPartnerSeoUrl.Trim());
 
     private void AddTuitionPartnerToCookie(string cookieName, string encodedTuitionPartnerSeoUrl)
     {

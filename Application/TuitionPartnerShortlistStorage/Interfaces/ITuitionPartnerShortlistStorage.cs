@@ -3,13 +3,13 @@ namespace Application.TuitionPartnerShortlistStorage.Interfaces;
 public interface ITuitionPartnerShortlistStorage
 {
     /// <summary>
-    /// Adds a Shortlisted Tuition Partner to an implemented form of storage.
+    /// Adds the specified Shortlisted Tuition Partner to the implemented storage.
     /// </summary>
     /// <param name="shortlistedTuitionPartnerSeoUrl"></param>
     void AddTuitionPartner(string shortlistedTuitionPartnerSeoUrl);
 
     /// <summary>
-    /// Adds a Shortlisted Tuition Partner to an implemented form of storage.
+    /// Adds the specified Shortlisted Tuition Partners to the implemented storage.
     /// </summary>
     /// <param name="shortlistedTuitionPartnersSeoUrl"></param>
     void AddTuitionPartners(IEnumerable<string> shortlistedTuitionPartnersSeoUrl);
@@ -22,9 +22,7 @@ public interface ITuitionPartnerShortlistStorage
     IEnumerable<string> GetAllTuitionPartners();
 
     /// <summary>
-    /// Removes a single entry of a Shortlisted Tuition Partner stored in the implemented storage
-    /// using the provided seoUrl.
-    /// Note: It expects a valid seoUrl and that the entry exists.
+    /// Removes the specified Shortlisted Tuition Partner stored in the implemented storage
     /// </summary>
     /// <param name="shortlistedTuitionPartnerSeoUrl"></param>
     void RemoveTuitionPartner(string shortlistedTuitionPartnerSeoUrl);
