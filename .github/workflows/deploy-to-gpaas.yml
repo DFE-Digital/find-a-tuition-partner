@@ -36,7 +36,8 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: ${{inputs.environment}}
+    environment: ${{ inputs.environment }}
+    concurrency: cfdeploy-${{ inputs.environment }}
 
     env:
       CF_API: "https://api.london.cloud.service.gov.uk"

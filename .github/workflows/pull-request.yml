@@ -17,6 +17,7 @@ jobs:
     name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
     environment: pr
+    concurrency: pr-${{ github.event.number }}
 
     steps:
     - name: Checkout

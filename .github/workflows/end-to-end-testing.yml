@@ -25,6 +25,8 @@ on:
 jobs:
   end-to-end-testing:
     runs-on: ubuntu-latest
+    concurrency: e2e-${{ inputs.environment }}
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
