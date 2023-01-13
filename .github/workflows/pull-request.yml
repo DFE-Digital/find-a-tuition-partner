@@ -40,7 +40,7 @@ jobs:
 
     - name: Add DfE Analytics credentials.json
       run: |
-        tee Infrastructure/dfe-analytics-credentials.json << EOF
+        tee UI/dfe-analytics-credentials.json << EOF
         ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
         EOF
 
