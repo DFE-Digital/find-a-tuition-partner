@@ -120,9 +120,16 @@ When("the user selects tuition type {string}", (tutionType) => {
   cy.get(`input[id="${kebabCase(tutionType)}-tuition-types"]`).click();
 });
 
-When("the user selects organisation grouping type {string}", (organisationGroupingType) => {
-  cy.get(`input[id="${kebabCase(organisationGroupingType)}-organisation-grouping-types"]`).click();
-});
+When(
+  "the user selects organisation grouping type {string}",
+  (organisationGroupingType) => {
+    cy.get(
+      `input[id="${kebabCase(
+        organisationGroupingType
+      )}-organisation-grouping-types"]`
+    ).click();
+  }
+);
 
 When("they select the tuition partner {string}", (name) => {
   cy.get(".govuk-link").contains(name).click();

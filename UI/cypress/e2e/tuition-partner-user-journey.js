@@ -160,7 +160,9 @@ Then(
       "YO11 1AA"
     );
     cy.get(`input[id="in-school-tuition-types"]`).should("be.checked");
-    cy.get(`input[id="non-charity-organisation-grouping-types"]`).should("be.checked");
+    cy.get(`input[id="non-charity-organisation-grouping-types"]`).should(
+      "be.checked"
+    );
   }
 );
 
