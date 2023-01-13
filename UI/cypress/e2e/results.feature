@@ -77,9 +77,13 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
 
-  Scenario: results default to Any tuition type
+  Scenario: results default to Any tuition type filter
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     Then they will see the tuition type 'Any' is selected
+
+  Scenario: results default to Any organisation type filter
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
+    Then they will see the organisation grouping type 'Any' is selected
 
   Scenario: All key stages are shown
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -118,6 +122,7 @@ Feature: User is shown search results
     When the ‘clear filters’ button as been selected
     Then no subject should be shown as selected
     And they will see the tuition type 'Any' is selected
+    And they will see the organisation grouping type 'Any' is selected
 
   Scenario: All subject filters are collapsed when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
@@ -171,10 +176,15 @@ Feature: User is shown search results
     When they click on the option heading for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
     Then they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
 
- Scenario: User is able to select a tuition type
+ Scenario: User is able to select a tuition type filter
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When the user selects tuition type 'in school'
     Then they will see the tuition type 'in school' is selected
+
+ Scenario: User is able to select a organisation type filter
+    Given a user has arrived on the 'Search results' page without subjects or postcode
+    When the user selects organisation grouping type 'charity'
+    Then they will see the organisation grouping type 'charity' is selected
 
 Scenario: Search result matches the displayed count with subjects selected
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'

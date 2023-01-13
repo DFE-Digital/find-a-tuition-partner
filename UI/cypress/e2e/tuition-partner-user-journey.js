@@ -31,10 +31,6 @@ When("the postcode is edited in the start page", () => {
   Step(this, "they click 'Continue'");
 });
 
-When("the tuition type is changed", () => {
-  cy.get(`input[id="in-school"]`).check();
-});
-
 Then("user has journeyed forward to a selected tuition partner page", () => {
   Step(this, "they enter 'SK1 1EB' as the school's postcode");
   Step(this, "they click 'Continue'");
@@ -66,7 +62,8 @@ Then("the filter section will be correctly displayed", () => {
     cy.get(`input[id=${kebabCase(element)}]`).check();
   });
   cy.get('[data-testid="postcode-input-box"]').should("have.value", "SK1 1EB");
-  cy.get(`input[id="any"]`).should("be.checked");
+  cy.get(`input[id="any-tuition-types"]`).should("be.checked");
+  cy.get(`input[id="any-organisation-grouping-types"]`).should("be.checked");
 });
 
 Then("they will be journey back to the page they started from", () => {
@@ -162,7 +159,8 @@ Then(
       "have.value",
       "YO11 1AA"
     );
-    cy.get(`input[id="in-school"]`).should("be.checked");
+    cy.get(`input[id="in-school-tuition-types"]`).should("be.checked");
+    cy.get(`input[id="non-charity-organisation-grouping-types"]`).should("be.checked");
   }
 );
 

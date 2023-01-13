@@ -36,10 +36,6 @@ When("'Key stage 1 English' is selected", () => {
   cy.get('[id="key-stage-1-english"]').check();
 });
 
-When("the user selects tuition type {string}", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
-});
-
 When("a user selects all subject", () => {
   const keystages = "Key stage 1,Key stage 2,Key stage 3,Key stage 4";
   const stages = keystages.split(",").map((s) => s.trim());
@@ -97,7 +93,11 @@ Then("they will see an expanded subject filter for {string}", (keystage) => {
 });
 
 Then("they will see the tuition type {string} is selected", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).should("be.checked");
+  cy.get(`input[id="${kebabCase(tutionType)}-tuition-types"]`).should("be.checked");
+});
+
+Then("they will see the organisation grouping type {string} is selected", (organisationGroupingType) => {
+    cy.get(`input[id="${kebabCase(organisationGroupingType)}-organisation-grouping-types"]`).should("be.checked");
 });
 
 Then("the subjects in the filter displayed in alphabetical order", () => {
