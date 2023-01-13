@@ -67,7 +67,7 @@
                         </govuk-radios-fieldset-legend>
                         @foreach (var item in Model.Data.AllTuitionTypes)
                         {
-                            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+                            <govuk-radios-item id="@item.ToString().ToSeoUrl()-tuition-types" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
                         }
                     </govuk-radios-fieldset>
                 </govuk-radios>
@@ -79,7 +79,7 @@
                         </govuk-radios-fieldset-legend>
                         @foreach (var item in Model.Data.AllOrganisationGroupingTypes)
                         {
-                            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.OrganisationGroupingType">@item.DisplayName()</govuk-radios-item>
+                            <govuk-radios-item id="@item.ToString().ToSeoUrl()-organisation-grouping-types" value="@item" checked="@item == @Model.Data.OrganisationGroupingType">@item.DisplayName()</govuk-radios-item>
                         }
                     </govuk-radios-fieldset>
                 </govuk-radios>
