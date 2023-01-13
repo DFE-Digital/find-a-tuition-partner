@@ -1,4 +1,4 @@
-﻿doc@page "{id}"
+﻿@page "{id}"
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
@@ -32,8 +32,8 @@
 <div class="govuk-grid-column-two-thirds">
 <span id="tp-details-page--tp-localAuthHeader" show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">
     @localAuthorityHeader<strong>@Model.Data.LocalAuthorityName</strong>
-    <input id="tp-details-page--tp-localAuthName" type="hidden" value="@Model.Data.LocalAuthorityName"/>
 </span>
+<input id="tp-details-page--tp-localAuthName" type="hidden" value="@Model.Data.LocalAuthorityName"/>
 
 <h1 class="govuk-heading-l">@Model.Data.Name</h1>
 <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>

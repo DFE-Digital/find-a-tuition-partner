@@ -24,7 +24,6 @@ const getFetchResponseData = (response) => {
 const isResultValid = (result) =>
   result && result.updated !== "undefined" && result.updated;
 const getError = (message = "Invalid result") => Error(message);
-
 const setLocalAuthorityHeaderText = (
   text = "Shortlisted tuition partner for"
 ) => {
@@ -63,13 +62,7 @@ const onCheckboxClick = async (event) => {
       const result = await onChecked(checkbox.id);
       if (!isResultValid(result)) throw getError();
 
-      const localAuthName = document.getElementById(
-        "tp-details-page--tp-localAuthName"
-      ).value;
-      const localAuthHeader = document.getElementById(
-        "tp-details-page--tp-localAuthHeader"
-      );
-      localAuthHeader.innerHTML = `Shortlisted tuition partner for ${localAuthName}`;
+      setLocalAuthorityHeaderText();
     } catch (error) {
       //What do we want to do with error?
       checkbox.checked = false;
@@ -79,21 +72,20 @@ const onCheckboxClick = async (event) => {
       const result = await onUnChecked(checkbox.id);
       if (!isResultValid(result)) throw getError();
 
-      // setLocalAuthorityHeaderText("Tuition partner for");
-      const localAuthName = document.getElementById(
-        "tp-details-page--tp-localAuthName"
-      ).value;
-      const localAuthHeader = document.getElementById(
-        "tp-details-page--tp-localAuthHeader"
-      );
-      localAuthHeader.innerHTML = `Tuition partner for ${localAuthName}`;
+      setLocalAuthorityHeaderText("Tuition partner for");
     } catch (error) {
       //What do we want to do with error?
       checkbox.checked = true;
     }
   }
 };
+const isCssJsEnabled = () => document.body.className.includes("js-enabled");
+
 const addClickEventListenerToCheckbox = () => {
+  // The if statement is to prevent using javascript for the checkboxes,
+  // mainly in the case of if the client is using an IE browsers
+  // as it doesn’t seem to support newer javascript keywords. e.g. 'let'.
+  if (!isCssJsEnabled()) return;
   const checkboxes = document.getElementsByName("ShortlistedCheckbox");
   if (checkboxes)
     checkboxes.forEach((c) => c.addEventListener("click", onCheckboxClick));
