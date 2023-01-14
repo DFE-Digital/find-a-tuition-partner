@@ -201,3 +201,72 @@ Then("the LA name is not shown", () => {
 Then("the LA name displayed is {string}", (laName) => {
   cy.get('[data-testid="la-name"]').should("contain.text", laName);
 });
+
+Then("the LA label text is {string}", (laLabelText) => {
+  cy.get('[data-testid="la-name"]').should("contain.text", laLabelText);
+});
+
+Then(
+  "the LA span text and .FindATuitionPartner.Shortlist are updated correctly when checkbox is clicked",
+  (laLabelText) => {
+    const unCheckedSpanText = "Tuition partner for Stockport";
+    const cookieName = ".FindATuitionPartner.Shortlist";
+    const laName = '[data-testid="la-name"]';
+    cy.get(laName).should("contain.text", `${unCheckedSpanText}`);
+    cy.getCookie(`${cookieName}`).should("equal", null);
+    cy.get('[id="shortlist-tpInfo-cb-bright-heart-education"]').then(
+      ($checkbox) => {
+        cy.wrap($checkbox).check();
+        cy.getCookie(`${cookieName}`).should(
+          "have.property",
+          "value",
+          "bright-heart-education"
+        );
+        cy.get(laName).should(
+          "contain.text",
+          "Shortlisted tuition partner for Stockport"
+        );
+
+        cy.wrap($checkbox).uncheck();
+        cy.getCookie(`${cookieName}`).should("have.property", "value", "");
+        cy.get(laName).should("contain.text", `${unCheckedSpanText}`);
+      }
+    );
+  }
+);
+
+Then(
+  "total Shortlisted Tuition Partners and checked TP should reflect shortlist changes from TP detail page",
+  () => {
+    cy.get('[id="totalShortlistedTuitionPartners"]')
+      .invoke("text")
+      .then((text) => {});
+    cy.get('[id="shortlist-cb-seven-springs-education"]').should(
+      "be.unchecked"
+    );
+    cy.get(".govuk-link").contains("Seven Springs Education").click();
+    cy.get('[class=".govuk-heading-l"]').should(
+      "contain.text",
+      "Seven Springs Education"
+    );
+    cy.get('[id="shortlist-tpInfo-cb-seven-springs-education"]').check();
+    cy.get('[data-testid="back-link"]').click();
+    cy.get('[id="totalShortlistedTuitionPartners"]')
+      .invoke("text")
+      .should("equal", "1");
+    cy.get('[id="shortlist-cb-seven-springs-education"]').should("be.checked");
+    cy.get(".govuk-link").contains("Seven Springs Education").click();
+    cy.get('[class=".govuk-heading-l"]').should(
+      "contain.text",
+      "Seven Springs Education"
+    );
+    cy.get('[id="shortlist-tpInfo-cb-seven-springs-education"]').uncheck();
+    cy.get('[data-testid="back-link"]').click();
+    cy.get('[id="totalShortlistedTuitionPartners"]')
+      .invoke("text")
+      .should("equal", "0");
+    cy.get('[id="shortlist-cb-seven-springs-education"]').should(
+      "be.unchecked"
+    );
+  }
+);
