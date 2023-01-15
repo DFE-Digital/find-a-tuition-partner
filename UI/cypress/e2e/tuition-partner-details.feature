@@ -137,10 +137,10 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: A user should be able to add and remove TP to and from the shortlist
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
-    Then  the LA span text and .FindATuitionPartner.Shortlist are updated correctly when checkbox is clicked
+    Then  the LA span text and .FindATuitionPartner.Shortlist are updated correctly when the checkbox is clicked
 
-  Scenario: Adding or removing TP to shortlist should be reflected on the search results page
+  Scenario: Adding or removing TP to shortlist from TP details page should be reflected on the search results page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
-    Then total Shortlisted Tuition Partners and checked TP should reflect shortlist changes from TP detail page 
+    Then shortlisted changes on TP 'Seven Springs Education' detail page should be reflected on search results page
 
     
