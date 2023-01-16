@@ -147,7 +147,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         TuitionPartner tuitionPartner = new();
         var sheetName = OrganisationDetailsSheetName;
 
-        foreach(var organisationDetailMapping in _organisationDetailsMapping)
+        foreach (var organisationDetailMapping in _organisationDetailsMapping)
         {
             organisationDetailMapping.Value.ClearValue();
         }
