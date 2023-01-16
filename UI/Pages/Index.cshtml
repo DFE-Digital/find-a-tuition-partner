@@ -54,9 +54,9 @@
                 <input asp-for="Data.TuitionType" hidden />
             }
 
-            @if (Model.Data.OrganisationGroupingType.HasValue)
+            @if (Model.Data.OrganisationTypeGrouping.HasValue)
             {
-                <input asp-for="Data.OrganisationGroupingType" hidden />
+                <input asp-for="Data.OrganisationTypeGrouping" hidden />
             }
 
             <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>

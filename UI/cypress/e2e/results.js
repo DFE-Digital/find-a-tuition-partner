@@ -100,11 +100,11 @@ Then("they will see the tuition type {string} is selected", (tutionType) => {
 
 Then(
   "they will see the organisation grouping type {string} is selected",
-  (organisationGroupingType) => {
+  (organisationTypeGrouping) => {
     cy.get(
       `input[id="${kebabCase(
-        organisationGroupingType
-      )}-organisation-grouping-types"]`
+        organisationTypeGrouping
+      )}-organisation-types-grouping"]`
     ).should("be.checked");
   }
 );

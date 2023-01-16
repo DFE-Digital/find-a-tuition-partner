@@ -18,7 +18,7 @@ public class TutoringPartnersController : ControllerBase
     public async Task<IActionResult> Post([FromBody] SearchResults.Query request)
     {
         request.TuitionType ??= Enums.TuitionType.Any;
-        request.OrganisationGroupingType ??= Enums.OrganisationGroupingType.Any;
+        request.OrganisationTypeGrouping ??= Enums.OrganisationTypeGrouping.Any;
 
         var result = await _sender.Send(request);
 

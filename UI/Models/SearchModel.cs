@@ -17,7 +17,7 @@ namespace UI.Models
             Postcode = model.Postcode;
             Subjects = model.Subjects;
             TuitionType = model.TuitionType;
-            OrganisationGroupingType = model.OrganisationGroupingType;
+            OrganisationTypeGrouping = model.OrganisationTypeGrouping;
             KeyStages = model.KeyStages;
             ShortlistOrderBy = model.ShortlistOrderBy;
             ShortlistOrderByDirection = model.ShortlistOrderByDirection;
@@ -33,7 +33,7 @@ namespace UI.Models
 
         public TuitionType? TuitionType { get; set; }
 
-        public OrganisationGroupingType? OrganisationGroupingType { get; set; }
+        public OrganisationTypeGrouping? OrganisationTypeGrouping { get; set; }
 
         public KeyStage[]? KeyStages { get; set; }
 

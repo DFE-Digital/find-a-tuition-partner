@@ -21,7 +21,12 @@ public class SearchResults : PageModel
     public async Task OnGet(Query data)
     {
         data.TuitionType ??= Enums.TuitionType.Any;
-        data.OrganisationGroupingType ??= Enums.OrganisationGroupingType.Any;
+        data.OrganisationTypeGrouping ??= Enums.OrganisationTypeGrouping.Any;
+        if (data.KeyStages == null && data.Subjects != null)
+        {
+            data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+        }
+
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
 
@@ -36,7 +41,7 @@ public class SearchResults : PageModel
     public async Task OnGetClearAllFilters(string postcode)
     {
         Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, OrganisationGroupingType = Enums.OrganisationGroupingType.Any, KeyStages = null });
+        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, OrganisationTypeGrouping = Enums.OrganisationTypeGrouping.Any, KeyStages = null });
 
         await SetSelectableTuitionPartners();
     }
@@ -171,7 +176,7 @@ public class SearchResults : PageModel
 
         public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
-        public IEnumerable<Enums.OrganisationGroupingType> AllOrganisationGroupingTypes { get; set; } = new List<Enums.OrganisationGroupingType>();
+        public IEnumerable<Enums.OrganisationTypeGrouping> AllOrganisationTypeGroupings { get; set; } = new List<Enums.OrganisationTypeGrouping>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -213,7 +218,7 @@ public class SearchResults : PageModel
             {
                 AllSubjects = await GetSubjectsList(request, cancellationToken),
                 AllTuitionTypes = AllTuitionTypes,
-                AllOrganisationGroupingTypes = AllOrganisationGroupingTypes,
+                AllOrganisationTypeGroupings = AllOrganisationTypeGroupings,
             };
 
             var searchResults = await GetSearchResults(request, cancellationToken);
@@ -259,12 +264,12 @@ public class SearchResults : PageModel
                 Enums.TuitionType.Online,
             };
 
-        private static List<Enums.OrganisationGroupingType> AllOrganisationGroupingTypes =>
+        private static List<Enums.OrganisationTypeGrouping> AllOrganisationTypeGroupings =>
             new()
             {
-                Enums.OrganisationGroupingType.Any,
-                Enums.OrganisationGroupingType.Charity,
-                Enums.OrganisationGroupingType.NonCharity,
+                Enums.OrganisationTypeGrouping.Any,
+                Enums.OrganisationTypeGrouping.Charity,
+                Enums.OrganisationTypeGrouping.NonCharity,
             };
 
         private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,
@@ -323,9 +328,9 @@ public class SearchResults : PageModel
 
             var subjectFilterIds = subjects.Select(x => x.Id);
             var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
-            bool? isTypeOfCharityFilter = request.OrganisationGroupingType == OrganisationGroupingType.Any ?
+            bool? isTypeOfCharityFilter = request.OrganisationTypeGrouping == OrganisationTypeGrouping.Any ?
                 null :
-                request.OrganisationGroupingType == OrganisationGroupingType.Charity;
+                request.OrganisationTypeGrouping == OrganisationTypeGrouping.Charity;
 
             var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(
                 new TuitionPartnersFilter

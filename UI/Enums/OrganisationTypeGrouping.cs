@@ -2,7 +2,7 @@
 
 namespace UI.Enums
 {
-    public enum OrganisationGroupingType
+    public enum OrganisationTypeGrouping
     {
         [Description("Any")]
         Any = 0,

@@ -72,8 +72,8 @@ public class BackLinks
     [Fact]
     public void Construct_querystring_from_organisation_grouping_type()
     {
-        var model = new SearchModel { OrganisationGroupingType = OrganisationGroupingType.Charity };
+        var model = new SearchModel { OrganisationTypeGrouping = OrganisationTypeGrouping.Charity };
         var result = model.ToQueryString();
-        result.Should().Be("OrganisationGroupingType=Charity");
+        result.Should().Be("OrganisationTypeGrouping=Charity");
     }
 }

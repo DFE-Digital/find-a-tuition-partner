@@ -40,18 +40,18 @@
             }
             @if (Model.Data.KeyStages != null)
             {
-                foreach (var subject in Model.Data.KeyStages)
+                foreach (var keyStage in Model.Data.KeyStages)
                 {
-                    <input type="hidden" id="@subject" name="Data.KeyStages" value="@subject"/>
+                    <input type="hidden" id="@keyStage" name="Data.KeyStages" value="@keyStage"/>
                 }
             }
             @if (Model.Data.TuitionType.HasValue)
             {
                 <input asp-for="Data.TuitionType" hidden/>
             }
-            @if (Model.Data.OrganisationGroupingType.HasValue)
+            @if (Model.Data.OrganisationTypeGrouping.HasValue)
             {
-                <input asp-for="Data.OrganisationGroupingType" hidden/>
+                <input asp-for="Data.OrganisationTypeGrouping" hidden/>
             }
             <div class="govuk-button-group">
                 <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>

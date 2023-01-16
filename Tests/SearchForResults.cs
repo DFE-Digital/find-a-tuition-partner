@@ -113,7 +113,7 @@ public class SearchForResults : CleanSliceFixture
                 };
 
                 page.Data.TuitionType = UI.Enums.TuitionType.Online;
-                page.Data.OrganisationGroupingType = UI.Enums.OrganisationGroupingType.Charity;
+                page.Data.OrganisationTypeGrouping = UI.Enums.OrganisationTypeGrouping.Charity;
 
                 await page.OnGetClearAllFilters(postcode);
 
@@ -124,7 +124,7 @@ public class SearchForResults : CleanSliceFixture
         result.Data.KeyStages.Should().BeNull();
         result.Data.Subjects.Should().BeNull();
         result.Data.TuitionType.Should().Be(UI.Enums.TuitionType.Any);
-        result.Data.OrganisationGroupingType.Should().Be(UI.Enums.OrganisationGroupingType.Any);
+        result.Data.OrganisationTypeGrouping.Should().Be(UI.Enums.OrganisationTypeGrouping.Any);
     }
 
     [Fact]
