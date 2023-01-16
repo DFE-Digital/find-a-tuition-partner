@@ -79,7 +79,7 @@
                         </govuk-radios-fieldset-legend>
                         @foreach (var item in Model.Data.AllOrganisationTypeGroupings)
                         {
-                            <govuk-radios-item id="@item.ToString().ToSeoUrl()-organisation-grouping-types" value="@item" checked="@item == @Model.Data.OrganisationTypeGrouping">@item.DisplayName()</govuk-radios-item>
+                            <govuk-radios-item id="@item.ToString().ToSeoUrl()-organisation-types-grouping" value="@item" checked="@item == @Model.Data.OrganisationTypeGrouping">@item.DisplayName()</govuk-radios-item>
                         }
                     </govuk-radios-fieldset>
                 </govuk-radios>
