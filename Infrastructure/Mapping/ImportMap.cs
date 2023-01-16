@@ -34,6 +34,13 @@ namespace Infrastructure.Mapping
             return null;
         }
 
+        public void ClearValue()
+        {
+            _sourceValue = null;
+            IsInSourceData = false;
+            _convertedValue = null;
+        }
+
         public void SetValue(string? sourceValue)
         {
             _sourceValue = sourceValue;

@@ -50,6 +50,10 @@ public static class SpreadsheetExtensions
         {
             return SetKindUtc(DateTime.FromOADate(doubleValue));
         }
+        if (DateTime.TryParse(cellValue, out var dateResult))
+        {
+            return SetKindUtc(dateResult);
+        }
 
         return null;
     }

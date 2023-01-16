@@ -26,8 +26,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     private IList<OrganisationType>? _organisationTypes;
     private ISpreadsheetExtractor? _spreadsheetExtractor;
 
-    private readonly List<string> _warnings = new();
-    private readonly List<string> _errors = new();
+    private List<string> _warnings = new();
+    private List<string> _errors = new();
 
     public TribalSpreadsheetTuitionPartnerFactory(ILogger<TribalSpreadsheetTuitionPartnerFactory> logger)
     {
@@ -37,7 +37,6 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
             { "Organisation_Ref_ID_s", new ImportMap() },
-            { "Organisation_LastUpdated_s", new ImportMap(tpMapping, nameof(tpMapping.TPLastUpdatedData)) },
             { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) },
             { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true } },
@@ -49,9 +48,10 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
             { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
-            { "Organisation_OrganisationType_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
+            { "Organisation_LegalStatus_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_LogoVector_s", new ImportMap() },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
+            { "Organisation_LastUpdated_d", new ImportMap(tpMapping, nameof(tpMapping.TPLastUpdatedData)) },
         };
     }
 
@@ -62,6 +62,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _subjects = subjects;
         _organisationTypes = organisationTypes;
 
+        _warnings = new();
+        _errors = new();
         TuitionPartner tuitionPartner = new();
 
         _spreadsheetExtractor = spreadsheetExtractor;
@@ -137,13 +139,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
     private TuitionPartner GetOrganisationDetails()
     {
-        const string KeyColumn = "B";
-        const string ValueColumn = "D";
-        const string TableHeaderColumn = "B";
+        const string KeyColumn = "A";
+        const string ValueColumn = "C";
+        const string TableHeaderColumn = "A";
         const string TableHeader = "Title";
 
         TuitionPartner tuitionPartner = new();
         var sheetName = OrganisationDetailsSheetName;
+
+        foreach(var organisationDetailMapping in _organisationDetailsMapping)
+        {
+            organisationDetailMapping.Value.ClearValue();
+        }
 
         //Add the data from the spreadsheet in to the _organisationDetailsMapping dictionary value class
         ProcessSheet(sheetName, TableHeaderColumn, TableHeader, KeyColumn,
@@ -176,7 +183,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
 
         //Get Organisation Type Id
-        var organisationTypeName = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_OrganisationType_s").Value.SourceValue;
+        var organisationTypeName = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_LegalStatus_s").Value.SourceValue;
         var organisationType = _organisationTypes!.Where(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
         if (organisationType == null)
         {
@@ -357,7 +364,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string KeyStageColumn = "B";
         const string SubjectColumn = "C";
         const string TuitionTypeColumn = "D";
-        const string RateColumn = "E";
+        const string RateColumn = "F";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "Group";
