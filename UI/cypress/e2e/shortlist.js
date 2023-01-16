@@ -8,14 +8,12 @@ import { kebabCase } from "../support/utils";
 
 When("they add {string} to their shortlist on the results page", (tpName) => {
   cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
-  cy.wait(500);
 });
 
 When(
   "they remove {string} from their shortlist on the results page",
   (tpName) => {
     cy.get(`#shortlist-cb-${kebabCase(tpName)}`).uncheck();
-    cy.wait(500);
   }
 );
 
