@@ -4,7 +4,11 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase } from "../support/utils";
+import {
+  kebabCase,
+  removeExcessWhitespaces,
+  removeNewLine,
+} from "../support/utils";
 
 When("they add {string} to their shortlist on the results page", (tpName) => {
   cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
@@ -115,4 +119,25 @@ Then("they click the cancel link", () => {
 
 Then("they click confirm button", () => {
   cy.get('[data-testid="call-to-action"]').click();
+});
+
+Then("there is {int} entry on the shortlist page", (count) => {
+  cy.get("tbody th").should("have.length", count);
+});
+
+Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
+
+Then("{string} is removed from the shortlist", (tpName) => {
+  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+});
+
+Then("they click Back to go back to the shortlist page", () => cy.clickBack());
+
+Then("the shortlist page displays {string}", (expectedText) => {
+  cy.get("[id='shortlist-no-tp-shortlisted']")
+    .first()
+    .should(
+      "contain.text",
+      removeExcessWhitespaces(removeNewLine(expectedText))
+    );
 });

@@ -24,17 +24,53 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import { removeNewLine } from "./utils";
+
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
-    const username = Cypress.env("username");
-    const password = Cypress.env("password");
+  const username = Cypress.env("username");
+  const password = Cypress.env("password");
 
-    if (username && password) {
-        options = options || {};
-        options.auth = {
-            username: username,
-            password: password,
-        };
-    }
+  if (username && password) {
+    options = options || {};
+    options.auth = {
+      username: username,
+      password: password,
+    };
+  }
 
-    return originalFn(url, options);
+  return originalFn(url, options);
+});
+
+Cypress.Commands.add("checkTotalTps", (expectedTotal) => {
+  cy.get('[id="totalShortlistedTuitionPartners"]')
+    .invoke("text")
+    .then((text) => {
+      cy.wrap(removeNewLine(text)).should("equal", `${expectedTotal}`);
+    });
+});
+Cypress.Commands.add("isCheckboxUnchecked", (checkboxSelector) => {
+  cy.get(checkboxSelector).should("not.be.checked");
+});
+Cypress.Commands.add("isCheckboxchecked", (checkboxSelector) => {
+  cy.get(checkboxSelector).should("be.checked");
+});
+Cypress.Commands.add("goToTpDetailPage", (tpName) => {
+  cy.get(".govuk-link").contains(tpName).click();
+  cy.get(".govuk-heading-l").should("contain.text", tpName);
+});
+Cypress.Commands.add("clickBack", () => {
+  cy.get('[data-testid="back-link"]').click();
+});
+Cypress.Commands.add("checkLaLabelText", (expectedText) => {
+  cy.get('[data-testid="la-name"]').should("contain.text", expectedText);
+});
+Cypress.Commands.add("isCookieNull", (cookieName) => {
+  cy.getCookie(`${cookieName}`).should("equal", null);
+});
+Cypress.Commands.add("checkCookieValue", (cookieName, expectedCookieValue) => {
+  cy.getCookie(`${cookieName}`).should(
+    "have.property",
+    "value",
+    `${expectedCookieValue}`
+  );
 });
