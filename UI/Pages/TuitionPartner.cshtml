@@ -1,29 +1,21 @@
 ﻿@page "{id}"
+@using UI.HelperFunctions
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
-    var pageUrl = "all-tuition-partners";
-    var pageName = "Back to tuition partners";
+    var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
+    var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
     var isFromSearchResultOrShortlistPage = false;
 
-    if (Model.SearchModel?.From == ReferrerList.SearchResults)
-    {
-        pageUrl = "search-results";
-        pageName = "Back to search results";
-    }
-
-    if (Model.SearchModel?.From == ReferrerList.Shortlist)
-    {
-        pageUrl = "shortlist";
-        pageName = "Back to shortlist";
-    }
     if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
         isFromSearchResultOrShortlistPage = true;
     var localAuthorityHeader = "Tuition partner for ";
     if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
         localAuthorityHeader = "Shortlisted tuition partner for ";
 
-    ViewData["BackLinkHref"] = "/" + pageUrl + "?" + Model.SearchModel.ToQueryString();
+    
+    ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
+                               $"{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }
@@ -122,9 +114,7 @@
     <div>
         <govuk-details data-testid="payment-details">
             <govuk-details-summary>
-                <govuk-details-text>
-                    How much will I pay?
-                </govuk-details-text>
+                How much will I pay?
             </govuk-details-summary>
             <govuk-details-text>
                 <strong>Example:</strong>
@@ -230,7 +220,7 @@
                 <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
             </govuk-summary-list-row-value>
         </govuk-summary-list-row>
-        @if (!string.IsNullOrEmpty(@Model.Data.PhoneNumber))
+        @if (!string.IsNullOrWhiteSpace(@Model.Data.PhoneNumber))
         {
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>

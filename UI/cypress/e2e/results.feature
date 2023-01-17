@@ -198,6 +198,10 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then logos are not shown for tuition partners
 
+  Scenario: User is returned to the correction TP position on the search result page
+    Given a user has arrived on the 'Search results' page
+    Then  they can visit each TP details page and be returned back to the correct TP location
+
   Scenario: Adding or removing TP to shortlist from search results page should be reflected on the TP details page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
     And total amount of shortlisted TPs is 0

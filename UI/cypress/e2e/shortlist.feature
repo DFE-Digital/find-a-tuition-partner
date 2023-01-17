@@ -14,6 +14,11 @@ Feature: Tuition Partner shortlist
     And 'm2r Education' is marked as shortlisted on the results page
     And the shortlist shows as having 2 entries on the results page
 
+    Scenario: User can add lots of TPs to their shortlist in quick succession from the results page
+        Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+        When they programmatically add the first 20 results to their shortlist on the results page
+        Then the shortlist shows as having 20 entries on the results page
+
   Scenario: User can remove a TP from their shortlist from the results page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their shortlist on the results page

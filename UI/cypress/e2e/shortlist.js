@@ -43,9 +43,13 @@ When("they choose to view their shortlist from the results page", () => {
 });
 
 Then("{string} is entry {int} on the shortlist page", (tpName, entry) => {
+  tpName = removeExcessWhitespaces(removeNewLine(tpName));
   cy.get("tbody th")
     .eq(entry - 1)
-    .should("have.text", tpName);
+    .then(($tbodyHeader) => {
+      return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+    })
+    .should("equal", tpName);
 });
 
 Then("there are {int} entries on the shortlist page", (count) => {
@@ -120,6 +124,22 @@ Then("they click the cancel link", () => {
 Then("they click confirm button", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
+
+When(
+  "they programmatically add the first {int} results to their shortlist on the results page",
+  (num) => {
+    // We will do this programmatically so that it happens quickly enough to potentially cause a race condition
+    cy.window().then((win) => {
+      [
+        ...win.document.querySelectorAll(
+          `input[name="ShortlistedTuitionPartners"]`
+        ),
+      ]
+        .slice(0, num)
+        .forEach((_) => _.click());
+    });
+  }
+);
 
 Then("there is {int} entry on the shortlist page", (count) => {
   cy.get("tbody th").should("have.length", count);

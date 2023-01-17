@@ -1,4 +1,5 @@
 ﻿@page
+@using UI.HelperFunctions
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UI.Pages.Shared
@@ -8,7 +9,7 @@
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
-    ViewData["BackLinkHref"] = "/which-subjects?" + Model.Data.ToQueryString();
+    ViewData["BackLinkHref"] = $"/which-subjects?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
 }
 
@@ -30,7 +31,6 @@
 </div>
 
 <div class="govuk-grid-row">
-
     <form>
 
         <div class="govuk-grid-column-one-third">
@@ -142,19 +142,19 @@
 
             @if (Model.Data.Results != null)
             {
-                int i = 0;
+                var i = 0;
                 var dataQueryString = Model.Data.ToQueryString();
                 foreach (var item in Model.Data.Results.Results)
                 {
                     i++;
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
-                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{HelperFunctions.JumpToLocationQueryName}=sr-tp-jtl-{@item.SeoUrl}";
 
-                    <div data-testid="results-list-item" data-position="@i">
+                    <div id="sr-tp-jtl-@item.SeoUrl" data-testid="results-list-item" data-position="@i">
                         <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
                             <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
                             <h2 class="govuk-heading-m">
-                                <a href="@tpUrl" class="govuk-link">@item.Name</a>
+                                <a href="@tpUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a>
                             </h2>
                             <govuk-summary-list class="govuk-!-margin-bottom-0">
                                 <govuk-summary-list-row class="govuk-body-s">
