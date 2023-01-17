@@ -86,12 +86,12 @@ let lastCheckboxPromise = null;
 
 const onCheckboxClick = async (event) => {
   const checkbox = event.target;
+  const checked = checkbox.checked;
 
   lastCheckboxPromise = (async (previousPromise) => {
     await previousPromise;
 
     try {
-      const checked = checkbox.checked;
       const updateFunction = checked ? onChecked : onUnChecked;
 
       const result = await updateFunction(checkbox);
