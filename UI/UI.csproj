@@ -16,6 +16,8 @@
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'FindATuitionPartner' " />
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'DataImport' " />
 	<ItemGroup>
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
 		<PackageReference Include="GovUk.Frontend.AspNetCore" Version="1.0.0-beta1" />

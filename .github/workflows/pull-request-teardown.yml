@@ -14,6 +14,8 @@ jobs:
   teardown_deployment:
     name: Teardown Deployment
     runs-on: ubuntu-latest
+    concurrency: pr-${{ github.event.number }}
+
     steps:
     - name: Install the CF CLI
       run: |
