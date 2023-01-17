@@ -24,6 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import { getJumpToLocationId } from "./utils";
+
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   const username = Cypress.env("username");
   const password = Cypress.env("password");
@@ -37,4 +39,17 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   }
 
   return originalFn(url, options);
+});
+
+Cypress.Commands.add("isWithinViewPort", { prevSubject: true }, (element) => {
+  const { top } = element[0].getBoundingClientRect();
+  expect(top).to.be.oneOf([-0.1875, -0.453125, 0, 0.234375, 0.28125, 63]);
+  return element;
+});
+
+Cypress.Commands.add("isCorrectJumpToLocation", ($element) => {
+  cy.visit($element.attr("href"));
+  cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get(".govuk-back-link").click();
+  cy.get(`[id="${getJumpToLocationId($element)}"]`).isWithinViewPort();
 });

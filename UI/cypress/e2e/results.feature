@@ -1,4 +1,5 @@
 Feature: User is shown search results
+
   Scenario: page url is '/search-results'
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     Then the page URL ends with '/search-results'
@@ -70,7 +71,7 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And all subject filters are collapsed
 
-  Scenario: unselects all boxes on the filters 
+  Scenario: unselects all boxes on the filters
     Given a user has arrived on the 'Search results' page
     When they enter '' as the school's postcode
     And they clear all the filters
@@ -103,13 +104,13 @@ Feature: User is shown search results
 
   Scenario: Subjects are displayed in alphabetical order in  page the filter of 'search results' page
     Given a user has arrived on the 'Search results' page
-    Then the subjects in the filter displayed in alphabetical order 
+    Then the subjects in the filter displayed in alphabetical order
 
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
     Given a user has arrived on the 'Search results' page
-    Then the subjects covered by a tuition partner are in alphabetical order 
+    Then the subjects covered by a tuition partner are in alphabetical order
 
-  Scenario: Results summary is shown 
+  Scenario: Results summary is shown
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     Then they will see the results summary for 'Stockport'
 
@@ -159,7 +160,7 @@ Feature: User is shown search results
     When they enter 'SK1 1EB' as the school's postcode
     And 'Key stage 1 English' is selected
     Then all tuition partner parameters are populated correctly
-     And the number of tuition partners displayed matches the displayed count
+    And the number of tuition partners displayed matches the displayed count
 
   Scenario: Tuition partner details are displayed correctly after clear filters is selected on results page
     Given a user has arrived on the 'Search results' page without subjects or postcode
@@ -190,19 +191,23 @@ Scenario: Search result matches the displayed count with subjects selected
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     Then the number of tuition partners displayed matches the displayed count
 
-Scenario: Search result matches the displayed count with no subjects selected
+  Scenario: Search result matches the displayed count with no subjects selected
     Given a user has arrived on the 'Search results' page without subjects
     Then the number of tuition partners displayed matches the displayed count
 
-Scenario: Search result matches the displayed count with no subjects or postcode
+  Scenario: Search result matches the displayed count with no subjects or postcode
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then the number of tuition partners displayed matches the displayed count
 
-Scenario: Logos are displayed for tution partners
+  Scenario: Logos are displayed for tution partners
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then logos are shown for tuition partners
 
-Scenario: Logos are hidden on mobile for tution partners
+  Scenario: Logos are hidden on mobile for tution partners
     Given a user is using a 'phone'
     Given a user has arrived on the 'Search results' page without subjects or postcode
     Then logos are not shown for tuition partners
+
+  Scenario: User is returned to the correction TP position on the search result page
+    Given a user has arrived on the 'Search results' page
+    Then  they can visit each TP details page and be returned back to the correct TP location
