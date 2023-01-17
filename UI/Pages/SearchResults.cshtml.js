@@ -82,23 +82,24 @@ const onUnChecked = async (checkbox) => {
     });
 };
 
+let lastCheckboxPromise = null;
+
 const onCheckboxClick = async (event) => {
   const checkbox = event.target;
-  if (checkbox.checked) {
+  const checked = checkbox.checked;
+
+  lastCheckboxPromise = (async (previousPromise) => {
+    await previousPromise;
+
     try {
-      const result = await onChecked(checkbox);
-      updateSearchResultPage(result, checkbox, false);
+      const updateFunction = checked ? onChecked : onUnChecked;
+
+      const result = await updateFunction(checkbox);
+      updateSearchResultPage(result, checkbox, !checked);
     } catch (e) {
-      checkbox.checked = false;
+      checkbox.checked = checked;
     }
-  } else {
-    try {
-      const result = await onUnChecked(checkbox);
-      updateSearchResultPage(result, checkbox, true);
-    } catch (e) {
-      checkbox.checked = true;
-    }
-  }
+  })(lastCheckboxPromise);
 };
 
 const addClickEventListenerToTuitionPartnerCheckboxes = () => {
