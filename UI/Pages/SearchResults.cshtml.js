@@ -90,20 +90,14 @@ const onCheckboxClick = async (event) => {
   lastCheckboxPromise = (async (previousPromise) => {
     await previousPromise;
 
-    if (checkbox.checked) {
-      try {
-        const result = await onChecked(checkbox);
-        updateSearchResultPage(result, checkbox, false);
-      } catch (e) {
-        checkbox.checked = false;
-      }
-    } else {
-      try {
-        const result = await onUnChecked(checkbox);
-        updateSearchResultPage(result, checkbox, true);
-      } catch (e) {
-        checkbox.checked = true;
-      }
+    try {
+      const checked = checkbox.checked;
+      const updateFunction = checked ? onChecked : onUnChecked;
+
+      const result = await updateFunction(checkbox);
+      updateSearchResultPage(result, checkbox, !checked);
+    } catch (e) {
+      checkbox.checked = checked;
     }
   })(lastCheckboxPromise);
 };
