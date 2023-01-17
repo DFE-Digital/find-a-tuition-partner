@@ -141,6 +141,22 @@ When(
   }
 );
 
+Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+  cy.checkTotalTps(expectedTotal);
+});
+Then("{string} checkbox is unchecked", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+Then("{string} checkbox is unchecked on its detail page", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+Then("the LA label text is {string}", (laLabelText) =>
+  cy.checkLaLabelText(laLabelText)
+);
+Then("{string} checkbox is checked on its detail page", (tpName) => {
+  cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+
 Then("there is {int} entry on the shortlist page", (count) => {
   cy.get("tbody th").should("have.length", count);
 });

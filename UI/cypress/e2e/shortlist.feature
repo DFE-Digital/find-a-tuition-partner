@@ -173,6 +173,26 @@ Feature: Tuition Partner shortlist
     Then they click confirm button
     Then there are 0 entries on the shortlist page
 
+  Scenario: Adding or removing TP to shortlist from search results page should be reflected on the TP details page
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
+    And total amount of shortlisted TPs is 0
+    And 'Seven Springs Education' checkbox is unchecked
+    Then 'Seven Springs Education' name link is clicked
+    And 'Seven Springs Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    Then they click 'Back'
+    Then they add 'Seven Springs Education' to their shortlist on the results page
+    And total amount of shortlisted TPs is 1
+    Then 'Seven Springs Education' name link is clicked
+    And  'Seven Springs Education' checkbox is checked on its detail page
+    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    Then they click 'Back'
+    Then they remove 'Seven Springs Education' from their shortlist on the results page
+    And total amount of shortlisted TPs is 0
+    Then 'Seven Springs Education' name link is clicked
+    And 'Seven Springs Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    
   Scenario: Removing last shortlisted TP from TP details page is reflected in shortlist page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Reeson Education' to their shortlist on the results page

@@ -201,30 +201,3 @@ Feature: User is shown search results
   Scenario: User is returned to the correction TP position on the search result page
     Given a user has arrived on the 'Search results' page
     Then  they can visit each TP details page and be returned back to the correct TP location
-
-  Scenario: Adding or removing TP to shortlist from search results page should be reflected on the TP details page
-    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
-    And total amount of shortlisted TPs is 0
-    And 'Seven Springs Education' checkbox is unchecked
-    Then 'Seven Springs Education' name link is clicked
-    And 'Seven Springs Education' checkbox is unchecked on its detail page
-    And the LA label text is 'Tuition partner for Stockport'
-    And '.FindATuitionPartner.Shortlist' cookie is null
-    Then they click Back to go back to the search results page
-    Then they check 'TuitionPartner' - 'Seven Springs Education' checkbox
-    And 'Seven Springs Education' checkbox is checked
-    And  '.FindATuitionPartner.Shortlist' cookie value is 'seven-springs-education'
-    And total amount of shortlisted TPs is 1
-    Then 'Seven Springs Education' name link is clicked
-    And  'Seven Springs Education' checkbox is checked on its detail page
-    And the LA label text is 'Shortlisted tuition partner for Stockport'
-    And  '.FindATuitionPartner.Shortlist' cookie value is 'seven-springs-education'
-    Then they click Back to go back to the search results page
-    Then they uncheck 'TuitionPartner' - 'Seven Springs Education' checkbox
-    And 'Seven Springs Education' checkbox is unchecked
-    And '.FindATuitionPartner.Shortlist' cookie value is ''
-    And total amount of shortlisted TPs is 0
-    Then 'Seven Springs Education' name link is clicked
-    And 'Seven Springs Education' checkbox is unchecked on its detail page
-    And the LA label text is 'Tuition partner for Stockport'
-    And '.FindATuitionPartner.Shortlist' cookie value is ''

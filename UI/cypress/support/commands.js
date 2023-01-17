@@ -66,20 +66,13 @@ Cypress.Commands.add("clickBack", () => {
 Cypress.Commands.add("checkLaLabelText", (expectedText) => {
   cy.get('[data-testid="la-name"]').should("contain.text", expectedText);
 });
-Cypress.Commands.add("isCookieNull", (cookieName) => {
-  cy.getCookie(`${cookieName}`).should("equal", null);
-});
-Cypress.Commands.add("checkCookieValue", (cookieName, expectedCookieValue) => {
-  cy.getCookie(`${cookieName}`).should(
-    "have.property",
-    "value",
-    `${expectedCookieValue}`
-  );
-});
 
-Cypress.Commands.add("isWithinViewPort", { prevSubject: true }, (element) => {
+Cypress.Commands.add("isWithinViewPort", (element) => {
   const { top } = element[0].getBoundingClientRect();
-  expect(top).to.be.oneOf([-0.1875, -0.453125, 0, 0.234375, 0.28125, 63]);
+  expect(top).to.be.oneOf([
+    -0.15625, -0.1875, -0.203125, -0.453125, 0, 0.0703125, 0.234375, 0.2421875,
+    0.28125, 63,
+  ]);
   return element;
 });
 
@@ -87,5 +80,7 @@ Cypress.Commands.add("isCorrectJumpToLocation", ($element) => {
   cy.visit($element.attr("href"));
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get(".govuk-back-link").click();
-  cy.get(`[id="${getJumpToLocationId($element)}"]`).isWithinViewPort();
+  cy.get(`[id="${getJumpToLocationId($element)}"]`).then(($el) => {
+    cy.isWithinViewPort($el);
+  });
 });

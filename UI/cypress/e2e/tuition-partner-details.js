@@ -202,10 +202,6 @@ Then("the LA label text is {string}", (laLabelText) => {
   cy.checkLaLabelText(laLabelText);
 });
 
-Then("{string} cookie is null", (cookieName) => {
-  cy.isCookieNull(cookieName);
-});
-
 Then("the user checks the {string} checkbox on its detail page", (tpName) => {
   cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).check();
 });
@@ -217,9 +213,7 @@ Then("the user unchecks the {string} checkbox", (tpName) => {
 Then("{string} checkbox is unchecked on its detail page", (tpName) => {
   cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
-Then("{string} cookie value is {string}", (cookieName, expectedCookieValue) => {
-  cy.checkCookieValue(cookieName, expectedCookieValue);
-});
+
 Then("{string} checkbox is checked on its detail page", (tpName) => {
   cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
