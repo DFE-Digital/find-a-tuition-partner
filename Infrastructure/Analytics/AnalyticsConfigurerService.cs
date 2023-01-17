@@ -42,11 +42,26 @@ namespace UI.Analytics
             var section = _configuration.GetSection("DfeAnalytics");
 
             // Do we have the bare minimum of configuration?
-            return (
-                (
-                    !string.IsNullOrEmpty(section["CredentialsJson"])
-                    || (!string.IsNullOrEmpty(section["CredentialsJsonFile"]) && !string.IsNullOrEmpty(section["ProjectId"]))
-                ) && !string.IsNullOrEmpty(section["DatasetId"]));
+
+            // `DatasetId` is always required
+            if (string.IsNullOrEmpty(section["DatasetId"]))
+            {
+                return false;
+            }
+
+            // One of `CredentialsJson` or `CredentialsJsonFile` is required
+            if (string.IsNullOrEmpty(section["CredentialsJson"] && string.IsNullOrEmpty(section["CredentialsJsonFile"])))
+            {
+                return false;
+            }
+
+            // If using `CredentialsJsonFile` then `ProjectId` is required
+            if (!string.IsNullOrEmpty(section["CredentialsJsonFile"] && string.IsNullOrEmpty(section["ProjectId"])))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static void ConfigureServices(WebApplicationBuilder builder)
