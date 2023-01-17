@@ -117,9 +117,18 @@ Then("they click confirm button", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
 
-When("they programmatically add the first {int} results to their shortlist on the results page", (num) => {
-  // We will do this programmatically so that it happens quickly enough to potentially cause a race condition
-  cy.window().then(win => {
-    [...win.document.querySelectorAll(`input[name="ShortlistedTuitionPartners"]`)].slice(0, num).forEach(_ => _.click());
-  });
-});
+When(
+  "they programmatically add the first {int} results to their shortlist on the results page",
+  (num) => {
+    // We will do this programmatically so that it happens quickly enough to potentially cause a race condition
+    cy.window().then((win) => {
+      [
+        ...win.document.querySelectorAll(
+          `input[name="ShortlistedTuitionPartners"]`
+        ),
+      ]
+        .slice(0, num)
+        .forEach((_) => _.click());
+    });
+  }
+);
