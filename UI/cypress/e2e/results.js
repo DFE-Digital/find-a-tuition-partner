@@ -4,7 +4,12 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, KeyStageSubjects } from "../support/utils";
+import {
+  kebabCase,
+  KeyStageSubjects,
+  removeExcessWhitespaces,
+  removeNewLine,
+} from "../support/utils";
 
 const allSubjects = {
   "Key stage 1": ["English", "Maths", "Science"],
@@ -136,8 +141,7 @@ Then("they will see the results summary for {string}", (location) => {
   const expected = new RegExp(`\\d+ results for ${location}`);
   cy.get('[data-testid="results-summary"]')
     .invoke("text")
-    .invoke("trim")
-    .then((words) => words.replace(/[\r\n]/gm, "").replace(/  +/g, " "))
+    .then((words) => removeExcessWhitespaces(removeNewLine(words)))
     .should("match", expected);
 });
 
