@@ -25,6 +25,8 @@ on:
 jobs:
   end-to-end-testing:
     runs-on: ubuntu-latest
+    concurrency: e2e-${{ inputs.environment }}
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -39,13 +41,13 @@ jobs:
           CYPRESS_password: ${{ inputs.password }}
 
       - name: Store screenshots on test failure
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
           path: UI/cypress/screenshots
       - name: Store videos
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: cypress-videos

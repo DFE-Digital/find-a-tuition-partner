@@ -18,3 +18,6 @@ applications:
     GoogleDrive:SharedDriveId: ((google-drive-shared-drive-id))
     GoogleDrive:TuitionPartnerDataFolderId: ((google-drive-tuition-partner-data-folder-id))
     GoogleDrive:TuitionPartnerLogosFolderId: ((google-drive-tuition-partner-logo-folder-id))
+    DfeAnalytics:CredentialsJsonFile: dfe-analytics-credentials.json
+    DfeAnalytics:ProjectId: find-a-tuition-partner
+    DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
