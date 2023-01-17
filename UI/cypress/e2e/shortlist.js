@@ -4,7 +4,12 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase } from "../support/utils";
+import {
+  kebabCase,
+  removeExcessWhitespaces,
+  removeNewLine,
+  removeWhitespace,
+} from "../support/utils";
 
 When("they add {string} to their shortlist on the results page", (tpName) => {
   cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
@@ -39,9 +44,13 @@ When("they choose to view their shortlist from the results page", () => {
 });
 
 Then("{string} is entry {int} on the shortlist page", (tpName, entry) => {
+  tpName = removeExcessWhitespaces(removeNewLine(tpName));
   cy.get("tbody th")
     .eq(entry - 1)
-    .should("have.text", tpName);
+    .then(($tbodyHeader) => {
+      return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+    })
+    .should("equal", tpName);
 });
 
 Then("there are {int} entries on the shortlist page", (count) => {
