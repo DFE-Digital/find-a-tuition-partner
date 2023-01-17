@@ -5,6 +5,7 @@ using GovUk.Frontend.AspNetCore;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using UI.Analytics;
 using UI.Filters;
 using UI.Routing;
 using UI.Services.TuitionPartnerShortlistStorage;
@@ -91,6 +92,8 @@ builder.Services.AddSwaggerGen(c =>
     c.CustomSchemaIds(x => x.FullName);
 });
 
+builder.AddAnalytics();
+
 builder.Host.AddLogging();
 
 var app = builder.Build();
@@ -102,6 +105,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAnalytics();
 
 // Handle runtime exceptions withing the application
 app.UseExceptionHandler("/Error");
