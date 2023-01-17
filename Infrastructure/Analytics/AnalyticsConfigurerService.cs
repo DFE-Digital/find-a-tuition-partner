@@ -50,13 +50,13 @@ namespace UI.Analytics
             }
 
             // One of `CredentialsJson` or `CredentialsJsonFile` is required
-            if (string.IsNullOrEmpty(section["CredentialsJson"] && string.IsNullOrEmpty(section["CredentialsJsonFile"])))
+            if (string.IsNullOrEmpty(section["CredentialsJson"]) && string.IsNullOrEmpty(section["CredentialsJsonFile"]))
             {
                 return false;
             }
 
             // If using `CredentialsJsonFile` then `ProjectId` is required
-            if (!string.IsNullOrEmpty(section["CredentialsJsonFile"] && string.IsNullOrEmpty(section["ProjectId"])))
+            if (!string.IsNullOrEmpty(section["CredentialsJsonFile"]) && string.IsNullOrEmpty(section["ProjectId"]))
             {
                 return false;
             }
