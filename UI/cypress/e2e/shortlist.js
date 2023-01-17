@@ -168,15 +168,14 @@ Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
 
 Then("{string} is removed from the shortlist", (tpName) => {
   cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+  cy.wait(200);
 });
 
 Then("they click Back to go back to the shortlist page", () => cy.clickBack());
 
 Then("the shortlist page displays {string}", (expectedText) => {
-  cy.get("[id='shortlist-no-tp-shortlisted']")
-    .first()
-    .should(
-      "contain.text",
-      removeExcessWhitespaces(removeNewLine(expectedText))
-    );
+  cy.get("[id='shortlist-no-tp-shortlisted']").should(
+    "contain.text",
+    removeExcessWhitespaces(removeNewLine(expectedText))
+  );
 });
