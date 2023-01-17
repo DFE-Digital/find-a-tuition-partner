@@ -1,263 +1,254 @@
 ﻿@page "{id}"
+@using UI.HelperFunctions
 @model TuitionPartner
 @{
     ViewData["Title"] = Model.Data!.Name;
-    var pageUrl = "all-tuition-partners";
-    var pageName = "Back to tuition partners";
+    var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
+    var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
 
-    if (Model.SearchModel?.From == ReferrerList.SearchResults)
-    {
-        pageUrl = "search-results";
-        pageName = "Back to search results";
-    }
-    else if (Model.SearchModel?.From == ReferrerList.Shortlist)
-    {
-        pageUrl = "shortlist";
-        pageName = "Back to shortlist";
-    }
-
-    ViewData["BackLinkHref"] = "/" + pageUrl + "?" + Model.SearchModel.ToQueryString();
+    ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
+                               $"{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition partner for <strong>@Model.Data.LocalAuthorityName</strong></span>
-        <h1 class="govuk-heading-l">@Model.Data.Name</h1>
-        <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
-        <govuk-details data-testid="qatp-details">
+<div class="govuk-grid-column-two-thirds">
+<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition partner for <strong>@Model.Data.LocalAuthorityName</strong></span>
+<h1 class="govuk-heading-l">@Model.Data.Name</h1>
+<p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
+<govuk-details data-testid="qatp-details">
+    <govuk-details-summary>
+        What is a quality assured tuition partner?
+    </govuk-details-summary>
+    <govuk-details-text>
+        The tuition partners shown on this service have met the standards required by our quality assurance process.
+        This process is to ensure quality tuition is delivered and includes safeguarding checks.
+    </govuk-details-text>
+</govuk-details>
+
+<div>
+    <h2 class="govuk-heading-m">Tuition details</h2>
+    <govuk-summary-list>
+        <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+                Subjects covered
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+                <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                    @foreach (var item in Model.Data.Subjects)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </govuk-summary-list-row-value>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+                Type of tuition
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+                <ul class="govuk-list" data-testid="type-of-tuition">
+                    @foreach (var item in Model.Data.TuitionTypes)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </govuk-summary-list-row-value>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+                Organisation type
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value data-testid="organisation-type">
+                @Model.Data.LegalStatus
+            </govuk-summary-list-row-value>
+        </govuk-summary-list-row>
+    </govuk-summary-list>
+</div>
+
+<table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
+    <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Region</th>
+        <th scope="col" class="govuk-table__header">LAD code</th>
+        <th scope="col" class="govuk-table__header">LAD name</th>
+        <th scope="col" class="govuk-table__header">In school</th>
+        <th scope="col" class="govuk-table__header">Online</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @foreach (var item in Model.Data.LocalAuthorityDistricts)
+    {
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">@item.Region</td>
+            <td class="govuk-table__cell">@item.Code</td>
+            <td class="govuk-table__cell">@item.Name</td>
+            <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
+            <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div>
+    <h2 class="govuk-heading-m">Tuition cost information</h2>
+
+    <p class="govuk-body">
+        Each pupil premium eligible student will receive £162. This funding cost has been calculated so you will have 60% of the cost covered for up to £18 per pupil per hour. For help understanding your funding, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-1">funding and reporting</a>.
+    </p>
+
+    <div>
+        <govuk-details data-testid="payment-details">
             <govuk-details-summary>
-                What is a quality assured tuition partner?
+                How much will I pay?
             </govuk-details-summary>
             <govuk-details-text>
-                The tuition partners shown on this service have met the standards required by our quality assurance process.
-                This process is to ensure quality tuition is delivered and includes safeguarding checks.
+                <strong>Example:</strong>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>If you spend £15 per pupil per hour, the government will cover 60% of the cost</li>
+                    <li>If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest</li>
+                </ul>
             </govuk-details-text>
         </govuk-details>
+    </div>
+</div>
 
-        <div>
-            <h2 class="govuk-heading-m">Tuition details</h2>
-            <govuk-summary-list>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Subjects covered
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                            @foreach (var item in Model.Data.Subjects)
-                            {
-                                <li>@item</li>
-                            }
-                        </ul>
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Type of tuition
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        <ul class="govuk-list" data-testid="type-of-tuition">
-                            @foreach (var item in Model.Data.TuitionTypes)
-                            {
-                                <li>@item</li>
-                            }
-                        </ul>
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Organisation type
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value data-testid="organisation-type">
-                        @Model.Data.LegalStatus
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-            </govuk-summary-list>
-        </div>
+<h2 class="govuk-heading-m">Tuition prices</h2>
+<p class="govuk-body">
+    Prices shown are per pupil per hour.<br/>
+    <span show-if="!@Model.Data.HasPricingVariation" data-testid="pricing-same-for-subjects">
+        All subjects are the same price but depend on tuition group size.
+    </span>
+    <span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
+        Some prices are different depending on key stage or subject. Please contact @Model.Data.Name for more information.
+    </span>
+    <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br/>Prices shown include VAT.</span>
+</p>
 
-        <table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
-            <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
+<table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Tuition group size</th>
+        <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+        <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @foreach (var item in Model.Data.Prices)
+    {
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">1 to @item.Key</th>
+            <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+                @item.Value.FormatFor(Domain.Constants.TuitionTypes.InSchool)
+            </td>
+
+            <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+                @item.Value.FormatFor(Domain.Constants.TuitionTypes.Online)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
+{
+    foreach (var (keyStage, subjects) in keyStages)
+    {
+        <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+            <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
             <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Region</th>
-                    <th scope="col" class="govuk-table__header">LAD code</th>
-                    <th scope="col" class="govuk-table__header">LAD name</th>
-                    <th scope="col" class="govuk-table__header">In school</th>
-                    <th scope="col" class="govuk-table__header">Online</th>
-                </tr>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Tuition group size</th>
+                @foreach (var (subjectName, _) in subjects)
+                {
+                    <th scope="col" class="govuk-table__header">@subjectName</th>
+                }
+            </tr>
             </thead>
             <tbody class="govuk-table__body">
-                @foreach (var item in Model.Data.LocalAuthorityDistricts)
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@item.Region</td>
-                        <td class="govuk-table__cell">@item.Code</td>
-                        <td class="govuk-table__cell">@item.Name</td>
-                        <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
-                        <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <div>
-            <h2 class="govuk-heading-m">Tuition cost information</h2>
-
-            <p class="govuk-body">
-                Each pupil premium eligible student will receive £162. This funding cost has been calculated so you will have 60% of the cost covered for up to £18 per pupil per hour. For help understanding your funding, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-1">funding and reporting</a>.
-            </p>
-
-            <p>
-                <govuk-details data-testid="payment-details">
-                    <govuk-details-summary>
-                        How much will I pay?
-                    </govuk-details-summary>
-                    <govuk-details-text>
-                        <strong>Example:</strong>
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li>If you spend £15 per pupil per hour, the government will cover 60% of the cost</li>
-                            <li>If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest</li>
-                        </ul>
-                    </govuk-details-text>
-                </govuk-details>
-            </p>
-        </div>
-
-        <h2 class="govuk-heading-m">Tuition prices</h2>
-        <p class="govuk-body">
-            Prices shown are per pupil per hour.<br />
-            <span show-if="!@Model.Data.HasPricingVariation" data-testid="pricing-same-for-subjects">
-                All subjects are the same price but depend on tuition group size.
-            </span>
-            <span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
-                Some prices are different depending on key stage or subject.  Please contact @Model.Data.Name for more information.
-            </span>
-            <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br />Prices shown include VAT.</span>
-        </p>
-
-        <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Tuition group size</th>
-                    <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
-                    <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                @foreach (var item in Model.Data.Prices)
-                {
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">1 to @item.Key</th>
-                        <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                            @item.Value.FormatFor(Domain.Constants.TuitionTypes.InSchool)
-                        </td>
-
-                        <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                            @item.Value.FormatFor(Domain.Constants.TuitionTypes.Online)
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        @foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
-        {
-            foreach (var (keyStage, subjects) in keyStages)
+            @for (var groupSize = 1; groupSize < 7; groupSize++)
             {
-                <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
-                    <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Tuition group size</th>
-                            @foreach (var (subjectName, _) in subjects)
-                            {
-                                <th scope="col" class="govuk-table__header">@subjectName</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @for (var groupSize = 1; groupSize < 7; groupSize++)
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">1 to @groupSize</th>
+                    @foreach (var (_, prices) in subjects)
+                    {
+                        if (prices.TryGetValue(groupSize, out var price))
                         {
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">1 to @groupSize</th>
-                                @foreach (var (_, prices) in subjects)
-                                {
-                                    if (prices.TryGetValue(groupSize, out var price))
-                                    {
-                                        <td class="govuk-table__cell">@price.FormatPrice()</td>
-                                    }
-                                    else
-                                    {
-                                        <td class="govuk-table__cell"></td>
-                                    }
-                                }
-                            </tr>
+                            <td class="govuk-table__cell">@price.FormatPrice()</td>
                         }
-                    </tbody>
-                </table>
+                        else
+                        {
+                            <td class="govuk-table__cell"></td>
+                        }
+                    }
+                </tr>
             }
+            </tbody>
+        </table>
+    }
+}
+
+<div>
+    <h2 class="govuk-heading-m">Next steps</h2>
+    <p class="govuk-body">
+        Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
+    </p>
+    <p class="govuk-body">
+        For help on understanding your funding amount and how spend it, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-2">funding and reporting</a>.
+    </p>
+
+    <govuk-summary-list data-testid="contact-details">
+        <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+                Website
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+                <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
+            </govuk-summary-list-row-value>
+        </govuk-summary-list-row>
+        @if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
+        {
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Phone number
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <a id="app-tuition-partner-phone-number-link" href="tel:@Model.Data.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@Model.Data.PhoneNumber</a>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
         }
-
-        <div>
-            <h2 class="govuk-heading-m">Next steps</h2>
-            <p class="govuk-body">
-                Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
-            </p>
-            <p class="govuk-body">
-                For help on understanding your funding amount and how spend it, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-2">funding and reporting</a>.
-            </p>
-
-            <govuk-summary-list data-testid="contact-details">
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Website
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                @if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
-                {
-                    <govuk-summary-list-row>
-                        <govuk-summary-list-row-key>
-                            Phone number
-                        </govuk-summary-list-row-key>
-                        <govuk-summary-list-row-value>
-                            <a id="app-tuition-partner-phone-number-link" href="tel:@Model.Data.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@Model.Data.PhoneNumber</a>
-                        </govuk-summary-list-row-value>
-                    </govuk-summary-list-row>
-                }
-                @if (!String.IsNullOrEmpty(@Model.Data.EmailAddress))
-                {
-                    <govuk-summary-list-row>
-                        <govuk-summary-list-row-key>
-                            Email address
-                        </govuk-summary-list-row-key>
-                        <govuk-summary-list-row-value>
-                            <a id="app-tuition-partner-email-link" href="mailto:@(Model.Data.EmailAddress)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@Model.Data.EmailAddress</a>
-                        </govuk-summary-list-row-value>
-                    </govuk-summary-list-row>
-                }
-                @if (@Model.Data.Address.Any())
-                {
-                    <govuk-summary-list-row>
-                        <govuk-summary-list-row-key>
-                            Address
-                        </govuk-summary-list-row-key>
-                        <govuk-summary-list-row-value>
-                            <ul class="govuk-list govuk-body-s">
-                                @foreach (var addressItem in @Model.Data.Address)
-                                {
-                                    <li class="govuk-body">@addressItem</li>
-                                }
-                            </ul>
-                        </govuk-summary-list-row-value>
-                    </govuk-summary-list-row>
-                }
-            </govuk-summary-list>
-        </div>
-    </div>
-    <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
-        <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo" />
-    </div>
+        @if (!String.IsNullOrEmpty(@Model.Data.EmailAddress))
+        {
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Email address
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <a id="app-tuition-partner-email-link" href="mailto:@(Model.Data.EmailAddress)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@Model.Data.EmailAddress</a>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        }
+        @if (@Model.Data.Address.Any())
+        {
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Address
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <ul class="govuk-list govuk-body-s">
+                        @foreach (var addressItem in @Model.Data.Address)
+                        {
+                            <li class="govuk-body">@addressItem</li>
+                        }
+                    </ul>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        }
+    </govuk-summary-list>
+</div>
+</div>
+<div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
+    <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo"/>
+</div>
 </div>

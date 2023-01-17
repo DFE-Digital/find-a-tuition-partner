@@ -38,3 +38,13 @@ export const KeyStageSubjects = (prefix, input) =>
       return `${prefix}=${ks}-${subj}`;
     })
     .join("&");
+export const removeNewLine = (text) => text.trim().replace(/[\r\n]/gm, "");
+export const removeExcessWhitespaces = (text) =>
+  text.trim().replace(/  +/g, " ");
+
+//$element is expected to be a jQuery anchor element.
+export const getJumpToLocationId = ($element) => {
+  const queryStringParams = $element.attr("href").split("?")[1];
+  const params = new URLSearchParams(queryStringParams);
+  return params.get("jumpToLocation");
+};
