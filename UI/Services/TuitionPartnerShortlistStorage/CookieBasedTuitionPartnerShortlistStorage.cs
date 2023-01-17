@@ -139,7 +139,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
 
     private void AddTuitionPartnersToCookie(string cookieName, IEnumerable<string> encodedTuitionPartnersSeoUrls)
     {
-        encodedTuitionPartnersSeoUrls = encodedTuitionPartnersSeoUrls.ToList();
+        encodedTuitionPartnersSeoUrls = encodedTuitionPartnersSeoUrls.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var cookieValueToAdd = new StringBuilder(encodedTuitionPartnersSeoUrls.Count());
         var counter = 0;
         foreach (var seoUrl in encodedTuitionPartnersSeoUrls)
@@ -147,6 +147,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             cookieValueToAdd.Append(counter < encodedTuitionPartnersSeoUrls.Count() - 1
                 ? $"{seoUrl}&"
                 : $"{seoUrl}");
+            counter++;
         }
 
         if (string.IsNullOrWhiteSpace(cookieValueToAdd.ToString()))
