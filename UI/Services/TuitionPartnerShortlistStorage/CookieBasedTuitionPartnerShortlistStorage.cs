@@ -157,7 +157,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             .Append(cookieName, $"{cookieValueToAdd}", GetCookieOptions());
     }
 
-    private static CookieOptions GetCookieOptions() => new() { Expires = DateTime.Now.AddDays(1) };
+    private static CookieOptions GetCookieOptions() => new() { Expires = DateTime.Now.AddDays(1), HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict };
 
     private IEnumerable<string> GetTuitionPartnersSeoUrlFromCookie(string cookie)
     {
