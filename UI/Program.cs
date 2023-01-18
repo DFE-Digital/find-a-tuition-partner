@@ -207,5 +207,8 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 app.Run();
 
-public partial class Program
-{ }
+namespace UI
+{
+    public partial class Program
+    { }
+}

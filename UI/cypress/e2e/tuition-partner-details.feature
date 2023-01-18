@@ -1,4 +1,5 @@
 Feature: User can view full details of a Tuition Parner
+
   Scenario: page title is 'Name of Tuition Partner'
     Given a user has arrived on the 'Tuition Partner' page for 'Toranj Tuition'
     Then the page's title is 'Toranj Tuition'
@@ -67,7 +68,7 @@ Feature: User can view full details of a Tuition Parner
     Then they will see the funding reporting header
     And  they will click the back link
     Then they redirects to the tuition partners website link with bright-heart-education
-  
+
   Scenario: locations covered table is not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for 'Tutor Doctor (Cambridge Tuition Limited)'
     Then the tuition partner locations covered table is not displayed
@@ -77,14 +78,14 @@ Feature: User can view full details of a Tuition Parner
     When they set the 'show-locations-covered' query string parameter value to 'true'
     Then the tuition partner locations covered table is displayed
 
-  Scenario: tuition cost table shows available tuition types
+  Scenario Outline: tuition cost table shows available tuition types
     Given a user has arrived on the 'Tuition Partner' page for '<tution-partner>'
     Then the tuition partner pricing table is displayed for '<tuition-types>'
     Examples:
-    | tution-partner | tuition-types |
-    | Fledge Tuition Ltd | Online |
-    | FFT Education | In school |
-    | career-tree | In school, Online |
+      | tution-partner     | tuition-types     |
+      | Fledge Tuition Ltd | Online            |
+      | FFT Education      | In school         |
+      | career-tree        | In school, Online |
 
   Scenario: tuition cost blurb states pricing uniformity
     Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
@@ -107,25 +108,63 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
-    Then the subjects covered by a tuition partner are in alphabetical order 
+    Then the subjects covered by a tuition partner are in alphabetical order
 
   Scenario: Tuition partner details are displayed correctly when arriving on the results page
-     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
-     Then all tuition partner details are populated correctly
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
+    Then all tuition partner details are populated correctly
 
-Scenario: Logos are displayed for tution partners
+  Scenario: Logos are displayed for tution partners
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is shown
 
-Scenario: Logos are not displayed for tution partners
+  Scenario: Logos are not displayed for tution partners
     Given a user is using a 'phone'
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is not shown
 
-Scenario: No LA label shown if go to TP details via All TP pages
+  Scenario: No LA label shown if go to TP details via All TP pages
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the LA name is not shown
 
-Scenario: LA label shown if go to TP details via search results page
+  Scenario: LA label shown if go to TP details via search results page
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
     Then the LA name displayed is 'Stockport'
+
+  Scenario: LA span shows correct the text if TP details page is gotten to via search results page
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
+    Then  the LA label text is 'Tuition partner for Stockport'
+
+  Scenario: A user should be able to add and remove TP to and from the shortlist
+    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
+    And 'Bright Heart Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    Then the user checks the 'Bright Heart Education' checkbox on its detail page
+    And  'Bright Heart Education' checkbox is checked on its detail page
+    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    Then the user unchecks the 'Bright Heart Education' checkbox
+    And 'Bright Heart Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    
+  Scenario: Adding or removing TP to shortlist from TP details page should be reflected on the search results page
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
+    And total amount of shortlisted TPs is 0
+    And 'Seven Springs Education' checkbox is unchecked
+    Then 'Seven Springs Education' name link is clicked
+    And 'Seven Springs Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    Then the user checks the 'Seven Springs Education' checkbox on its detail page
+    And  'Seven Springs Education' checkbox is checked on its detail page
+    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    Then they click Back to go back to the search results page
+    And total amount of shortlisted TPs is 1
+    And the 'TuitionPartner' - 'Seven Springs Education' checkbox is checked
+    Then 'Seven Springs Education' name link is clicked
+    And  'Seven Springs Education' checkbox is checked on its detail page
+    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    Then the user unchecks the 'Seven Springs Education' checkbox
+    And 'Seven Springs Education' checkbox is unchecked on its detail page
+    And the LA label text is 'Tuition partner for Stockport'
+    Then they click Back to go back to the search results page
+    And total amount of shortlisted TPs is 0
+    And the 'TuitionPartner' - 'Seven Springs Education' checkbox is unchecked
