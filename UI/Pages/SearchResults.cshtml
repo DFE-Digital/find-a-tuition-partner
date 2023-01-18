@@ -1,5 +1,11 @@
 ﻿@page
 @using UI.HelperFunctions
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using UI.Pages.Shared
+@using UI.TagHelpers
+@using FormTagHelper = UI.TagHelpers.FormTagHelper
+@using AnchorTagHelper = GovUk.Frontend.AspNetCore.TagHelpers.AnchorTagHelper
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
@@ -201,12 +207,10 @@
                             @{
                                 var shortlist = Model.SelectableTuitionPartners
                                     .First(tp => tp.SeoUrl == item.SeoUrl);
+                                var shortlistCheckboxModel = new ShortlistCheckboxModel($"shortlist-cb-{shortlist.SeoUrl}",
+                                    shortlist.SeoUrl, item.Name, "ShortlistedTuitionPartners", shortlist.IsSelected);
                             }
-                            <govuk-checkboxes class="govuk-checkboxes--small govuk-!-padding-bottom-0 govuk-!-margin-1" name="ShortlistedTuitionPartners">
-                                <govuk-checkboxes-item id="shortlist-cb-@shortlist.SeoUrl" value="@shortlist.SeoUrl" checked="@shortlist.IsSelected">
-                                    <span class="shortlist-partner-checkbox-label--font-style">Add @item.Name to my shortlist</span>
-                                </govuk-checkboxes-item>
-                            </govuk-checkboxes>
+                            <partial name="Shared/_ShortlistCheckbox" model="shortlistCheckboxModel"/>
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
@@ -225,4 +229,4 @@
     </form>
 </div>
 
-@section Scripts { <script src="/Pages/SearchResults.cshtml.js"></script> }
+@section Scripts { <script src="/Pages/SearchResults.cshtml.js" asp-append-version="true"></script> }

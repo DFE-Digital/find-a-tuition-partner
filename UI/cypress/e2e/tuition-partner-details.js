@@ -4,11 +4,7 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import {
-  kebabCase,
-  camelCaseKeyStage,
-  KeyStageSubjects,
-} from "../support/utils";
+import { kebabCase, KeyStageSubjects } from "../support/utils";
 
 When("they click 'What is a quality assured tuition partner?'", () => {
   cy.get('[data-testid="qatp-details"]').click();
@@ -200,4 +196,47 @@ Then("the LA name is not shown", () => {
 
 Then("the LA name displayed is {string}", (laName) => {
   cy.get('[data-testid="la-name"]').should("contain.text", laName);
+});
+
+Then("the LA label text is {string}", (laLabelText) => {
+  cy.checkLaLabelText(laLabelText);
+});
+
+Then("the user checks the {string} checkbox on its detail page", (tpName) => {
+  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).check();
+});
+
+Then("the user unchecks the {string} checkbox", (tpName) => {
+  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+});
+
+Then("{string} checkbox is unchecked on its detail page", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("{string} checkbox is checked on its detail page", (tpName) => {
+  cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("the 'TuitionPartner' - {string} checkbox is checked", (tpName) => {
+  cy.isCheckboxchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("the 'TuitionPartner' - {string} checkbox is unchecked", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+  cy.checkTotalTps(expectedTotal);
+});
+Then("{string} checkbox is unchecked", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("{string} name link is clicked", (tpName) => {
+  cy.goToTpDetailPage(tpName);
+});
+
+Then("they click Back to go back to the search results page", () => {
+  cy.clickBack();
 });

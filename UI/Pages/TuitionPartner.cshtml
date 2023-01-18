@@ -5,15 +5,26 @@
     ViewData["Title"] = Model.Data!.Name;
     var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
     var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
+    var isFromSearchResultOrShortlistPage = false;
 
+    if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
+        isFromSearchResultOrShortlistPage = true;
+    var localAuthorityHeader = "Tuition partner for ";
+    if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
+        localAuthorityHeader = "Shortlisted tuition partner for ";
+
+    
     ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
                                $"{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["BackLinkText"] = pageName;
     ViewData["IncludePrintPage"] = true;
 }
+<form method="POST">
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-two-thirds">
-<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition partner for <strong>@Model.Data.LocalAuthorityName</strong></span>
+<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name"><span id="tp-details-page--tp-localAuthHeader">@localAuthorityHeader</span><strong>@Model.Data.LocalAuthorityName</strong>
+</span>
+
 <h1 class="govuk-heading-l">@Model.Data.Name</h1>
 <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
 <govuk-details data-testid="qatp-details">
@@ -140,11 +151,11 @@
         <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header">1 to @item.Key</th>
             <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Constants.TuitionTypes.InSchool)
+                @item.Value.FormatFor(TuitionTypes.InSchool)
             </td>
 
             <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Constants.TuitionTypes.Online)
+                @item.Value.FormatFor(TuitionTypes.Online)
             </td>
         </tr>
     }
@@ -207,7 +218,7 @@
                 <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
             </govuk-summary-list-row-value>
         </govuk-summary-list-row>
-        @if (!String.IsNullOrEmpty(@Model.Data.PhoneNumber))
+        @if (!string.IsNullOrWhiteSpace(@Model.Data.PhoneNumber))
         {
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>
@@ -218,7 +229,7 @@
                 </govuk-summary-list-row-value>
             </govuk-summary-list-row>
         }
-        @if (!String.IsNullOrEmpty(@Model.Data.EmailAddress))
+        @if (!string.IsNullOrWhiteSpace(@Model.Data.EmailAddress))
         {
             <govuk-summary-list-row>
                 <govuk-summary-list-row-key>
@@ -246,9 +257,25 @@
             </govuk-summary-list-row>
         }
     </govuk-summary-list>
+    @if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
+    {
+        <hr class="govuk-section-break govuk-section-break--visible ">
+        <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+        <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
+            @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
+            <input type="hidden" name="SearchModel" value="@searchModel"/>
+            <govuk-button asp-page-handler="UpdateShortlist" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
+                Update shortlist
+            </govuk-button>
+        </div>
+        <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+    }
 </div>
 </div>
 <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
     <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo"/>
 </div>
 </div>
+</form>
+
+@section Scripts{<script src="/Pages/TuitionPartner.cshtml.js" asp-append-version="true"></script>}

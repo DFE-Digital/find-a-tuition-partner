@@ -1,7 +1,3 @@
-using Domain;
-using Domain.Constants;
-using Domain.Search;
-
 namespace UI.Pages;
 
 public class TuitionPartner : PageModel
@@ -15,351 +11,86 @@ public class TuitionPartner : PageModel
         _mediator = mediator;
     }
 
-    public Command? Data { get; set; }
-
+    public TuitionPartnerModel? Data { get; set; }
     public SearchModel? SearchModel { get; set; }
+    public ShortlistCheckboxModel ShortlistCheckboxModel = new();
+    [BindProperty] public string? ShortlistedCheckbox { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(Query query)
+    public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQuery query)
     {
         SearchModel = new SearchModel(query);
 
         if (string.IsNullOrWhiteSpace(query.Id))
-        {
-            _logger.LogWarning("Null or whitespace id '{Id}' provided", query.Id);
-            return NotFound();
-        }
+            return ReturnNotFound($"Null or whitespace id '{query.Id}' provided");
 
         Data = await _mediator.Send(query);
 
         if (Data == null)
         {
             var seoUrl = query.Id.ToSeoUrl();
-            if (query.Id != seoUrl)
-            {
-                _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
-                return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
-            }
-            else
-            {
-                _logger.LogInformation("No Tuition Partner found for id '{Id}'", query.Id);
-                return NotFound();
-            }
+
+            if (query.Id == seoUrl) return ReturnNotFound($"No Tuition Partner found for id '{query.Id}'");
+
+            _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
+            return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
+
+        await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(ShortlistedCheckbox));
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
 
-    public record Query(
-            string Id,
-            [FromQuery(Name = "show-locations-covered")]
-            bool ShowLocationsCovered = false,
-            [FromQuery(Name = "show-full-pricing")]
-            bool ShowFullPricing = false)
-        : SearchModel, IRequest<Command?>
+    public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl, string searchModel)
     {
-        public Dictionary<string, string> ToRouteData()
-        {
-            var dictionary = new Dictionary<string, string>
-            {
-                [nameof(Id)] = Id
-            };
+        if (IsStringWhitespaceOrNull(seoUrl)) throw GetArgumentException(nameof(seoUrl));
+        if (IsStringWhitespaceOrNull(searchModel)) throw GetArgumentException(nameof(searchModel));
 
-            if (ShowLocationsCovered)
-            {
-                dictionary["show-locations-covered"] = "true";
-            }
+        SearchModel = JsonSerializer.Deserialize<SearchModel>(searchModel);
 
-            if (ShowFullPricing)
-            {
-                dictionary["show-full-pricing"] = "true";
-            }
+        if (IsStringWhitespaceOrNull(ShortlistedCheckbox))
+            await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl));
 
-            return dictionary;
-        }
+        if (!IsStringWhitespaceOrNull(ShortlistedCheckbox))
+            await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl));
+
+        return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
     }
 
-    public record Command(
-        string Id, string Name, bool HasLogo, string Description, string[] Subjects,
-        string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
-        string Website, string PhoneNumber, string EmailAddress, string[] Address, bool HasSenProvision, bool IsVatCharged,
-        LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
-        Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
-        string OrganisationTypeName, string? LocalAuthorityName)
+    public async Task<IActionResult> OnPostAddToShortlist([FromBody] string seoUrl)
     {
-        public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
+        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
+
+        await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl.Trim()));
+
+        return GetShortlistJsonResult(true);
     }
 
-    public record struct GroupPrice(decimal? SchoolMin, decimal? SchoolMax, decimal? OnlineMin, decimal? OnlineMax)
+    public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] string seoUrl)
     {
-        public bool HasAtLeastOnePrice =>
-            OnlineMin != null || OnlineMax != null || SchoolMin != null || SchoolMax != null;
+        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
 
-        public bool HasVariation =>
-            (OnlineMin != OnlineMax) || (SchoolMin != SchoolMax);
+        await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl.Trim()));
+
+        return GetShortlistJsonResult(true);
     }
 
-    public record struct LocalAuthorityDistrictCoverage(string Region, string Code, string Name, bool InSchool, bool Online);
+    private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
+    private ArgumentException GetArgumentException(string name) => new($"{name} is null or whitespace");
+    private JsonResult GetShortlistJsonResult(bool status) => new(new { Updated = status });
 
-    private class Validator : AbstractValidator<Query>
+    private IActionResult ReturnNotFound(string logMessage)
     {
-        public Validator()
-        {
-            RuleFor(m => m.Postcode)
-                .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode")
-                .When(m => !string.IsNullOrEmpty(m.Postcode));
-        }
+        _logger.LogWarning("{LogMessage}", logMessage);
+        return NotFound();
     }
 
-    public class QueryHandler : IRequestHandler<Query, Command?>
+    private async Task GetShortlistCheckboxModel(string name, string seoUrl, string checkboxName)
     {
-        private readonly ILocationFilterService _locationService;
-        private readonly ITuitionPartnerService _tuitionPartnerService;
-        private readonly INtpDbContext _db;
-        private readonly ILogger<TuitionPartner> _logger;
-
-        public QueryHandler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
-        {
-            _locationService = locationService;
-            _tuitionPartnerService = tuitionPartnerService;
-            _db = db;
-            _logger = logger;
-        }
-
-        public async Task<Command?> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var tpResult = GetTPResult(request, cancellationToken);
-
-            if (!tpResult.Result.IsSuccess) return null;
-
-            var tp = tpResult.Result.Data.FirstResult;
-
-            var subjects = tp.SubjectsCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId).Select(x => $"{((Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-            var types = tp.TuitionTypes.Select(x => x.Name).Distinct();
-            var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-            var prices = GetPricing(tp.Prices);
-            var lads = await GetLocalAuthorityDistricts(request, tp.Id);
-            var allPrices = await GetFullPricing(request, tp.Prices);
-
-            return new(
-                request.Id,
-                tp.Name,
-                tp.HasLogo,
-                tp.Description,
-                subjects.ToArray(),
-                types!.ToArray(),
-                ratios.ToArray(),
-                prices,
-                tp.Website,
-                tp.PhoneNumber,
-                tp.Email,
-                tp.Address.SplitByLineBreaks(),
-                tp.HasSenProvision,
-                tp.IsVatCharged,
-                lads,
-                allPrices,
-                tp.OrganisationTypeName,
-                tpResult.Result.Data.LocalAuthorityName);
-        }
-
-        private async Task<IResult<TuitionPartnersResult>> GetTPResult(Query request, CancellationToken cancellationToken)
-        {
-            var locationResult = await GetSearchLocation(request, cancellationToken);
-
-            LocationFilterParameters location = new();
-
-            if (!locationResult.IsSuccess)
-            {
-                //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
-                _logger.LogWarning("Invalid postcode '{Postcode}' provided on TP details page", request.Postcode);
-
-                //Set to null and contine to get nationwide data
-                request.Postcode = null;
-            }
-            else
-            {
-                location = locationResult.Data;
-            }
-
-            var tpResult = await FindTuitionPartner(
-                        location,
-                        request,
-                        cancellationToken);
-
-            if (tpResult is IErrorResult tpError)
-            {
-                return tpError.Cast<TuitionPartnersResult>();
-            }
-
-            var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority);
-
-            return Result.Success(result);
-        }
-
-        private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
-        {
-            var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(request.Postcode))
-                return Result.Success(new LocationFilterParameters { });
-
-            if (!validationResults.IsValid)
-            {
-                return Result.Invalid<LocationFilterParameters>(validationResults.Errors);
-            }
-            else
-            {
-                return (await _locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
-            }
-        }
-
-        private async Task<IResult<TuitionPartnerResult>> FindTuitionPartner(
-            LocationFilterParameters parameters,
-            Query request,
-            CancellationToken cancellationToken)
-        {
-            int? id = null;
-            if (int.TryParse(request.Id, out var parsedId))
-            {
-                id = parsedId;
-            }
-            else
-            {
-                var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(new TuitionPartnersFilter
-                {
-                    LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                    SeoUrls = new string[] { request.Id }
-                }, cancellationToken);
-
-                if (tuitionPartnersIds?.Length == 1)
-                {
-                    id = tuitionPartnersIds[0];
-                }
-            }
-
-            if (id == null)
-            {
-                //shouldn't get here, unless manually changed query string or is an old bookmarked URL that's no longer valid.  Will be logged as 404 error in ExceptionLoggingMiddleware
-                return Result.Error<TuitionPartnerResult>();
-            }
-
-            var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest
-            {
-                TuitionPartnerIds = new int[] { id!.Value },
-                LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
-                Urn = parameters.Urn
-            }, cancellationToken);
-
-            if (tuitionPartners?.Count() != 1)
-            {
-                _logger.LogWarning("Did not return a single TP for the Id '{Id}' and LAD Id {LocalAuthorityDistrictId} provided.  {Count} results were returned", request.Id, parameters.LocalAuthorityDistrictId, tuitionPartners?.Count());
-                return Result.Error<TuitionPartnerResult>();
-            }
-
-            return Result.Success(tuitionPartners.First());
-        }
-
-        private async Task<LocalAuthorityDistrictCoverage[]> GetLocalAuthorityDistricts(Query request, int tpId)
-        {
-            if (!request.ShowLocationsCovered) return Array.Empty<LocalAuthorityDistrictCoverage>();
-
-            var coverage = await _db.LocalAuthorityDistrictCoverage.Where(e => e.TuitionPartnerId == tpId)
-                .ToArrayAsync();
-
-            var coverageDictionary = coverage
-                .GroupBy(e => e.TuitionTypeId)
-                .ToDictionary(e => (Enums.TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
-
-            var regions = await _db.Regions
-                .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
-                .OrderBy(e => e.Name)
-                .ToDictionaryAsync(e => e, e => e.LocalAuthorityDistricts);
-
-            var result = new Dictionary<int, LocalAuthorityDistrictCoverage>();
-
-            foreach (var (region, lads) in regions)
-            {
-                foreach (var lad in lads)
-                {
-                    var inSchool = coverageDictionary.ContainsKey(Enums.TuitionType.InSchool) && coverageDictionary[Enums.TuitionType.InSchool].ContainsKey(lad.Id);
-                    var online = coverageDictionary.ContainsKey(Enums.TuitionType.Online) && coverageDictionary[Enums.TuitionType.Online].ContainsKey(lad.Id);
-                    result[lad.Id] = new LocalAuthorityDistrictCoverage(region.Name, lad.Code, lad.Name, inSchool, online);
-                }
-            }
-
-            return result.Values.ToArray();
-        }
-
-        private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
-        {
-            (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) online =
-                (prices => MinPrice(prices, TuitionTypes.Online), prices => MaxPrice(prices, TuitionTypes.Online));
-
-            (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) inSchool =
-                (prices => MinPrice(prices, TuitionTypes.InSchool), prices => MaxPrice(prices, TuitionTypes.InSchool));
-
-            return prices
-                .GroupBy(x => x.GroupSize)
-                .ToDictionary(
-                    key => key.Key,
-                    value => new GroupPrice
-                            (inSchool.min(value)
-                            , inSchool.max(value)
-                            , online.min(value)
-                            , online.max(value)
-                            )
-                    )
-                .Where(x => x.Value.HasAtLeastOnePrice)
-                .ToDictionary(k => k.Key, v => v.Value);
-
-            static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
-                => MinMaxPrice(value, tuitionType, Enumerable.MinBy);
-
-            static decimal? MaxPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
-                => MinMaxPrice(value, tuitionType, Enumerable.MaxBy);
-
-            static decimal? MinMaxPrice(
-                IEnumerable<Price> value, TuitionTypes tuitionType,
-                Func<IEnumerable<Price>, Func<Price, decimal>, Price?> minMax)
-            {
-                var pricesForTuition = value.Where(x => x.TuitionType.Id == (int)tuitionType);
-                var minMaxForTuition = minMax(pricesForTuition, x => x.HourlyRate);
-                return minMaxForTuition?.HourlyRate;
-            }
-        }
-
-        private async Task<Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>> GetFullPricing(Query request, ICollection<Price> prices)
-        {
-            if (!request.ShowFullPricing) return new();
-
-            var fullPricing = new Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>();
-
-            foreach (var tuitionType in new[] { Enums.TuitionType.InSchool, Enums.TuitionType.Online })
-            {
-                fullPricing[tuitionType] = new Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>();
-                foreach (var keyStage in new[] { Enums.KeyStage.KeyStage1, Enums.KeyStage.KeyStage2, Enums.KeyStage.KeyStage3, Enums.KeyStage.KeyStage4 })
-                {
-                    fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
-
-                    var keyStageSubjects = await _db.Subjects.Where(e => e.KeyStageId == (int)keyStage).OrderBy(e => e.Name).ToArrayAsync();
-                    foreach (var subject in keyStageSubjects)
-                    {
-                        fullPricing[tuitionType][keyStage][subject.Name] = new Dictionary<int, decimal>();
-                    }
-                }
-            }
-
-            foreach (var price in prices)
-            {
-                var tuitionType = (Enums.TuitionType)price.TuitionTypeId;
-                var keyStage = (Enums.KeyStage)price.Subject.KeyStageId;
-                var subjectName = price.Subject.Name;
-
-                fullPricing[tuitionType][keyStage][subjectName][price.GroupSize] = price.HourlyRate;
-            }
-
-            return fullPricing;
-        }
+        ShortlistCheckboxModel.Id = $"shortlist-tpInfo-cb-{seoUrl}";
+        ShortlistCheckboxModel.LabelValue = name;
+        ShortlistCheckboxModel.CheckboxName = checkboxName;
+        ShortlistCheckboxModel.IsShortlisted = await _mediator.Send(new IsTuitionPartnerShortlistedQuery(seoUrl));
+        ShortlistCheckboxModel.SeoUrl = seoUrl;
     }
 }
