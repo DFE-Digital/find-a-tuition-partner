@@ -25,7 +25,7 @@ const isResultValid = (result) =>
   result && result.updated !== "undefined" && result.updated;
 const getError = (message = "Invalid result") => Error(message);
 const setLocalAuthorityHeaderText = (
-  headerText = "Shortlisted tuition partner for"
+  headerText = "Shortlisted tuition partner for "
 ) => {
   const localAuthHeader = document.getElementById(
     "tp-details-page--tp-localAuthHeader"
@@ -69,7 +69,7 @@ const onCheckboxClick = async (event) => {
       const result = await onUnChecked(checkbox.id);
       if (!isResultValid(result)) throw getError();
 
-      setLocalAuthorityHeaderText("Tuition partner for");
+      setLocalAuthorityHeaderText("Tuition partner for ");
     } catch (error) {
       //What do we want to do with error?
       checkbox.checked = true;
