@@ -11,6 +11,6 @@ namespace Domain.Enums
         Online = 1,
 
         [Description("In School")]
-        InSchool,
+        InSchool = 2,
     }
 }

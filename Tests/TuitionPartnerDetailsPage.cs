@@ -82,9 +82,9 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             .WithWebsite("https://a-tuition-partner.testdata/ntp")
             .WithPhoneNumber("0123456789")
             .WithEmailAddress("ntp@a-tuition-partner.testdata")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
-            .TaughtIn(District.NorthEastLincolnshire, TuitionTypes.InSchool, TuitionTypes.Online)
-            .TaughtIn(District.Ryedale, TuitionTypes.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.NorthEastLincolnshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
+            .TaughtIn(District.Ryedale, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
@@ -114,7 +114,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery("a-tuition-partner"));
@@ -127,7 +127,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
@@ -142,7 +142,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.Ryedale, TuitionTypes.Online));
+            .TaughtIn(District.Ryedale, Domain.Enums.TuitionType.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
@@ -157,7 +157,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.NorthEastLincolnshire, TuitionTypes.InSchool, TuitionTypes.Online)
+            .TaughtIn(District.NorthEastLincolnshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
@@ -182,8 +182,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.NorthEastLincolnshire, TuitionTypes.InSchool)
-            .TaughtIn(District.Ryedale, TuitionTypes.Online)
+            .TaughtIn(District.NorthEastLincolnshire, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.Ryedale, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
                     .InSchool().Costing(33.44m).ForGroupSizes(2)
@@ -205,8 +205,8 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
-            .TaughtIn(District.Ryedale, TuitionTypes.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.Ryedale, Domain.Enums.TuitionType.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery("a-tuition-partner", ShowLocationsCovered: true));
@@ -222,7 +222,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
@@ -262,7 +262,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
@@ -271,7 +271,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         );
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("bravo-learning")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
                     .InSchool().Costing(12.34m).ForGroupSizes(2, 3))

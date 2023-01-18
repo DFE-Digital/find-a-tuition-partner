@@ -17,7 +17,7 @@ public record TuitionPartnerBuilder
     public string EmailAddress { get; private init; } = "tp@example.com";
     public string PostalAddress { get; private set; } = "1 High Street\r\nBeautiful City\rThe County\nPostcode";
     public int OrganisationTypeId { get; private init; } = 1;
-    public Dictionary<int, TuitionTypes[]> Districts { get; private init; } = new();
+    public Dictionary<int, Domain.Enums.TuitionType[]> Districts { get; private init; } = new();
     public SubjectBuilder Subjects { get; private init; } = new SubjectBuilder();
 
     public static implicit operator TuitionPartner(TuitionPartnerBuilder builder) => new()
@@ -72,12 +72,12 @@ public record TuitionPartnerBuilder
             }
         };
 
-    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionTypes[] tuition)
+    internal TuitionPartnerBuilder TaughtIn(District district, params Domain.Enums.TuitionType[] tuition)
         => new TuitionPartnerBuilder(this) with
         {
-            Districts = new Dictionary<int, TuitionTypes[]>(Districts)
+            Districts = new Dictionary<int, Domain.Enums.TuitionType[]>(Districts)
             {
-                [district.Id] = tuition.Any() ? tuition : new[] { TuitionTypes.InSchool }
+                [district.Id] = tuition.Any() ? tuition : new[] { Domain.Enums.TuitionType.InSchool }
             }
         };
 

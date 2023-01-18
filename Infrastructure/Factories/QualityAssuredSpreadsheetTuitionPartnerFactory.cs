@@ -3,6 +3,7 @@ using Application.Extraction;
 using Application.Factories;
 using Domain;
 using Domain.Constants;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Factories;
@@ -18,41 +19,41 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
     private const string PricingSheetName = "Pricing, Key Stage and SEN";
     private const string LocationSheetName = "Location of Tuition Provision";
 
-    private static readonly IDictionary<(TuitionTypes, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(TuitionTypes, int), (string, int)>
+    private static readonly IDictionary<(Domain.Enums.TuitionType, int), (string, int)> SubjectPricesCellReferences = new Dictionary<(Domain.Enums.TuitionType, int), (string, int)>
         {
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1English), ("C", 7) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Maths), ("D", 7) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage1Science), ("E", 7) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2English), ("C", 17) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Maths), ("D", 17) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage2Science), ("E", 17) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3English), ("C", 27) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 27) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Maths), ("E", 27) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 27) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage3Science), ("G", 27) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4English), ("C", 37) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Humanities), ("D", 37) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Maths), ("E", 37) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 37) },
-            { (TuitionTypes.InSchool, Subjects.Id.KeyStage4Science), ("G", 37) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage1English), ("C", 7) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage1Maths), ("D", 7) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage1Science), ("E", 7) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage2English), ("C", 17) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage2Maths), ("D", 17) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage2Science), ("E", 17) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage3English), ("C", 27) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage3Humanities), ("D", 27) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage3Maths), ("E", 27) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 27) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage3Science), ("G", 27) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage4English), ("C", 37) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage4Humanities), ("D", 37) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage4Maths), ("E", 37) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 37) },
+            { (Domain.Enums.TuitionType.InSchool, Subjects.Id.KeyStage4Science), ("G", 37) },
 
-            { (TuitionTypes.Online, Subjects.Id.KeyStage1English), ("C", 47) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage1Maths), ("D", 47) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage1Science), ("E", 47) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage2English), ("C", 57) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage2Maths), ("D", 57) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage2Science), ("E", 57) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage3English), ("C", 67) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage3Humanities), ("D", 67) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage3Maths), ("E", 67) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 67) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage3Science), ("G", 67) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage4English), ("C", 77) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage4Humanities), ("D", 77) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage4Maths), ("E", 77) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 77) },
-            { (TuitionTypes.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage1English), ("C", 47) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage1Maths), ("D", 47) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage1Science), ("E", 47) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage2English), ("C", 57) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage2Maths), ("D", 57) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage2Science), ("E", 57) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage3English), ("C", 67) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage3Humanities), ("D", 67) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage3Maths), ("E", 67) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage3ModernForeignLanguages), ("F", 67) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage3Science), ("G", 67) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage4English), ("C", 77) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage4Humanities), ("D", 77) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage4Maths), ("E", 77) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage4ModernForeignLanguages), ("F", 77) },
+            { (Domain.Enums.TuitionType.Online, Subjects.Id.KeyStage4Science), ("G", 77) }
         };
 
     public QualityAssuredSpreadsheetTuitionPartnerFactory(NtpDbContext dbContext)
@@ -108,13 +109,13 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
 
         var ladCodesCovered = GetLadCodesCovered();
 
-        var ladsCovered = new Dictionary<(string code, TuitionTypes tuitionType), LocalAuthorityDistrict>();
+        var ladsCovered = new Dictionary<(string code, Domain.Enums.TuitionType tuitionType), LocalAuthorityDistrict>();
 
         if (isInSchoolNationwide)
         {
             foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
             {
-                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
+                ladsCovered[(lad.Code, Domain.Enums.TuitionType.InSchool)] = lad;
             }
         }
 
@@ -122,7 +123,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
         {
             foreach (var lad in _dbContext.LocalAuthorityDistricts.OrderBy(e => e.Code))
             {
-                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
+                ladsCovered[(lad.Code, Domain.Enums.TuitionType.Online)] = lad;
             }
         }
 
@@ -146,11 +147,11 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
             {
                 if (inSchoolCovered)
                 {
-                    ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
+                    ladsCovered[(lad.Code, Domain.Enums.TuitionType.InSchool)] = lad;
                 }
                 if (onlineCovered)
                 {
-                    ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
+                    ladsCovered[(lad.Code, Domain.Enums.TuitionType.Online)] = lad;
                 }
             }
         }
@@ -167,15 +168,15 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
 
             if (inSchoolCovered)
             {
-                ladsCovered[(lad.Code, TuitionTypes.InSchool)] = lad;
+                ladsCovered[(lad.Code, Domain.Enums.TuitionType.InSchool)] = lad;
             }
             if (onlineCovered)
             {
-                ladsCovered[(lad.Code, TuitionTypes.Online)] = lad;
+                ladsCovered[(lad.Code, Domain.Enums.TuitionType.Online)] = lad;
             }
         }
 
-        foreach (((_, TuitionTypes tuitionType), LocalAuthorityDistrict lad) in ladsCovered)
+        foreach (((_, Domain.Enums.TuitionType tuitionType), LocalAuthorityDistrict lad) in ladsCovered)
         {
             var coverage = new LocalAuthorityDistrictCoverage
             {

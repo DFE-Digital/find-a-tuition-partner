@@ -180,7 +180,7 @@ public class SearchForResults : CleanSliceFixture
         // Given
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
-            .TaughtIn(District.Dacorum, TuitionTypes.InSchool)
+            .TaughtIn(District.Dacorum, Domain.Enums.TuitionType.InSchool)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
                     .InSchool().Costing(12m).ForGroupSizes(2))));

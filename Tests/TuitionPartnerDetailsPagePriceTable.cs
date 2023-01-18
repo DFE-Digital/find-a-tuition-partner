@@ -102,7 +102,7 @@ public class TuitionPartnerDetailsPagePriceTable
 
     [Theory]
     [MemberData(nameof(GroupPriceFormat))]
-    public void Formats_group_price(TuitionTypes tuitionType, GroupPrice price, string expected)
+    public void Formats_group_price(Domain.Enums.TuitionType tuitionType, GroupPrice price, string expected)
     {
         price.FormatFor(tuitionType).Should().Be(expected);
     }
@@ -111,47 +111,47 @@ public class TuitionPartnerDetailsPagePriceTable
     {
         yield return new object[]
         {
-            TuitionTypes.InSchool, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
+            Domain.Enums.TuitionType.InSchool, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
         };
         yield return new object[]
         {
-            TuitionTypes.InSchool, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£1 to £2"
+            Domain.Enums.TuitionType.InSchool, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£1 to £2"
         };
         yield return new object[]
         {
-            TuitionTypes.InSchool, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.12 to £2.99"
+            Domain.Enums.TuitionType.InSchool, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.12 to £2.99"
         };
         yield return new object[]
         {
-            TuitionTypes.InSchool, new GroupPrice(SchoolMin: 1.1m, SchoolMax: 2.8m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.10 to £2.80"
+            Domain.Enums.TuitionType.InSchool, new GroupPrice(SchoolMin: 1.1m, SchoolMax: 2.8m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.10 to £2.80"
         };
         yield return new object[]
         {
-            TuitionTypes.InSchool, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£8"
+            Domain.Enums.TuitionType.InSchool, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£8"
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£3 to £4"
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£3 to £4"
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£3.33 to £4.99"
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£3.33 to £4.99"
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£12"
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£12"
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.22m, OnlineMax: 12.22m), "£12.22"
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.22m, OnlineMax: 12.22m), "£12.22"
         };
         yield return new object[]
         {
-            TuitionTypes.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.20m, OnlineMax: 12.20m), "£12.20"
+            Domain.Enums.TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.20m, OnlineMax: 12.20m), "£12.20"
         };
     }
 }

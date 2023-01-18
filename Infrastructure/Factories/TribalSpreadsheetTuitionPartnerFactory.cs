@@ -294,11 +294,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             {
                 if (inSchool)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionTypes.InSchool, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, Domain.Enums.TuitionType.InSchool, ladId);
                 }
                 if (online)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionTypes.Online, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, Domain.Enums.TuitionType.Online, ladId);
                 }
             }
 
@@ -346,7 +346,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, TuitionTypes tuitionType, int ladId)
+    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, Domain.Enums.TuitionType tuitionType, int ladId)
     {
         var coverage = new LocalAuthorityDistrictCoverage
         {
@@ -449,8 +449,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
         else
         {
-            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionTypes.InSchool);
-            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionTypes.Online);
+            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.InSchool);
+            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.Online);
 
             foreach (((int groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
             {

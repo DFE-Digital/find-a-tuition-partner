@@ -17,7 +17,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(3)
             .WithName("charlie-tuition-partner", "Charlie")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3ModernForeignLanguages, s => s
                     .InSchool().Costing(8m).ForGroupSizes(3)))
@@ -26,8 +26,8 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(1)
             .WithName("alpha-tuition-partner", "Alpha")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool)
-            .TaughtIn(District.NorthEastLincolnshire, TuitionTypes.InSchool, TuitionTypes.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.NorthEastLincolnshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage1English, s => s
                     .InSchool().Costing(13m).ForGroupSizes(3))
@@ -46,7 +46,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(2)
             .WithName("bravo-tuition-partner", "Bravo")
-            .TaughtIn(District.NorthTyneside, TuitionTypes.InSchool)
+            .TaughtIn(District.NorthTyneside, Domain.Enums.TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3ModernForeignLanguages, s => s
                     .InSchool().Costing(14m).ForGroupSizes(4))
@@ -58,7 +58,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(4)
             .WithName("delta-tuition-partner", "Delta")
-            .TaughtIn(District.Dacorum, TuitionTypes.InSchool, TuitionTypes.Online)
+            .TaughtIn(District.Dacorum, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage1English, s => s
                     .InSchool().Costing(113m).ForGroupSizes(3))
@@ -241,7 +241,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.NorthTyneside.Id,
-            TuitionTypeId = (int)TuitionTypes.Online
+            TuitionTypeId = (int)Domain.Enums.TuitionType.Online
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
@@ -259,7 +259,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.NorthEastLincolnshire.Id,
-            TuitionTypeId = (int)TuitionTypes.Online
+            TuitionTypeId = (int)Domain.Enums.TuitionType.Online
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
@@ -278,7 +278,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.EastRidingOfYorkshire.Id,
-            TuitionTypeId = (int)TuitionTypes.InSchool,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
             SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths }
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
@@ -297,7 +297,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.EastRidingOfYorkshire.Id,
-            TuitionTypeId = (int)TuitionTypes.InSchool,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
             SubjectIds = new List<int>() { Subjects.Id.KeyStage1English }
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
@@ -386,7 +386,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
         alpha.SubjectsCoverage.Length.Should().Be(1);
-        alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionTypes.InSchool);
+        alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
         alpha.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage1English);
         alpha.Prices.Should().NotBeEmpty();
         alpha.Prices.Length.Should().Be(2);
@@ -398,7 +398,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
         alpha.TuitionTypes.Length.Should().Be(1);
-        alpha.TuitionTypes[0].Id.Should().Be((int)TuitionTypes.InSchool);
+        alpha.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
 
 
         //no TT, subjects or prices for Bravo TP for EastRidingOfYorkshire
@@ -430,7 +430,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var bravo = results.First(x => x.Name == "Bravo");
         bravo.SubjectsCoverage.Should().NotBeEmpty();
         bravo.SubjectsCoverage.Length.Should().Be(1);
-        bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionTypes.InSchool);
+        bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
         bravo.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage3ModernForeignLanguages);
         bravo.Prices.Should().NotBeEmpty();
         bravo.Prices.Length.Should().Be(2);
@@ -442,7 +442,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         });
         bravo.TuitionTypes.Should().NotBeEmpty();
         bravo.TuitionTypes.Length.Should().Be(1);
-        bravo.TuitionTypes[0].Id.Should().Be((int)TuitionTypes.InSchool);
+        bravo.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
 
 
         //no TT, subjects or prices for Charlie TP for NorthTyneside

@@ -184,10 +184,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
     {
         (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) online =
-            (prices => MinPrice(prices, Domain.Constants.TuitionTypes.Online), prices => MaxPrice(prices, Domain.Constants.TuitionTypes.Online));
+            (prices => MinPrice(prices, Domain.Enums.TuitionType.Online), prices => MaxPrice(prices, Domain.Enums.TuitionType.Online));
 
         (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) inSchool =
-            (prices => MinPrice(prices, Domain.Constants.TuitionTypes.InSchool), prices => MaxPrice(prices, Domain.Constants.TuitionTypes.InSchool));
+            (prices => MinPrice(prices, Domain.Enums.TuitionType.InSchool), prices => MaxPrice(prices, Domain.Enums.TuitionType.InSchool));
 
         return prices
             .GroupBy(x => x.GroupSize)
@@ -203,14 +203,14 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             .Where(x => x.Value.HasAtLeastOnePrice)
             .ToDictionary(k => k.Key, v => v.Value);
 
-        static decimal? MinPrice(IEnumerable<Price> value, Domain.Constants.TuitionTypes tuitionType)
+        static decimal? MinPrice(IEnumerable<Price> value, Domain.Enums.TuitionType tuitionType)
             => MinMaxPrice(value, tuitionType, Enumerable.MinBy);
 
-        static decimal? MaxPrice(IEnumerable<Price> value, Domain.Constants.TuitionTypes tuitionType)
+        static decimal? MaxPrice(IEnumerable<Price> value, Domain.Enums.TuitionType tuitionType)
             => MinMaxPrice(value, tuitionType, Enumerable.MaxBy);
 
         static decimal? MinMaxPrice(
-            IEnumerable<Price> value, Domain.Constants.TuitionTypes tuitionType,
+            IEnumerable<Price> value, Domain.Enums.TuitionType tuitionType,
             Func<IEnumerable<Price>, Func<Price, decimal>, Price?> minMax)
         {
             var pricesForTuition = value.Where(x => x.TuitionType.Id == (int)tuitionType);
