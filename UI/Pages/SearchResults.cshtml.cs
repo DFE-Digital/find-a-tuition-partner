@@ -328,7 +328,7 @@ public class SearchResults : PageModel
 
             var subjectFilterIds = subjects.Select(x => x.Id);
             var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
-            bool? isTypeOfCharityFilter = request.OrganisationTypeGrouping == OrganisationTypeGrouping.Any ?
+            bool? isTypeOfCharityFilter = (request.OrganisationTypeGrouping == null || request.OrganisationTypeGrouping == OrganisationTypeGrouping.Any) ?
                 null :
                 request.OrganisationTypeGrouping == OrganisationTypeGrouping.Charity;
 
