@@ -1,7 +1,6 @@
 ﻿using Application.Extensions;
 using Domain.Search;
 using FluentValidation.TestHelper;
-using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using UI.Pages;
 using Index = UI.Pages.Index;

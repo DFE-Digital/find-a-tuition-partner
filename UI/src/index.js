@@ -35,7 +35,7 @@ if ($errorSummary) {
   new ErrorSummary($errorSummary).init();
 }
 
-var $radios = document.querySelectorAll('[data-module="govuk-radios]');
+var $radios = document.querySelectorAll('[data-module="govuk-radios"]');
 if ($radios) {
   for (var i = 0; i < $radios.length; i++) {
     new Radios($radios[i]).init();

@@ -29,7 +29,7 @@ const allSubjects = {
     "Science",
   ],
 };
-
+``;
 const stages = ["Key stage 1", "Key stage 2", "Key stage 3", "Key stage 4"];
 
 When("they clear all the filters", () => {
@@ -229,4 +229,16 @@ Then("logos are not shown for tuition partners", () => {
   cy.get('[data-testid="results-list-item-nudge-education"]>img').should(
     "not.be.visible"
   );
+});
+
+Then("they check 'TuitionPartner' - {string} checkbox", (tpName) => {
+  cy.get(`[id="shortlist-cb-${kebabCase(tpName)}"]`).check();
+});
+
+Then("{string} checkbox is checked", (tpName) => {
+  cy.isCheckboxchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("they uncheck 'TuitionPartner' - {string} checkbox", (tpName) => {
+  cy.get(`[id="shortlist-cb-${kebabCase(tpName)}"]`).uncheck();
 });
