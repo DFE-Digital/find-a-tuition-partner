@@ -25,15 +25,12 @@ const isResultValid = (result) =>
   result && result.updated !== "undefined" && result.updated;
 const getError = (message = "Invalid result") => Error(message);
 const setLocalAuthorityHeaderText = (
-  text = "Shortlisted tuition partner for"
+  headerText = "Shortlisted tuition partner for"
 ) => {
-  const localAuthName = document.getElementById(
-    "tp-details-page--tp-localAuthName"
-  ).value;
   const localAuthHeader = document.getElementById(
     "tp-details-page--tp-localAuthHeader"
   );
-  localAuthHeader.innerHTML = `${text} ${localAuthName}`;
+  localAuthHeader.innerHTML = headerText;
 };
 const onChecked = async (checkboxId) => {
   return await fetch(
