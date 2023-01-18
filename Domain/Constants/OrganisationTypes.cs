@@ -2,11 +2,11 @@
 
 public enum OrganisationTypes
 {
-    PrivateCompany = 1,
+    Charity = 1,
     LimitedCompany = 2,
     LimitedLiabilityPartnership = 3,
     PrivateCompanyLimitedByGuarantee = 4,
-    Charity = 5,
-    NonProfit = 6,
-    CommunityInterestCompany = 7,
+    PrivateCompany = 7,
+    NonProfit = 8,
+    CommunityInterestCompany = 9,
 }

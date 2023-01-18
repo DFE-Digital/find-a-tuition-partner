@@ -3848,8 +3848,8 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            IsTypeOfCharity = false,
-                            Name = "Private company"
+                            IsTypeOfCharity = true,
+                            Name = "Charity/charities"
                         },
                         new
                         {
@@ -3871,19 +3871,19 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 5,
-                            IsTypeOfCharity = true,
-                            Name = "Charity/charities"
+                            Id = 7,
+                            IsTypeOfCharity = false,
+                            Name = "Private company"
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 8,
                             IsTypeOfCharity = true,
                             Name = "Non-profit"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 9,
                             IsTypeOfCharity = true,
                             Name = "Community interest company"
                         });
