@@ -45,13 +45,13 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "IsTypeOfCharity", "Name" },
                 values: new object[,]
                 {
-                    { 1, false, "Private company" },
+                    { 1, true, "Charity/charities" },
                     { 2, false, "Limited company" },
                     { 3, false, "Limited liability partnership" },
                     { 4, true, "Private company limited by guarantee" },
-                    { 5, true, "Charity/charities" },
-                    { 6, true, "Non-profit" },
-                    { 7, true, "Community interest company" }
+                    { 7, false, "Private company" },
+                    { 8, true, "Non-profit" },
+                    { 9, true, "Community interest company" }
                 });
 
             migrationBuilder.CreateIndex(
