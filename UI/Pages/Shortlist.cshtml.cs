@@ -163,7 +163,7 @@ public class ShortlistModel : PageModel
             if (location is IErrorResult error)
             {
                 //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
-                _logger.LogInformation("Invalid postcode '{Postcode}' provided on shortlist page", request.Postcode);
+                _logger.LogWarning("Invalid postcode '{Postcode}' provided on shortlist page", request.Postcode);
                 return error.Cast<TuitionPartnersResult>();
             }
             else if (location.Data.LocalAuthorityDistrictId is null)

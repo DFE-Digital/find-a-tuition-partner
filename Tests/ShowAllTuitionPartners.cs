@@ -13,17 +13,17 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Displays_all_tuition_partners_in_database_in_alphabetical_ordering()
     {
-        // Given
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Gamma"));
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
 
-        // When
+        // Act
         CancellationTokenSource cts = new();
         CancellationToken cancellationToken = cts.Token;
         var page = await Fixture.GetPage<AllTuitionPartners>(page => page.OnGet(cancellationToken));
 
-        // Then
+        // Assert
         page.Results.Should().NotBeNull();
         page.Results!.Results.Should().BeEquivalentTo(new[]
         {
@@ -53,11 +53,11 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     [Fact]
     public async Task Search_by_name()
     {
-        // Given
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
         await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
 
-        // When
+        // Act
         var page = await Fixture.GetPage<AllTuitionPartners>(page =>
         {
             page.Data.Name = "LPh";
@@ -66,7 +66,7 @@ public class ShowAllTuitionPartners : CleanSliceFixture
             return page.OnGet(cancellationToken);
         });
 
-        // Then
+        // Assert
         page.Results.Should().NotBeNull();
         page.Results!.Results.Should().BeEquivalentTo(new[]
         {

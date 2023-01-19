@@ -177,7 +177,7 @@ public class SearchForResults : CleanSliceFixture
     [Fact]
     public async Task Displays_all_tutor_types_in_database()
     {
-        // Given
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
             .TaughtIn(District.Dacorum, TuitionTypes.InSchool)
@@ -185,11 +185,11 @@ public class SearchForResults : CleanSliceFixture
                 .Subject(Subjects.Id.KeyStage1English, l => l
                     .InSchool().Costing(12m).ForGroupSizes(2))));
 
-        // When
+        // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
-        // Then
+        // Assert
         result.Results.Should().NotBeNull();
         result.Results!.Results.Should().BeEquivalentTo(new[]
         {
@@ -200,11 +200,11 @@ public class SearchForResults : CleanSliceFixture
     [Fact]
     public async Task Displays_local_authority()
     {
-        // When
+        // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
-        // Then
+        // Assert
         result?.Results?.LocalAuthorityName.Should().Be("Hertfordshire");
     }
 
