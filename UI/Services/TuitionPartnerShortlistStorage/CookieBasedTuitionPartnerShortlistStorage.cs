@@ -27,6 +27,8 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             throw new ArgumentException($"{nameof(shortlistedTuitionPartnerSeoUrl)} is invalid");
         if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
 
+        if (GetAllTuitionPartners().ToList().Contains(shortlistedTuitionPartnerSeoUrl.Trim())) return;
+
         var encodedTuitionPartnerSeoUrl = EncodeShortlistedTuitionPartnerSeoUrl(shortlistedTuitionPartnerSeoUrl);
         AddTuitionPartnerToCookie(CookieName, encodedTuitionPartnerSeoUrl);
     }
@@ -46,7 +48,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
 
         if (isFaultyData)
             throw new ArgumentException(
-                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrls)}is invalid");
+                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrls)} is invalid");
         if (_httpContextAccessor.HttpContext == null) throw GetHttpContextException();
 
         var encodedShortlistedTuitionPartnersSeoUrls =
@@ -70,7 +72,9 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     ///<inheritdoc />
     public void RemoveTuitionPartner(string shortlistedTuitionPartnerSeoUrl)
     {
+        shortlistedTuitionPartnerSeoUrl = shortlistedTuitionPartnerSeoUrl.Trim();
         var valuesInCookie = GetAllTuitionPartners().ToList();
+
         if (!valuesInCookie.Contains(shortlistedTuitionPartnerSeoUrl)) return;
 
         valuesInCookie.RemoveAll(v => v == shortlistedTuitionPartnerSeoUrl);
@@ -84,6 +88,16 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     public void RemoveAllTuitionPartners() =>
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(CookieName);
 
+    /// <inheritdoc/>
+    public bool IsTuitionPartnerShortlisted(string tuitionPartnerSeoUrl)
+    {
+        if (!IsShortlistedTuitionPartnerSeoUrlValid(tuitionPartnerSeoUrl))
+            throw new ArgumentException($"{nameof(tuitionPartnerSeoUrl)} is invalid");
+
+        var allShortlistedTps = GetAllTuitionPartners().ToList();
+        return allShortlistedTps.Any(tp => tp == tuitionPartnerSeoUrl.Trim());
+    }
+
     private bool IsShortlistedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
     {
         if (!string.IsNullOrEmpty(tuitionPartnerSeoUrl)) return true;
@@ -94,7 +108,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
     }
 
     private string EncodeShortlistedTuitionPartnerSeoUrl(string shortlistedTuitionPartnerSeoUrl) =>
-        Uri.EscapeDataString(shortlistedTuitionPartnerSeoUrl);
+        Uri.EscapeDataString(shortlistedTuitionPartnerSeoUrl.Trim());
 
     private void AddTuitionPartnerToCookie(string cookieName, string encodedTuitionPartnerSeoUrl)
     {
@@ -125,7 +139,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
 
     private void AddTuitionPartnersToCookie(string cookieName, IEnumerable<string> encodedTuitionPartnersSeoUrls)
     {
-        encodedTuitionPartnersSeoUrls = encodedTuitionPartnersSeoUrls.ToList();
+        encodedTuitionPartnersSeoUrls = encodedTuitionPartnersSeoUrls.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var cookieValueToAdd = new StringBuilder(encodedTuitionPartnersSeoUrls.Count());
         var counter = 0;
         foreach (var seoUrl in encodedTuitionPartnersSeoUrls)
@@ -133,6 +147,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             cookieValueToAdd.Append(counter < encodedTuitionPartnersSeoUrls.Count() - 1
                 ? $"{seoUrl}&"
                 : $"{seoUrl}");
+            counter++;
         }
 
         if (string.IsNullOrWhiteSpace(cookieValueToAdd.ToString()))
@@ -142,7 +157,7 @@ public class CookieBasedTuitionPartnerShortlistStorage : ITuitionPartnerShortlis
             .Append(cookieName, $"{cookieValueToAdd}", GetCookieOptions());
     }
 
-    private static CookieOptions GetCookieOptions() => new() { Expires = DateTime.Now.AddDays(1) };
+    private static CookieOptions GetCookieOptions() => new() { Expires = DateTime.Now.AddDays(1), HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict };
 
     private IEnumerable<string> GetTuitionPartnersSeoUrlFromCookie(string cookie)
     {

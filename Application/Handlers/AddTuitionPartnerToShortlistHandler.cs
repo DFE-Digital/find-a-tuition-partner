@@ -9,8 +9,6 @@ public class AddTuitionPartnerToShortlistHandler : IRequestHandler<AddTuitionPar
 
     public Task<Unit> Handle(AddTuitionPartnerToShortlistCommand request, CancellationToken cancellationToken)
     {
-        _tuitionPartnerShortlistStorage.RemoveTuitionPartner(request.ShortlistedTuitionPartnerSeoUrl);
-
         _tuitionPartnerShortlistStorage.AddTuitionPartner(request.ShortlistedTuitionPartnerSeoUrl);
         return Task.FromResult(Unit.Value);
     }

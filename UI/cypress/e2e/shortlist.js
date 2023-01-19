@@ -8,7 +8,6 @@ import {
   kebabCase,
   removeExcessWhitespaces,
   removeNewLine,
-  removeWhitespace,
 } from "../support/utils";
 
 When("they add {string} to their shortlist on the results page", (tpName) => {
@@ -144,3 +143,39 @@ When(
     cy.wait(500);
   }
 );
+
+Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+  cy.checkTotalTps(expectedTotal);
+});
+Then("{string} checkbox is unchecked", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+});
+Then("{string} checkbox is unchecked on its detail page", (tpName) => {
+  cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+Then("the LA label text is {string}", (laLabelText) =>
+  cy.checkLaLabelText(laLabelText)
+);
+Then("{string} checkbox is checked on its detail page", (tpName) => {
+  cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+});
+
+Then("there is {int} entry on the shortlist page", (count) => {
+  cy.get("tbody th").should("have.length", count);
+});
+
+Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
+
+Then("{string} is removed from the shortlist", (tpName) => {
+  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+  cy.wait(200);
+});
+
+Then("they click Back to go back to the shortlist page", () => cy.clickBack());
+
+Then("the shortlist page displays {string}", (expectedText) => {
+  cy.get("[id='shortlist-no-tp-shortlisted']").should(
+    "contain.text",
+    removeExcessWhitespaces(removeNewLine(expectedText))
+  );
+});

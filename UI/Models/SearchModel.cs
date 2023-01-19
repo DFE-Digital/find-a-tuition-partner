@@ -10,7 +10,7 @@ namespace UI.Models
 
         }
 
-        public SearchModel(SearchModel model) : base()
+        public SearchModel(SearchModel model)
         {
             From = model.From;
             Name = model.Name;
