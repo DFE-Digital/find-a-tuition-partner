@@ -20,7 +20,7 @@ Feature: User can choose Key Stage and Subject
     Given a user has arrived on the 'Which subjects' page for 'Key stage 1'
     Then the page's title is 'Which subjects do you need tutoring support for?'
 
-  Scenario: user clicks service name on key stages page
+  Scenario: user clicks service name on which subjects page
     Given a user has arrived on the 'Which subjects' page for 'Key stage 1'
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page

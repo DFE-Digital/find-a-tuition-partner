@@ -35,6 +35,16 @@ Feature: Tuition Partner shortlist
         And they choose to view their shortlist from the results page
         When they click 'Back'
         Then the search results are displayed
+        
+    Scenario: On the Shortlist page blank postcode user redirect back to the search results page with a validation error shown
+        Given a user has arrived on the 'My shortlisted tuition partners' page for postcode ''
+        Then the page URL ends with '/search-results'
+        And they will see 'Enter a postcode' as an error message for the 'postcode'
+        
+    Scenario: On the Shortlist page invalid postcode user redirect back to the search results page with a validation error shown
+        Given a user has arrived on the 'My shortlisted tuition partners' page for postcode 'invalid postcode'
+        Then the page URL ends with '/search-results'
+        And they will see 'Enter a valid postcode' as an error message for the 'postcode'
 
     Scenario: User views their shortlisted TPs on the shortlist page
         Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
