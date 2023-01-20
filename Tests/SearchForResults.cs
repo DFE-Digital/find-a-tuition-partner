@@ -241,7 +241,7 @@ public class SearchForResults : CleanSliceFixture
 
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
             await Fixture.AddTuitionPartner(A.TuitionPartner.
-                TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
+                TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
@@ -262,7 +262,7 @@ public class SearchForResults : CleanSliceFixture
 
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
             await Fixture.AddTuitionPartner(A.TuitionPartner.
-                TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
+                TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = "AAAA BBCCD"; ;
@@ -285,8 +285,8 @@ public class SearchForResults : CleanSliceFixture
         searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
 
         var partner = logo == null
-            ? A.TuitionPartner.TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online)
-            : A.TuitionPartner.WithLogo(logo).TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online);
+            ? A.TuitionPartner.TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
+            : A.TuitionPartner.WithLogo(logo).TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online);
         await Fixture.AddTuitionPartner(partner);
 
         // Act
