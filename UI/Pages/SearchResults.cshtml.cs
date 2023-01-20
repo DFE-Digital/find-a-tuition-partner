@@ -180,6 +180,10 @@ public class SearchResults : PageModel
         public Validator()
         {
             RuleFor(m => m.Postcode)
+                .NotEmpty()
+                .WithMessage("Enter a postcode");
+
+            RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
@@ -290,9 +294,6 @@ public class SearchResults : PageModel
             CancellationToken cancellationToken)
         {
             var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(request.Postcode))
-                return Result.Success(new LocationFilterParameters());
 
             return !validationResults.IsValid
                 ? Result.Invalid<LocationFilterParameters>(validationResults.Errors)

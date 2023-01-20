@@ -12,15 +12,16 @@ public class ShortlistModel : PageModel
 
     public ResultsModel Data { get; set; } = new();
 
-    public async Task OnGet(Query data)
+    public async Task<IActionResult> OnGet(Query data)
     {
-        data.From = Enums.ReferrerList.Shortlist;
+        data.From = ReferrerList.Shortlist;
+        var validator = new Validator();
+        var results = await validator.ValidateAsync(data);
+        if (!results.IsValid)
+            return RedirectToPage(nameof(SearchResults), new SearchModel(data));
 
         Data = await _mediator.Send(data);
-
-        if (!Data.Validation.IsValid)
-            foreach (var error in Data.Validation.Errors)
-                ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
+        return Page();
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(Query data)
@@ -64,10 +65,14 @@ public class ShortlistModel : PageModel
 
     }
 
-    private class Validator : AbstractValidator<Query>
+    public class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
+            RuleFor(m => m.Postcode)
+                .NotEmpty()
+                .WithMessage("Enter a postcode");
+
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a valid postcode")
@@ -178,13 +183,9 @@ public class ShortlistModel : PageModel
 
             return Result.Success(result);
         }
-
         private async Task<IResult<LocationFilterParameters>> GetSearchLocation(Query request, CancellationToken cancellationToken)
         {
             var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
-
-            if (string.IsNullOrWhiteSpace(request.Postcode))
-                return Result.Success(new LocationFilterParameters { });
 
             if (!validationResults.IsValid)
             {
