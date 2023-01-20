@@ -97,10 +97,6 @@ When(
   }
 );
 
-Then("they choose to sort the shortlist by name", () => {
-  cy.get('[data-testid="shortlist-name-sort"]').click();
-});
-
 Then("they choose to sort the shortlist by price", () => {
   cy.get('[data-testid="shortlist-price-sort"]').click();
 });

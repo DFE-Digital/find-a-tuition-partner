@@ -20,6 +20,8 @@ namespace UI.Models
             KeyStages = model.KeyStages;
             ShortlistOrderBy = model.ShortlistOrderBy;
             ShortlistOrderByDirection = model.ShortlistOrderByDirection;
+            ShortlistTuitionType = model.ShortlistTuitionType;
+            ShortlistGroupSize = model.ShortlistGroupSize;
         }
 
         public ReferrerList? From { get; set; }
@@ -37,5 +39,9 @@ namespace UI.Models
         public TuitionPartnerOrderBy? ShortlistOrderBy { get; set; }
 
         public OrderByDirection? ShortlistOrderByDirection { get; set; }
+
+        public TuitionType? ShortlistTuitionType { get; set; }
+
+        public int? ShortlistGroupSize { get; set; }
     }
 }

@@ -163,7 +163,7 @@
                                     </govuk-summary-list-row-key>
                                     <govuk-summary-list-row-value>
                                         <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                            @foreach (var keyStageSubjects in item.SubjectsCoverage
+                                            @foreach (var keyStageSubjects in item.SubjectsCoverage!
                                                 .Select(e => e.Subject)
                                                 .Distinct()
                                                 .OrderBy(e => e.KeyStageId)
@@ -179,7 +179,7 @@
                                         Type of tuition
                                     </govuk-summary-list-row-key>
                                     <govuk-summary-list-row-value data-testid="type-of-tuition">
-                                        @string.Join(", ", item.TuitionTypes.Select(e => e.Name))
+                                        @string.Join(", ", item.TuitionTypes!.Select(e => e.Name))
                                     </govuk-summary-list-row-value>
                                 </govuk-summary-list-row>
                                 <govuk-summary-list-row class="govuk-body-s">

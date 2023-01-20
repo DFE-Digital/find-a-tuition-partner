@@ -20,7 +20,7 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query data)
     {
-        data.TuitionType ??= Enums.TuitionType.Any;
+        data.TuitionType ??= Domain.Enums.TuitionType.Any;
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
 
@@ -35,7 +35,7 @@ public class SearchResults : PageModel
     public async Task OnGetClearAllFilters(string postcode)
     {
         Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
+        { Postcode = postcode, Subjects = null, TuitionType = Domain.Enums.TuitionType.Any, KeyStages = null });
 
         await SetSelectableTuitionPartners();
     }
@@ -169,7 +169,7 @@ public class SearchResults : PageModel
         }
 
         public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
+        public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -252,12 +252,12 @@ public class SearchResults : PageModel
                 Enums.KeyStage.KeyStage4,
             };
 
-        private static List<Enums.TuitionType> AllTuitionTypes =>
+        private static List<Domain.Enums.TuitionType> AllTuitionTypes =>
             new()
             {
-                Enums.TuitionType.Any,
-                Enums.TuitionType.InSchool,
-                Enums.TuitionType.Online,
+                Domain.Enums.TuitionType.Any,
+                Domain.Enums.TuitionType.InSchool,
+                Domain.Enums.TuitionType.Online,
             };
 
         private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,

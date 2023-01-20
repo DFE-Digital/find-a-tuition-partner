@@ -5,6 +5,7 @@ import {
   ErrorSummary,
   Radios,
   SkipLink,
+  Select,
 } from "govuk-frontend";
 
 var $buttons = document.querySelectorAll('[data-module="govuk-button"]');
@@ -40,6 +41,13 @@ if ($radios) {
   for (var i = 0; i < $radios.length; i++) {
     new Radios($radios[i]).init();
   }
+}
+
+var $select = document.querySelectorAll('[data-module="govuk-select"]');
+if ($select) {
+    for (var i = 0; i < $select.length; i++) {
+        new Select($select[i]).init();
+    }
 }
 
 var $skipLink = document.querySelector('[data-module="govuk-skip-link"]');

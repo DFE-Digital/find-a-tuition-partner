@@ -22,6 +22,8 @@ namespace UI.Extensions
             model.AddAll(x => x.Subjects, dictionary);
             model.Add(x => x.ShortlistOrderBy, dictionary);
             model.Add(x => x.ShortlistOrderByDirection, dictionary);
+            model.Add(x => x.ShortlistTuitionType, dictionary);
+            model.Add(x => x.ShortlistGroupSize, dictionary);
 
             return dictionary;
         }

@@ -21,13 +21,79 @@
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
+
+                @*
+                    TODO
+                    gov uk select styles not added in with npm?
+                    think about what grid style to use below - 3 drop downs in 3 equal columns?
+                    Better way to do this than adding hidden inputs so can post
+                    This has broken remove func from row the way the post is now working
+                *@
+
+                <input asp-for="Data.From" hidden />
+                <input asp-for="Data.Postcode" hidden />
+                @if (Model.Data.KeyStages != null)
+                {
+                    foreach (var KeyStage in Model.Data.KeyStages)
+                    {
+                        <input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
+                    }
+                }
+                @if (Model.Data.Subjects != null)
+                {
+                    foreach (var subject in Model.Data.Subjects)
+                    {
+                        <input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+                    }
+                }
+                @if (Model.Data.TuitionType.HasValue)
+                {
+                    <input asp-for="Data.TuitionType" hidden />
+                }
+                @if (Model.Data.ShortlistOrderBy != null)
+                {
+                    <input asp-for="Data.ShortlistOrderBy" hidden />
+                }
+                @if (Model.Data.ShortlistOrderByDirection != null)
+                {
+                    <input asp-for="Data.ShortlistOrderByDirection" hidden />
+                }
+
+                <h2 class="govuk-heading-m">Refine the pricing</h2>
+
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-one-third">
+                    <govuk-select asp-for="Data.ShortlistGroupSize">
+                        <govuk-select-label>Group size</govuk-select-label>
+                    @foreach (var item in Model.Data.AllGroupSizes)
+                    {
+                        <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistGroupSize">@(item == 0 ? "Any" : "1 to " + @item)</govuk-select-item>
+                    }
+                    </govuk-select>
+                    </div>
+
+                    <div class="govuk-grid-column-one-third">
+                    <govuk-select asp-for="Data.ShortlistTuitionType">
+                        <govuk-select-label>Type of tuition</govuk-select-label>
+                    @foreach (var item in Model.Data.AllTuitionTypes)
+                    {
+                        <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistTuitionType">@item.DisplayName()</govuk-select-item>
+                    }
+                    </govuk-select>
+                    </div>
+
+                    <div class="govuk-grid-column-one-third">
+                        <div class="govuk-button-group app-shortlist--apply-refinement">
+                            <button class="govuk-button govuk-button--primary remove-shortlist-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="govuk-table-container">
                     <table class="govuk-table" data-testid="shortlist-table">
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Name))">
-                                <a class="table-column-sort" data-testid="shortlist-name-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Name))">Name</a>
-                            </th>
+                            <th scope="col" class="govuk-table__header">Name</th>
                             <th scope="col" class="govuk-table__header">Key stages covered</th>
                             <th scope="col" class="govuk-table__header">Subjects</th>
                             <th scope="col" class="govuk-table__header">Type of tuition</th>
@@ -47,14 +113,23 @@
                                 <th scope="row" class="govuk-table__header">
                                     <a href="@tpUrl" class="govuk-link">@item.Name</a>
                                 </th>
+                                @if(item.Prices == null)
+                                {
+                                <td class="govuk-table__cell" colspan="4">
+                                    @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
+                                </td>
+                                }
+                                else
+                                {
                                 <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage.Select(e => e.Subject.KeyStage).DisplayList()
+                                    @item.SubjectsCoverage!.Select(e => e.Subject.KeyStage).DisplayList()
                                 </td>
                                 <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage.Select(e => e.Subject).DisplayList()
+                                    @item.SubjectsCoverage!.Select(e => e.Subject).DisplayList()
                                 </td>
-                                <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes.Select(e => e.Name))</td>
-                                <td class="govuk-table__cell">From @item.Prices?.Min(e => e.HourlyRate).FormatPrice()</td>
+                                <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
+                                <td class="govuk-table__cell">From @item.Prices.Min(e => e.HourlyRate).FormatPrice()</td>
+                                }
                                 <td class="govuk-table__cell app-print-hide">
                                     <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>
                                 </td>

@@ -28,13 +28,13 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         var tp = tpResult.Result.Data.FirstResult;
 
-        var subjects = tp.SubjectsCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
+        var subjects = tp.SubjectsCoverage!.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
             .Select(x => $"{((Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-        var types = tp.TuitionTypes.Select(x => x.Name).Distinct();
-        var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
-        var prices = GetPricing(tp.Prices);
+        var types = tp.TuitionTypes!.Select(x => x.Name).Distinct();
+        var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
+        var prices = GetPricing(tp.Prices!);
         var lads = await GetLocalAuthorityDistricts(request, tp.Id);
-        var allPrices = await GetFullPricing(request, tp.Prices);
+        var allPrices = await GetFullPricing(request, tp.Prices!);
 
         return new(
             request.Id,
@@ -158,7 +158,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         var coverageDictionary = coverage
             .GroupBy(e => e.TuitionTypeId)
-            .ToDictionary(e => (Enums.TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
+            .ToDictionary(e => (Domain.Enums.TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
 
         var regions = await _db.Regions
             .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
@@ -171,10 +171,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         {
             foreach (var lad in lads)
             {
-                var inSchool = coverageDictionary.ContainsKey(Enums.TuitionType.InSchool) &&
-                               coverageDictionary[Enums.TuitionType.InSchool].ContainsKey(lad.Id);
-                var online = coverageDictionary.ContainsKey(Enums.TuitionType.Online) &&
-                             coverageDictionary[Enums.TuitionType.Online].ContainsKey(lad.Id);
+                var inSchool = coverageDictionary.ContainsKey(Domain.Enums.TuitionType.InSchool) &&
+                               coverageDictionary[Domain.Enums.TuitionType.InSchool].ContainsKey(lad.Id);
+                var online = coverageDictionary.ContainsKey(Domain.Enums.TuitionType.Online) &&
+                             coverageDictionary[Domain.Enums.TuitionType.Online].ContainsKey(lad.Id);
                 result[lad.Id] = new LocalAuthorityDistrictCoverage(region.Name, lad.Code, lad.Name, inSchool, online);
             }
         }
@@ -221,16 +221,16 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     }
 
     private async
-        Task<Dictionary<Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>>
+        Task<Dictionary<Domain.Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>>
         GetFullPricing(GetTuitionPartnerQuery request, ICollection<Price> prices)
     {
         if (!request.ShowFullPricing) return new();
 
         var fullPricing =
-            new Dictionary<Enums.TuitionType,
+            new Dictionary<Domain.Enums.TuitionType,
                 Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>();
 
-        foreach (var tuitionType in new[] { Enums.TuitionType.InSchool, Enums.TuitionType.Online })
+        foreach (var tuitionType in new[] { Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online })
         {
             fullPricing[tuitionType] = new Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>();
             foreach (var keyStage in new[]
@@ -250,7 +250,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         foreach (var price in prices)
         {
-            var tuitionType = (Enums.TuitionType)price.TuitionTypeId;
+            var tuitionType = (Domain.Enums.TuitionType)price.TuitionTypeId;
             var keyStage = (Enums.KeyStage)price.Subject.KeyStageId;
             var subjectName = price.Subject.Name;
 

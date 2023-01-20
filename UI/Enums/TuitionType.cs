@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+﻿//using System.ComponentModel;
 
-namespace UI.Enums
-{
-    public enum TuitionType
-    {
-        [Description("Any")]
-        Any = 0,
+//namespace UI.Enums
+//{
+//    public enum TuitionType
+//    {
+//        [Description("Any")]
+//        Any = 0,
 
-        [Description("Online")]
-        Online = 1,
+//        [Description("Online")]
+//        Online = 1,
 
-        [Description("In School")]
-        InSchool,
-    }
-}
+//        [Description("In School")]
+//        InSchool,
+//    }
+//}
