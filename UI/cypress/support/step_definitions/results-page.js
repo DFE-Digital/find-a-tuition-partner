@@ -122,10 +122,10 @@ When("the user selects tuition type {string}", (tutionType) => {
 
 When(
   "the user selects organisation grouping type {string}",
-  (OrganisationTypeGrouping) => {
+  (organisationTypeGrouping) => {
     cy.get(
       `input[id="${kebabCase(
-        OrganisationTypeGrouping
+        organisationTypeGrouping
       )}-organisation-types-grouping"]`
     ).click();
   }

@@ -21,7 +21,7 @@ public class SearchResults : PageModel
     public async Task OnGet(Query data)
     {
         data.TuitionType ??= Enums.TuitionType.Any;
-        data.OrganisationTypeGrouping ??= Enums.OrganisationTypeGrouping.Any;
+        data.OrganisationTypeGrouping ??= OrganisationTypeGrouping.Any;
         if (data.KeyStages == null && data.Subjects != null)
         {
             data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
@@ -41,7 +41,7 @@ public class SearchResults : PageModel
     public async Task OnGetClearAllFilters(string postcode)
     {
         Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, OrganisationTypeGrouping = Enums.OrganisationTypeGrouping.Any, KeyStages = null });
+        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, OrganisationTypeGrouping = OrganisationTypeGrouping.Any, KeyStages = null });
 
         await SetSelectableTuitionPartners();
     }
@@ -176,7 +176,7 @@ public class SearchResults : PageModel
 
         public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
-        public IEnumerable<Enums.OrganisationTypeGrouping> AllOrganisationTypeGroupings { get; set; } = new List<Enums.OrganisationTypeGrouping>();
+        public IEnumerable<OrganisationTypeGrouping> AllOrganisationTypeGroupings { get; set; } = new List<OrganisationTypeGrouping>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
@@ -264,12 +264,12 @@ public class SearchResults : PageModel
                 Enums.TuitionType.Online,
             };
 
-        private static List<Enums.OrganisationTypeGrouping> AllOrganisationTypeGroupings =>
+        private static List<OrganisationTypeGrouping> AllOrganisationTypeGroupings =>
             new()
             {
-                Enums.OrganisationTypeGrouping.Any,
-                Enums.OrganisationTypeGrouping.Charity,
-                Enums.OrganisationTypeGrouping.NonCharity,
+                OrganisationTypeGrouping.Any,
+                OrganisationTypeGrouping.Charity,
+                OrganisationTypeGrouping.NonCharity,
             };
 
         private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,

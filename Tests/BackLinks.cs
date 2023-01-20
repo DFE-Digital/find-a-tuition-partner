@@ -1,4 +1,5 @@
-﻿using UI.Enums;
+﻿using Domain.Enums;
+using UI.Enums;
 using UI.Extensions;
 using UI.Models;
 

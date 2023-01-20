@@ -1,4 +1,5 @@
-﻿using UI.Pages;
+﻿using Domain.Enums;
+using UI.Pages;
 
 namespace UI.Controllers.Api;
 
@@ -18,7 +19,7 @@ public class TutoringPartnersController : ControllerBase
     public async Task<IActionResult> Post([FromBody] SearchResults.Query request)
     {
         request.TuitionType ??= Enums.TuitionType.Any;
-        request.OrganisationTypeGrouping ??= Enums.OrganisationTypeGrouping.Any;
+        request.OrganisationTypeGrouping ??= OrganisationTypeGrouping.Any;
 
         var result = await _sender.Send(request);
 

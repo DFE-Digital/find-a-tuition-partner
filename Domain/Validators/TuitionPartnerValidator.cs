@@ -67,8 +67,8 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
                          RegexOptions.IgnoreCase);
     }
 
-    private bool ValidOrganisationTypeId(int OrganisationTypeId)
+    private bool ValidOrganisationTypeId(int organisationTypeId)
     {
-        return Enum.GetName(typeof(OrganisationTypes), OrganisationTypeId) != null;
+        return Enum.GetName(typeof(OrganisationTypes), organisationTypeId) != null;
     }
 }

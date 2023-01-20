@@ -86,7 +86,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : ITuitionPartnerFac
 
         //Get Organisation Type Id
         var organisationTypeName = _spreadsheetExtractor.GetCellValue(GeneralInformationSheetName, "D", 13);
-        var organisationType = _organisationTypes!.Where(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+        var organisationType = _organisationTypes!.SingleOrDefault(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase));
         if (organisationType != null)
         {
             tuitionPartner.OrganisationTypeId = organisationType!.Id;
