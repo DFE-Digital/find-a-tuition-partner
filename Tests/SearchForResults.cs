@@ -79,19 +79,19 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async void With_a_blank_postcode()
+    public async void With_a_blank_postcode_should_have_postcode_validation_error()
     {
-        // Given
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner);
 
-        // When
-        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
+        var searchResultsQuery = Basic.SearchResultsQuery;
+        searchResultsQuery.Postcode = "";
 
-        // Then
-        new TestValidationResult<SearchResults.Query>(result.Validation)
-            .ShouldNotHaveValidationErrorFor(x => x.Postcode);
+        // Act
+        var result = await Fixture.SendAsync(searchResultsQuery);
 
-        result.Results!.Results.Should().NotBeEmpty();
+        // Assert
+        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a postcode");
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class SearchForResults : CleanSliceFixture
     [Fact]
     public async Task Displays_all_tutor_types_in_database()
     {
-        // Given
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
             .TaughtIn(District.Dacorum, Domain.Enums.TuitionType.InSchool)
@@ -185,11 +185,11 @@ public class SearchForResults : CleanSliceFixture
                 .Subject(Subjects.Id.KeyStage1English, l => l
                     .InSchool().Costing(12m).ForGroupSizes(2))));
 
-        // When
+        // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
-        // Then
+        // Assert
         result.Results.Should().NotBeNull();
         result.Results!.Results.Should().BeEquivalentTo(new[]
         {
@@ -200,21 +200,27 @@ public class SearchForResults : CleanSliceFixture
     [Fact]
     public async Task Displays_local_authority()
     {
-        // When
+        // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
-        // Then
+        // Assert
         result?.Results?.LocalAuthorityName.Should().Be("Hertfordshire");
     }
 
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
+        // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner);
 
-        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
+        var searchResultsQuery = Basic.SearchResultsQuery;
+        searchResultsQuery.Postcode = District.Dacorum.SamplePostcode;
 
+        // Act
+        var result = await Fixture.SendAsync(searchResultsQuery);
+
+        // Assert
         result.Results.Should().NotBeNull();
         result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
@@ -223,23 +229,50 @@ public class SearchForResults : CleanSliceFixture
                 new { Name = "Maths", Selected = false },
                 new { Name = "Science", Selected = false },
             });
+
+        result.Postcode.Should().Be(District.Dacorum.SamplePostcode);
     }
 
     [Fact]
-    public async Task Verify_Search_Results_Count()
+    public async Task Verify_Search_Results_Count_With_Valid_PostCode()
     {
+        // Arrange
         const int numberOfTuitionPartners = 55;
 
-        // Given
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
-            await Fixture.AddTuitionPartner(A.TuitionPartner);
+            await Fixture.AddTuitionPartner(A.TuitionPartner.
+                TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
 
-        // When
-        var result = await Fixture.SendAsync(new SearchResults.Query());
+        var searchResultsQuery = Basic.SearchResultsQuery;
+        searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
 
-        // Then
+        // Act
+        var result = await Fixture.SendAsync(searchResultsQuery);
+
+        // Assert
         result!.Results.Should().NotBeNull();
         result!.Results!.Count.Should().Be(numberOfTuitionPartners);
+    }
+
+    [Fact]
+    public async Task Verify_Search_Results_With_InValid_PostCode()
+    {
+        // Arrange
+        const int numberOfTuitionPartners = 55;
+
+        for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
+            await Fixture.AddTuitionPartner(A.TuitionPartner.
+                TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online));
+
+        var searchResultsQuery = Basic.SearchResultsQuery;
+        searchResultsQuery.Postcode = "AAAA BBCCD"; ;
+
+        // Act
+        var result = await Fixture.SendAsync(searchResultsQuery);
+
+        // Assert
+        result!.Results.Should().BeNull();
+        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a valid postcode");
     }
 
     [Theory]
@@ -247,19 +280,31 @@ public class SearchForResults : CleanSliceFixture
     [InlineData("image-data", true)]
     public async Task Results_show_logos(string? logo, bool hasLogo)
     {
-        // Given
+        // Arrange
+        var searchResultsQuery = Basic.SearchResultsQuery;
+        searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
+
         var partner = logo == null
-            ? A.TuitionPartner
-            : A.TuitionPartner.WithLogo(logo);
+            ? A.TuitionPartner.TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online)
+            : A.TuitionPartner.WithLogo(logo).TaughtIn(District.EastRidingOfYorkshire, TuitionTypes.InSchool, TuitionTypes.Online);
         await Fixture.AddTuitionPartner(partner);
 
-        // When
-        var result = await Fixture.SendAsync(Basic.SearchResultsQuery);
+        // Act
+        var result = await Fixture.SendAsync(searchResultsQuery);
 
-        // Then
+        // Assert
         result!.Results!.Results.Should().ContainEquivalentOf(new
         {
             HasLogo = hasLogo,
         });
+    }
+
+    private static void PostCodeEmptyOrInvalidShouldHaveValidationError(SearchResults.ResultsModel result, string errorMessage)
+    {
+        result.Validation?.IsValid.Should().Be(false);
+
+        result.Validation?.Errors.Count.Should().Be(1);
+
+        result.Validation?.Errors[0].ErrorMessage.Should().Be(errorMessage);
     }
 }

@@ -30,8 +30,8 @@ Feature: User is shown search results
 
   Scenario: user does not enter postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' without a postcode
-    Then display all correct tuition partners that provide the selected subjects in any location
-    And they will not see an error message
+    And they click 'Continue'
+    Then they will see 'Enter a postcode' as an error message for the 'postcode'
 
   Scenario: user enters an invalid postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -68,7 +68,7 @@ Feature: User is shown search results
 
   Scenario: lands on search results with blank URL
     Given a user has arrived on the 'Search results' page without subjects or postcode
-    Then display all correct tuition partners in any location
+    Then they will see 'Enter a postcode' as an error message for the 'postcode'
     And all subject filters are collapsed
 
   Scenario: unselects all boxes on the filters
@@ -116,13 +116,13 @@ Feature: User is shown search results
 
   Scenario: Nothing is selected if when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
-    When the ‘clear filters’ button as been selected
+    When the ‘clear filters’ button has been selected
     Then no subject should be shown as selected
     And they will see the tuition type 'Any' is selected
 
   Scenario: All subject filters are collapsed when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
-    When the ‘clear filters’ button as been selected
+    When the ‘clear filters’ button has been selected
     Then all subject filters are collapsed
 
   Scenario: Results are updated when clear all filters is clicked
@@ -131,7 +131,7 @@ Feature: User is shown search results
 
   Scenario: Postcode is retained after clear filters is selected
     Given a user has arrived on the 'Search results' page
-    When the ‘clear filters’ button as been selected
+    When the ‘clear filters’ button has been selected
     Then the postcode search parameter remains
 
   Scenario: Results page  contact us back link redirects to right page
@@ -140,26 +140,23 @@ Feature: User is shown search results
     When they click 'Back'
     Then they will see the results summary for 'Hertfordshire'
 
-  Scenario: Tuition partner details are displayed correctly when no postcode entered or filters selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter '' as the school's postcode
-    Then all tuition partner parameters are populated correctly
+  Scenario: Tuition partner details are not displayed when no postcode entered
+    Given a user has arrived on the 'Search results' page without subjects for postcode ''
+    Then they will see 'Enter a postcode' as an error message for the 'postcode'
 
   Scenario: Tuition partner details are displayed correctly when postcode entered and no filters are selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter 'SK1 1EB' as the school's postcode
+    Given a user has arrived on the 'Search results' page without subjects
     Then all tuition partner parameters are populated correctly
 
   Scenario: Tuition partner details are displayed correctly when postcode entered and filters are selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When they enter 'SK1 1EB' as the school's postcode
+    Given a user has arrived on the 'Search results' page without subjects
     And 'Key stage 1 English' is selected
     Then all tuition partner parameters are populated correctly
     And the number of tuition partners displayed matches the displayed count
 
   Scenario: Tuition partner details are displayed correctly after clear filters is selected on results page
-    Given a user has arrived on the 'Search results' page without subjects or postcode
-    When the ‘clear filters’ button as been selected
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
+    When the ‘clear filters’ button has been selected
     Then all tuition partner parameters are populated correctly
     And the number of tuition partners displayed matches the displayed count
 
@@ -185,17 +182,17 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page without subjects
     Then the number of tuition partners displayed matches the displayed count
 
-  Scenario: Search result matches the displayed count with no subjects or postcode
-    Given a user has arrived on the 'Search results' page without subjects or postcode
+  Scenario: Search result matches the displayed count with no subjects
+    Given a user has arrived on the 'Search results' page without subjects
     Then the number of tuition partners displayed matches the displayed count
 
-  Scenario: Logos are displayed for tution partners
-    Given a user has arrived on the 'Search results' page without subjects or postcode
+  Scenario: Logos are displayed for tuition partners
+    Given a user has arrived on the 'Search results' page without subjects
     Then logos are shown for tuition partners
 
-  Scenario: Logos are hidden on mobile for tution partners
+  Scenario: Logos are hidden on mobile for tuition partners
     Given a user is using a 'phone'
-    Given a user has arrived on the 'Search results' page without subjects or postcode
+    Given a user has arrived on the 'Search results' page without subjects
     Then logos are not shown for tuition partners
 
   Scenario: User is returned to the correction TP position on the search result page
