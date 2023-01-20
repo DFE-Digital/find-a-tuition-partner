@@ -45,9 +45,9 @@ if ($radios) {
 
 var $select = document.querySelectorAll('[data-module="govuk-select"]');
 if ($select) {
-    for (var i = 0; i < $select.length; i++) {
-        new Select($select[i]).init();
-    }
+  for (var i = 0; i < $select.length; i++) {
+    new Select($select[i]).init();
+  }
 }
 
 var $skipLink = document.querySelector('[data-module="govuk-skip-link"]');

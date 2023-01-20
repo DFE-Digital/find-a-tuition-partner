@@ -342,9 +342,9 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
-        alpha.SubjectsCoverage.Length.Should().Be(2);
+        alpha.SubjectsCoverage!.Length.Should().Be(2);
         alpha.Prices.Should().NotBeEmpty();
-        alpha.Prices.Length.Should().Be(5);
+        alpha.Prices!.Length.Should().Be(5);
         var prices = alpha.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -355,7 +355,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 3, HourlyRate = 16m }
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
-        alpha.TuitionTypes.Length.Should().Be(2);
+        alpha.TuitionTypes!.Length.Should().Be(2);
 
 
         var bravo = results.First(x => x.Name == "Bravo");
@@ -385,11 +385,11 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         //has TT, subjects and prices for Alpha TP for EastRidingOfYorkshire
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
-        alpha.SubjectsCoverage.Length.Should().Be(1);
+        alpha.SubjectsCoverage!.Length.Should().Be(1);
         alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionTypes.InSchool);
         alpha.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage1English);
         alpha.Prices.Should().NotBeEmpty();
-        alpha.Prices.Length.Should().Be(2);
+        alpha.Prices!.Length.Should().Be(2);
         var prices = alpha.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -397,7 +397,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 4, HourlyRate = 11m }
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
-        alpha.TuitionTypes.Length.Should().Be(1);
+        alpha.TuitionTypes!.Length.Should().Be(1);
         alpha.TuitionTypes[0].Id.Should().Be((int)TuitionTypes.InSchool);
 
 
@@ -429,11 +429,11 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         //has TT, subjects and prices for Bravo TP for NorthTyneside
         var bravo = results.First(x => x.Name == "Bravo");
         bravo.SubjectsCoverage.Should().NotBeEmpty();
-        bravo.SubjectsCoverage.Length.Should().Be(1);
+        bravo.SubjectsCoverage!.Length.Should().Be(1);
         bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionTypes.InSchool);
         bravo.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage3ModernForeignLanguages);
         bravo.Prices.Should().NotBeEmpty();
-        bravo.Prices.Length.Should().Be(2);
+        bravo.Prices!.Length.Should().Be(2);
         var prices = bravo.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -441,7 +441,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 5, HourlyRate = 13m }
         });
         bravo.TuitionTypes.Should().NotBeEmpty();
-        bravo.TuitionTypes.Length.Should().Be(1);
+        bravo.TuitionTypes!.Length.Should().Be(1);
         bravo.TuitionTypes[0].Id.Should().Be((int)TuitionTypes.InSchool);
 
 

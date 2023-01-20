@@ -109,7 +109,7 @@ public class ShortlistModel : PageModel
             var queryResponse = new ResultsModel(request) with
             {
                 AllTuitionTypes = EnumExtensions.GetAllEnums<Domain.Enums.TuitionType>(),
-                AllGroupSizes = new List<int>() { 0, 1, 2, 3, 4, 5, 6} //TODO - better way than this?
+                AllGroupSizes = new List<int>() { 0, 1, 2, 3, 4, 5, 6 } //TODO - better way than this?
             };
 
             var seoUrls = GetShortlistSeoUrls();
@@ -239,11 +239,11 @@ public class ShortlistModel : PageModel
 
             tuitionPartners = _tuitionPartnerService.FilterTuitionPartnersData(tuitionPartners, tuitionPartnersDataFilter);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() 
-            { 
-                OrderBy = orderBy, 
-                Direction = orderByDirection, 
-                SeoUrlOrderBy = tuitionPartnerSeoUrls 
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering()
+            {
+                OrderBy = orderBy,
+                Direction = orderByDirection,
+                SeoUrlOrderBy = tuitionPartnerSeoUrls
             });
 
             return tuitionPartners;
