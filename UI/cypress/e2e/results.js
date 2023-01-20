@@ -54,7 +54,7 @@ When("a user selects all subject", () => {
   cy.get('[id="key-stage-4-english"]').check();
 });
 
-Then("the ‘clear filters’ button as been selected", () => {
+Then("the ‘clear filters’ button has been selected", () => {
   cy.get('[data-testid="clear-all-filters"]').click();
 });
 
