@@ -42,6 +42,6 @@ namespace UI.Models
 
         public TuitionType? ShortlistTuitionType { get; set; }
 
-        public int? ShortlistGroupSize { get; set; }
+        public GroupSize? ShortlistGroupSize { get; set; }
     }
 }

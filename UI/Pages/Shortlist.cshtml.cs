@@ -15,6 +15,10 @@ public class ShortlistModel : PageModel
     public async Task<IActionResult> OnGet(Query data)
     {
         data.From = ReferrerList.Shortlist;
+        if (data.ShortlistTuitionType == null && data.TuitionType != null)
+        {
+            data.ShortlistTuitionType = data.TuitionType.Value;
+        }
         var validator = new Validator();
         var results = await validator.ValidateAsync(data);
         if (!results.IsValid)
@@ -31,13 +35,13 @@ public class ShortlistModel : PageModel
         return RedirectToPage(data.ToRouteData());
     }
 
-    public async Task<IActionResult> OnPostRemoveAsync(Query data)
+    public async Task<IActionResult> OnPostRemoveAsync(Query data, string? removeTuitionPartnerSeoUrl)
     {
         if (!ModelState.IsValid) return Page();
 
-        if (!string.IsNullOrWhiteSpace(data.RemoveTuitionPartnerSeoUrl))
+        if (!string.IsNullOrWhiteSpace(removeTuitionPartnerSeoUrl))
         {
-            await _mediator.Send(new RemoveTuitionPartnerCommand(data.RemoveTuitionPartnerSeoUrl));
+            await _mediator.Send(new RemoveTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
         }
 
         return RedirectToPage(data.ToRouteData());
@@ -45,7 +49,6 @@ public class ShortlistModel : PageModel
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
-        public string? RemoveTuitionPartnerSeoUrl { get; set; }
     };
 
     public record ResultsModel : SearchModel
@@ -69,7 +72,7 @@ public class ShortlistModel : PageModel
             return (this with { ShortlistOrderBy = matchedOrderBy, ShortlistOrderByDirection = (ShortlistOrderBy == matchedOrderBy && ShortlistOrderByDirection == OrderByDirection.Ascending) ? OrderByDirection.Descending : OrderByDirection.Ascending }).ToRouteData();
         }
 
-        public IEnumerable<int> AllGroupSizes { get; set; } = new List<int>();
+        public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
         public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
 
     }
@@ -109,7 +112,7 @@ public class ShortlistModel : PageModel
             var queryResponse = new ResultsModel(request) with
             {
                 AllTuitionTypes = EnumExtensions.GetAllEnums<Domain.Enums.TuitionType>(),
-                AllGroupSizes = new List<int>() { 0, 1, 2, 3, 4, 5, 6 } //TODO - better way than this?
+                AllGroupSizes = EnumExtensions.GetAllEnums<GroupSize>()
             };
 
             var seoUrls = GetShortlistSeoUrls();
@@ -192,7 +195,7 @@ public class ShortlistModel : PageModel
                         location.Data,
                         new TuitionPartnersDataFilter()
                         {
-                            GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize < 1 || request.ShortlistGroupSize > 6) ? null : request.ShortlistGroupSize,
+                            GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
                             TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType
                         },
                         cancellationToken);

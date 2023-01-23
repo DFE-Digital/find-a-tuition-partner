@@ -41,7 +41,7 @@ public class TuitionPartnerService : ITuitionPartnerService
                     prices = prices.Where(x => x.GroupSize == dataFilter.GroupSize.Value).ToList();
                     if (!prices.Any())
                     {
-                        tpResult.RefinedDataEmptyReason = $"Does not offer group sizes of 1 to {dataFilter.GroupSize}";
+                        tpResult.RefinedDataEmptyReason = $"Does not offer group sizes of {((GroupSize)dataFilter.GroupSize).DisplayName()}";
                     }
                 }
 
@@ -50,7 +50,7 @@ public class TuitionPartnerService : ITuitionPartnerService
                     var refinedOriginalPrices = pricesOriginal.Where(x => dataFilter.SubjectIds.Contains(x.SubjectId)).ToList();
                     if (!refinedOriginalPrices.Any())
                     {
-                        tpResult.RefinedDataEmptyReason = String.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
+                        tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
                             $"Does not offer tuition for the selected subject" :
                             $"{tpResult.RefinedDataEmptyReason} or for the selected subject";
                     }
@@ -66,9 +66,9 @@ public class TuitionPartnerService : ITuitionPartnerService
                     var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
                     if (!refinedOriginalPrices.Any())
                     {
-                        tpResult.RefinedDataEmptyReason = String.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
-                            $"Does not offer {((Domain.Enums.TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in " :
-                            $"{tpResult.RefinedDataEmptyReason} or {((Domain.Enums.TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in ";
+                        tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
+                            $"Does not offer {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in " :
+                            $"{tpResult.RefinedDataEmptyReason} or {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in ";
                         tpResult.RefinedDataEmptyReasonAppendLAName = true;
                     }
 

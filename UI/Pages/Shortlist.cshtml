@@ -10,7 +10,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <form method="post">
+        <form method="post" asp-page-handler="applyrefinement">
             @{
                 var count = Model.Data.Results?.Count;
                 var partnersPlural = count > 1 ? "partners" : "partner";
@@ -24,10 +24,7 @@
 
                 @*
                     TODO
-                    gov uk select styles not added in with npm?
-                    think about what grid style to use below - 3 drop downs in 3 equal columns?
-                    Better way to do this than adding hidden inputs so can post
-                    This has broken remove func from row the way the post is now working
+                    gov uk SELECT styles not added in with npm?  Get error on index.js saying: export 'Select' (imported as 'Select') was not found in 'govuk-frontend' (possible exports: Accordion, Button, CharacterCount, Checkboxes, Details, ErrorSummary, Header, NotificationBanner, Radios, SkipLink, Tabs, initAll)
                 *@
 
                 <input asp-for="Data.From" hidden />
@@ -59,32 +56,34 @@
                     <input asp-for="Data.ShortlistOrderByDirection" hidden />
                 }
 
-                <h2 class="govuk-heading-m">Refine the pricing</h2>
+                <div data-module="shortlist-refinement">
+                    <h2 class="govuk-heading-m">Refine the pricing</h2>
 
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-third">
-                    <govuk-select asp-for="Data.ShortlistGroupSize">
-                        <govuk-select-label>Group size</govuk-select-label>
-                    @foreach (var item in Model.Data.AllGroupSizes)
-                    {
-                        <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistGroupSize">@(item == 0 ? "Any" : "1 to " + @item)</govuk-select-item>
-                    }
-                    </govuk-select>
-                    </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-quarter">
+                        <govuk-select asp-for="Data.ShortlistGroupSize">
+                            <govuk-select-label>Group size</govuk-select-label>
+                        @foreach (var item in Model.Data.AllGroupSizes)
+                        {
+                            <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistGroupSize">@item.DisplayName()</govuk-select-item>
+                        }
+                        </govuk-select>
+                        </div>
 
-                    <div class="govuk-grid-column-one-third">
-                    <govuk-select asp-for="Data.ShortlistTuitionType">
-                        <govuk-select-label>Type of tuition</govuk-select-label>
-                    @foreach (var item in Model.Data.AllTuitionTypes)
-                    {
-                        <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistTuitionType">@item.DisplayName()</govuk-select-item>
-                    }
-                    </govuk-select>
-                    </div>
+                        <div class="govuk-grid-column-one-quarter">
+                        <govuk-select asp-for="Data.ShortlistTuitionType">
+                            <govuk-select-label>Type of tuition</govuk-select-label>
+                        @foreach (var item in Model.Data.AllTuitionTypes)
+                        {
+                            <govuk-select-item value="@item" selected="@item == @Model.Data.ShortlistTuitionType">@item.DisplayName()</govuk-select-item>
+                        }
+                        </govuk-select>
+                        </div>
 
-                    <div class="govuk-grid-column-one-third">
-                        <div class="govuk-button-group app-shortlist--apply-refinement">
-                            <button class="govuk-button govuk-button--primary remove-shortlist-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
+                        <div class="govuk-grid-column-one-quarter">
+                            <div class="govuk-button-group app-shortlist--apply-refinement">
+                                <button class="govuk-button govuk-button--primary remove-shortlist-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
+                            </div>
                         </div>
                     </div>
                 </div>
