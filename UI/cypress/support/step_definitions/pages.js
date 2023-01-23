@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import {mapTextToNumberIndexZeroToTenth} from "../utils";
+import { mapTextToNumberIndexZeroToTenth } from "../utils";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit("/");
