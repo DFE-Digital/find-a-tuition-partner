@@ -67,7 +67,7 @@
         </ul>
 
         <form method="post">
-            <input asp-for="ReturnUrl" value="@Model.ReturnUrl" hidden=true/>
+            <input asp-for="ReturnUrl" value="@Model.ReturnUrl" type="hidden" />
             <govuk-radios asp-for="Consent">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend>

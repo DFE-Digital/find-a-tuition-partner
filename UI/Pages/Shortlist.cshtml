@@ -27,34 +27,25 @@
                     gov uk SELECT styles not added in with npm?  Get error on index.js saying: export 'Select' (imported as 'Select') was not found in 'govuk-frontend' (possible exports: Accordion, Button, CharacterCount, Checkboxes, Details, ErrorSummary, Header, NotificationBanner, Radios, SkipLink, Tabs, initAll)
                 *@
 
-                <input asp-for="Data.From" hidden />
-                <input asp-for="Data.Postcode" hidden />
+                <input asp-for="Data.From" type="hidden" />
+                <input asp-for="Data.Postcode" type="hidden" />
                 @if (Model.Data.KeyStages != null)
                 {
-                    foreach (var KeyStage in Model.Data.KeyStages)
+                    @for(int i = 0; i < Model.Data.KeyStages.Count(); i++)
                     {
-                        <input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
+                        <input asp-for="Data.KeyStages[i]" type="hidden" />
                     }
                 }
                 @if (Model.Data.Subjects != null)
                 {
-                    foreach (var subject in Model.Data.Subjects)
+                    @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
                     {
-                        <input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+                        <input asp-for="Data.Subjects[i]" type="hidden" />
                     }
                 }
-                @if (Model.Data.TuitionType.HasValue)
-                {
-                    <input asp-for="Data.TuitionType" hidden />
-                }
-                @if (Model.Data.ShortlistOrderBy != null)
-                {
-                    <input asp-for="Data.ShortlistOrderBy" hidden />
-                }
-                @if (Model.Data.ShortlistOrderByDirection != null)
-                {
-                    <input asp-for="Data.ShortlistOrderByDirection" hidden />
-                }
+                <input asp-for="Data.TuitionType" type="hidden" />
+                <input asp-for="Data.ShortlistOrderBy" type="hidden" />
+                <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
 
                 <div data-module="shortlist-refinement">
                     <h2 class="govuk-heading-m">Refine the pricing</h2>
