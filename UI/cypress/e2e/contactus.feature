@@ -13,27 +13,22 @@
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: page as link to back button
+  Scenario: page has link to back button
     Given a user has arrived on the contact us page
     Then they will see the back link
 
-  Scenario: page as link to ftp mail 
+  Scenario: page has link to ftp mail 
     Given a user has arrived on the contact us page
     Then they will see link to tutoring mail address
-
-  Scenario: page should not show contact us link 
+    
+  Scenario: page has link to 'Find out about call charges' 
     Given a user has arrived on the contact us page
-    Then they will not see contact us link
-
- Scenario: Report issue page is displayed when read our guidance link is selected
+    Then they will see link to 'https://www.gov.uk/call-charges' with test id 'find-out-call-charges-link'
+    And the 'Find out about call charges' link opens a new window with test id 'find-out-call-charges-link'
+    
+  Scenario: page has telephone number
     Given a user has arrived on the contact us page
-    When the link ‘read our guidance’ is selected
-    Then they will be taken to the 'Report issues' page
-    And the page's title is 'Report issues'
+    Then they will see the telephone number 'Phone: 0300 373 0891'
 
-  Scenario: page should have a feedbackform link 
-    Given a user has arrived on the contact us page
-    Then they will see feedback form link
-    And the feedback form link opens in a new window
 
  
