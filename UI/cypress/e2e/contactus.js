@@ -15,4 +15,3 @@ Then("they will see link to tutoring mail address", () => {
 Then("they will see the telephone number {string}", (telephone) => {
   cy.get('[data-testid="contact-us-telephone"]').should("have.text", telephone);
 });
-
