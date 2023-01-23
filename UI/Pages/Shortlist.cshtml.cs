@@ -32,7 +32,7 @@ public class ShortlistModel : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        return RedirectToPage(data.ToRouteData());
+        return RedirectToPage(data);
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(Query data, string? removeTuitionPartnerSeoUrl)
@@ -44,7 +44,7 @@ public class ShortlistModel : PageModel
             await _mediator.Send(new RemoveTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
         }
 
-        return RedirectToPage(data.ToRouteData());
+        return RedirectToPage(data);
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>

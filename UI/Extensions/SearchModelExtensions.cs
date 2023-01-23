@@ -6,26 +6,13 @@ namespace UI.Extensions
     {
         public static string ToQueryString(this SearchModel? model)
         {
-            var routes = model?.ToRouteData() ?? new();
+            var routes = model?.ToRouteData(true) ?? new();
             return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
         }
 
         public static Dictionary<string, string> ToRouteData(this SearchModel model)
         {
-            var dictionary = new Dictionary<string, string>();
-
-            model.Add(x => x.From, dictionary);
-            model.Add(x => x.Name, dictionary);
-            model.Add(x => x.Postcode, dictionary);
-            model.Add(x => x.TuitionType, dictionary);
-            model.AddAll(x => x.KeyStages, dictionary);
-            model.AddAll(x => x.Subjects, dictionary);
-            model.Add(x => x.ShortlistOrderBy, dictionary);
-            model.Add(x => x.ShortlistOrderByDirection, dictionary);
-            model.Add(x => x.ShortlistTuitionType, dictionary);
-            model.Add(x => x.ShortlistGroupSize, dictionary);
-
-            return dictionary;
+            return model.ToRouteData(false);
         }
 
         public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude)
@@ -40,12 +27,56 @@ namespace UI.Extensions
             return dictionary;
         }
 
+        private static Dictionary<string, string> ToRouteData(this SearchModel model, bool flattenCollection)
+        {
+            var dictionary = new Dictionary<string, string>();
+
+            model.Add(x => x.From, dictionary);
+            model.Add(x => x.Name, dictionary);
+            model.Add(x => x.Postcode, dictionary);
+            model.Add(x => x.TuitionType, dictionary);
+            model.AddAll(x => x.KeyStages, dictionary, flattenCollection);
+            model.AddAll(x => x.Subjects, dictionary, flattenCollection);
+            model.Add(x => x.ShortlistOrderBy, dictionary);
+            model.Add(x => x.ShortlistOrderByDirection, dictionary);
+            model.Add(x => x.ShortlistTuitionType, dictionary);
+            model.Add(x => x.ShortlistGroupSize, dictionary);
+
+            return dictionary;
+        }
+
         private static void AddAll<T>(
             this SearchModel model,
             Expression<Func<SearchModel, IEnumerable<T>?>> expression,
-            Dictionary<string, string> dictionary)
+            Dictionary<string, string> dictionary,
+            bool flattenCollection)
         {
-            model.Add(expression, (prop, name) => BuildQueryString(prop, name), dictionary);
+            if (flattenCollection)
+            {
+                model.Add(expression, (prop, name) => BuildQueryString(prop, name), dictionary);
+            }
+            else
+            {
+                var name = expression.MemberName();
+                var collection = expression.Compile()(model);
+
+                if (collection is null || name is null) return;
+
+                int i = 0;
+                foreach (var item in collection)
+                {
+                    if (item != null)
+                    {
+                        var itemString = item.ToString();
+
+                        if (!string.IsNullOrWhiteSpace(itemString))
+                        {
+                            dictionary.Add($"{name}[{i}]", itemString);
+                            i++;
+                        }
+                    }
+                }
+            }
         }
 
         private static void Add<T>(
