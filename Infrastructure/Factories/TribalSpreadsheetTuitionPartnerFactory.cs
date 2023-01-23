@@ -1,4 +1,6 @@
-﻿using Application.Extensions;
+﻿using System.Text.RegularExpressions;
+using Application.Constants;
+using Application.Extensions;
 using Application.Extraction;
 using Application.Factories;
 using Domain;
@@ -8,8 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Factories;
 
-//TODO - Consider if can refactor this so less code here?  Validation outside here?
-//TODO - No existing unit or cypress tests - write some?  Possibly run tests against test directory?  With invalid files that cover each warning/error scenario below?
 public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionPartnerFactory
 {
     public const string OrganisationDetailsSheetName = "Organisation Details";
@@ -90,7 +90,6 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             PopulateSubjectCoverageAndPrice(tuitionPartner);
         }
 
-        //TODO - review how the multiple errors/warnings are logged in logit, ensure looks OK
         if (_warnings.Any())
         {
             _logger.LogWarning("Issues importing Tribal spreadsheet '{filename}': {warnings}", filename, string.Join(Environment.NewLine, _warnings));
@@ -198,6 +197,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         tuitionPartner.Website = tuitionPartner.Website.ParseUrl();
 
         //Populate Address from multiple cells
+        var postcode = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_PostCode_s").Value.SourceValue;
         var addressLines = new string?[]
         {
         tuitionPartner.Address,
@@ -205,7 +205,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Address3_s").Value.SourceValue,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_Town_s").Value.SourceValue,
         _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_County_s").Value.SourceValue,
-        _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_PostCode_s").Value.SourceValue
+        postcode
         };
 
         tuitionPartner.Address = string.Join(Environment.NewLine, addressLines.Where(x => x != null));
@@ -213,7 +213,25 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 
         //Deal with warnings and errors
-        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData);
+        if (!string.IsNullOrWhiteSpace(tuitionPartner.Website) && !Regex.Match(tuitionPartner.Website, StringConstants.WebsiteURLRegExp).Success)
+        {
+            _warnings.Add($"The website supplied is invalid in the '{sheetName}' worksheet");
+        }
+        if (!string.IsNullOrWhiteSpace(tuitionPartner.Email) && !Regex.Match(tuitionPartner.Email, StringConstants.EmailRegExp).Success)
+        {
+            _warnings.Add($"The email supplied is invalid in the '{sheetName}' worksheet");
+        }
+        if (!string.IsNullOrWhiteSpace(postcode) && !Regex.Match(postcode, StringConstants.PostcodeRegExp).Success)
+        {
+            _warnings.Add($"The postcode supplied is invalid in the '{sheetName}' worksheet");
+        }
+        if (!string.IsNullOrWhiteSpace(tuitionPartner.PhoneNumber) && !Regex.Match(tuitionPartner.PhoneNumber, StringConstants.PhoneNumberRegExp).Success)
+        {
+            _warnings.Add($"The phone number supplied is invalid in the '{sheetName}' worksheet");
+        }
+
+        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData &&
+                                                                          !(x.Value.IsRequired && string.IsNullOrWhiteSpace(x.Value.SourceValue)));
         if (missingNTPProperties.Any())
         {
             _warnings.Add($"The following were expected and not supplied in the '{sheetName}' worksheet: {string.Join(", ", missingNTPProperties.Select(x => x.Key).ToArray())}");
@@ -370,7 +388,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string TableHeader = "Group";
 
         var sheetName = PricingSheetName;
-        var subjectCoverageAndPrices = new Dictionary<(int groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal>();
+        var subjectCoverageAndPrices = new Dictionary<(Domain.Enums.GroupSize groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal>();
 
         bool castError = false;
 
@@ -385,7 +403,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
                 //Cast to required types
                 var groupStringReplaced = groupString.Replace("1 To ", "", StringComparison.InvariantCultureIgnoreCase);
-                if (!int.TryParse(groupStringReplaced, out int groupSize))
+                if (groupStringReplaced.TryParse(out Domain.Enums.GroupSize groupSize))
                 {
                     castError = true;
                     _errors.Add($"Invalid Group conversion, should be in '1 of x' format.  '{groupString}' is on row {row} on '{sheetName}' worksheet");
@@ -452,7 +470,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.InSchool);
             var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.Online);
 
-            foreach (((int groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
+            foreach (((Domain.Enums.GroupSize groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
             {
                 if (ladHasInSchool && rate > 0 && (tuitionType == Domain.Enums.TuitionType.InSchool || tuitionType == Domain.Enums.TuitionType.Any))
                 {
@@ -484,16 +502,6 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     tuitionPartner.SubjectCoverage.Add(coverage);
                 }
 
-                //Error - group must be 1-6
-                var inavlidGroupSizes = subjectCoverageAndPrices
-                    .Where(x => x.Key.groupSize == 0 || x.Key.groupSize > 6)
-                    .Select(x => x.Key.groupSize)
-                    .OrderBy(x => x)
-                    .Distinct();
-                if (inavlidGroupSizes.Any())
-                {
-                    _errors.Add($"Some invalid group sizes on '{sheetName}' worksheet.  Group sizes: {string.Join(", ", inavlidGroupSizes)}");
-                }
                 //Warn - if any £0
                 if (subjectCoverageAndPrices.Any(x => x.Value == 0))
                 {
@@ -512,14 +520,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddPrice(TuitionPartner tuitionPartner, Domain.Enums.TuitionType tuitionType, int subjectId, int groupSize, decimal rate)
+    private static void AddPrice(TuitionPartner tuitionPartner, Domain.Enums.TuitionType tuitionType, int subjectId, Domain.Enums.GroupSize groupSize, decimal rate)
     {
         var price = new Price
         {
             TuitionPartner = tuitionPartner,
             TuitionTypeId = (int)tuitionType,
             SubjectId = subjectId,
-            GroupSize = groupSize,
+            GroupSize = (int)groupSize,
             HourlyRate = rate
         };
 

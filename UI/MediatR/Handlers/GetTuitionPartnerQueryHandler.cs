@@ -31,7 +31,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         var subjects = tp.SubjectsCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
             .Select(x => $"{((Domain.Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
         var types = tp.TuitionTypes.Select(x => x.Name).Distinct();
-        var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"1 to {x}");
+        var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"{((Domain.Enums.GroupSize)x).DisplayName()}");
         var prices = GetPricing(tp.Prices);
         var lads = await GetLocalAuthorityDistricts(request, tp.Id);
         var allPrices = await GetFullPricing(request, tp.Prices);
