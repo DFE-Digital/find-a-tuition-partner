@@ -49,7 +49,7 @@ export const getJumpToLocationId = ($element) => {
   return params.get("jumpToLocation");
 };
 
-export const textToNumberIndex = (t) => {
+export const mapTextToNumberIndexZeroToTenth = (t) => {
   switch (t) {
     case "first":
       return 0;
@@ -61,7 +61,17 @@ export const textToNumberIndex = (t) => {
       return 3;
     case "fifth":
       return 4;
+    case "sixth":
+      return 5;
+    case "seventh":
+      return 6;
+    case "eighth":
+      return 7;
+    case "ninth":
+      return 8;
+    case "tenth":
+      return 9;
     default:
-      return "";
+      return -1;
   }
 };

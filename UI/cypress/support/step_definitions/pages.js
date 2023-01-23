@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { textToNumberIndex } from "../utils";
+import {mapTextToNumberIndexZeroToTenth} from "../utils";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit("/");
@@ -120,7 +120,7 @@ Then(
   (linkTextLocation, linkText, testId) => {
     cy.get(`[data-testid="${testId}"]`)
       .find(">li")
-      .eq(`${textToNumberIndex(linkTextLocation)}`)
+      .eq(`${mapTextToNumberIndexZeroToTenth(linkTextLocation)}`)
       .should("contain", linkText);
   }
 );
