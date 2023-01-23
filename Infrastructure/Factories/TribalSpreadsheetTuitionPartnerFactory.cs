@@ -230,8 +230,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             _warnings.Add($"The phone number supplied is invalid in the '{sheetName}' worksheet");
         }
 
-        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData &&
-                                                                          !(x.Value.IsRequired && string.IsNullOrWhiteSpace(x.Value.SourceValue)));
+        var missingNTPProperties = _organisationDetailsMapping.Where(x => !x.Value.IsInSourceData);
         if (missingNTPProperties.Any())
         {
             _warnings.Add($"The following were expected and not supplied in the '{sheetName}' worksheet: {string.Join(", ", missingNTPProperties.Select(x => x.Key).ToArray())}");
