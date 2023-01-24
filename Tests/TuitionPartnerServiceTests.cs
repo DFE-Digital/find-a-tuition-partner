@@ -1,7 +1,6 @@
 ﻿using Domain.Constants;
 using Domain.Search;
 using Tests.TestData;
-using UI.Pages;
 
 namespace Tests;
 
@@ -450,6 +449,173 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         charlie.SubjectsCoverage.Should().BeEmpty();
         charlie.Prices.Should().BeEmpty();
         charlie.TuitionTypes.Should().BeEmpty();
+    }
+    #endregion
+
+    #region FilterTuitionPartnersData
+    [Fact]
+    public async void FilterTuitionPartnersData_no_data()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = 6,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage4ModernForeignLanguages }
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().BeNull();
+            refinedResult.TuitionTypes.Should().BeNull();
+            refinedResult.SubjectsCoverage.Should().BeNull();
+
+            refinedResult.Name.Should().NotBeEmpty();
+        }
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_all()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = null,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().NotBeEmpty();
+            refinedResult.TuitionTypes.Should().NotBeEmpty();
+            refinedResult.SubjectsCoverage.Should().NotBeEmpty();
+
+            refinedResult.Name.Should().NotBeEmpty();
+        }
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_group_size()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = 4,
+            TuitionTypeId = null,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        var alpha = refinedResults.First(x => x.Name == "Alpha");
+        alpha!.Prices!.Length.Should().Be(1);
+        alpha!.Prices[0].HourlyRate.Should().Be(11m);
+        alpha!.TuitionTypes!.Length.Should().Be(1);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        alpha!.SubjectsCoverage!.Length.Should().Be(1);
+        alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_tuition_type()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        var delta = refinedResults.First(x => x.Name == "Delta");
+        delta!.Prices!.Length.Should().Be(2);
+        delta!.Prices[0].HourlyRate.Should().Be(113m);
+        delta!.TuitionTypes!.Length.Should().Be(1);
+        delta!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        delta!.SubjectsCoverage!.Length.Should().Be(1);
+        delta!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_subjects()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = null,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths, Subjects.Id.KeyStage3ModernForeignLanguages }
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        //All the TPs in the mocked data have KeyStage2Maths or KeyStage3ModernForeignLanguages
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().NotBeEmpty();
+            refinedResult.TuitionTypes.Should().NotBeEmpty();
+            refinedResult.SubjectsCoverage.Should().NotBeEmpty();
+        }
+
+        refinedResults.Should().NotBeEmpty();
+        var alpha = refinedResults.First(x => x.Name == "Alpha");
+        alpha!.Prices!.Length.Should().Be(3);
+        alpha!.Prices[0].HourlyRate.Should().Be(20m);
+        alpha!.TuitionTypes!.Length.Should().Be(1);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.Online);
+        alpha!.SubjectsCoverage!.Length.Should().Be(1);
+        alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage2Maths);
     }
     #endregion
 
