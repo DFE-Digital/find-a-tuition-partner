@@ -245,7 +245,7 @@ Feature: Tuition Partner shortlist
     When '1 to 1' group size shortlist refinement option is selected
     Then the 'Action Tutoring' empty data reason is 'Does not offer group sizes of 1 to 1'
     When 'Any' group size shortlist refinement option is selected
-    And 'Online' tuition type shortlist refinement option is selected
+    And 'In School' tuition type shortlist refinement option is selected
     Then the 'Action Tutoring' empty data reason is 'Does not offer in school tuition in Stockport'
     When '1 to 1' group size shortlist refinement option is selected
     Then the 'Action Tutoring' empty data reason is 'Does not offer group sizes of 1 to 1 or in school tuition in Stockport'
