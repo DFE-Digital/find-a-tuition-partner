@@ -52,7 +52,7 @@
 
                     <div class="govuk-grid-row">
                         <div class="govuk-grid-column-one-quarter">
-                        <govuk-select asp-for="Data.ShortlistGroupSize">
+                        <govuk-select asp-for="Data.ShortlistGroupSize" data-testid="shortlist-group-size-refine">
                             <govuk-select-label>Group size</govuk-select-label>
                         @foreach (var item in Model.Data.AllGroupSizes)
                         {
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="govuk-grid-column-one-quarter">
-                        <govuk-select asp-for="Data.ShortlistTuitionType">
+                        <govuk-select asp-for="Data.ShortlistTuitionType" data-testid="shortlist-tuition-type-refine">
                             <govuk-select-label>Type of tuition</govuk-select-label>
                         @foreach (var item in Model.Data.AllTuitionTypes)
                         {
@@ -105,7 +105,7 @@
                                 </th>
                                 @if(item.Prices == null)
                                 {
-                                <td class="govuk-table__cell" colspan="4">
+                                <td class="govuk-table__cell" colspan="4" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
                                     @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
                                 </td>
                                 }
@@ -118,7 +118,7 @@
                                     @item.SubjectsCoverage!.Select(e => e.Subject).DisplayList()
                                 </td>
                                 <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
-                                <td class="govuk-table__cell">From @item.Prices.Min(e => e.HourlyRate).FormatPrice()</td>
+                                <td class="govuk-table__cell" data-testid="shortlist-price-@item.SeoUrl">From @item.Prices.Min(e => e.HourlyRate).FormatPrice()</td>
                                 }
                                 <td class="govuk-table__cell app-print-hide">
                                     <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>

@@ -15,7 +15,7 @@ public class ShortlistModel : PageModel
     public async Task<IActionResult> OnGet(Query data)
     {
         data.From = ReferrerList.Shortlist;
-        if (data.ShortlistTuitionType == null && data.TuitionType != null)
+        if (data.ShortlistTuitionType == null && data.TuitionType != null && data.TuitionType != Domain.Enums.TuitionType.Any)
         {
             data.ShortlistTuitionType = data.TuitionType.Value;
         }

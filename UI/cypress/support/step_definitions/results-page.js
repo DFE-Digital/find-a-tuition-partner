@@ -195,3 +195,8 @@ Then(
     });
   }
 );
+
+When("the user selects tuition type {string}", (tutionType) => {
+  cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
+  cy.wait(500);
+});

@@ -149,7 +149,7 @@
     @foreach (var item in Model.Data.Prices)
     {
         <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">@((Domain.Enums.GroupSize)item.Key).DisplayName()</th>
+            <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)item.Key).DisplayName())</th>
             <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
                 @item.Value.FormatFor(TuitionTypes.InSchool)
             </td>
@@ -181,7 +181,7 @@
             @for (var groupSize = 1; groupSize < 7; groupSize++)
             {
                 <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">@((Domain.Enums.GroupSize)groupSize).DisplayName()</th>
+                    <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
                     @foreach (var (_, prices) in subjects)
                     {
                         if (prices.TryGetValue(groupSize, out var price))
