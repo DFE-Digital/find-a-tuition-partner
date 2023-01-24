@@ -128,7 +128,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         if (id == null)
         {
             //shouldn't get here, unless manually changed query string
-            _logger.LogWarning("No TP found for the invalid Id '{Id}' provided", request.Id);
+            _logger.LogInformation("No TP found for the invalid Id '{Id}' provided", request.Id);
             return Result.Error<TuitionPartnerResult>();
         }
 
