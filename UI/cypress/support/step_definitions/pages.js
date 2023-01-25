@@ -1,4 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { mapTextToNumberIndexZeroToTenth } from "../utils";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit("/");
@@ -102,3 +103,24 @@ Then("a user is using a {string}", (device) => {
     cy.viewport(770, 1024);
   }
 });
+
+Then("they will see link to {string} with test id {string}", (link, id) => {
+  cy.get(`[data-testid="${id}"]`).should("have.attr", "href", link);
+});
+
+Then(
+  "the {string} link opens a new window with test id {string}",
+  (linkText, id) => {
+    cy.get(`[data-testid="${id}"]`).should("have.attr", "target", "_blank");
+  }
+);
+
+Then(
+  "the {string} link they see is {string} with test id {string}",
+  (linkTextLocation, linkText, testId) => {
+    cy.get(`[data-testid="${testId}"]`)
+      .find(">li")
+      .eq(`${mapTextToNumberIndexZeroToTenth(linkTextLocation)}`)
+      .should("contain", linkText);
+  }
+);
