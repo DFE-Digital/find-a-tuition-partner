@@ -21,6 +21,11 @@ public class SearchResults : PageModel
     public async Task OnGet(Query data)
     {
         data.TuitionType ??= Domain.Enums.TuitionType.Any;
+        if (data.KeyStages == null && data.Subjects != null)
+        {
+            data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+        }
+
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
 

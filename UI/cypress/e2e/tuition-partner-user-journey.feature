@@ -23,7 +23,7 @@ Feature: User can travel forwards and backwards
     When the postcode is edited in the start page
     And the key stages are edited in the key stages page
     And the subjects are edited in the subjects page after key stage has been edited
-    And the tuition type is changed
+    And the user selects tuition type 'in school'
     Then the filter selections are correct in the search results page with the edited selections
 
   Scenario: User can search by postcode SK1 1EB to see Action Tutoring TP with filtered tuition (online only) types then search by new postcode NR1 1BD that excludes Action Tutoring and then find Action Tutoring via find all will show unfiltered tuition types (Online and School)
