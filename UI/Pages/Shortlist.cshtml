@@ -15,7 +15,7 @@
                 var count = Model.Data.Results?.Count;
                 var partnersPlural = count > 1 ? "partners" : "partner";
             }
-            <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
+            <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong> (@Model.Data.KeyStageSubjectsFilteredLabel)</span>
             <h1 class="govuk-heading-l">My shortlisted tuition partners</h1>
 
             @if (count > 0)
@@ -79,11 +79,11 @@
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Name</th>
-                            <th scope="col" class="govuk-table__header">Key stages covered</th>
-                            <th scope="col" class="govuk-table__header">Subjects</th>
+                            <th scope="col" class="govuk-table__header">Key stages and subjects</th>
+                            <th scope="col" class="govuk-table__header">Group sizes</th>
                             <th scope="col" class="govuk-table__header">Type of tuition</th>
                             <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
-                                <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price</a>
+                                <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Prices</a>
                             </th>
                             <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
                         </tr>
@@ -106,14 +106,20 @@
                                 }
                                 else
                                 {
+                                    var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
+                                    var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
+                                    var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
                                 <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage!.Select(e => e.Subject.KeyStage).DisplayList()
+                                    @foreach (var keyStageName in item.SubjectsCoverage!.Select(e => e.Subject.KeyStage.Name).Distinct().OrderBy(x => x))
+                                    {
+                                        @(keyStageName + ": " + item.SubjectsCoverage!.Where(e => e.Subject.KeyStage.Name == keyStageName).Select(e => e.Subject).DisplayList()) <br/>
+                                    }
                                 </td>
                                 <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage!.Select(e => e.Subject).DisplayList()
+                                    1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
                                 <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
-                                <td class="govuk-table__cell" data-testid="shortlist-price-@item.SeoUrl">From @item.Prices.Min(e => e.HourlyRate).FormatPrice()</td>
+                                <td class="govuk-table__cell" data-testid="shortlist-price-@item.SeoUrl">@prices</td>
                                 }
                                 <td class="govuk-table__cell app-print-hide">
                                     <button class="govuk-button govuk-button--secondary remove-shortlist-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>

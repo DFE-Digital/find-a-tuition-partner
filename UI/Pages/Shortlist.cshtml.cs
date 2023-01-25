@@ -19,6 +19,16 @@ public class ShortlistModel : PageModel
         {
             data.ShortlistTuitionType = data.TuitionType.Value;
         }
+
+        if (data.Subjects != null)
+        {
+            if (data.KeyStages == null)
+            {
+                data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+            }
+            data.KeyStageSubjects = Enum.GetValues(typeof(Domain.Enums.KeyStageSubject)).Cast<Domain.Enums.KeyStageSubject>().Where(x => string.Join(" ", data.Subjects).ToSeoUrl().Contains(x.DisplayName().ToSeoUrl())).ToArray();
+        }
+
         var validator = new Validator();
         var results = await validator.ValidateAsync(data);
         if (!results.IsValid)
@@ -49,6 +59,7 @@ public class ShortlistModel : PageModel
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
+        public Domain.Enums.KeyStageSubject[]? KeyStageSubjects { get; set; }
     };
 
     public record ResultsModel : SearchModel
@@ -74,6 +85,7 @@ public class ShortlistModel : PageModel
 
         public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
         public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
+        public string? KeyStageSubjectsFilteredLabel { get; set; }
 
     }
 
@@ -133,12 +145,27 @@ public class ShortlistModel : PageModel
                 }
             }
 
+            //TODO - Tidy this, just like this for demo
+            string? keyStageSubjectsFilteredLabel = null;
+            if (request != null && request.KeyStages != null && request.KeyStageSubjects != null)
+            {
+                foreach (var keyStage in request.KeyStages)
+                {
+                    if (!string.IsNullOrWhiteSpace(keyStageSubjectsFilteredLabel))
+                    {
+                        keyStageSubjectsFilteredLabel += "; ";
+                    }
+                    keyStageSubjectsFilteredLabel += keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "")).Distinct().OrderBy(x => x));
+                }
+            }
+
             return searchResults switch
             {
                 SuccessResult => queryResponse with
                 {
                     Results = searchResults.Data,
                     InvalidTPs = invalidResults,
+                    KeyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel
                 },
                 Domain.ValidationResult error => queryResponse with
                 {
@@ -188,6 +215,12 @@ public class ShortlistModel : PageModel
                 return Result.Error<TuitionPartnersResult>("Unable to get LocalAuthorityDistrictId for supplied postcode");
             }
 
+            IEnumerable<int>? subjectIds = null;
+            if (request.KeyStageSubjects != null)
+            {
+                subjectIds = request.KeyStageSubjects.Select(x => (int)x);
+            }
+
             var results = await FindTuitionPartners(
                         tuitionPartnerSeoUrls,
                         orderBy,
@@ -196,7 +229,8 @@ public class ShortlistModel : PageModel
                         new TuitionPartnersDataFilter()
                         {
                             GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
-                            TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType
+                            TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType,
+                            SubjectIds = subjectIds
                         },
                         cancellationToken);
 
