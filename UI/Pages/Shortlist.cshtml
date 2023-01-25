@@ -22,11 +22,6 @@
             {
                 var dataQueryString = Model.Data.ToQueryString();
 
-                @*
-                    TODO
-                    gov uk SELECT styles not added in with npm?  Get error on index.js saying: export 'Select' (imported as 'Select') was not found in 'govuk-frontend' (possible exports: Accordion, Button, CharacterCount, Checkboxes, Details, ErrorSummary, Header, NotificationBanner, Radios, SkipLink, Tabs, initAll)
-                *@
-
                 <input asp-for="Data.From" type="hidden" />
                 <input asp-for="Data.Postcode" type="hidden" />
                 @if (Model.Data.KeyStages != null)
