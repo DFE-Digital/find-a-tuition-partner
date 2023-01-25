@@ -21,7 +21,6 @@
 
     var consentCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
     var consentGranted = Convert.ToBoolean(consentCookie);
-    var showContactus = Context.Request.HttpContext.Request.Path != "/contact-us";
 }
 
 <!DOCTYPE html>
@@ -193,18 +192,6 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
         <main class="govuk-main-wrapper " id="main-content" role="main">
             @RenderBody()
         </main>
-
-        @if (showContactus)
-        {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full app-contact-banner">
-                    <p class="govuk-body app-contact-content govuk-!-margin-0">
-                        For any questions or problems you can <a href="/contact-us"
-                                                             class="govuk-footer__link app-contact-content" data-testid="contact-us-link">contact us</a>
-                    </p>
-                </div>
-            </div>
-        }
     </div>
 
     <footer class="govuk-footer " role="contentinfo">
@@ -212,7 +199,13 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
             <div class="govuk-footer__meta">
                 <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                     <h2 class="govuk-visually-hidden">Support links</h2>
-                    <ul class="govuk-footer__inline-list">
+                    <ul data-testid="govuk-footer-link" class="govuk-footer__inline-list">
+                        <li class="govuk-footer__inline-list-item">
+                            <a asp-page="/ContactUs" class="govuk-footer__link"
+                               data-testid="contact-us-link">
+                                Contact us
+                            </a>
+                        </li>
                         <li class="govuk-footer__inline-list-item">
                             <a asp-page="/Accessibility" class="govuk-footer__link"
                                data-testid="accessibility-link">Accessibility</a>
@@ -223,6 +216,12 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a asp-page="/Privacy" class="govuk-footer__link" data-testid="privacy-link">Privacy</a>
+                        </li>
+                        <li class="govuk-footer__inline-list-item">
+                            <a asp-page="/ReportIssues" class="govuk-footer__link"
+                               data-testid="report-issues-link">
+                                Report issues
+                            </a>
                         </li>
                     </ul>
 

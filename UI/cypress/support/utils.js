@@ -48,3 +48,30 @@ export const getJumpToLocationId = ($element) => {
   const params = new URLSearchParams(queryStringParams);
   return params.get("jumpToLocation");
 };
+
+export const mapTextToNumberIndexZeroToTenth = (t) => {
+  switch (t) {
+    case "first":
+      return 0;
+    case "second":
+      return 1;
+    case "third":
+      return 2;
+    case "fourth":
+      return 3;
+    case "fifth":
+      return 4;
+    case "sixth":
+      return 5;
+    case "seventh":
+      return 6;
+    case "eighth":
+      return 7;
+    case "ninth":
+      return 8;
+    case "tenth":
+      return 9;
+    default:
+      return -1;
+  }
+};
