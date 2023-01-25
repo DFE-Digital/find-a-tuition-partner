@@ -50,8 +50,8 @@
                 <div data-module="shortlist-refinement">
                     <h2 class="govuk-heading-m">Refine the pricing</h2>
 
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-one-quarter">
+                    <div class="govuk-grid-row govuk-grid-row-shortlist">
+                        <div class="govuk-grid-column-shortlist">
                         <govuk-select asp-for="Data.ShortlistGroupSize" data-testid="shortlist-group-size-refine">
                             <govuk-select-label>Group size</govuk-select-label>
                         @foreach (var item in Model.Data.AllGroupSizes)
@@ -61,7 +61,7 @@
                         </govuk-select>
                         </div>
 
-                        <div class="govuk-grid-column-one-quarter">
+                        <div class="govuk-grid-column-shortlist">
                         <govuk-select asp-for="Data.ShortlistTuitionType" data-testid="shortlist-tuition-type-refine">
                             <govuk-select-label>Type of tuition</govuk-select-label>
                         @foreach (var item in Model.Data.AllTuitionTypes)
@@ -71,7 +71,7 @@
                         </govuk-select>
                         </div>
 
-                        <div class="govuk-grid-column-one-quarter">
+                        <div class="govuk-grid-column-shortlist">
                             <div class="govuk-button-group app-shortlist--apply-refinement">
                                 <button class="govuk-button govuk-button--primary remove-shortlist-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
                             </div>

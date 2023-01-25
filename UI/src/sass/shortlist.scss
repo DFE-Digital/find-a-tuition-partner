@@ -83,3 +83,13 @@
 .js-enabled .app-shortlist--apply-refinement {
   display: none;
 }
+
+.govuk-grid-column-shortlist {
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 0;
+}
+
+.govuk-grid-row-shortlist {
+  margin-left: 0px;
+}
