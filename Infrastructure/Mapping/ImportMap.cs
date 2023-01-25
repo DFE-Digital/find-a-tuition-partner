@@ -23,6 +23,7 @@ namespace Infrastructure.Mapping
         public bool IsRequired { get; set; } = false;
         public bool HasConvertedValue { get { return _convertedValue != null; } }
         public string? SourceValue { get { return _sourceValue; } }
+        public int? RecommendedMaxStringLength { get; set; } = null;
 
         private static Type? GetPropertyType(object data, string propName)
         {

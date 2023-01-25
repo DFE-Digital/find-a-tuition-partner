@@ -37,17 +37,17 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
             { "Organisation_Ref_ID_s", new ImportMap() },
-            { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) },
-            { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) },
-            { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true } },
-            { "Organisation_Address3_s", new ImportMap() { IsStoredInNtp = true } },
-            { "Organisation_Town_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
-            { "Organisation_County_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
-            { "Organisation_PostCode_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
-            { "Organisation_Tel_s", new ImportMap(tpMapping, nameof(tpMapping.PhoneNumber)) },
-            { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) },
-            { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) },
-            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) },
+            { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) { RecommendedMaxStringLength = 120 } },
+            { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) { RecommendedMaxStringLength = 100 } },
+            { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true, RecommendedMaxStringLength = 100 } },
+            { "Organisation_Address3_s", new ImportMap() { IsStoredInNtp = true, RecommendedMaxStringLength = 100 } },
+            { "Organisation_Town_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true, RecommendedMaxStringLength = 100 } },
+            { "Organisation_County_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true, RecommendedMaxStringLength = 100 } },
+            { "Organisation_PostCode_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true, RecommendedMaxStringLength = 8 } },
+            { "Organisation_Tel_s", new ImportMap(tpMapping, nameof(tpMapping.PhoneNumber)) { RecommendedMaxStringLength = 40 } },
+            { "Organisation_TP_Link_s", new ImportMap(tpMapping, nameof(tpMapping.Website)) { RecommendedMaxStringLength = 200 } },
+            { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) { RecommendedMaxStringLength = 100 } },
+            { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) { RecommendedMaxStringLength = 350 } },
             { "Organisation_LegalStatus_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
             { "Organisation_LogoVector_s", new ImportMap() },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
@@ -235,6 +235,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         {
             _warnings.Add($"The following were expected and not supplied in the '{sheetName}' worksheet: {string.Join(", ", missingNTPProperties.Select(x => x.Key).ToArray())}");
         }
+        var exceedMaxLengthNTPProperties = _organisationDetailsMapping.Where(x => x.Value.IsInSourceData &&
+                                                                                    !string.IsNullOrWhiteSpace(x.Value.SourceValue) &&
+                                                                                    x.Value.RecommendedMaxStringLength != null &&
+                                                                                    x.Value.SourceValue.Length > x.Value.RecommendedMaxStringLength);
+        if (exceedMaxLengthNTPProperties.Any())
+        {
+            _warnings.Add($"The following exceeded the suggested max length in the '{sheetName}' worksheet: {string.Join(", ", exceedMaxLengthNTPProperties.Select(x => $"{x.Key} (suggested max length {x.Value.RecommendedMaxStringLength}, actual length {x.Value.SourceValue!.Length})").ToArray())}");
+        }
         var missingRequiredNTPProperties = _organisationDetailsMapping.Where(x => x.Value.IsRequired && string.IsNullOrWhiteSpace(x.Value.SourceValue));
         if (missingRequiredNTPProperties.Any())
         {
@@ -401,11 +409,10 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var tuitionTypeString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionTypeColumn, row);
 
                 //Cast to required types
-                var groupStringReplaced = groupString.Replace("1 To ", "", StringComparison.InvariantCultureIgnoreCase);
-                if (groupStringReplaced.TryParse(out Domain.Enums.GroupSize groupSize))
+                if (!groupString.TryParse(out Domain.Enums.GroupSize groupSize))
                 {
                     castError = true;
-                    _errors.Add($"Invalid Group conversion, should be in '1 of x' format.  '{groupString}' is on row {row} on '{sheetName}' worksheet");
+                    _errors.Add($"Invalid Group conversion, should be in '1 to x' format.  '{groupString}' is on row {row} on '{sheetName}' worksheet");
                 }
                 if (!keyStageString.TryParse(out Domain.Enums.KeyStage keyStage))
                 {
