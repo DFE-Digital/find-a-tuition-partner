@@ -53,7 +53,7 @@ namespace UI.Extensions
         {
             if (flattenCollection)
             {
-                model.Add(expression, (prop, name) => BuildQueryString(prop, name), dictionary);
+                model.Add(expression, BuildQueryString, dictionary);
             }
             else
             {
