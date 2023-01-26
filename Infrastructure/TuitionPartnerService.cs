@@ -111,26 +111,30 @@ public class TuitionPartnerService : ITuitionPartnerService
 
             case TuitionPartnerOrderBy.Random:
                 var random = ordering.RandomSeed is null ? new Random() : new Random(ordering.RandomSeed.Value);
-                return results.OrderByDescending(e => e.SeoUrl).OrderBy(x => random.Next()).ToList();
+                return results
+                    .OrderBy(x => random.Next())
+                    .ThenByDescending(e => e.SeoUrl)
+                    .ToList();
 
             case TuitionPartnerOrderBy.MinPrice:
                 return ordering.Direction == OrderByDirection.Descending
                     ? results
-                        .OrderBy(e => e.Name)
-                        .OrderBy(s => (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0) ? -1 : Array.IndexOf(ordering.SeoUrlOrderBy, s.SeoUrl))
                         .OrderByDescending(e => e.Prices == null ? int.MinValue : e.Prices!.Min(x => x.HourlyRate))
+                        .ThenBy(s => (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0) ? -1 : Array.IndexOf(ordering.SeoUrlOrderBy, s.SeoUrl))
+                        .ThenBy(e => e.Name)
                     : results
-                        .OrderBy(e => e.Name)
-                        .OrderBy(s => (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0) ? -1 : Array.IndexOf(ordering.SeoUrlOrderBy, s.SeoUrl))
-                        .OrderBy(e => e.Prices == null ? int.MaxValue : e.Prices!.Min(x => x.HourlyRate));
+                        .OrderBy(e => e.Prices == null ? int.MaxValue : e.Prices!.Min(x => x.HourlyRate))
+                        .ThenBy(s => (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0) ? -1 : Array.IndexOf(ordering.SeoUrlOrderBy, s.SeoUrl))
+                        .ThenBy(e => e.Name);
 
             case TuitionPartnerOrderBy.SeoList:
                 if (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0)
                 {
                     return results;
                 }
+                var tuitionPartnerWithDataMoveToEndOfList = 1000;
                 return results
-                    .OrderBy(x => x.Prices == null ? (1000 + Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl)) : Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl));
+                    .OrderBy(x => x.Prices == null ? (Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl) + tuitionPartnerWithDataMoveToEndOfList) : Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl));
 
             default:
                 return results.OrderByDescending(e => e.Id);
