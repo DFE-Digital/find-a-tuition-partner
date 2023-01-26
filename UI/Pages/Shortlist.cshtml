@@ -3,7 +3,7 @@
 @model UI.Pages.ShortlistModel
 @{
     var clearShortlistUrl = $"/shortlist-clear-confirm?{Model.Data.ToQueryString()}";
-    ViewData["Title"] = "My shortlisted tuition partners";
+    ViewData["Title"] = "Compare tuition partner prices";
     ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}{HelperFunctions.GetJumpToLocation(Request)}";
     ViewData["IncludePrintPage"] = true;
 }
@@ -15,9 +15,8 @@
                 var count = Model.Data.Results?.Count;
                 var partnersPlural = count > 1 ? "partners" : "partner";
             }
-            <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong> (@Model.Data.KeyStageSubjectsFilteredLabel)</span>
-            <h1 class="govuk-heading-l">My shortlisted tuition partners</h1>
-
+            <h1 class="govuk-heading-l">Compare tuition partner prices</h1>
+            <h2 class="govuk-heading-m" show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong>, @Model.Data.KeyStageSubjectsFilteredLabel</h2>
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
@@ -43,7 +42,7 @@
                 <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
 
                 <div data-module="shortlist-refinement">
-                    <h2 class="govuk-heading-m">Refine the pricing</h2>
+                    <h3 class="govuk-heading-s">Refine the pricing</h3>
 
                     <div class="govuk-grid-row govuk-grid-row-shortlist">
                         <div class="govuk-grid-column-shortlist">
@@ -79,11 +78,10 @@
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Name</th>
-                            <th scope="col" class="govuk-table__header">Key stages and subjects</th>
                             <th scope="col" class="govuk-table__header">Group sizes</th>
                             <th scope="col" class="govuk-table__header">Type of tuition</th>
                             <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
-                                <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Prices</a>
+                                <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price per pupil, per hour</a>
                             </th>
                             <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
                         </tr>
@@ -102,19 +100,14 @@
                                 {
                                 <td class="govuk-table__cell" colspan="4" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
                                     @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
-                                </td>
-                                }
-                                else
-                                {
-                                    var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
-                                    var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
-                                    var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
-                                <td class="govuk-table__cell">
-                                    @foreach (var keyStageName in item.SubjectsCoverage!.Select(e => e.Subject.KeyStage.Name).Distinct().OrderBy(x => x))
-                                    {
-                                        @(keyStageName + ": " + item.SubjectsCoverage!.Where(e => e.Subject.KeyStage.Name == keyStageName).Select(e => e.Subject).DisplayList()) <br/>
+                                        </td>
                                     }
-                                </td>
+                                    else
+                                    {
+                                        var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
+                                        var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
+                                        var vatMsg = item.IsVatCharged ? "inc" : "exc";
+                                        var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}, {vatMsg} VAT";
                                 <td class="govuk-table__cell">
                                     1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
@@ -150,7 +143,7 @@
             }
 
             <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
-                <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my shortlist</a>
+                <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my price comparision list</a>
             </div>
         </form>
     </div>

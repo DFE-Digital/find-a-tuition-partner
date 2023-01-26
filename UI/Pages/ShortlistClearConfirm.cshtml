@@ -2,17 +2,17 @@
 @model UI.Pages.ShortlistClearConfirm
 @{
     var returnUrl = "/shortlist?" + Model.Data.ToQueryString();
-    ViewData["Title"] = "Clear my shortlisted confirmation";
+    ViewData["Title"] = "Clear my price comparision list";
     ViewData["BackLinkHref"] = returnUrl;
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <form method="post">
-            <h1 class="govuk-heading-l">You're about to clear your shortlist</h1>
+            <h1 class="govuk-heading-l">You're about to clear your price comparision list</h1>
 
             <p class="govuk-body">
-                Any tuition partners you’ve shortlisted will be removed.
+                Any tuition partners you’ve added to your price comparision list will be removed.
             </p>
 
             <div class="govuk-button-group">
