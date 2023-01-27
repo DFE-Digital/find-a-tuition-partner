@@ -107,8 +107,9 @@
                                         var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
                                         var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
                                         var vatMsg = item.IsVatCharged ? "inc" : "exc";
-                                        var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}, {vatMsg} VAT";
-                                <td class="govuk-table__cell">
+                                        var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
+                                        prices += $", {vatMsg} VAT";
+                                        <td class="govuk-table__cell">
                                     1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
                                 <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
