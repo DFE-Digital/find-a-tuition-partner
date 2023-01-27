@@ -250,7 +250,7 @@ Feature: Tuition Partner shortlist
     When '1 to 1' group size shortlist refinement option is selected
     Then the 'Action Tutoring' empty data reason is 'Does not offer group sizes of 1 to 1 or in school tuition in Stockport'
 
-  Scenario: The shortlist refinement tuition type defaults to the search tuition type filter on first load and then maintains own state after being selected
+  Scenario: The shortlist refinement tuition type defaults to the search tuition type filter on first load and then maintains own state after being selected until the search tuition type filter is changed
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their shortlist on the results page
     When they choose to view their shortlist from the results page
@@ -268,3 +268,8 @@ Feature: Tuition Partner shortlist
     Then the search results are displayed
     When they choose to view their shortlist from the results page
     Then the tuition type select option is 'Online'
+    When they click 'Back'
+    Then the search results are displayed
+    When the user selects tuition type 'any'
+    When they choose to view their shortlist from the results page
+    Then the tuition type select option is 'Any'

@@ -29,6 +29,13 @@ public class SearchResults : PageModel
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
 
+        //Clear shortlist TuitionType if has been changed on shortlist
+        if (data.PreviousTuitionType != null && data.PreviousTuitionType != data.TuitionType)
+        {
+            Data.ShortlistTuitionType = null;
+        }
+        Data.PreviousTuitionType = data.TuitionType;
+
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
@@ -161,7 +168,10 @@ public class SearchResults : PageModel
     private JsonResult GetJsonResult(int totalShortlistedTuitionPartners) =>
         new(new UpdateTuitionPartnerResult(true, totalShortlistedTuitionPartners));
 
-    public record Query : SearchModel, IRequest<ResultsModel>;
+    public record Query : SearchModel, IRequest<ResultsModel>
+    {
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
+    };
 
     public record ResultsModel : SearchModel
     {
@@ -178,6 +188,7 @@ public class SearchResults : PageModel
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
     }
 
     private class Validator : AbstractValidator<Query>
