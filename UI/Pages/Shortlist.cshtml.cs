@@ -85,7 +85,7 @@ public class ShortlistModel : PageModel
 
         public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
         public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
-        public string? KeyStageSubjectsFilteredLabel { get; set; }
+        public IEnumerable<string> KeyStageSubjectsFilteredLabels { get; set; } = new List<string>();
 
     }
 
@@ -146,16 +146,12 @@ public class ShortlistModel : PageModel
             }
 
             //TODO - Tidy this, just like this for demo
-            string? keyStageSubjectsFilteredLabel = null;
+            List<string> keyStageSubjectsFilteredLabels = new();
             if (request != null && request.KeyStages != null && request.KeyStageSubjects != null)
             {
                 foreach (var keyStage in request.KeyStages)
                 {
-                    if (!string.IsNullOrWhiteSpace(keyStageSubjectsFilteredLabel))
-                    {
-                        keyStageSubjectsFilteredLabel += "; ";
-                    }
-                    keyStageSubjectsFilteredLabel += keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "")).Distinct().OrderBy(x => x));
+                    keyStageSubjectsFilteredLabels.Add(keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "")).Distinct().OrderBy(x => x)));
                 }
             }
 
@@ -165,7 +161,7 @@ public class ShortlistModel : PageModel
                 {
                     Results = searchResults.Data,
                     InvalidTPs = invalidResults,
-                    KeyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel
+                    KeyStageSubjectsFilteredLabels = keyStageSubjectsFilteredLabels
                 },
                 Domain.ValidationResult error => queryResponse with
                 {

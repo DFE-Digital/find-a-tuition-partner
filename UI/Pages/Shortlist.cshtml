@@ -15,8 +15,19 @@
                 var count = Model.Data.Results?.Count;
                 var partnersPlural = count > 1 ? "partners" : "partner";
             }
+            <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
             <h1 class="govuk-heading-l">Compare tuition partner prices</h1>
-            <h2 class="govuk-heading-m" show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong>, @Model.Data.KeyStageSubjectsFilteredLabel</h2>
+
+            <div class="govuk-inset-text" show-if="@Model.Data.KeyStageSubjectsFilteredLabels.Any()">
+                The following search filters have been applied:
+                <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
+                    @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </div>
+
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
@@ -42,7 +53,7 @@
                 <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
 
                 <div data-module="shortlist-refinement">
-                    <h3 class="govuk-heading-s">Refine the pricing</h3>
+                    <h3 class="govuk-heading-s refine-pricing-heading">Refine the pricing</h3>
 
                     <div class="govuk-grid-row govuk-grid-row-shortlist">
                         <div class="govuk-grid-column-shortlist">
@@ -98,7 +109,7 @@
                                 </th>
                                 @if(item.Prices == null)
                                 {
-                                <td class="govuk-table__cell" colspan="4" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
+                                <td class="govuk-table__cell" colspan="3" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
                                     @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
                                         </td>
                                     }
@@ -106,9 +117,9 @@
                                     {
                                         var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
                                         var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
-                                        var vatMsg = item.IsVatCharged ? "inc" : "exc";
+                                        var vatMsg = item.IsVatCharged ? " including VAT" : " VAT is not applicable";
                                         var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
-                                        prices += $", {vatMsg} VAT";
+                                        prices += vatMsg;
                                         <td class="govuk-table__cell">
                                     1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
