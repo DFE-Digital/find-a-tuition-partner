@@ -21,7 +21,7 @@ public class TuitionPartner : PageModel
         SearchModel = new SearchModel(query);
 
         if (string.IsNullOrWhiteSpace(query.Id))
-            return ReturnNotFound($"Null or whitespace id '{query.Id}' provided");
+            return ReturnNotFoundWithLogging($"Null or whitespace id '{query.Id}' provided", LogLevel.Information);
 
         Data = await _mediator.Send(query);
 
@@ -29,7 +29,7 @@ public class TuitionPartner : PageModel
         {
             var seoUrl = query.Id.ToSeoUrl();
 
-            if (query.Id == seoUrl) return ReturnNotFound($"No Tuition Partner found for id '{query.Id}'");
+            if (query.Id == seoUrl) return ReturnNotFoundWithLogging($"No Tuition Partner found for id '{query.Id}'", LogLevel.Information);
 
             _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
@@ -79,9 +79,9 @@ public class TuitionPartner : PageModel
     private ArgumentException GetArgumentException(string name) => new($"{name} is null or whitespace");
     private JsonResult GetShortlistJsonResult(bool status) => new(new { Updated = status });
 
-    private IActionResult ReturnNotFound(string logMessage)
+    private IActionResult ReturnNotFoundWithLogging(string logMessage, LogLevel logLevel)
     {
-        _logger.LogWarning("{LogMessage}", logMessage);
+        _logger.Log(logLevel, "{LogMessage}", logMessage);
         return NotFound();
     }
 
