@@ -19,13 +19,11 @@
             <h1 class="govuk-heading-l">Compare tuition partner prices</h1>
 
             <div class="govuk-inset-text" show-if="@Model.Data.KeyStageSubjectsFilteredLabels.Any()">
-                The following search filters have been applied:
-                <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
+                <p>Results for:</p>
                     @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
                     {
-                        <li>@item</li>
+                        @item<br/>
                     }
-                </ul>
             </div>
 
             @if (count > 0)
@@ -53,7 +51,7 @@
                 <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
 
                 <div data-module="shortlist-refinement">
-                    <h3 class="govuk-heading-s refine-pricing-heading">Refine the pricing</h3>
+                    <h3 class="govuk-heading-s refine-pricing-heading">Refine pricing</h3>
 
                     <div class="govuk-grid-row govuk-grid-row-shortlist">
                         <div class="govuk-grid-column-shortlist">
