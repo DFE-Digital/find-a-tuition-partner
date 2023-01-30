@@ -41,6 +41,7 @@ namespace UI.Extensions
             model.Add(x => x.ShortlistOrderByDirection, dictionary);
             model.Add(x => x.ShortlistTuitionType, dictionary);
             model.Add(x => x.ShortlistGroupSize, dictionary);
+            model.Add(x => x.ShortlistShowWithVAT, dictionary);
 
             return dictionary;
         }

@@ -226,7 +226,8 @@ public class ShortlistModel : PageModel
                         {
                             GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
                             TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType,
-                            SubjectIds = subjectIds
+                            SubjectIds = subjectIds,
+                            ShowWithVAT = request.ShortlistShowWithVAT
                         },
                         cancellationToken);
 

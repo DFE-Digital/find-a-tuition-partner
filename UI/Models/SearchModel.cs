@@ -22,6 +22,7 @@ namespace UI.Models
             ShortlistOrderByDirection = model.ShortlistOrderByDirection;
             ShortlistTuitionType = model.ShortlistTuitionType;
             ShortlistGroupSize = model.ShortlistGroupSize;
+            ShortlistShowWithVAT = model.ShortlistShowWithVAT;
         }
 
         public ReferrerList? From { get; set; }
@@ -43,5 +44,7 @@ namespace UI.Models
         public TuitionType? ShortlistTuitionType { get; set; }
 
         public GroupSize? ShortlistGroupSize { get; set; }
+
+        public bool? ShortlistShowWithVAT { get; set; }
     }
 }

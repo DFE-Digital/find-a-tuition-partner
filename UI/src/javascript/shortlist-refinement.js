@@ -14,6 +14,14 @@ ShortlistRefinement.prototype.init = function () {
         this.refinementChangedEvent.bind(this)
       );
     });
+    this.$refinementSection
+      .querySelectorAll("input[type='checkbox']")
+      .forEach((element) => {
+        element.addEventListener(
+          "click",
+          this.refinementChangedEvent.bind(this)
+        );
+      });
   }
 };
 
