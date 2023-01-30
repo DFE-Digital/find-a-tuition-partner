@@ -62,3 +62,9 @@ if ($optionsSelect) {
 import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();
 printThisPage.init();
+
+import TuitionPartner from "./javascript/tuition-partner";
+TuitionPartner.init();
+
+import SearchResults from "./javascript/search-results";
+SearchResults.init();

@@ -28,7 +28,6 @@ public class SearchResults : PageModel
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
 
-        // await _mediator.Send(new RemoveAllTuitionPartnersCommand());
         await SetSelectableTuitionPartners();
     }
 

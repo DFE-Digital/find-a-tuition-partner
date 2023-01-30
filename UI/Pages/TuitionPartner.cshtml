@@ -5,10 +5,8 @@
     ViewData["Title"] = Model.Data!.Name;
     var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
     var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
-    var isFromSearchResultOrShortlistPage = false;
+    var isFromSearchResultOrShortlistPage = Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist;
 
-    if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
-        isFromSearchResultOrShortlistPage = true;
     var localAuthorityHeader = "Tuition partner for ";
     if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
         localAuthorityHeader = "Shortlisted tuition partner for ";
@@ -138,6 +136,7 @@
 </p>
 
 <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
+    <caption>Pricing table</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Tuition group size</th>
@@ -257,10 +256,12 @@
             </govuk-summary-list-row>
         }
     </govuk-summary-list>
-    @if (Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist)
+    @if (isFromSearchResultOrShortlistPage)
     {
         <hr class="govuk-section-break govuk-section-break--visible ">
-        <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+        <div data-module="tuition-partner-shortlist">
+            <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+        </div>
         <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
             @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
             <input type="hidden" name="SearchModel" value="@searchModel"/>
@@ -277,5 +278,3 @@
 </div>
 </div>
 </form>
-
-@section Scripts{<script src="/Pages/TuitionPartner.cshtml.js" asp-append-version="true"></script>}

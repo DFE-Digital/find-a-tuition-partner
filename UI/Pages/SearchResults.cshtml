@@ -197,7 +197,9 @@
                                 var shortlistCheckboxModel = new ShortlistCheckboxModel($"shortlist-cb-{shortlist.SeoUrl}",
                                     shortlist.SeoUrl, item.Name, "ShortlistedTuitionPartners", shortlist.IsSelected);
                             }
-                            <partial name="Shared/_ShortlistCheckbox" model="shortlistCheckboxModel"/>
+                            <div data-module="search-results-tp-shortlist">
+                                <partial name="Shared/_ShortlistCheckbox" model="shortlistCheckboxModel"/>
+                            </div>
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
@@ -215,5 +217,3 @@
 
     </form>
 </div>
-
-@section Scripts { <script src="/Pages/SearchResults.cshtml.js" asp-append-version="true"></script> }
