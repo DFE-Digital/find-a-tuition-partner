@@ -27,7 +27,7 @@ namespace UI.Pages
 
             _logger.LogInformation("Cleared full shortlist");
 
-            return RedirectToPage("shortlist", data.ToRouteData());
+            return RedirectToPage("shortlist", data);
         }
 
         public record Query : SearchModel

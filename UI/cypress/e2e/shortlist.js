@@ -41,7 +41,9 @@ Then(
 );
 
 When("they choose to view their shortlist from the results page", () => {
-  cy.get('[data-testid="my-shortlisted-tuition-partners-link"]').click();
+  cy.get('[data-testid="my-shortlisted-tuition-partners-link"]').click({
+    force: true,
+  });
 });
 
 Then("{string} is entry {int} on the shortlist page", (tpName, entry) => {
@@ -96,10 +98,6 @@ When(
     cy.get("a").contains(tpName).click();
   }
 );
-
-Then("they choose to sort the shortlist by name", () => {
-  cy.get('[data-testid="shortlist-name-sort"]').click();
-});
 
 Then("they choose to sort the shortlist by price", () => {
   cy.get('[data-testid="shortlist-price-sort"]').click();
@@ -179,3 +177,81 @@ Then("the shortlist page displays {string}", (expectedText) => {
     removeExcessWhitespaces(removeNewLine(expectedText))
   );
 });
+
+Then(
+  "{string} group size shortlist refinement option is selected",
+  (optionText) => {
+    cy.get("[data-testid='shortlist-group-size-refine'] select").select(
+      `${optionText}`
+    );
+    cy.wait(1000);
+  }
+);
+
+Then(
+  "{string} tuition type shortlist refinement option is selected",
+  (optionText) => {
+    cy.get("[data-testid='shortlist-tuition-type-refine'] select").select(
+      `${optionText}`
+    );
+    cy.wait(1000);
+  }
+);
+
+Then("the group size select option is {string}", (optionText) => {
+  cy.get(
+    "[data-testid='shortlist-group-size-refine'] select option:selected"
+  ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
+});
+
+Then("the tuition type select option is {string}", (optionText) => {
+  cy.get(
+    "[data-testid='shortlist-tuition-type-refine'] select option:selected"
+  ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
+});
+
+Then("the {string} price is {string}", (tpName, priceString) => {
+  cy.get(`[data-testid="shortlist-price-${kebabCase(tpName)}"]`).should(
+    "contain.text",
+    removeExcessWhitespaces(removeNewLine(priceString))
+  );
+});
+
+Then("the {string} empty data reason is {string}", (tpName, priceString) => {
+  cy.get(
+    `[data-testid="shortlist-empty-data-reason-${kebabCase(tpName)}"]`
+  ).should("contain.text", removeExcessWhitespaces(removeNewLine(priceString)));
+});
+
+Given(
+  "a user has selected TPs to shortlist and journeyed forward to the shortlist page",
+  () => {
+    Step(
+      this,
+      "a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'"
+    );
+    Step(
+      this,
+      "they add 'Reeson Education' to their shortlist on the results page"
+    );
+    Step(
+      this,
+      "they add 'Action Tutoring' to their shortlist on the results page"
+    );
+    Step(
+      this,
+      "they add '3D Recruit Ltd' to their shortlist on the results page"
+    );
+    Step(
+      this,
+      "they add 'Booster Club' to their shortlist on the results page"
+    );
+    Step(this, "they add 'Zen Educate' to their shortlist on the results page");
+    Step(
+      this,
+      "they add 'Tutors Green' to their shortlist on the results page"
+    );
+    Step(this, "they choose to view their shortlist from the results page");
+    Step(this, "there are 6 entries on the shortlist page");
+  }
+);

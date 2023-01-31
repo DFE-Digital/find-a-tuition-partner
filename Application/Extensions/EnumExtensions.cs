@@ -16,6 +16,12 @@ public static class EnumExtensions
             : displayName;
     }
 
+    public static List<TEnum> GetAllEnums<TEnum>()
+        where TEnum : struct, Enum
+    {
+        return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+    }
+
     private static DescriptionAttribute? GetDisplayAttribute(Enum enumValue)
         => enumValue
             .GetType()

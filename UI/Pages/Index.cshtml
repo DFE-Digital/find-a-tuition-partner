@@ -37,22 +37,23 @@
             <input type="hidden" name="handler" value="Submit" />
             @if (Model.Data.KeyStages != null)
             {
-                foreach (var KeyStage in Model.Data.KeyStages)
+                @for(int i = 0; i < Model.Data.KeyStages.Count(); i++)
                 {
-                    <input type="hidden" id="@KeyStage" name="Data.KeyStages" value="@KeyStage" />
+                    <input asp-for="Data.KeyStages![i]" type="hidden" />
                 }
             }
             @if (Model.Data.Subjects != null)
             {
-                foreach (var subject in Model.Data.Subjects)
+                @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
                 {
-                    <input type="hidden" id="@subject" name="Data.Subjects" value="@subject" />
+                    <input asp-for="Data.Subjects![i]" type="hidden" />
                 }
             }
-            @if (Model.Data.TuitionType.HasValue)
-            {
-                <input asp-for="Data.TuitionType" hidden />
-            }
+            <input asp-for="Data.TuitionType" type="hidden" />
+            <input asp-for="Data.ShortlistOrderBy" type="hidden" />
+            <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
+            <input asp-for="Data.ShortlistTuitionType" type="hidden" />
+            <input asp-for="Data.ShortlistGroupSize" type="hidden" />
 
             <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
             <p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>

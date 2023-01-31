@@ -67,6 +67,21 @@ public class LoggingTuitionPartnerService : ITuitionPartnerService
         return result;
     }
 
+    public IEnumerable<TuitionPartnerResult> FilterTuitionPartnersData(IEnumerable<TuitionPartnerResult> results, TuitionPartnersDataFilter dataFilter)
+    {
+        _logger.LogInformation("Filter data for tuition partners");
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+        var result = _inner.FilterTuitionPartnersData(results, dataFilter);
+        stopwatch.Stop();
+
+        _logger.LogInformation("FilterTuitionPartnersData {Count} TP results in {Elapsed}ms",
+                    result.Count(), stopwatch.ElapsedMilliseconds);
+
+        return result;
+    }
+
     public IEnumerable<TuitionPartnerResult> OrderTuitionPartners(IEnumerable<TuitionPartnerResult> results, TuitionPartnerOrdering ordering)
     {
         _logger.LogInformation("Order tuition partners");

@@ -5,7 +5,7 @@ using UI.MediatR.Queries;
 using UI.Structs;
 using KeyStage = UI.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
-using TuitionType = UI.Enums.TuitionType;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Tests;
 

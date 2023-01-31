@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace UI.Enums
+namespace Domain.Enums
 {
     public enum TuitionType
     {

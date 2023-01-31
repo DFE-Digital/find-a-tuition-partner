@@ -74,3 +74,7 @@ const searchResultShortlistCheckboxes = document.querySelectorAll(
   '[data-module="search-results-tp-shortlist"]'
 );
 SearchResults.init(searchResultShortlistCheckboxes);
+
+import ShortlistRefinement from "./javascript/shortlist-refinement";
+var shortlistRefinement = new ShortlistRefinement();
+shortlistRefinement.init();
