@@ -74,7 +74,7 @@ Cypress.Commands.add("isWithinViewPort", (element) => {
   return element;
 });
 
-Cypress.Commands.add("isCorrectJumpToLocation", ($element) => {
+Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
   cy.visit($element.attr("href"));
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get('[data-testid="pricing-group-size-column"]')
