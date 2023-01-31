@@ -77,6 +77,20 @@ Cypress.Commands.add("isWithinViewPort", (element) => {
 Cypress.Commands.add("isCorrectJumpToLocation", ($element) => {
   cy.visit($element.attr("href"));
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get('[data-testid="pricing-group-size-column"]')
+    .first()
+    .should("not.be.empty");
+  const names = [];
+  cy.get('[data-testid="pricing-group-size-column"]')
+    .each(($element, index) => {
+      names[index] = $element.text();
+    })
+    .then(() => {
+      const sortedNames = names.slice().sort(function (a, b) {
+        return a.localeCompare(b, "en", { sensitivity: "base" });
+      });
+      expect(names).to.deep.equal(sortedNames);
+    });
   cy.get(".govuk-back-link").click();
   cy.get(`[id="${getJumpToLocationId($element)}"]`).then(($el) => {
     cy.isWithinViewPort($el);
