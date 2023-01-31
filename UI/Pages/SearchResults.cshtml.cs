@@ -20,9 +20,21 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query data)
     {
-        data.TuitionType ??= Enums.TuitionType.Any;
+        data.TuitionType ??= Domain.Enums.TuitionType.Any;
+        if (data.KeyStages == null && data.Subjects != null)
+        {
+            data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+        }
+
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
+
+        //Clear shortlist TuitionType if has been changed on shortlist
+        if (data.PreviousTuitionType != null && data.PreviousTuitionType != data.TuitionType)
+        {
+            Data.ShortlistTuitionType = null;
+        }
+        Data.PreviousTuitionType = data.TuitionType;
 
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
@@ -35,7 +47,7 @@ public class SearchResults : PageModel
     public async Task OnGetClearAllFilters(string postcode)
     {
         Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Enums.TuitionType.Any, KeyStages = null });
+        { Postcode = postcode, Subjects = null, TuitionType = Domain.Enums.TuitionType.Any, KeyStages = null });
 
         await SetSelectableTuitionPartners();
     }
@@ -156,7 +168,10 @@ public class SearchResults : PageModel
     private JsonResult GetJsonResult(int totalShortlistedTuitionPartners) =>
         new(new UpdateTuitionPartnerResult(true, totalShortlistedTuitionPartners));
 
-    public record Query : SearchModel, IRequest<ResultsModel>;
+    public record Query : SearchModel, IRequest<ResultsModel>
+    {
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
+    };
 
     public record ResultsModel : SearchModel
     {
@@ -169,10 +184,11 @@ public class SearchResults : PageModel
         }
 
         public Dictionary<Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Enums.TuitionType>();
+        public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
     }
 
     private class Validator : AbstractValidator<Query>
@@ -252,12 +268,12 @@ public class SearchResults : PageModel
                 Enums.KeyStage.KeyStage4,
             };
 
-        private static List<Enums.TuitionType> AllTuitionTypes =>
+        private static List<Domain.Enums.TuitionType> AllTuitionTypes =>
             new()
             {
-                Enums.TuitionType.Any,
-                Enums.TuitionType.InSchool,
-                Enums.TuitionType.Online,
+                Domain.Enums.TuitionType.Any,
+                Domain.Enums.TuitionType.InSchool,
+                Domain.Enums.TuitionType.Online,
             };
 
         private async Task<Dictionary<Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,

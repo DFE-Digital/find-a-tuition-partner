@@ -15,6 +15,10 @@ public class ShortlistModel : PageModel
     public async Task<IActionResult> OnGet(Query data)
     {
         data.From = ReferrerList.Shortlist;
+        if (data.ShortlistTuitionType == null && data.TuitionType != null)
+        {
+            data.ShortlistTuitionType = data.TuitionType.Value;
+        }
         var validator = new Validator();
         var results = await validator.ValidateAsync(data);
         if (!results.IsValid)
@@ -24,22 +28,27 @@ public class ShortlistModel : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostRemoveAsync(Query data)
+    public IActionResult OnPostApplyRefinement(Query data)
     {
         if (!ModelState.IsValid) return Page();
 
-        if (!string.IsNullOrWhiteSpace(data.RemoveTuitionPartnerSeoUrl))
+        return RedirectToPage(data);
+    }
+
+    public async Task<IActionResult> OnPostRemoveAsync(Query data, string? removeTuitionPartnerSeoUrl)
+    {
+        if (!ModelState.IsValid) return Page();
+
+        if (!string.IsNullOrWhiteSpace(removeTuitionPartnerSeoUrl))
         {
-            await _mediator.Send(new RemoveTuitionPartnerCommand(data.RemoveTuitionPartnerSeoUrl));
+            await _mediator.Send(new RemoveTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
         }
 
-        return RedirectToPage(data.ToRouteData());
+        return RedirectToPage(data);
     }
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
-        public TuitionPartnerOrderBy? OrderBy { get; set; }
-        public string? RemoveTuitionPartnerSeoUrl { get; set; }
     };
 
     public record ResultsModel : SearchModel
@@ -62,6 +71,9 @@ public class ShortlistModel : PageModel
         {
             return (this with { ShortlistOrderBy = matchedOrderBy, ShortlistOrderByDirection = (ShortlistOrderBy == matchedOrderBy && ShortlistOrderByDirection == OrderByDirection.Ascending) ? OrderByDirection.Descending : OrderByDirection.Ascending }).ToRouteData();
         }
+
+        public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
+        public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
 
     }
 
@@ -97,7 +109,11 @@ public class ShortlistModel : PageModel
 
         public async Task<ResultsModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var queryResponse = new ResultsModel(request);
+            var queryResponse = new ResultsModel(request) with
+            {
+                AllTuitionTypes = EnumExtensions.GetAllEnums<Domain.Enums.TuitionType>(),
+                AllGroupSizes = EnumExtensions.GetAllEnums<GroupSize>()
+            };
 
             var seoUrls = GetShortlistSeoUrls();
 
@@ -177,6 +193,11 @@ public class ShortlistModel : PageModel
                         orderBy,
                         orderByDirection,
                         location.Data,
+                        new TuitionPartnersDataFilter()
+                        {
+                            GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
+                            TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType
+                        },
                         cancellationToken);
 
             var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
@@ -202,6 +223,7 @@ public class ShortlistModel : PageModel
             TuitionPartnerOrderBy orderBy,
             OrderByDirection orderByDirection,
             LocationFilterParameters parameters,
+            TuitionPartnersDataFilter tuitionPartnersDataFilter,
             CancellationToken cancellationToken)
         {
 
@@ -218,7 +240,14 @@ public class ShortlistModel : PageModel
                 Urn = parameters?.Urn
             }, cancellationToken);
 
-            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering() { OrderBy = orderBy, Direction = orderByDirection, SeoUrlOrderBy = tuitionPartnerSeoUrls });
+            tuitionPartners = _tuitionPartnerService.FilterTuitionPartnersData(tuitionPartners, tuitionPartnersDataFilter);
+
+            tuitionPartners = _tuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering()
+            {
+                OrderBy = orderBy,
+                Direction = orderByDirection,
+                SeoUrlOrderBy = tuitionPartnerSeoUrls
+            });
 
             return tuitionPartners;
         }

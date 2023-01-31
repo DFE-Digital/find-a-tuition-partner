@@ -62,3 +62,7 @@ if ($optionsSelect) {
 import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();
 printThisPage.init();
+
+import ShortlistRefinement from "./javascript/shortlist-refinement";
+var shortlistRefinement = new ShortlistRefinement();
+shortlistRefinement.init();

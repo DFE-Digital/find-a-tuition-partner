@@ -31,10 +31,6 @@ When("the postcode is edited in the start page", () => {
   Step(this, "they click 'Continue'");
 });
 
-When("the tuition type is changed", () => {
-  cy.get(`input[id="in-school"]`).check();
-});
-
 Then("user has journeyed forward to a selected tuition partner page", () => {
   Step(this, "they enter 'SK1 1EB' as the school's postcode");
   Step(this, "they click 'Continue'");

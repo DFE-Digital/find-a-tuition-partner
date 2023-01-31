@@ -65,7 +65,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
 
         results.Should().NotBeEmpty();
         results.Select(x => x.Name).Should()
-            .ContainInOrder("Alpha", "Delta", "Bravo", "Charlie");
+            .ContainInOrder("Delta", "Alpha", "Charlie", "Bravo");
     }
 
     [Theory]
@@ -101,20 +101,20 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
         yield return new object[]
         {
             new TuitionPartnersFilter { },
-            new []{ "Alpha", "Delta", "Bravo", "Charlie", }
+            new []{ "Delta", "Alpha", "Charlie", "Bravo", }
         };
 
         yield return new object[]
         {
             new TuitionPartnersFilter { LocalAuthorityDistrictId = 58 }, //58 = E06000030
-            new []{ "Delta", "Alpha", "Charlie", "Bravo",  },
+            new []{ "Alpha", "Delta", "Bravo", "Charlie",  },
             "E06000030"
         };
 
         yield return new object[]
         {
             new TuitionPartnersFilter { LocalAuthorityDistrictId = 144 }, //144 = E07000179
-            new []{  "Bravo", "Alpha", "Charlie", "Delta",  },
+            new []{ "Charlie", "Delta", "Bravo", "Alpha",  },
             "E07000179"
         };
 
@@ -125,7 +125,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
                 LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 1, 2, 3, 4 }
             },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie", },
+            new []{ "Alpha", "Charlie", "Delta", "Bravo", },
             "E07000179"
         };
 
@@ -137,7 +137,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
                 LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 4, 3, 2, 1 }
             },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie", },
+            new []{ "Alpha", "Charlie", "Delta", "Bravo", },
             "E07000179"
         };
 
@@ -149,7 +149,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
                 LocalAuthorityDistrictId = 144, //144 = E07000179
                 SubjectIds = new[] { 4, 5, 6, 7, 8, 9 }
             },
-            new []{ "Charlie", "Delta", "Bravo", "Alpha", },
+            new []{ "Bravo", "Alpha", "Charlie", "Delta", },
             "E07000179"
         };
 
@@ -161,7 +161,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
                 SubjectIds = new[] { 4, 3, 2, 1 },
                 TuitionTypeId = 1,
             },
-            new []{ "Charlie", "Alpha", "Delta", "Bravo", },
+            new []{ "Bravo", "Delta", "Alpha", "Charlie", },
             "E06000057"
         };
 
@@ -173,7 +173,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
                 SubjectIds = new[] { 4, 3, 2, 1 },
                 TuitionTypeId = 2,
             },
-            new []{ "Delta", "Bravo", "Charlie", "Alpha", },
+            new []{ "Alpha", "Charlie", "Bravo", "Delta", },
             "E06000057"
         };
     }

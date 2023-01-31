@@ -64,7 +64,7 @@ public class BackLinks
     [Fact]
     public void Construct_querystring_from_tutor_type()
     {
-        var model = new SearchModel { TuitionType = TuitionType.Online };
+        var model = new SearchModel { TuitionType = Domain.Enums.TuitionType.Online };
         var result = model.ToQueryString();
         result.Should().Be("TuitionType=Online");
     }
