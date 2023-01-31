@@ -46,7 +46,7 @@ Feature: User enters postcode to begin search
     Given a user has started the 'Find a tuition partner' journey
     When they enter 'INVALID' as the school's postcode
     And they click 'Continue'
-    Then they will see 'Enter a valid postcode' as an error message for the 'postcode'
+    Then they will see 'Enter a real postcode' as an error message for the 'postcode'
 
   Scenario: user enters a postcode in Wales
     Given a user has started the 'Find a tuition partner' journey
@@ -71,7 +71,7 @@ Feature: User enters postcode to begin search
     When they click on the postcode error
     Then the school's postcode text input is focused
 
-  Scenario: user enters a valid postcode
+  Scenario: user enters a real postcode
     Given a user has started the 'Find a tuition partner' journey
     When they enter 'SK1 1EB' as the school's postcode
     And they click 'Continue'

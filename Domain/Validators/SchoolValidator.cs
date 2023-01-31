@@ -42,7 +42,7 @@ public class SchoolValidator : AbstractValidator<School>
 
         RuleFor(m => m.Postcode)
             .NotEmpty()
-            .WithMessage("Enter a valid Postcode");
+            .WithMessage("Enter a real postcode");
     }
 
     private bool ValidEstablishmentStatusId(int EstablishmentStatusId)

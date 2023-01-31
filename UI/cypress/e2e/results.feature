@@ -37,7 +37,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     When they enter 'INVALID' as the school's postcode
     And they click 'Continue'
-    Then they will see 'Enter a valid postcode' as an error message for the 'postcode'
+    Then they will see 'Enter a real postcode' as an error message for the 'postcode'
 
   Scenario: user enters a postcode in Wales
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
