@@ -64,7 +64,13 @@ var printThisPage = new PrintThisPage();
 printThisPage.init();
 
 import TuitionPartner from "./javascript/tuition-partner";
-TuitionPartner.init();
+const tpShortlistCheckboxes = document.querySelector(
+  '[data-module="tuition-partner-shortlist"]'
+);
+TuitionPartner.init(tpShortlistCheckboxes);
 
 import SearchResults from "./javascript/search-results";
-SearchResults.init();
+const searchResultShortlistCheckboxes = document.querySelectorAll(
+  '[data-module="search-results-tp-shortlist"]'
+);
+SearchResults.init(searchResultShortlistCheckboxes);

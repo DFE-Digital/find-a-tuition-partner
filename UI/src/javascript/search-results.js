@@ -1,31 +1,19 @@
 "use strict";
 
-import axios from "axios";
+import SearchResultsClient from "./api/search-results-client";
 
 const SearchResults = (() => {
-  const getAddShortlistTuitionPartnerFetchUrl = (seoUrl) =>
-    `/search-results?handler=AddShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}`;
-
-  const getRemoveShortlistTuitionPartnerFetchUrl = (seoUrl) =>
-    `/search-results?handler=RemoveShortlistedTuitionPartner&tuitionPartnerSeoUrl=${seoUrl}`;
-
-  const getSeoUrlFromCheckboxId = (id) => id && id.replace("shortlist-cb-", "");
-
+  let client = new SearchResultsClient();
   const isFetchResponseDataValid = (response) =>
     response &&
     response.isCallSuccessful !== "undefined" &&
     response.totalShortlistedTuitionPartners !== "undefined";
-
-  const shortlistCheckboxes = document.querySelectorAll(
-    '[data-module="search-results-tp-shortlist"]'
-  );
-  const throwError = (message = "Invalid result") => {
-    throw new Error(message);
-  };
-
-  const init = () => {
-    if (shortlistCheckboxes && shortlistCheckboxes.length > 0) {
-      shortlistCheckboxes.forEach((element) => {
+  const init = (searchResultShortlistCheckboxes) => {
+    if (
+      searchResultShortlistCheckboxes &&
+      searchResultShortlistCheckboxes.length > 0
+    ) {
+      searchResultShortlistCheckboxes.forEach((element) => {
         element
           .querySelector("input[type='checkbox']")
           .addEventListener("click", onCheckboxClick);
@@ -50,13 +38,6 @@ const SearchResults = (() => {
       }
     })(lastCheckboxPromise);
   };
-  const getResponseData = (response) => {
-    if (response.status >= 200 && response.status <= 299) {
-      return response.data;
-    } else {
-      throwError(response.statusText);
-    }
-  };
   const setShortlistedTuitionPartnersBadgeClass = (
     badgeElement,
     totalShortlistedTuitionPartners
@@ -76,7 +57,6 @@ const SearchResults = (() => {
       );
     }
   };
-
   const updateSearchResultPage = (result, checkBox, elseCheckboxState) => {
     if (isFetchResponseDataValid(result) && result.isCallSuccessful) {
       const badgeElement = document.getElementById(
@@ -94,28 +74,10 @@ const SearchResults = (() => {
     }
   };
   const onChecked = async (checkbox) => {
-    return await axios
-      .get(
-        getAddShortlistTuitionPartnerFetchUrl(
-          getSeoUrlFromCheckboxId(checkbox.id)
-        )
-      )
-      .then((response) => getResponseData(response))
-      .catch((error) => {
-        throwError(error);
-      });
+    return await client.getAddShortlistedTuitionPartner(checkbox.id);
   };
   const onUnChecked = async (checkbox) => {
-    return await axios
-      .get(
-        getRemoveShortlistTuitionPartnerFetchUrl(
-          getSeoUrlFromCheckboxId(checkbox.id)
-        )
-      )
-      .then((response) => getResponseData(response))
-      .catch((error) => {
-        throwError(error);
-      });
+    return await client.getRemoveShortlistedTuitionPartner(checkbox.id);
   };
 
   return {
