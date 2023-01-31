@@ -43,7 +43,7 @@ public class LocationNotAvailableResult : ErrorResult<LocationFilterParameters, 
 
 public class LocationNotFoundResult : ErrorResult<LocationFilterParameters, string>
 {
-    public LocationNotFoundResult() : base("Enter a valid postcode")
+    public LocationNotFoundResult() : base("Enter a real postcode")
     {
     }
 }
