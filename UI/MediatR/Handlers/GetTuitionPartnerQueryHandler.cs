@@ -202,6 +202,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
                 )
             )
             .Where(x => x.Value.HasAtLeastOnePrice)
+            .OrderBy(x => x.Key)
             .ToDictionary(k => k.Key, v => v.Value);
 
         static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
