@@ -151,7 +151,14 @@ public class ShortlistModel : PageModel
             {
                 foreach (var keyStage in request.KeyStages)
                 {
-                    keyStageSubjectsFilteredLabels.Add(keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "")).Distinct().OrderBy(x => x)));
+                    var keyStageSubjectsFilteredLabel = keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "").ToLower()).Distinct().OrderBy(x => x));
+                    keyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.Replace("english", "English");
+                    var indexOfLastCommaKeyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.LastIndexOf(",");
+                    if (indexOfLastCommaKeyStageSubjectsFilteredLabel != -1)
+                    {
+                        keyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.Remove(indexOfLastCommaKeyStageSubjectsFilteredLabel, 1).Insert(indexOfLastCommaKeyStageSubjectsFilteredLabel, " and");
+                    }
+                    keyStageSubjectsFilteredLabels.Add(keyStageSubjectsFilteredLabel);
                 }
             }
 
