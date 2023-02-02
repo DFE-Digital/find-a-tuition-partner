@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using UI.Analytics;
 using UI.Filters;
 using UI.Routing;
+using UI.Services;
 using AssemblyReference = UI.AssemblyReference;
 
 // Data import is a stand-alone process that should terminate once completed

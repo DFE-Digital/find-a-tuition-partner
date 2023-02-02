@@ -1,9 +1,7 @@
 using System.Text;
 using Application.Common.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Services;
+namespace UI.Services;
 
 /// <summary>
 /// The CookieBasedTuitionPartnerShortlistStorageService stores ShortlistedTuitionPartner details in a cookie
