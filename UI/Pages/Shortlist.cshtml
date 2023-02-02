@@ -18,6 +18,19 @@
             <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
             <h1 class="govuk-heading-l">My shortlisted tuition partners</h1>
 
+            @if(Model.Data.KeyStageSubjectsFilteredLabels.Any())
+            {
+                 <h2 class="govuk-heading-m">You've searched for:</h2>
+                @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
+                {
+                    <p class="govuk-body key-stage-subjects-filtered-labels">@item</p>
+                }
+            }
+            else
+            {
+                <h2 class="govuk-heading-m">Results for any key stage subject</h2>
+            }
+
             @if (count > 0)
             {
                 var dataQueryString = Model.Data.ToQueryString();
@@ -43,7 +56,7 @@
                 <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
 
                 <div data-module="shortlist-refinement">
-                    <h2 class="govuk-heading-m">Refine the pricing</h2>
+                    <h2 class="govuk-heading-m refine-pricing-heading">Refine pricing</h2>
 
                     <div class="govuk-grid-row govuk-grid-row-shortlist">
                         <div class="govuk-grid-column-shortlist">
@@ -79,8 +92,7 @@
                         <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Name</th>
-                            <th scope="col" class="govuk-table__header">Key stages covered</th>
-                            <th scope="col" class="govuk-table__header">Subjects</th>
+                            <th scope="col" class="govuk-table__header">Group sizes</th>
                             <th scope="col" class="govuk-table__header">Type of tuition</th>
                             <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">
                                 <a class="table-column-sort" data-testid="shortlist-price-sort" asp-page="Shortlist" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.MinPrice))">Price</a>
@@ -100,17 +112,14 @@
                                 </th>
                                 @if(item.Prices == null)
                                 {
-                                <td class="govuk-table__cell" colspan="4" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
+                                <td class="govuk-table__cell" colspan="3" data-testid="shortlist-empty-data-reason-@item.SeoUrl">
                                     @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
                                 </td>
                                 }
                                 else
                                 {
                                 <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage!.Select(e => e.Subject.KeyStage).DisplayList()
-                                </td>
-                                <td class="govuk-table__cell">
-                                    @item.SubjectsCoverage!.Select(e => e.Subject).DisplayList()
+                                    1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
                                 <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
                                 <td class="govuk-table__cell" data-testid="shortlist-price-@item.SeoUrl">From @item.Prices.Min(e => e.HourlyRate).FormatPrice()</td>

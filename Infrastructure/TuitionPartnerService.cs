@@ -34,47 +34,55 @@ public class TuitionPartnerService : ITuitionPartnerService
             var prices = tpResult.Prices!.ToList();
             if (prices.Any())
             {
-                var pricesOriginal = tpResult.Prices!.ToList();
-
-                if (dataFilter.GroupSize != null && tpResult.Prices != null)
+                if (dataFilter.SubjectIds != null && dataFilter.SubjectIds.Any())
                 {
-                    prices = prices.Where(x => x.GroupSize == dataFilter.GroupSize.Value).ToList();
-                    if (!prices.Any())
-                    {
-                        tpResult.RefinedDataEmptyReason = $"Does not offer group sizes of {((GroupSize)dataFilter.GroupSize).DisplayName()}";
-                    }
-                }
-
-                if (dataFilter.SubjectIds != null && dataFilter.SubjectIds.Any() && prices.Any())
-                {
-                    var refinedOriginalPrices = pricesOriginal.Where(x => dataFilter.SubjectIds.Contains(x.SubjectId)).ToList();
-                    if (!refinedOriginalPrices.Any())
-                    {
-                        tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
-                            $"Does not offer tuition for the selected subject" :
-                            $"{tpResult.RefinedDataEmptyReason} or for the selected subject";
-                    }
-
+                    //Filter prices so only include the subjects
                     if (prices.Any())
                     {
                         prices = prices.Where(x => dataFilter.SubjectIds.Contains(x.SubjectId)).ToList();
                     }
-                }
 
-                if (dataFilter.TuitionTypeId != null)
-                {
-                    var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
-                    if (!refinedOriginalPrices.Any())
+                    var setRefinedDataEmpty = !prices.Any();
+                    //If any subject ids are not included then remove all and add empty reason
+                    if (dataFilter.SubjectIds.Any(x => !prices.Select(p => p.SubjectId).Contains(x)))
                     {
-                        tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
-                            $"Does not offer {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in " :
-                            $"{tpResult.RefinedDataEmptyReason} or {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in ";
-                        tpResult.RefinedDataEmptyReasonAppendLAName = true;
+                        prices = new List<Domain.Price>();
                     }
 
-                    if (prices.Any())
+                    if (!prices.Any())
                     {
-                        prices = prices.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
+                        tpResult.RefinedDataEmptyReason = "Does not offer tuition for all the selected subjects";
+                    }
+                }
+
+                if (prices.Any())
+                {
+                    var pricesOriginal = tpResult.Prices!.ToList();
+
+                    if (dataFilter.GroupSize != null && tpResult.Prices != null)
+                    {
+                        prices = prices.Where(x => x.GroupSize == dataFilter.GroupSize.Value).ToList();
+                        if (!prices.Any())
+                        {
+                            tpResult.RefinedDataEmptyReason = $"Does not offer group sizes of {((GroupSize)dataFilter.GroupSize).DisplayName()}";
+                        }
+                    }
+
+                    if (dataFilter.TuitionTypeId != null)
+                    {
+                        var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
+                        if (!refinedOriginalPrices.Any())
+                        {
+                            tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
+                                $"Does not offer {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in " :
+                                $"{tpResult.RefinedDataEmptyReason} or {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in ";
+                            tpResult.RefinedDataEmptyReasonAppendLAName = true;
+                        }
+
+                        if (prices.Any())
+                        {
+                            prices = prices.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
+                        }
                     }
                 }
             }

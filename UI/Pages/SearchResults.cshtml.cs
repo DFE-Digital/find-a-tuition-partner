@@ -205,7 +205,7 @@ public class SearchResults : PageModel
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
 
             RuleForEach(m => m.Subjects)
-                .Must(x => KeyStageSubject.TryParse(x, out var _));
+                .Must(x => UI.Models.KeyStageSubject.TryParse(x, out var _));
         }
     }
 
@@ -321,7 +321,7 @@ public class SearchResults : PageModel
             Query request,
             CancellationToken cancellationToken)
         {
-            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<UI.Models.KeyStageSubject>();
 
             var subjects = await _db.Subjects.Where(e =>
                     keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
