@@ -19,32 +19,29 @@ const ShortlistCheckbox = (() => {
       });
     }
   };
+
+  let lastCheckboxPromise = null;
   const onCheckboxClick = async (event) => {
     const checkbox = event.target;
-    if (checkbox.checked) {
+    const checked = checkbox.checked;
+
+    lastCheckboxPromise = (async (previousPromise) => {
+      await previousPromise;
       try {
-        const result = await onChecked(checkbox.id);
-        if (!isResultValid(result)) throwError();
-        updateSearchResultPage(result);
-        setLocalAuthorityHeaderText();
-      } catch (error) {
-        checkbox.checked = false;
+        const updateFunction = checked ? onChecked : onUnChecked;
+        const result = await updateFunction(checkbox);
+        updateSearchResultPage(result, checkbox, !checked);
+        setLocalAuthorityHeaderText(checked);
+      } catch (e) {
+        checkbox.checked = checked;
       }
-    }
-    if (!checkbox.checked) {
-      try {
-        const result = await onUnChecked(checkbox.id);
-        if (!isResultValid(result)) throwError();
-        updateSearchResultPage(result);
-        setLocalAuthorityHeaderText("Tuition partner for ");
-      } catch (error) {
-        checkbox.checked = true;
-      }
-    }
+    })(lastCheckboxPromise);
   };
-  const setLocalAuthorityHeaderText = (
-    headerText = "Shortlisted tuition partner for "
-  ) => {
+  const setLocalAuthorityHeaderText = (checked) => {
+    let headerText = "Tuition partner for ";
+    if (checked) {
+      headerText = "Shortlisted tuition partner for ";
+    }
     const localAuthHeader = document.getElementById(
       "tp-details-page--tp-localAuthHeader"
     );
@@ -72,7 +69,7 @@ const ShortlistCheckbox = (() => {
       );
     }
   };
-  const updateSearchResultPage = (result) => {
+  const updateSearchResultPage = (result, checkBox, elseCheckboxState) => {
     if (isResultValid(result) && result.isCallSuccessful) {
       const badgeElement = document.getElementById(
         "totalShortlistedTuitionPartners"
@@ -84,23 +81,25 @@ const ShortlistCheckbox = (() => {
           result.totalShortlistedTuitionPartners
         );
       }
+    } else {
+      checkBox.checked = elseCheckboxState;
     }
   };
-  const onChecked = async (checkboxId) => {
+  const onChecked = async (checkbox) => {
     const totalShortlistedTuitionPartners = document.querySelectorAll(
       `input[name="ShortlistedTuitionPartners"]:checked`
     ).length;
     return await client.postAddToShortlist(
-      checkboxId,
+      checkbox.id,
       totalShortlistedTuitionPartners
     );
   };
-  const onUnChecked = async (checkboxId) => {
+  const onUnChecked = async (checkbox) => {
     const totalShortlistedTuitionPartners = document.querySelectorAll(
       `input[name="ShortlistedTuitionPartners"]:checked`
     ).length;
     return await client.postRemoveFromShortlist(
-      checkboxId,
+      checkbox.id,
       totalShortlistedTuitionPartners
     );
   };
