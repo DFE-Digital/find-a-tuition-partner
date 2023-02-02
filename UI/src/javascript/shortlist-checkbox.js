@@ -30,7 +30,8 @@ const ShortlistCheckbox = (() => {
       } catch (error) {
         checkbox.checked = false;
       }
-    } else {
+    }
+    if (!checkbox.checked) {
       try {
         const result = await onUnChecked(checkbox.id);
         if (!isResultValid(result)) throwError();
