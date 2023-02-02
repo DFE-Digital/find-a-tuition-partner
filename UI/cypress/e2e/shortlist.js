@@ -70,23 +70,20 @@ Then(
 );
 
 Then(
-  "entry {int} on the shortlist is the row {string}, {string}, {string}, {string}, {string}",
-  (entry, name, keyStages, subjects, tuitionType, price) => {
+  "entry {int} on the shortlist is the row {string}, {string}, {string}, {string}",
+  (entry, name, groupSizes, tuitionType, price) => {
     cy.get("tbody tr")
       .eq(entry - 1)
       .within(() => {
         cy.get("th").should((el) => expect(el.text().trim()).to.equal(name));
         cy.get("td")
           .eq(0)
-          .should((el) => expect(el.text().trim()).to.equal(keyStages));
+          .should((el) => expect(el.text().trim()).to.equal(groupSizes));
         cy.get("td")
           .eq(1)
-          .should((el) => expect(el.text().trim()).to.equal(subjects));
-        cy.get("td")
-          .eq(2)
           .should((el) => expect(el.text().trim()).to.equal(tuitionType));
         cy.get("td")
-          .eq(3)
+          .eq(2)
           .should((el) => expect(el.text().trim()).to.equal(price));
       });
   }

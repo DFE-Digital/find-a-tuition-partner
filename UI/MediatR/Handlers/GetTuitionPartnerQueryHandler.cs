@@ -8,14 +8,16 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 {
     private readonly ILocationFilterService _locationService;
     private readonly ITuitionPartnerService _tuitionPartnerService;
+    private readonly ILookupDataService _lookupDataService;
     private readonly INtpDbContext _db;
     private readonly ILogger<TuitionPartner> _logger;
 
-    public GetTuitionPartnerQueryHandler(ILocationFilterService locationService,
-        ITuitionPartnerService tuitionPartnerService, INtpDbContext db, ILogger<TuitionPartner> logger)
+    public GetTuitionPartnerQueryHandler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService,
+        ILookupDataService lookupDataService, INtpDbContext db, ILogger<TuitionPartner> logger)
     {
         _locationService = locationService;
         _tuitionPartnerService = tuitionPartnerService;
+        _lookupDataService = lookupDataService;
         _db = db;
         _logger = logger;
     }
@@ -242,8 +244,11 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             {
                 fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
 
-                var keyStageSubjects = await _db.Subjects.Where(e => e.KeyStageId == (int)keyStage)
-                    .OrderBy(e => e.Name).ToArrayAsync();
+                var allKeyStageSubjects = await _lookupDataService.GetSubjectsAsync();
+
+                var keyStageSubjects = allKeyStageSubjects.Where(e => e.KeyStageId == (int)keyStage)
+                    .OrderBy(e => e.Name).ToArray();
+
                 foreach (var subject in keyStageSubjects)
                     fullPricing[tuitionType][keyStage][subject.Name] = new Dictionary<int, decimal>();
             }

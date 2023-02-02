@@ -8,21 +8,21 @@ namespace Infrastructure;
 
 public class TuitionPartnerService : ITuitionPartnerService
 {
-    private readonly ITuitionPartnerRepository _tuitionPartnerRepositoryRepository;
+    private readonly ITuitionPartnerRepository _tuitionPartnerRepository;
 
-    public TuitionPartnerService(ITuitionPartnerRepository tuitionPartnerRepositoryRepository)
+    public TuitionPartnerService(ITuitionPartnerRepository tuitionPartnerRepository)
     {
-        _tuitionPartnerRepositoryRepository = tuitionPartnerRepositoryRepository;
+        _tuitionPartnerRepository = tuitionPartnerRepository;
     }
 
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
-        return await _tuitionPartnerRepositoryRepository.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
+        return await _tuitionPartnerRepository.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
     }
 
     public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersAsync(TuitionPartnerRequest request, CancellationToken cancellationToken)
     {
-        return await _tuitionPartnerRepositoryRepository.GetTuitionPartnersAsync(request, cancellationToken);
+        return await _tuitionPartnerRepository.GetTuitionPartnersAsync(request, cancellationToken);
     }
 
     public IEnumerable<TuitionPartnerResult> FilterTuitionPartnersData(IEnumerable<TuitionPartnerResult> results, TuitionPartnersDataFilter dataFilter)

@@ -1,5 +1,4 @@
-﻿using Domain.Enums;
-using Domain.Search;
+﻿using Domain.Search;
 
 namespace Application;
 

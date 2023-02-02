@@ -83,12 +83,12 @@ Feature: Tuition Partner shortlist
     And they add 'Reeson Education' to their shortlist on the results page
     When they choose to view their shortlist from the results page
     Then there are 1 entries on the shortlist page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1, 2, 3 and 4', 'English, Maths, Science, Humanities and Modern Foreign Languages', 'In School, Online', 'From £10'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', 'From £10'
     And they click 'Back'
     And they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     And they choose to view their shortlist from the results page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1, 2, 3 and 4', 'English, Maths, Science, Humanities and Modern Foreign Languages', 'Online', 'From £10'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'Online', 'From £10'
 
   Scenario: User views TP details from the shortlist
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'

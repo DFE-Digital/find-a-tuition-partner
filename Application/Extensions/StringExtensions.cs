@@ -30,4 +30,17 @@ public static class StringExtensions
 
     public static string[] SplitByLineBreaks(this string value)
         => value.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+    public static string DisplayList(this IEnumerable<string>? strings)
+    {
+        if (strings == null) return string.Empty;
+
+        var commaSeparated = string.Join(", ", strings);
+
+        var lastCommaIndex = commaSeparated.LastIndexOf(",", StringComparison.Ordinal);
+
+        if (lastCommaIndex == -1) return commaSeparated;
+
+        return commaSeparated.Remove(lastCommaIndex, 1).Insert(lastCommaIndex, " and");
+    }
 }

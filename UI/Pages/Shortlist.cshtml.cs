@@ -20,13 +20,9 @@ public class ShortlistModel : PageModel
             data.ShortlistTuitionType = data.TuitionType.Value;
         }
 
-        if (data.Subjects != null)
+        if (data.KeyStages == null && data.Subjects != null)
         {
-            if (data.KeyStages == null)
-            {
-                data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
-            }
-            data.KeyStageSubjects = Enum.GetValues(typeof(Domain.Enums.KeyStageSubject)).Cast<Domain.Enums.KeyStageSubject>().Where(x => string.Join(" ", data.Subjects).ToSeoUrl().Contains(x.DisplayName().ToSeoUrl())).ToArray();
+            data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
         }
 
         var validator = new Validator();
@@ -59,7 +55,7 @@ public class ShortlistModel : PageModel
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
-        public Domain.Enums.KeyStageSubject[]? KeyStageSubjects { get; set; }
+        public int[]? SubjectIds { get; set; }
     };
 
     public record ResultsModel : SearchModel
@@ -108,13 +104,16 @@ public class ShortlistModel : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
+        private readonly ILookupDataService _lookupDataService;
         private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
         private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage, ILogger<TuitionPartner> logger)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService,
+            ILookupDataService lookupDataService, ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
+            _lookupDataService = lookupDataService;
             _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
             _logger = logger;
         }
@@ -132,6 +131,29 @@ public class ShortlistModel : PageModel
             var shortlistOrderBy = request.ShortlistOrderBy ?? TuitionPartnerOrderBy.SeoList;
             var shortlistOrderByDirection = request.ShortlistOrderByDirection ?? OrderByDirection.Ascending;
 
+            List<string> keyStageSubjectsFilteredLabels = new();
+
+            var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<UI.Models.KeyStageSubject>();
+
+            var allSubjects = await _lookupDataService.GetSubjectsAsync(cancellationToken);
+
+            var subjectFilters = allSubjects
+                        .Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl));
+
+            if (subjectFilters != null)
+            {
+                request.SubjectIds = subjectFilters!.Select(x => x.Id).ToArray();
+
+                if (request.KeyStages != null)
+                {
+                    foreach (var keyStage in request.KeyStages)
+                    {
+                        var keyStageSubjectsFilteredLabel = keyStage.DisplayName() + ": " + subjectFilters.Where(x => x.SeoUrl.Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.Name).Distinct().OrderBy(x => x).DisplayList();
+                        keyStageSubjectsFilteredLabels.Add(keyStageSubjectsFilteredLabel);
+                    }
+                }
+            }
+
             var searchResults = await GetShortlistResults(seoUrls, request, shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
 
             IEnumerable<TuitionPartnerResult>? invalidResults = null;
@@ -142,23 +164,6 @@ public class ShortlistModel : PageModel
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
                     _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
-                }
-            }
-
-            //TODO - Tidy this, just like this for demo
-            List<string> keyStageSubjectsFilteredLabels = new();
-            if (request != null && request.KeyStages != null && request.KeyStageSubjects != null)
-            {
-                foreach (var keyStage in request.KeyStages)
-                {
-                    var keyStageSubjectsFilteredLabel = keyStage.DisplayName() + ": " + string.Join(", ", request.KeyStageSubjects.Where(x => x.DisplayName().ToSeoUrl().Contains(keyStage.DisplayName().ToSeoUrl())).Select(x => x.DisplayName().Replace(keyStage.DisplayName() + " ", "").ToLower()).Distinct().OrderBy(x => x));
-                    keyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.Replace("english", "English");
-                    var indexOfLastCommaKeyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.LastIndexOf(",");
-                    if (indexOfLastCommaKeyStageSubjectsFilteredLabel != -1)
-                    {
-                        keyStageSubjectsFilteredLabel = keyStageSubjectsFilteredLabel.Remove(indexOfLastCommaKeyStageSubjectsFilteredLabel, 1).Insert(indexOfLastCommaKeyStageSubjectsFilteredLabel, " and");
-                    }
-                    keyStageSubjectsFilteredLabels.Add(keyStageSubjectsFilteredLabel);
                 }
             }
 
@@ -218,12 +223,6 @@ public class ShortlistModel : PageModel
                 return Result.Error<TuitionPartnersResult>("Unable to get LocalAuthorityDistrictId for supplied postcode");
             }
 
-            IEnumerable<int>? subjectIds = null;
-            if (request.KeyStageSubjects != null)
-            {
-                subjectIds = request.KeyStageSubjects.Select(x => (int)x);
-            }
-
             var results = await FindTuitionPartners(
                         tuitionPartnerSeoUrls,
                         orderBy,
@@ -233,7 +232,7 @@ public class ShortlistModel : PageModel
                         {
                             GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
                             TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType,
-                            SubjectIds = subjectIds
+                            SubjectIds = request.SubjectIds
                         },
                         cancellationToken);
 

@@ -213,15 +213,15 @@ public class SearchResults : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
+        private readonly ILookupDataService _lookupDataService;
         private readonly IMediator _mediator;
-        private readonly INtpDbContext _db;
 
         public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService,
-            INtpDbContext db, IMediator mediator)
+            ILookupDataService lookupDataService, IMediator mediator)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
-            _db = db;
+            _lookupDataService = lookupDataService;
             _mediator = mediator;
         }
 
@@ -323,11 +323,12 @@ public class SearchResults : PageModel
         {
             var keyStageSubjects = request.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<UI.Models.KeyStageSubject>();
 
-            var subjects = await _db.Subjects.Where(e =>
-                    keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
-                .ToListAsync(cancellationToken);
+            var subjects = await _lookupDataService.GetSubjectsAsync(cancellationToken);
 
-            var subjectFilterIds = subjects.Select(x => x.Id);
+            var subjectFilterIds = subjects
+                                    .Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
+                                    .Select(x => x.Id);
+
             var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
 
             var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(

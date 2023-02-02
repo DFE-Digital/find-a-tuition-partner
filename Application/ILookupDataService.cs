@@ -1,8 +1,9 @@
 ﻿using Domain;
+using Domain.Search;
 
-namespace Application.Repositories;
+namespace Application;
 
-public interface ILookupDataRepository
+public interface ILookupDataService
 {
     Task<IEnumerable<Subject>> GetSubjectsAsync(CancellationToken cancellationToken = default);
 }
