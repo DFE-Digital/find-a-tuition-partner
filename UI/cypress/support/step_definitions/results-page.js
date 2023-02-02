@@ -191,7 +191,7 @@ Then(
   "they can visit each TP details page and be returned back to the correct TP location",
   () => {
     cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
-      cy.isCorrectJumpToLocation($element);
+      cy.validateTPPageAndReturnLink($element);
     });
   }
 );

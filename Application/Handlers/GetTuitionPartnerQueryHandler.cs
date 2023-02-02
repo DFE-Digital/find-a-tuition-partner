@@ -213,6 +213,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
                 )
             )
             .Where(x => x.Value.HasAtLeastOnePrice)
+            .OrderBy(x => x.Key)
             .ToDictionary(k => k.Key, v => v.Value);
 
         static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
@@ -277,7 +278,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         {
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode")
+                .WithMessage("Enter a real postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
         }
     }

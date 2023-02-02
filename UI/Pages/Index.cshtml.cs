@@ -58,7 +58,7 @@ public partial class Index : PageModel
 
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode");
+                .WithMessage("Enter a real postcode");
         }
     }
 

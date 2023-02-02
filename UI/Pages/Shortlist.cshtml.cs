@@ -127,7 +127,7 @@ public class ShortlistModel : PageModel
 
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode")
+                .WithMessage("Enter a real postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
         }
     }
