@@ -389,7 +389,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string KeyStageColumn = "B";
         const string SubjectColumn = "C";
         const string TuitionTypeColumn = "D";
-        const string RateColumn = "F";
+        const string RateColumn = "E";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "Group";
