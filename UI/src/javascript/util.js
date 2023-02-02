@@ -1,5 +1,12 @@
-export const getSeoUrlFromId = (id, replaceString) =>
-  id && id.replace(replaceString, "");
+export const getSeoUrlFromId = (id, replaceIdStringArray) => {
+  if (!id) return;
+
+  replaceIdStringArray.forEach((str) => {
+    id = id.replace(str, "");
+  });
+
+  return id;
+};
 
 export const throwError = (message = "Invalid result") => {
   throw new Error(message);

@@ -63,17 +63,11 @@ import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();
 printThisPage.init();
 
-import TuitionPartner from "./javascript/tuition-partner";
-const tpShortlistCheckboxes = document.querySelector(
-  '[data-module="tuition-partner-shortlist"]'
+import ShortlistCheckbox from "./javascript/shortlist-checkbox";
+const shortlistCheckboxes = document.querySelectorAll(
+  '[data-module="shortlist-checkbox"]'
 );
-TuitionPartner.init(tpShortlistCheckboxes);
-
-import SearchResults from "./javascript/search-results";
-const searchResultShortlistCheckboxes = document.querySelectorAll(
-  '[data-module="search-results-tp-shortlist"]'
-);
-SearchResults.init(searchResultShortlistCheckboxes);
+ShortlistCheckbox.init(shortlistCheckboxes);
 
 import ShortlistRefinement from "./javascript/shortlist-refinement";
 var shortlistRefinement = new ShortlistRefinement();

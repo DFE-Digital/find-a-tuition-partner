@@ -1,4 +1,6 @@
 ﻿@page
+@using Application.Common.Models
+@using Domain.Enums
 @using UI.HelperFunctions
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -31,7 +33,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <form>
+    <form method="POST">
 
         <div class="govuk-grid-column-one-third">
             <div class="app-results-filter" data-module="results-filter" data-testid="results-filter">
@@ -197,7 +199,7 @@
                                 var shortlistCheckboxModel = new ShortlistCheckboxModel($"shortlist-cb-{shortlist.SeoUrl}",
                                     shortlist.SeoUrl, item.Name, "ShortlistedTuitionPartners", shortlist.IsSelected);
                             }
-                            <div data-module="search-results-tp-shortlist">
+                            <div>
                                 <partial name="Shared/_ShortlistCheckbox" model="shortlistCheckboxModel"/>
                             </div>
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">

@@ -1,4 +1,5 @@
 ﻿@page "{id}"
+@using Domain.Enums
 @using UI.HelperFunctions
 @model TuitionPartner
 @{
@@ -259,7 +260,7 @@
     @if (isFromSearchResultOrShortlistPage)
     {
         <hr class="govuk-section-break govuk-section-break--visible ">
-        <div data-module="tuition-partner-shortlist">
+        <div>
             <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
         </div>
         <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">

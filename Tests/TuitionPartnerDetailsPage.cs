@@ -1,9 +1,9 @@
-﻿using Domain.Constants;
+﻿using Application.Common.Structs;
+using Application.Queries;
+using Domain.Constants;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tests.TestData;
-using UI.MediatR.Queries;
-using UI.Structs;
-using KeyStage = UI.Enums.KeyStage;
+using KeyStage = Domain.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
 using TuitionType = Domain.Enums.TuitionType;
 
