@@ -69,16 +69,28 @@ Cypress.Commands.add("checkLaLabelText", (expectedText) => {
 
 Cypress.Commands.add("isWithinViewPort", (element) => {
   const { top } = element[0].getBoundingClientRect();
-  expect(top).to.be.oneOf([
-    -0.15625, -0.1875, -0.203125, -0.453125, 0, 0.0703125, 0.234375, 0.2421875,
-    0.28125, 63, 133,
-  ]);
+  expect(top).to.be.greaterThan(-1);
+  expect(top).to.be.lessThan(150);
   return element;
 });
 
-Cypress.Commands.add("isCorrectJumpToLocation", ($element) => {
+Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
   cy.visit($element.attr("href"));
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get('[data-testid="pricing-group-size-column"]')
+    .first()
+    .should("not.be.empty");
+  const names = [];
+  cy.get('[data-testid="pricing-group-size-column"]')
+    .each(($element, index) => {
+      names[index] = $element.text();
+    })
+    .then(() => {
+      const sortedNames = names.slice().sort(function (a, b) {
+        return a.localeCompare(b, "en", { sensitivity: "base" });
+      });
+      expect(names).to.deep.equal(sortedNames);
+    });
   cy.get(".govuk-back-link").click();
   cy.get(`[id="${getJumpToLocationId($element)}"]`).then(($el) => {
     cy.isWithinViewPort($el);

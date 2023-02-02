@@ -16,6 +16,12 @@ public static class EnumExtensions
             : displayName;
     }
 
+    public static List<TEnum> GetAllEnums<TEnum>()
+        where TEnum : struct, Enum
+    {
+        return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+    }
+
     public static bool TryParse<TEnum>(this string displayName, out TEnum resultInputType)
         where TEnum : struct, Enum
     {

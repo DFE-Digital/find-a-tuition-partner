@@ -21,8 +21,20 @@ public class SearchResults : PageModel
     public async Task OnGet(Query data)
     {
         data.TuitionType ??= Domain.Enums.TuitionType.Any;
+        if (data.KeyStages == null && data.Subjects != null)
+        {
+            data.KeyStages = Enum.GetValues(typeof(Domain.Enums.KeyStage)).Cast<Domain.Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+        }
+
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
+
+        //Clear shortlist TuitionType if has been changed on shortlist
+        if (data.PreviousTuitionType != null && data.PreviousTuitionType != data.TuitionType)
+        {
+            Data.ShortlistTuitionType = null;
+        }
+        Data.PreviousTuitionType = data.TuitionType;
 
         if (!Data.Validation.IsValid)
             foreach (var error in Data.Validation.Errors)
@@ -156,7 +168,10 @@ public class SearchResults : PageModel
     private JsonResult GetJsonResult(int totalShortlistedTuitionPartners) =>
         new(new UpdateTuitionPartnerResult(true, totalShortlistedTuitionPartners));
 
-    public record Query : SearchModel, IRequest<ResultsModel>;
+    public record Query : SearchModel, IRequest<ResultsModel>
+    {
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
+    };
 
     public record ResultsModel : SearchModel
     {
@@ -173,6 +188,7 @@ public class SearchResults : PageModel
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
     }
 
     private class Validator : AbstractValidator<Query>
@@ -185,7 +201,7 @@ public class SearchResults : PageModel
 
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode")
+                .WithMessage("Enter a real postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
 
             RuleForEach(m => m.Subjects)

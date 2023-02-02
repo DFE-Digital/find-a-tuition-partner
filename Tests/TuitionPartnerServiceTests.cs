@@ -1,7 +1,6 @@
 ﻿using Domain.Constants;
 using Domain.Search;
 using Tests.TestData;
-using UI.Pages;
 
 namespace Tests;
 
@@ -342,9 +341,9 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
-        alpha.SubjectsCoverage.Length.Should().Be(2);
+        alpha.SubjectsCoverage!.Length.Should().Be(2);
         alpha.Prices.Should().NotBeEmpty();
-        alpha.Prices.Length.Should().Be(5);
+        alpha.Prices!.Length.Should().Be(5);
         var prices = alpha.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -355,7 +354,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 3, HourlyRate = 16m }
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
-        alpha.TuitionTypes.Length.Should().Be(2);
+        alpha.TuitionTypes!.Length.Should().Be(2);
 
 
         var bravo = results.First(x => x.Name == "Bravo");
@@ -385,11 +384,11 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         //has TT, subjects and prices for Alpha TP for EastRidingOfYorkshire
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
-        alpha.SubjectsCoverage.Length.Should().Be(1);
+        alpha.SubjectsCoverage!.Length.Should().Be(1);
         alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
         alpha.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage1English);
         alpha.Prices.Should().NotBeEmpty();
-        alpha.Prices.Length.Should().Be(2);
+        alpha.Prices!.Length.Should().Be(2);
         var prices = alpha.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -397,7 +396,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 4, HourlyRate = 11m }
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
-        alpha.TuitionTypes.Length.Should().Be(1);
+        alpha.TuitionTypes!.Length.Should().Be(1);
         alpha.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
 
 
@@ -429,11 +428,11 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         //has TT, subjects and prices for Bravo TP for NorthTyneside
         var bravo = results.First(x => x.Name == "Bravo");
         bravo.SubjectsCoverage.Should().NotBeEmpty();
-        bravo.SubjectsCoverage.Length.Should().Be(1);
+        bravo.SubjectsCoverage!.Length.Should().Be(1);
         bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
         bravo.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage3ModernForeignLanguages);
         bravo.Prices.Should().NotBeEmpty();
-        bravo.Prices.Length.Should().Be(2);
+        bravo.Prices!.Length.Should().Be(2);
         var prices = bravo.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
@@ -441,7 +440,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             new { GroupSize = 5, HourlyRate = 13m }
         });
         bravo.TuitionTypes.Should().NotBeEmpty();
-        bravo.TuitionTypes.Length.Should().Be(1);
+        bravo.TuitionTypes!.Length.Should().Be(1);
         bravo.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
 
 
@@ -450,6 +449,173 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         charlie.SubjectsCoverage.Should().BeEmpty();
         charlie.Prices.Should().BeEmpty();
         charlie.TuitionTypes.Should().BeEmpty();
+    }
+    #endregion
+
+    #region FilterTuitionPartnersData
+    [Fact]
+    public async void FilterTuitionPartnersData_no_data()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = 6,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage4ModernForeignLanguages }
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().BeNull();
+            refinedResult.TuitionTypes.Should().BeNull();
+            refinedResult.SubjectsCoverage.Should().BeNull();
+
+            refinedResult.Name.Should().NotBeEmpty();
+        }
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_all()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = null,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().NotBeEmpty();
+            refinedResult.TuitionTypes.Should().NotBeEmpty();
+            refinedResult.SubjectsCoverage.Should().NotBeEmpty();
+
+            refinedResult.Name.Should().NotBeEmpty();
+        }
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_group_size()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = 4,
+            TuitionTypeId = null,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        var alpha = refinedResults.First(x => x.Name == "Alpha");
+        alpha!.Prices!.Length.Should().Be(1);
+        alpha!.Prices[0].HourlyRate.Should().Be(11m);
+        alpha!.TuitionTypes!.Length.Should().Be(1);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        alpha!.SubjectsCoverage!.Length.Should().Be(1);
+        alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_tuition_type()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        var delta = refinedResults.First(x => x.Name == "Delta");
+        delta!.Prices!.Length.Should().Be(2);
+        delta!.Prices[0].HourlyRate.Should().Be(113m);
+        delta!.TuitionTypes!.Length.Should().Be(1);
+        delta!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        delta!.SubjectsCoverage!.Length.Should().Be(1);
+        delta!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_subjects()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionTypeId = null,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths, Subjects.Id.KeyStage3ModernForeignLanguages }
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        //All the TPs in the mocked data have KeyStage2Maths or KeyStage3ModernForeignLanguages
+        foreach (var refinedResult in refinedResults)
+        {
+            refinedResult.Prices.Should().NotBeEmpty();
+            refinedResult.TuitionTypes.Should().NotBeEmpty();
+            refinedResult.SubjectsCoverage.Should().NotBeEmpty();
+        }
+
+        refinedResults.Should().NotBeEmpty();
+        var alpha = refinedResults.First(x => x.Name == "Alpha");
+        alpha!.Prices!.Length.Should().Be(3);
+        alpha!.Prices[0].HourlyRate.Should().Be(20m);
+        alpha!.TuitionTypes!.Length.Should().Be(1);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.Online);
+        alpha!.SubjectsCoverage!.Length.Should().Be(1);
+        alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage2Maths);
     }
     #endregion
 

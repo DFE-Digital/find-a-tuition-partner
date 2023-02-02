@@ -37,7 +37,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     When they enter 'INVALID' as the school's postcode
     And they click 'Continue'
-    Then they will see 'Enter a valid postcode' as an error message for the 'postcode'
+    Then they will see 'Enter a real postcode' as an error message for the 'postcode'
 
   Scenario: user enters a postcode in Wales
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -78,7 +78,7 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
 
-  Scenario: results default to Any tuition type
+  Scenario: results default to Any tuition type filter
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     Then they will see the tuition type 'Any' is selected
 
@@ -169,7 +169,7 @@ Feature: User is shown search results
     When they click on the option heading for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
     Then they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
 
-  Scenario: User is able to select a tuition type
+  Scenario: User is able to select a tuition type filter
     Given a user has arrived on the 'Search results' page without subjects or postcode
     When the user selects tuition type 'in school'
     Then they will see the tuition type 'in school' is selected

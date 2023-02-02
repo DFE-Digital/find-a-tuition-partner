@@ -19,7 +19,7 @@ public class ShortlistPageTests : CleanSliceFixture
         var model = new ShortlistModel.Query() { Postcode = postcode };
         var result = new ShortlistModel.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
-            .WithErrorMessage("Enter a valid postcode");
+            .WithErrorMessage("Enter a real postcode");
     }
 
     [Theory]

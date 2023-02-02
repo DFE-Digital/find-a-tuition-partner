@@ -66,7 +66,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
             //Mapster has issues mapping Prices, due to circular ref, but ignore it anyway, since done below as needed
             TypeAdapterConfig<Domain.TuitionPartner, TuitionPartnerResult>
                 .NewConfig()
-                .Ignore(dest => dest.Prices);
+                .Ignore(dest => dest.Prices!);
 
             var entities = await _dbContext.TuitionPartners.AsNoTracking()
                 .Include(x => x.OrganisationType)

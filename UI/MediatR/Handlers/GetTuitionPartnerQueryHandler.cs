@@ -28,13 +28,13 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         var tp = tpResult.Result.Data.FirstResult;
 
-        var subjects = tp.SubjectsCoverage.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
+        var subjects = tp.SubjectsCoverage!.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
             .Select(x => $"{((Domain.Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
-        var types = tp.TuitionTypes.Select(x => x.Name).Distinct();
-        var ratios = tp.Prices.Select(x => x.GroupSize).Distinct().Select(x => $"{((Domain.Enums.GroupSize)x).DisplayName()}");
-        var prices = GetPricing(tp.Prices);
+        var types = tp.TuitionTypes!.Select(x => x.Name).Distinct();
+        var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"{((Domain.Enums.GroupSize)x).DisplayName()}");
+        var prices = GetPricing(tp.Prices!);
         var lads = await GetLocalAuthorityDistricts(request, tp.Id);
-        var allPrices = await GetFullPricing(request, tp.Prices);
+        var allPrices = await GetFullPricing(request, tp.Prices!);
 
         return new(
             request.Id,
@@ -201,6 +201,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
                 )
             )
             .Where(x => x.Value.HasAtLeastOnePrice)
+            .OrderBy(x => x.Key)
             .ToDictionary(k => k.Key, v => v.Value);
 
         static decimal? MinPrice(IEnumerable<Price> value, Domain.Enums.TuitionType tuitionType)
@@ -265,7 +266,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         {
             RuleFor(m => m.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a valid postcode")
+                .WithMessage("Enter a real postcode")
                 .When(m => !string.IsNullOrEmpty(m.Postcode));
         }
     }

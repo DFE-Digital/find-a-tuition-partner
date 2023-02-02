@@ -41,10 +41,6 @@ When("'Key stage 1 English' is selected", () => {
   cy.get('[id="key-stage-1-english"]').check();
 });
 
-When("the user selects tuition type {string}", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
-});
-
 When("a user selects all subject", () => {
   const keystages = "Key stage 1,Key stage 2,Key stage 3,Key stage 4";
   const stages = keystages.split(",").map((s) => s.trim());

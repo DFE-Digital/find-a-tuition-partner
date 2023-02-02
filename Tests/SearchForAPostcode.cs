@@ -33,7 +33,7 @@ public class SearchForAPostcode
         var model = new Index.Command { Postcode = postcode };
         var result = new Index.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
-            .WithErrorMessage("Enter a valid postcode");
+            .WithErrorMessage("Enter a real postcode");
     }
 
     [Theory]

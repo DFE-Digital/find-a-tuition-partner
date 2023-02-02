@@ -24,7 +24,7 @@ public class SearchForResults : CleanSliceFixture
         var model = new Index.Command { Postcode = postcode };
         var result = new Index.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
-            .WithErrorMessage("Enter a valid postcode");
+            .WithErrorMessage("Enter a real postcode");
     }
 
     [Theory]
@@ -39,7 +39,7 @@ public class SearchForResults : CleanSliceFixture
 
         var validationResult = new TestValidationResult<SearchResults.Query>(result.Validation);
         validationResult.ShouldHaveValidationErrorFor(x => x.Postcode)
-            .WithErrorMessage("Enter a valid postcode");
+            .WithErrorMessage("Enter a real postcode");
     }
 
     [Theory]
@@ -272,7 +272,7 @@ public class SearchForResults : CleanSliceFixture
 
         // Assert
         result!.Results.Should().BeNull();
-        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a valid postcode");
+        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a real postcode");
     }
 
     [Theory]
