@@ -251,9 +251,9 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         {
             _errors.Add($"The following were required and not set in the '{sheetName}' worksheet: {string.Join(", ", missingRequiredNTPProperties.Select(x => x.Key).ToArray())}");
         }
-        if (_tpImportedDates != null && _tpImportedDates.ContainsKey(tuitionPartner.Name))
+        if (_tpImportedDates != null && _tpImportedDates.ContainsKey(tuitionPartner.Name.ToLower()))
         {
-            var previousLastUpdated = _tpImportedDates[tuitionPartner.Name];
+            var previousLastUpdated = _tpImportedDates[tuitionPartner.Name.ToLower()];
             if (previousLastUpdated > tuitionPartner.TPLastUpdatedData)
             {
                 _errors.Add($"The existing TP has a last updated date of {previousLastUpdated} and the spreadsheet last updated date is {tuitionPartner.TPLastUpdatedData}, which is before");

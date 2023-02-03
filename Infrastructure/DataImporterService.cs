@@ -44,9 +44,14 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
+                var tpImportedDates = await dbContext
+                                .TuitionPartners
+                                .Select(x => new { x.Name, x.TPLastUpdatedData })
+                                .ToDictionaryAsync(x => x.Name.ToLower(), x => x.TPLastUpdatedData, cancellationToken);
+
                 await RemoveTuitionPartners(dbContext, cancellationToken);
 
-                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
+                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, tpImportedDates, cancellationToken);
 
                 await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
@@ -140,7 +145,8 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
-    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory, CancellationToken cancellationToken)
+    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory, 
+        IDictionary<string, DateTime> tpImportedDates, CancellationToken cancellationToken)
     {
         var regions = await dbContext.Regions
             .Include(e => e.LocalAuthorityDistricts)
@@ -151,11 +157,6 @@ public class DataImporterService : IHostedService
 
         var organisationTypes = await dbContext.OrganisationType
             .ToListAsync(cancellationToken);
-
-        var tpImportedDates = await dbContext
-                        .TuitionPartners
-                        .Select(x => new { x.Name, x.TPLastUpdatedData })
-                        .ToDictionaryAsync(x => x.Name, x => x.TPLastUpdatedData, cancellationToken);
 
         foreach (var dataFile in dataFileEnumerable)
         {
