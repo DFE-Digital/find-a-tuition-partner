@@ -152,6 +152,11 @@ public class DataImporterService : IHostedService
         var organisationTypes = await dbContext.OrganisationType
             .ToListAsync(cancellationToken);
 
+        var tpImportedDates = await dbContext
+                        .TuitionPartners
+                        .Select(x => new { x.Name, x.TPLastUpdatedData })
+                        .ToDictionaryAsync(x => x.Name, x => x.TPLastUpdatedData, cancellationToken);
+
         foreach (var dataFile in dataFileEnumerable)
         {
             var originalFilename = dataFile.Filename;
@@ -180,7 +185,7 @@ public class DataImporterService : IHostedService
                     //if (random.Next(1, 3) == 1)
                     //    throw new Exception("Testing Polly");
 
-                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, cancellationToken);
+                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, tpImportedDates, cancellationToken);
                 });
             }
             catch (Exception ex)

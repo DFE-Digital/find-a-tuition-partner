@@ -20,7 +20,8 @@ public class SpreadsheetTuitionPartnerFactory : ISpreadsheetTuitionPartnerFactor
     }
 
     public async Task<TuitionPartner> GetTuitionPartner(Stream stream, string filename,
-        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes, CancellationToken cancellationToken)
+        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes,
+        IDictionary<string, DateTime> tpImportedDates, CancellationToken cancellationToken)
     {
         _spreadsheetExtractor.SetStream(stream);
 
@@ -29,7 +30,7 @@ public class SpreadsheetTuitionPartnerFactory : ISpreadsheetTuitionPartnerFactor
         //Identify which factory to use...
         if (isTribalSpreadsheet)
         {
-            return _tribalSpreadsheetTuitionPartnerFactory.GetTuitionPartner(_spreadsheetExtractor, filename, regions, subjects, organisationTypes);
+            return _tribalSpreadsheetTuitionPartnerFactory.GetTuitionPartner(_spreadsheetExtractor, filename, regions, subjects, organisationTypes, tpImportedDates);
         }
 
         return await _qualityAssuredSpreadsheetTuitionPartnerFactory.GetTuitionPartner(_spreadsheetExtractor, organisationTypes, cancellationToken);

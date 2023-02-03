@@ -24,6 +24,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     private IList<Region>? _regions;
     private IList<Subject>? _subjects;
     private IList<OrganisationType>? _organisationTypes;
+    private IDictionary<string, DateTime>? _tpImportedDates;
     private ISpreadsheetExtractor? _spreadsheetExtractor;
 
     private List<string> _warnings = new();
@@ -56,11 +57,13 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     }
 
     public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename,
-        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes)
+        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes,
+        IDictionary<string, DateTime> tpImportedDates)
     {
         _regions = regions;
         _subjects = subjects;
         _organisationTypes = organisationTypes;
+        _tpImportedDates = tpImportedDates;
 
         _warnings = new();
         _errors = new();
@@ -247,6 +250,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         if (missingRequiredNTPProperties.Any())
         {
             _errors.Add($"The following were required and not set in the '{sheetName}' worksheet: {string.Join(", ", missingRequiredNTPProperties.Select(x => x.Key).ToArray())}");
+        }
+        if (_tpImportedDates != null && _tpImportedDates.ContainsKey(tuitionPartner.Name))
+        {
+            var previousLastUpdated = _tpImportedDates[tuitionPartner.Name];
+            if (previousLastUpdated > tuitionPartner.TPLastUpdatedData)
+            {
+                _errors.Add($"The existing TP has a last updated date of {previousLastUpdated} and the spreadsheet last updated date is {tuitionPartner.TPLastUpdatedData}, which is before");
+            }
         }
 
         return tuitionPartner;
