@@ -145,7 +145,7 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
-    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory, 
+    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory,
         IDictionary<string, DateTime> tpImportedDates, CancellationToken cancellationToken)
     {
         var regions = await dbContext.Regions
