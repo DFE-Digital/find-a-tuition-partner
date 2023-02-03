@@ -1,13 +1,11 @@
 // Global using directives
 
-global using System.Text;
 global using System.Text.Json;
 global using Application;
 global using Application.Commands;
 global using Application.Constants;
 global using Application.Extensions;
 global using Application.Queries;
-global using Application.TuitionPartnerShortlistStorage.Interfaces;
 global using Domain.Constants;
 global using Domain.Enums;
 global using FluentValidation;
@@ -16,8 +14,4 @@ global using MediatR;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.EntityFrameworkCore;
-global using UI.Enums;
 global using UI.Extensions;
-global using UI.MediatR.Queries;
-global using UI.Models;
-global using UI.Structs;

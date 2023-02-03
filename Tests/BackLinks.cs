@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using Application.Common.Models;
+using Domain.Enums;
 using UI.Extensions;
-using UI.Models;
 
 namespace Tests;
 

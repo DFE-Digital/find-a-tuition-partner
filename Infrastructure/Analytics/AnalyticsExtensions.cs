@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace UI.Analytics
+namespace Infrastructure.Analytics
 {
     public static class AnalyticsExtensions
     {

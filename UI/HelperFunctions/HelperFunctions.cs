@@ -1,3 +1,5 @@
+using Domain.Enums;
+
 namespace UI.HelperFunctions;
 
 public static class HelperFunctions

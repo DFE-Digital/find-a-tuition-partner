@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.Constants;
+﻿using Domain.Constants;
 using Domain.Search;
 using FluentValidation.TestHelper;
 using NSubstitute;

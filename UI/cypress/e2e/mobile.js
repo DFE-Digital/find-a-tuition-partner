@@ -135,6 +135,12 @@ Then("subject {string} is selected", (subject) => {
   cy.url().should("contain", subject);
 });
 
+Then("subject {string} is selected on the filter", (subject) => {
+  cy.get('[data-testid="subject-name"] :checked')
+    .should("be.checked")
+    .check(subject, { force: true });
+});
+
 Then("subject {string} is no longer selected", (subject) => {
   cy.url().should("not.contain", subject);
 });

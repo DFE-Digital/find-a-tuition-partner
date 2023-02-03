@@ -1,5 +1,4 @@
 ﻿using Domain.Enums;
-using Microsoft.AspNetCore.Mvc;
 using UI.Extensions;
 using UI.Pages;
 

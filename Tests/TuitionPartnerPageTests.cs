@@ -19,24 +19,16 @@ public class TuitionPartnerPageTests
         @"{""From"":0,""Name"":null,""Postcode"":""DE1 1RY"",""Subjects"":[""KeyStage1-English""],""TuitionType"":0,""KeyStages"":[1]}";
 
     private void VerifyRemoveTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<RemoveTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<RemoveShortlistedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
 
     private void VerifyAddTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<AddTuitionPartnerToShortlistCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<AddTuitionPartnersToShortlistCommand>(), default), Times.Exactly(numberOfTimes));
 
     private void AssertRedirect(IActionResult result)
     {
         result.Should().BeOfType<RedirectToPageResult>();
         var redirect = result as RedirectToPageResult;
         redirect?.PageName.Should().Be("TuitionPartner");
-    }
-
-    private void AssertJsonResult(IActionResult result, string expectedValue)
-    {
-        result.Should().BeOfType<JsonResult>();
-        var jsonResult = result as JsonResult;
-        var expectedResult = $"{{ Updated = {expectedValue} }}";
-        jsonResult?.Value?.ToString()?.Trim().Should().Be(expectedResult);
     }
 
     [Theory]
@@ -75,55 +67,5 @@ public class TuitionPartnerPageTests
 
         AssertRedirect(result);
         VerifyAddTuitionPartnerMediatorCall(1);
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData(null)]
-    public async Task OnPostAddToShortlist_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
-    {
-        var sut = GetTuitionPartner();
-
-        var result = await sut.OnPostAddToShortlist(seoUrl);
-
-        AssertJsonResult(result, "False");
-        VerifyAddTuitionPartnerMediatorCall(0);
-    }
-
-    [Fact]
-    public async Task OnPostAddToShortlist_WhenCalledWithSeoUrl_ReturnExpectJson()
-    {
-        var sut = GetTuitionPartner();
-
-        var result = await sut.OnPostAddToShortlist("seoUrl");
-
-        AssertJsonResult(result, "True");
-        VerifyAddTuitionPartnerMediatorCall(1);
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData(null)]
-    public async Task OnPostRemoveFromShortlist_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
-    {
-        var sut = GetTuitionPartner();
-
-        var result = await sut.OnPostRemoveFromShortlist(seoUrl);
-
-        AssertJsonResult(result, "False");
-        VerifyRemoveTuitionPartnerMediatorCall(0);
-    }
-
-    [Fact]
-    public async Task OnPostRemoveFromShortlist_WhenCalledWithSeoUrl_ReturnExpectJson()
-    {
-        var sut = GetTuitionPartner();
-
-        var result = await sut.OnPostRemoveFromShortlist("seoUrl");
-
-        AssertJsonResult(result, "True");
-        VerifyRemoveTuitionPartnerMediatorCall(1);
     }
 }

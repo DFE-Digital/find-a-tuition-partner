@@ -1,7 +1,10 @@
+using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
+using KeyStage = Domain.Enums.KeyStage;
 
 namespace UI.Pages;
 [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -20,10 +23,29 @@ public class SearchResults : PageModel
 
     public async Task OnGet(Query data)
     {
+        await CommonOnGetPostLogic(data);
+    }
+
+    public async Task OnPost(Query data)
+    {
+        await CommonOnGetPostLogic(data);
+    }
+
+    public async Task OnGetClearAllFilters(string postcode)
+    {
+        Data = await _mediator.Send(new Query
+        { Postcode = postcode, Subjects = null, TuitionType = Domain.Enums.TuitionType.Any, KeyStages = null });
+
+        await SetSelectableTuitionPartners();
+    }
+
+    private async Task CommonOnGetPostLogic(Query data)
+    {
         data.TuitionType ??= Domain.Enums.TuitionType.Any;
         if (data.KeyStages == null && data.Subjects != null)
         {
-            data.KeyStages = Enum.GetValues(typeof(Domain.Enums.KeyStage)).Cast<Domain.Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+            data.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
+                .Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
         }
 
         Data = await _mediator.Send(data);
@@ -40,47 +62,8 @@ public class SearchResults : PageModel
             foreach (var error in Data.Validation.Errors)
                 ModelState.AddModelError($"Data.{error.PropertyName}", error.ErrorMessage);
 
-        // await _mediator.Send(new RemoveAllTuitionPartnersCommand());
         await SetSelectableTuitionPartners();
     }
-
-    public async Task OnGetClearAllFilters(string postcode)
-    {
-        Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Domain.Enums.TuitionType.Any, KeyStages = null });
-
-        await SetSelectableTuitionPartners();
-    }
-
-    public async Task<JsonResult> OnGetAddShortlistedTuitionPartner(string tuitionPartnerSeoUrl)
-    {
-        var response = new UpdateTuitionPartnerResult(false, TotalShortlistedTuitionPartners);
-
-        if (!IsParamValid(tuitionPartnerSeoUrl)) return new JsonResult(response);
-
-        TotalShortlistedTuitionPartners = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).Count();
-        await _mediator.Send(new AddTuitionPartnerToShortlistCommand(tuitionPartnerSeoUrl.Trim()));
-        // if update is successful
-        TotalShortlistedTuitionPartners++;
-        return GetJsonResult(TotalShortlistedTuitionPartners);
-    }
-
-
-    public async Task<JsonResult> OnGetRemoveShortlistedTuitionPartner(string tuitionPartnerSeoUrl)
-    {
-        var response = new UpdateTuitionPartnerResult(false, TotalShortlistedTuitionPartners);
-
-        if (!IsParamValid(tuitionPartnerSeoUrl)) return new JsonResult(response);
-
-        TotalShortlistedTuitionPartners = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).Count();
-        tuitionPartnerSeoUrl = tuitionPartnerSeoUrl.Trim();
-        await _mediator.Send(new RemoveTuitionPartnerCommand(tuitionPartnerSeoUrl));
-        // if update is successful
-        TotalShortlistedTuitionPartners--;
-
-        return GetJsonResult(TotalShortlistedTuitionPartners);
-    }
-
     private async Task SetSelectableTuitionPartners()
     {
         if (Data.Results != null)
@@ -131,10 +114,9 @@ public class SearchResults : PageModel
     {
         if (shortlistedTpsInSelectableTps.Any())
         {
-            foreach (var tp in shortlistedTpsInSelectableTps)
+            foreach (var tp in shortlistedTpsInSelectableTps.Where(tp => shortlistedTps.Any(stp => stp == tp)))
             {
-                if (shortlistedTps.Any(stp => stp == tp))
-                    shortlistedTps.RemoveAll(stp => stp == tp);
+                shortlistedTps.RemoveAll(stp => stp == tp);
             }
         }
 
@@ -144,7 +126,7 @@ public class SearchResults : PageModel
             await _mediator.Send(new AddTuitionPartnersToShortlistCommand(shortlistedTps));
 
         if (!shortlistedTps.Any())
-            await _mediator.Send(new RemoveAllTuitionPartnersCommand());
+            await _mediator.Send(new RemoveAllShortlistedTuitionPartnersCommand());
     }
 
     private List<SelectableTuitionPartnerModel> GetSelectableTuitionPartnerModels(
@@ -162,12 +144,6 @@ public class SearchResults : PageModel
 
         return selectableTuitionPartnerModels;
     }
-
-    private bool IsParamValid(string value) => !(string.IsNullOrWhiteSpace(value) || value.ToLower().Equals("undefined"));
-
-    private JsonResult GetJsonResult(int totalShortlistedTuitionPartners) =>
-        new(new UpdateTuitionPartnerResult(true, totalShortlistedTuitionPartners));
-
     public record Query : SearchModel, IRequest<ResultsModel>
     {
         public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
@@ -183,15 +159,15 @@ public class SearchResults : PageModel
         {
         }
 
-        public Dictionary<Domain.Enums.KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
+        public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
         public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
-        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
+        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; }
     }
 
-    private class Validator : AbstractValidator<Query>
+    private sealed class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
@@ -259,13 +235,13 @@ public class SearchResults : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private static Domain.Enums.KeyStage[] AllKeyStages =>
+        private static KeyStage[] AllKeyStages =>
             new[]
             {
-                Domain.Enums.KeyStage.KeyStage1,
-                Domain.Enums.KeyStage.KeyStage2,
-                Domain.Enums.KeyStage.KeyStage3,
-                Domain.Enums.KeyStage.KeyStage4,
+                KeyStage.KeyStage1,
+                KeyStage.KeyStage2,
+                KeyStage.KeyStage3,
+                KeyStage.KeyStage4,
             };
 
         private static List<Domain.Enums.TuitionType> AllTuitionTypes =>
@@ -276,7 +252,7 @@ public class SearchResults : PageModel
                 Domain.Enums.TuitionType.Online,
             };
 
-        private async Task<Dictionary<Domain.Enums.KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,
+        private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,
             CancellationToken cancellationToken)
         {
             return await _mediator.Send(new WhichSubjects.Query
@@ -327,7 +303,7 @@ public class SearchResults : PageModel
                     keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
                 .ToListAsync(cancellationToken);
 
-            var subjectFilterIds = subjects.Select(x => x.Id);
+            var subjectFilterIds = subjects.Select(x => x.Id).ToList();
             var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
 
             var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(

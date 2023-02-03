@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Domain.Constants;
 using UI.Extensions;
-using GroupPrice = UI.Structs.GroupPrice;
+using GroupPrice = Application.Common.Structs.GroupPrice;
 
 namespace Tests;
 

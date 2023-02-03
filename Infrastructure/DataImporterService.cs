@@ -74,10 +74,10 @@ public class DataImporterService : IHostedService
 
     private async Task ImportGeneralInformationAboutSchools(NtpDbContext dbContext, IGeneralInformationAboutSchoolsRecords generalInformatioAboutSchoolsRecords, ISchoolsFactory giasFactory, CancellationToken cancellationToken)
     {
-        var LocalAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new { t.Code, t.Id })
+        var localAuthorityDistrictsIds = dbContext.LocalAuthorityDistricts.Select(t => new { t.Code, t.Id })
             .ToDictionary(t => t.Code, t => t.Id);
 
-        var LocalAuthorityIds = dbContext.LocalAuthority.Select(t => new { t.Id, t.Code, })
+        var localAuthorityIds = dbContext.LocalAuthority.Select(t => new { t.Id, t.Code, })
            .ToDictionary(t => t.Id, t => t.Code);
 
         _logger.LogInformation("Retrieving GIAS dataset");
@@ -88,16 +88,16 @@ public class DataImporterService : IHostedService
         var failedValidation = 0;
         foreach (SchoolDatum schoolDatum in result.Result.Where(s => s.IsValidForService()))
         {
-            var EstablishmentName = schoolDatum.Name;
+            var establishmentName = schoolDatum.Name;
 
             School school;
             try
             {
-                school = giasFactory.GetSchool(schoolDatum, LocalAuthorityDistrictsIds, LocalAuthorityIds);
+                school = giasFactory.GetSchool(schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception thrown when creating General Information About Schools from record {OriginalFilename}", EstablishmentName);
+                _logger.LogError(ex, "Exception thrown when creating General Information About Schools from record {OriginalFilename}", establishmentName);
                 continue;
             }
 
