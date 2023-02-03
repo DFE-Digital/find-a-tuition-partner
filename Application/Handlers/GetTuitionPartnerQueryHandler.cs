@@ -78,10 +78,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         if (!locationResult.IsSuccess)
         {
             //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
-            _logger.LogWarning("Invalid postcode '{Postcode}' provided on TP details page", request.Postcode);
+            _logger.LogWarning("Invalid postcode '{Postcode}' provided on TP details page", request.SearchModel?.Postcode);
 
             //Set to null and continue to get nationwide data
-            request.Postcode = null;
+            if (request.SearchModel != null) request.SearchModel.Postcode = null;
         }
         else
         {
@@ -106,12 +106,12 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     {
         var validationResults = await new Validator().ValidateAsync(request, cancellationToken);
 
-        if (string.IsNullOrWhiteSpace(request.Postcode))
+        if (string.IsNullOrWhiteSpace(request.SearchModel?.Postcode))
             return Result.Success(new LocationFilterParameters { });
 
         return !validationResults.IsValid
             ? Result.Invalid<LocationFilterParameters>(validationResults.Errors)
-            : (await _locationService.GetLocationFilterParametersAsync(request.Postcode!)).TryValidate();
+            : (await _locationService.GetLocationFilterParametersAsync(request.SearchModel?.Postcode!)).TryValidate();
     }
 
     private async Task<IResult<TuitionPartnerResult>> FindTuitionPartner(LocationFilterParameters parameters,
@@ -276,10 +276,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     {
         public Validator()
         {
-            RuleFor(m => m.Postcode)
+            RuleFor(m => m.SearchModel!.Postcode)
                 .Matches(StringConstants.PostcodeRegExp)
                 .WithMessage("Enter a real postcode")
-                .When(m => !string.IsNullOrEmpty(m.Postcode));
+                .When(m => m.SearchModel != null && !string.IsNullOrEmpty(m.SearchModel?.Postcode));
         }
     }
 }

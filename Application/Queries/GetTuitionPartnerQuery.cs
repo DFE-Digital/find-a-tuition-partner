@@ -1,26 +1,13 @@
 using Application.Common.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Queries;
+
 public record GetTuitionPartnerQuery(
-            string Id,
-            [FromQuery(Name = "show-locations-covered")]
-            bool ShowLocationsCovered = false,
-            [FromQuery(Name = "show-full-pricing")]
-            bool ShowFullPricing = false)
-        : SearchModel, IRequest<TuitionPartnerModel?>
+        string Id,
+        bool ShowLocationsCovered = false,
+        bool ShowFullPricing = false)
+    : IRequest<TuitionPartnerModel?>
 {
-    public Dictionary<string, string> ToRouteData()
-    {
-        var dictionary = new Dictionary<string, string>
-        {
-            [nameof(Id)] = Id
-        };
-
-        if (ShowLocationsCovered) dictionary["show-locations-covered"] = "true";
-
-        if (ShowFullPricing) dictionary["show-full-pricing"] = "true";
-
-        return dictionary;
-    }
+    public SearchModel? SearchModel { get; set; }
 }
+

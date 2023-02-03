@@ -1,4 +1,5 @@
 using Application.Common.Models;
+using UI.Models;
 
 namespace UI.Pages;
 
@@ -19,14 +20,19 @@ public class TuitionPartner : PageModel
 
     [BindProperty] public string? ShortlistedCheckbox { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQuery query)
+    public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQueryModel query)
     {
         SearchModel = new SearchModel(query);
 
         if (string.IsNullOrWhiteSpace(query.Id))
             return ReturnNotFoundWithLogging($"Null or whitespace id '{query.Id}' provided", LogLevel.Information);
 
-        Data = await _mediator.Send(query);
+        var getTuitionPartnerQuery = new GetTuitionPartnerQuery(query.Id, query.ShowLocationsCovered, query.ShowFullPricing)
+        {
+            SearchModel = SearchModel
+        };
+
+        Data = await _mediator.Send(getTuitionPartnerQuery);
 
         if (Data == null)
         {

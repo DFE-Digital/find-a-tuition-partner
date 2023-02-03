@@ -1,8 +1,10 @@
-﻿using Application.Common.Structs;
+﻿using Application.Common.Models;
+using Application.Common.Structs;
 using Application.Queries;
 using Domain.Constants;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tests.TestData;
+using UI.Models;
 using KeyStage = Domain.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
 using TuitionType = Domain.Enums.TuitionType;
@@ -23,7 +25,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     public async Task Get_with_null_or_whitespace_id(string id)
     {
         var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQuery(id)));
+            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel(id)));
         result.Should().BeOfType<NotFoundResult>();
     }
 
@@ -33,7 +35,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     public async Task Redirect_to_seo_url(string id)
     {
         var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQuery(id)));
+            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel(id)));
         result.Should().BeAssignableTo<RedirectToPageResult>()
             .Which.RouteValues.Should().BeEquivalentTo(new Dictionary<string, string>
             {
@@ -45,7 +47,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     public async Task Tuition_partner_not_found()
     {
         var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQuery("not-found")));
+            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel("not-found")));
         result.Should().BeOfType<NotFoundResult>();
     }
 
@@ -59,7 +61,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             .WithName("this-tuition-partner", "This Tuition Partner"));
 
         var result = await Fixture.GetPage<TuitionPartner>()
-            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQuery(id)));
+            .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel(id)));
         result.Should().BeOfType<PageResult>();
     }
 
@@ -132,7 +134,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
                     "a-tuition-partner")
-            { Postcode = District.EastRidingOfYorkshire.SamplePostcode });
+            {
+                SearchModel = new SearchModel()
+                {
+                    Postcode = District.EastRidingOfYorkshire.SamplePostcode
+                }
+            });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
     }
@@ -147,7 +154,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
                     "a-tuition-partner")
-            { Postcode = District.Ryedale.SamplePostcode });
+            {
+                SearchModel = new SearchModel()
+                {
+                    Postcode = District.Ryedale.SamplePostcode
+                }
+            });
 
         result!.TuitionTypes.Should().BeEquivalentTo("Online");
     }
@@ -168,7 +180,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
                     "a-tuition-partner")
-            { Postcode = District.NorthEastLincolnshire.SamplePostcode });
+            {
+                SearchModel = new SearchModel()
+                {
+                    Postcode = District.NorthEastLincolnshire.SamplePostcode
+                }
+            });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {
@@ -192,7 +209,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
                     "a-tuition-partner")
-            { Postcode = District.Ryedale.SamplePostcode });
+            {
+                SearchModel = new SearchModel()
+                {
+                    Postcode = District.Ryedale.SamplePostcode
+                }
+            });
 
         result!.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {
