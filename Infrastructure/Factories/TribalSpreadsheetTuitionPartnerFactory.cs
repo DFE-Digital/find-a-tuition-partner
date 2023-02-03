@@ -18,7 +18,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     private const int MaxRows = 100000;
     private const decimal VATRatePercentage = 20;
 
-    private readonly ILogger _logger;
+    private readonly ILogger<TribalSpreadsheetTuitionPartnerFactory> _logger;
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
 
     private IList<Region>? _regions;
@@ -97,7 +97,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         if (_errors.Any())
         {
-            throw new Exception($"Error importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _errors)}");
+            throw new InvalidOperationException($"Error importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _errors)}");
         }
 
         return tuitionPartner;
@@ -183,7 +183,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         //Get Organisation Type Id
         var organisationTypeName = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_LegalStatus_s").Value.SourceValue;
-        var organisationType = _organisationTypes!.Where(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+        var organisationType = _organisationTypes!.FirstOrDefault(x => string.Equals(x.Name, organisationTypeName, StringComparison.InvariantCultureIgnoreCase));
         if (organisationType == null)
         {
             _errors.Add($"No matching organisation type in the db for '{organisationTypeName}' in '{sheetName}' worksheet");

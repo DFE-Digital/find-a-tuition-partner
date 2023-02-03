@@ -50,12 +50,30 @@ namespace Infrastructure.Mapping
                 PropertyType != null &&
                 !string.IsNullOrWhiteSpace(_sourceValue))
             {
-                _convertedValue = (PropertyType == typeof(string)) ? _sourceValue :
-                    (PropertyType == typeof(bool)) ? _sourceValue.ParseBoolean() :
-                    (PropertyType == typeof(DateOnly)) ? _sourceValue.ParseDateOnly() :
-                    (PropertyType == typeof(DateTime)) ? _sourceValue.ParseDateTime() :
-                    (PropertyType == typeof(decimal)) ? _sourceValue.ParsePrice() :
-                    null;
+                if (PropertyType == typeof(string))
+                {
+                    _convertedValue = _sourceValue;
+                }
+                else if (PropertyType == typeof(bool))
+                {
+                    _convertedValue = _sourceValue.ParseBoolean();
+                }
+                else if (PropertyType == typeof(DateOnly))
+                {
+                    _convertedValue = _sourceValue.ParseDateOnly();
+                }
+                else if (PropertyType == typeof(DateTime))
+                {
+                    _convertedValue = _sourceValue.ParseDateTime();
+                }
+                else if (PropertyType == typeof(decimal))
+                {
+                    _convertedValue = _sourceValue.ParsePrice();
+                }
+                else
+                {
+                    _convertedValue = null;
+                }
             }
         }
 

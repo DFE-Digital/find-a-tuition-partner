@@ -20,14 +20,30 @@ public static class StringExtensions
         return seo;
     }
 
-    private static string RegexReplace(this string value, string pattern, string replacement)
-        => Regex.Replace(
-            value, pattern, replacement,
-            RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
-
     public static string ToYesNoString(this bool value)
             => value ? "Yes" : "No";
 
     public static string[] SplitByLineBreaks(this string value)
         => value.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+    public static bool TryParse<TEnum>(this string displayName, out TEnum resultInputType)
+        where TEnum : struct, Enum
+    {
+        foreach (TEnum enumLoop in Enum.GetValues(typeof(TEnum)))
+        {
+            var displayNameLoop = enumLoop.DisplayName();
+            if (displayNameLoop.Equals(displayName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                resultInputType = enumLoop;
+                return true;
+            }
+        }
+        resultInputType = default;
+        return false;
+    }
+    private static string RegexReplace(this string value, string pattern, string replacement)
+        => Regex.Replace(
+            value, pattern, replacement,
+            RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+
 }
