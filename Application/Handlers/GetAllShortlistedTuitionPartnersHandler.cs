@@ -1,3 +1,4 @@
+using Application.Common.Interfaces;
 using Application.Queries;
 
 namespace Application.Handlers;
@@ -6,12 +7,12 @@ public class
     GetAllShortlistedTuitionPartnersHandler : IRequestHandler<GetAllShortlistedTuitionPartnersQuery,
         IEnumerable<string>>
 {
-    private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
+    private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
 
-    public GetAllShortlistedTuitionPartnersHandler(ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage)
-        => _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
+    public GetAllShortlistedTuitionPartnersHandler(ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService)
+        => _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
 
     public Task<IEnumerable<string>> Handle
         (GetAllShortlistedTuitionPartnersQuery request, CancellationToken cancellationToken) =>
-        Task.FromResult(_tuitionPartnerShortlistStorage.GetAllTuitionPartners());
+        Task.FromResult(_tuitionPartnerShortlistStorageService.GetAllTuitionPartners());
 }

@@ -1,4 +1,4 @@
-﻿using UI.Enums;
+﻿using Domain.Enums;
 using UI.Extensions;
 using UI.Pages;
 

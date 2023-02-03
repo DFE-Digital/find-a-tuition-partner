@@ -1,5 +1,6 @@
 ﻿using Application;
-using Infrastructure.MetricLogging;
+using Application.Common.Interfaces;
+using Infrastructure.Services.MetricLogging;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,14 +1,15 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
+using Application.Common.Interfaces;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
+using Infrastructure.Analytics;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using UI.Analytics;
 using UI.Filters;
 using UI.Routing;
-using UI.Services.TuitionPartnerShortlistStorage;
+using UI.Services;
 using AssemblyReference = UI.AssemblyReference;
 
 // Data import is a stand-alone process that should terminate once completed
@@ -17,7 +18,7 @@ if (await Import.RunImport(args)) return;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ITuitionPartnerShortlistStorage, CookieBasedTuitionPartnerShortlistStorage>();
+builder.Services.AddScoped<ITuitionPartnerShortlistStorageService, CookieBasedTuitionPartnerShortlistStorageService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>

@@ -1,12 +1,11 @@
-﻿using Domain;
-using Domain.Constants;
+﻿using Domain.Constants;
 using Domain.Search;
 using FluentValidation.TestHelper;
 using NSubstitute;
 using Tests.TestData;
 using UI.Pages;
 using Index = UI.Pages.Index;
-using KeyStage = UI.Enums.KeyStage;
+using KeyStage = Domain.Enums.KeyStage;
 
 namespace Tests;
 

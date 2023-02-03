@@ -1,3 +1,6 @@
+using Application.Common.Models;
+using Domain.Enums;
+
 namespace UI.Pages;
 
 using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;

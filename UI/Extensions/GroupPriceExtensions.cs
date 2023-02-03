@@ -1,4 +1,6 @@
-﻿namespace UI.Extensions
+﻿using Application.Common.Structs;
+
+namespace UI.Extensions
 {
     public static class GroupPriceExtensions
     {

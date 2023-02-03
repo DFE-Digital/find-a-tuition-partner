@@ -1,14 +1,15 @@
+using Application.Common.Interfaces;
 using Application.Queries;
 
 namespace Application.Handlers;
 
 public class IsTuitionPartnerShortlistedHandler : IRequestHandler<IsTuitionPartnerShortlistedQuery, bool>
 {
-    private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
+    private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
 
-    public IsTuitionPartnerShortlistedHandler(ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage) =>
-        _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
+    public IsTuitionPartnerShortlistedHandler(ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService) =>
+        _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
 
     public Task<bool> Handle(IsTuitionPartnerShortlistedQuery request, CancellationToken cancellationToken) =>
-        Task.FromResult(_tuitionPartnerShortlistStorage.IsTuitionPartnerShortlisted(request.TuitionPartnerSeoUrl));
+        Task.FromResult(_tuitionPartnerShortlistStorageService.IsTuitionPartnerShortlisted(request.TuitionPartnerSeoUrl));
 }

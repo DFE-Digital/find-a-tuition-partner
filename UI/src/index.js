@@ -63,6 +63,12 @@ import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();
 printThisPage.init();
 
+import ShortlistCheckbox from "./javascript/shortlist-checkbox";
+const shortlistCheckboxes = document.querySelectorAll(
+  '[data-module="shortlist-checkbox"]'
+);
+ShortlistCheckbox.init(shortlistCheckboxes);
+
 import ShortlistRefinement from "./javascript/shortlist-refinement";
 var shortlistRefinement = new ShortlistRefinement();
 shortlistRefinement.init();
