@@ -252,3 +252,25 @@ Given(
     Step(this, "there are 6 entries on the shortlist page");
   }
 );
+
+Then(
+  "the shortlist key stage subjects label number {int} is {string}",
+  (entry, keyStageAndSubjectsLabel) => {
+    keyStageAndSubjectsLabel = removeExcessWhitespaces(
+      removeNewLine(keyStageAndSubjectsLabel)
+    );
+    cy.get("[data-testid='shortlist-key-stage-subjects-label']")
+      .eq(entry - 1)
+      .then(($paragraph) => {
+        return removeExcessWhitespaces(removeNewLine($paragraph.text()));
+      })
+      .should("equal", keyStageAndSubjectsLabel);
+  }
+);
+
+Then("the shortlist key stage subjects header is {string}", (header) => {
+  cy.get("[data-testid='shortlist-key-stage-subjects-header']").should(
+    "contain.text",
+    removeExcessWhitespaces(removeNewLine(header))
+  );
+});

@@ -273,3 +273,16 @@ Feature: Tuition Partner shortlist
     When the user selects tuition type 'any'
     When they choose to view their shortlist from the results page
     Then the tuition type select option is 'Any'
+
+  Scenario: The shortlist page shows the previously searched by subjects
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English, Key stage 2 Maths, Key stage 3 Maths' for postcode 'SK1 1EB'
+    And they add 'Action Tutoring' to their shortlist on the results page
+    When they choose to view their shortlist from the results page
+    Then the shortlist key stage subjects label number 1 is 'Key stage 2: English and Maths'
+    Then the shortlist key stage subjects label number 2 is 'Key stage 3: Maths'
+
+  Scenario: The shortlist page shows a message if no subjects have been searched for
+    Given a user has arrived on the 'Search results' page without subjects
+    And they add 'Action Tutoring' to their shortlist on the results page
+    When they choose to view their shortlist from the results page
+    Then the shortlist key stage subjects header is 'Results for any key stage subject'
