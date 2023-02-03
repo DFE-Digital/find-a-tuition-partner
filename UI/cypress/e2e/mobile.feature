@@ -84,5 +84,5 @@ Feature: Tuition partner details mobile view page tests
     Given a mobile user has opened the mobile filters overlay
     When they select subject 'Key stage 1 Maths'
     And they select the 'Show search results' button
-    Then subject 'KeyStage1-Maths' is selected
+    Then subject 'KeyStage1-Maths' is selected on the filter
     And only the postcode and results sections are displayed

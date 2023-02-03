@@ -1,3 +1,5 @@
+using Application.Common.Models;
+
 namespace UI.Extensions;
 
 public class SelectableTuitionPartnerModelComparer : IEqualityComparer<SelectableTuitionPartnerModel>

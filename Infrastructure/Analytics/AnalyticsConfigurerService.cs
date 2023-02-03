@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace UI.Analytics
+namespace Infrastructure.Analytics
 {
     interface IAnalyticsConfigurerService
     {
@@ -20,9 +20,9 @@ namespace UI.Analytics
 
         public AnalyticsConfigurerService(IConfiguration configuration, ILogger<AnalyticsConfigurerService> logger)
         {
-            this._configuration = configuration;
-            this._logger = logger;
-            this._isConfigured = IsAnalyticsConfigured();
+            _configuration = configuration;
+            _logger = logger;
+            _isConfigured = IsAnalyticsConfigured();
         }
 
         public void ConfigureApp(IApplicationBuilder app)

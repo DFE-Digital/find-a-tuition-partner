@@ -1,3 +1,6 @@
+using Application.Common.Models;
+using UI.Models;
+
 namespace UI.Pages;
 
 public class TuitionPartner : PageModel
@@ -13,23 +16,30 @@ public class TuitionPartner : PageModel
 
     public TuitionPartnerModel? Data { get; set; }
     public SearchModel? SearchModel { get; set; }
-    public ShortlistCheckboxModel ShortlistCheckboxModel = new();
+    public ShortlistCheckboxModel ShortlistCheckboxModel { get; set; } = new();
+
     [BindProperty] public string? ShortlistedCheckbox { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQuery query)
+    public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQueryModel query)
     {
         SearchModel = new SearchModel(query);
 
         if (string.IsNullOrWhiteSpace(query.Id))
             return ReturnNotFoundWithLogging($"Null or whitespace id '{query.Id}' provided", LogLevel.Information);
 
-        Data = await _mediator.Send(query);
+        var getTuitionPartnerQuery = new GetTuitionPartnerQuery(query.Id, query.ShowLocationsCovered, query.ShowFullPricing)
+        {
+            SearchModel = SearchModel
+        };
+
+        Data = await _mediator.Send(getTuitionPartnerQuery);
 
         if (Data == null)
         {
             var seoUrl = query.Id.ToSeoUrl();
 
-            if (query.Id == seoUrl) return ReturnNotFoundWithLogging($"No Tuition Partner found for id '{query.Id}'", LogLevel.Information);
+            if (query.Id == seoUrl)
+                return ReturnNotFoundWithLogging($"No Tuition Partner found for id '{query.Id}'", LogLevel.Information);
 
             _logger.LogInformation("Non SEO id '{Id}' provided. Redirecting to {SeoUrl}", query.Id, seoUrl);
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
@@ -43,46 +53,37 @@ public class TuitionPartner : PageModel
 
     public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl, string searchModel)
     {
-        if (IsStringWhitespaceOrNull(seoUrl)) throw GetArgumentException(nameof(seoUrl));
-        if (IsStringWhitespaceOrNull(searchModel)) throw GetArgumentException(nameof(searchModel));
+        ValidatePostUpdateShortListArguments(seoUrl, searchModel);
 
         SearchModel = JsonSerializer.Deserialize<SearchModel>(searchModel);
 
-        if (IsStringWhitespaceOrNull(ShortlistedCheckbox))
-            await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl));
-
-        if (!IsStringWhitespaceOrNull(ShortlistedCheckbox))
-            await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl));
+        await HandleShortlistUpdate(seoUrl);
 
         return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
     }
 
-    public async Task<IActionResult> OnPostAddToShortlist([FromBody] string seoUrl)
+    private void ValidatePostUpdateShortListArguments(string seoUrl, string searchModel)
     {
-        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
-
-        await _mediator.Send(new AddTuitionPartnerToShortlistCommand(seoUrl.Trim()));
-
-        return GetShortlistJsonResult(true);
-    }
-
-    public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] string seoUrl)
-    {
-        if (IsStringWhitespaceOrNull(seoUrl)) return GetShortlistJsonResult(false);
-
-        await _mediator.Send(new RemoveTuitionPartnerCommand(seoUrl.Trim()));
-
-        return GetShortlistJsonResult(true);
+        if (IsStringWhitespaceOrNull(seoUrl)) throw GetArgumentException(nameof(seoUrl));
+        if (IsStringWhitespaceOrNull(searchModel)) throw GetArgumentException(nameof(searchModel));
     }
 
     private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
     private ArgumentException GetArgumentException(string name) => new($"{name} is null or whitespace");
-    private JsonResult GetShortlistJsonResult(bool status) => new(new { Updated = status });
 
     private IActionResult ReturnNotFoundWithLogging(string logMessage, LogLevel logLevel)
     {
         _logger.Log(logLevel, "{LogMessage}", logMessage);
         return NotFound();
+    }
+
+    private async Task HandleShortlistUpdate(string seoUrl)
+    {
+        if (IsStringWhitespaceOrNull(ShortlistedCheckbox))
+            await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(seoUrl));
+
+        if (!IsStringWhitespaceOrNull(ShortlistedCheckbox))
+            await _mediator.Send(new AddTuitionPartnersToShortlistCommand(new List<string>() { seoUrl }));
     }
 
     private async Task GetShortlistCheckboxModel(string name, string seoUrl, string checkboxName)

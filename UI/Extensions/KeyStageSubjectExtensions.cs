@@ -1,4 +1,6 @@
-﻿namespace UI.Extensions
+﻿using Application.Common.Models;
+
+namespace UI.Extensions
 {
     public static class KeyStageSubjectExtensions
     {

@@ -1,17 +1,18 @@
+using Application.Common.Interfaces;
+
 namespace Application.Handlers;
 
-public class AddTuitionPartnersToShortlistHandler : IRequestHandler<AddTuitionPartnersToShortlistCommand>
+public class AddTuitionPartnersToShortlistHandler : IRequestHandler<AddTuitionPartnersToShortlistCommand, bool>
 {
-    private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
+    private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
 
-    public AddTuitionPartnersToShortlistHandler(ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage) =>
-        _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
+    public AddTuitionPartnersToShortlistHandler(ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService) =>
+        _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
 
-    public Task<Unit> Handle(AddTuitionPartnersToShortlistCommand request, CancellationToken cancellationToken)
+    public Task<bool> Handle(AddTuitionPartnersToShortlistCommand request, CancellationToken cancellationToken)
     {
-        _tuitionPartnerShortlistStorage.RemoveAllTuitionPartners();
-        _tuitionPartnerShortlistStorage.AddTuitionPartners(request.ShortlistedTuitionPartnersSeoUrl);
+        var result = _tuitionPartnerShortlistStorageService.AddTuitionPartners(request.ShortlistedTuitionPartnersSeoUrl);
 
-        return Task.FromResult(Unit.Value);
+        return Task.FromResult(result);
     }
 }

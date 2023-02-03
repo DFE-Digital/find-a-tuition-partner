@@ -1,15 +1,17 @@
+using Application.Common.Interfaces;
+
 namespace Application.Handlers;
 
-public class RemoveShortlistedTuitionPartnerHandler : IRequestHandler<RemoveTuitionPartnerCommand>
+public class RemoveShortlistedTuitionPartnerHandler : IRequestHandler<RemoveShortlistedTuitionPartnerCommand, bool>
 {
-    private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
+    private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
 
-    public RemoveShortlistedTuitionPartnerHandler(ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage) =>
-        _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
+    public RemoveShortlistedTuitionPartnerHandler(ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService) =>
+        _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
 
-    public Task<Unit> Handle(RemoveTuitionPartnerCommand request, CancellationToken cancellationToken)
+    public Task<bool> Handle(RemoveShortlistedTuitionPartnerCommand request, CancellationToken cancellationToken)
     {
-        _tuitionPartnerShortlistStorage.RemoveTuitionPartner(request.SeoUrl);
-        return Task.FromResult(Unit.Value);
+        var result = _tuitionPartnerShortlistStorageService.RemoveTuitionPartner(request.SeoUrl);
+        return Task.FromResult(result);
     }
 }
