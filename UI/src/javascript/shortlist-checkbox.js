@@ -1,7 +1,6 @@
 "use strict";
 
 import ShortlistClient from "./api/shortlist-client";
-import { throwError } from "./util";
 
 const ShortlistCheckbox = (() => {
   let client = new ShortlistClient();
