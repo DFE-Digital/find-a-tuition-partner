@@ -235,10 +235,7 @@ Given(
       this,
       "they add 'Action Tutoring' to their shortlist on the results page"
     );
-    Step(
-      this,
-      "they add '3D Recruit Ltd' to their shortlist on the results page"
-    );
+    Step(this, "they add 'Career Tree' to their shortlist on the results page");
     Step(
       this,
       "they add 'Booster Club' to their shortlist on the results page"
@@ -268,9 +265,8 @@ Then(
   }
 );
 
-Then("the shortlist key stage subjects header is {string}", (header) => {
+Then("the shortlist key stage subjects header is not shown", () => {
   cy.get("[data-testid='shortlist-key-stage-subjects-header']").should(
-    "contain.text",
-    removeExcessWhitespaces(removeNewLine(header))
+    "not.exist"
   );
 });
