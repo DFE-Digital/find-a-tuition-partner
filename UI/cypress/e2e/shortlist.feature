@@ -200,10 +200,10 @@ Feature: Tuition Partner shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
     Then the 'Tutors Green' price is 'From £10.42'
     When 'In School' tuition type shortlist refinement option is selected
-    Then 'Booster Club' is entry 1 on the shortlist page
-    And 'Zen Educate' is entry 2 on the shortlist page
-    And 'Tutors Green' is entry 3 on the shortlist page
-    And 'Career Tree' is entry 4 on the shortlist page
+    Then 'Career Tree' is entry 1 on the shortlist page
+    And 'Booster Club' is entry 2 on the shortlist page
+    And 'Zen Educate' is entry 3 on the shortlist page
+    And 'Tutors Green' is entry 4 on the shortlist page
     And 'Reeson Education' is entry 5 on the shortlist page
     And 'Action Tutoring' is entry 6 on the shortlist page
     And the 'Tutors Green' price is 'From £11.25'
