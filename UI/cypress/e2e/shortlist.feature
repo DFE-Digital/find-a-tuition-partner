@@ -50,17 +50,17 @@ Feature: Tuition Partner shortlist
   Scenario: User views their shortlisted TPs on the shortlist page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their shortlist on the results page
-    And they add '3D Recruit Ltd' to their shortlist on the results page
+    And they add 'Career Tree' to their shortlist on the results page
     When they choose to view their shortlist from the results page
     Then there are 2 entries on the shortlist page
     And the heading caption is 'Tuition partners for Stockport'
     And 'Action Tutoring' is entry 1 on the shortlist page
-    And '3D Recruit Ltd' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
 
   Scenario: User changes their filters to exclude a shortlisted TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their shortlist on the results page
-    And they add '3D Recruit Ltd' to their shortlist on the results page
+    And they add 'Career Tree' to their shortlist on the results page
     When they click on the option heading for 'Key stage 4'
     And they select subject 'key-stage-4-humanities'
     Then the shortlist shows as having 2 entries on the results page
@@ -68,14 +68,14 @@ Feature: Tuition Partner shortlist
   Scenario: User changes their postcode to exclude a shortlisted TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their shortlist on the results page
-    And they add '3D Recruit Ltd' to their shortlist on the results page
+    And they add 'Career Tree' to their shortlist on the results page
     When they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     Then the shortlist shows as having 2 entries on the results page
     And they choose to view their shortlist from the results page
     And there are 1 entries on the shortlist page
     And the heading caption is 'Tuition partner for East Sussex'
-    And '3D Recruit Ltd' is entry 1 on the shortlist page
+    And 'Career Tree' is entry 1 on the shortlist page
     And 'Action Tutoring' is entry 1 on the not available list on the shortlist page
 
   Scenario: The shortlist displays the expected data for the search area
@@ -104,7 +104,7 @@ Feature: Tuition Partner shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
     And 'Reeson Education' is entry 1 on the shortlist page
     And 'Action Tutoring' is entry 2 on the shortlist page
-    And '3D Recruit Ltd' is entry 3 on the shortlist page
+    And 'Career Tree' is entry 3 on the shortlist page
     And 'Booster Club' is entry 4 on the shortlist page
     And 'Zen Educate' is entry 5 on the shortlist page
     And 'Tutors Green' is entry 6 on the shortlist page
@@ -113,17 +113,17 @@ Feature: Tuition Partner shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
     Then they choose to sort the shortlist by price
     And 'Zen Educate' is entry 1 on the shortlist page
-    And 'Reeson Education' is entry 2 on the shortlist page
-    And 'Tutors Green' is entry 3 on the shortlist page
-    And '3D Recruit Ltd' is entry 4 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
+    And 'Reeson Education' is entry 3 on the shortlist page
+    And 'Tutors Green' is entry 4 on the shortlist page
     And 'Action Tutoring' is entry 5 on the shortlist page
     And 'Booster Club' is entry 6 on the shortlist page
     Then they choose to sort the shortlist by price
     And 'Booster Club' is entry 1 on the shortlist page
     And 'Action Tutoring' is entry 2 on the shortlist page
-    And '3D Recruit Ltd' is entry 3 on the shortlist page
-    And 'Tutors Green' is entry 4 on the shortlist page
-    And 'Reeson Education' is entry 5 on the shortlist page
+    And 'Tutors Green' is entry 3 on the shortlist page
+    And 'Reeson Education' is entry 4 on the shortlist page
+    And 'Career Tree' is entry 5 on the shortlist page
     And 'Zen Educate' is entry 6 on the shortlist page
 
   Scenario: User removes single item from shortlist
@@ -131,13 +131,13 @@ Feature: Tuition Partner shortlist
     Then they choose to remove entry 2 on the shortlist page
     Then there are 5 entries on the shortlist page
     And 'Reeson Education' is entry 1 on the shortlist page
-    And '3D Recruit Ltd' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
     Then they click 'Back'
     And the search results are displayed
     Then they choose to view their shortlist from the results page
     Then there are 5 entries on the shortlist page
     And 'Reeson Education' is entry 1 on the shortlist page
-    And '3D Recruit Ltd' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
 
   Scenario: User clears full shortlist then cancel
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
@@ -189,7 +189,7 @@ Feature: Tuition Partner shortlist
     Then the 'Reeson Education' price is 'From £10'
     When '1 to 1' group size shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
-    And '3D Recruit Ltd' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
     And 'Zen Educate' is entry 3 on the shortlist page
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Action Tutoring' is entry 5 on the shortlist page
@@ -203,9 +203,9 @@ Feature: Tuition Partner shortlist
     Then 'Booster Club' is entry 1 on the shortlist page
     And 'Zen Educate' is entry 2 on the shortlist page
     And 'Tutors Green' is entry 3 on the shortlist page
-    And 'Reeson Education' is entry 4 on the shortlist page
-    And 'Action Tutoring' is entry 5 on the shortlist page
-    And '3D Recruit Ltd' is entry 6 on the shortlist page
+    And 'Career Tree' is entry 4 on the shortlist page
+    And 'Reeson Education' is entry 5 on the shortlist page
+    And 'Action Tutoring' is entry 6 on the shortlist page
     And the 'Tutors Green' price is 'From £11.25'
 
   Scenario: The shortlist can be refined by group size and tuition type then TP rows and the price are updated
@@ -214,7 +214,7 @@ Feature: Tuition Partner shortlist
     When '1 to 1' group size shortlist refinement option is selected
     And 'Online' tuition type shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
-    And '3D Recruit Ltd' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
     And 'Tutors Green' is entry 3 on the shortlist page
     And 'Action Tutoring' is entry 4 on the shortlist page
     And 'Booster Club' is entry 5 on the shortlist page
@@ -226,7 +226,7 @@ Feature: Tuition Partner shortlist
     When '1 to 1' group size shortlist refinement option is selected
     And 'Online' tuition type shortlist refinement option is selected
     And they choose to sort the shortlist by price
-    Then '3D Recruit Ltd' is entry 1 on the shortlist page
+    Then 'Career Tree' is entry 1 on the shortlist page
     And 'Tutors Green' is entry 2 on the shortlist page
     And 'Reeson Education' is entry 3 on the shortlist page
     And 'Action Tutoring' is entry 4 on the shortlist page
@@ -235,7 +235,7 @@ Feature: Tuition Partner shortlist
     And they choose to sort the shortlist by price
     Then 'Reeson Education' is entry 1 on the shortlist page
     And 'Tutors Green' is entry 2 on the shortlist page
-    And '3D Recruit Ltd' is entry 3 on the shortlist page
+    And 'Career Tree' is entry 3 on the shortlist page
     And 'Action Tutoring' is entry 4 on the shortlist page
     And 'Booster Club' is entry 5 on the shortlist page
     And 'Zen Educate' is entry 6 on the shortlist page
