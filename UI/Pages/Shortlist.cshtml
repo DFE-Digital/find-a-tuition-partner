@@ -20,15 +20,11 @@
 
             @if(Model.Data.KeyStageSubjectsFilteredLabels.Any())
             {
-                <h2 class="govuk-heading-m">You've searched for:</h2>
+                <h2 class="govuk-heading-m" data-testid="shortlist-key-stage-subjects-header">You've searched for:</h2>
                 @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
                 {
                     <p class="govuk-body key-stage-subjects-filtered-label" data-testid="shortlist-key-stage-subjects-label">@item</p>
                 }
-            }
-            else
-            {
-                <h2 class="govuk-heading-m" data-testid="shortlist-key-stage-subjects-header">Results for any key stage subject</h2>
             }
 
             @if (count > 0)

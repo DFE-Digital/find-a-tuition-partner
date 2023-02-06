@@ -281,8 +281,8 @@ Feature: Tuition Partner shortlist
     Then the shortlist key stage subjects label number 1 is 'Key stage 2: English and Maths'
     Then the shortlist key stage subjects label number 2 is 'Key stage 3: Maths'
 
-  Scenario: The shortlist page shows a message if no subjects have been searched for
+  Scenario: The shortlist page shows no message if no subjects have been searched for
     Given a user has arrived on the 'Search results' page without subjects
     And they add 'Action Tutoring' to their shortlist on the results page
     When they choose to view their shortlist from the results page
-    Then the shortlist key stage subjects header is 'Results for any key stage subject'
+    Then the shortlist key stage subjects header is not shown

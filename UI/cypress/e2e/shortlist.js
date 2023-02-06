@@ -268,9 +268,8 @@ Then(
   }
 );
 
-Then("the shortlist key stage subjects header is {string}", (header) => {
+Then("the shortlist key stage subjects header is not shown", () => {
   cy.get("[data-testid='shortlist-key-stage-subjects-header']").should(
-    "contain.text",
-    removeExcessWhitespaces(removeNewLine(header))
+    "not.exist"
   );
 });
