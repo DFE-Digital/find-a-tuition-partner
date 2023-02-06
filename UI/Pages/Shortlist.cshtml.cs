@@ -4,6 +4,7 @@ using Domain;
 using Domain.Enums;
 using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
+using KeyStage = Domain.Enums.KeyStage;
 
 namespace UI.Pages;
 public class ShortlistModel : PageModel
@@ -26,7 +27,7 @@ public class ShortlistModel : PageModel
         {
             if (data.KeyStages == null)
             {
-                data.KeyStages = Enum.GetValues(typeof(Enums.KeyStage)).Cast<Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
+                data.KeyStages = Enum.GetValues(typeof(Domain.Enums.KeyStage)).Cast<Domain.Enums.KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
             }
             data.KeyStageSubjects = Enum.GetValues(typeof(Domain.Enums.KeyStageSubject)).Cast<Domain.Enums.KeyStageSubject>().Where(x => string.Join(" ", data.Subjects).ToSeoUrl().Contains(x.DisplayName().ToSeoUrl())).ToArray();
         }

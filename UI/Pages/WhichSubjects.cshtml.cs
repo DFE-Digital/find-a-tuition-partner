@@ -57,7 +57,7 @@ public class WhichSubjects : PageModel
                 .WithMessage("Select the subject or subjects");
 
             RuleForEach(m => m.Subjects)
-                .Must(x => KeyStageSubject.TryParse(x, out var _));
+                .Must(x => Application.Common.Models.KeyStageSubject.TryParse(x, out var _));
         }
     }
 
