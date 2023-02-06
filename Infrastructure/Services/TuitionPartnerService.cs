@@ -141,9 +141,9 @@ public class TuitionPartnerService : ITuitionPartnerService
                 {
                     return results;
                 }
-                var tuitionPartnerWithDataMoveToEndOfList = 1000;
+                var tuitionPartnerWithNoDataMoveToEndOfList = 1000;
                 return results
-                    .OrderBy(x => x.Prices == null ? (Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl) + tuitionPartnerWithDataMoveToEndOfList) : Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl));
+                    .OrderBy(x => x.Prices == null ? (Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl) + tuitionPartnerWithNoDataMoveToEndOfList) : Array.IndexOf(ordering.SeoUrlOrderBy, x.SeoUrl));
 
             default:
                 return results.OrderByDescending(e => e.Id);

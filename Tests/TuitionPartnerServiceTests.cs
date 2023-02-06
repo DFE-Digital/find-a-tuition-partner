@@ -668,7 +668,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         yield return new object[]
         {
             new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.Price, Direction = Domain.Enums.OrderByDirection.Descending },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie" }
+            new []{ "Delta", "Alpha", "Bravo", "Charlie" }
         };
     }
     #endregion
