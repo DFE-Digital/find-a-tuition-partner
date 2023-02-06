@@ -83,12 +83,12 @@ Feature: Tuition Partner shortlist
     And they add 'Reeson Education' to their shortlist on the results page
     When they choose to view their shortlist from the results page
     Then there are 1 entries on the shortlist page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', 'From £10'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£10 to £60'
     And they click 'Back'
     And they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     And they choose to view their shortlist from the results page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'Online', 'From £10'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'Online', '£10 to £60'
 
   Scenario: User views TP details from the shortlist
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
@@ -109,7 +109,7 @@ Feature: Tuition Partner shortlist
     And 'Zen Educate' is entry 5 on the shortlist page
     And 'Tutors Green' is entry 6 on the shortlist page
 
-  Scenario: User sorts shortlist table by Price
+  Scenario: User sorts shortlist table by Price, uses min price for ascending, max price for descending
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
     Then they choose to sort the shortlist by price
     And 'Zen Educate' is entry 1 on the shortlist page
@@ -119,12 +119,12 @@ Feature: Tuition Partner shortlist
     And 'Action Tutoring' is entry 5 on the shortlist page
     And 'Booster Club' is entry 6 on the shortlist page
     Then they choose to sort the shortlist by price
-    And 'Booster Club' is entry 1 on the shortlist page
-    And 'Action Tutoring' is entry 2 on the shortlist page
-    And 'Tutors Green' is entry 3 on the shortlist page
-    And 'Reeson Education' is entry 4 on the shortlist page
-    And 'Career Tree' is entry 5 on the shortlist page
-    And 'Zen Educate' is entry 6 on the shortlist page
+    And 'Reeson Education' is entry 1 on the shortlist page
+    And 'Tutors Green' is entry 2 on the shortlist page
+    And 'Career Tree' is entry 3 on the shortlist page
+    And 'Zen Educate' is entry 4 on the shortlist page
+    And 'Booster Club' is entry 5 on the shortlist page
+    And 'Action Tutoring' is entry 6 on the shortlist page
 
   Scenario: User removes single item from shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
@@ -186,7 +186,7 @@ Feature: Tuition Partner shortlist
 
   Scenario: The shortlist can be refined by group size then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Reeson Education' price is 'From £10'
+    Then the 'Reeson Education' price is '£10 to £60'
     When '1 to 1' group size shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
     And 'Career Tree' is entry 2 on the shortlist page
@@ -194,11 +194,11 @@ Feature: Tuition Partner shortlist
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Action Tutoring' is entry 5 on the shortlist page
     And 'Booster Club' is entry 6 on the shortlist page
-    And the 'Reeson Education' price is 'From £60'
+    And the 'Reeson Education' price is '£60'
 
   Scenario: The shortlist can be refined by tuition type then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Tutors Green' price is 'From £10.42'
+    Then the 'Tutors Green' price is '£10.42 to £55'
     When 'In School' tuition type shortlist refinement option is selected
     Then 'Career Tree' is entry 1 on the shortlist page
     And 'Booster Club' is entry 2 on the shortlist page
@@ -206,11 +206,11 @@ Feature: Tuition Partner shortlist
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Reeson Education' is entry 5 on the shortlist page
     And 'Action Tutoring' is entry 6 on the shortlist page
-    And the 'Tutors Green' price is 'From £11.25'
+    And the 'Tutors Green' price is '£11.25 to £55'
 
   Scenario: The shortlist can be refined by group size and tuition type then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Tutors Green' price is 'From £10.42'
+    Then the 'Tutors Green' price is '£10.42 to £55'
     When '1 to 1' group size shortlist refinement option is selected
     And 'Online' tuition type shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
@@ -219,7 +219,7 @@ Feature: Tuition Partner shortlist
     And 'Action Tutoring' is entry 4 on the shortlist page
     And 'Booster Club' is entry 5 on the shortlist page
     And 'Zen Educate' is entry 6 on the shortlist page
-    And the 'Tutors Green' price is 'From £50'
+    And the 'Tutors Green' price is '£50'
 
   Scenario: The shortlist price ordering works with refined data and any inavid TP data still follows the order they were added to shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
