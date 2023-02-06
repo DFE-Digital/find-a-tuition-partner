@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using Domain.Enums;
+using KeyStage = Domain.Enums.KeyStage;
 
 namespace Application.Common.Models
 {
-    public record KeyStageSubject(Domain.Enums.KeyStage KeyStage, string Subject)
+    public record KeyStageSubject(KeyStage KeyStage, string Subject)
     {
         public static KeyStageSubject Parse(string value)
         {
@@ -13,7 +13,7 @@ namespace Application.Common.Models
             if (!re.Success)
                 throw new ArgumentException("Subject must be of the form KS1-English");
 
-            if (!Enum.TryParse<Domain.Enums.KeyStage>(re.Groups[1].Value, out var ks))
+            if (!Enum.TryParse<KeyStage>(re.Groups[1].Value, out var ks))
                 throw new ArgumentException($"'{re.Groups[0].Value}' is not a valid key stage");
 
             return new KeyStageSubject(ks, re.Groups[2].Value);
@@ -38,7 +38,7 @@ namespace Application.Common.Models
                 return false;
             }
 
-            if (!Enum.TryParse<Domain.Enums.KeyStage>(re.Groups[1].Value, out var ks))
+            if (!Enum.TryParse<KeyStage>(re.Groups[1].Value, out var ks))
             { // Value is not a valid key stage
                 parsed = default;
                 return false;

@@ -7,6 +7,9 @@ using Domain;
 using Domain.Constants;
 using Infrastructure.Mapping;
 using Microsoft.Extensions.Logging;
+using GroupSize = Domain.Enums.GroupSize;
+using KeyStage = Domain.Enums.KeyStage;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Infrastructure.Factories;
 
@@ -330,11 +333,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             {
                 if (inSchool)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, Domain.Enums.TuitionType.InSchool, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionType.InSchool, ladId);
                 }
                 if (online)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, Domain.Enums.TuitionType.Online, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionType.Online, ladId);
                 }
             }
 
@@ -382,7 +385,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, Domain.Enums.TuitionType tuitionType, int ladId)
+    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, TuitionType tuitionType, int ladId)
     {
         var coverage = new LocalAuthorityDistrictCoverage
         {
@@ -406,7 +409,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string TableHeader = "Group";
 
         var sheetName = PricingSheetName;
-        var subjectCoverageAndPrices = new Dictionary<(Domain.Enums.GroupSize groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal>();
+        var subjectCoverageAndPrices = new Dictionary<(GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionType tuitionType), decimal>();
 
         bool castError = false;
 
@@ -420,12 +423,12 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var tuitionTypeString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionTypeColumn, row);
 
                 //Cast to required types
-                if (!groupString.TryParse(out Domain.Enums.GroupSize groupSize))
+                if (!groupString.TryParse(out GroupSize groupSize))
                 {
                     castError = true;
                     _errors.Add($"Invalid Group conversion, should be in '1 to x' format.  '{groupString}' is on row {row} on '{sheetName}' worksheet");
                 }
-                if (!keyStageString.TryParse(out Domain.Enums.KeyStage keyStage))
+                if (!keyStageString.TryParse(out KeyStage keyStage))
                 {
                     castError = true;
                     _errors.Add($"Invalid KeyStage conversion, should be in 'Key Stage x' format.  '{keyStageString}' is on row {row} on '{sheetName}' worksheet");
@@ -435,8 +438,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     castError = true;
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
                 }
-                var tuitionTypeStringReplaced = tuitionTypeString.Replace("Both", Domain.Enums.TuitionType.Any.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-                if (!tuitionTypeStringReplaced.TryParse(out Domain.Enums.TuitionType tuitionType))
+                var tuitionTypeStringReplaced = tuitionTypeString.Replace("Both", TuitionType.Any.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
+                if (!tuitionTypeStringReplaced.TryParse(out TuitionType tuitionType))
                 {
                     castError = true;
                     _errors.Add($"Invalid TuitionType conversion.  '{tuitionTypeString}' is on row {row} on '{sheetName}' worksheet");
@@ -484,18 +487,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
         else
         {
-            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.InSchool);
-            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)Domain.Enums.TuitionType.Online);
+            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionType.InSchool);
+            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionType.Online);
 
-            foreach (((Domain.Enums.GroupSize groupSize, Domain.Enums.KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, Domain.Enums.TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
+            foreach (((GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
             {
-                if (ladHasInSchool && rate > 0 && (tuitionType == Domain.Enums.TuitionType.InSchool || tuitionType == Domain.Enums.TuitionType.Any))
+                if (ladHasInSchool && rate > 0 && (tuitionType == TuitionType.InSchool || tuitionType == TuitionType.Any))
                 {
-                    AddPrice(tuitionPartner, Domain.Enums.TuitionType.InSchool, subjectId, groupSize, rate);
+                    AddPrice(tuitionPartner, TuitionType.InSchool, subjectId, groupSize, rate);
                 }
-                if (ladHasOnline && rate > 0 && (tuitionType == Domain.Enums.TuitionType.Online || tuitionType == Domain.Enums.TuitionType.Any))
+                if (ladHasOnline && rate > 0 && (tuitionType == TuitionType.Online || tuitionType == TuitionType.Any))
                 {
-                    AddPrice(tuitionPartner, Domain.Enums.TuitionType.Online, subjectId, groupSize, rate);
+                    AddPrice(tuitionPartner, TuitionType.Online, subjectId, groupSize, rate);
                 }
             }
 
@@ -525,11 +528,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     _warnings.Add($"Some zero rates on '{sheetName}' worksheet");
                 }
                 //Warn - see if any in school or online when not set for LADs
-                if (!ladHasInSchool && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == Domain.Enums.TuitionType.InSchool || x.Key.tuitionType == Domain.Enums.TuitionType.Any)))
+                if (!ladHasInSchool && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == TuitionType.InSchool || x.Key.tuitionType == TuitionType.Any)))
                 {
                     _warnings.Add($"Some subjects and prices exist for In School on '{sheetName}' worksheet.  But no LADs are In School");
                 }
-                if (!ladHasOnline && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == Domain.Enums.TuitionType.Online || x.Key.tuitionType == Domain.Enums.TuitionType.Any)))
+                if (!ladHasOnline && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == TuitionType.Online || x.Key.tuitionType == TuitionType.Any)))
                 {
                     _warnings.Add($"Some subjects and prices exist for Online on '{sheetName}' worksheet.  But no LADs are Online");
                 }
@@ -537,7 +540,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddPrice(TuitionPartner tuitionPartner, Domain.Enums.TuitionType tuitionType, int subjectId, Domain.Enums.GroupSize groupSize, decimal rate)
+    private static void AddPrice(TuitionPartner tuitionPartner, TuitionType tuitionType, int subjectId, GroupSize groupSize, decimal rate)
     {
         var price = new Price
         {

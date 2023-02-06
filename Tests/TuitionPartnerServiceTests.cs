@@ -1,6 +1,9 @@
 ﻿using Domain.Constants;
 using Domain.Search;
 using Tests.TestData;
+using OrderByDirection = Domain.Enums.OrderByDirection;
+using TuitionPartnerOrderBy = Domain.Enums.TuitionPartnerOrderBy;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Tests;
 
@@ -16,7 +19,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(3)
             .WithName("charlie-tuition-partner", "Charlie")
-            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3ModernForeignLanguages, s => s
                     .InSchool().Costing(8m).ForGroupSizes(3)))
@@ -25,8 +28,8 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(1)
             .WithName("alpha-tuition-partner", "Alpha")
-            .TaughtIn(District.EastRidingOfYorkshire, Domain.Enums.TuitionType.InSchool)
-            .TaughtIn(District.NorthEastLincolnshire, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
+            .TaughtIn(District.NorthEastLincolnshire, TuitionType.InSchool, TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage1English, s => s
                     .InSchool().Costing(13m).ForGroupSizes(3))
@@ -45,7 +48,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(2)
             .WithName("bravo-tuition-partner", "Bravo")
-            .TaughtIn(District.NorthTyneside, Domain.Enums.TuitionType.InSchool)
+            .TaughtIn(District.NorthTyneside, TuitionType.InSchool)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3ModernForeignLanguages, s => s
                     .InSchool().Costing(14m).ForGroupSizes(4))
@@ -57,7 +60,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(4)
             .WithName("delta-tuition-partner", "Delta")
-            .TaughtIn(District.Dacorum, Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online)
+            .TaughtIn(District.Dacorum, TuitionType.InSchool, TuitionType.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage1English, s => s
                     .InSchool().Costing(113m).ForGroupSizes(3))
@@ -240,7 +243,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.NorthTyneside.Id,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.Online
+            TuitionTypeId = (int)TuitionType.Online
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
@@ -258,7 +261,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.NorthEastLincolnshire.Id,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.Online
+            TuitionTypeId = (int)TuitionType.Online
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
@@ -277,7 +280,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.EastRidingOfYorkshire.Id,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            TuitionTypeId = (int)TuitionType.InSchool,
             SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths }
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
@@ -296,7 +299,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var filter = new TuitionPartnersFilter()
         {
             LocalAuthorityDistrictId = District.EastRidingOfYorkshire.Id,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            TuitionTypeId = (int)TuitionType.InSchool,
             SubjectIds = new List<int>() { Subjects.Id.KeyStage1English }
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
@@ -385,7 +388,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
         alpha.SubjectsCoverage!.Length.Should().Be(1);
-        alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        alpha.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionType.InSchool);
         alpha.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage1English);
         alpha.Prices.Should().NotBeEmpty();
         alpha.Prices!.Length.Should().Be(2);
@@ -397,7 +400,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         });
         alpha.TuitionTypes.Should().NotBeEmpty();
         alpha.TuitionTypes!.Length.Should().Be(1);
-        alpha.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        alpha.TuitionTypes[0].Id.Should().Be((int)TuitionType.InSchool);
 
 
         //no TT, subjects or prices for Bravo TP for EastRidingOfYorkshire
@@ -429,7 +432,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var bravo = results.First(x => x.Name == "Bravo");
         bravo.SubjectsCoverage.Should().NotBeEmpty();
         bravo.SubjectsCoverage!.Length.Should().Be(1);
-        bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        bravo.SubjectsCoverage[0].TuitionTypeId.Should().Be((int)TuitionType.InSchool);
         bravo.SubjectsCoverage[0].Subject.Id.Should().Be(Subjects.Id.KeyStage3ModernForeignLanguages);
         bravo.Prices.Should().NotBeEmpty();
         bravo.Prices!.Length.Should().Be(2);
@@ -441,7 +444,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         });
         bravo.TuitionTypes.Should().NotBeEmpty();
         bravo.TuitionTypes!.Length.Should().Be(1);
-        bravo.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        bravo.TuitionTypes[0].Id.Should().Be((int)TuitionType.InSchool);
 
 
         //no TT, subjects or prices for Charlie TP for NorthTyneside
@@ -468,7 +471,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var dataFilter = new TuitionPartnersDataFilter()
         {
             GroupSize = 6,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            TuitionTypeId = (int)TuitionType.InSchool,
             SubjectIds = new List<int>() { Subjects.Id.KeyStage4ModernForeignLanguages }
         };
 
@@ -543,7 +546,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         alpha!.Prices!.Length.Should().Be(1);
         alpha!.Prices[0].HourlyRate.Should().Be(11m);
         alpha!.TuitionTypes!.Length.Should().Be(1);
-        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)TuitionType.InSchool);
         alpha!.SubjectsCoverage!.Length.Should().Be(1);
         alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
     }
@@ -563,7 +566,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         var dataFilter = new TuitionPartnersDataFilter()
         {
             GroupSize = null,
-            TuitionTypeId = (int)Domain.Enums.TuitionType.InSchool,
+            TuitionTypeId = (int)TuitionType.InSchool,
             SubjectIds = null
         };
 
@@ -574,7 +577,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         delta!.Prices!.Length.Should().Be(2);
         delta!.Prices[0].HourlyRate.Should().Be(113m);
         delta!.TuitionTypes!.Length.Should().Be(1);
-        delta!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.InSchool);
+        delta!.TuitionTypes[0].Id.Should().Be((int)TuitionType.InSchool);
         delta!.SubjectsCoverage!.Length.Should().Be(1);
         delta!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
     }
@@ -613,7 +616,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         alpha!.Prices!.Length.Should().Be(3);
         alpha!.Prices[0].HourlyRate.Should().Be(20m);
         alpha!.TuitionTypes!.Length.Should().Be(1);
-        alpha!.TuitionTypes[0].Id.Should().Be((int)Domain.Enums.TuitionType.Online);
+        alpha!.TuitionTypes[0].Id.Should().Be((int)TuitionType.Online);
         alpha!.SubjectsCoverage!.Length.Should().Be(1);
         alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage2Maths);
     }
@@ -651,31 +654,31 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.Name },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Name },
             new []{ "Alpha", "Bravo", "Charlie", "Delta" }
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.Name, Direction = Domain.Enums.OrderByDirection.Descending },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Name, Direction = OrderByDirection.Descending },
             new []{ "Delta", "Charlie", "Bravo", "Alpha"}
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.SeoList, SeoUrlOrderBy = new string[]{ "charlie-tuition-partner", "alpha-tuition-partner", "delta-tuition-partner", "bravo-tuition-partner" } },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.SeoList, SeoUrlOrderBy = new string[]{ "charlie-tuition-partner", "alpha-tuition-partner", "delta-tuition-partner", "bravo-tuition-partner" } },
             new []{ "Charlie", "Alpha", "Delta", "Bravo" }
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.MinPrice },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice },
             new []{ "Charlie", "Alpha", "Bravo", "Delta" }
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = Domain.Enums.TuitionPartnerOrderBy.MinPrice, Direction = Domain.Enums.OrderByDirection.Descending },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice, Direction = OrderByDirection.Descending },
             new []{ "Delta", "Bravo", "Alpha", "Charlie" }
         };
     }

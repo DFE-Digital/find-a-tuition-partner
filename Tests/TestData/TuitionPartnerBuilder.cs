@@ -1,6 +1,5 @@
 ﻿using Domain;
-using Domain.Constants;
-using Infrastructure.Migrations;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Tests.TestData;
 
@@ -17,7 +16,7 @@ public record TuitionPartnerBuilder
     public string EmailAddress { get; private init; } = "tp@example.com";
     public string PostalAddress { get; private set; } = "1 High Street\r\nBeautiful City\rThe County\nPostcode";
     public int OrganisationTypeId { get; private init; } = 1;
-    public Dictionary<int, Domain.Enums.TuitionType[]> Districts { get; private init; } = new();
+    public Dictionary<int, TuitionType[]> Districts { get; private init; } = new();
     public SubjectBuilder Subjects { get; private init; } = new SubjectBuilder();
 
     public static implicit operator TuitionPartner(TuitionPartnerBuilder builder) => new()
@@ -72,12 +71,12 @@ public record TuitionPartnerBuilder
             }
         };
 
-    internal TuitionPartnerBuilder TaughtIn(District district, params Domain.Enums.TuitionType[] tuition)
+    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionType[] tuition)
         => new TuitionPartnerBuilder(this) with
         {
-            Districts = new Dictionary<int, Domain.Enums.TuitionType[]>(Districts)
+            Districts = new Dictionary<int, TuitionType[]>(Districts)
             {
-                [district.Id] = tuition.Any() ? tuition : new[] { Domain.Enums.TuitionType.InSchool }
+                [district.Id] = tuition.Any() ? tuition : new[] { TuitionType.InSchool }
             }
         };
 

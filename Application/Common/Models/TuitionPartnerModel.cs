@@ -1,4 +1,6 @@
 using Application.Common.Structs;
+using KeyStage = Domain.Enums.KeyStage;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Application.Common.Models;
 public record TuitionPartnerModel(
@@ -6,7 +8,7 @@ public record TuitionPartnerModel(
         string[] TuitionTypes, string[] Ratios, Dictionary<int, GroupPrice> Prices,
         string Website, string PhoneNumber, string EmailAddress, string[] Address, bool IsVatCharged,
         LocalAuthorityDistrictCoverage[] LocalAuthorityDistricts,
-        Dictionary<Domain.Enums.TuitionType, Dictionary<Domain.Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
+        Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>> AllPrices,
         string OrganisationTypeName, string? LocalAuthorityName)
 {
     public bool HasPricingVariation => Prices.Any(x => x.Value.HasVariation);
