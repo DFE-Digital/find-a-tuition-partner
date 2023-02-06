@@ -18,17 +18,17 @@
             <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
             <h1 class="govuk-heading-l">My shortlisted tuition partners</h1>
 
-            @if(Model.Data.KeyStageSubjectsFilteredLabels.Any())
-            {
-                <h2 class="govuk-heading-m" data-testid="shortlist-key-stage-subjects-header">You've searched for:</h2>
-                @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
-                {
-                    <p class="govuk-body key-stage-subjects-filtered-label" data-testid="shortlist-key-stage-subjects-label">@item</p>
-                }
-            }
-
             @if (count > 0)
             {
+                @if(Model.Data.KeyStageSubjectsFilteredLabels.Any())
+                {
+                    <h2 class="govuk-heading-m" data-testid="shortlist-key-stage-subjects-header">You've searched for:</h2>
+                    @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
+                    {
+                        <p class="govuk-body key-stage-subjects-filtered-label" data-testid="shortlist-key-stage-subjects-label">@item</p>
+                    }
+                }
+
                 var dataQueryString = Model.Data.ToQueryString();
 
                 <input asp-for="Data.From" type="hidden" />
