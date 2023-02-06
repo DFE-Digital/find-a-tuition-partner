@@ -91,6 +91,15 @@ public class TuitionPartnerService : ITuitionPartnerService
             if (prices.Any())
             {
                 tpResult.Prices = prices.ToArray();
+
+                if (tpResult.IsVatCharged && (dataFilter.ShowWithVAT == null || dataFilter.ShowWithVAT.Value))
+                {
+                    foreach (var price in prices)
+                    {
+                        price.HourlyRate = price.HourlyRate.AddVAT();
+                    }
+                }
+
                 var tuitionTypes = prices.Select(x => x.TuitionTypeId).Distinct();
                 var subjects = prices.Select(x => x.SubjectId).Distinct();
 

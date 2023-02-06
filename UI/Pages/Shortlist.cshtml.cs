@@ -80,10 +80,10 @@ public class ShortlistModel : PageModel
         return GetJsonResult(response.IsCallSuccessful, shortlistModel.TotalShortlistedTuitionPartners);
     }
 
-    private JsonResult GetJsonResult(bool isCallSuccessful, int totalShortlistedTuitionPartners) =>
+    private static JsonResult GetJsonResult(bool isCallSuccessful, int totalShortlistedTuitionPartners) =>
         new(new ShortlistedTuitionPartnerResult(isCallSuccessful, totalShortlistedTuitionPartners));
 
-    private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
+    private static bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
@@ -204,7 +204,7 @@ public class ShortlistModel : PageModel
                 if (invalidSeoUrls.Any())
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
-                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
+                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count, string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
 
@@ -273,7 +273,8 @@ public class ShortlistModel : PageModel
                         {
                             GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
                             TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType,
-                            SubjectIds = request.SubjectIds
+                            SubjectIds = request.SubjectIds,
+                            ShowWithVAT = request.ShortlistShowWithVAT
                         },
                         cancellationToken);
 

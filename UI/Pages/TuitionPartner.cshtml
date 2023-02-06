@@ -151,11 +151,11 @@
         <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">@(((Domain.Enums.GroupSize)item.Key).DisplayName())</th>
             <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(TuitionTypes.InSchool)
+                @item.Value.FormatFor(TuitionTypes.InSchool, Model.Data.IsVatCharged)
             </td>
 
             <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(TuitionTypes.Online)
+                @item.Value.FormatFor(TuitionTypes.Online, Model.Data.IsVatCharged)
             </td>
         </tr>
     }

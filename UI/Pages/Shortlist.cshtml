@@ -76,6 +76,14 @@
                         </div>
 
                         <div class="govuk-grid-column-shortlist">
+                            <govuk-select asp-for="Data.ShortlistShowWithVAT" data-testid="shortlist-show-vat-refine">
+                                <govuk-select-label>VAT</govuk-select-label>
+                                <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == true">Show prices including VAT</govuk-select-item>
+                                <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == false">Show prices excluding VAT</govuk-select-item>
+                            </govuk-select>
+                        </div>
+
+                        <div class="govuk-grid-column-shortlist">
                             <div class="govuk-button-group app-shortlist--apply-refinement">
                                 <button class="govuk-button govuk-button--primary remove-shortlist-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
                             </div>
@@ -114,9 +122,12 @@
                                 }
                                 else
                                 {
+                                    var includeVatMsg = (Model.Data.ShortlistShowWithVAT ?? true);
+                                    var vatMsg = !item.IsVatCharged ? " VAT does not apply" : includeVatMsg ? " including VAT" : " excluding VAT";
                                     var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
                                     var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
                                     var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
+                                    prices += vatMsg;
                                 <td class="govuk-table__cell">
                                     1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                                 </td>
