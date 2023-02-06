@@ -75,8 +75,8 @@
                         <div class="govuk-grid-column-shortlist">
                         <govuk-select asp-for="Data.ShortlistShowWithVAT" data-testid="shortlist-show-vat-refine">
                             <govuk-select-label>Include VAT?</govuk-select-label>
-                            <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == false">Show VAT exclusive prices</govuk-select-item>
-                            <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == true">Show VAT inclusive prices, if they apply</govuk-select-item>
+                            <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == true">Show VAT inclusive prices, if they apply</govuk-select-item>
+                            <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == false">Show VAT exclusive prices</govuk-select-item>
                         </govuk-select>
                         </div>
 
@@ -132,8 +132,8 @@
                                     }
                                     else
                                     {
-                                        var removeVatMsg = !(Model.Data.ShortlistShowWithVAT ?? false);
-                                        var removeVat = (!(Model.Data.ShortlistShowWithVAT ?? false) && item.IsVatCharged);
+                                        var removeVatMsg = !(Model.Data.ShortlistShowWithVAT ?? true);
+                                        var removeVat = (!(Model.Data.ShortlistShowWithVAT ?? true) && item.IsVatCharged);
                                         var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
                                         var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
                                         var vatMsg = !item.IsVatCharged ? " VAT does not apply" : removeVatMsg ? " excluding VAT" : " including VAT";
