@@ -1,3 +1,5 @@
+using Application.Common.Models;
+
 namespace UI.Pages
 {
     public class ShortlistClearConfirm : PageModel
@@ -23,7 +25,7 @@ namespace UI.Pages
             if (!ModelState.IsValid) return Page();
 
             //Remove all TPs
-            await _mediator.Send(new RemoveAllTuitionPartnersCommand());
+            await _mediator.Send(new RemoveAllShortlistedTuitionPartnersCommand());
 
             _logger.LogInformation("Cleared full shortlist");
 

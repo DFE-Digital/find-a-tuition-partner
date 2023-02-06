@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Application.Common.Models;
 
 namespace UI.Extensions
 {
@@ -61,7 +62,7 @@ namespace UI.Extensions
                 var name = expression.MemberName();
                 var collection = expression.Compile()(model);
 
-                if (collection is null || name is null) return;
+                if (collection is null) return;
 
                 int i = 0;
                 foreach (var item in collection)
@@ -110,14 +111,15 @@ namespace UI.Extensions
         private static string MemberName<T>(this Expression<Func<SearchModel, T?>> expression)
             => expression.Body switch
             {
-                MemberExpression x when x.Member != null => x.Member.Name,
+                MemberExpression x when true => x.Member.Name,
                 _ => throw new ArgumentException("Only member expressions are supported", nameof(expression)),
             };
 
         private static string BuildQueryString<T>(IEnumerable<T> data, string name)
         {
-            var first = data.Take(1).Select(x => x?.ToString());
-            var rest = data.Skip(1).Select(x => $"{name}={x}");
+            var enumerable = data as T[] ?? data.ToArray();
+            var first = enumerable.Take(1).Select(x => x?.ToString());
+            var rest = enumerable.Skip(1).Select(x => $"{name}={x}");
             return string.Join("&", first.Union(rest));
         }
     }

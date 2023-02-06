@@ -190,10 +190,10 @@ Then("logos are not shown for tuition partners", () => {
 });
 
 Then(
-  "they can visit each TP details page and see the Type of Tuition details",
+  "they can visit each TP details page and see the Type of Tuition details and the pricing in the correct order",
   () => {
     cy.get('[data-testid="tuition-partner-name-link"]').each(($element) => {
-      cy.isCorrectJumpToLocation($element);
+      cy.validateTPPageAndReturnLink($element);
     });
   }
 );

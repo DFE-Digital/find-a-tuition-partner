@@ -1,3 +1,5 @@
+using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
@@ -51,11 +53,40 @@ public class ShortlistModel : PageModel
 
         if (!string.IsNullOrWhiteSpace(removeTuitionPartnerSeoUrl))
         {
-            await _mediator.Send(new RemoveTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
+            await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
         }
 
         return RedirectToPage(data);
     }
+
+    public async Task<IActionResult> OnPostAddToShortlist([FromBody] AddToShortlistModel shortlistModel)
+    {
+        var response = new ShortlistedTuitionPartnerResult(false, shortlistModel.TotalShortlistedTuitionPartners);
+
+        if (IsStringWhitespaceOrNull(shortlistModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalShortlistedTuitionPartners);
+
+        response.IsCallSuccessful = await _mediator.Send(new AddTuitionPartnersToShortlistCommand(new List<string>() { shortlistModel.SeoUrl.Trim() }));
+
+        return GetJsonResult(response.IsCallSuccessful, shortlistModel.TotalShortlistedTuitionPartners);
+    }
+
+    public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] RemoveFromShortlistModel shortlistModel)
+    {
+        var response = new ShortlistedTuitionPartnerResult(false, shortlistModel.TotalShortlistedTuitionPartners);
+
+        if (IsStringWhitespaceOrNull(shortlistModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalShortlistedTuitionPartners);
+
+        shortlistModel.SeoUrl = shortlistModel.SeoUrl.Trim();
+
+        response.IsCallSuccessful = await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(shortlistModel.SeoUrl));
+
+        return GetJsonResult(response.IsCallSuccessful, shortlistModel.TotalShortlistedTuitionPartners);
+    }
+
+    private JsonResult GetJsonResult(bool isCallSuccessful, int totalShortlistedTuitionPartners) =>
+        new(new ShortlistedTuitionPartnerResult(isCallSuccessful, totalShortlistedTuitionPartners));
+
+    private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
@@ -75,7 +106,16 @@ public class ShortlistModel : PageModel
 
         public string GetAriaSort(TuitionPartnerOrderBy matchedOrderBy)
         {
-            return ShortlistOrderBy != matchedOrderBy ? "none" : ShortlistOrderByDirection == OrderByDirection.Ascending ? "ascending" : "descending";
+            string result;
+            if (ShortlistOrderBy != matchedOrderBy)
+            {
+                result = "none";
+            }
+            else
+            {
+                result = ShortlistOrderByDirection == OrderByDirection.Ascending ? "ascending" : "descending";
+            }
+            return result;
         }
 
         public Dictionary<string, string> GetSortRouteData(TuitionPartnerOrderBy matchedOrderBy)
@@ -108,14 +148,14 @@ public class ShortlistModel : PageModel
     {
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
-        private readonly ITuitionPartnerShortlistStorage _tuitionPartnerShortlistStorage;
+        private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
         private readonly ILogger<TuitionPartner> _logger;
 
-        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ITuitionPartnerShortlistStorage tuitionPartnerShortlistStorage, ILogger<TuitionPartner> logger)
+        public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService, ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
-            _tuitionPartnerShortlistStorage = tuitionPartnerShortlistStorage;
+            _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
             _logger = logger;
         }
 
@@ -137,7 +177,7 @@ public class ShortlistModel : PageModel
             IEnumerable<TuitionPartnerResult>? invalidResults = null;
             if (searchResults.IsSuccess && searchResults.Data.Count != seoUrls.Length)
             {
-                var invalidSeoUrls = seoUrls.Where(e => !searchResults.Data.Results.Select(x => x.SeoUrl).Contains(e));
+                var invalidSeoUrls = seoUrls.Where(e => !searchResults.Data.Results.Select(x => x.SeoUrl).Contains(e)).ToList();
                 if (invalidSeoUrls.Any())
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
@@ -190,7 +230,7 @@ public class ShortlistModel : PageModel
 
         private string[] GetShortlistSeoUrls()
         {
-            var shortlistedTPs = _tuitionPartnerShortlistStorage.GetAllTuitionPartners();
+            var shortlistedTPs = _tuitionPartnerShortlistStorageService.GetAllTuitionPartners();
 
             var tuitionPartnersIds = shortlistedTPs.Select(x => x).Distinct().ToArray();
 

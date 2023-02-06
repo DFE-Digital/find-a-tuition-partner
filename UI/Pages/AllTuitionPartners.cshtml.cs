@@ -1,3 +1,6 @@
+using Application.Common.Interfaces;
+using Application.Common.Models;
+using Domain.Enums;
 using Domain.Search;
 
 namespace UI.Pages;
