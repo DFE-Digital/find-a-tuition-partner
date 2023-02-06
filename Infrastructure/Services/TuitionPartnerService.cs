@@ -125,10 +125,10 @@ public class TuitionPartnerService : ITuitionPartnerService
                     .ThenByDescending(e => e.SeoUrl)
                     .ToList();
 
-            case TuitionPartnerOrderBy.MinPrice:
+            case TuitionPartnerOrderBy.Price:
                 return ordering.Direction == OrderByDirection.Descending
                     ? results
-                        .OrderByDescending(e => e.Prices == null ? int.MinValue : e.Prices!.Min(x => x.HourlyRate))
+                        .OrderByDescending(e => e.Prices == null ? int.MinValue : e.Prices!.Max(x => x.HourlyRate))
                         .ThenBy(s => (ordering.SeoUrlOrderBy == null || ordering.SeoUrlOrderBy.Length == 0) ? -1 : Array.IndexOf(ordering.SeoUrlOrderBy, s.SeoUrl))
                         .ThenBy(e => e.Name)
                     : results
