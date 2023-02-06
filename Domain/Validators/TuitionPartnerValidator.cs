@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Domain.Constants;
 using FluentValidation;
 
 namespace Domain.Validators;
@@ -34,6 +35,10 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         RuleFor(m => m.SubjectCoverage)
             .Must(m => m.Any())
             .WithMessage("Enter subject Coverage");
+
+        RuleFor(m => m.OrganisationTypeId)
+            .Must(ValidOrganisationTypeId)
+            .WithMessage("Enter a valid Organisation Type");
     }
 
     private bool BeValidWebsite(string website)
@@ -60,5 +65,10 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
         return Regex.IsMatch(property,
                          regex,
                          RegexOptions.IgnoreCase);
+    }
+
+    private bool ValidOrganisationTypeId(int OrganisationTypeId)
+    {
+        return Enum.GetName(typeof(OrganisationTypes), OrganisationTypeId) != null;
     }
 }

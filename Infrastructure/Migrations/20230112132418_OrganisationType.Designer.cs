@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230112132418_OrganisationType")]
+    partial class OrganisationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4307,6 +4309,10 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdditionalServiceOfferings")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("text");
@@ -4319,13 +4325,23 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Experience")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("HasLogo")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("boolean")
                         .HasComputedColumnSql("case when \"Logo\" is null then false else true end", true);
 
+                    b.Property<bool>("HasSenProvision")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsVatCharged")
                         .HasColumnType("boolean");
+
+                    b.Property<DateOnly>("LastUpdated")
+                        .HasColumnType("date");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -4342,9 +4358,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("SeoUrl");
-
-                    b.Property<DateTime>("TPLastUpdatedData")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Website")
                         .IsRequired()

@@ -1,6 +1,5 @@
 ﻿using Domain;
-using Domain.Constants;
-using Infrastructure.Migrations;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Tests.TestData;
 
@@ -16,8 +15,8 @@ public record TuitionPartnerBuilder
     public string PhoneNumber { get; private init; } = "phonenumber";
     public string EmailAddress { get; private init; } = "tp@example.com";
     public string PostalAddress { get; private set; } = "1 High Street\r\nBeautiful City\rThe County\nPostcode";
-    public bool SupportsSen { get; private init; }
-    public Dictionary<int, TuitionTypes[]> Districts { get; private init; } = new();
+    public int OrganisationTypeId { get; private init; } = 1;
+    public Dictionary<int, TuitionType[]> Districts { get; private init; } = new();
     public SubjectBuilder Subjects { get; private init; } = new SubjectBuilder();
 
     public static implicit operator TuitionPartner(TuitionPartnerBuilder builder) => new()
@@ -30,11 +29,11 @@ public record TuitionPartnerBuilder
         PhoneNumber = builder.PhoneNumber,
         Email = builder.EmailAddress,
         Address = builder.PostalAddress,
-        HasSenProvision = builder.SupportsSen,
         LocalAuthorityDistrictCoverage = builder.DistrictCoverage,
         SubjectCoverage = builder.Subjects.SubjectCoverage.Select(x => new { x.SubjectId, x.TuitionTypeId }).Distinct().Select(x => new SubjectCoverage() { SubjectId = x.SubjectId, TuitionTypeId = x.TuitionTypeId }).ToList(),
         Prices = builder.Subjects.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId, x.GroupSize, x.HourlyRate }).Distinct().Select(x => new Price() { TuitionTypeId = x.TuitionTypeId, SubjectId = x.SubjectId, GroupSize = x.GroupSize, HourlyRate = x.HourlyRate }).ToList(),
         Logo = builder.Logo,
+        OrganisationTypeId = builder.OrganisationTypeId,
     };
 
     public List<LocalAuthorityDistrictCoverage> DistrictCoverage =>
@@ -72,20 +71,18 @@ public record TuitionPartnerBuilder
             }
         };
 
-    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionTypes[] tuition)
+    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionType[] tuition)
         => new TuitionPartnerBuilder(this) with
         {
-            Districts = new Dictionary<int, TuitionTypes[]>(Districts)
+            Districts = new Dictionary<int, TuitionType[]>(Districts)
             {
-                [district.Id] = tuition.Any() ? tuition : new[] { TuitionTypes.InSchool }
+                [district.Id] = tuition.Any() ? tuition : new[] { TuitionType.InSchool }
             }
         };
 
     internal TuitionPartnerBuilder WithSubjects(Func<SubjectBuilder, SubjectBuilder> config)
         => new TuitionPartnerBuilder(this) with { Subjects = config(new SubjectBuilder()) };
 
-    internal TuitionPartnerBuilder WithSen(bool supportsSend)
-        => new TuitionPartnerBuilder(this) with { SupportsSen = supportsSend };
 
     internal TuitionPartnerBuilder WithAddress(string address)
         => new TuitionPartnerBuilder(this) with { PostalAddress = address };

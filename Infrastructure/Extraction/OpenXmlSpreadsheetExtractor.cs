@@ -51,6 +51,15 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
         return values;
     }
 
+    public bool WorksheetExists(string sheetName)
+    {
+        var workbookPart = GetWorkbookPart();
+
+        var sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);
+
+        return (sheet != null && sheet.Id != null);
+    }
+
     private WorkbookPart GetWorkbookPart()
     {
         if (_document == null)
@@ -71,7 +80,7 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
     {
         var workbookPart = GetWorkbookPart();
 
-        var sheet = GetWorkbookPart().Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);
+        var sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == sheetName);
         if (sheet == null || sheet.Id == null)
         {
             throw new ArgumentException($"Could not access sheet {sheetName}", nameof(sheetName));
