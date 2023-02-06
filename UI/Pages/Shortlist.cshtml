@@ -18,7 +18,7 @@
             <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
             <h1 class="govuk-heading-l">Compare tuition partner prices</h1>
 
-             <h2 class="govuk-heading-m">You've searched for:</h2>
+            <h2 class="govuk-heading-m" show-if="Model.Data.KeyStageSubjectsFilteredLabels.Any()">You've searched for:</h2>
             @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
             {
                 <p class="govuk-body" style="margin-bottom:10px;">@item</p>
@@ -74,9 +74,9 @@
 
                         <div class="govuk-grid-column-shortlist">
                         <govuk-select asp-for="Data.ShortlistShowWithVAT" data-testid="shortlist-show-vat-refine">
-                            <govuk-select-label>Include VAT?</govuk-select-label>
-                            <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == true">Show VAT inclusive prices, if they apply</govuk-select-item>
-                            <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == false">Show VAT exclusive prices</govuk-select-item>
+                            <govuk-select-label>VAT</govuk-select-label>
+                                <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == true">Show prices including VAT</govuk-select-item>
+                                <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == false">Show prices excluding VAT</govuk-select-item>
                         </govuk-select>
                         </div>
 
