@@ -1,4 +1,5 @@
 ﻿using Application.Common.Structs;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace UI.Extensions
 {
@@ -10,12 +11,12 @@ namespace UI.Extensions
         public static bool ContainsOnlinePrice(this Dictionary<int, GroupPrice> prices)
             => prices.Any(x => x.Value.OnlineMin.HasValue || x.Value.OnlineMax.HasValue);
 
-        public static string FormatFor(this GroupPrice price, TuitionTypes tuitionType)
+        public static string FormatFor(this GroupPrice price, TuitionType tuitionType)
         {
             return tuitionType switch
             {
-                TuitionTypes.InSchool => FormatPrices(price.SchoolMin, price.SchoolMax),
-                TuitionTypes.Online => FormatPrices(price.OnlineMin, price.OnlineMax),
+                TuitionType.InSchool => FormatPrices(price.SchoolMin, price.SchoolMax),
+                TuitionType.Online => FormatPrices(price.OnlineMin, price.OnlineMax),
                 _ => "",
             };
 
