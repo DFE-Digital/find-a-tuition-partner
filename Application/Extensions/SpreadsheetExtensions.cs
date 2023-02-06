@@ -24,6 +24,11 @@ public static class SpreadsheetExtensions
         return 0;
     }
 
+    public static decimal ParsePrice(this string? cellValue, decimal vatPercentageToApply)
+    {
+        return Math.Round(cellValue.ParseDecimal() * (1 + (vatPercentageToApply / 100)), 2);
+    }
+
     public static decimal ParsePrice(this string? cellValue)
     {
         return Math.Round(cellValue.ParseDecimal(), 2);
@@ -37,6 +42,27 @@ public static class SpreadsheetExtensions
         }
 
         return null;
+    }
+
+    public static DateTime? ParseDateTime(this string? cellValue)
+    {
+        if (double.TryParse(cellValue, out var doubleValue))
+        {
+            return SetKindUtc(DateTime.FromOADate(doubleValue));
+        }
+        if (DateTime.TryParse(cellValue, out var dateResult))
+        {
+            return SetKindUtc(dateResult);
+        }
+
+        return null;
+    }
+
+    public static DateTime SetKindUtc(this DateTime dateTime)
+    {
+        //This must be done for postgres timestamp
+        if (dateTime.Kind == DateTimeKind.Utc) { return dateTime; }
+        return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     }
 
     public static string ParseUrl(this string? cellValue)
