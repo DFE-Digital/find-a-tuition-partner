@@ -70,7 +70,7 @@
                 Organisation type
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value data-testid="organisation-type">
-                @Model.Data.LegalStatus
+                @Model.Data.OrganisationTypeName
             </govuk-summary-list-row-value>
         </govuk-summary-list-row>
     </govuk-summary-list>
@@ -151,11 +151,11 @@
         <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">@(((Domain.Enums.GroupSize)item.Key).DisplayName())</th>
             <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(TuitionTypes.InSchool, Model.Data.IsVatCharged)
+                @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, Model.Data.IsVatCharged)
             </td>
 
             <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(TuitionTypes.Online, Model.Data.IsVatCharged)
+                @item.Value.FormatFor(Domain.Enums.TuitionType.Online, Model.Data.IsVatCharged)
             </td>
         </tr>
     }

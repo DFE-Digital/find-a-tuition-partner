@@ -1,10 +1,10 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain;
-using Domain.Enums;
 using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 using KeyStage = Domain.Enums.KeyStage;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace UI.Pages;
 [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -34,14 +34,14 @@ public class SearchResults : PageModel
     public async Task OnGetClearAllFilters(string postcode)
     {
         Data = await _mediator.Send(new Query
-        { Postcode = postcode, Subjects = null, TuitionType = Domain.Enums.TuitionType.Any, KeyStages = null });
+        { Postcode = postcode, Subjects = null, TuitionType = TuitionType.Any, KeyStages = null });
 
         await SetSelectableTuitionPartners();
     }
 
     private async Task CommonOnGetPostLogic(Query data)
     {
-        data.TuitionType ??= Domain.Enums.TuitionType.Any;
+        data.TuitionType ??= TuitionType.Any;
         if (data.KeyStages == null && data.Subjects != null)
         {
             data.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
@@ -146,7 +146,7 @@ public class SearchResults : PageModel
     }
     public record Query : SearchModel, IRequest<ResultsModel>
     {
-        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; } = null;
+        public TuitionType? PreviousTuitionType { get; set; } = null;
     };
 
     public record ResultsModel : SearchModel
@@ -160,11 +160,11 @@ public class SearchResults : PageModel
         }
 
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
+        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
-        public Domain.Enums.TuitionType? PreviousTuitionType { get; set; }
+        public TuitionType? PreviousTuitionType { get; set; }
     }
 
     private sealed class Validator : AbstractValidator<Query>
@@ -244,12 +244,12 @@ public class SearchResults : PageModel
                 KeyStage.KeyStage4,
             };
 
-        private static List<Domain.Enums.TuitionType> AllTuitionTypes =>
+        private static List<TuitionType> AllTuitionTypes =>
             new()
             {
-                Domain.Enums.TuitionType.Any,
-                Domain.Enums.TuitionType.InSchool,
-                Domain.Enums.TuitionType.Online,
+                TuitionType.Any,
+                TuitionType.InSchool,
+                TuitionType.Online,
             };
 
         private async Task<Dictionary<KeyStage, Selectable<string>[]>> GetSubjectsList(Query request,

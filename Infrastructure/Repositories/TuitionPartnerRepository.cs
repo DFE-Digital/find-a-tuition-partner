@@ -70,10 +70,11 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
                 .Ignore(dest => dest.Prices!);
 
             var entities = await _dbContext.TuitionPartners.AsNoTracking()
+                .Include(x => x.OrganisationType)
                 .IncludeTuitionForLocalDistrict(request.LocalAuthorityDistrictId)
-                .ThenInclude(e => e.TuitionType)
-                .Include(e => e.SubjectCoverage)
-                .ThenInclude(e => e.Subject)
+                .ThenInclude(x => x.TuitionType)
+                .Include(x => x.SubjectCoverage)
+                .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
                 .Include(x => x.SubjectCoverage)
                 .ThenInclude(x => x.TuitionType)
@@ -82,7 +83,7 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
                 .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
-                .Where(e => request.TuitionPartnerIds == null || request.TuitionPartnerIds.Distinct().Contains(e.Id))
+                .Where(x => request.TuitionPartnerIds == null || request.TuitionPartnerIds.Distinct().Contains(x.Id))
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
 
