@@ -195,6 +195,13 @@ Then(
   }
 );
 
+Then("{string} VAT shortlist refinement option is selected", (optionText) => {
+  cy.get("[data-testid='shortlist-show-vat-toggle'] select").select(
+    `${optionText}`
+  );
+  cy.wait(1000);
+});
+
 Then("the group size select option is {string}", (optionText) => {
   cy.get(
     "[data-testid='shortlist-group-size-refine'] select option:selected"
@@ -204,6 +211,12 @@ Then("the group size select option is {string}", (optionText) => {
 Then("the tuition type select option is {string}", (optionText) => {
   cy.get(
     "[data-testid='shortlist-tuition-type-refine'] select option:selected"
+  ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
+});
+
+Then("the VAT select option is {string}", (optionText) => {
+  cy.get(
+    "[data-testid='shortlist-show-vat-toggle'] select option:selected"
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 

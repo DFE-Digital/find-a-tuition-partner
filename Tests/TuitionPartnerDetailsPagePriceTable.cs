@@ -102,56 +102,64 @@ public class TuitionPartnerDetailsPagePriceTable
 
     [Theory]
     [MemberData(nameof(GroupPriceFormat))]
-    public void Formats_group_price(TuitionType tuitionType, GroupPrice price, string expected)
+    public void Formats_group_price(TuitionType tuitionType, GroupPrice price, string expected, bool addVAT)
     {
-        price.FormatFor(tuitionType, true).Should().Be(expected);
+        price.FormatFor(tuitionType, addVAT).Should().Be(expected);
     }
 
     public static IEnumerable<object[]> GroupPriceFormat()
     {
         yield return new object[]
         {
-            TuitionType.InSchool, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
+            TuitionType.InSchool, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), "", false
         };
         yield return new object[]
         {
-            TuitionType.InSchool, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£1 to £2"
+            TuitionType.InSchool, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£1 to £2", false
         };
         yield return new object[]
         {
-            TuitionType.InSchool, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.12 to £2.99"
+            TuitionType.InSchool, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.12 to £2.99", false
         };
         yield return new object[]
         {
-            TuitionType.InSchool, new GroupPrice(SchoolMin: 1.1m, SchoolMax: 2.8m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.10 to £2.80"
+            TuitionType.InSchool, new GroupPrice(SchoolMin: 1.1m, SchoolMax: 2.8m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£1.10 to £2.80", false
         };
         yield return new object[]
         {
-            TuitionType.InSchool, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£8"
+            TuitionType.InSchool, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£8", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), ""
+            TuitionType.Online, new GroupPrice(SchoolMin: null, null, OnlineMin: null, null), "", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£3 to £4"
+            TuitionType.Online, new GroupPrice(SchoolMin: 1, SchoolMax: 2, OnlineMin: 3, OnlineMax: 4), "£3 to £4", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£3.33 to £4.99"
+            TuitionType.Online, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£3.33 to £4.99", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£12"
+            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12, OnlineMax: 12), "£12", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.22m, OnlineMax: 12.22m), "£12.22"
+            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.22m, OnlineMax: 12.22m), "£12.22", false
         };
         yield return new object[]
         {
-            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.20m, OnlineMax: 12.20m), "£12.20"
+            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.20m, OnlineMax: 12.20m), "£12.20", false
+        };
+        yield return new object[]
+        {
+            TuitionType.Online, new GroupPrice(SchoolMin: 1.12m, SchoolMax: 2.99m, OnlineMin: 3.33m, OnlineMax: 4.99m), "£4 to £5.99", true
+        };
+        yield return new object[]
+        {
+            TuitionType.Online, new GroupPrice(SchoolMin: 8, SchoolMax: 8, OnlineMin: 12.20m, OnlineMax: 12.20m), "£14.64", true
         };
     }
 }

@@ -76,7 +76,7 @@
                         </div>
 
                         <div class="govuk-grid-column-shortlist">
-                            <govuk-select asp-for="Data.ShortlistShowWithVAT" data-testid="shortlist-show-vat-refine">
+                            <govuk-select asp-for="Data.ShortlistShowWithVAT" data-testid="shortlist-show-vat-toggle">
                                 <govuk-select-label>VAT</govuk-select-label>
                                 <govuk-select-item value="true" selected="@Model.Data.ShortlistShowWithVAT == null || Model.Data.ShortlistShowWithVAT.Value == true">Show prices including VAT</govuk-select-item>
                                 <govuk-select-item value="false" selected="@Model.Data.ShortlistShowWithVAT != null && Model.Data.ShortlistShowWithVAT.Value == false">Show prices excluding VAT</govuk-select-item>

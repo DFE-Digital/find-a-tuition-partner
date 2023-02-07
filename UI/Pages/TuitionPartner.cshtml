@@ -134,6 +134,7 @@
         Some prices are different depending on key stage or subject. Please contact @Model.Data.Name for more information.
     </span>
     <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br/>Prices shown include VAT.</span>
+    <span show-if="@Model.Data.IsVatCharged==false" data-testid="price-vat-not-applicable"><br/>VAT does not apply to these prices because @Model.Data.Name is VAT exempt.</span>
 </p>
 
 <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
