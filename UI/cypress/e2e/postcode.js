@@ -92,11 +92,3 @@ Then("the contact us link opens contact us page", () => {
 Then("the user redirected to postcode page", () => {
   cy.location("pathname").should("eq", "/");
 });
-
-Then("they will see the tribal link", () => {
-  cy.get('[data-testid="tribal-link"]').should(
-    "have.attr",
-    "href",
-    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
-  );
-});

@@ -223,11 +223,3 @@ Then("{string} name link is clicked", (tpName) => {
 Then("they click Back to go back to the search results page", () => {
   cy.clickBack();
 });
-
-Then("they will see the tribal link", () => {
-  cy.get('[data-testid="tribal-link"]').should(
-    "have.attr",
-    "href",
-    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
-  );
-});

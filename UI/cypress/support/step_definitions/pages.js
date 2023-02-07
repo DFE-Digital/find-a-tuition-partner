@@ -136,3 +136,11 @@ Then("the quality assured tuition partner details are hidden", () => {
 Then("the quality assured tuition partner details are shown", () => {
   cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
 });
+
+Then("they will see the tribal link", () => {
+  cy.get('[data-testid="tribal-link"]').should(
+    "have.attr",
+    "href",
+    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
+  );
+});
