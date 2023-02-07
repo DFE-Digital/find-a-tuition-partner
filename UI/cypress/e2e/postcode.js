@@ -10,7 +10,7 @@ Given("a user has tried to continue without entering a postcode", () => {
   Step(this, "they click 'Continue'");
 });
 
-When("they click 'What is a quality-assured tuition partner?'", () => {
+When("they click 'How are tuition partners quality-assured?'", () => {
   cy.get('[data-testid="qatp-details"]').click();
 });
 
@@ -103,4 +103,12 @@ Then("the contact us link opens contact us page", () => {
 
 Then("the user redirected to postcode page", () => {
   cy.location("pathname").should("eq", "/");
+});
+
+Then("they will see the tribal link", () => {
+  cy.get('[data-testid="tribal-link"]').should(
+    "have.attr",
+    "href",
+    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
+  );
 });

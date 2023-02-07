@@ -1,12 +1,7 @@
-import {
-  Given,
-  When,
-  Then,
-  Step,
-} from "@badeball/cypress-cucumber-preprocessor";
-import { kebabCase, KeyStageSubjects } from "../support/utils";
+import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { kebabCase } from "../support/utils";
 
-When("they click 'What is a quality assured tuition partner?'", () => {
+When("they click 'How are tuition partners quality-assured?'", () => {
   cy.get('[data-testid="qatp-details"]').click();
 });
 
@@ -239,4 +234,12 @@ Then("{string} name link is clicked", (tpName) => {
 
 Then("they click Back to go back to the search results page", () => {
   cy.clickBack();
+});
+
+Then("they will see the tribal link", () => {
+  cy.get('[data-testid="tribal-link"]').should(
+    "have.attr",
+    "href",
+    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
+  );
 });

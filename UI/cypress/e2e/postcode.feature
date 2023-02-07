@@ -34,8 +34,9 @@ Feature: User enters postcode to begin search
 
   Scenario: user clicks quality assured tuition partner details summary
     Given a user has started the 'Find a tuition partner' journey
-    When they click 'What is a quality-assured tuition partner?'
+    When they click 'How are tuition partners quality-assured?'
     Then the quality assured tuition partner details are shown
+    And they will see the tribal link
 
   Scenario: user does not enter postcode
     Given a user has started the 'Find a tuition partner' journey
