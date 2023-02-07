@@ -227,4 +227,20 @@ public class TuitionPartnerValidatorTests
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.SubjectCoverage);
     }
+
+    [Fact]
+    public void With_no_org_type()
+    {
+        var model = new TuitionPartner();
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.OrganisationTypeId);
+    }
+
+    [Fact]
+    public void With_valid_org_type()
+    {
+        var model = new TuitionPartner { OrganisationTypeId = 1 };
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.OrganisationTypeId);
+    }
 }

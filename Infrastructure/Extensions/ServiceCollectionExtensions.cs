@@ -98,9 +98,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
         services.AddScoped<ILogoFileEnumerable, GoogleDriveLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
-        services.AddScoped<ITuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
+        services.AddScoped<ISpreadsheetTuitionPartnerFactory, SpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
         services.AddScoped<ISchoolsFactory, SchoolsFactory>();
+        services.AddScoped<ITribalSpreadsheetTuitionPartnerFactory, TribalSpreadsheetTuitionPartnerFactory>();
+        services.AddScoped<IQualityAssuredSpreadsheetTuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
         services.AddHostedService<DataImporterService>();
         return services;
     }

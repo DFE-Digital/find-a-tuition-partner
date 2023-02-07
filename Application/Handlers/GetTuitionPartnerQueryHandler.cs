@@ -5,13 +5,15 @@ using Application.Constants;
 using Application.Extensions;
 using Application.Queries;
 using Domain;
-using Domain.Constants;
 using Domain.Search;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Enums = Domain.Enums;
+using GroupSize = Domain.Enums.GroupSize;
+using KeyStage = Domain.Enums.KeyStage;
 using LocalAuthorityDistrictCoverage = Application.Common.Structs.LocalAuthorityDistrictCoverage;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Application.Handlers;
 
@@ -40,9 +42,9 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         var tp = tpResult.Result.Data.FirstResult;
 
         var subjects = tp.SubjectsCoverage!.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
-            .Select(x => $"{((Enums.KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
+            .Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
         var types = tp.TuitionTypes!.Select(x => x.Name).Distinct();
-        var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"{((Domain.Enums.GroupSize)x).DisplayName()}");
+        var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"{((GroupSize)x).DisplayName()}");
         var prices = GetPricing(tp.Prices!);
         var lads = await GetLocalAuthorityDistricts(request, tp.Id);
         var allPrices = await GetFullPricing(request, tp.Prices!);
@@ -60,11 +62,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             tp.PhoneNumber,
             tp.Email,
             tp.Address.SplitByLineBreaks(),
-            tp.HasSenProvision,
             tp.IsVatCharged,
             lads,
             allPrices,
-            tp.LegalStatus,
+            tp.OrganisationTypeName,
             tpResult.Result.Data.LocalAuthorityName);
     }
 
@@ -169,7 +170,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         var coverageDictionary = coverage
             .GroupBy(e => e.TuitionTypeId)
-            .ToDictionary(e => (Domain.Enums.TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
+            .ToDictionary(e => (TuitionType)e.Key, e => e.ToDictionary(x => x.LocalAuthorityDistrictId, x => x));
 
         var regions = await _db.Regions
             .Include(e => e.LocalAuthorityDistricts.OrderBy(x => x.Code))
@@ -196,10 +197,10 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     private static Dictionary<int, GroupPrice> GetPricing(ICollection<Price> prices)
     {
         (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) online =
-            (prices => MinPrice(prices, TuitionTypes.Online), prices => MaxPrice(prices, TuitionTypes.Online));
+            (prices => MinPrice(prices, TuitionType.Online), prices => MaxPrice(prices, TuitionType.Online));
 
         (Func<IEnumerable<Price>, decimal?> min, Func<IEnumerable<Price>, decimal?> max) inSchool =
-            (prices => MinPrice(prices, TuitionTypes.InSchool), prices => MaxPrice(prices, TuitionTypes.InSchool));
+            (prices => MinPrice(prices, TuitionType.InSchool), prices => MaxPrice(prices, TuitionType.InSchool));
 
         return prices
             .GroupBy(x => x.GroupSize)
@@ -216,14 +217,14 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             .OrderBy(x => x.Key)
             .ToDictionary(k => k.Key, v => v.Value);
 
-        static decimal? MinPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
+        static decimal? MinPrice(IEnumerable<Price> value, TuitionType tuitionType)
             => MinMaxPrice(value, tuitionType, Enumerable.MinBy);
 
-        static decimal? MaxPrice(IEnumerable<Price> value, TuitionTypes tuitionType)
+        static decimal? MaxPrice(IEnumerable<Price> value, TuitionType tuitionType)
             => MinMaxPrice(value, tuitionType, Enumerable.MaxBy);
 
         static decimal? MinMaxPrice(
-            IEnumerable<Price> value, TuitionTypes tuitionType,
+            IEnumerable<Price> value, TuitionType tuitionType,
             Func<IEnumerable<Price>, Func<Price, decimal>, Price?> minMax)
         {
             var pricesForTuition = value.Where(x => x.TuitionType.Id == (int)tuitionType);
@@ -233,22 +234,22 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     }
 
     private async
-        Task<Dictionary<Domain.Enums.TuitionType, Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>>
+        Task<Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>>>
         GetFullPricing(GetTuitionPartnerQuery request, ICollection<Price> prices)
     {
         if (!request.ShowFullPricing) return new();
 
         var fullPricing =
-            new Dictionary<Domain.Enums.TuitionType,
-                Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>>();
+            new Dictionary<TuitionType,
+                Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>>();
 
-        foreach (var tuitionType in new[] { Domain.Enums.TuitionType.InSchool, Domain.Enums.TuitionType.Online })
+        foreach (var tuitionType in new[] { TuitionType.InSchool, TuitionType.Online })
         {
-            fullPricing[tuitionType] = new Dictionary<Enums.KeyStage, Dictionary<string, Dictionary<int, decimal>>>();
+            fullPricing[tuitionType] = new Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>();
             foreach (var keyStage in new[]
                      {
-                         Enums.KeyStage.KeyStage1, Enums.KeyStage.KeyStage2, Enums.KeyStage.KeyStage3,
-                         Enums.KeyStage.KeyStage4
+                         KeyStage.KeyStage1, KeyStage.KeyStage2, KeyStage.KeyStage3,
+                         KeyStage.KeyStage4
                      })
             {
                 fullPricing[tuitionType][keyStage] = new Dictionary<string, Dictionary<int, decimal>>();
@@ -262,8 +263,8 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
 
         foreach (var price in prices)
         {
-            var tuitionType = (Domain.Enums.TuitionType)price.TuitionTypeId;
-            var keyStage = (Enums.KeyStage)price.Subject.KeyStageId;
+            var tuitionType = (TuitionType)price.TuitionTypeId;
+            var keyStage = (KeyStage)price.Subject.KeyStageId;
             var subjectName = price.Subject.Name;
 
             fullPricing[tuitionType][keyStage][subjectName][price.GroupSize] = price.HourlyRate;
