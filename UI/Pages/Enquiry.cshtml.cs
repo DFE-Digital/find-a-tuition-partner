@@ -10,7 +10,7 @@ public class Enquiry : PageModel
     [BindProperty] public EnquiryModel Data { get; set; } = new();
 
     [TempData] public string Message { get; set; } = null!;
-    
+
     public async Task<IActionResult> OnPost()
     {
         if (!ModelState.IsValid) return Page();
@@ -36,7 +36,7 @@ public class Enquiry : PageModel
             ModelState.Clear();
             Data = new();
         }
-        
+
         return Page();
     }
 }
