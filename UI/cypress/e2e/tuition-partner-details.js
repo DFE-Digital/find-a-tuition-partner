@@ -1,10 +1,6 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import { kebabCase } from "../support/utils";
 
-When("they click 'How are tuition partners quality-assured?'", () => {
-  cy.get('[data-testid="qatp-details"]').click();
-});
-
 Then(
   "TP has not provided the information in the {string} section",
   (details) => {
@@ -37,16 +33,8 @@ Then("the search details include {string}", (subjects) => {
   });
 });
 
-Then("the quality assured tuition partner details are hidden", () => {
-  cy.get('[data-testid="qatp-details"]').should("not.have.attr", "open");
-});
-
 Then("the payment details are hidden", () => {
   cy.get('[data-testid="payment-details"]').should("not.have.attr", "open");
-});
-
-Then("the quality assured tuition partner details are shown", () => {
-  cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
 });
 
 Then("the tuition partner's website link is displayed", () => {
@@ -145,7 +133,7 @@ Then(
     ];
 
     stages.forEach((element) => {
-      cy.get(".govuk-list").first().contains(element);
+      cy.get('[data-testid="results-subjects"]').first().contains(element);
     });
   }
 );

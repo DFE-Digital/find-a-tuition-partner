@@ -10,14 +10,6 @@ Given("a user has tried to continue without entering a postcode", () => {
   Step(this, "they click 'Continue'");
 });
 
-When("they click 'How are tuition partners quality-assured?'", () => {
-  cy.get('[data-testid="qatp-details"]').click();
-});
-
-Then("the quality assured tuition partner details are hidden", () => {
-  cy.get('[data-testid="qatp-details"]').should("not.have.attr", "open");
-});
-
 Then("they will see phase banner", () => {
   cy.get('[data-testid="phase-banner-title"]').should(
     "contain.text",
@@ -31,10 +23,6 @@ Then("the user should redirected to feedback form", () => {
     "href",
     "https://docs.google.com/document/d/1Iybtc7c9IVMVNUE2Hkj85WF8csEIdhD6XNZ0hd4ozOs/edit"
   );
-});
-
-Then("the quality assured tuition partner details are shown", () => {
-  cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
 });
 
 Then("check other tutoring options text is displayed", () => {
