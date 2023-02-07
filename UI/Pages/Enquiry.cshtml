@@ -1,0 +1,61 @@
+@page
+@model UI.Pages.Enquiry
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    ViewData["Title"] = "Make an Enquiry";
+    ViewData["BackLinkHref"] = "/";
+    ViewData["IncludePrintPage"] = true;
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.Email"/>
+            <govuk-error-summary-item asp-for="Data.EnquiryText"/>
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">
+            <span>Make an Enquiry</span>
+        </h1>
+        
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <govuk-notification-banner type="Success">
+                <p class="govuk-notification-banner__heading">
+                    @Model.Message
+                </p>
+            </govuk-notification-banner>
+        }
+    </div>
+</div>
+
+<form method="post">
+    <div data-module="create-enquiry-detail">
+        <div class="govuk-form-group">
+            <govuk-textarea asp-for="Data.EnquiryText" ignore-modelstate-errors="true">
+                <govuk-textarea-label class="govuk-label--m" is-page-heading="true">
+                    Provide the enquiry details
+                </govuk-textarea-label>
+                <govuk-textarea-hint>
+                    Do not include personal or financial information like your National Insurance number or credit card details.
+                </govuk-textarea-hint>
+            </govuk-textarea>
+        </div>
+    </div>
+    <div data-module="create-enquiry-email">
+        <div class="govuk-form-group">
+            <div asp-validation-group-for="Data.Email" data-testid="enquiry-email">
+                <label asp-for="Data.Email" class="govuk-label govuk-label--s">
+                    Your email address
+                </label>
+                <span asp-validation-for="Data.Email" class="govuk-error-message"></span>
+                <div class="app-form-group-inline">
+                    <input asp-for="Data.Email" class="govuk-input"
+                           data-testid="enquiry-email-input-box" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
+                </div>
+            </div>
+        </div>
+    </div>
+    <govuk-button prevent-double-click="true" type="submit">Confirm and send</govuk-button>
+</form>

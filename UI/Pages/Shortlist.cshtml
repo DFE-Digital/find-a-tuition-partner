@@ -143,9 +143,16 @@
                 </div>
             }
 
-            <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
-                <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my shortlist</a>
+            <div class="govuk-button-group">
+                <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
+                    <a class="govuk-link" data-testid="clear-shortlist-link" href="@clearShortlistUrl">Clear my shortlist</a>
+                </div>
+
+                <div show-if="count > 0" class="govuk-body app-print-hide">
+                    <govuk-button-link data-testid="make-enquiry-link" href="/enquiry">Make an Enquiry</govuk-button-link>
+                </div>
             </div>
+            
         </form>
     </div>
 </div>

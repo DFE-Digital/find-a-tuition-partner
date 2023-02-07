@@ -86,6 +86,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();
         services.AddScoped<ILookupDataRepository, LookupDataRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
+        services.AddScoped<IEnquiryRepository, EnquiryRepository>();
         return services;
     }
 
