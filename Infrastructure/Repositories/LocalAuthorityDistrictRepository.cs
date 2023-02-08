@@ -1,21 +1,18 @@
-﻿using Application.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class GeographyLookupRepository : IGeographyLookupRepository
+public class LocalAuthorityDistrictRepository : GenericRepository<LocalAuthorityDistrict>, ILocalAuthorityDistrictRepository
 {
-    private readonly NtpDbContext _dbContext;
-
-    public GeographyLookupRepository(NtpDbContext dbContext)
+    public LocalAuthorityDistrictRepository(NtpDbContext dbContext) : base(dbContext)
     {
-        _dbContext = dbContext;
     }
 
     public async Task<IEnumerable<LocalAuthorityDistrict>> GetLocalAuthorityDistrictsAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.LocalAuthorityDistricts.Include(e => e.LocalAuthority).OrderBy(e => e.Name).ToListAsync(cancellationToken);
+        return await _context.LocalAuthorityDistricts.Include(e => e.LocalAuthority).OrderBy(e => e.Name).ToListAsync(cancellationToken);
     }
 
     public async Task<IDictionary<string, LocalAuthorityDistrict>> GetLocalAuthorityDistrictDictionaryAsync(CancellationToken cancellationToken = default)
@@ -27,6 +24,6 @@ public class GeographyLookupRepository : IGeographyLookupRepository
     {
         if (string.IsNullOrWhiteSpace(code)) return null;
 
-        return await _dbContext.LocalAuthorityDistricts.Include(e => e.LocalAuthority).SingleOrDefaultAsync(e => e.Code == code, cancellationToken);
+        return await _context.LocalAuthorityDistricts.Include(e => e.LocalAuthority).SingleOrDefaultAsync(e => e.Code == code, cancellationToken);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Domain;
 
-namespace Application.Repositories;
+namespace Application.Common.Interfaces.Repositories;
 
-public interface IGeographyLookupRepository
+public interface ILocalAuthorityDistrictRepository : IGenericRepository<LocalAuthorityDistrict>
 {
     Task<IEnumerable<LocalAuthorityDistrict>> GetLocalAuthorityDistrictsAsync(CancellationToken cancellationToken = default);
     Task<IDictionary<string, LocalAuthorityDistrict>> GetLocalAuthorityDistrictDictionaryAsync(CancellationToken cancellationToken = default);

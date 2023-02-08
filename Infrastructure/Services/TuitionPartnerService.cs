@@ -1,7 +1,5 @@
-﻿using Application;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Extensions;
-using Application.Repositories;
 using Domain.Enums;
 using Domain.Search;
 
@@ -9,21 +7,21 @@ namespace Infrastructure.Services;
 
 public class TuitionPartnerService : ITuitionPartnerService
 {
-    private readonly ITuitionPartnerRepository _tuitionPartnerRepositoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TuitionPartnerService(ITuitionPartnerRepository tuitionPartnerRepositoryRepository)
+    public TuitionPartnerService(IUnitOfWork unitOfWork)
     {
-        _tuitionPartnerRepositoryRepository = tuitionPartnerRepositoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
-        return await _tuitionPartnerRepositoryRepository.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
+        return await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
     }
 
     public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersAsync(TuitionPartnerRequest request, CancellationToken cancellationToken)
     {
-        return await _tuitionPartnerRepositoryRepository.GetTuitionPartnersAsync(request, cancellationToken);
+        return await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersAsync(request, cancellationToken);
     }
 
     public IEnumerable<TuitionPartnerResult> FilterTuitionPartnersData(IEnumerable<TuitionPartnerResult> results, TuitionPartnersDataFilter dataFilter)

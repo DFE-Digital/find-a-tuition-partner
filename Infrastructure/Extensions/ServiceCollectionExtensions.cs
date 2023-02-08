@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using Application;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Repositories;
 using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
-using Application.Repositories;
 using Infrastructure.Configuration;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
@@ -13,6 +13,7 @@ using Infrastructure.Extraction;
 using Infrastructure.Factories;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -83,10 +84,13 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IGeographyLookupRepository, GeographyLookupRepository>();
-        services.AddScoped<ILookupDataRepository, LookupDataRepository>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<ILocalAuthorityDistrictRepository, LocalAuthorityDistrictRepository>();
+        services.AddScoped<ISubjectRepository, SubjectRepository>();
+        services.AddScoped<ITuitionTypeRepository, TuitionTypeRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
         services.AddScoped<IEnquiryRepository, EnquiryRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 

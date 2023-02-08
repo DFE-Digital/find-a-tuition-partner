@@ -1,5 +1,5 @@
+using Application.Common.Interfaces;
 using Application.Common.Models;
-using Application.Repositories;
 using Domain;
 
 namespace Application.Commands;
@@ -11,11 +11,11 @@ public record AddEnquiryCommand : IRequest<bool>
 
 public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, bool>
 {
-    private readonly IEnquiryRepository _enquiryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AddEnquiryCommandHandler(IEnquiryRepository enquiryRepository)
+    public AddEnquiryCommandHandler(IUnitOfWork unitOfWork)
     {
-        _enquiryRepository = enquiryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<bool> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
@@ -26,6 +26,9 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, bool>
             Email = request.Data?.Email!,
             TuitionPartners = request.Data?.SelectedTuitionPartners!
         };
-        return await _enquiryRepository.AddEnquiryAsync(enquiry, cancellationToken);
+
+        _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
+
+        return await _unitOfWork.Complete();
     }
 }

@@ -1,8 +1,9 @@
-﻿using Domain.Search;
+﻿using Domain;
+using Domain.Search;
 
-namespace Application.Repositories;
+namespace Application.Common.Interfaces.Repositories;
 
-public interface ITuitionPartnerRepository
+public interface ITuitionPartnerRepository : IGenericRepository<TuitionPartner>
 {
     Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken);
 

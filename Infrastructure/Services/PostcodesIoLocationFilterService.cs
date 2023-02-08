@@ -1,24 +1,19 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Nodes;
-using Application;
 using Application.Common.Interfaces;
-using Application.Repositories;
 using Domain.Search;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
 public class PostcodesIoLocationFilterService : ILocationFilterService
 {
     private readonly HttpClient _httpClient;
-    private readonly IGeographyLookupRepository _geographyLookupRepository;
-    private readonly INtpDbContext _dbContext;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PostcodesIoLocationFilterService(HttpClient httpClient, IGeographyLookupRepository geographyLookupRepository, INtpDbContext dbContext)
+    public PostcodesIoLocationFilterService(HttpClient httpClient, IUnitOfWork unitOfWork)
     {
         _httpClient = httpClient;
-        _geographyLookupRepository = geographyLookupRepository;
-        _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<LocationFilterParameters?> GetLocationFilterParametersAsync(string postcode)
@@ -45,7 +40,7 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
             LocalAuthorityDistrictCode = result["codes"]!["admin_district"]!.ToString()
         };
 
-        var lad = await _geographyLookupRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
+        var lad = await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
         if (lad == null) return parameters;
 
         parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
@@ -53,7 +48,7 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthorityDistrictId = lad.Id;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
-        var school = await _dbContext.Schools.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
+        var school = await _unitOfWork.SchoolRepository.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
         parameters.Urn = school?.Urn;
         return parameters;
     }
