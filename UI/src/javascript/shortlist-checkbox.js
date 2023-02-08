@@ -39,7 +39,7 @@ const ShortlistCheckbox = (() => {
   const setLocalAuthorityHeaderText = (checked) => {
     let headerText = "Tuition partner for ";
     if (checked) {
-      headerText = "Shortlisted tuition partner for ";
+      headerText = "Price comparison listed tuition partner for ";
     }
     const localAuthHeader = document.getElementById(
       "tp-details-page--tp-localAuthHeader"
