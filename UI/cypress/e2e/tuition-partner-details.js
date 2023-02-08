@@ -226,7 +226,7 @@ Then("the 'TuitionPartner' - {string} checkbox is unchecked", (tpName) => {
   cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
 });
 
-Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
 Then("{string} checkbox is unchecked", (tpName) => {
