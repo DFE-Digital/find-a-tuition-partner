@@ -148,7 +148,7 @@ Feature: User can view full details of a Tuition Parner
     
   Scenario: Adding or removing TP to price comparison list from TP details page should be reflected on the search results page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
-    And total amount of price comparison listd TPs is 0
+    And total amount of price comparison list TPs is 0
     And 'Seven Springs Education' checkbox is unchecked
     Then 'Seven Springs Education' name link is clicked
     And 'Seven Springs Education' checkbox is unchecked on its detail page
