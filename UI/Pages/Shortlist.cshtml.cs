@@ -204,7 +204,7 @@ public class ShortlistModel : PageModel
                 if (invalidSeoUrls.Any())
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
-                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on shortlist page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
+                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on price comparison page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
 
@@ -255,12 +255,12 @@ public class ShortlistModel : PageModel
             if (location is IErrorResult error)
             {
                 //Shouldn't be invalid, unless query string edited - since postcode on this page comes from previous page with validation
-                _logger.LogWarning("Invalid postcode '{Postcode}' provided on shortlist page", request.Postcode);
+                _logger.LogWarning("Invalid postcode '{Postcode}' provided on price comparison page", request.Postcode);
                 return error.Cast<TuitionPartnersResult>();
             }
             else if (location.Data.LocalAuthorityDistrictId is null)
             {
-                _logger.LogError("Unable to get LocalAuthorityDistrictId for supplied postcode '{Postcode}' on TP shortlist page", request.Postcode);
+                _logger.LogError("Unable to get LocalAuthorityDistrictId for supplied postcode '{Postcode}' on TP price comparison page", request.Postcode);
                 return Result.Error<TuitionPartnersResult>("Unable to get LocalAuthorityDistrictId for supplied postcode");
             }
 

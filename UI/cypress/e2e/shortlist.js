@@ -10,29 +10,38 @@ import {
   removeNewLine,
 } from "../support/utils";
 
-When("they add {string} to their shortlist on the results page", (tpName) => {
-  cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
-  cy.wait(500);
-});
+When(
+  "they add {string} to their price comparison list on the results page",
+  (tpName) => {
+    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
+    cy.wait(500);
+  }
+);
 
 When(
-  "they remove {string} from their shortlist on the results page",
+  "they remove {string} from their price comparison list on the results page",
   (tpName) => {
     cy.get(`#shortlist-cb-${kebabCase(tpName)}`).uncheck();
     cy.wait(500);
   }
 );
 
-Then("{string} is marked as shortlisted on the results page", (tpName) => {
-  cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("be.checked");
-});
-
-Then("{string} is not marked as shortlisted on the results page", (tpName) => {
-  cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("not.be.checked");
-});
+Then(
+  "{string} is marked as added to the price comparison list on the results page",
+  (tpName) => {
+    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("be.checked");
+  }
+);
 
 Then(
-  "the shortlist shows as having {int} entries on the results page",
+  "{string} is not marked as added to the price comparison list on the results page",
+  (tpName) => {
+    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("not.be.checked");
+  }
+);
+
+Then(
+  "the price comparison list shows as having {int} entries on the results page",
   (numEntries) => {
     cy.get("#totalShortlistedTuitionPartners").should((el) =>
       expect(parseInt(el.text().trim())).to.equal(numEntries)
@@ -40,28 +49,34 @@ Then(
   }
 );
 
-When("they choose to view their shortlist from the results page", () => {
-  cy.get('[data-testid="my-shortlisted-tuition-partners-link"]').click({
-    force: true,
-  });
-});
+When(
+  "they choose to view their price comparison list from the results page",
+  () => {
+    cy.get('[data-testid="my-shortlisted-tuition-partners-link"]').click({
+      force: true,
+    });
+  }
+);
 
-Then("{string} is entry {int} on the shortlist page", (tpName, entry) => {
-  tpName = removeExcessWhitespaces(removeNewLine(tpName));
-  cy.get("tbody th")
-    .eq(entry - 1)
-    .then(($tbodyHeader) => {
-      return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
-    })
-    .should("equal", tpName);
-});
+Then(
+  "{string} is entry {int} on the price comparison list page",
+  (tpName, entry) => {
+    tpName = removeExcessWhitespaces(removeNewLine(tpName));
+    cy.get("tbody th")
+      .eq(entry - 1)
+      .then(($tbodyHeader) => {
+        return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+      })
+      .should("equal", tpName);
+  }
+);
 
-Then("there are {int} entries on the shortlist page", (count) => {
+Then("there are {int} entries on the price comparison list page", (count) => {
   cy.get("tbody th").should("have.length", count);
 });
 
 Then(
-  "{string} is entry {int} on the not available list on the shortlist page",
+  "{string} is entry {int} on the not available list on the price comparison list page",
   (tpName, entry) => {
     cy.get('[data-testid="unavailable-tps"] li')
       .eq(entry - 1)
@@ -70,7 +85,7 @@ Then(
 );
 
 Then(
-  "entry {int} on the shortlist is the row {string}, {string}, {string}, {string}",
+  "entry {int} on the price comparison list is the row {string}, {string}, {string}, {string}",
   (entry, name, groupSizes, tuitionType, price) => {
     cy.get("tbody tr")
       .eq(entry - 1)
@@ -90,29 +105,38 @@ Then(
 );
 
 When(
-  "they choose to view the {string} details from the shortlist",
+  "they choose to view the {string} details from the price comparison list",
   (tpName) => {
     cy.get("a").contains(tpName).click();
   }
 );
 
-Then("they choose to sort the shortlist by price", () => {
+Then("they choose to sort the price comparison list by price", () => {
   cy.get('[data-testid="shortlist-price-sort"]').click();
 });
 
-Then("they choose to remove entry {int} on the shortlist page", (entry) => {
-  cy.get('tbody td [data-testid="remove-tp"]')
-    .eq(entry - 1)
-    .click();
-});
+Then(
+  "they choose to remove entry {int} on the price comparison list page",
+  (entry) => {
+    cy.get('tbody td [data-testid="remove-tp"]')
+      .eq(entry - 1)
+      .click();
+  }
+);
 
-Then("they choose to click on clear shortlist link", () => {
+Then("they choose to click on clear price comparison list link", () => {
   cy.get('[data-testid="clear-shortlist-link"]').click();
 });
 
-Then("they are taken to the clear shortlist confirmation page", () => {
-  cy.get("h1").should("have.text", "You're about to clear your shortlist");
-});
+Then(
+  "they are taken to the clear price comparison list confirmation page",
+  () => {
+    cy.get("h1").should(
+      "have.text",
+      "You're about to clear your price comparison list"
+    );
+  }
+);
 
 Then("they click the cancel link", () => {
   cy.get('[data-testid="cancel-link"]').click();
@@ -123,7 +147,7 @@ Then("they click confirm button", () => {
 });
 
 When(
-  "they programmatically add the first {int} results to their shortlist on the results page",
+  "they programmatically add the first {int} results to their price comparison list on the results page",
   (num) => {
     // We will do this programmatically so that it happens quickly enough to potentially cause a race condition
     cy.window().then((win) => {
@@ -139,7 +163,7 @@ When(
   }
 );
 
-Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
 Then("{string} checkbox is unchecked", (tpName) => {
@@ -155,20 +179,22 @@ Then("{string} checkbox is checked on its detail page", (tpName) => {
   cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
 
-Then("there is {int} entry on the shortlist page", (count) => {
+Then("there is {int} entry on the price comparison list page", (count) => {
   cy.get("tbody th").should("have.length", count);
 });
 
 Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
 
-Then("{string} is removed from the shortlist", (tpName) => {
+Then("{string} is removed from the price comparison list", (tpName) => {
   cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
   cy.wait(200);
 });
 
-Then("they click Back to go back to the shortlist page", () => cy.clickBack());
+Then("they click Back to go back to the price comparison list page", () =>
+  cy.clickBack()
+);
 
-Then("the shortlist page displays {string}", (expectedText) => {
+Then("the price comparison list page displays {string}", (expectedText) => {
   cy.get("[id='shortlist-no-tp-shortlisted']").should(
     "contain.text",
     removeExcessWhitespaces(removeNewLine(expectedText))
@@ -176,7 +202,7 @@ Then("the shortlist page displays {string}", (expectedText) => {
 });
 
 Then(
-  "{string} group size shortlist refinement option is selected",
+  "{string} group size price comparison list refinement option is selected",
   (optionText) => {
     cy.get("[data-testid='shortlist-group-size-refine'] select").select(
       `${optionText}`
@@ -186,7 +212,7 @@ Then(
 );
 
 Then(
-  "{string} tuition type shortlist refinement option is selected",
+  "{string} tuition type price comparison list refinement option is selected",
   (optionText) => {
     cy.get("[data-testid='shortlist-tuition-type-refine'] select").select(
       `${optionText}`
@@ -221,7 +247,7 @@ Then("the {string} empty data reason is {string}", (tpName, priceString) => {
 });
 
 Given(
-  "a user has selected TPs to shortlist and journeyed forward to the shortlist page",
+  "a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page",
   () => {
     Step(
       this,
@@ -229,29 +255,38 @@ Given(
     );
     Step(
       this,
-      "they add 'Reeson Education' to their shortlist on the results page"
+      "they add 'Reeson Education' to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'Action Tutoring' to their shortlist on the results page"
+      "they add 'Action Tutoring' to their price comparison list on the results page"
     );
-    Step(this, "they add 'Career Tree' to their shortlist on the results page");
     Step(
       this,
-      "they add 'Booster Club' to their shortlist on the results page"
+      "they add 'Career Tree' to their price comparison list on the results page"
     );
-    Step(this, "they add 'Zen Educate' to their shortlist on the results page");
     Step(
       this,
-      "they add 'Tutors Green' to their shortlist on the results page"
+      "they add 'Booster Club' to their price comparison list on the results page"
     );
-    Step(this, "they choose to view their shortlist from the results page");
-    Step(this, "there are 6 entries on the shortlist page");
+    Step(
+      this,
+      "they add 'Zen Educate' to their price comparison list on the results page"
+    );
+    Step(
+      this,
+      "they add 'Tutors Green' to their price comparison list on the results page"
+    );
+    Step(
+      this,
+      "they choose to view their price comparison list from the results page"
+    );
+    Step(this, "there are 6 entries on the price comparison list page");
   }
 );
 
 Then(
-  "the shortlist key stage subjects label number {int} is {string}",
+  "the price comparison list key stage subjects label number {int} is {string}",
   (entry, keyStageAndSubjectsLabel) => {
     keyStageAndSubjectsLabel = removeExcessWhitespaces(
       removeNewLine(keyStageAndSubjectsLabel)
@@ -265,7 +300,7 @@ Then(
   }
 );
 
-Then("the shortlist key stage subjects header is not shown", () => {
+Then("the price comparison list key stage subjects header is not shown", () => {
   cy.get("[data-testid='shortlist-key-stage-subjects-header']").should(
     "not.exist"
   );

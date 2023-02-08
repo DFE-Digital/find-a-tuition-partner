@@ -10,7 +10,7 @@ namespace UI.Services;
 public class CookieBasedTuitionPartnerShortlistStorageService : ITuitionPartnerShortlistStorageService
 {
     // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
-    private const string CookieName = ".FindATuitionPartner.Shortlist";
+    private const string CookieName = ".FindATuitionPartner.PriceComparisonList";
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<CookieBasedTuitionPartnerShortlistStorageService> _logger;
 

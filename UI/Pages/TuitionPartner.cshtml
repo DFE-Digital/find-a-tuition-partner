@@ -10,7 +10,7 @@
 
     var localAuthorityHeader = "Tuition partner for ";
     if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
-        localAuthorityHeader = "Shortlisted tuition partner for ";
+        localAuthorityHeader = "Price comparison listed tuition partner for ";
 
     
     ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
