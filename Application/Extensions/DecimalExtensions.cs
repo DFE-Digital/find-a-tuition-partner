@@ -13,11 +13,11 @@ public static class DecimalExtensions
 
     public static decimal AddVAT(this decimal price)
     {
-        return Math.Round(price * ((100 + VATRate) / 100), 2);
+        return Math.Round(price * ((100 + VATRate) / 100), 2, MidpointRounding.AwayFromZero);
     }
 
     public static decimal RemoveVAT(this decimal price)
     {
-        return Math.Round(price / (100 + VATRate) * 100, 2);
+        return Math.Round(price / (100 + VATRate) * 100, 2, MidpointRounding.AwayFromZero);
     }
 }
