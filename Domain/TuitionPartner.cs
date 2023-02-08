@@ -23,7 +23,6 @@ public class TuitionPartner
     public bool IsVatCharged { get; set; }
     public TuitionPartnerLogo? Logo { get; set; } = null!;
     public bool HasLogo { get; set; }
-
     public ICollection<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }
     public ICollection<SubjectCoverage> SubjectCoverage { get; set; }
     public ICollection<Price> Prices { get; set; }

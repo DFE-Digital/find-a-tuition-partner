@@ -13,6 +13,13 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     {
     }
 
+    public IEnumerable<string> GetMatchedSeoUrls(IEnumerable<string> seoUrls)
+    {
+        var matchedSeoUrls = _context.TuitionPartners.AsQueryable().Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
+            .Select(x => x.SeoUrl).ToList();
+
+        return matchedSeoUrls;
+    }
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.AsQueryable();
