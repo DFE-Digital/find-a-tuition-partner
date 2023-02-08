@@ -14,7 +14,7 @@ Then(
       .should("exist")
       .and(
         "contain.text",
-        `VAT does not apply to these prices because ${name} is VAT exempt.'`
+        `VAT does not apply to these prices because ${name} is VAT exempt.`
       );
   }
 );
