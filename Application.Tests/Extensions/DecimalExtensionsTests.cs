@@ -33,8 +33,8 @@ public class DecimalExtensionsTests
     [InlineData(12.62, 10.52)]
     [InlineData(12.63, 10.53)]
     [InlineData(12.64, 10.53)]
-    public void RemoveVAT_RemovesCorrectPercentage(decimal vatExclusive, decimal vatInclusive)
+    public void RemoveVAT_RemovesCorrectPercentage(decimal vatInclusive, decimal vatExclusive)
     {
-        vatExclusive.RemoveVAT().Should().Be(vatInclusive);
+        vatInclusive.RemoveVAT().Should().Be(vatExclusive);
     }
 }
