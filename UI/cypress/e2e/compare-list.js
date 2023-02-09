@@ -13,7 +13,7 @@ import {
 When(
   "they add {string} to their price comparison list on the results page",
   (tpName) => {
-    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).check();
+    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).check();
     cy.wait(500);
   }
 );
@@ -21,7 +21,7 @@ When(
 When(
   "they remove {string} from their price comparison list on the results page",
   (tpName) => {
-    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).uncheck();
+    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).uncheck();
     cy.wait(500);
   }
 );
@@ -29,21 +29,21 @@ When(
 Then(
   "{string} is marked as added to the price comparison list on the results page",
   (tpName) => {
-    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("be.checked");
+    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).should("be.checked");
   }
 );
 
 Then(
   "{string} is not marked as added to the price comparison list on the results page",
   (tpName) => {
-    cy.get(`#shortlist-cb-${kebabCase(tpName)}`).should("not.be.checked");
+    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).should("not.be.checked");
   }
 );
 
 Then(
   "the price comparison list shows as having {int} entries on the results page",
   (numEntries) => {
-    cy.get("#totalShortlistedTuitionPartners").should((el) =>
+    cy.get("#totalCompareListedTuitionPartners").should((el) =>
       expect(parseInt(el.text().trim())).to.equal(numEntries)
     );
   }
@@ -52,7 +52,7 @@ Then(
 When(
   "they choose to view their price comparison list from the results page",
   () => {
-    cy.get('[data-testid="my-shortlisted-tuition-partners-link"]').click({
+    cy.get('[data-testid="my-compare-listed-tuition-partners-link"]').click({
       force: true,
     });
   }
@@ -112,7 +112,7 @@ When(
 );
 
 Then("they choose to sort the price comparison list by price", () => {
-  cy.get('[data-testid="shortlist-price-sort"]').click();
+  cy.get('[data-testid="compare-list-price-sort"]').click();
 });
 
 Then(
@@ -125,7 +125,7 @@ Then(
 );
 
 Then("they choose to click on clear price comparison list link", () => {
-  cy.get('[data-testid="clear-shortlist-link"]').click();
+  cy.get('[data-testid="clear-compare-list-link"]').click();
 });
 
 Then(
@@ -153,7 +153,7 @@ When(
     cy.window().then((win) => {
       [
         ...win.document.querySelectorAll(
-          `input[name="ShortlistedTuitionPartners"]`
+          `input[name="CompareListedTuitionPartners"]`
         ),
       ]
         .slice(0, num)
@@ -167,16 +167,16 @@ Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
 Then("{string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
 });
 Then("{string} checkbox is unchecked on its detail page", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxUnchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
 Then("the LA label text is {string}", (laLabelText) =>
   cy.checkLaLabelText(laLabelText)
 );
 Then("{string} checkbox is checked on its detail page", (tpName) => {
-  cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("there is {int} entry on the price comparison list page", (count) => {
@@ -186,7 +186,7 @@ Then("there is {int} entry on the price comparison list page", (count) => {
 Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
 
 Then("{string} is removed from the price comparison list", (tpName) => {
-  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
   cy.wait(200);
 });
 
@@ -195,7 +195,7 @@ Then("they click Back to go back to the price comparison list page", () =>
 );
 
 Then("the price comparison list page displays {string}", (expectedText) => {
-  cy.get("[id='shortlist-no-tp-shortlisted']").should(
+  cy.get("[id='compare-list-no-tp-compare-listed']").should(
     "contain.text",
     removeExcessWhitespaces(removeNewLine(expectedText))
   );
@@ -204,7 +204,7 @@ Then("the price comparison list page displays {string}", (expectedText) => {
 Then(
   "{string} group size price comparison list refinement option is selected",
   (optionText) => {
-    cy.get("[data-testid='shortlist-group-size-refine'] select").select(
+    cy.get("[data-testid='compare-list-group-size-refine'] select").select(
       `${optionText}`
     );
     cy.wait(1000);
@@ -214,7 +214,7 @@ Then(
 Then(
   "{string} tuition type price comparison list refinement option is selected",
   (optionText) => {
-    cy.get("[data-testid='shortlist-tuition-type-refine'] select").select(
+    cy.get("[data-testid='compare-list-tuition-type-refine'] select").select(
       `${optionText}`
     );
     cy.wait(1000);
@@ -223,18 +223,18 @@ Then(
 
 Then("the group size select option is {string}", (optionText) => {
   cy.get(
-    "[data-testid='shortlist-group-size-refine'] select option:selected"
+    "[data-testid='compare-list-group-size-refine'] select option:selected"
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 
 Then("the tuition type select option is {string}", (optionText) => {
   cy.get(
-    "[data-testid='shortlist-tuition-type-refine'] select option:selected"
+    "[data-testid='compare-list-tuition-type-refine'] select option:selected"
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 
 Then("the {string} price is {string}", (tpName, priceString) => {
-  cy.get(`[data-testid="shortlist-price-${kebabCase(tpName)}"]`).should(
+  cy.get(`[data-testid="compare-list-price-${kebabCase(tpName)}"]`).should(
     "contain.text",
     removeExcessWhitespaces(removeNewLine(priceString))
   );
@@ -242,7 +242,7 @@ Then("the {string} price is {string}", (tpName, priceString) => {
 
 Then("the {string} empty data reason is {string}", (tpName, priceString) => {
   cy.get(
-    `[data-testid="shortlist-empty-data-reason-${kebabCase(tpName)}"]`
+    `[data-testid="compare-list-empty-data-reason-${kebabCase(tpName)}"]`
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(priceString)));
 });
 
@@ -291,7 +291,7 @@ Then(
     keyStageAndSubjectsLabel = removeExcessWhitespaces(
       removeNewLine(keyStageAndSubjectsLabel)
     );
-    cy.get("[data-testid='shortlist-key-stage-subjects-label']")
+    cy.get("[data-testid='compare-list-key-stage-subjects-label']")
       .eq(entry - 1)
       .then(($paragraph) => {
         return removeExcessWhitespaces(removeNewLine($paragraph.text()));
@@ -301,7 +301,7 @@ Then(
 );
 
 Then("the price comparison list key stage subjects header is not shown", () => {
-  cy.get("[data-testid='shortlist-key-stage-subjects-header']").should(
+  cy.get("[data-testid='compare-list-key-stage-subjects-header']").should(
     "not.exist"
   );
 });

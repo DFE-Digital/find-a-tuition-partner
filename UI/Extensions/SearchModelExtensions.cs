@@ -38,10 +38,10 @@ namespace UI.Extensions
             model.Add(x => x.TuitionType, dictionary);
             model.AddAll(x => x.KeyStages, dictionary, flattenCollection);
             model.AddAll(x => x.Subjects, dictionary, flattenCollection);
-            model.Add(x => x.ShortlistOrderBy, dictionary);
-            model.Add(x => x.ShortlistOrderByDirection, dictionary);
-            model.Add(x => x.ShortlistTuitionType, dictionary);
-            model.Add(x => x.ShortlistGroupSize, dictionary);
+            model.Add(x => x.CompareListOrderBy, dictionary);
+            model.Add(x => x.CompareListOrderByDirection, dictionary);
+            model.Add(x => x.CompareListTuitionType, dictionary);
+            model.Add(x => x.CompareListGroupSize, dictionary);
 
             return dictionary;
         }

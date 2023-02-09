@@ -1,7 +1,7 @@
 ﻿@page
-@model UI.Pages.ShortlistClearConfirm
+@model UI.Pages.CompareListClearConfirm
 @{
-    var returnUrl = "/shortlist?" + Model.Data.ToQueryString();
+    var returnUrl = "/compare-list?" + Model.Data.ToQueryString();
     ViewData["Title"] = "Clear my price comparison list confirmation";
     ViewData["BackLinkHref"] = returnUrl;
 }

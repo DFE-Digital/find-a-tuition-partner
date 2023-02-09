@@ -14,10 +14,10 @@ public class SearchResults : PageModel
     public SearchResults(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
-    [BindProperty(SupportsGet = true)] public List<string> ShortlistedTuitionPartners { get; set; } = new();
+    [BindProperty(SupportsGet = true)] public List<string> CompareListedTuitionPartners { get; set; } = new();
     public List<SelectableTuitionPartnerModel> SelectableTuitionPartners { get; set; } = new();
-    public int TotalShortlistedTuitionPartners { get; set; }
-    [BindProperty(SupportsGet = true)] public string? UpdateMyShortlist { get; set; }
+    public int TotalCompareListedTuitionPartners { get; set; }
+    [BindProperty(SupportsGet = true)] public string? UpdateMyCompareList { get; set; }
 
     // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
 
@@ -51,10 +51,10 @@ public class SearchResults : PageModel
         Data = await _mediator.Send(data);
         Data.From = ReferrerList.SearchResults;
 
-        //Clear shortlist TuitionType if has been changed on shortlist
+        //Clear compare list TuitionType if has been changed on compare list
         if (data.PreviousTuitionType != null && data.PreviousTuitionType != data.TuitionType)
         {
-            Data.ShortlistTuitionType = null;
+            Data.CompareListTuitionType = null;
         }
         Data.PreviousTuitionType = data.TuitionType;
 
@@ -67,7 +67,7 @@ public class SearchResults : PageModel
     private async Task SetSelectableTuitionPartners()
     {
         if (Data.Results != null)
-            SelectableTuitionPartners = await GetSelectableTuitionPartners(Data, ShortlistedTuitionPartners);
+            SelectableTuitionPartners = await GetSelectableTuitionPartners(Data, CompareListedTuitionPartners);
     }
 
     private async Task<List<SelectableTuitionPartnerModel>> GetSelectableTuitionPartners(
@@ -77,56 +77,56 @@ public class SearchResults : PageModel
         selectedTuitionPartners = selectedTuitionPartners.ToList();
 
         var selectableTps = resultsModel.Results?.Results.Select(tp => tp.SeoUrl).ToList();
-        var shortlistedTps = (await _mediator.Send(new GetAllShortlistedTuitionPartnersQuery())).ToList();
-        var shortlistedTpsInSelectableTps = new List<string>();
-        if (shortlistedTps.Any() && selectableTps != null && selectableTps.Any())
+        var compareListedTps = (await _mediator.Send(new GetAllCompareListTuitionPartnersQuery())).ToList();
+        var compareListedTpsInSelectableTps = new List<string>();
+        if (compareListedTps.Any() && selectableTps != null && selectableTps.Any())
         {
-            shortlistedTpsInSelectableTps =
-                GetSelectableTpsPresentInShortlistedTps(selectableTps, shortlistedTps).ToList();
+            compareListedTpsInSelectableTps =
+                GetSelectableTpsPresentInCompareListedTps(selectableTps, compareListedTps).ToList();
 
-            selectableTuitionPartnerModels.AddRange(shortlistedTpsInSelectableTps
+            selectableTuitionPartnerModels.AddRange(compareListedTpsInSelectableTps
                 .Select(tpSeoUrl => new SelectableTuitionPartnerModel(tpSeoUrl, true)));
         }
 
 
-        if (!string.IsNullOrEmpty(UpdateMyShortlist))
+        if (!string.IsNullOrEmpty(UpdateMyCompareList))
         {
-            await UpdateTuitionPartners(selectedTuitionPartners, shortlistedTpsInSelectableTps, shortlistedTps);
+            await UpdateTuitionPartners(selectedTuitionPartners, compareListedTpsInSelectableTps, compareListedTps);
 
             selectableTuitionPartnerModels.Clear();
             selectableTuitionPartnerModels.AddRange(selectedTuitionPartners
                 .Select(tpSeoUrl => new SelectableTuitionPartnerModel(tpSeoUrl, true)));
         }
 
-        TotalShortlistedTuitionPartners = shortlistedTps.Count;
+        TotalCompareListedTuitionPartners = compareListedTps.Count;
 
         return GetSelectableTuitionPartnerModels(selectableTps, selectableTuitionPartnerModels);
     }
 
-    private IEnumerable<string> GetSelectableTpsPresentInShortlistedTps(List<string> selectableTps,
-        List<string> shortlistedTps) =>
-        selectableTps.Where(tp => shortlistedTps.Any(stp => stp == tp)).ToList();
+    private IEnumerable<string> GetSelectableTpsPresentInCompareListedTps(List<string> selectableTps,
+        List<string> compareListedTps) =>
+        selectableTps.Where(tp => compareListedTps.Any(stp => stp == tp)).ToList();
 
 
     private async Task UpdateTuitionPartners(
-        IEnumerable<string> selectedTuitionPartners, List<string> shortlistedTpsInSelectableTps,
-        List<string> shortlistedTps)
+        IEnumerable<string> selectedTuitionPartners, List<string> compareListedTpsInSelectableTps,
+        List<string> compareListedTps)
     {
-        if (shortlistedTpsInSelectableTps.Any())
+        if (compareListedTpsInSelectableTps.Any())
         {
-            foreach (var tp in shortlistedTpsInSelectableTps.Where(tp => shortlistedTps.Any(stp => stp == tp)))
+            foreach (var tp in compareListedTpsInSelectableTps.Where(tp => compareListedTps.Any(stp => stp == tp)))
             {
-                shortlistedTps.RemoveAll(stp => stp == tp);
+                compareListedTps.RemoveAll(stp => stp == tp);
             }
         }
 
-        shortlistedTps.AddRange(selectedTuitionPartners);
+        compareListedTps.AddRange(selectedTuitionPartners);
 
-        if (shortlistedTps.Any())
-            await _mediator.Send(new AddTuitionPartnersToShortlistCommand(shortlistedTps));
+        if (compareListedTps.Any())
+            await _mediator.Send(new AddTuitionPartnersToCompareListCommand(compareListedTps));
 
-        if (!shortlistedTps.Any())
-            await _mediator.Send(new RemoveAllShortlistedTuitionPartnersCommand());
+        if (!compareListedTps.Any())
+            await _mediator.Send(new RemoveAllCompareListedTuitionPartnersCommand());
     }
 
     private List<SelectableTuitionPartnerModel> GetSelectableTuitionPartnerModels(

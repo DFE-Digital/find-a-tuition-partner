@@ -1,12 +1,12 @@
-﻿function ShortlistRefinement() {
+﻿function CompareListRefinement() {
   this.$body = document.querySelector("body");
   this.$refinementSection = document.querySelector(
-    '[data-module="shortlist-refinement"]'
+    '[data-module="compare-list-refinement"]'
   );
   this.$timeout = null;
 }
 
-ShortlistRefinement.prototype.init = function () {
+CompareListRefinement.prototype.init = function () {
   if (this.$refinementSection) {
     this.$refinementSection.querySelectorAll("select").forEach((element) => {
       element.addEventListener(
@@ -17,7 +17,7 @@ ShortlistRefinement.prototype.init = function () {
   }
 };
 
-ShortlistRefinement.prototype.refinementChangedEvent = function (e) {
+CompareListRefinement.prototype.refinementChangedEvent = function (e) {
   if (this.$timeout) {
     clearTimeout(this.$timeout);
   }
@@ -28,4 +28,4 @@ ShortlistRefinement.prototype.refinementChangedEvent = function (e) {
   );
 };
 
-export default ShortlistRefinement;
+export default CompareListRefinement;

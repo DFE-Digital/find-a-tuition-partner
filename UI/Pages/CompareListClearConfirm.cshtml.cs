@@ -2,12 +2,12 @@ using Application.Common.Models;
 
 namespace UI.Pages
 {
-    public class ShortlistClearConfirm : PageModel
+    public class CompareListClearConfirm : PageModel
     {
         private readonly ILogger<TuitionPartner> _logger;
         private readonly IMediator _mediator;
 
-        public ShortlistClearConfirm(ILogger<TuitionPartner> logger, IMediator mediator)
+        public CompareListClearConfirm(ILogger<TuitionPartner> logger, IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
@@ -25,11 +25,11 @@ namespace UI.Pages
             if (!ModelState.IsValid) return Page();
 
             //Remove all TPs
-            await _mediator.Send(new RemoveAllShortlistedTuitionPartnersCommand());
+            await _mediator.Send(new RemoveAllCompareListedTuitionPartnersCommand());
 
-            _logger.LogInformation("Cleared full shortlist");
+            _logger.LogInformation("Cleared full compare list");
 
-            return RedirectToPage("shortlist", data);
+            return RedirectToPage("compare-list", data);
         }
 
         public record Query : SearchModel

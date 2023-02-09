@@ -1,5 +1,5 @@
 ﻿@media not print {
-  .remove-shortlist-table-button {
+  .remove-compare-list-table-button {
     margin-bottom: 0px;
   }
 }
@@ -76,21 +76,21 @@
   top: 2px;
 }
 
-.app-shortlist--apply-refinement {
+.app-compare-list--apply-refinement {
   margin-top: 30px;
 }
 
-.js-enabled .app-shortlist--apply-refinement {
+.js-enabled .app-compare-list--apply-refinement {
   display: none;
 }
 
-.govuk-grid-column-shortlist {
+.govuk-grid-column-compare-list {
   display: inline-block;
   margin-right: 20px;
   margin-bottom: 0;
 }
 
-.govuk-grid-row-shortlist {
+.govuk-grid-row-compare-list {
   margin-left: 0px;
 }
 

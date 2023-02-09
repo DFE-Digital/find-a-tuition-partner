@@ -1,26 +1,25 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain;
-using Domain.Enums;
 using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 using KeyStage = Domain.Enums.KeyStage;
 
 namespace UI.Pages;
-public class ShortlistModel : PageModel
+public class CompareListModel : PageModel
 {
     private readonly IMediator _mediator;
 
-    public ShortlistModel(IMediator mediator) => _mediator = mediator;
+    public CompareListModel(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
 
     public async Task<IActionResult> OnGet(Query data)
     {
-        data.From = ReferrerList.Shortlist;
-        if (data.ShortlistTuitionType == null && data.TuitionType != null)
+        data.From = ReferrerList.CompareList;
+        if (data.CompareListTuitionType == null && data.TuitionType != null)
         {
-            data.ShortlistTuitionType = data.TuitionType.Value;
+            data.CompareListTuitionType = data.TuitionType.Value;
         }
 
         if (data.KeyStages == null && data.Subjects != null)
@@ -50,38 +49,38 @@ public class ShortlistModel : PageModel
 
         if (!string.IsNullOrWhiteSpace(removeTuitionPartnerSeoUrl))
         {
-            await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
+            await _mediator.Send(new RemoveCompareListedTuitionPartnerCommand(removeTuitionPartnerSeoUrl));
         }
 
         return RedirectToPage(data);
     }
 
-    public async Task<IActionResult> OnPostAddToShortlist([FromBody] AddToShortlistModel shortlistModel)
+    public async Task<IActionResult> OnPostAddToCompareList([FromBody] AddToCompareListModel compareListModel)
     {
-        var response = new ShortlistedTuitionPartnerResult(false, shortlistModel.TotalShortlistedTuitionPartners);
+        var response = new CompareListedTuitionPartnerResult(false, compareListModel.TotalCompareListedTuitionPartners);
 
-        if (IsStringWhitespaceOrNull(shortlistModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalShortlistedTuitionPartners);
+        if (IsStringWhitespaceOrNull(compareListModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalCompareListedTuitionPartners);
 
-        response.IsCallSuccessful = await _mediator.Send(new AddTuitionPartnersToShortlistCommand(new List<string>() { shortlistModel.SeoUrl.Trim() }));
+        response.IsCallSuccessful = await _mediator.Send(new AddTuitionPartnersToCompareListCommand(new List<string>() { compareListModel.SeoUrl.Trim() }));
 
-        return GetJsonResult(response.IsCallSuccessful, shortlistModel.TotalShortlistedTuitionPartners);
+        return GetJsonResult(response.IsCallSuccessful, compareListModel.TotalCompareListedTuitionPartners);
     }
 
-    public async Task<IActionResult> OnPostRemoveFromShortlist([FromBody] RemoveFromShortlistModel shortlistModel)
+    public async Task<IActionResult> OnPostRemoveFromCompareList([FromBody] RemoveFromCompareListModel compareListModel)
     {
-        var response = new ShortlistedTuitionPartnerResult(false, shortlistModel.TotalShortlistedTuitionPartners);
+        var response = new CompareListedTuitionPartnerResult(false, compareListModel.TotalCompareListedTuitionPartners);
 
-        if (IsStringWhitespaceOrNull(shortlistModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalShortlistedTuitionPartners);
+        if (IsStringWhitespaceOrNull(compareListModel.SeoUrl)) return GetJsonResult(response.IsCallSuccessful, response.TotalCompareListedTuitionPartners);
 
-        shortlistModel.SeoUrl = shortlistModel.SeoUrl.Trim();
+        compareListModel.SeoUrl = compareListModel.SeoUrl.Trim();
 
-        response.IsCallSuccessful = await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(shortlistModel.SeoUrl));
+        response.IsCallSuccessful = await _mediator.Send(new RemoveCompareListedTuitionPartnerCommand(compareListModel.SeoUrl));
 
-        return GetJsonResult(response.IsCallSuccessful, shortlistModel.TotalShortlistedTuitionPartners);
+        return GetJsonResult(response.IsCallSuccessful, compareListModel.TotalCompareListedTuitionPartners);
     }
 
-    private JsonResult GetJsonResult(bool isCallSuccessful, int totalShortlistedTuitionPartners) =>
-        new(new ShortlistedTuitionPartnerResult(isCallSuccessful, totalShortlistedTuitionPartners));
+    private JsonResult GetJsonResult(bool isCallSuccessful, int totalCompareListedTuitionPartners) =>
+        new(new CompareListedTuitionPartnerResult(isCallSuccessful, totalCompareListedTuitionPartners));
 
     private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
 
@@ -104,20 +103,20 @@ public class ShortlistModel : PageModel
         public string GetAriaSort(TuitionPartnerOrderBy matchedOrderBy)
         {
             string result;
-            if (ShortlistOrderBy != matchedOrderBy)
+            if (CompareListOrderBy != matchedOrderBy)
             {
                 result = "none";
             }
             else
             {
-                result = ShortlistOrderByDirection == OrderByDirection.Ascending ? "ascending" : "descending";
+                result = CompareListOrderByDirection == OrderByDirection.Ascending ? "ascending" : "descending";
             }
             return result;
         }
 
         public Dictionary<string, string> GetSortRouteData(TuitionPartnerOrderBy matchedOrderBy)
         {
-            return (this with { ShortlistOrderBy = matchedOrderBy, ShortlistOrderByDirection = (ShortlistOrderBy == matchedOrderBy && ShortlistOrderByDirection == OrderByDirection.Ascending) ? OrderByDirection.Descending : OrderByDirection.Ascending }).ToRouteData();
+            return (this with { CompareListOrderBy = matchedOrderBy, CompareListOrderByDirection = (CompareListOrderBy == matchedOrderBy && CompareListOrderByDirection == OrderByDirection.Ascending) ? OrderByDirection.Descending : OrderByDirection.Ascending }).ToRouteData();
         }
 
         public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
@@ -146,16 +145,16 @@ public class ShortlistModel : PageModel
         private readonly ILocationFilterService _locationService;
         private readonly ITuitionPartnerService _tuitionPartnerService;
         private readonly ILookupDataService _lookupDataService;
-        private readonly ITuitionPartnerShortlistStorageService _tuitionPartnerShortlistStorageService;
+        private readonly ITuitionPartnerCompareListStorageService _tuitionPartnerCompareListStorageService;
         private readonly ILogger<TuitionPartner> _logger;
 
         public Handler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService,
-            ILookupDataService lookupDataService, ITuitionPartnerShortlistStorageService tuitionPartnerShortlistStorageService, ILogger<TuitionPartner> logger)
+            ILookupDataService lookupDataService, ITuitionPartnerCompareListStorageService tuitionPartnerCompareListStorageService, ILogger<TuitionPartner> logger)
         {
             _locationService = locationService;
             _tuitionPartnerService = tuitionPartnerService;
             _lookupDataService = lookupDataService;
-            _tuitionPartnerShortlistStorageService = tuitionPartnerShortlistStorageService;
+            _tuitionPartnerCompareListStorageService = tuitionPartnerCompareListStorageService;
             _logger = logger;
         }
 
@@ -167,10 +166,10 @@ public class ShortlistModel : PageModel
                 AllGroupSizes = EnumExtensions.GetAllEnums<GroupSize>()
             };
 
-            var seoUrls = GetShortlistSeoUrls();
+            var seoUrls = GetCompareListSeoUrls();
 
-            var shortlistOrderBy = request.ShortlistOrderBy ?? TuitionPartnerOrderBy.SeoList;
-            var shortlistOrderByDirection = request.ShortlistOrderByDirection ?? OrderByDirection.Ascending;
+            var compareListOrderBy = request.CompareListOrderBy ?? TuitionPartnerOrderBy.SeoList;
+            var compareListOrderByDirection = request.CompareListOrderByDirection ?? OrderByDirection.Ascending;
 
             List<string> keyStageSubjectsFilteredLabels = new();
 
@@ -195,7 +194,7 @@ public class ShortlistModel : PageModel
                 }
             }
 
-            var searchResults = await GetShortlistResults(seoUrls, request, shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
+            var searchResults = await GetCompareListResults(seoUrls, request, compareListOrderBy, compareListOrderByDirection, cancellationToken);
 
             IEnumerable<TuitionPartnerResult>? invalidResults = null;
             if (searchResults.IsSuccess && searchResults.Data.Count != seoUrls.Length)
@@ -203,7 +202,7 @@ public class ShortlistModel : PageModel
                 var invalidSeoUrls = seoUrls.Where(e => !searchResults.Data.Results.Select(x => x.SeoUrl).Contains(e)).ToList();
                 if (invalidSeoUrls.Any())
                 {
-                    invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), shortlistOrderBy, shortlistOrderByDirection, cancellationToken);
+                    invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), compareListOrderBy, compareListOrderByDirection, cancellationToken);
                     _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on price comparison page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
@@ -234,16 +233,16 @@ public class ShortlistModel : PageModel
                 new(new[] { new ValidationFailure("", "An unknown problem occurred") });
         }
 
-        private string[] GetShortlistSeoUrls()
+        private string[] GetCompareListSeoUrls()
         {
-            var shortlistedTPs = _tuitionPartnerShortlistStorageService.GetAllTuitionPartners();
+            var compareListedTPs = _tuitionPartnerCompareListStorageService.GetAllTuitionPartners();
 
-            var tuitionPartnersIds = shortlistedTPs.Select(x => x).Distinct().ToArray();
+            var tuitionPartnersIds = compareListedTPs.Select(x => x).Distinct().ToArray();
 
             return tuitionPartnersIds;
         }
 
-        private async Task<IResult<TuitionPartnersResult>> GetShortlistResults(
+        private async Task<IResult<TuitionPartnersResult>> GetCompareListResults(
             string[] tuitionPartnerSeoUrls,
             Query request,
             TuitionPartnerOrderBy orderBy,
@@ -271,8 +270,8 @@ public class ShortlistModel : PageModel
                         location.Data,
                         new TuitionPartnersDataFilter()
                         {
-                            GroupSize = (request.ShortlistGroupSize == null || request.ShortlistGroupSize == GroupSize.Any) ? null : (int)request.ShortlistGroupSize,
-                            TuitionTypeId = (request.ShortlistTuitionType == null || request.ShortlistTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.ShortlistTuitionType,
+                            GroupSize = (request.CompareListGroupSize == null || request.CompareListGroupSize == GroupSize.Any) ? null : (int)request.CompareListGroupSize,
+                            TuitionTypeId = (request.CompareListTuitionType == null || request.CompareListTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.CompareListTuitionType,
                             SubjectIds = request.SubjectIds
                         },
                         cancellationToken);

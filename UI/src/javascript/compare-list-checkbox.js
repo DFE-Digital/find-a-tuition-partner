@@ -1,17 +1,17 @@
 "use strict";
 
-import ShortlistClient from "./api/shortlist-client";
+import CompareListClient from "./api/compare-list-client";
 
-const ShortlistCheckbox = (() => {
-  let client = new ShortlistClient();
+const CompareListCheckbox = (() => {
+  let client = new CompareListClient();
   const isResultValid = (result) =>
     result &&
     result.isCallSuccessful !== "undefined" &&
-    result.totalShortlistedTuitionPartners !== "undefined";
+    result.totalCompareListedTuitionPartners !== "undefined";
 
-  const init = (shortlistCheckboxes) => {
-    if (shortlistCheckboxes && shortlistCheckboxes.length > 0) {
-      shortlistCheckboxes.forEach((element) => {
+  const init = (compareListCheckboxes) => {
+    if (compareListCheckboxes && compareListCheckboxes.length > 0) {
+      compareListCheckboxes.forEach((element) => {
         element
           .querySelector("input[type='checkbox']")
           .addEventListener("click", onCheckboxClick);
@@ -49,35 +49,35 @@ const ShortlistCheckbox = (() => {
     }
   };
 
-  const setShortlistedTuitionPartnersBadgeClass = (
+  const setCompareListedTuitionPartnersBadgeClass = (
     badgeElement,
-    totalShortlistedTuitionPartners
+    totalCompareListedTuitionPartners
   ) => {
-    if (!totalShortlistedTuitionPartners) {
+    if (!totalCompareListedTuitionPartners) {
       return;
     }
-    if (totalShortlistedTuitionPartners < 20) {
+    if (totalCompareListedTuitionPartners < 20) {
       badgeElement.classList.remove(
-        "my-shortlisted-partners-badge--for-values-greater-than-nineteen"
+        "my-compare-listed-partners-badge--for-values-greater-than-nineteen"
       );
-      badgeElement.classList.add("my-shortlisted-partners-badge");
+      badgeElement.classList.add("my-compare-listed-partners-badge");
     } else {
-      badgeElement.classList.remove("my-shortlisted-partners-badge");
+      badgeElement.classList.remove("my-compare-listed-partners-badge");
       badgeElement.classList.add(
-        "my-shortlisted-partners-badge--for-values-greater-than-nineteen"
+        "my-compare-listed-partners-badge--for-values-greater-than-nineteen"
       );
     }
   };
   const updateSearchResultPage = (result, checkBox, elseCheckboxState) => {
     if (isResultValid(result) && result.isCallSuccessful) {
       const badgeElement = document.getElementById(
-        "totalShortlistedTuitionPartners"
+        "totalCompareListedTuitionPartners"
       );
       if (badgeElement) {
-        badgeElement.textContent = result.totalShortlistedTuitionPartners;
-        setShortlistedTuitionPartnersBadgeClass(
+        badgeElement.textContent = result.totalCompareListedTuitionPartners;
+        setCompareListedTuitionPartnersBadgeClass(
           badgeElement,
-          result.totalShortlistedTuitionPartners
+          result.totalCompareListedTuitionPartners
         );
       }
     } else {
@@ -85,21 +85,21 @@ const ShortlistCheckbox = (() => {
     }
   };
   const onChecked = async (checkbox) => {
-    const totalShortlistedTuitionPartners = document.querySelectorAll(
-      `input[name="ShortlistedTuitionPartners"]:checked`
+    const totalCompareListedTuitionPartners = document.querySelectorAll(
+      `input[name="CompareListedTuitionPartners"]:checked`
     ).length;
-    return await client.postAddToShortlist(
+    return await client.postAddToCompareList(
       checkbox.id,
-      totalShortlistedTuitionPartners
+      totalCompareListedTuitionPartners
     );
   };
   const onUnChecked = async (checkbox) => {
-    const totalShortlistedTuitionPartners = document.querySelectorAll(
-      `input[name="ShortlistedTuitionPartners"]:checked`
+    const totalCompareListedTuitionPartners = document.querySelectorAll(
+      `input[name="CompareListedTuitionPartners"]:checked`
     ).length;
-    return await client.postRemoveFromShortlist(
+    return await client.postRemoveFromCompareList(
       checkbox.id,
-      totalShortlistedTuitionPartners
+      totalCompareListedTuitionPartners
     );
   };
 
@@ -108,4 +108,4 @@ const ShortlistCheckbox = (() => {
   };
 })();
 
-export default ShortlistCheckbox;
+export default CompareListCheckbox;

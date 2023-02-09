@@ -6,14 +6,14 @@ using UI.Pages;
 namespace Tests;
 
 [Collection(nameof(SliceFixture))]
-public class ShortlistPageTests : CleanSliceFixture
+public class CompareListPageTests : CleanSliceFixture
 {
     private readonly Mock<IMediator> _mediator;
-    private readonly ShortlistModel _sut;
-    public ShortlistPageTests(SliceFixture fixture) : base(fixture)
+    private readonly CompareListModel _sut;
+    public CompareListPageTests(SliceFixture fixture) : base(fixture)
     {
         _mediator = new Mock<IMediator>();
-        _sut = new ShortlistModel(_mediator.Object);
+        _sut = new CompareListModel(_mediator.Object);
     }
 
     [Theory]
@@ -21,8 +21,8 @@ public class ShortlistPageTests : CleanSliceFixture
     [InlineData("ABCDD EFG")]
     public void With_an_invalid_postcode(string postcode)
     {
-        var model = new ShortlistModel.Query() { Postcode = postcode };
-        var result = new ShortlistModel.Validator().TestValidate(model);
+        var model = new CompareListModel.Query() { Postcode = postcode };
+        var result = new CompareListModel.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a real postcode");
     }
@@ -32,8 +32,8 @@ public class ShortlistPageTests : CleanSliceFixture
     [InlineData(null)]
     public void With_a_blank_or_null_postcode(string postcode)
     {
-        var model = new ShortlistModel.Query() { Postcode = postcode };
-        var result = new ShortlistModel.Validator().TestValidate(model);
+        var model = new CompareListModel.Query() { Postcode = postcode };
+        var result = new CompareListModel.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a postcode");
     }
@@ -46,8 +46,8 @@ public class ShortlistPageTests : CleanSliceFixture
     public async Task With_a_blank_or_invalid_postcode_user_should_be_redirect_to_search_results_page(string postcode)
     {
         const string pageNameProp = "PageName";
-        var query = new ShortlistModel.Query() { Postcode = postcode };
-        var result = await Fixture.GetPage<ShortlistModel>().Execute(async page => await page.OnGet(query));
+        var query = new CompareListModel.Query() { Postcode = postcode };
+        var result = await Fixture.GetPage<CompareListModel>().Execute(async page => await page.OnGet(query));
         result.Should().BeOfType<RedirectToPageResult>();
         var pageName = GetPropValue(result, pageNameProp);
         pageName.Should().Be(nameof(SearchResults));
@@ -57,21 +57,21 @@ public class ShortlistPageTests : CleanSliceFixture
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public async Task OnPostAddToShortlist_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
+    public async Task OnPostAddToCompareList_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
     {
-        var result = await _sut.OnPostAddToShortlist(GetAddToShortlistModel(seoUrl));
+        var result = await _sut.OnPostAddToCompareList(GetAddToCompareListModel(seoUrl));
 
         AssertJsonResult(result, false);
         VerifyAddTuitionPartnerMediatorCall(0);
     }
 
     [Fact]
-    public async Task OnPostAddToShortlist_WhenCalledWithSeoUrl_ReturnExpectJson()
+    public async Task OnPostAddToCompareList_WhenCalledWithSeoUrl_ReturnExpectJson()
     {
-        _mediator.Setup(x => x.Send(It.IsAny<AddTuitionPartnersToShortlistCommand>(),
+        _mediator.Setup(x => x.Send(It.IsAny<AddTuitionPartnersToCompareListCommand>(),
             It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-        var result = await _sut.OnPostAddToShortlist(GetAddToShortlistModel("seoUrl"));
+        var result = await _sut.OnPostAddToCompareList(GetAddToCompareListModel("seoUrl"));
 
         AssertJsonResult(result, true);
         VerifyAddTuitionPartnerMediatorCall(1);
@@ -81,21 +81,21 @@ public class ShortlistPageTests : CleanSliceFixture
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public async Task OnPostRemoveFromShortlist_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
+    public async Task OnPostRemoveFromCompareList_WhenCalledWithInvalidSeoUrl_ReturnExpectJson(string seoUrl)
     {
-        var result = await _sut.OnPostRemoveFromShortlist(GetRemoveFromShortlistModel(seoUrl));
+        var result = await _sut.OnPostRemoveFromCompareList(GetRemoveFromCompareListModel(seoUrl));
 
         AssertJsonResult(result, false);
         VerifyRemoveTuitionPartnerMediatorCall(0);
     }
 
     [Fact]
-    public async Task OnPostRemoveFromShortlist_WhenCalledWithSeoUrl_ReturnExpectJson()
+    public async Task OnPostRemoveFromCompareList_WhenCalledWithSeoUrl_ReturnExpectJson()
     {
-        _mediator.Setup(x => x.Send(It.IsAny<RemoveShortlistedTuitionPartnerCommand>(),
+        _mediator.Setup(x => x.Send(It.IsAny<RemoveCompareListedTuitionPartnerCommand>(),
             It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-        var result = await _sut.OnPostRemoveFromShortlist(GetRemoveFromShortlistModel("seoUrl"));
+        var result = await _sut.OnPostRemoveFromCompareList(GetRemoveFromCompareListModel("seoUrl"));
 
         AssertJsonResult(result, true);
         VerifyRemoveTuitionPartnerMediatorCall(1);
@@ -106,36 +106,36 @@ public class ShortlistPageTests : CleanSliceFixture
         result.Should().BeOfType<JsonResult>();
         var jsonResult = result as JsonResult;
         var json = JsonConvert.SerializeObject(jsonResult?.Value);
-        var resultData = JsonConvert.DeserializeObject<ShortlistedTuitionPartnerResult>(json);
+        var resultData = JsonConvert.DeserializeObject<CompareListedTuitionPartnerResult>(json);
         resultData?.IsCallSuccessful.Should().Be(isCallSuccessful);
     }
 
     private void VerifyRemoveTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<RemoveShortlistedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<RemoveCompareListedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
 
     private void VerifyAddTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<AddTuitionPartnersToShortlistCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<AddTuitionPartnersToCompareListCommand>(), default), Times.Exactly(numberOfTimes));
 
-    private AddToShortlistModel GetAddToShortlistModel(string seoUrl, int totalShortlistedTuitionPartners = 1)
+    private AddToCompareListModel GetAddToCompareListModel(string seoUrl, int totalCompareListedTuitionPartners = 1)
     {
-        var addToShortlistModel = new AddToShortlistModel()
+        var addToCompareListModel = new AddToCompareListModel()
         {
             SeoUrl = seoUrl,
-            TotalShortlistedTuitionPartners = totalShortlistedTuitionPartners
+            TotalCompareListedTuitionPartners = totalCompareListedTuitionPartners
         };
 
-        return addToShortlistModel;
+        return addToCompareListModel;
     }
 
-    private RemoveFromShortlistModel GetRemoveFromShortlistModel(string seoUrl, int totalShortlistedTuitionPartners = 1)
+    private RemoveFromCompareListModel GetRemoveFromCompareListModel(string seoUrl, int totalCompareListedTuitionPartners = 1)
     {
-        var removeFromShortlistModel = new RemoveFromShortlistModel()
+        var removeFromCompareListModel = new RemoveFromCompareListModel()
         {
             SeoUrl = seoUrl,
-            TotalShortlistedTuitionPartners = totalShortlistedTuitionPartners
+            TotalCompareListedTuitionPartners = totalCompareListedTuitionPartners
         };
 
-        return removeFromShortlistModel;
+        return removeFromCompareListModel;
     }
 
     private static object? GetPropValue(object src, string propName)

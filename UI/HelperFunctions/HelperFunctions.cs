@@ -15,7 +15,7 @@ public static class HelperFunctions
         return referrerList switch
         {
             ReferrerList.SearchResults => "search-results",
-            ReferrerList.Shortlist => "shortlist",
+            ReferrerList.CompareList => "compare-list",
             _ => defaultPageUrl
         };
     }
@@ -25,7 +25,7 @@ public static class HelperFunctions
         return referrerList switch
         {
             ReferrerList.SearchResults => "Back to search results",
-            ReferrerList.Shortlist => "Back to price comparison list",
+            ReferrerList.CompareList => "Back to price comparison list",
             _ => defaultPageName
         };
     }

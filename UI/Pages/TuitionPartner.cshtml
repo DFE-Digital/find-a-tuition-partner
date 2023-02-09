@@ -6,10 +6,10 @@
     ViewData["Title"] = Model.Data!.Name;
     var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
     var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
-    var isFromSearchResultOrShortlistPage = Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.Shortlist;
+    var isFromSearchResultOrCompareListPage = Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.CompareList;
 
     var localAuthorityHeader = "Tuition partner for ";
-    if (isFromSearchResultOrShortlistPage && Model.ShortlistCheckboxModel.IsShortlisted)
+    if (isFromSearchResultOrCompareListPage && Model.CompareListCheckboxModel.IsCompareListed)
         localAuthorityHeader = "Price comparison listed tuition partner for ";
 
     
@@ -257,17 +257,17 @@
             </govuk-summary-list-row>
         }
     </govuk-summary-list>
-    @if (isFromSearchResultOrShortlistPage)
+    @if (isFromSearchResultOrCompareListPage)
     {
         <hr class="govuk-section-break govuk-section-break--visible ">
         <div>
-            <partial name="Shared/_ShortlistCheckbox" model="@Model.ShortlistCheckboxModel"/>
+            <partial name="Shared/_CompareListCheckbox" model="@Model.CompareListCheckboxModel"/>
         </div>
-        <div class="govuk-grid-column-full add-to-or-remove-from-shortlist-button--apply-visibility govuk-!-padding-left-0">
+        <div class="govuk-grid-column-full add-to-or-remove-from-compare-list-button--apply-visibility govuk-!-padding-left-0">
             @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
             <input type="hidden" name="SearchModel" value="@searchModel"/>
-            <govuk-button asp-page-handler="UpdateShortlist" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
-                Update shortlist
+            <govuk-button asp-page-handler="UpdateCompareList" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
+                Update my price comparison list
             </govuk-button>
         </div>
         <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">

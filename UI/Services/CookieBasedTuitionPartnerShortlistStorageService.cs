@@ -4,41 +4,41 @@ using Application.Common.Interfaces;
 namespace UI.Services;
 
 /// <summary>
-/// The CookieBasedTuitionPartnerShortlistStorageService stores ShortlistedTuitionPartner details in a cookie
+/// The CookieBasedTuitionPartnerCompareListStorageService stores CompareListedTuitionPartner details in a cookie
 /// for 24 hours/one day from the time it was added.
 /// </summary>
-public class CookieBasedTuitionPartnerShortlistStorageService : ITuitionPartnerShortlistStorageService
+public class CookieBasedTuitionPartnerCompareListStorageService : ITuitionPartnerCompareListStorageService
 {
     // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
     private const string CookieName = ".FindATuitionPartner.PriceComparisonList";
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<CookieBasedTuitionPartnerShortlistStorageService> _logger;
+    private readonly ILogger<CookieBasedTuitionPartnerCompareListStorageService> _logger;
 
-    public CookieBasedTuitionPartnerShortlistStorageService(
-        IHttpContextAccessor httpContextAccessor, ILogger<CookieBasedTuitionPartnerShortlistStorageService> logger)
+    public CookieBasedTuitionPartnerCompareListStorageService(
+        IHttpContextAccessor httpContextAccessor, ILogger<CookieBasedTuitionPartnerCompareListStorageService> logger)
     {
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException($"{nameof(httpContextAccessor)}");
         _logger = logger ?? throw new ArgumentNullException($"{nameof(logger)}");
     }
 
     /// <summary>
-    /// Adds a Shortlisted Tuition Partner to an implemented form of storage.
+    /// Adds a compare listed Tuition Partner to an implemented form of storage.
     /// </summary>
-    /// <param name="shortlistedTuitionPartnersSeoUrl"></param>
+    /// <param name="compareListedTuitionPartnersSeoUrl"></param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public bool AddTuitionPartners(IEnumerable<string> shortlistedTuitionPartnersSeoUrl)
+    public bool AddTuitionPartners(IEnumerable<string> compareListedTuitionPartnersSeoUrl)
     {
-        shortlistedTuitionPartnersSeoUrl = shortlistedTuitionPartnersSeoUrl.ToList();
+        compareListedTuitionPartnersSeoUrl = compareListedTuitionPartnersSeoUrl.ToList();
         var isFaultyData =
-            shortlistedTuitionPartnersSeoUrl.Any(seoUrl => !IsShortlistedTuitionPartnerSeoUrlValid(seoUrl));
+            compareListedTuitionPartnersSeoUrl.Any(seoUrl => !IsCompareListedTuitionPartnerSeoUrlValid(seoUrl));
 
         if (isFaultyData)
             throw new InvalidOperationException(
-                $"One or more of the values in {nameof(shortlistedTuitionPartnersSeoUrl)} is invalid");
+                $"One or more of the values in {nameof(compareListedTuitionPartnersSeoUrl)} is invalid");
         if (_httpContextAccessor.HttpContext == null) throw new ArgumentException($"{nameof(_httpContextAccessor.HttpContext)} is null");
 
-        var isCallSuccessful = AddTuitionPartnersToCookie(shortlistedTuitionPartnersSeoUrl);
+        var isCallSuccessful = AddTuitionPartnersToCookie(compareListedTuitionPartnersSeoUrl);
 
         return isCallSuccessful;
     }
@@ -56,15 +56,15 @@ public class CookieBasedTuitionPartnerShortlistStorageService : ITuitionPartnerS
     }
 
     ///<inheritdoc />
-    public bool RemoveTuitionPartner(string shortlistedTuitionPartnerSeoUrl)
+    public bool RemoveTuitionPartner(string compareListedTuitionPartnerSeoUrl)
     {
         var result = false;
-        shortlistedTuitionPartnerSeoUrl = shortlistedTuitionPartnerSeoUrl.Trim();
+        compareListedTuitionPartnerSeoUrl = compareListedTuitionPartnerSeoUrl.Trim();
         var valuesInCookie = GetAllTuitionPartners().ToList();
 
-        if (!valuesInCookie.Contains(shortlistedTuitionPartnerSeoUrl, StringComparer.OrdinalIgnoreCase)) return result;
+        if (!valuesInCookie.Contains(compareListedTuitionPartnerSeoUrl, StringComparer.OrdinalIgnoreCase)) return result;
 
-        valuesInCookie.RemoveAll(v => v.Equals(shortlistedTuitionPartnerSeoUrl, StringComparison.OrdinalIgnoreCase));
+        valuesInCookie.RemoveAll(v => v.Equals(compareListedTuitionPartnerSeoUrl, StringComparison.OrdinalIgnoreCase));
 
         result = RemoveAllTuitionPartners();
 
@@ -90,16 +90,16 @@ public class CookieBasedTuitionPartnerShortlistStorageService : ITuitionPartnerS
     }
 
     /// <inheritdoc/>
-    public bool IsTuitionPartnerShortlisted(string tuitionPartnerSeoUrl)
+    public bool IsTuitionPartnerCompareListed(string tuitionPartnerSeoUrl)
     {
-        if (!IsShortlistedTuitionPartnerSeoUrlValid(tuitionPartnerSeoUrl))
+        if (!IsCompareListedTuitionPartnerSeoUrlValid(tuitionPartnerSeoUrl))
             throw new InvalidOperationException($"{nameof(tuitionPartnerSeoUrl)} is invalid");
 
-        var allShortlistedTps = GetAllTuitionPartners().ToList();
-        return allShortlistedTps.Any(tp => tp == tuitionPartnerSeoUrl.Trim());
+        var allCompareListedTps = GetAllTuitionPartners().ToList();
+        return allCompareListedTps.Any(tp => tp == tuitionPartnerSeoUrl.Trim());
     }
 
-    private bool IsShortlistedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
+    private bool IsCompareListedTuitionPartnerSeoUrlValid(string tuitionPartnerSeoUrl)
     {
         if (!string.IsNullOrEmpty(tuitionPartnerSeoUrl)) return true;
 
