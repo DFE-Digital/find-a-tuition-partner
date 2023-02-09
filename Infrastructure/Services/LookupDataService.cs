@@ -2,7 +2,7 @@
 using Application.Repositories;
 using Domain;
 
-namespace Infrastructure;
+namespace Infrastructure.Services;
 
 public class LookupDataService : ILookupDataService
 {
