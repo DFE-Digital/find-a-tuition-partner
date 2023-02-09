@@ -222,12 +222,15 @@ Then(
   }
 );
 
-Then("{string} VAT price comparison list refinement option is selected", (optionText) => {
+Then(
+  "{string} VAT price comparison list refinement option is selected",
+  (optionText) => {
     cy.get("[data-testid='compare-list-show-vat-toggle'] select").select(
-        `${optionText}`
+      `${optionText}`
     );
     cy.wait(1000);
-});
+  }
+);
 
 Then("the group size select option is {string}", (optionText) => {
   cy.get(
@@ -242,9 +245,9 @@ Then("the tuition type select option is {string}", (optionText) => {
 });
 
 Then("the VAT select option is {string}", (optionText) => {
-    cy.get(
-        "[data-testid='compare-list-show-vat-toggle'] select option:selected"
-    ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
+  cy.get(
+    "[data-testid='compare-list-show-vat-toggle'] select option:selected"
+  ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 
 Then("the {string} price is {string}", (tpName, priceString) => {
