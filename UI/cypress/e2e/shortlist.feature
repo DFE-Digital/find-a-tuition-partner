@@ -206,7 +206,7 @@ Feature: Tuition Partner shortlist
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Reeson Education' is entry 5 on the shortlist page
     And 'Action Tutoring' is entry 6 on the shortlist page
-    And the 'Tutors Green' price is '£11.25 to £55 including VAT'
+    And the 'Tutors Green' price is '£11.26 to £55 including VAT'
 
   Scenario: The shortlist can be refined by group size and tuition type then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
