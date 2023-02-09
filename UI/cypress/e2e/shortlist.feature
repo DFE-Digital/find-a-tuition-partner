@@ -83,12 +83,12 @@ Feature: Tuition Partner shortlist
     And they add 'Reeson Education' to their shortlist on the results page
     When they choose to view their shortlist from the results page
     Then there are 1 entries on the shortlist page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£10 to £60'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£10 to £60 including VAT'
     And they click 'Back'
     And they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     And they choose to view their shortlist from the results page
-    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'Online', '£10 to £60'
+    And entry 1 on the shortlist is the row 'Reeson Education', '1 to 1, 2, 3, 4, 5, 6', 'Online', '£10 to £60 including VAT'
 
   Scenario: User views TP details from the shortlist
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
@@ -186,7 +186,7 @@ Feature: Tuition Partner shortlist
 
   Scenario: The shortlist can be refined by group size then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Reeson Education' price is '£10 to £60'
+    Then the 'Reeson Education' price is '	£10 to £60 including VAT'
     When '1 to 1' group size shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
     And 'Career Tree' is entry 2 on the shortlist page
@@ -194,11 +194,11 @@ Feature: Tuition Partner shortlist
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Action Tutoring' is entry 5 on the shortlist page
     And 'Booster Club' is entry 6 on the shortlist page
-    And the 'Reeson Education' price is '£60'
+    And the 'Reeson Education' price is '£60 including VAT'
 
   Scenario: The shortlist can be refined by tuition type then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Tutors Green' price is '£10.42 to £55'
+    Then the 'Tutors Green' price is '£10.42 to £55 including VAT'
     When 'In School' tuition type shortlist refinement option is selected
     Then 'Career Tree' is entry 1 on the shortlist page
     And 'Booster Club' is entry 2 on the shortlist page
@@ -206,11 +206,11 @@ Feature: Tuition Partner shortlist
     And 'Tutors Green' is entry 4 on the shortlist page
     And 'Reeson Education' is entry 5 on the shortlist page
     And 'Action Tutoring' is entry 6 on the shortlist page
-    And the 'Tutors Green' price is '£11.25 to £55'
+    And the 'Tutors Green' price is '£11.26 to £55 including VAT'
 
   Scenario: The shortlist can be refined by group size and tuition type then TP rows and the price are updated
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
-    Then the 'Tutors Green' price is '£10.42 to £55'
+    Then the 'Tutors Green' price is '£10.42 to £55 including VAT'
     When '1 to 1' group size shortlist refinement option is selected
     And 'Online' tuition type shortlist refinement option is selected
     Then 'Reeson Education' is entry 1 on the shortlist page
@@ -219,7 +219,7 @@ Feature: Tuition Partner shortlist
     And 'Action Tutoring' is entry 4 on the shortlist page
     And 'Booster Club' is entry 5 on the shortlist page
     And 'Zen Educate' is entry 6 on the shortlist page
-    And the 'Tutors Green' price is '£50'
+    And the 'Tutors Green' price is '£50 including VAT'
 
   Scenario: The shortlist price ordering works with refined data and any inavid TP data still follows the order they were added to shortlist
     Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
@@ -286,3 +286,47 @@ Feature: Tuition Partner shortlist
     And they add 'Action Tutoring' to their shortlist on the results page
     When they choose to view their shortlist from the results page
     Then the shortlist key stage subjects header is not shown
+
+  Scenario: The shortlist displays VAT is not applicable if needed
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    And they add 'Action Tutoring' to their shortlist on the results page
+    When they choose to view their shortlist from the results page
+    Then there are 1 entries on the shortlist page
+    And entry 1 on the shortlist is the row 'Action Tutoring', '1 to 2', 'Online', '£20.12 VAT does not apply'
+
+  Scenario: The shortlist can show VAT inclusive and then toggle to VAT exclusive prices
+    Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
+    Then the 'Tutors Green' price is '£10.42 to £55 including VAT'
+    Then the 'Action Tutoring' price is '£20.12 VAT does not apply'
+    When 'Show prices excluding VAT' VAT shortlist refinement option is selected
+    Then the 'Tutors Green' price is '£8.68 to £45.83 excluding VAT'
+    And the 'Action Tutoring' price is '£20.12 VAT does not apply'
+
+  Scenario: The shortlist price ordering works with inclusive or exclusive prices
+    Given a user has selected TPs to shortlist and journeyed forward to the shortlist page
+    Then they choose to sort the shortlist by price
+    And 'Zen Educate' is entry 1 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
+    And 'Reeson Education' is entry 3 on the shortlist page
+    And 'Tutors Green' is entry 4 on the shortlist page
+    And 'Action Tutoring' is entry 5 on the shortlist page
+    And 'Booster Club' is entry 6 on the shortlist page
+    When 'Show prices excluding VAT' VAT shortlist refinement option is selected
+    Then 'Zen Educate' is entry 1 on the shortlist page
+    And 'Career Tree' is entry 2 on the shortlist page
+    And 'Reeson Education' is entry 3 on the shortlist page
+    And 'Tutors Green' is entry 4 on the shortlist page
+    And 'Booster Club' is entry 5 on the shortlist page
+    And 'Action Tutoring' is entry 6 on the shortlist page
+
+  Scenario: The shortlist VAT defaults to inclusive on first load and then maintains own state after being selected
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    And they add 'Action Tutoring' to their shortlist on the results page
+    When they choose to view their shortlist from the results page
+    Then the VAT select option is 'Show prices including VAT'
+    When 'Show prices excluding VAT' VAT shortlist refinement option is selected
+    Then the VAT select option is 'Show prices excluding VAT'
+    When they click 'Back'
+    Then the search results are displayed
+    When they choose to view their shortlist from the results page
+    Then the VAT select option is 'Show prices excluding VAT'
