@@ -42,6 +42,7 @@ namespace UI.Extensions
             model.Add(x => x.CompareListOrderByDirection, dictionary);
             model.Add(x => x.CompareListTuitionType, dictionary);
             model.Add(x => x.CompareListGroupSize, dictionary);
+            model.Add(x => x.CompareListShowWithVAT, dictionary);
 
             return dictionary;
         }

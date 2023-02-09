@@ -79,10 +79,10 @@ public class CompareList : PageModel
         return GetJsonResult(response.IsCallSuccessful, compareListModel.TotalCompareListedTuitionPartners);
     }
 
-    private JsonResult GetJsonResult(bool isCallSuccessful, int totalCompareListedTuitionPartners) =>
+    private static JsonResult GetJsonResult(bool isCallSuccessful, int totalCompareListedTuitionPartners) =>
         new(new CompareListedTuitionPartnerResult(isCallSuccessful, totalCompareListedTuitionPartners));
 
-    private bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
+    private static bool IsStringWhitespaceOrNull(string? parameter) => string.IsNullOrWhiteSpace(parameter);
 
     public record Query : SearchModel, IRequest<ResultsModel>
     {
@@ -272,7 +272,8 @@ public class CompareList : PageModel
                         {
                             GroupSize = (request.CompareListGroupSize == null || request.CompareListGroupSize == GroupSize.Any) ? null : (int)request.CompareListGroupSize,
                             TuitionTypeId = (request.CompareListTuitionType == null || request.CompareListTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.CompareListTuitionType,
-                            SubjectIds = request.SubjectIds
+                            SubjectIds = request.SubjectIds,
+                            ShowWithVAT = request.CompareListShowWithVAT
                         },
                         cancellationToken);
 

@@ -23,6 +23,7 @@ namespace Application.Common.Models
             CompareListOrderByDirection = model.CompareListOrderByDirection;
             CompareListTuitionType = model.CompareListTuitionType;
             CompareListGroupSize = model.CompareListGroupSize;
+            CompareListShowWithVAT = model.CompareListShowWithVAT;
         }
 
         public ReferrerList? From { get; set; }
@@ -44,5 +45,7 @@ namespace Application.Common.Models
         public TuitionType? CompareListTuitionType { get; set; }
 
         public GroupSize? CompareListGroupSize { get; set; }
+
+        public bool? CompareListShowWithVAT { get; set; }
     }
 }
