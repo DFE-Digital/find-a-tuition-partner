@@ -13,10 +13,10 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     {
     }
 
-    public IEnumerable<string> GetMatchedSeoUrls(IEnumerable<string> seoUrls)
+    public async Task<IEnumerable<string>> GetMatchedSeoUrls(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
     {
-        var matchedSeoUrls = _context.TuitionPartners.AsQueryable().Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
-            .Select(x => x.SeoUrl).ToList();
+        var matchedSeoUrls = await _context.TuitionPartners.AsNoTracking().AsQueryable().Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
+            .Select(x => x.SeoUrl).ToListAsync(cancellationToken);
 
         return matchedSeoUrls;
     }

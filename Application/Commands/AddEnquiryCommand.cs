@@ -20,7 +20,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, bool>
 
     public async Task<bool> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
-        var matchedSeoUrls = _unitOfWork.TuitionPartnerRepository.GetMatchedSeoUrls(request.Data!.SelectedTuitionPartners!).ToList();
+        var matchedSeoUrls = await _unitOfWork.TuitionPartnerRepository.GetMatchedSeoUrls(request.Data!.SelectedTuitionPartners!, cancellationToken);
 
         if (!matchedSeoUrls.Any()) return false;
         var tuitionPartnerEnquirySeoUrl = matchedSeoUrls.Select(selectedTuitionPartner =>

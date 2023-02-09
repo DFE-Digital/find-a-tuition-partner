@@ -5,7 +5,7 @@ namespace Application.Common.Interfaces.Repositories;
 
 public interface ITuitionPartnerRepository : IGenericRepository<TuitionPartner>
 {
-    IEnumerable<string> GetMatchedSeoUrls(IEnumerable<string> seoUrls);
+    Task<IEnumerable<string>> GetMatchedSeoUrls(IEnumerable<string> seoUrls, CancellationToken cancellationToken);
     Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken);
     Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersAsync(TuitionPartnerRequest request, CancellationToken cancellationToken);
 }
