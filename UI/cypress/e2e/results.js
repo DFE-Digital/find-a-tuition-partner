@@ -228,13 +228,13 @@ Then("logos are not shown for tuition partners", () => {
 });
 
 Then("they check 'TuitionPartner' - {string} checkbox", (tpName) => {
-  cy.get(`[id="shortlist-cb-${kebabCase(tpName)}"]`).check();
+  cy.get(`[id="compare-list-cb-${kebabCase(tpName)}"]`).check();
 });
 
 Then("{string} checkbox is checked", (tpName) => {
-  cy.isCheckboxchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("they uncheck 'TuitionPartner' - {string} checkbox", (tpName) => {
-  cy.get(`[id="shortlist-cb-${kebabCase(tpName)}"]`).uncheck();
+  cy.get(`[id="compare-list-cb-${kebabCase(tpName)}"]`).uncheck();
 });

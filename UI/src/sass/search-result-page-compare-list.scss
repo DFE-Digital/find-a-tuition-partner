@@ -1,0 +1,18 @@
+.js-enabled .update-my-compare-list-button--apply-visibility {
+  display: none;
+}
+
+.update-my-compare-list-button--top-margin-ne-2 {
+  margin-top: govuk-spacing(-2);
+}
+
+.my-compare-listed-partners-badge {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+}
+
+.my-compare-listed-partners-badge--for-values-greater-than-nineteen {
+  background-color: govuk-colour("mid-grey");
+  color: govuk-colour("black");
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}

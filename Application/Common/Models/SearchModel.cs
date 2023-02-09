@@ -19,11 +19,11 @@ namespace Application.Common.Models
             Subjects = model.Subjects;
             TuitionType = model.TuitionType;
             KeyStages = model.KeyStages;
-            ShortlistOrderBy = model.ShortlistOrderBy;
-            ShortlistOrderByDirection = model.ShortlistOrderByDirection;
-            ShortlistTuitionType = model.ShortlistTuitionType;
-            ShortlistGroupSize = model.ShortlistGroupSize;
-            ShortlistShowWithVAT = model.ShortlistShowWithVAT;
+            CompareListOrderBy = model.CompareListOrderBy;
+            CompareListOrderByDirection = model.CompareListOrderByDirection;
+            CompareListTuitionType = model.CompareListTuitionType;
+            CompareListGroupSize = model.CompareListGroupSize;
+            CompareListShowWithVAT = model.CompareListShowWithVAT;
         }
 
         public ReferrerList? From { get; set; }
@@ -38,14 +38,14 @@ namespace Application.Common.Models
 
         public KeyStage[]? KeyStages { get; set; }
 
-        public TuitionPartnerOrderBy? ShortlistOrderBy { get; set; }
+        public TuitionPartnerOrderBy? CompareListOrderBy { get; set; }
 
-        public OrderByDirection? ShortlistOrderByDirection { get; set; }
+        public OrderByDirection? CompareListOrderByDirection { get; set; }
 
-        public TuitionType? ShortlistTuitionType { get; set; }
+        public TuitionType? CompareListTuitionType { get; set; }
 
-        public GroupSize? ShortlistGroupSize { get; set; }
+        public GroupSize? CompareListGroupSize { get; set; }
 
-        public bool? ShortlistShowWithVAT { get; set; }
+        public bool? CompareListShowWithVAT { get; set; }
     }
 }
