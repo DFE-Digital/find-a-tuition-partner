@@ -664,14 +664,14 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Price },
             new []{ "Charlie", "Alpha", "Bravo", "Delta" }
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice, Direction = OrderByDirection.Descending },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie" }
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Price, Direction = OrderByDirection.Descending },
+            new []{ "Delta", "Alpha", "Bravo", "Charlie" }
         };
     }
     #endregion

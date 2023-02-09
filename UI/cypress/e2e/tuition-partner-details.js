@@ -203,34 +203,34 @@ Then("the LA label text is {string}", (laLabelText) => {
 });
 
 Then("the user checks the {string} checkbox on its detail page", (tpName) => {
-  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).check();
+  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).check();
 });
 
 Then("the user unchecks the {string} checkbox", (tpName) => {
-  cy.get(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
 });
 
 Then("{string} checkbox is unchecked on its detail page", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxUnchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("{string} checkbox is checked on its detail page", (tpName) => {
-  cy.isCheckboxchecked(`[id="shortlist-tpInfo-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("the 'TuitionPartner' - {string} checkbox is checked", (tpName) => {
-  cy.isCheckboxchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("the 'TuitionPartner' - {string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
 });
 
-Then("total amount of shortlisted TPs is {int}", (expectedTotal) => {
+Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
 Then("{string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="shortlist-cb-${kebabCase(tpName)}"]`);
+  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
 });
 
 Then("{string} name link is clicked", (tpName) => {
