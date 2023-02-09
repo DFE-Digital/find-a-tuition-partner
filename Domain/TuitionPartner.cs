@@ -23,6 +23,8 @@ public class TuitionPartner
     public bool IsVatCharged { get; set; }
     public TuitionPartnerLogo? Logo { get; set; } = null!;
     public bool HasLogo { get; set; }
+    public string ImportId { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
 
     public ICollection<LocalAuthorityDistrictCoverage> LocalAuthorityDistrictCoverage { get; set; }
     public ICollection<SubjectCoverage> SubjectCoverage { get; set; }

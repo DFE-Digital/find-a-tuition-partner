@@ -11,6 +11,8 @@ public class TuitionPartnerConfiguration : IEntityTypeConfiguration<TuitionPartn
         builder.ToTable("TuitionPartners");
         builder.HasIndex(e => e.SeoUrl).IsUnique();
         builder.HasIndex(e => e.Name);
+        builder.HasIndex(e => e.ImportId).IsUnique();
+        builder.HasIndex(e => e.IsActive);
         builder.Property(s => s.SeoUrl).HasColumnName("SeoUrl");
         builder.Property(u => u.HasLogo)
             .HasComputedColumnSql("case when \"Logo\" is null then false else true end", stored: true);

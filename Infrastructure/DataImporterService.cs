@@ -206,6 +206,8 @@ public class DataImporterService : IHostedService
                 throw new ValidationException(errorMsg);
             }
 
+            tuitionPartner.IsActive = true;
+
             dbContext.TuitionPartners.Add(tuitionPartner);
             await dbContext.SaveChangesAsync(cancellationToken);
 
