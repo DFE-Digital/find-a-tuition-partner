@@ -6,11 +6,11 @@ using FluentValidationResult = FluentValidation.Results.ValidationResult;
 using KeyStage = Domain.Enums.KeyStage;
 
 namespace UI.Pages;
-public class CompareListModel : PageModel
+public class CompareList : PageModel
 {
     private readonly IMediator _mediator;
 
-    public CompareListModel(IMediator mediator) => _mediator = mediator;
+    public CompareList(IMediator mediator) => _mediator = mediator;
 
     public ResultsModel Data { get; set; } = new();
 

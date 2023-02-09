@@ -29,7 +29,7 @@ namespace UI.Pages
 
             _logger.LogInformation("Cleared full compare list");
 
-            return RedirectToPage("compare-list", data);
+            return RedirectToPage(nameof(CompareList), data);
         }
 
         public record Query : SearchModel

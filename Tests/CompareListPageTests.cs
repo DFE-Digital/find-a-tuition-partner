@@ -9,11 +9,11 @@ namespace Tests;
 public class CompareListPageTests : CleanSliceFixture
 {
     private readonly Mock<IMediator> _mediator;
-    private readonly CompareListModel _sut;
+    private readonly CompareList _sut;
     public CompareListPageTests(SliceFixture fixture) : base(fixture)
     {
         _mediator = new Mock<IMediator>();
-        _sut = new CompareListModel(_mediator.Object);
+        _sut = new CompareList(_mediator.Object);
     }
 
     [Theory]
@@ -21,8 +21,8 @@ public class CompareListPageTests : CleanSliceFixture
     [InlineData("ABCDD EFG")]
     public void With_an_invalid_postcode(string postcode)
     {
-        var model = new CompareListModel.Query() { Postcode = postcode };
-        var result = new CompareListModel.Validator().TestValidate(model);
+        var model = new CompareList.Query() { Postcode = postcode };
+        var result = new CompareList.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a real postcode");
     }
@@ -32,8 +32,8 @@ public class CompareListPageTests : CleanSliceFixture
     [InlineData(null)]
     public void With_a_blank_or_null_postcode(string postcode)
     {
-        var model = new CompareListModel.Query() { Postcode = postcode };
-        var result = new CompareListModel.Validator().TestValidate(model);
+        var model = new CompareList.Query() { Postcode = postcode };
+        var result = new CompareList.Validator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a postcode");
     }
@@ -46,8 +46,8 @@ public class CompareListPageTests : CleanSliceFixture
     public async Task With_a_blank_or_invalid_postcode_user_should_be_redirect_to_search_results_page(string postcode)
     {
         const string pageNameProp = "PageName";
-        var query = new CompareListModel.Query() { Postcode = postcode };
-        var result = await Fixture.GetPage<CompareListModel>().Execute(async page => await page.OnGet(query));
+        var query = new CompareList.Query() { Postcode = postcode };
+        var result = await Fixture.GetPage<CompareList>().Execute(async page => await page.OnGet(query));
         result.Should().BeOfType<RedirectToPageResult>();
         var pageName = GetPropValue(result, pageNameProp);
         pageName.Should().Be(nameof(SearchResults));
