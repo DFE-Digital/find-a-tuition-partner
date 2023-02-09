@@ -267,7 +267,7 @@
             @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
             <input type="hidden" name="SearchModel" value="@searchModel"/>
             <govuk-button asp-page-handler="UpdateCompareList" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
-                Update my price comparison list
+                            Update price comparison list
             </govuk-button>
         </div>
         <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">

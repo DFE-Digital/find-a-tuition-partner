@@ -134,14 +134,16 @@
             }
             else
             {
-                <p id="compare-list-no-tp-compare-listed" class="govuk-body">You don’t have any tuition partners selected to compare.</p>
-                <p class="govuk-body">To compare tuition partner prices, go to your <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search results</a>.</p>
+                <div class="govuk-inset-text">
+                    <p id="compare-list-no-tp-compare-listed" class="govuk-body">You don’t have any tuition partners selected to compare.</p>
+                    <p class="govuk-body">To compare tuition partner prices, go to your <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search results</a>.</p>
+                </div>
             }
 
             @if (Model.Data.InvalidTPs is not null)
             {
                 <div class="govuk-inset-text">
-                    Some of your price comparison tuition partners are not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search")
+                    Some of your price comparison tuition partners are not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search").
                     <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
                         @foreach (var item in Model.Data.InvalidTPs)
                         {
