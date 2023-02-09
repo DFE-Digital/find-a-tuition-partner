@@ -206,7 +206,7 @@ Feature: Tuition Partner price comparison list
     And 'Tutors Green' is entry 4 on the price comparison list page
     And 'Reeson Education' is entry 5 on the price comparison list page
     And 'Action Tutoring' is entry 6 on the price comparison list page
-    And the 'Tutors Green' price is '£11.25 to £55 including VAT'
+    And the 'Tutors Green' price is '£11.26 to £55 including VAT'
 
   Scenario: The price comparison list can be refined by group size and tuition type then TP rows and the price are updated
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
