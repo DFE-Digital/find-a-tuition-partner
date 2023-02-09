@@ -43,6 +43,7 @@ Then(
 Then(
   "the price comparison list shows as having {int} entries on the results page",
   (numEntries) => {
+    Step(this, "the heading is 'Compare tuition partner prices'");
     cy.get("#totalCompareListedTuitionPartners").should((el) =>
       expect(parseInt(el.text().trim())).to.equal(numEntries)
     );
@@ -72,6 +73,7 @@ Then(
 );
 
 Then("there are {int} entries on the price comparison list page", (count) => {
+  cy.get("tbody th").should("have.length", count);
   cy.get("tbody th").should("have.length", count);
 });
 
