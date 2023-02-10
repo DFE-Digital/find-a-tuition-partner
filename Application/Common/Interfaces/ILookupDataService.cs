@@ -1,7 +1,6 @@
 ﻿using Domain;
-using Domain.Search;
 
-namespace Application;
+namespace Application.Common.Interfaces;
 
 public interface ILookupDataService
 {

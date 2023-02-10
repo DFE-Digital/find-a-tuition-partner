@@ -1,4 +1,3 @@
-using Application;
 using Application.Common.Interfaces;
 using Domain.Search;
 using Infrastructure;

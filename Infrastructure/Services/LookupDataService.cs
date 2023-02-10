@@ -1,4 +1,4 @@
-﻿using Application;
+﻿using Application.Common.Interfaces;
 using Application.Repositories;
 using Domain;
 
