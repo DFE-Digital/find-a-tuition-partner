@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230209104429_ImporterAsUpdate")]
+    [Migration("20230210094003_ImporterAsUpdate")]
     partial class ImporterAsUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -4329,6 +4329,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ImportId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("ImportProcessLastUpdatedData")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
