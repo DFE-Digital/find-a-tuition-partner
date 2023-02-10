@@ -63,6 +63,10 @@ jobs:
       run: |
         cf create-service postgres small-13 find-a-tuition-partner-$PR_NUMBER-postgres-db --wait
 
+    - name: Create Redis backing service
+      run: |
+        cf create-service redis tiny-6.x find-a-tuition-partner-$PR_NUMBER-redis-db --wait
+
     - name: Deploy to PaaS
       run: |
         cf push --strategy rolling --vars-file vars-pr.yml \

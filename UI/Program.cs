@@ -7,6 +7,7 @@ using Infrastructure.Analytics;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Caching.Distributed;
 using UI.Filters;
 using UI.Routing;
 using UI.Services;
@@ -18,6 +19,18 @@ if (await Import.RunImport(args)) return;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
+
+builder.Host.AddLogging();
+
+builder.Services.AddDistributedCache(builder.Configuration);
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddScoped<ITuitionPartnerShortlistStorageService, CookieBasedTuitionPartnerShortlistStorageService>();
 
 // Rename add and rename cookies for application
@@ -95,8 +108,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.AddAnalytics();
 
-builder.Host.AddLogging();
-
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionLoggingMiddleware>();
@@ -127,6 +138,16 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+
+if (app.Environment.IsProduction())
+{
+    if(app.Services.GetService<IDistributedCache>() is MemoryDistributedCache)
+    {
+        throw new Exception("In-memory distributed cache must not be used in production");
+    }
+}
+
+app.UseSession();
 
 app.UseAuthorization();
 

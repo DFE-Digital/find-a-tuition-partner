@@ -3,6 +3,7 @@ applications:
 - name: find-a-tuition-partner((environment-postfix))
   services:
     - find-a-tuition-partner((environment-postfix))-postgres-db
+    - find-a-tuition-partner((environment-postfix))-redis-db
   buildpacks:
     - dotnet_core_buildpack
   instances: ((instances))
