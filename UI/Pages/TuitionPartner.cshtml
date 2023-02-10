@@ -26,15 +26,7 @@
 
 <h1 class="govuk-heading-l">@Model.Data.Name</h1>
 <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
-<govuk-details data-testid="qatp-details">
-    <govuk-details-summary>
-        What is a quality assured tuition partner?
-    </govuk-details-summary>
-    <govuk-details-text>
-        The tuition partners shown on this service have met the standards required by our quality assurance process.
-        This process is to ensure quality tuition is delivered and includes safeguarding checks.
-    </govuk-details-text>
-</govuk-details>
+<partial name="_QualityAssuredDetails" />
 
 <div>
     <h2 class="govuk-heading-m">Tuition details</h2>
@@ -138,7 +130,7 @@
 </p>
 
 <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
-    <caption>Pricing table</caption>
+    <caption class="govuk-visually-hidden">Tuition prices</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Tuition group size</th>

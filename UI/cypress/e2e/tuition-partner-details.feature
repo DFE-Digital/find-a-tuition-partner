@@ -54,8 +54,9 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: user clicks quality assured tuition partner details summary
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
-    When they click 'What is a quality assured tuition partner?'
+    When they click 'How are tuition partners quality-assured?'
     Then the quality assured tuition partner details are shown
+    And they will see the tribal link
 
   Scenario: tuition partner website link is displayed
     Given a user has arrived on the 'Tuition Partner' page for 'TLC LIVE'
