@@ -41,6 +41,8 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options =>
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();
 builder.Services.AddServices();
+builder.Services.AddNotificationConfig(builder.Configuration)
+    .AddNotificationClientServiceConfiguration(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();

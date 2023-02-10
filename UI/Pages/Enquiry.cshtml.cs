@@ -32,6 +32,13 @@ public class Enquiry : PageModel
 
         if (dataSaved)
         {
+            var sendEnquiryEmailCommand = new SendEnquiryEmailCommand()
+            {
+                Data = Data
+            };
+
+            await _mediator.Send(sendEnquiryEmailCommand);
+
             Message = $"Enquiry successfully sent to the shortlisted tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email}";
             ModelState.Clear();
             Data = new();

@@ -20,6 +20,15 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
 
         return matchedSeoUrls;
     }
+
+    public async Task<IEnumerable<string>> GetMatchedSeoUrlsEmails(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
+    {
+        var matchedSeoUrlsEmails = await _context.TuitionPartners.AsNoTracking().AsQueryable()
+            .Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
+            .Select(x => x.Email).ToListAsync(cancellationToken);
+
+        return matchedSeoUrlsEmails;
+    }
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.AsQueryable();
