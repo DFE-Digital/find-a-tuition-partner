@@ -2,9 +2,9 @@ namespace Tests.Utilities;
 
 public abstract class Logging<T>
 {
-    public static void VerifyLogging(Mock<ILogger<T>> _loggerMock, LogLevel inputLogLevel, string message, Times numberOfTimes)
+    public static void VerifyLogging(Mock<ILogger<T>> loggerMock, LogLevel inputLogLevel, string message, Times numberOfTimes)
     {
-        _loggerMock.Verify(logger => logger.Log(
+        loggerMock.Verify(logger => logger.Log(
                 It.Is<LogLevel>(logLevel => logLevel == inputLogLevel),
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == message && @type.Name == "FormattedLogValues"),
