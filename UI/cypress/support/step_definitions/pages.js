@@ -74,8 +74,8 @@ Then("they will be taken to the 'Search Results' page", () => {
   cy.location("pathname").should("eq", "/search-results");
 });
 
-Then("they will be taken to the 'Shortlist' page", () => {
-  cy.location("pathname").should("eq", "/shortlist");
+Then("they will be taken to the 'Price comparison list' page", () => {
+  cy.location("pathname").should("eq", "/compare-list");
 });
 
 Then("the page URL ends with {string}", (url) => {

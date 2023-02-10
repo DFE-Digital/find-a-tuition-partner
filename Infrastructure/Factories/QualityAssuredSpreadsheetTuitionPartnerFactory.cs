@@ -270,7 +270,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
                     TuitionTypeId = (int)tuitionType,
                     SubjectId = subjectId,
                     GroupSize = i + 1,
-                    HourlyRate = subjectHourlyRate
+                    HourlyRate = tuitionPartner.IsVatCharged ? subjectHourlyRate.RemoveVAT() : subjectHourlyRate //These are stored with VAT inclusive in the spreadsheets, but need to store exclusive in database
                 };
 
                 tuitionPartner.Prices.Add(price);

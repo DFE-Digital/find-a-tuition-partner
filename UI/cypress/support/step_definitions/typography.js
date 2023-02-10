@@ -10,3 +10,9 @@ Then("the heading caption is {string}", (expected) => {
     .first()
     .should((caption) => expect(caption.text().trim()).to.equal(expected));
 });
+
+Then("the heading is {string}", (expected) => {
+  cy.get(".govuk-heading-l")
+    .first()
+    .should((caption) => expect(caption.text().trim()).to.equal(expected));
+});

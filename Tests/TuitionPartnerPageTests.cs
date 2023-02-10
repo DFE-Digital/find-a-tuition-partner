@@ -19,10 +19,10 @@ public class TuitionPartnerPageTests
         @"{""From"":0,""Name"":null,""Postcode"":""DE1 1RY"",""Subjects"":[""KeyStage1-English""],""TuitionType"":0,""KeyStages"":[1]}";
 
     private void VerifyRemoveTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<RemoveShortlistedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<RemoveCompareListedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
 
     private void VerifyAddTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
-        m.Send(It.IsAny<AddTuitionPartnersToShortlistCommand>(), default), Times.Exactly(numberOfTimes));
+        m.Send(It.IsAny<AddTuitionPartnersToCompareListCommand>(), default), Times.Exactly(numberOfTimes));
 
     private void AssertRedirect(IActionResult result)
     {
@@ -38,32 +38,32 @@ public class TuitionPartnerPageTests
     [InlineData("seoUrl", "")]
     [InlineData("seoUrl", " ")]
     [InlineData("seoUrl", null)]
-    public async Task OnPostUpdateShortlist_WhenCalledWithInvalidParameters_ThrowsArgumentException(string seoUrl,
+    public async Task OnPostUpdateCompareList_WhenCalledWithInvalidParameters_ThrowsArgumentException(string seoUrl,
         string searchModel)
     {
         var sut = GetTuitionPartner();
 
-        await Assert.ThrowsAsync<ArgumentException>(() => sut.OnPostUpdateShortlist(seoUrl, searchModel));
+        await Assert.ThrowsAsync<ArgumentException>(() => sut.OnPostUpdateCompareList(seoUrl, searchModel));
     }
 
     [Fact]
-    public async Task OnPostUpdateShortlist_WhenShortlistedCheckboxIsWhitespaceOrNull_MakesTheRightMediatorCall()
+    public async Task OnPostUpdateCompareList_WhenCompareListedCheckboxIsWhitespaceOrNull_MakesTheRightMediatorCall()
     {
         var sut = GetTuitionPartner();
 
-        var result = await sut.OnPostUpdateShortlist("seoUrl", GetSearchModel);
+        var result = await sut.OnPostUpdateCompareList("seoUrl", GetSearchModel);
 
         AssertRedirect(result);
         VerifyRemoveTuitionPartnerMediatorCall(1);
     }
 
     [Fact]
-    public async Task OnPostUpdateShortlist_WhenShortlistedCheckboxIsNotWhitespaceOrNull_MakesTheRightMediatorCall()
+    public async Task OnPostUpdateCompareList_WhenCompareListedCheckboxIsNotWhitespaceOrNull_MakesTheRightMediatorCall()
     {
         var sut = GetTuitionPartner();
-        sut.ShortlistedCheckbox = "ShortlistedCheckbox";
+        sut.CompareListedCheckbox = "CompareListedCheckbox";
 
-        var result = await sut.OnPostUpdateShortlist("seoUrl", GetSearchModel);
+        var result = await sut.OnPostUpdateCompareList("seoUrl", GetSearchModel);
 
         AssertRedirect(result);
         VerifyAddTuitionPartnerMediatorCall(1);

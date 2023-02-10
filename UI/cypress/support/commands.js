@@ -44,7 +44,7 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
 });
 
 Cypress.Commands.add("checkTotalTps", (expectedTotal) => {
-  cy.get('[id="totalShortlistedTuitionPartners"]')
+  cy.get('[id="totalCompareListedTuitionPartners"]')
     .invoke("text")
     .then((text) => {
       cy.wrap(removeNewLine(text)).should("equal", `${expectedTotal}`);
