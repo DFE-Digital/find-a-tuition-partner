@@ -53,7 +53,9 @@ public static class ServiceCollectionExtensions
             {
                 options.Configuration = connectionString;
             });
-        } else {
+        }
+        else
+        {
             services.AddDistributedMemoryCache();
         }
 
