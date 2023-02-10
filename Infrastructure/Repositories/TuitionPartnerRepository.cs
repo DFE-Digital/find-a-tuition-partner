@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application;
+using Application.Repositories;
 using Domain.Search;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +9,9 @@ namespace Infrastructure.Repositories;
 
 public class TuitionPartnerRepository : ITuitionPartnerRepository
 {
-    private readonly NtpDbContext _dbContext;
+    private readonly INtpDbContext _dbContext;
 
-    public TuitionPartnerRepository(NtpDbContext dbContext)
+    public TuitionPartnerRepository(INtpDbContext dbContext)
     {
         _dbContext = dbContext;
     }

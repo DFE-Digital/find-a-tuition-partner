@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application;
+using Application.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,9 +7,9 @@ namespace Infrastructure.Repositories;
 
 public class LookupDataRepository : ILookupDataRepository
 {
-    private readonly NtpDbContext _dbContext;
+    private readonly INtpDbContext _dbContext;
 
-    public LookupDataRepository(NtpDbContext dbContext)
+    public LookupDataRepository(INtpDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -16,10 +17,5 @@ public class LookupDataRepository : ILookupDataRepository
     public async Task<IEnumerable<Subject>> GetSubjectsAsync(CancellationToken cancellationToken = default)
     {
         return await _dbContext.Subjects.OrderBy(e => e.Id).ToArrayAsync(cancellationToken);
-    }
-
-    public async Task<IEnumerable<TuitionType>> GetTuitionTypesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.TuitionTypes.OrderBy(e => e.Id).ToArrayAsync(cancellationToken);
     }
 }
