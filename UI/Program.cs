@@ -139,13 +139,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
-if (app.Environment.IsProduction())
-{
-    if(app.Services.GetService<IDistributedCache>() is MemoryDistributedCache)
-    {
-        throw new Exception("In-memory distributed cache must not be used in production");
-    }
-}
+app.EnsureDistributedCacheIsUsed(!app.Environment.IsDevelopment());
 
 app.UseSession();
 
