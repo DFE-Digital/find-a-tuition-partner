@@ -105,7 +105,7 @@ public static class ServiceCollectionExtensions
 
             if (redisCredentials?.IsValid() == true)
             {
-                return $"{redisCredentials.Host}:{redisCredentials.Port},password={redisCredentials.Password}";
+                return $"{redisCredentials.Host}:{redisCredentials.Port},ssl=true,password={redisCredentials.Password}";
             }
         }
 
