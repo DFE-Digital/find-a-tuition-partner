@@ -27,7 +27,7 @@ public class TuitionPartner : PageModel
         if (string.IsNullOrWhiteSpace(query.Id))
             return ReturnNotFoundWithLogging($"Null or whitespace id '{query.Id}' provided", LogLevel.Information);
 
-        var getTuitionPartnerQuery = new GetTuitionPartnerQuery(query.Id, query.ShowLocationsCovered, query.ShowFullPricing)
+        var getTuitionPartnerQuery = new GetTuitionPartnerQuery(query.Id, query.ShowLocationsCovered, query.ShowFullPricing, query.ShowFullInfo)
         {
             SearchModel = SearchModel
         };

@@ -107,6 +107,18 @@ Feature: User can view full details of a Tuition Parner
     Then the tuition partner full pricing tables are displayed
     And the tuition partner pricing table is not displayed
 
+  Scenario: meta data displayed when show-full-info=true
+    Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
+    When they set the 'show-full-info' query string parameter value to 'true'
+    Then the tuition partner full pricing tables are displayed
+    And the tuition partner pricing table is not displayed
+    And the tuition partner locations covered table is displayed
+    And the tuition partner meta data is displayed
+
+  Scenario: meta data is not displayed as default
+    Given a user has arrived on the 'Tuition Partner' page for 'Tutor Doctor (Cambridge Tuition Limited)'
+    Then the tuition partner meta data is not displayed
+
   Scenario: subjects covered by a tuition partner are in alphabetical order in the 'search results' page
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then the subjects covered by a tuition partner are in alphabetical order
