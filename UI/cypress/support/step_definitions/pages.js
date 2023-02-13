@@ -74,8 +74,8 @@ Then("they will be taken to the 'Search Results' page", () => {
   cy.location("pathname").should("eq", "/search-results");
 });
 
-Then("they will be taken to the 'Shortlist' page", () => {
-  cy.location("pathname").should("eq", "/shortlist");
+Then("they will be taken to the 'Price comparison list' page", () => {
+  cy.location("pathname").should("eq", "/compare-list");
 });
 
 Then("the page URL ends with {string}", (url) => {
@@ -124,3 +124,23 @@ Then(
       .should("contain", linkText);
   }
 );
+
+When("they click 'How are tuition partners quality-assured?'", () => {
+  cy.get('[data-testid="qatp-details"]').click();
+});
+
+Then("the quality assured tuition partner details are hidden", () => {
+  cy.get('[data-testid="qatp-details"]').should("not.have.attr", "open");
+});
+
+Then("the quality assured tuition partner details are shown", () => {
+  cy.get('[data-testid="qatp-details"]').should("have.attr", "open");
+});
+
+Then("they will see the tribal link", () => {
+  cy.get('[data-testid="tribal-link"]').should(
+    "have.attr",
+    "href",
+    "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
+  );
+});

@@ -31,7 +31,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddScoped<ITuitionPartnerShortlistStorageService, CookieBasedTuitionPartnerShortlistStorageService>();
+builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>

@@ -4,6 +4,6 @@
     {
         SearchResults = 0,
         FullList = 1,
-        Shortlist = 2
+        CompareList = 2
     }
 }

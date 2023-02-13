@@ -16,15 +16,7 @@
                 This service will help match you with a partner who meets your requirements from the full list of quality-assured tuition partners.
             </p>
 
-            <govuk-details data-testid="qatp-details">
-                <govuk-details-summary>
-                    What is a quality-assured tuition partner?
-                </govuk-details-summary>
-                <govuk-details-text>
-                    The tuition partners shown on this service have met the standards required by our quality assurance process.
-                    This process is to ensure quality tuition is delivered and includes safeguarding checks.
-                </govuk-details-text>
-            </govuk-details>
+            <partial name="_QualityAssuredDetails" />
 
             <div class="app-option-card">
                 <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
@@ -50,10 +42,10 @@
                 }
             }
             <input asp-for="Data.TuitionType" type="hidden" />
-            <input asp-for="Data.ShortlistOrderBy" type="hidden" />
-            <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
-            <input asp-for="Data.ShortlistTuitionType" type="hidden" />
-            <input asp-for="Data.ShortlistGroupSize" type="hidden" />
+            <input asp-for="Data.CompareListOrderBy" type="hidden" />
+            <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
+            <input asp-for="Data.CompareListTuitionType" type="hidden" />
+            <input asp-for="Data.CompareListGroupSize" type="hidden" />
 
             <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
             <p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
