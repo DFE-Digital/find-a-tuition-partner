@@ -139,7 +139,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
-app.EnsureDistributedCacheIsUsed(!app.Environment.IsDevelopment());
+app.EnsureDistributedCacheIsUsed(!app.Environment.IsDevelopment() && !app.Environment.IsTesting());
 
 app.UseSession();
 
