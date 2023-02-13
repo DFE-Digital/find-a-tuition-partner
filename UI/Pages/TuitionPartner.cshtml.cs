@@ -16,9 +16,9 @@ public class TuitionPartner : PageModel
 
     public TuitionPartnerModel? Data { get; set; }
     public SearchModel? SearchModel { get; set; }
-    public ShortlistCheckboxModel ShortlistCheckboxModel { get; set; } = new();
+    public CompareListCheckboxModel CompareListCheckboxModel { get; set; } = new();
 
-    [BindProperty] public string? ShortlistedCheckbox { get; set; }
+    [BindProperty] public string? CompareListedCheckbox { get; set; }
 
     public async Task<IActionResult> OnGetAsync(GetTuitionPartnerQueryModel query)
     {
@@ -45,24 +45,24 @@ public class TuitionPartner : PageModel
             return RedirectToPage((query with { Id = seoUrl }).ToRouteData());
         }
 
-        await GetShortlistCheckboxModel(Data.Name, Data.Id.Trim(), nameof(ShortlistedCheckbox));
+        await GetCompareListCheckboxModel(Data.Name, Data.Id.Trim(), nameof(CompareListedCheckbox));
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
     }
 
-    public async Task<IActionResult> OnPostUpdateShortlist(string seoUrl, string searchModel)
+    public async Task<IActionResult> OnPostUpdateCompareList(string seoUrl, string searchModel)
     {
-        ValidatePostUpdateShortListArguments(seoUrl, searchModel);
+        ValidatePostUpdateCompareListArguments(seoUrl, searchModel);
 
         SearchModel = JsonSerializer.Deserialize<SearchModel>(searchModel);
 
-        await HandleShortlistUpdate(seoUrl);
+        await HandleCompareListUpdate(seoUrl);
 
         return RedirectToPage("TuitionPartner", SearchModel?.ToRouteData());
     }
 
-    private void ValidatePostUpdateShortListArguments(string seoUrl, string searchModel)
+    private void ValidatePostUpdateCompareListArguments(string seoUrl, string searchModel)
     {
         if (IsStringWhitespaceOrNull(seoUrl)) throw GetArgumentException(nameof(seoUrl));
         if (IsStringWhitespaceOrNull(searchModel)) throw GetArgumentException(nameof(searchModel));
@@ -77,21 +77,21 @@ public class TuitionPartner : PageModel
         return NotFound();
     }
 
-    private async Task HandleShortlistUpdate(string seoUrl)
+    private async Task HandleCompareListUpdate(string seoUrl)
     {
-        if (IsStringWhitespaceOrNull(ShortlistedCheckbox))
-            await _mediator.Send(new RemoveShortlistedTuitionPartnerCommand(seoUrl));
+        if (IsStringWhitespaceOrNull(CompareListedCheckbox))
+            await _mediator.Send(new RemoveCompareListedTuitionPartnerCommand(seoUrl));
 
-        if (!IsStringWhitespaceOrNull(ShortlistedCheckbox))
-            await _mediator.Send(new AddTuitionPartnersToShortlistCommand(new List<string>() { seoUrl }));
+        if (!IsStringWhitespaceOrNull(CompareListedCheckbox))
+            await _mediator.Send(new AddTuitionPartnersToCompareListCommand(new List<string>() { seoUrl }));
     }
 
-    private async Task GetShortlistCheckboxModel(string name, string seoUrl, string checkboxName)
+    private async Task GetCompareListCheckboxModel(string name, string seoUrl, string checkboxName)
     {
-        ShortlistCheckboxModel.Id = $"shortlist-tpInfo-cb-{seoUrl}";
-        ShortlistCheckboxModel.LabelValue = name;
-        ShortlistCheckboxModel.CheckboxName = checkboxName;
-        ShortlistCheckboxModel.IsShortlisted = await _mediator.Send(new IsTuitionPartnerShortlistedQuery(seoUrl));
-        ShortlistCheckboxModel.SeoUrl = seoUrl;
+        CompareListCheckboxModel.Id = $"compare-list-tpInfo-cb-{seoUrl}";
+        CompareListCheckboxModel.LabelValue = name;
+        CompareListCheckboxModel.CheckboxName = checkboxName;
+        CompareListCheckboxModel.IsCompareListed = await _mediator.Send(new IsTuitionPartnerCompareListQuery(seoUrl));
+        CompareListCheckboxModel.SeoUrl = seoUrl;
     }
 }

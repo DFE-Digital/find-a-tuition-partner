@@ -1,0 +1,180 @@
+﻿@page
+@using UI.HelperFunctions
+@model UI.Pages.CompareList
+@{
+    var clearCompareListUrl = $"/compare-list-clear-confirm?{Model.Data.ToQueryString()}";
+    ViewData["Title"] = "Compare tuition partner prices";
+    ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}{HelperFunctions.GetJumpToLocation(Request)}";
+    ViewData["IncludePrintPage"] = true;
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <form method="post" asp-page-handler="applyrefinement">
+            @{
+                var count = Model.Data.Results?.Count;
+                var partnersPlural = count > 1 ? "partners" : "partner";
+            }
+            <span show-if="@count > 0 && Model.Data.Results?.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name">Tuition @partnersPlural for <strong>@Model.Data.Results?.LocalAuthorityName</strong></span>
+            <h1 class="govuk-heading-l">Compare tuition partner prices</h1>
+
+            @if (count > 0)
+            {
+                @if(Model.Data.KeyStageSubjectsFilteredLabels.Any())
+                {
+                    <h2 class="govuk-heading-m" data-testid="compare-list-key-stage-subjects-header">You've searched for:</h2>
+                    @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
+                    {
+                        <p class="govuk-body key-stage-subjects-filtered-label" data-testid="compare-list-key-stage-subjects-label">@item</p>
+                    }
+                }
+
+                var dataQueryString = Model.Data.ToQueryString();
+
+                <input asp-for="Data.From" type="hidden" />
+                <input asp-for="Data.Postcode" type="hidden" />
+                @if (Model.Data.KeyStages != null)
+                {
+                    @for(int i = 0; i < Model.Data.KeyStages.Count(); i++)
+                    {
+                        <input asp-for="Data.KeyStages![i]" type="hidden" />
+                    }
+                }
+                @if (Model.Data.Subjects != null)
+                {
+                    @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
+                    {
+                        <input asp-for="Data.Subjects![i]" type="hidden" />
+                    }
+                }
+                <input asp-for="Data.TuitionType" type="hidden" />
+                <input asp-for="Data.CompareListOrderBy" type="hidden" />
+                <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
+
+                <div data-module="compare-list-refinement">
+                    <h2 class="govuk-heading-m refine-pricing-heading">Refine pricing</h2>
+
+                    <div class="govuk-grid-row govuk-grid-row-compare-list">
+                        <div class="govuk-grid-column-compare-list">
+                        <govuk-select asp-for="Data.CompareListGroupSize" data-testid="compare-list-group-size-refine">
+                            <govuk-select-label>Group size</govuk-select-label>
+                        @foreach (var item in Model.Data.AllGroupSizes)
+                        {
+                            <govuk-select-item value="@item" selected="@item == @Model.Data.CompareListGroupSize">@item.DisplayName()</govuk-select-item>
+                        }
+                        </govuk-select>
+                        </div>
+
+                        <div class="govuk-grid-column-compare-list">
+                        <govuk-select asp-for="Data.CompareListTuitionType" data-testid="compare-list-tuition-type-refine">
+                            <govuk-select-label>Type of tuition</govuk-select-label>
+                        @foreach (var item in Model.Data.AllTuitionTypes)
+                        {
+                            <govuk-select-item value="@item" selected="@item == @Model.Data.CompareListTuitionType">@item.DisplayName()</govuk-select-item>
+                        }
+                        </govuk-select>
+                        </div>
+
+                        <div class="govuk-grid-column-compare-list">
+                            <govuk-select asp-for="Data.CompareListShowWithVAT" data-testid="compare-list-show-vat-toggle">
+                                <govuk-select-label>VAT</govuk-select-label>
+                                <govuk-select-item value="true" selected="@Model.Data.CompareListShowWithVAT == null || Model.Data.CompareListShowWithVAT.Value == true">Show prices including VAT</govuk-select-item>
+                                <govuk-select-item value="false" selected="@Model.Data.CompareListShowWithVAT != null && Model.Data.CompareListShowWithVAT.Value == false">Show prices excluding VAT</govuk-select-item>
+                            </govuk-select>
+                        </div>
+
+                        <div class="govuk-grid-column-compare-list">
+                            <div class="govuk-button-group app-compare-list--apply-refinement">
+                                <button class="govuk-button govuk-button--primary remove-compare-list-table-button" data-module="govuk-button" type="submit" asp-page-handler="applyrefinement" asp-all-route-data="@Model.Data.ToRouteData()">Apply refinement</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="govuk-table-container">
+                    <table class="govuk-table" data-testid="compare-list-table">
+                        <caption class="govuk-visually-hidden">Comparison table</caption>
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Name</th>
+                            <th scope="col" class="govuk-table__header">Group sizes</th>
+                            <th scope="col" class="govuk-table__header">Type of tuition</th>
+                            <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Price))">
+                                    <a class="table-column-sort" data-testid="compare-list-price-sort" asp-page="CompareList" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Price))">Price per pupil, per hour</a>
+                            </th>
+                            <th scope="col" class="govuk-table__header app-print-hide">Remove</th>
+                        </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+
+                        @foreach (var item in Model.Data.Results?.Results!)
+                        {
+                            var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}";
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">
+                                    <a href="@tpUrl" class="govuk-link">@item.Name</a>
+                                </th>
+                                @if(item.Prices == null)
+                                {
+                                <td class="govuk-table__cell" colspan="3" data-testid="compare-list-empty-data-reason-@item.SeoUrl">
+                                    @(item.RefinedDataEmptyReason + (item.RefinedDataEmptyReasonAppendLAName ? Model.Data.Results?.LocalAuthorityName : ""))
+                                </td>
+                                }
+                                else
+                                {
+                                    var includeVatMsg = (Model.Data.CompareListShowWithVAT ?? true);
+                                    var vatMsg = !item.IsVatCharged ? " VAT does not apply" : includeVatMsg ? " including VAT" : " excluding VAT";
+                                    var minPrice = item.Prices.Min(e => e.HourlyRate).FormatPrice();
+                                    var maxPrice = item.Prices.Max(e => e.HourlyRate).FormatPrice();
+                                    var prices = (minPrice == maxPrice) ? minPrice : $"{minPrice} to {maxPrice}";
+                                    prices += vatMsg;
+                                <td class="govuk-table__cell">
+                                    1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
+                                </td>
+                                <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
+                                <td class="govuk-table__cell" data-testid="compare-list-price-@item.SeoUrl">@prices</td>
+                                }
+                                <td class="govuk-table__cell app-print-hide">
+                                    <button class="govuk-button govuk-button--secondary remove-compare-list-table-button" data-testid="remove-tp" data-module="govuk-button" type="submit" asp-page-handler="remove" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"RemoveTuitionPartnerSeoUrl", item.SeoUrl}})">Remove</button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="govuk-inset-text">
+                    <p id="compare-list-no-tp-compare-listed" class="govuk-body">You don’t have any tuition partners selected to compare.</p>
+                    <p class="govuk-body">To compare tuition partner prices, go to your <a class="govuk-link" data-testid="no-results-return-link" href="/search-results?@Model.Data.ToQueryString()">search results</a>.</p>
+                </div>
+            }
+
+            @if (Model.Data.InvalidTPs is not null)
+            {
+                <div class="govuk-inset-text">
+                    Some of your price comparison tuition partners are not available for @(Model.Data.Results?.LocalAuthorityName != null ? Model.Data.Results?.LocalAuthorityName : "your current search").
+                    <ul class="govuk-list govuk-list--bullet" data-testid="unavailable-tps">
+                        @foreach (var item in Model.Data.InvalidTPs)
+                        {
+                            <li>@item.Name</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="govuk-button-group">
+                <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
+                    <a class="govuk-link" data-testid="clear-compare-list-link" href="@clearCompareListUrl">Clear my price comparison list</a>
+                </div>
+
+                <div show-if="count > 0" class="govuk-body app-print-hide">
+                    <govuk-button-link data-testid="make-enquiry-link" href="/enquiry">Make an Enquiry</govuk-button-link>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+</div>

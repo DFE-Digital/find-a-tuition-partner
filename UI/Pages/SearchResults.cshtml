@@ -124,17 +124,17 @@
                 </span><br/>
                 Your results are in a random order.
                 <div class="govuk-grid-row govuk-!-margin-top-2">
-                    <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
-                        <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyShortlist" value="Update my shortlist">
-                            Update my shortlist
+                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+                        <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
+                            Update price comparison list
                         </govuk-button>
                     </div>
                     <div class="govuk-grid-column-full">
-                        <a asp-page="/Shortlist" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
-                           module="my-shortlisted-tuition-partners-link" data-testid="my-shortlisted-tuition-partners-link">
-                            View my shortlisted tuition partners
-                            <span id="totalShortlistedTuitionPartners" class="moj-notification-badge my-shortlisted-partners-badge">
-                                @Model.TotalShortlistedTuitionPartners
+                        <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
+                           module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
+                            Compare tuition partner prices
+                            <span id="totalCompareListedTuitionPartners" class="moj-notification-badge my-compare-listed-partners-badge">
+                                @Model.TotalCompareListedTuitionPartners
                             </span>
                         </a>
                     </div>
@@ -194,32 +194,32 @@
                                 </govuk-summary-list-row>
                             </govuk-summary-list>
                             @{
-                                var shortlist = Model.SelectableTuitionPartners
+                                var compareList = Model.SelectableTuitionPartners
                                     .First(tp => tp.SeoUrl == item.SeoUrl);
-                                var shortlistCheckboxModel = new ShortlistCheckboxModel($"shortlist-cb-{shortlist.SeoUrl}",
-                                    shortlist.SeoUrl, item.Name, "ShortlistedTuitionPartners", shortlist.IsSelected);
+                                var compareListCheckboxModel = new CompareListCheckboxModel($"compare-list-cb-{compareList.SeoUrl}",
+                                    compareList.SeoUrl, item.Name, "CompareListedTuitionPartners", compareList.IsSelected);
                             }
                             <div>
-                                <partial name="Shared/_ShortlistCheckbox" model="shortlistCheckboxModel"/>
+                                <partial name="Shared/_CompareListCheckbox" model="compareListCheckboxModel"/>
                             </div>
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
                 }
-                <div class="govuk-grid-row update-my-shortlist-button--top-margin-ne-2">
-                    <div class="govuk-grid-column-full update-my-shortlist-button--apply-visibility">
-                        <govuk-button type="submit" name="UpdateMyShortlist" value="Update my shortlist"
+                <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
+                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+                        <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
                                       class="govuk-!-margin-bottom-2">
-                            Update my shortlist
+                            Update price comparison list
                         </govuk-button>
                     </div>
                 </div>
             }
         </div>
-        <input asp-for="Data.ShortlistOrderBy" type="hidden" />
-        <input asp-for="Data.ShortlistOrderByDirection" type="hidden" />
-        <input asp-for="Data.ShortlistTuitionType" type="hidden" />
-        <input asp-for="Data.ShortlistGroupSize" type="hidden" />
+        <input asp-for="Data.CompareListOrderBy" type="hidden" />
+        <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
+        <input asp-for="Data.CompareListTuitionType" type="hidden" />
+        <input asp-for="Data.CompareListGroupSize" type="hidden" />
         <input asp-for="Data.PreviousTuitionType" type="hidden" />
     </form>
 </div>

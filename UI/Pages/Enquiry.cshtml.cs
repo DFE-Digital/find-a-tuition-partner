@@ -15,13 +15,13 @@ public class Enquiry : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var shortListedTpsQuery = new GetAllShortlistedTuitionPartnersQuery();
+        var compareListedTpsQuery = new GetAllCompareListTuitionPartnersQuery();
 
-        var shortListedTps = await _mediator.Send(shortListedTpsQuery);
+        var compareListedTps = await _mediator.Send(compareListedTpsQuery);
 
-        if (shortListedTps.Any())
+        if (compareListedTps.Any())
         {
-            Data.SelectedTuitionPartners = shortListedTps.ToList();
+            Data.SelectedTuitionPartners = compareListedTps.ToList();
         }
         var command = new AddEnquiryCommand()
         {
@@ -39,7 +39,7 @@ public class Enquiry : PageModel
 
             await _mediator.Send(sendEnquiryEmailCommand);
 
-            Message = $"Enquiry successfully sent to the shortlisted tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email}";
+            Message = $"Enquiry successfully sent to the compare listed tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email}";
             ModelState.Clear();
             Data = new();
         }

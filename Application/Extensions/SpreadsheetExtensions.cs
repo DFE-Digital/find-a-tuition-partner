@@ -26,12 +26,12 @@ public static class SpreadsheetExtensions
 
     public static decimal ParsePrice(this string? cellValue, decimal vatPercentageToApply)
     {
-        return Math.Round(cellValue.ParseDecimal() * (1 + (vatPercentageToApply / 100)), 2);
+        return Math.Round(cellValue.ParseDecimal() * (1 + (vatPercentageToApply / 100)), 2, MidpointRounding.AwayFromZero);
     }
 
     public static decimal ParsePrice(this string? cellValue)
     {
-        return Math.Round(cellValue.ParseDecimal(), 2);
+        return Math.Round(cellValue.ParseDecimal(), 2, MidpointRounding.AwayFromZero);
     }
 
     public static DateOnly? ParseDateOnly(this string? cellValue)

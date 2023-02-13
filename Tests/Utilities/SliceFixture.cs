@@ -1,4 +1,3 @@
-using Application;
 using Application.Common.Interfaces;
 using Domain.Search;
 using Infrastructure;
@@ -34,6 +33,7 @@ public class SliceFixture : IAsyncLifetime
 
     public ILocationFilterService LocationFilter => _factory.LocationFilter;
     public ITuitionPartnerService TuitionPartnerService => _factory.Services.GetRequiredService<ITuitionPartnerService>();
+    public ILookupDataService LookupDataService => _factory.Services.GetRequiredService<ILookupDataService>();
 
     private class NtpApplicationFactory
         : WebApplicationFactory<Program>

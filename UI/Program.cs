@@ -18,7 +18,7 @@ if (await Import.RunImport(args)) return;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ITuitionPartnerShortlistStorageService, CookieBasedTuitionPartnerShortlistStorageService>();
+builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>

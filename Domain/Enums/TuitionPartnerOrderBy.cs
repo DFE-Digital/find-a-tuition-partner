@@ -4,6 +4,6 @@ public enum TuitionPartnerOrderBy
 {
     Random,
     Name,
-    MinPrice,
+    Price,
     SeoList
 }

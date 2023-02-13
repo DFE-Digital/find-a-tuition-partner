@@ -54,8 +54,9 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario: user clicks quality assured tuition partner details summary
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
-    When they click 'What is a quality assured tuition partner?'
+    When they click 'How are tuition partners quality-assured?'
     Then the quality assured tuition partner details are shown
+    And they will see the tribal link
 
   Scenario: tuition partner website link is displayed
     Given a user has arrived on the 'Tuition Partner' page for 'TLC LIVE'
@@ -135,36 +136,36 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
     Then  the LA label text is 'Tuition partner for Stockport'
 
-  Scenario: A user should be able to add and remove TP to and from the shortlist
+  Scenario: A user should be able to add and remove TP to and from the price comparison list
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education' after searching for 'Key stage 1 English' in postcode 'sk11eb'
     And 'Bright Heart Education' checkbox is unchecked on its detail page
     And the LA label text is 'Tuition partner for Stockport'
     Then the user checks the 'Bright Heart Education' checkbox on its detail page
     And  'Bright Heart Education' checkbox is checked on its detail page
-    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    And the LA label text is 'Price comparison listed tuition partner for Stockport'
     Then the user unchecks the 'Bright Heart Education' checkbox
     And 'Bright Heart Education' checkbox is unchecked on its detail page
     And the LA label text is 'Tuition partner for Stockport'
     
-  Scenario: Adding or removing TP to shortlist from TP details page should be reflected on the search results page
+  Scenario: Adding or removing TP to price comparison list from TP details page should be reflected on the search results page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
-    And total amount of shortlisted TPs is 0
+    And total amount of price comparison list TPs is 0
     And 'Seven Springs Education' checkbox is unchecked
     Then 'Seven Springs Education' name link is clicked
     And 'Seven Springs Education' checkbox is unchecked on its detail page
     And the LA label text is 'Tuition partner for Stockport'
     Then the user checks the 'Seven Springs Education' checkbox on its detail page
     And  'Seven Springs Education' checkbox is checked on its detail page
-    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    And the LA label text is 'Price comparison listed tuition partner for Stockport'
     Then they click Back to go back to the search results page
-    And total amount of shortlisted TPs is 1
+    And total amount of price comparison list TPs is 1
     And the 'TuitionPartner' - 'Seven Springs Education' checkbox is checked
     Then 'Seven Springs Education' name link is clicked
     And  'Seven Springs Education' checkbox is checked on its detail page
-    And the LA label text is 'Shortlisted tuition partner for Stockport'
+    And the LA label text is 'Price comparison listed tuition partner for Stockport'
     Then the user unchecks the 'Seven Springs Education' checkbox
     And 'Seven Springs Education' checkbox is unchecked on its detail page
     And the LA label text is 'Tuition partner for Stockport'
     Then they click Back to go back to the search results page
-    And total amount of shortlisted TPs is 0
+    And total amount of price comparison list TPs is 0
     And the 'TuitionPartner' - 'Seven Springs Education' checkbox is unchecked

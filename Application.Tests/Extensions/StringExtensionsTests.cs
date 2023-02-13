@@ -1,4 +1,5 @@
-﻿using Application.Extensions;
+﻿using System.Collections.Generic;
+using Application.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -146,5 +147,24 @@ public class StringExtensionsTests
     public void With_trailing_digit(string value, string expected)
     {
         value.ToSeoUrl().Should().Be(expected);
+    }
+
+    [Fact]
+    public void DisplayList_Null()
+    {
+        IEnumerable<string>? list = null;
+        list.DisplayList().Should().Be(string.Empty);
+    }
+
+    [Theory]
+    [InlineData(new string[] { }, "")]
+    [InlineData(new string[] { "test" }, "test")]
+    [InlineData(new string[] { "test1 test2" }, "test1 test2")]
+    [InlineData(new string[] { "test1", "test2" }, "test1 and test2")]
+    [InlineData(new string[] { "test1", "test2", "test3" }, "test1, test2 and test3")]
+    public void DisplayList_WithData(string[] stringArray, string output)
+    {
+        List<string> list = new List<string>(stringArray);
+        list.DisplayList().Should().Be(output);
     }
 }
