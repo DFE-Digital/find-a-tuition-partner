@@ -19,7 +19,6 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     private const string DeliverySheetName = "Delivery";
     private const string PricingSheetName = "Pricing";
     private const int MaxRows = 100000;
-    private const decimal VATRatePercentage = 20;
 
     private readonly ILogger<TribalSpreadsheetTuitionPartnerFactory> _logger;
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
@@ -468,12 +467,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var key = (groupSize, keyStage, subjectEnum, subjectId, tuitionType);
                 if (!subjectCoverageAndPrices.ContainsKey(key))
                 {
-                    //If "Is Vat Charged" is true then apply VAT, we store all rates inclusive of VAT
-                    var rate = tuitionPartner.IsVatCharged ?
-                        spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice(VATRatePercentage) :
-                        spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice();
-
-                    subjectCoverageAndPrices[key] = rate;
+                    //We store all prices exclusive of VAT
+                    subjectCoverageAndPrices[key] = spreadsheetExtractor!.GetCellValue(sheetName, RateColumn, row).ParsePrice();
                 }
                 else
                 {

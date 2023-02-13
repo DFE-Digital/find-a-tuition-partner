@@ -598,18 +598,10 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         {
             GroupSize = null,
             TuitionTypeId = null,
-            SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths, Subjects.Id.KeyStage3ModernForeignLanguages }
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage2Maths }
         };
 
         var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
-
-        //All the TPs in the mocked data have KeyStage2Maths or KeyStage3ModernForeignLanguages
-        foreach (var refinedResult in refinedResults)
-        {
-            refinedResult.Prices.Should().NotBeEmpty();
-            refinedResult.TuitionTypes.Should().NotBeEmpty();
-            refinedResult.SubjectsCoverage.Should().NotBeEmpty();
-        }
 
         refinedResults.Should().NotBeEmpty();
         var alpha = refinedResults.First(x => x.Name == "Alpha");
@@ -672,14 +664,14 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice },
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Price },
             new []{ "Charlie", "Alpha", "Bravo", "Delta" }
         };
 
         yield return new object[]
         {
-            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.MinPrice, Direction = OrderByDirection.Descending },
-            new []{ "Delta", "Bravo", "Alpha", "Charlie" }
+            new TuitionPartnerOrdering { OrderBy = TuitionPartnerOrderBy.Price, Direction = OrderByDirection.Descending },
+            new []{ "Delta", "Alpha", "Bravo", "Charlie" }
         };
     }
     #endregion

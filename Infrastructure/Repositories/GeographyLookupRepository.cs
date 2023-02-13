@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application;
+using Application.Repositories;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,9 +7,9 @@ namespace Infrastructure.Repositories;
 
 public class GeographyLookupRepository : IGeographyLookupRepository
 {
-    private readonly NtpDbContext _dbContext;
+    private readonly INtpDbContext _dbContext;
 
-    public GeographyLookupRepository(NtpDbContext dbContext)
+    public GeographyLookupRepository(INtpDbContext dbContext)
     {
         _dbContext = dbContext;
     }
