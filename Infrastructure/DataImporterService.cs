@@ -153,6 +153,8 @@ public class DataImporterService : IHostedService
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
 
+        _logger.LogInformation("Number of existing TPs {AllExistingTPsCount}", allExistingTPs.Count);
+
         var tpImportedDates = allExistingTPs
                 .Select(x => new { x.Name, x.TPLastUpdatedData })
                 .ToDictionary(x => x.Name.ToLower(), x => x.TPLastUpdatedData);
@@ -207,6 +209,9 @@ public class DataImporterService : IHostedService
                 throw new ValidationException(errorMsg);
             }
 
+            //TODO - test duplicate import id & seo url in files
+
+
             tuitionPartnerToProcess.IsActive = true;
 
             var matchedTPs = allExistingTPs
@@ -216,6 +221,7 @@ public class DataImporterService : IHostedService
 
             if (matchedTPs == null)
             {
+                //TODO - test this
                 tuitionPartnerToProcess.ImportProcessLastUpdatedData = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 dbContext.TuitionPartners.Add(tuitionPartnerToProcess);
 
@@ -234,6 +240,10 @@ public class DataImporterService : IHostedService
                 ImportTuitionPartnerSubjectCoverage(dbContext, existingTP, tuitionPartnerToProcess);
                 ImportTuitionPartnerPrices(dbContext, existingTP, tuitionPartnerToProcess);
 
+                //TODO - performace test this
+                //TODO - test against live data
+                //TODO - test switch org type
+
                 if (dbContext.ChangeTracker.Entries().Any(e => e.State == EntityState.Modified ||
                                                                 e.State == EntityState.Added ||
                                                                 e.State == EntityState.Deleted))
@@ -245,9 +255,15 @@ public class DataImporterService : IHostedService
                     _logger.LogInformation("Updated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
                         existingTP.Name, existingTP.Id, originalFilename);
                 }
+                else
+                {
+                    _logger.LogInformation("No changes for Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                        existingTP.Name, existingTP.Id, originalFilename);
+                }
             }
             else if (matchedTPs.Count > 1)
             {
+                //TODO - test this
                 var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
                 _logger.LogError(message: errorMsg);
                 throw new InvalidOperationException(errorMsg);
@@ -274,6 +290,9 @@ public class DataImporterService : IHostedService
                     tpToDeactivate.Name, tpToDeactivate.Id);
             }
         }
+
+        //TODO - Update all places currently calls to get TP so that deactiavted are excluded
+        //TODO - Add a show-all query string flag to TP page - show active flag, updated dates etc
     }
 
     private void ConfigurerMapper()
