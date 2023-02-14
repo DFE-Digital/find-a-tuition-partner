@@ -8,6 +8,10 @@ public class EnquiryResponse : PageModel
     private readonly IMediator _mediator;
     private readonly IEncrypt _aesEncrypt;
 
+    private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
+
+    private const string InvalidUrlErrorMessage = "Invalid Url";
+
     public EnquiryResponse(IMediator mediator, IEncrypt aesEncrypt)
     {
         _mediator = mediator;
@@ -20,33 +24,22 @@ public class EnquiryResponse : PageModel
 
     [TempData] public string? ErrorMessage { get; set; }
 
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet()
     {
-        var errorMessage = "Invalid Url";
-
         var token = Request.Query["token"];
 
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            ErrorMessage = errorMessage;
-
-            ModelState.AddModelError("Data.ErrorMessage", errorMessage);
-
-            return Page();
-        }
+        if (AddInValidUrlErrorMessage(token)) return Page();
 
         try
         {
             GetEnquiryIdFromToken(token);
+
+            var validMagicLinkToken = await isValidMagicLinkToken(token);
+            if (!validMagicLinkToken) return Page();
         }
         catch
         {
-            errorMessage = "Invalid token provided in the URl.";
-
-            ErrorMessage = errorMessage;
-
-            ModelState.AddModelError("Data.ErrorMessage", errorMessage);
-
+            AddErrorMessage(InvalidTokenErrorMessage);
             return Page();
         }
 
@@ -59,9 +52,14 @@ public class EnquiryResponse : PageModel
 
         var token = Request.Query["token"];
 
+        if (AddInValidUrlErrorMessage(token)) return Page();
+
         try
         {
             var enquiryId = GetEnquiryIdFromToken(token);
+
+            var validMagicLinkToken = await isValidMagicLinkToken(token);
+            if (!validMagicLinkToken) return Page();
 
             Data.EnquiryId = enquiryId;
 
@@ -81,9 +79,7 @@ public class EnquiryResponse : PageModel
         }
         catch
         {
-            var errorMessage = "Invalid token provided in the URl.";
-            ErrorMessage = errorMessage;
-            ModelState.AddModelError("Data.ErrorMessage", errorMessage);
+            AddErrorMessage(InvalidTokenErrorMessage);
             return Page();
         }
 
@@ -104,5 +100,37 @@ public class EnquiryResponse : PageModel
         }
 
         return enquiryId;
+    }
+
+    private void AddErrorMessage(string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+
+        ModelState.AddModelError("Data.ErrorMessage", errorMessage);
+    }
+
+    private bool AddInValidUrlErrorMessage(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            AddErrorMessage(InvalidUrlErrorMessage);
+            return true;
+        }
+
+        return false;
+    }
+
+    private async Task<bool> isValidMagicLinkToken(string token)
+    {
+        var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token));
+
+        if (!isValidMagicLinkToken)
+        {
+            AddErrorMessage(InvalidTokenErrorMessage);
+
+            return false;
+        }
+
+        return true;
     }
 }
