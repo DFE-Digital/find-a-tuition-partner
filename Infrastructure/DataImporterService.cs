@@ -198,17 +198,18 @@ public class DataImporterService : IHostedService
                 //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
                 throw;
             }
-
+            _logger.LogInformation("MessageTest1 - {OriginalFilename}", originalFilename);
             var validator = new TuitionPartnerValidator(successfullyProcessed);
             var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
             if (!results.IsValid)
             {
+                _logger.LogInformation("MessageTest2 - {OriginalFilename}", originalFilename);
                 var errorMsg = $"Tuition Partner name {tuitionPartnerToProcess.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
                 _logger.LogError(message: errorMsg);
                 //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
                 throw new ValidationException(errorMsg);
             }
-
+            _logger.LogInformation("MessageTest3 - {OriginalFilename}", originalFilename);
             //TODO - test duplicate import id & seo url in files
 
 
@@ -218,9 +219,10 @@ public class DataImporterService : IHostedService
                     .Where(x => x.ImportId == tuitionPartnerToProcess.ImportId ||
                                 x.SeoUrl == tuitionPartnerToProcess.SeoUrl)
                     .ToList();
-
+            _logger.LogInformation("MessageTest4 - {OriginalFilename}", originalFilename);
             if (matchedTPs == null)
             {
+                _logger.LogInformation("MessageTest5 - {OriginalFilename}", originalFilename);
                 //TODO - test this
                 tuitionPartnerToProcess.ImportProcessLastUpdatedData = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 dbContext.TuitionPartners.Add(tuitionPartnerToProcess);
@@ -232,6 +234,7 @@ public class DataImporterService : IHostedService
             }
             else if (matchedTPs.Count == 1)
             {
+                _logger.LogInformation("MessageTest6 - {OriginalFilename}", originalFilename);
                 var existingTP = matchedTPs.First();
 
                 existingTP = tuitionPartnerToProcess!.Adapt(existingTP);
@@ -263,6 +266,7 @@ public class DataImporterService : IHostedService
             }
             else if (matchedTPs.Count > 1)
             {
+                _logger.LogInformation("MessageTest7 - {OriginalFilename}", originalFilename);
                 //TODO - test this
                 var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
                 _logger.LogError(message: errorMsg);
