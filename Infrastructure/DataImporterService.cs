@@ -220,7 +220,7 @@ public class DataImporterService : IHostedService
                                 x.SeoUrl == tuitionPartnerToProcess.SeoUrl)
                     .ToList();
             _logger.LogInformation("MessageTest4 - {OriginalFilename}", originalFilename);
-            if (matchedTPs == null)
+            if (matchedTPs == null || matchedTPs.Count == 0)
             {
                 _logger.LogInformation("MessageTest5 - {OriginalFilename}", originalFilename);
                 //TODO - test this
