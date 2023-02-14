@@ -304,6 +304,29 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
         var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
         coverage.InSchool.Should().BeTrue();
         coverage.Online.Should().BeTrue();
+
+        result.ImportId.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Not_show_all_info()
+    {
+        await Fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("a-tuition-partner")
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .WithSubjects(c => c
+                .Subject(Subjects.Id.KeyStage3English, s => s
+                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                .Subject(Subjects.Id.KeyStage3Maths, s => s
+                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .Online().Costing(56.78m).ForGroupSizes(3)))
+        );
+
+        var result = await Fixture.SendAsync(
+            new GetTuitionPartnerQuery("a-tuition-partner", ShowFullInfo: false));
+
+        result.Should().NotBeNull();
+        result!.ImportId.Should().BeNull();
     }
 
 
