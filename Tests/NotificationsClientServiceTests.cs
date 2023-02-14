@@ -1,3 +1,4 @@
+using Application.Common.DTO;
 using Domain.Enums;
 using Infrastructure.Configuration;
 using Infrastructure.Services;
@@ -27,16 +28,18 @@ public class NotificationsClientServiceTests
     public async Task SendEmailAsync_ShouldCallSendEmailAsync_WhenRecipientsSupplied()
     {
         // Arrange
-        var recipients = new List<string> { "test1@email.com", "test2@email.com" };
-        var emailTemplateType = EmailTemplateType.Enquiry;
         var personalisation = new Dictionary<string, dynamic>();
+        var notificationsRecipients = new List<NotificationsRecipientDto> { new()
+        { Email = "test@example.com",
+            Personalisation = personalisation} };
+        var emailTemplateType = EmailTemplateType.Enquiry;
         var emailTemplateId = "template-id";
 
         _configMock.Setup(x => x.Value)
             .Returns(new GovUkNotifyOptions { EnquiryTemplateId = emailTemplateId });
         _notificationClientMock.Setup(x =>
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
-                    personalisation, It.IsAny<string>(), It.IsAny<string>()))
+                    notificationsRecipients.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(new EmailNotificationResponse
             { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent() });
 
@@ -44,22 +47,24 @@ public class NotificationsClientServiceTests
             new NotificationsClientService(_configMock.Object, _loggerMock.Object, _notificationClientMock.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(recipients, emailTemplateType, personalisation);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
         _notificationClientMock.Verify(x =>
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
-                    personalisation, It.IsAny<string>(), It.IsAny<string>()),
-            Times.Exactly(2));
+                    notificationsRecipients.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()),
+            Times.Exactly(1));
     }
 
     [Fact]
     public async Task SendEmailAsync_ShouldLogError_WhenNoRecipientsSupplied()
     {
         // Arrange
-        var recipients = new List<string>();
-        var emailTemplateType = EmailTemplateType.Enquiry;
         var personalisation = new Dictionary<string, dynamic>();
+        var notificationsRecipients = new List<NotificationsRecipientDto> { new()
+        { Email = "",
+            Personalisation = personalisation} };
+        var emailTemplateType = EmailTemplateType.Enquiry;
 
         _configMock.Setup(x => x.Value)
             .Returns(new GovUkNotifyOptions { });
@@ -69,10 +74,11 @@ public class NotificationsClientServiceTests
           new NotificationsClientService(_configMock.Object, _loggerMock.Object, _notificationClientMock.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(recipients, emailTemplateType, personalisation);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
-        VerifyLogging(_loggerMock, LogLevel.Error, "No email address was supplied for the recipient.", Times.Once());
+        VerifyLogging(_loggerMock, LogLevel.Error, $"No email address was supplied for the recipient: {notificationsRecipients.First()}.",
+            Times.Once());
     }
 
     [Fact]
@@ -81,10 +87,13 @@ public class NotificationsClientServiceTests
         // Arrange
         var mockNotificationClient = new Mock<IAsyncNotificationClient>();
         var mockOptions = new Mock<IOptions<GovUkNotifyOptions>>();
-
-        var recipients = new List<string> { "test1@test.com", "test2@test.com" };
-        var emailTemplateType = EmailTemplateType.Enquiry;
         var personalisation = new Dictionary<string, dynamic> { { "key1", "value1" } };
+        var notificationsRecipients = new List<NotificationsRecipientDto>
+        {
+            new() { Email = "test@example.com", Personalisation = personalisation },
+            new() { Email = "test2@example.com", Personalisation = personalisation }
+        };
+        var emailTemplateType = EmailTemplateType.Enquiry;
 
         var enquiryTemplateId = "enquiry-template-id";
 
@@ -111,7 +120,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, mockNotificationClient.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(recipients, emailTemplateType, personalisation);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
         mockNotificationClient.Verify(nc =>
@@ -119,11 +128,11 @@ public class NotificationsClientServiceTests
                 It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>(),
                 It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 
-        foreach (var recipient in recipients)
+        foreach (var recipient in notificationsRecipients)
         {
-            VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send to {recipient}", Times.Exactly(1));
+            VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send to {recipient.Email}", Times.Exactly(1));
 
-            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent to: {recipient}", Times.Exactly(1));
+            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent to: {recipient.Email}", Times.Exactly(1));
         }
 
         VerifyLogging(_loggerMock, LogLevel.Information, $"Result: {emailResponse.id} {emailResponse.reference} {emailResponse.uri}",

@@ -28,10 +28,14 @@ public class Enquiry : PageModel
             Data = Data
         };
 
-        var dataSaved = await _mediator.Send(command);
+        var enquiryId = await _mediator.Send(command);
 
-        if (dataSaved)
+        if (enquiryId != default)
         {
+            Data.EnquiryId = enquiryId;
+
+            Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
             var sendEnquiryEmailCommand = new SendEnquiryEmailCommand()
             {
                 Data = Data

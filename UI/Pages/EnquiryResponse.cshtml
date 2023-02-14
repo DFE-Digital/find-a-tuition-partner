@@ -1,0 +1,48 @@
+@page
+@model UI.Pages.EnquiryResponse
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    ViewData["Title"] = "Make an Enquiry";
+    ViewData["BackLinkHref"] = "/";
+    ViewData["IncludePrintPage"] = true;
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.EnquiryResponseText"/>
+            <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">
+            <span>Submit Enquiry Response</span>
+        </h1>
+        
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <govuk-notification-banner type="Success">
+                <p class="govuk-notification-banner__heading">
+                    @Model.SuccessMessage
+                </p>
+            </govuk-notification-banner>
+        }
+    </div>
+</div>
+
+<form method="post">
+    <div data-module="create-enquiry-response-detail">
+        <div class="govuk-form-group">
+            <govuk-textarea asp-for="Data.EnquiryResponseText" ignore-modelstate-errors="true">
+                <govuk-textarea-label class="govuk-label--m" is-page-heading="true">
+                    Provide the enquiry response details
+                </govuk-textarea-label>
+                <govuk-textarea-hint>
+                    Do not include personal or financial information like your National Insurance number or credit card details.
+                </govuk-textarea-hint>
+            </govuk-textarea>
+        </div>
+    </div>
+   
+    <govuk-button prevent-double-click="true" type="submit">Confirm and send</govuk-button>
+</form>

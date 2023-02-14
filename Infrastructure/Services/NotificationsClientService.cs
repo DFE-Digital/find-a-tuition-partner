@@ -1,3 +1,4 @@
+using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Domain.Enums;
 using Infrastructure.Configuration;
@@ -21,20 +22,28 @@ public class NotificationsClientService : INotificationsClientService
         _notificationClient = notificationClient;
     }
 
-    public async Task SendEmailAsync(List<string> recipients, EmailTemplateType emailTemplateType,
-        Dictionary<string, dynamic> personalisation)
+    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients, EmailTemplateType emailTemplateType)
     {
+        notificationsRecipients = notificationsRecipients.ToList();
+
         var testEmail = _config.TestEmailAddress;
 
-        if (recipients.Any() && !string.IsNullOrEmpty(testEmail))
+        if (!string.IsNullOrEmpty(testEmail))
         {
-            recipients = testEmail.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var recipients = testEmail.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            notificationsRecipients = notificationsRecipients.Take(recipients.Count).ToList();
+
+            for (var i = 0; i < recipients.Count; i++)
+            {
+                notificationsRecipients.ToList()[i].Email = recipients[i];
+            }
         }
 
-        if (!recipients.Any())
+        foreach (var recipient in notificationsRecipients.Where(x => string.IsNullOrEmpty(x.Email)))
         {
-            _logger.LogError("No email address was supplied for the recipient.");
-            return;
+            _logger.LogError("No email address was supplied for the recipient: {recipient}.", recipient);
+
         }
 
         var emailTemplateId = GetEmailTemplateId(emailTemplateType, _config);
@@ -42,27 +51,31 @@ public class NotificationsClientService : INotificationsClientService
         if (string.IsNullOrEmpty(emailTemplateId))
         {
             _logger.LogError("No templateId was supplied for the {emailType}.", emailTemplateType);
-            return;
+            return false;
         }
 
         try
         {
-            foreach (var recipient in recipients)
+            foreach (var recipient in notificationsRecipients.Where(recipient => !string.IsNullOrEmpty(recipient.Email)))
             {
-                _logger.LogInformation("Preparing to send to {target}", recipient);
+                _logger.LogInformation("Preparing to send to {target}", recipient.Email);
 
-                var result = await _notificationClient.SendEmailAsync(recipient,
-                    emailTemplateId, personalisation: personalisation);
+                var result = await _notificationClient.SendEmailAsync(recipient.Email,
+                    emailTemplateId, personalisation: recipient.Personalisation);
 
-                _logger.LogInformation("Email successfully sent to: {email}", recipient);
+                _logger.LogInformation("Email successfully sent to: {email}", recipient.Email);
                 _logger.LogInformation("Result: {id} {reference} {uri}", result.id, result.reference, result.uri);
                 _logger.LogInformation("Result: {content}", result.content);
             }
+
+            return true;
         }
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while attempting to SendEmailAsync: {ex}", ex);
         }
+
+        return false;
     }
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions config)
