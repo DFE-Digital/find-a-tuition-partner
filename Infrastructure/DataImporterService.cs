@@ -5,6 +5,7 @@ using Application.Factories;
 using Application.Mapping;
 using Domain;
 using Domain.Validators;
+using Infrastructure.Configuration;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -159,7 +160,7 @@ public class DataImporterService : IHostedService
                 .Select(x => new { x.Name, x.TPLastUpdatedData })
                 .ToDictionary(x => x.Name.ToLower(), x => x.TPLastUpdatedData);
 
-        ConfigureMapper();
+        DataImporterMapingConfig.Configure();
 
         foreach (var dataFile in dataFileEnumerable)
         {
@@ -269,45 +270,6 @@ public class DataImporterService : IHostedService
         await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
     }
 
-    private static void ConfigureMapper()
-    {
-        TypeAdapterConfig<LocalAuthorityDistrictCoverage, LocalAuthorityDistrictCoverage>
-            .NewConfig()
-            .Ignore(dest => dest.Id)
-            .Ignore(dest => dest.TuitionPartnerId)
-            .Ignore(dest => dest.TuitionPartner!)
-            .Ignore(dest => dest.TuitionType!)
-            .Ignore(dest => dest.LocalAuthorityDistrict!);
-
-        TypeAdapterConfig<SubjectCoverage, SubjectCoverage>
-            .NewConfig()
-            .Ignore(dest => dest.Id)
-            .Ignore(dest => dest.TuitionPartnerId)
-            .Ignore(dest => dest.TuitionPartner!)
-            .Ignore(dest => dest.TuitionType!)
-            .Ignore(dest => dest.Subject!);
-
-        TypeAdapterConfig<Price, Price>
-            .NewConfig()
-            .Ignore(dest => dest.Id)
-            .Ignore(dest => dest.TuitionPartnerId)
-            .Ignore(dest => dest.TuitionPartner!)
-            .Ignore(dest => dest.TuitionType!)
-            .Ignore(dest => dest.Subject!);
-
-        TypeAdapterConfig<TuitionPartner, TuitionPartner>
-            .NewConfig()
-            .Ignore(dest => dest.Id)
-            .Ignore(dest => dest.Prices!)
-            .Ignore(dest => dest.LocalAuthorityDistrictCoverage!)
-            .Ignore(dest => dest.SubjectCoverage!)
-            .Ignore(dest => dest.Logo!)
-            .Ignore(dest => dest.HasLogo)
-            .Ignore(dest => dest.ImportProcessLastUpdatedData)
-            .Ignore(dest => dest.IsActive)
-            .Ignore(dest => dest.OrganisationType);
-    }
-
     private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
         var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
@@ -328,6 +290,7 @@ public class DataImporterService : IHostedService
             }
             else
             {
+                //Update the existing data, will be updated since ref to object
                 existingLaDistrictCoverage = laDistrictCoverage.Adapt(existingLaDistrictCoverage);
             }
         }
@@ -353,6 +316,7 @@ public class DataImporterService : IHostedService
             }
             else
             {
+                //Update the existing data, will be updated since ref to object
                 existingSubjectCoverage = subjectCoverage.Adapt(existingSubjectCoverage);
             }
         }
@@ -380,6 +344,7 @@ public class DataImporterService : IHostedService
             }
             else
             {
+                //Update the existing data, will be updated since ref to object
                 existingPrice = price.Adapt(existingPrice);
             }
         }
