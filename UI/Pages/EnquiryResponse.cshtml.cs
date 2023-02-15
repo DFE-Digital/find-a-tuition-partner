@@ -34,7 +34,7 @@ public class EnquiryResponse : PageModel
         {
             GetEnquiryIdFromToken(token);
 
-            var validMagicLinkToken = await isValidMagicLinkToken(token);
+            var validMagicLinkToken = await IsValidMagicLinkToken(token);
             if (!validMagicLinkToken) return Page();
         }
         catch
@@ -58,7 +58,7 @@ public class EnquiryResponse : PageModel
         {
             var enquiryId = GetEnquiryIdFromToken(token);
 
-            var validMagicLinkToken = await isValidMagicLinkToken(token);
+            var validMagicLinkToken = await IsValidMagicLinkToken(token);
             if (!validMagicLinkToken) return Page();
 
             Data.EnquiryId = enquiryId;
@@ -120,7 +120,7 @@ public class EnquiryResponse : PageModel
         return false;
     }
 
-    private async Task<bool> isValidMagicLinkToken(string token)
+    private async Task<bool> IsValidMagicLinkToken(string token)
     {
         var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token));
 
