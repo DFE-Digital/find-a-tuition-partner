@@ -5,6 +5,8 @@ using Application.Factories;
 using Application.Mapping;
 using Domain;
 using Domain.Validators;
+using Infrastructure.Configuration;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,14 +46,7 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                var tpImportedDates = await dbContext
-                                .TuitionPartners
-                                .Select(x => new { x.Name, x.TPLastUpdatedData })
-                                .ToDictionaryAsync(x => x.Name.ToLower(), x => x.TPLastUpdatedData, cancellationToken);
-
-                await RemoveTuitionPartners(dbContext, cancellationToken);
-
-                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, tpImportedDates, cancellationToken);
+                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
                 await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
@@ -130,15 +125,6 @@ public class DataImporterService : IHostedService
         _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
     }
 
-    private async Task RemoveTuitionPartners(NtpDbContext dbContext, CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Deleting all existing Tuition Partner data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"LocalAuthorityDistrictCoverage\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"SubjectCoverage\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Prices\"", cancellationToken: cancellationToken);
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"TuitionPartners\"", cancellationToken: cancellationToken);
-    }
-
     private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting all existing General Information About Schools data");
@@ -146,8 +132,10 @@ public class DataImporterService : IHostedService
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory,
-        IDictionary<string, DateTime> tpImportedDates, CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>();
+
         var regions = await dbContext.Regions
             .Include(e => e.LocalAuthorityDistricts)
             .ToListAsync(cancellationToken);
@@ -157,6 +145,22 @@ public class DataImporterService : IHostedService
 
         var organisationTypes = await dbContext.OrganisationType
             .ToListAsync(cancellationToken);
+
+        var allExistingTPs = await dbContext
+                .TuitionPartners
+                .Include(x => x.Prices)
+                .Include(x => x.LocalAuthorityDistrictCoverage)
+                .Include(x => x.SubjectCoverage)
+                .AsSplitQuery()
+                .ToListAsync(cancellationToken);
+
+        _logger.LogInformation("Number of existing TPs {AllExistingTPsCount}", allExistingTPs.Count);
+
+        var tpImportedDates = allExistingTPs
+                .Select(x => new { x.Name, x.TPLastUpdatedData })
+                .ToDictionary(x => x.Name.ToLower(), x => x.TPLastUpdatedData);
+
+        DataImporterMapingConfig.Configure();
 
         foreach (var dataFile in dataFileEnumerable)
         {
@@ -175,11 +179,11 @@ public class DataImporterService : IHostedService
                     });
 
 
-            _logger.LogInformation("Attempting to create Tuition Partner from file {OriginalFilename}", originalFilename);
-            TuitionPartner tuitionPartner = new();
+            _logger.LogInformation("Attempting to process Tuition Partner from file {OriginalFilename}", originalFilename);
+            TuitionPartner tuitionPartnerToProcess = new();
             try
             {
-                tuitionPartner = await retryPolicy.ExecuteAsync(async () =>
+                tuitionPartnerToProcess = await retryPolicy.ExecuteAsync(async () =>
                 {
                     //Uncomment to test polly
                     //Random random = new();
@@ -191,32 +195,192 @@ public class DataImporterService : IHostedService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception thrown when creating Tuition Partner from file {OriginalFilename}", originalFilename);
+                _logger.LogError(ex, "Exception thrown when processing Tuition Partner from file {OriginalFilename}", originalFilename);
                 //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
                 throw;
             }
 
-            var validator = new TuitionPartnerValidator();
-            var results = await validator.ValidateAsync(tuitionPartner, cancellationToken);
+            var validator = new TuitionPartnerValidator(successfullyProcessed);
+            var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
             if (!results.IsValid)
             {
-                var errorMsg = $"Tuition Partner name {tuitionPartner.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
+                var errorMsg = $"Tuition Partner name {tuitionPartnerToProcess.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
                 _logger.LogError(message: errorMsg);
                 //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
                 throw new ValidationException(errorMsg);
             }
 
-            dbContext.TuitionPartners.Add(tuitionPartner);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            //Find existing TP in db
+            var matchedTPs = allExistingTPs.Where(x => x.ImportId == tuitionPartnerToProcess.ImportId ||
+                                                        x.SeoUrl == tuitionPartnerToProcess.SeoUrl).ToList();
 
-            _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                tuitionPartner.Name, tuitionPartner.Id, originalFilename);
+            //If no match then add
+            if (matchedTPs == null || matchedTPs.Count == 0)
+            {
+                SetImportingData(tuitionPartnerToProcess);
+
+                dbContext.TuitionPartners.Add(tuitionPartnerToProcess);
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                    tuitionPartnerToProcess.Name, tuitionPartnerToProcess.Id, originalFilename);
+            }
+            else if (matchedTPs.Count == 1)
+            {
+                //If matched then see if needs updating
+
+                var existingTP = matchedTPs.First();
+
+                //Map spreadsheet data to existing entity
+                existingTP = tuitionPartnerToProcess!.Adapt(existingTP);
+
+                ImportTuitionPartnerLocalAuthorityDistrictCoverage(dbContext, existingTP, tuitionPartnerToProcess);
+                ImportTuitionPartnerSubjectCoverage(dbContext, existingTP, tuitionPartnerToProcess);
+                ImportTuitionPartnerPrices(dbContext, existingTP, tuitionPartnerToProcess);
+
+                if (!existingTP.IsActive ||
+                    dbContext.ChangeTracker.Entries().Any(e => e.State == EntityState.Modified ||
+                                                                e.State == EntityState.Added ||
+                                                                e.State == EntityState.Deleted))
+                {
+                    SetImportingData(existingTP);
+
+                    await dbContext.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogInformation("Updated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                        existingTP.Name, existingTP.Id, originalFilename);
+                }
+                else
+                {
+                    _logger.LogInformation("No changes for Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                        existingTP.Name, existingTP.Id, originalFilename);
+                }
+            }
+            else if (matchedTPs.Count > 1)
+            {
+                var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
+                _logger.LogError(message: errorMsg);
+                throw new InvalidOperationException(errorMsg);
+            }
+
+            successfullyProcessed.Add(originalFilename, tuitionPartnerToProcess);
         }
+
+        await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
+    }
+
+    private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
+    {
+        var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+                                                                                                                                                e.LocalAuthorityDistrictId == x.LocalAuthorityDistrictId));
+        foreach (var laDistrictCoverageToDelete in laDistrictCoveragesToDelete)
+        {
+            dbContext.Entry(laDistrictCoverageToDelete).State = EntityState.Deleted;
+        }
+
+        foreach (var laDistrictCoverage in tuitionPartnerToProcess.LocalAuthorityDistrictCoverage)
+        {
+            var existingLaDistrictCoverage = existingTP.LocalAuthorityDistrictCoverage.FirstOrDefault(x => x.TuitionTypeId == laDistrictCoverage.TuitionTypeId &&
+                                                                                                        x.LocalAuthorityDistrictId == laDistrictCoverage.LocalAuthorityDistrictId);
+
+            if (existingLaDistrictCoverage == null)
+            {
+                existingTP.LocalAuthorityDistrictCoverage.Add(laDistrictCoverage);
+            }
+            else
+            {
+                //Update the existing data, will be updated since ref to object
+                existingLaDistrictCoverage = laDistrictCoverage.Adapt(existingLaDistrictCoverage);
+            }
+        }
+    }
+
+    private static void ImportTuitionPartnerSubjectCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
+    {
+        var subjectCoveragesToDelete = existingTP.SubjectCoverage.Where(x => !tuitionPartnerToProcess.SubjectCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+                                                                                                                            e.SubjectId == x.SubjectId));
+        foreach (var subjectCoverageToDelete in subjectCoveragesToDelete)
+        {
+            dbContext.Entry(subjectCoverageToDelete).State = EntityState.Deleted;
+        }
+
+        foreach (var subjectCoverage in tuitionPartnerToProcess.SubjectCoverage)
+        {
+            var existingSubjectCoverage = existingTP.SubjectCoverage.FirstOrDefault(x => x.TuitionTypeId == subjectCoverage.TuitionTypeId &&
+                                                                                x.SubjectId == subjectCoverage.SubjectId);
+
+            if (existingSubjectCoverage == null)
+            {
+                existingTP.SubjectCoverage.Add(subjectCoverage);
+            }
+            else
+            {
+                //Update the existing data, will be updated since ref to object
+                existingSubjectCoverage = subjectCoverage.Adapt(existingSubjectCoverage);
+            }
+        }
+    }
+
+    private static void ImportTuitionPartnerPrices(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
+    {
+        var pricesToDelete = existingTP.Prices.Where(x => !tuitionPartnerToProcess.Prices.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+                                                                                                e.SubjectId == x.SubjectId &&
+                                                                                                e.GroupSize == x.GroupSize));
+        foreach (var priceToDelete in pricesToDelete)
+        {
+            dbContext.Entry(priceToDelete).State = EntityState.Deleted;
+        }
+
+        foreach (var price in tuitionPartnerToProcess.Prices)
+        {
+            var existingPrice = existingTP.Prices.FirstOrDefault(x => x.TuitionTypeId == price.TuitionTypeId &&
+                                                                    x.SubjectId == price.SubjectId &&
+                                                                    x.GroupSize == price.GroupSize);
+
+            if (existingPrice == null)
+            {
+                existingTP.Prices.Add(price);
+            }
+            else
+            {
+                //Update the existing data, will be updated since ref to object
+                existingPrice = price.Adapt(existingPrice);
+            }
+        }
+    }
+
+    private async Task DeactivateTPs(NtpDbContext dbContext, List<TuitionPartner> allExistingTPs, Dictionary<string, TuitionPartner> successfullyProcessed, CancellationToken cancellationToken)
+    {
+        var tpsToDeactivate = allExistingTPs
+                    .Where(x => x.IsActive &&
+                                !successfullyProcessed.Select(s => s.Value.ImportId).Contains(x.ImportId))
+                    .ToList();
+
+        if (tpsToDeactivate != null)
+        {
+            foreach (var tpToDeactivate in tpsToDeactivate)
+            {
+                SetImportingData(tpToDeactivate, false);
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("Deactivated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId}",
+                    tpToDeactivate.Name, tpToDeactivate.Id);
+            }
+        }
+    }
+
+    private static void SetImportingData(TuitionPartner tp, bool isActive = true)
+    {
+        tp.ImportProcessLastUpdatedData = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
+        tp.IsActive = isActive;
     }
 
     private async Task ImportTutionPartnerLogos(NtpDbContext dbContext, ILogoFileEnumerable logoFileEnumerable, CancellationToken cancellationToken)
     {
         var partners = await dbContext.TuitionPartners
+            .Where(x => x.IsActive)
             .Select(x => new { x.Id, x.SeoUrl })
             .ToListAsync(cancellationToken);
 
@@ -234,20 +398,20 @@ public class DataImporterService : IHostedService
                         })
                        .ToList();
 
-        _logger.LogInformation("Matched {Count} logos to tuition partners:\n{Matches}",
+        _logger.LogInformation("Matched {Count} logos to active tuition partners:\n{Matches}",
             matching.Count, string.Join("\n", matching.Select(x => $"{x.Partner.SeoUrl} => {x.Logo.Filename}")));
 
         var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner)).ToList();
         if (partnersWithoutLogos.Any())
         {
-            _logger.LogInformation("{Count} tuition partners do not have logos:\n{WithoutLogo}",
+            _logger.LogInformation("{Count} active tuition partners do not have logos:\n{WithoutLogo}",
                 partnersWithoutLogos.Count, string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
         }
 
         var logosWithoutPartners = logos.Except(matching.Select(x => x.Logo)).ToList();
         if (logosWithoutPartners.Any())
         {
-            _logger.LogWarning("{Count} logos files do not match a tuition partner:\n{UnmatchedLogos}",
+            _logger.LogWarning("{Count} logos files do not match an active tuition partner:\n{UnmatchedLogos}",
                 logosWithoutPartners.Count, string.Join("\n", logosWithoutPartners.Select(x => x.Filename)));
         }
 

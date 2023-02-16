@@ -276,6 +276,60 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             });
     }
 
+    [Fact]
+    public async Task Shows_all_info()
+    {
+        await Fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("a-tuition-partner")
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .WithSubjects(c => c
+                .Subject(Subjects.Id.KeyStage3English, s => s
+                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                .Subject(Subjects.Id.KeyStage3Maths, s => s
+                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .Online().Costing(56.78m).ForGroupSizes(3)))
+        );
+
+        var result = await Fixture.SendAsync(
+            new GetTuitionPartnerQuery("a-tuition-partner", ShowFullInfo: true));
+
+        result.Should().NotBeNull();
+        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
+            new Dictionary<int, decimal>
+            {
+                {2, 12.34m},
+                {3, 12.34m}
+            });
+
+        var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
+        coverage.InSchool.Should().BeTrue();
+        coverage.Online.Should().BeTrue();
+
+        result.ImportId.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Not_show_all_info()
+    {
+        await Fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("a-tuition-partner")
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .WithSubjects(c => c
+                .Subject(Subjects.Id.KeyStage3English, s => s
+                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                .Subject(Subjects.Id.KeyStage3Maths, s => s
+                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .Online().Costing(56.78m).ForGroupSizes(3)))
+        );
+
+        var result = await Fixture.SendAsync(
+            new GetTuitionPartnerQuery("a-tuition-partner", ShowFullInfo: false));
+
+        result.Should().NotBeNull();
+        result!.ImportId.Should().BeNull();
+    }
+
+
     [Theory]
     [InlineData("a-tuition-partner", 2, true)]
     [InlineData("a-tuition-partner", 3, true)]

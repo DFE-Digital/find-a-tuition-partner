@@ -16,6 +16,11 @@ public record TuitionPartnerBuilder
     public string EmailAddress { get; private init; } = "tp@example.com";
     public string PostalAddress { get; private set; } = "1 High Street\r\nBeautiful City\rThe County\nPostcode";
     public int OrganisationTypeId { get; private init; } = 1;
+    public DateTime TPLastUpdatedData { get; private set; } = new DateTime(2023, 2, 15, 12, 40, 15);
+    public DateTime ImportProcessLastUpdatedData { get; private set; } = new DateTime(2023, 2, 20, 01, 30, 25);
+    public string ImportId { get; private set; } = "import-id";
+    public bool IsActive { get; private set; } = true;
+
     public Dictionary<int, TuitionType[]> Districts { get; private init; } = new();
     public SubjectBuilder Subjects { get; private init; } = new SubjectBuilder();
 
@@ -34,6 +39,10 @@ public record TuitionPartnerBuilder
         Prices = builder.Subjects.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId, x.GroupSize, x.HourlyRate }).Distinct().Select(x => new Price() { TuitionTypeId = x.TuitionTypeId, SubjectId = x.SubjectId, GroupSize = x.GroupSize, HourlyRate = x.HourlyRate }).ToList(),
         Logo = builder.Logo,
         OrganisationTypeId = builder.OrganisationTypeId,
+        TPLastUpdatedData = builder.TPLastUpdatedData,
+        ImportProcessLastUpdatedData = builder.ImportProcessLastUpdatedData,
+        ImportId = builder.ImportId,
+        IsActive = builder.IsActive,
     };
 
     public List<LocalAuthorityDistrictCoverage> DistrictCoverage =>
@@ -47,7 +56,7 @@ public record TuitionPartnerBuilder
         => new TuitionPartnerBuilder(this) with { Id = id };
 
     internal TuitionPartnerBuilder WithName(string seoName, string? name = null)
-        => new TuitionPartnerBuilder(this) with { Name = name ?? seoName, SeoName = seoName };
+        => new TuitionPartnerBuilder(this) with { Name = name ?? seoName, SeoName = seoName, ImportId = seoName };
 
     internal TuitionPartnerBuilder WithDescription(string description)
         => new TuitionPartnerBuilder(this) with { Description = description };

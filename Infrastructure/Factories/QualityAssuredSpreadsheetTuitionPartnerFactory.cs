@@ -92,6 +92,7 @@ public class QualityAssuredSpreadsheetTuitionPartnerFactory : IQualityAssuredSpr
         }
 
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
+        tuitionPartner.ImportId = tuitionPartner.SeoUrl;
 
         tuitionPartner = await AddLocalAuthorityDistrictCoverage(tuitionPartner, cancellationToken);
 
