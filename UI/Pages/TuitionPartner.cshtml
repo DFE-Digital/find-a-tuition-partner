@@ -249,6 +249,39 @@
                 </govuk-summary-list-row-value>
             </govuk-summary-list-row>
         }
+        @if (!string.IsNullOrWhiteSpace(Model.Data.ImportId))
+        {
+            <govuk-summary-list-row data-testid="tp-meta-data">
+                <govuk-summary-list-row-key>
+                    Import Id
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @(Model.Data.ImportId)
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        }
+        @if (Model.Data.TPLastUpdatedData.HasValue)
+        {
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Data last updated by @Model.Data.Name
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @(Model.Data.TPLastUpdatedData)
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        }
+        @if (Model.Data.ImportProcessLastUpdatedData.HasValue)
+        {
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Last date imported
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @(Model.Data.ImportProcessLastUpdatedData)
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        }
     </govuk-summary-list>
     @if (isFromSearchResultOrCompareListPage)
     {

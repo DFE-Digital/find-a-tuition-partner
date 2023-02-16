@@ -209,7 +209,9 @@ public class RandomiseSearchResultsFixture : IAsyncLifetime
                 Description = $"{name} Description",
                 LocalAuthorityDistrictCoverage = CreateAreaCoverage(),
                 SubjectCoverage = CreateSubjectCoverage(),
-                OrganisationTypeId = 1
+                OrganisationTypeId = 1,
+                IsActive = true,
+                ImportId = $"{name.ToLower()}-tuition-partner",
             };
 
             List<LocalAuthorityDistrictCoverage> CreateAreaCoverage() =>

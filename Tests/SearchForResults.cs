@@ -240,8 +240,9 @@ public class SearchForResults : CleanSliceFixture
         const int numberOfTuitionPartners = 55;
 
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
-            await Fixture.AddTuitionPartner(A.TuitionPartner.
-                TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+            await Fixture.AddTuitionPartner(A.TuitionPartner
+                .WithName($"tp-name-{tuitionPartnersAdded}")
+                .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
@@ -261,8 +262,9 @@ public class SearchForResults : CleanSliceFixture
         const int numberOfTuitionPartners = 55;
 
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
-            await Fixture.AddTuitionPartner(A.TuitionPartner.
-                TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+            await Fixture.AddTuitionPartner(A.TuitionPartner
+                .WithName($"tp-name-{tuitionPartnersAdded}")
+                .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = "AAAA BBCCD"; ;

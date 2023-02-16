@@ -68,7 +68,11 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             lads,
             allPrices,
             tp.OrganisationTypeName,
-            tpResult.Result.Data.LocalAuthorityName);
+            tpResult.Result.Data.LocalAuthorityName,
+            request.ShowFullInfo ? tp.TPLastUpdatedData : null,
+            request.ShowFullInfo ? tp.ImportProcessLastUpdatedData : null,
+            request.ShowFullInfo ? tp.ImportId : null,
+            request.ShowFullInfo ? tp.IsActive : null);
     }
 
     private async Task<IResult<TuitionPartnersResult>> GetTpResult(GetTuitionPartnerQuery request,
@@ -165,7 +169,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
     private async Task<LocalAuthorityDistrictCoverage[]> GetLocalAuthorityDistricts(
         GetTuitionPartnerQuery request, int tpId)
     {
-        if (!request.ShowLocationsCovered) return Array.Empty<LocalAuthorityDistrictCoverage>();
+        if (!request.ShowLocationsCovered && !request.ShowFullInfo) return Array.Empty<LocalAuthorityDistrictCoverage>();
 
         var coverage = await _db.LocalAuthorityDistrictCoverage
             .Where(e => e.TuitionPartnerId == tpId).ToArrayAsync();
@@ -239,7 +243,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         Task<Dictionary<TuitionType, Dictionary<KeyStage, Dictionary<string, Dictionary<int, decimal>>>>>
         GetFullPricing(GetTuitionPartnerQuery request, ICollection<Price> prices)
     {
-        if (!request.ShowFullPricing) return new();
+        if (!request.ShowFullPricing && !request.ShowFullInfo) return new();
 
         var fullPricing =
             new Dictionary<TuitionType,

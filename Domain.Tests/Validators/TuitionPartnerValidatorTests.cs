@@ -11,7 +11,7 @@ public class TuitionPartnerValidatorTests
 
     public TuitionPartnerValidatorTests()
     {
-        _validator = new TuitionPartnerValidator();
+        _validator = new TuitionPartnerValidator(new Dictionary<string, TuitionPartner>());
     }
 
     [Theory]
@@ -242,5 +242,57 @@ public class TuitionPartnerValidatorTests
         var model = new TuitionPartner { OrganisationTypeId = 1 };
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.OrganisationTypeId);
+    }
+
+    [Fact]
+    public void With_invalid_import_id()
+    {
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        {
+            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+        };
+        var validator = new TuitionPartnerValidator(successfullyProcessed);
+        var model = new TuitionPartner { ImportId = "123" };
+        var result = validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.ImportId);
+    }
+
+    [Fact]
+    public void With_valid_import_id()
+    {
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        {
+            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+        };
+        var validator = new TuitionPartnerValidator(successfullyProcessed);
+        var model = new TuitionPartner { ImportId = "1234" };
+        var result = validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.ImportId);
+    }
+
+    [Fact]
+    public void With_invalid_seourl_id()
+    {
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        {
+            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+        };
+        var validator = new TuitionPartnerValidator(successfullyProcessed);
+        var model = new TuitionPartner { SeoUrl = "ABC" };
+        var result = validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.SeoUrl);
+    }
+
+    [Fact]
+    public void With_valid_seourl_id()
+    {
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        {
+            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+        };
+        var validator = new TuitionPartnerValidator(successfullyProcessed);
+        var model = new TuitionPartner { SeoUrl = "ABCD" };
+        var result = validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.SeoUrl);
     }
 }

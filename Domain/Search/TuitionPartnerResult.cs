@@ -18,4 +18,8 @@ public class TuitionPartnerResult
     public string OrganisationTypeName { get; set; } = string.Empty;
     public string RefinedDataEmptyReason { get; set; } = string.Empty;
     public bool RefinedDataEmptyReasonAppendLAName { get; set; } = false;
+    public DateTime TPLastUpdatedData { get; set; }
+    public DateTime ImportProcessLastUpdatedData { get; set; }
+    public string ImportId { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
 }

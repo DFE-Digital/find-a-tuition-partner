@@ -88,6 +88,14 @@ Then("the tuition partner pricing table is displayed", () => {
   cy.get('[data-testid="pricing-table"]').should("exist");
 });
 
+Then("the tuition partner meta data is not displayed", () => {
+  cy.get('[data-testid="tp-meta-data"]').should("not.exist");
+});
+
+Then("the tuition partner meta data is displayed", () => {
+  cy.get('[data-testid="tp-meta-data"]').should("exist");
+});
+
 Then(
   "the tuition partner pricing table is displayed for {string}",
   (tuitionTypes) => {

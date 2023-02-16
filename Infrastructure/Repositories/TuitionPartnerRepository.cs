@@ -31,7 +31,7 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     }
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
-        var queryable = _context.TuitionPartners.AsQueryable();
+        var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();
 
         if (filter.SeoUrls is not null)
         {
@@ -96,7 +96,8 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
                 .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
-                .Where(x => request.TuitionPartnerIds == null || request.TuitionPartnerIds.Distinct().Contains(x.Id))
+                .Where(x => (request.TuitionPartnerIds == null && x.IsActive) ||
+                            (request.TuitionPartnerIds != null && request.TuitionPartnerIds.Distinct().Contains(x.Id)))
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
 
