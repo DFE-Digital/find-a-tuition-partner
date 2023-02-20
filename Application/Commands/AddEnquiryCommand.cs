@@ -20,17 +20,21 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, int>
 
     public async Task<int> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
-        var matchedSeoUrls = await _unitOfWork.TuitionPartnerRepository.GetMatchedSeoUrls(request.Data!.SelectedTuitionPartners!, cancellationToken);
+        var matchedTps = await _unitOfWork.TuitionPartnerRepository
+            .GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!, cancellationToken);
 
-        if (!matchedSeoUrls.Any()) return default;
-        var tuitionPartnerEnquirySeoUrl = matchedSeoUrls.Select(selectedTuitionPartner =>
-            new TuitionPartnerEnquirySeoUrl() { SeoUrl = selectedTuitionPartner }).ToList();
+        matchedTps = matchedTps.ToList();
+
+        if (!matchedTps.Any()) return default;
+
+        var tuitionPartnerEnquiry = matchedTps.Select(selectedTuitionPartner =>
+            new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
 
         var enquiry = new Enquiry()
         {
             EnquiryText = request.Data?.EnquiryText!,
             Email = request.Data?.Email!,
-            TuitionPartnerEnquirySeoUrl = tuitionPartnerEnquirySeoUrl
+            TuitionPartnerEnquiry = tuitionPartnerEnquiry
         };
 
         _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);

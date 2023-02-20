@@ -3,6 +3,8 @@ using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain;
 using Domain.Enums;
+using Domain.Search;
+using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Application.Commands;
 
@@ -32,12 +34,12 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
 
     public async Task<Unit> Handle(SendEnquiryEmailCommand request, CancellationToken cancellationToken)
     {
-        var getMatchedSeoUrlsEmails =
-            await _unitOfWork.TuitionPartnerRepository.GetMatchedSeoUrlsEmails(request.Data!.SelectedTuitionPartners!,
+        var matchedTps =
+            await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!,
                 cancellationToken);
 
         var notificationsRecipients = GetNotificationsRecipients(request,
-            getMatchedSeoUrlsEmails.ToList());
+            matchedTps);
 
         var hasEmailSent = await _notificationsClientService.SendEmailAsync(notificationsRecipients,
             EmailTemplateType.Enquiry);
@@ -45,7 +47,7 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
         if (hasEmailSent)
         {
             var magicLinks = notificationsRecipients.Select(recipient => new MagicLink()
-            { Token = recipient.Token, EnquiryId = request.Data?.EnquiryId }).ToList();
+            { Token = recipient.Token, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
 
             _unitOfWork.MagicLinkRepository.AddRangeAsync(magicLinks, cancellationToken);
 
@@ -67,17 +69,17 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
     }
 
     private List<NotificationsRecipientDto> GetNotificationsRecipients(SendEnquiryEmailCommand request,
-        List<string> recipients)
+        IEnumerable<TuitionPartnerResult> recipients)
     {
         return (from recipient in recipients
                 let generateRandomness
                     = _aesEncryption.GenerateRandomToken()
                 let token = _aesEncryption.Encrypt(
-                    $"EnquiryId={request.Data?.EnquiryId}&{generateRandomness}")
+                    $"EnquiryId={request.Data?.EnquiryId}&Type={nameof(MagicLinkType.EnquiryRequest)}&{generateRandomness}")
                 let formLink = $"{request.Data?.BaseServiceUrl}/enquiry-response?token={token}"
                 select new NotificationsRecipientDto()
                 {
-                    Email = recipient,
+                    Email = recipient.Email,
                     Token = token,
                     Personalisation = GetPersonalisation(request.Data?.EnquiryText!, formLink)
                 }).ToList();

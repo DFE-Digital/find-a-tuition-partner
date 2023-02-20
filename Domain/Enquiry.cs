@@ -6,7 +6,8 @@ public class Enquiry
     public string Email { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public List<TuitionPartnerEnquirySeoUrl> TuitionPartnerEnquirySeoUrl { get; set; } = null!;
 
-    public List<EnquiryResponse> EnquiryResponse { get; set; } = null!;
+    public ICollection<TuitionPartnerEnquiry> TuitionPartnerEnquiry { get; set; } = null!;
+
+    public ICollection<EnquiryResponse> EnquiryResponse { get; set; } = null!;
 }

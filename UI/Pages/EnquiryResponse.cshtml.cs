@@ -20,9 +20,9 @@ public class EnquiryResponse : PageModel
 
     [BindProperty] public EnquiryResponseModel Data { get; set; } = new();
 
-    [TempData] public string SuccessMessage { get; set; } = null!;
+    [ViewData] public string SuccessMessage { get; set; } = null!;
 
-    [TempData] public string? ErrorMessage { get; set; }
+    [ViewData] public string? ErrorMessage { get; set; }
 
     public async Task<IActionResult> OnGet()
     {
@@ -106,7 +106,7 @@ public class EnquiryResponse : PageModel
     {
         ErrorMessage = errorMessage;
 
-        ModelState.AddModelError("Data.ErrorMessage", errorMessage);
+        ModelState.AddModelError("Data.ErrorMessage", ErrorMessage);
     }
 
     private bool AddInValidUrlErrorMessage(string token)

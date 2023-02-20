@@ -8,6 +8,8 @@ public class GovUkNotifyOptions
 
     public string EnquiryTemplateId { get; set; } = string.Empty;
 
+    public string EnquirerViewResponsesTemplateId { get; set; } = string.Empty;
+
     public string TestEmailAddress { get; set; } = string.Empty;
 
 }

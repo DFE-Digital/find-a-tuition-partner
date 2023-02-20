@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230218145940_TuitionPartnerEnquiry")]
+    partial class TuitionPartnerEnquiry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3880,11 +3882,11 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("EnquiryId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("EnquiryResponseId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("MagicLinkTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -3894,46 +3896,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("EnquiryId");
 
-                    b.HasIndex("MagicLinkTypeId");
+                    b.HasIndex("EnquiryResponseId");
 
                     b.ToTable("MagicLinks");
-                });
-
-            modelBuilder.Entity("Domain.MagicLinkType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("MagicLinkTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "EnquiryRequest"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "EnquirerViewResponse"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "EnquirerViewAllResponses"
-                        });
                 });
 
             modelBuilder.Entity("Domain.OrganisationType", b =>
@@ -4503,7 +4468,7 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EnquiryId")
+                    b.Property<int?>("EnquiryId")
                         .HasColumnType("integer");
 
                     b.Property<int>("TuitionPartnerId")
@@ -4669,13 +4634,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("EnquiryId");
 
-                    b.HasOne("Domain.MagicLinkType", "MagicLinkType")
+                    b.HasOne("Domain.EnquiryResponse", "EnquiryResponse")
                         .WithMany()
-                        .HasForeignKey("MagicLinkTypeId");
+                        .HasForeignKey("EnquiryResponseId");
 
                     b.Navigation("Enquiry");
 
-                    b.Navigation("MagicLinkType");
+                    b.Navigation("EnquiryResponse");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -4799,19 +4764,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.TuitionPartnerEnquiry", b =>
                 {
-                    b.HasOne("Domain.Enquiry", "Enquiry")
+                    b.HasOne("Domain.Enquiry", null)
                         .WithMany("TuitionPartnerEnquiry")
-                        .HasForeignKey("EnquiryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EnquiryId");
 
                     b.HasOne("Domain.TuitionPartner", "TuitionPartner")
                         .WithMany()
                         .HasForeignKey("TuitionPartnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Enquiry");
 
                     b.Navigation("TuitionPartner");
                 });

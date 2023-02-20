@@ -1,0 +1,55 @@
+@page
+@model UI.Pages.EnquirerViewAllResponses
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    ViewData["Title"] = "Enquirer View Responses";
+    ViewData["BackLinkHref"] = "/";
+    ViewData["IncludePrintPage"] = true;
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+          <govuk-error-summary-item asp-for="ErrorMessage"/>
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">
+            <span>Enquirer View All Responses</span>
+        </h1>
+    </div>
+</div>
+
+<table class="govuk-table" data-testid="enquirer-view-all-responses-table">
+<caption class="govuk-visually-hidden">Enquirer View All Responses</caption>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col"> TuitionPartner Name </th>
+      <th class="govuk-table__header" scope="col"> Status </th>
+      <th class="govuk-table__header" scope="col"> Enquiry Response </th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+   @foreach (var item in @Model.Data)
+   {
+       <tr class="govuk-table__row">
+           <td class="govuk-table__cell">
+               @item.TuitionPartnerName
+           </td>
+           <td class="govuk-table__cell">
+               @if (@item.Status == "RECEIVED")
+               {
+                   <govuk-tag class="govuk-tag--purple">RECEIVED</govuk-tag>
+               }
+               else
+               {
+               <govuk-tag class="govuk-tag--blue">PENDING</govuk-tag>
+               }
+           </td>
+           <td class="govuk-table__cell">
+               @item.EnquiryResponse
+           </td>
+       </tr>
+   }
+  </tbody>
+</table>

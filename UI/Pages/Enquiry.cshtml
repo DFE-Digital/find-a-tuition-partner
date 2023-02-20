@@ -19,11 +19,11 @@
             <span>Make an Enquiry</span>
         </h1>
         
-        @if (!string.IsNullOrEmpty(Model.Message))
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
         {
             <govuk-notification-banner type="Success">
                 <p class="govuk-notification-banner__heading">
-                    @Model.Message
+                    @Model.SuccessMessage
                 </p>
             </govuk-notification-banner>
         }
