@@ -6,8 +6,8 @@ public class GovUkNotifyOptions
 
     public string ApiKey { get; set; } = string.Empty;
 
-    public string EnquiryTemplateId { get; set; } = string.Empty;
+    public string TemplateIdEnquirySubmittedConfirmationToEnquirer { get; set; } = string.Empty;
 
-    public string TestEmailAddress { get; set; } = string.Empty;
+    public string TemplateIdEnquirySubmittedToTp { get; set; } = string.Empty;
 
 }

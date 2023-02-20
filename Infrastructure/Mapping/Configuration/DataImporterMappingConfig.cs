@@ -1,9 +1,9 @@
 ﻿using Domain;
 using Mapster;
 
-namespace Infrastructure.Configuration
+namespace Infrastructure.Mapping.Configuration
 {
-    public static class DataImporterMapingConfig
+    public static class DataImporterMappingConfig
     {
         public static void Configure()
         {

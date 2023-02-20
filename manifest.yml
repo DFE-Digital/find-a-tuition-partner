@@ -22,7 +22,10 @@ applications:
     DfeAnalytics:ProjectId: find-a-tuition-partner
     DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
     GovUkNotify:ApiKey: ((govuk-notify-api-key))
-    GovUkNotify:EnquiryTemplateId: ((govuk-notify-enquiry-template-id))
-    GovUkNotify:TestEmailAddress: ((test-email-addresss))
+    GovUkNotify:TemplateIdEnquirySubmittedConfirmationToEnquirer: ((govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id))
+    GovUkNotify:TemplateIdEnquirySubmittedToTp: ((govuk-notify-enquiry-submitted-to-tp-template-id))
+    EmailSettings:OverrideAddress: ((override-email-address))
+    EmailSettings:AmalgamateResponses: ((email-amalgamate-responses))
+    EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
     AesEncryption:Key: ((magiclink-aes-encryption-key))
     AesEncryption:IV: ((magiclink-aes-encryption-iv))
