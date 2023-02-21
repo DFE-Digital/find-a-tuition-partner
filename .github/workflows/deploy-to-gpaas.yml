@@ -95,7 +95,6 @@ jobs:
             --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
             --var magiclink-aes-encryption-key="${{ secrets.ML_AES_ENCRYPTION_KEY }}" \
             --var magiclink-aes-encryption-iv="${{ secrets.ML_AES_ENCRYPTION_IV }}" \
-            --var test-email-addresss="${{ vars.TEST_EMAIL_ADDRESS }}" \
             --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
             --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
             --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"

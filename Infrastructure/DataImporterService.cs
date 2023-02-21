@@ -5,7 +5,7 @@ using Application.Factories;
 using Application.Mapping;
 using Domain;
 using Domain.Validators;
-using Infrastructure.Configuration;
+using Infrastructure.Mapping.Configuration;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -160,7 +160,7 @@ public class DataImporterService : IHostedService
                 .Select(x => new { x.Name, x.TPLastUpdatedData })
                 .ToDictionary(x => x.Name.ToLower(), x => x.TPLastUpdatedData);
 
-        DataImporterMapingConfig.Configure();
+        DataImporterMappingConfig.Configure();
 
         foreach (var dataFile in dataFileEnumerable)
         {

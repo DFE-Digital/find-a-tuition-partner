@@ -34,11 +34,11 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
 
     public async Task<Unit> Handle(SendEnquirerViewAllResponsesEmailCommand request, CancellationToken cancellationToken)
     {
-        var notificationsRecipient = GetNotificationsRecipients(request);
+        var notificationsRecipient = GetNotificationsRecipient(request);
 
         var magicLink = new MagicLink()
         {
-            Token = notificationsRecipient.Token,
+            Token = notificationsRecipient.Token!,
             EnquiryId = request.Data?.EnquiryId,
             MagicLinkTypeId = (int)MagicLinkType.EnquirerViewAllResponses
         };
@@ -48,13 +48,13 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
         await _unitOfWork.Complete();
 
         await _notificationsClientService.SendEmailAsync(
-            new List<NotificationsRecipientDto>() { notificationsRecipient },
-            EmailTemplateType.EnquirerViewResponses);
+            notificationsRecipient,
+            EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
 
         return Unit.Value;
     }
 
-    private NotificationsRecipientDto GetNotificationsRecipients(SendEnquirerViewAllResponsesEmailCommand request)
+    private NotificationsRecipientDto GetNotificationsRecipient(SendEnquirerViewAllResponsesEmailCommand request)
     {
         var generateRandomness
             = _aesEncryption.GenerateRandomToken();
@@ -65,13 +65,14 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
         var result = new NotificationsRecipientDto()
         {
             Email = request.Data?.Email!,
+            EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
             Personalisation = GetPersonalisation(request.Data?.EnquiryText!, pageLink)
         };
         return result;
     }
 
-    private Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquirerViewAllResponsesPageLink)
+    private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquirerViewAllResponsesPageLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {

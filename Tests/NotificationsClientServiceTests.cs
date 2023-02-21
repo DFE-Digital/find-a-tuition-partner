@@ -13,13 +13,15 @@ using static Logging<NotificationsClientService>;
 public class NotificationsClientServiceTests
 {
     private NotificationsClientService? _notificationsClientService;
-    private readonly Mock<IOptions<GovUkNotifyOptions>> _configMock;
+    private readonly Mock<IOptions<GovUkNotifyOptions>> _notifyConfigMock;
+    private readonly Mock<IOptions<EmailSettings>> _emailSettingsConfigMock;
     private readonly Mock<ILogger<NotificationsClientService>> _loggerMock;
     private readonly Mock<IAsyncNotificationClient> _notificationClientMock;
 
     public NotificationsClientServiceTests()
     {
-        _configMock = new Mock<IOptions<GovUkNotifyOptions>>();
+        _notifyConfigMock = new Mock<IOptions<GovUkNotifyOptions>>();
+        _emailSettingsConfigMock = new Mock<IOptions<EmailSettings>>();
         _loggerMock = new Mock<ILogger<NotificationsClientService>>();
         _notificationClientMock = new Mock<IAsyncNotificationClient>();
     }
@@ -32,11 +34,15 @@ public class NotificationsClientServiceTests
         var notificationsRecipients = new List<NotificationsRecipientDto> { new()
         { Email = "test@example.com",
             Personalisation = personalisation} };
-        var emailTemplateType = EmailTemplateType.Enquiry;
+        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
         var emailTemplateId = "template-id";
 
-        _configMock.Setup(x => x.Value)
-            .Returns(new GovUkNotifyOptions { EnquiryTemplateId = emailTemplateId });
+        _notifyConfigMock.Setup(x => x.Value)
+            .Returns(new GovUkNotifyOptions { TemplateIdEnquirySubmittedConfirmationToEnquirer = emailTemplateId });
+
+        _emailSettingsConfigMock.Setup(x => x.Value)
+            .Returns(new EmailSettings());
+
         _notificationClientMock.Setup(x =>
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
                     notificationsRecipients.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()))
@@ -44,7 +50,7 @@ public class NotificationsClientServiceTests
             { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent() });
 
         _notificationsClientService =
-            new NotificationsClientService(_configMock.Object, _loggerMock.Object, _notificationClientMock.Object);
+            new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object, _loggerMock.Object, _notificationClientMock.Object);
 
         // Act
         await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
@@ -64,14 +70,16 @@ public class NotificationsClientServiceTests
         var notificationsRecipients = new List<NotificationsRecipientDto> { new()
         { Email = "",
             Personalisation = personalisation} };
-        var emailTemplateType = EmailTemplateType.Enquiry;
+        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
 
-        _configMock.Setup(x => x.Value)
+        _notifyConfigMock.Setup(x => x.Value)
             .Returns(new GovUkNotifyOptions { });
 
+        _emailSettingsConfigMock.Setup(x => x.Value)
+            .Returns(new EmailSettings());
 
         _notificationsClientService =
-          new NotificationsClientService(_configMock.Object, _loggerMock.Object, _notificationClientMock.Object);
+          new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object, _loggerMock.Object, _notificationClientMock.Object);
 
         // Act
         await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
@@ -93,13 +101,13 @@ public class NotificationsClientServiceTests
             new() { Email = "test@example.com", Personalisation = personalisation },
             new() { Email = "test2@example.com", Personalisation = personalisation }
         };
-        var emailTemplateType = EmailTemplateType.Enquiry;
+        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
 
         var enquiryTemplateId = "enquiry-template-id";
 
         var govUkNotifyOptions = new GovUkNotifyOptions
         {
-            EnquiryTemplateId = enquiryTemplateId
+            TemplateIdEnquirySubmittedConfirmationToEnquirer = enquiryTemplateId
         };
         var emailResponse = new EmailNotificationResponse
         {
@@ -110,13 +118,17 @@ public class NotificationsClientServiceTests
         };
 
         mockOptions.Setup(o => o.Value).Returns(govUkNotifyOptions);
+
+        _emailSettingsConfigMock.Setup(x => x.Value)
+            .Returns(new EmailSettings());
+
         mockNotificationClient.Setup(nc =>
                 nc.SendEmailAsync(It.IsAny<string>(),
                     It.IsAny<string>(), It.IsAny<Dictionary<string,
                         dynamic>>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(emailResponse);
 
-        _notificationsClientService = new NotificationsClientService(mockOptions.Object,
+        _notificationsClientService = new NotificationsClientService(mockOptions.Object, _emailSettingsConfigMock.Object,
             _loggerMock.Object, mockNotificationClient.Object);
 
         // Act

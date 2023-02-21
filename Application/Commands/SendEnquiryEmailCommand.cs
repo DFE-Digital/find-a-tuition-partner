@@ -34,39 +34,30 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
 
     public async Task<Unit> Handle(SendEnquiryEmailCommand request, CancellationToken cancellationToken)
     {
+        var enquirerEmailForTestingPurposes = request.Data?.Email!;
+
         var matchedTps =
             await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!,
                 cancellationToken);
 
-        var notificationsRecipients = GetNotificationsRecipients(request,
-            matchedTps);
+        var tpNotificationsRecipients = GetTuitionPartnerNotificationsRecipients(request,
+            matchedTps, enquirerEmailForTestingPurposes);
 
-        var magicLinks = notificationsRecipients.Select(recipient => new MagicLink()
-        { Token = recipient.Token, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
+        var magicLinks = tpNotificationsRecipients.Select(recipient => new MagicLink()
+        { Token = recipient.Token!, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
 
         _unitOfWork.MagicLinkRepository.AddRangeAsync(magicLinks, cancellationToken);
 
         await _unitOfWork.Complete();
 
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients,
-            EmailTemplateType.Enquiry);
+        await _notificationsClientService.SendEmailAsync(tpNotificationsRecipients,
+            EmailTemplateType.EnquirySubmittedToTp);
 
         return Unit.Value;
     }
 
-    private Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string responseFormLink)
-    {
-        var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EnquiryTextVariableKey, enquiryText },
-            { EnquiryResponseFormLinkKey, responseFormLink }
-        };
-
-        return personalisation;
-    }
-
-    private List<NotificationsRecipientDto> GetNotificationsRecipients(SendEnquiryEmailCommand request,
-        IEnumerable<TuitionPartnerResult> recipients)
+    private List<NotificationsRecipientDto> GetTuitionPartnerNotificationsRecipients(SendEnquiryEmailCommand request,
+        IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
     {
         return (from recipient in recipients
                 let generateRandomness
@@ -77,8 +68,20 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
                 select new NotificationsRecipientDto()
                 {
                     Email = recipient.Email,
+                    EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
                     Personalisation = GetPersonalisation(request.Data?.EnquiryText!, formLink)
                 }).ToList();
+    }
+
+    private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string responseFormLink)
+    {
+        var personalisation = new Dictionary<string, dynamic>()
+        {
+            { EnquiryTextVariableKey, enquiryText },
+            { EnquiryResponseFormLinkKey, responseFormLink }
+        };
+
+        return personalisation;
     }
 }

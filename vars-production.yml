@@ -7,3 +7,8 @@ override-log-event-level: Information
 google-tag-manager-container-id: GTM-KV8MCQW
 google-analytics-measurement-id:
 dfe-analytics-dataset: fatp_events_production
+govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id: b1e29214-dfc0-4225-b65a-df6a20c4c297
+govuk-notify-enquiry-submitted-to-tp-template-id: b24ffca7-6119-4dbf-8ae2-dceb2c300ca4
+override-email-address: 
+email-amalgamate-responses: false
+email-all-sent-to-enquirer: false
