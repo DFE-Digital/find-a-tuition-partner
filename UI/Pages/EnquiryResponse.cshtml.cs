@@ -32,7 +32,7 @@ public class EnquiryResponse : PageModel
 
         try
         {
-            GetEnquiryIdFromToken(token);
+            GetTokenValues(token);
 
             var validMagicLinkToken = await IsValidMagicLinkToken(token);
             if (!validMagicLinkToken) return Page();
@@ -56,12 +56,10 @@ public class EnquiryResponse : PageModel
 
         try
         {
-            var enquiryId = GetEnquiryIdFromToken(token);
+            GetTokenValues(token);
 
             var validMagicLinkToken = await IsValidMagicLinkToken(token);
             if (!validMagicLinkToken) return Page();
-
-            Data.EnquiryId = enquiryId;
 
             var command = new AddEnquiryResponseCommand()
             {
@@ -86,7 +84,7 @@ public class EnquiryResponse : PageModel
         return Page();
     }
 
-    private int GetEnquiryIdFromToken(string token)
+    private void GetTokenValues(string token)
     {
         var tokenValue = _aesEncrypt.Decrypt(token);
 
@@ -99,7 +97,14 @@ public class EnquiryResponse : PageModel
             Data.EnquiryId = enquiryId;
         }
 
-        return enquiryId;
+        var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+        if (int.TryParse(splitTuitionPartnerPart[1], out var tuitionPartnerId))
+        {
+            Data.TuitionPartnerId = tuitionPartnerId;
+        }
+
+        Data.Token = token;
     }
 
     private void AddErrorMessage(string errorMessage)

@@ -50,7 +50,8 @@ public class Enquiry : PageModel
 
             await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
 
-            SuccessMessage = $"Enquiry successfully sent to the compare listed tuition partners. You will receive an email shortly to the following email: {Data.Email} to view the enquiry response.";
+            SuccessMessage = $"Enquiry successfully sent to the compare listed tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email} {Environment.NewLine}" +
+                             $"and a link to view the enquiry response.";
             ModelState.Clear();
             Data = new();
         }

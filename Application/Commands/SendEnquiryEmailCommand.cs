@@ -41,18 +41,15 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
         var notificationsRecipients = GetNotificationsRecipients(request,
             matchedTps);
 
-        var hasEmailSent = await _notificationsClientService.SendEmailAsync(notificationsRecipients,
+        var magicLinks = notificationsRecipients.Select(recipient => new MagicLink()
+        { Token = recipient.Token, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
+
+        _unitOfWork.MagicLinkRepository.AddRangeAsync(magicLinks, cancellationToken);
+
+        await _unitOfWork.Complete();
+
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients,
             EmailTemplateType.Enquiry);
-
-        if (hasEmailSent)
-        {
-            var magicLinks = notificationsRecipients.Select(recipient => new MagicLink()
-            { Token = recipient.Token, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
-
-            _unitOfWork.MagicLinkRepository.AddRangeAsync(magicLinks, cancellationToken);
-
-            await _unitOfWork.Complete();
-        }
 
         return Unit.Value;
     }
@@ -75,7 +72,7 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
                 let generateRandomness
                     = _aesEncryption.GenerateRandomToken()
                 let token = _aesEncryption.Encrypt(
-                    $"EnquiryId={request.Data?.EnquiryId}&Type={nameof(MagicLinkType.EnquiryRequest)}&{generateRandomness}")
+                    $"EnquiryId={request.Data?.EnquiryId}&TuitionPartnerId={recipient.Id}&Type={nameof(MagicLinkType.EnquiryRequest)}&{generateRandomness}")
                 let formLink = $"{request.Data?.BaseServiceUrl}/enquiry-response?token={token}"
                 select new NotificationsRecipientDto()
                 {

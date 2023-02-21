@@ -11,12 +11,22 @@
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-          <govuk-error-summary-item asp-for="ErrorMessage"/>
+          <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
             <span>Enquirer View All Responses</span>
         </h1>
+        
+        <govuk-details open="false">
+            <govuk-details-summary>
+                Reveal your enquiry
+            </govuk-details-summary>
+            <govuk-details-text>
+                @Model.Data?.EnquiryText 
+            </govuk-details-text>
+        </govuk-details>
+        
     </div>
 </div>
 
@@ -24,26 +34,26 @@
 <caption class="govuk-visually-hidden">Enquirer View All Responses</caption>
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col"> TuitionPartner Name </th>
+      <th class="govuk-table__header" scope="col"> Tuition Partner Name </th>
       <th class="govuk-table__header" scope="col"> Status </th>
       <th class="govuk-table__header" scope="col"> Enquiry Response </th>
     </tr>
   </thead>
   <tbody class="govuk-table__body">
-   @foreach (var item in @Model.Data)
+   @foreach (var item in @Model.Data?.EnquirerViewResponses!)
    {
        <tr class="govuk-table__row">
            <td class="govuk-table__cell">
                @item.TuitionPartnerName
            </td>
            <td class="govuk-table__cell">
-               @if (@item.Status == "RECEIVED")
+               @if (@item.Status == StringConstants.RECEIVED)
                {
-                   <govuk-tag class="govuk-tag--purple">RECEIVED</govuk-tag>
+                   <govuk-tag class="govuk-tag--purple">@StringConstants.RECEIVED</govuk-tag>
                }
                else
                {
-               <govuk-tag class="govuk-tag--blue">PENDING</govuk-tag>
+               <govuk-tag class="govuk-tag--blue">@StringConstants.PENDING</govuk-tag>
                }
            </td>
            <td class="govuk-table__cell">

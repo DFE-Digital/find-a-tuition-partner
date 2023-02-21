@@ -14,6 +14,7 @@ public record SendEnquirerViewAllResponsesEmailCommand : IRequest<Unit>
 
 public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<SendEnquirerViewAllResponsesEmailCommand, Unit>
 {
+    private const string EnquiryTextVariableKey = "enquiry";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
 
     private readonly INotificationsClientService _notificationsClientService;
@@ -35,23 +36,20 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
     {
         var notificationsRecipient = GetNotificationsRecipients(request);
 
-        var hasEmailSent = await _notificationsClientService.SendEmailAsync(
+        var magicLink = new MagicLink()
+        {
+            Token = notificationsRecipient.Token,
+            EnquiryId = request.Data?.EnquiryId,
+            MagicLinkTypeId = (int)MagicLinkType.EnquirerViewAllResponses
+        };
+
+        _unitOfWork.MagicLinkRepository.AddAsync(magicLink, cancellationToken);
+
+        await _unitOfWork.Complete();
+
+        await _notificationsClientService.SendEmailAsync(
             new List<NotificationsRecipientDto>() { notificationsRecipient },
             EmailTemplateType.EnquirerViewResponses);
-
-        if (hasEmailSent)
-        {
-            var magicLink = new MagicLink()
-            {
-                Token = notificationsRecipient.Token,
-                EnquiryId = request.Data?.EnquiryId,
-                MagicLinkTypeId = (int)MagicLinkType.EnquirerViewAllResponses
-            };
-
-            _unitOfWork.MagicLinkRepository.AddAsync(magicLink, cancellationToken);
-
-            await _unitOfWork.Complete();
-        }
 
         return Unit.Value;
     }
@@ -68,15 +66,16 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
         {
             Email = request.Data?.Email!,
             Token = token,
-            Personalisation = GetPersonalisation(pageLink)
+            Personalisation = GetPersonalisation(request.Data?.EnquiryText!, pageLink)
         };
         return result;
     }
 
-    private Dictionary<string, dynamic> GetPersonalisation(string enquirerViewAllResponsesPageLink)
+    private Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquirerViewAllResponsesPageLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
+            { EnquiryTextVariableKey, enquiryText },
             { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink }
         };
 

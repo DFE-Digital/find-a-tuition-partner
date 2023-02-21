@@ -18,6 +18,7 @@ public class UnitOfWork : IUnitOfWork
         TuitionTypeRepository = new TuitionTypeRepository(_context);
         SchoolRepository = new SchoolRepository(_context);
         MagicLinkRepository = new MagicLinkRepository(_context);
+        TuitionPartnerEnquiryRepository = new TuitionPartnerEnquiryRepository(_context);
     }
     public IEnquiryRepository EnquiryRepository { get; private set; }
     public IEnquiryResponseRepository EnquiryResponseRepository { get; private set; }
@@ -27,6 +28,8 @@ public class UnitOfWork : IUnitOfWork
     public ITuitionTypeRepository TuitionTypeRepository { get; private set; }
     public ISchoolRepository SchoolRepository { get; private set; }
     public IMagicLinkRepository MagicLinkRepository { get; private set; }
+
+    public ITuitionPartnerEnquiryRepository TuitionPartnerEnquiryRepository { get; private set; }
 
     public async Task<bool> Complete()
     {

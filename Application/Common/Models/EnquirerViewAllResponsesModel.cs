@@ -2,9 +2,9 @@ namespace Application.Common.Models;
 
 public class EnquirerViewAllResponsesModel
 {
-    public string TuitionPartnerName { get; set; } = null!;
+    public string EnquiryText { get; set; } = null!;
 
-    public string Status { get; set; } = null!;
+    public string? ErrorMessage { get; set; }
 
-    public string EnquiryResponse { get; set; } = null!;
+    public List<EnquirerViewResponseModel> EnquirerViewResponses { get; set; } = null!;
 }
