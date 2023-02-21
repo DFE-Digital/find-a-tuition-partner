@@ -23,6 +23,7 @@ applications:
     DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
     GovUkNotify:ApiKey: ((govuk-notify-api-key))
     GovUkNotify:EnquiryTemplateId: ((govuk-notify-enquiry-template-id))
+    GovUkNotify:EnquirerViewResponsesTemplateId: ((govuk-notify-enquirer-view-responses-template-id))
     GovUkNotify:TestEmailAddress: ((test-email-addresss))
     AesEncryption:Key: ((magiclink-aes-encryption-key))
     AesEncryption:IV: ((magiclink-aes-encryption-iv))
