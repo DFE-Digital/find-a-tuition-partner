@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230220220530_AddTuitionPartnerEnquiryResponse")]
+    partial class AddTuitionPartnerEnquiryResponse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,14 +68,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("MagicLinkId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EnquiryId");
-
-                    b.HasIndex("MagicLinkId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -4514,9 +4511,6 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("EnquiryResponseId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MagicLinkId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
@@ -4525,8 +4519,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("EnquiryId");
 
                     b.HasIndex("EnquiryResponseId");
-
-                    b.HasIndex("MagicLinkId");
 
                     b.HasIndex("TuitionPartnerId");
 
@@ -4618,13 +4610,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.MagicLink", "MagicLink")
-                        .WithMany()
-                        .HasForeignKey("MagicLinkId");
-
                     b.Navigation("Enquiry");
-
-                    b.Navigation("MagicLink");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
@@ -4830,10 +4816,6 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("EnquiryResponseId");
 
-                    b.HasOne("Domain.MagicLink", "MagicLink")
-                        .WithMany()
-                        .HasForeignKey("MagicLinkId");
-
                     b.HasOne("Domain.TuitionPartner", "TuitionPartner")
                         .WithMany()
                         .HasForeignKey("TuitionPartnerId")
@@ -4843,8 +4825,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Enquiry");
 
                     b.Navigation("EnquiryResponse");
-
-                    b.Navigation("MagicLink");
 
                     b.Navigation("TuitionPartner");
                 });

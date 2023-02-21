@@ -156,17 +156,16 @@ public class NotificationsClientService : INotificationsClientService
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions notifyConfig)
     {
-        if (emailTemplateType == EmailTemplateType.EnquirySubmittedConfirmationToEnquirer)
+        return emailTemplateType switch
         {
-            return !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer) ? notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer : string.Empty;
-        }
-
-        if (emailTemplateType == EmailTemplateType.EnquirySubmittedToTp)
-        {
-            return !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedToTp) ? notifyConfig.TemplateIdEnquirySubmittedToTp : string.Empty;
-        }
-
-        return string.Empty;
+            EmailTemplateType.EnquirySubmittedConfirmationToEnquirer => !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer)
+                ? notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer
+                : string.Empty,
+            EmailTemplateType.EnquirySubmittedToTp => !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedToTp)
+                ? notifyConfig.TemplateIdEnquirySubmittedToTp
+                : string.Empty,
+            _ => string.Empty
+        };
     }
 
     private static void AddDefaultTestPersonalisation(Dictionary<string, dynamic> personalisation)

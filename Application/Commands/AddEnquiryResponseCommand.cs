@@ -22,12 +22,32 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     {
         var enquiryId = request.Data.EnquiryId;
 
-        if (enquiryId == default) return false;
-        _unitOfWork.EnquiryResponseRepository.AddAsync(new EnquiryResponse()
+        var tuitionPartnerId = request.Data.TuitionPartnerId;
+
+        if (string.IsNullOrEmpty(request.Data.Token))
+        {
+            return false;
+        }
+
+        var magicLink =
+            await _unitOfWork.MagicLinkRepository
+                .SingleOrDefaultAsync(x => x.Token == request.Data.Token, null, true, cancellationToken);
+
+        if (enquiryId == default || tuitionPartnerId == default) return false;
+
+        var tpEnquiry = _unitOfWork.TuitionPartnerEnquiryRepository
+            .Find(x => x.EnquiryId == enquiryId && x.TuitionPartnerId == tuitionPartnerId).SingleOrDefault();
+
+        if (tpEnquiry == null) return false;
+
+        tpEnquiry.EnquiryResponse = new EnquiryResponse()
         {
             EnquiryResponseText = request.Data?.EnquiryResponseText!,
-            EnquiryId = enquiryId
-        }, cancellationToken);
+            EnquiryId = enquiryId,
+            MagicLinkId = magicLink?.Id
+        };
+
+        tpEnquiry.MagicLinkId = magicLink?.Id;
 
         return await _unitOfWork.Complete();
 

@@ -1,10 +1,9 @@
 namespace Application.Common.Models;
 
-public class EnquiryResponseModel
+public class EnquiryResponseModel : EnquiryBaseModel
 {
+    public int TuitionPartnerId { get; set; }
+
+    public string Token { get; set; } = string.Empty;
     public string EnquiryResponseText { get; set; } = null!;
-
-    public int EnquiryId { get; set; }
-
-    public string? ErrorMessage { get; set; }
 }

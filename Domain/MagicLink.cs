@@ -6,13 +6,13 @@ public class MagicLink
 
     public string Token { get; set; } = null!;
 
-    public DateTime ExpirationDate { get; set; } = DateTime.UtcNow.AddDays(2);
+    public DateTime ExpirationDate { get; set; } = DateTime.UtcNow.AddDays(14);
 
     public int? EnquiryId { get; set; }
 
-    public int? EnquiryResponseId { get; set; }
+    public int? MagicLinkTypeId { get; set; }
 
     public Enquiry? Enquiry { get; set; } = null;
 
-    public EnquiryResponse? EnquiryResponse { get; set; } = null;
+    public MagicLinkType? MagicLinkType { get; set; } = null;
 }

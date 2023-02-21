@@ -12,5 +12,6 @@ public interface IUnitOfWork : IDisposable
     ITuitionTypeRepository TuitionTypeRepository { get; }
     ISchoolRepository SchoolRepository { get; }
     IMagicLinkRepository MagicLinkRepository { get; }
+    ITuitionPartnerEnquiryRepository TuitionPartnerEnquiryRepository { get; }
     Task<bool> Complete();
 }

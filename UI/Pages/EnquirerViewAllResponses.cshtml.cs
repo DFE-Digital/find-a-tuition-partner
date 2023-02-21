@@ -3,26 +3,24 @@ using Application.Common.Models;
 
 namespace UI.Pages;
 
-public class EnquiryResponse : PageModel
+public class EnquirerViewAllResponses : PageModel
 {
-    private readonly IMediator _mediator;
-    private readonly IEncrypt _aesEncrypt;
-
     private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
     private const string InvalidUrlErrorMessage = "Invalid Url";
 
-    public EnquiryResponse(IMediator mediator, IEncrypt aesEncrypt)
+    private readonly IMediator _mediator;
+    private readonly IEncrypt _aesEncrypt;
+
+    public EnquirerViewAllResponses(IMediator mediator, IEncrypt aesEncrypt)
     {
         _mediator = mediator;
         _aesEncrypt = aesEncrypt;
     }
 
-    [BindProperty] public EnquiryResponseModel Data { get; set; } = new();
+    [BindProperty] public EnquirerViewAllResponsesModel Data { get; set; } = new();
 
-    [ViewData] public string SuccessMessage { get; set; } = null!;
-
-    [ViewData] public string? ErrorMessage { get; set; }
+    [ViewData] public string ErrorMessage { get; set; } = string.Empty;
 
     public async Task<IActionResult> OnGet()
     {
@@ -32,10 +30,12 @@ public class EnquiryResponse : PageModel
 
         try
         {
-            GetTokenValues(token);
+            var enquiryId = GetEnquiryIdFromToken(token);
 
             var validMagicLinkToken = await IsValidMagicLinkToken(token);
             if (!validMagicLinkToken) return Page();
+
+            Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(enquiryId));
         }
         catch
         {
@@ -46,45 +46,7 @@ public class EnquiryResponse : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPost()
-    {
-        if (!ModelState.IsValid) return Page();
-
-        var token = Request.Query["token"];
-
-        if (AddInValidUrlErrorMessage(token)) return Page();
-
-        try
-        {
-            GetTokenValues(token);
-
-            var validMagicLinkToken = await IsValidMagicLinkToken(token);
-            if (!validMagicLinkToken) return Page();
-
-            var command = new AddEnquiryResponseCommand()
-            {
-                Data = Data
-            };
-
-            var hasDataSaved = await _mediator.Send(command);
-
-            if (hasDataSaved)
-            {
-                SuccessMessage = $"The enquiry response was submitted successfully.";
-                ModelState.Clear();
-                Data = new();
-            }
-        }
-        catch
-        {
-            AddErrorMessage(InvalidTokenErrorMessage);
-            return Page();
-        }
-
-        return Page();
-    }
-
-    private void GetTokenValues(string token)
+    private int GetEnquiryIdFromToken(string token)
     {
         var tokenValue = _aesEncrypt.Decrypt(token);
 
@@ -94,17 +56,10 @@ public class EnquiryResponse : PageModel
 
         if (int.TryParse(splitEnquiryPart[1], out var enquiryId))
         {
-            Data.EnquiryId = enquiryId;
+            return enquiryId;
         }
 
-        var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
-
-        if (int.TryParse(splitTuitionPartnerPart[1], out var tuitionPartnerId))
-        {
-            Data.TuitionPartnerId = tuitionPartnerId;
-        }
-
-        Data.Token = token;
+        return default;
     }
 
     private void AddErrorMessage(string errorMessage)

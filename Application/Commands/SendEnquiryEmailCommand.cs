@@ -3,6 +3,8 @@ using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain;
 using Domain.Enums;
+using Domain.Search;
+using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Application.Commands;
 
@@ -34,31 +36,42 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
     {
         var enquirerEmailForTestingPurposes = request.Data?.Email!;
 
-        var getMatchedSeoUrlsEmails =
-            await _unitOfWork.TuitionPartnerRepository.GetMatchedSeoUrlsEmails(request.Data!.SelectedTuitionPartners!,
+        var matchedTps =
+            await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!,
                 cancellationToken);
 
         var tpNotificationsRecipients = GetTuitionPartnerNotificationsRecipients(request,
-            getMatchedSeoUrlsEmails.ToList(), enquirerEmailForTestingPurposes);
+            matchedTps, enquirerEmailForTestingPurposes);
 
-        //Save to the database, since the magic links need to exist before sending the emails
         var magicLinks = tpNotificationsRecipients.Select(recipient => new MagicLink()
-        { Token = recipient.Token!, EnquiryId = request.Data?.EnquiryId }).ToList();
+        { Token = recipient.Token!, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
 
         _unitOfWork.MagicLinkRepository.AddRangeAsync(magicLinks, cancellationToken);
 
         await _unitOfWork.Complete();
 
-        //Send the enquirer email
-        await _notificationsClientService.SendEmailAsync(
-            GetEnquirerNotificationsRecipient(request, enquirerEmailForTestingPurposes),
-            EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
-
-        //Send the TP emails
         await _notificationsClientService.SendEmailAsync(tpNotificationsRecipients,
             EmailTemplateType.EnquirySubmittedToTp);
 
         return Unit.Value;
+    }
+
+    private List<NotificationsRecipientDto> GetTuitionPartnerNotificationsRecipients(SendEnquiryEmailCommand request,
+        IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
+    {
+        return (from recipient in recipients
+                let generateRandomness
+                    = _aesEncryption.GenerateRandomToken()
+                let token = _aesEncryption.Encrypt(
+                    $"EnquiryId={request.Data?.EnquiryId}&TuitionPartnerId={recipient.Id}&Type={nameof(MagicLinkType.EnquiryRequest)}&{generateRandomness}")
+                let formLink = $"{request.Data?.BaseServiceUrl}/enquiry-response?token={token}"
+                select new NotificationsRecipientDto()
+                {
+                    Email = recipient.Email,
+                    EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
+                    Token = token,
+                    Personalisation = GetPersonalisation(request.Data?.EnquiryText!, formLink)
+                }).ToList();
     }
 
     private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string responseFormLink)
@@ -70,37 +83,5 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
         };
 
         return personalisation;
-    }
-
-    private List<NotificationsRecipientDto> GetTuitionPartnerNotificationsRecipients(SendEnquiryEmailCommand request,
-        List<string> recipients, string enquirerEmailForTestingPurposes)
-    {
-        return (from recipient in recipients
-                let generateRandomness
-                    = _aesEncryption.GenerateRandomToken()
-                let token = _aesEncryption.Encrypt(
-                    $"EnquiryId={request.Data?.EnquiryId}&{generateRandomness}")
-                let formLink = $"{request.Data?.BaseServiceUrl}/enquiry-response?token={token}"
-                select new NotificationsRecipientDto()
-                {
-                    Email = recipient,
-                    EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
-                    Token = token,
-                    Personalisation = GetPersonalisation(request.Data?.EnquiryText!, formLink)
-                }).ToList();
-    }
-
-    private static NotificationsRecipientDto GetEnquirerNotificationsRecipient(SendEnquiryEmailCommand request,
-        string enquirerEmailForTestingPurposes)
-    {
-        return new NotificationsRecipientDto()
-        {
-            Email = request.Data?.Email!,
-            EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
-            Personalisation = new Dictionary<string, dynamic>()
-            {
-                { EnquiryTextVariableKey, request.Data?.EnquiryText! }
-            }
-        };
     }
 }
