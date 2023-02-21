@@ -32,14 +32,38 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return _context.Set<T>().Where(expression);
     }
 
-    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> expression)
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> filter,
+        string? includeProperties = null, bool tracked = true, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<T>().FirstOrDefaultAsync(expression);
+        IQueryable<T> query = tracked ? _context.Set<T>() : _context.Set<T>().AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            var properties = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+        }
+
+        return await query.FirstOrDefaultAsync(filter, cancellationToken);
     }
 
-    public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>> expression)
+    public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>> filter,
+        string? includeProperties = null, bool tracked = true, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<T>().SingleOrDefaultAsync(expression);
+        IQueryable<T> query = tracked ? _context.Set<T>() : _context.Set<T>().AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            var properties = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+        }
+
+        return await query.SingleOrDefaultAsync(filter, cancellationToken);
     }
 
     public IEnumerable<T> GetAll()
@@ -47,9 +71,26 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return _context.Set<T>().ToList();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null,
+        string? includeProperties = null, bool tracked = true, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<T>().ToListAsync(cancellationToken);
+        IQueryable<T> query = tracked ? _context.Set<T>() : _context.Set<T>().AsNoTracking();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (!string.IsNullOrWhiteSpace(includeProperties))
+        {
+            var properties = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+        }
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     public T GetById(long id)

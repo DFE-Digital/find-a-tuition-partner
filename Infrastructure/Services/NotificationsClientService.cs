@@ -80,11 +80,15 @@ public class NotificationsClientService : INotificationsClientService
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions config)
     {
-        if (emailTemplateType == EmailTemplateType.Enquiry)
+        return emailTemplateType switch
         {
-            return !string.IsNullOrEmpty(config.EnquiryTemplateId) ? config.EnquiryTemplateId : string.Empty;
-        }
-
-        return string.Empty;
+            EmailTemplateType.Enquiry => !string.IsNullOrEmpty(config.EnquiryTemplateId)
+                ? config.EnquiryTemplateId
+                : string.Empty,
+            EmailTemplateType.EnquirerViewResponses => !string.IsNullOrEmpty(config.EnquirerViewResponsesTemplateId)
+                ? config.EnquirerViewResponsesTemplateId
+                : string.Empty,
+            _ => string.Empty
+        };
     }
 }

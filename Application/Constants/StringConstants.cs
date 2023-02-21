@@ -11,5 +11,9 @@
         public const string SpacesAndUnderscore = @"[\s_]+";
         public const string UrlUnsafeCharacters = "[^a-zA-Z0-9_{}()\\-~/]";
         public const string MultipleUnderscores = @"[-]{2,}";
+
+        public const string PENDING = "PENDING";
+
+        public const string RECEIVED = "RECEIVED";
     }
 }

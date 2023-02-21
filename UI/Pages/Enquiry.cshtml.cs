@@ -9,7 +9,7 @@ public class Enquiry : PageModel
     public Enquiry(IMediator mediator) => _mediator = mediator;
     [BindProperty] public EnquiryModel Data { get; set; } = new();
 
-    [TempData] public string Message { get; set; } = null!;
+    [ViewData] public string SuccessMessage { get; set; } = null!;
 
     public async Task<IActionResult> OnPost()
     {
@@ -43,7 +43,15 @@ public class Enquiry : PageModel
 
             await _mediator.Send(sendEnquiryEmailCommand);
 
-            Message = $"Enquiry successfully sent to the compare listed tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email}";
+            var sendEnquirerViewResponsesEmailCommand = new SendEnquirerViewAllResponsesEmailCommand()
+            {
+                Data = Data
+            };
+
+            await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
+
+            SuccessMessage = $"Enquiry successfully sent to the compare listed tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email} {Environment.NewLine}" +
+                             $"and a link to view the enquiry response.";
             ModelState.Clear();
             Data = new();
         }

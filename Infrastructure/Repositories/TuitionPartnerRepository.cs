@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Domain;
 using Domain.Search;
+using Infrastructure.Mapping;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -13,22 +14,22 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     {
     }
 
-    public async Task<IEnumerable<string>> GetMatchedSeoUrls(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersBySeoUrls(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
     {
-        var matchedSeoUrls = await _context.TuitionPartners.AsNoTracking().AsQueryable().Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
-            .Select(x => x.SeoUrl).ToListAsync(cancellationToken);
+        var results = new List<TuitionPartnerResult>();
 
-        return matchedSeoUrls;
+        TuitionPartnerMapping.Configure();
+
+        var matchedTps = await _context.TuitionPartners.AsNoTracking().AsQueryable()
+            .Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl)).ToListAsync(cancellationToken);
+
+        if (!matchedTps.Any()) return results;
+
+        results.AddRange(matchedTps.Select(tuitionPartner => tuitionPartner.Adapt<TuitionPartnerResult>()));
+
+        return results;
     }
 
-    public async Task<IEnumerable<string>> GetMatchedSeoUrlsEmails(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
-    {
-        var matchedSeoUrlsEmails = await _context.TuitionPartners.AsNoTracking().AsQueryable()
-            .Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl))
-            .Select(x => x.Email).ToListAsync(cancellationToken);
-
-        return matchedSeoUrlsEmails;
-    }
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();
@@ -77,10 +78,7 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
 
         if (request.TuitionPartnerIds == null || request.TuitionPartnerIds.Length > 0)
         {
-            //Mapster has issues mapping Prices, due to circular ref, but ignore it anyway, since done below as needed
-            TypeAdapterConfig<Domain.TuitionPartner, TuitionPartnerResult>
-                .NewConfig()
-                .Ignore(dest => dest.Prices!);
+            TuitionPartnerMapping.Configure();
 
             var entities = await _context.TuitionPartners.AsNoTracking()
                 .Include(x => x.OrganisationType)

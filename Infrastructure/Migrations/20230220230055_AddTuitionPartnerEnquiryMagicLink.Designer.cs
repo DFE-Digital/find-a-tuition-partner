@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230220230055_AddTuitionPartnerEnquiryMagicLink")]
+    partial class AddTuitionPartnerEnquiryMagicLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,14 +68,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("MagicLinkId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EnquiryId");
-
-                    b.HasIndex("MagicLinkId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -4618,13 +4615,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.MagicLink", "MagicLink")
-                        .WithMany()
-                        .HasForeignKey("MagicLinkId");
-
                     b.Navigation("Enquiry");
-
-                    b.Navigation("MagicLink");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
