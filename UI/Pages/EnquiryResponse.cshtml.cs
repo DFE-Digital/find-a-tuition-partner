@@ -70,6 +70,15 @@ public class EnquiryResponse : PageModel
 
             if (hasDataSaved)
             {
+                Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+                var sendEnquirerEnquiryResponseReceivedEmail = new SendEnquirerEnquiryResponseReceivedEmailCommand()
+                {
+                    Data = Data
+                };
+
+                await _mediator.Send(sendEnquirerEnquiryResponseReceivedEmail);
+
                 SuccessMessage = $"The enquiry response was submitted successfully.";
                 ModelState.Clear();
                 Data = new();
