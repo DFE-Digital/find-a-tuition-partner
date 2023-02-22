@@ -39,3 +39,7 @@ jobs:
     - name: Delete database backing service
       run: |
         cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db -f
+
+    - name: Delete database backing service
+      run: |
+        cf delete-service find-a-tuition-partner-$PR_NUMBER-redis-db -f
