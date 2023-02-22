@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Extensions;
 
@@ -43,17 +44,47 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static string GetNtpConnectionString(this IConfiguration configuration)
+    public static IServiceCollection AddDistributedCache(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetRedisConnectionString();
+
+        if (connectionString != null)
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = connectionString;
+            });
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
+
+        return services;
+    }
+
+    public static VcapServices? GetVcapServices(this IConfiguration configuration)
     {
         var vcapServicesJson = configuration["VCAP_SERVICES"];
-        if (!string.IsNullOrEmpty(vcapServicesJson))
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
 
-            var vcapServices = JsonSerializer.Deserialize<VcapServices>(vcapServicesJson, options);
+        if (string.IsNullOrEmpty(vcapServicesJson))
+        {
+            return null;
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<VcapServices>(vcapServicesJson, options);
+    }
+    public static string GetNtpConnectionString(this IConfiguration configuration)
+    {
+        var vcapServices = configuration.GetVcapServices();
+
+        if (vcapServices != null)
+        {
             var postgresCredentials = vcapServices?.Postgres?.FirstOrDefault()?.Credentials;
 
             if (postgresCredentials?.IsValid() == true)
@@ -63,6 +94,23 @@ public static class ServiceCollectionExtensions
         }
 
         return configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString);
+    }
+
+    public static string? GetRedisConnectionString(this IConfiguration configuration)
+    {
+        var vcapServices = configuration.GetVcapServices();
+
+        if (vcapServices != null)
+        {
+            var redisCredentials = vcapServices?.Redis?.FirstOrDefault()?.Credentials;
+
+            if (redisCredentials?.IsValid() == true)
+            {
+                return $"{redisCredentials.Host}:{redisCredentials.Port},ssl=true,password={redisCredentials.Password}";
+            }
+        }
+
+        return configuration.GetConnectionString(EnvironmentVariables.FatpRedisConnectionString);
     }
 
     public static IServiceCollection AddLocationFilterService(this IServiceCollection services)
