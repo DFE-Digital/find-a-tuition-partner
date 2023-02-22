@@ -24,7 +24,7 @@ public class EnquirerViewAllResponses : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var token = Request.Query["token"];
+        var token = Request.Query["token"].ToString();
 
         if (AddInValidUrlErrorMessage(token)) return Page();
 
