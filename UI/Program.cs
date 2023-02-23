@@ -18,6 +18,21 @@ if (await Import.RunImport(args)) return;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
+
+builder.Host.AddLogging();
+
+builder.Services.AddDistributedCache(builder.Configuration);
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".FindATuitionPartner.Session";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
 builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
 
 // Rename add and rename cookies for application
@@ -99,8 +114,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.AddAnalytics();
 
-builder.Host.AddLogging();
-
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionLoggingMiddleware>();
@@ -131,6 +144,10 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+
+app.EnsureDistributedCacheIsUsed(!app.Environment.IsDevelopment() && !app.Environment.IsTesting());
+
+app.UseSession();
 
 app.UseAuthorization();
 
