@@ -15,9 +15,11 @@ public class WhichSubjects : PageModel
 
     public async Task OnGet(Query query)
     {
+        var sessionValue = HttpContext.Session.GetString("Key1");
         Data = new Command(query)
         {
-            AllSubjects = await _mediator.Send(query)
+            AllSubjects = await _mediator.Send(query),
+            SessionValue = sessionValue ?? "No session set"
         };
     }
 
@@ -46,6 +48,8 @@ public class WhichSubjects : PageModel
         public Command(SearchModel query) : base(query) { }
 
         public KeyStageSubjectDictionary AllSubjects { get; set; } = new();
+
+        public string SessionValue { get; set; } = "No session set";
     }
 
     public class Validator : AbstractValidator<Command>

@@ -15,6 +15,7 @@ namespace UI.Pages
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
+            HttpContext.Session.SetString("Key1", "Testing session...");
             if (ModelState.IsValid)
             {
                 return RedirectToPage(nameof(WhichSubjects), new SearchModel(data));
