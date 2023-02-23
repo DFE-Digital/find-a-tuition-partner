@@ -158,11 +158,16 @@ public class NotificationsClientService : INotificationsClientService
     {
         return emailTemplateType switch
         {
-            EmailTemplateType.EnquirySubmittedConfirmationToEnquirer => !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer)
+            EmailTemplateType.EnquirySubmittedConfirmationToEnquirer =>
+                !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer)
                 ? notifyConfig.TemplateIdEnquirySubmittedConfirmationToEnquirer
                 : string.Empty,
             EmailTemplateType.EnquirySubmittedToTp => !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquirySubmittedToTp)
                 ? notifyConfig.TemplateIdEnquirySubmittedToTp
+                : string.Empty,
+            EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer =>
+                !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryResponseReceivedConfirmationToEnquirer)
+                ? notifyConfig.TemplateIdEnquiryResponseReceivedConfirmationToEnquirer
                 : string.Empty,
             _ => string.Empty
         };

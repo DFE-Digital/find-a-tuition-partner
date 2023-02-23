@@ -10,4 +10,6 @@ public class GovUkNotifyOptions
 
     public string TemplateIdEnquirySubmittedToTp { get; set; } = string.Empty;
 
+    public string TemplateIdEnquiryResponseReceivedConfirmationToEnquirer { get; set; } = string.Empty;
+
 }
