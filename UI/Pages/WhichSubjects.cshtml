@@ -14,7 +14,6 @@
         <form method="get" gfa-prepend-error-summary="false">
             <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
             <p class="govuk-body">Select all of the subjects that apply</p>
-            <p class="govuk-body">@Model.Data.SessionValue</p>
 
             @foreach (var item in Model.Data.AllSubjects.Keys)
             {
