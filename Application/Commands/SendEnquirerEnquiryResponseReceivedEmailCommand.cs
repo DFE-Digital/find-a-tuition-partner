@@ -43,7 +43,7 @@ public class SendEnquirerEnquiryResponseReceivedEmailCommandHandler : IRequestHa
         {
             _logger.LogError("Unable to send enquirer enquiry response received email. " +
                              "Can't find magic link token with the type {type} by enquiry Id {enquiryId}",
-                request.Data.EnquiryId, MagicLinkType.EnquirerViewAllResponses.ToString());
+                MagicLinkType.EnquirerViewAllResponses.ToString(), request.Data.EnquiryId);
 
             return Unit.Value;
         }
