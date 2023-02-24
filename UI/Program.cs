@@ -34,6 +34,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
+builder.Services.AddScoped<ISessionService, DistributedSessionService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>

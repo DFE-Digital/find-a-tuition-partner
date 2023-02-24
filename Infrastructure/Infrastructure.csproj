@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <None Remove="Analytics\" />
-    <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
   </ItemGroup>
   <ItemGroup>
     <None Update="credentials.json">
