@@ -14,12 +14,8 @@ public class Enquire : PageModel
     public void OnGet(EnquiryModel data)
     {
         data.TuitionType ??= TuitionType.Any;
-        //TODO - Check if this is needed, if it is then it's repeated from search and compare - change this so not repeated code, add to a base class or extesntion method
-        if (data.KeyStages == null && data.Subjects != null)
-        {
-            data.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                .Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
-        }
+        data.KeyStages = data.KeyStages.UpdateFromSubjects(data.Subjects);
+
         Data = data;
     }
 
@@ -27,10 +23,8 @@ public class Enquire : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        //TODO - Move to Application project in same way as others rather than calling cross page
-        //TODO - Only need the results, not the extra data and ordering etc - pass in flag?
-        //TODO - Will we also pass in the group sizes to this filter, even though not used on search page?
-        var searchResultsData = new SearchResults.Query(Data);
+        //TODO - Will we also need to pass in the group sizes to this filter, even though not used on search page for MVP
+        var searchResultsData = new GetSearchResultsQuery(Data);
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
 
@@ -65,7 +59,7 @@ public class Enquire : PageModel
             return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
         }
 
-        //TODO - deal with errors if fails and if zero TPs to send enquiry to
+        //TODO - deal with errors if fails and if zero TPs returned to send enquiry to
         return Page();
     }
 }
