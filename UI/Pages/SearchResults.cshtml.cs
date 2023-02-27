@@ -146,6 +146,13 @@ public class SearchResults : PageModel
     }
     public record Query : SearchModel, IRequest<ResultsModel>
     {
+        public Query()
+        {
+        }
+
+        public Query(SearchModel query) : base(query)
+        {
+        }
         public TuitionType? PreviousTuitionType { get; set; } = null;
     };
 

@@ -60,7 +60,7 @@ public class SendEnquirerViewAllResponsesEmailCommandHandler : IRequestHandler<S
             = _aesEncryption.GenerateRandomToken();
         var token = _aesEncryption.Encrypt(
             $"EnquiryId={request.Data?.EnquiryId}&Type={nameof(MagicLinkType.EnquirerViewAllResponses)}&{generateRandomness}");
-        var pageLink = $"{request.Data?.BaseServiceUrl}/enquirer-view-all-responses?token={token}";
+        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/all-enquirer-responses?token={token}";
 
         var result = new NotificationsRecipientDto()
         {
