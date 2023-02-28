@@ -1,8 +1,10 @@
 @page
 @model WhichKeyStages
 @{
+
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : $"/?{Model.Data.ToQueryString()}";
     ViewData["Title"] = "Which key stages do you need tutoring support for?";
-    ViewData["BackLinkHref"] = "/?" + Model.Data.ToQueryString();
+    ViewData["BackLinkHref"] = backLink;
 }
 
 <div class="govuk-grid-row">
@@ -16,7 +18,7 @@
                     <govuk-checkboxes-hint>
                         Select all of the key stages that apply
                     </govuk-checkboxes-hint>
-                    @foreach (var item in Model.Data.AllKeyStages)
+                    @foreach (var item in Model.Data!.AllKeyStages)
                     {
                         <govuk-checkboxes-item id="@item.Name.ToString().ToSeoUrl()" value="@item.Name" checked="@item.Selected" data-testid="key-stage-name">@item.Name.DisplayName()</govuk-checkboxes-item>
                     }
@@ -29,7 +31,7 @@
 
             <input type="hidden" name="handler" value="Submit"/>
             <input asp-for="Data.Postcode" type="hidden" />
-            @if (Model.Data.Subjects != null)
+            @if (Model.Data!.Subjects != null)
             {
                 @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
                 {

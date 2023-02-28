@@ -1,0 +1,38 @@
+@page
+@model UI.Pages.Enquiry.Build.EnquiryQuestion
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/enquirer-email";
+    ViewData["Title"] = "What's your enquiry?";
+    ViewData["BackLinkHref"] = backLink;
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.EnquiryText"/>
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">
+            <span>What's your enquiry?</span>
+        </h1>
+    </div>
+</div>
+
+<form method="get">
+    <div data-module="create-enquiry-detail">
+        <div class="govuk-form-group">
+            <govuk-textarea asp-for="Data.EnquiryText" ignore-modelstate-errors="true">
+                <govuk-textarea-label class="govuk-label--m" is-page-heading="true">
+                    Provide the enquiry details
+                </govuk-textarea-label>
+                <govuk-textarea-hint>
+                    Do not include personal or financial information like your National Insurance number or credit card details.
+                </govuk-textarea-hint>
+            </govuk-textarea>
+        </div>
+    </div>
+    <input type="hidden" name="handler" value="Submit"/>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+</form>

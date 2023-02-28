@@ -27,7 +27,7 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.IsEssential = true;
-    options.Cookie.Name = ".FindATuitionPartner.Session";
+    options.Cookie.Name = StringConstants.SessionCookieName;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Strict;

@@ -1,5 +1,5 @@
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 
 namespace Application.Queries;
 

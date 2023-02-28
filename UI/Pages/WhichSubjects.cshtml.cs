@@ -1,5 +1,6 @@
+using Application.Common.Interfaces;
 using Application.Common.Models;
-using Domain.Enums;
+using UI.Pages.Enquiry.Build;
 
 namespace UI.Pages;
 
@@ -8,17 +9,45 @@ using KeyStageSubjectDictionary = Dictionary<KeyStage, Selectable<string>[]>;
 public class WhichSubjects : PageModel
 {
     private readonly IMediator _mediator;
+    private readonly ISessionService _sessionService;
 
-    public WhichSubjects(IMediator mediator) => _mediator = mediator;
+    public WhichSubjects(IMediator mediator, ISessionService sessionService)
+    {
+        _mediator = mediator;
+        _sessionService = sessionService;
+    }
 
     public Command Data { get; set; } = new();
 
-    public async Task OnGet(Query query)
+    public async Task<IActionResult> OnGet(Query query)
     {
         Data = new Command(query)
         {
             AllSubjects = await _mediator.Send(query)
         };
+
+        if (Data.From == ReferrerList.CheckYourAnswers)
+        {
+            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+
+            if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
+
+            var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
+
+            if (sessionValues != null)
+            {
+                foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.Subjects)))
+                {
+                    query.Subjects = sessionValue.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                }
+
+                Data = new Command(query)
+                {
+                    AllSubjects = await _mediator.Send(query)
+                };
+            }
+        }
+        return Page();
     }
 
     public async Task<IActionResult> OnGetSubmit(Command data)
@@ -30,6 +59,24 @@ public class WhichSubjects : PageModel
                 AllSubjects = await _mediator.Send(new Query(data))
             };
             return Page();
+        }
+
+        if (Request != null)
+        {
+            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+
+            if (sessionId != null)
+            {
+                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                {
+                    { StringConstants.Subjects, string.Join(",", data.Subjects!)}
+                });
+
+                if (data.From == ReferrerList.CheckYourAnswers)
+                {
+                    return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
+                }
+            }
         }
         return RedirectToPage("SearchResults", new SearchModel(data));
     }

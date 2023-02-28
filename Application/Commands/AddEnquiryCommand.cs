@@ -1,12 +1,12 @@
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Build;
 using Domain;
 
 namespace Application.Commands;
 
 public record AddEnquiryCommand : IRequest<int>
 {
-    public EnquiryModel? Data { get; set; } = null!;
+    public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
 public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, int>

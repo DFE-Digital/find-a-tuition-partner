@@ -1,5 +1,5 @@
 using Application.Common.Interfaces.Repositories;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 using Application.Constants;
 using Domain;
 using Microsoft.EntityFrameworkCore;

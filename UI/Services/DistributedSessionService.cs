@@ -13,6 +13,11 @@ public class DistributedSessionService : ISessionService
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
     }
 
+    public void InitSession()
+    {
+        SetString(StringConstants.SessionCookieName, StringConstants.SessionCookieName);
+    }
+
     public async Task AddOrUpdateDataAsync(string sessionIdKey, Dictionary<string, string> data)
     {
         await LoadDataFromDistributedDataStore();
@@ -23,9 +28,23 @@ public class DistributedSessionService : ISessionService
 
         if (!string.IsNullOrEmpty(storedValue))
         {
-            // Update 
-            storedValue = dataString;
-            SetString(sessionIdKey, storedValue);
+            var existingData = JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
+
+            // Update existing data with new values
+            foreach (var key in data.Keys)
+            {
+                if (existingData!.ContainsKey(key))
+                {
+                    existingData[key] = data[key];
+                }
+                else
+                {
+                    existingData.Add(key, data[key]);
+                }
+            }
+
+            var updatedValue = JsonConvert.SerializeObject(existingData);
+            SetString(sessionIdKey, updatedValue);
         }
         else
         {

@@ -1,9 +1,9 @@
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 
-namespace UI.Pages;
+namespace UI.Pages.Enquiry.Respond;
 
-public class EnquiryResponse : PageModel
+public class Response : PageModel
 {
     private readonly IMediator _mediator;
     private readonly IEncrypt _aesEncrypt;
@@ -12,7 +12,7 @@ public class EnquiryResponse : PageModel
 
     private const string InvalidUrlErrorMessage = "Invalid Url";
 
-    public EnquiryResponse(IMediator mediator, IEncrypt aesEncrypt)
+    public Response(IMediator mediator, IEncrypt aesEncrypt)
     {
         _mediator = mediator;
         _aesEncrypt = aesEncrypt;

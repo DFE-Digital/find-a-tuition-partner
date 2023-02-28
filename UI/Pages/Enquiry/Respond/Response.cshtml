@@ -1,8 +1,8 @@
 @page
-@model UI.Pages.Enquiry
+@model UI.Pages.Enquiry.Respond.Response
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    ViewData["Title"] = "Make an Enquiry";
+    ViewData["Title"] = "Enquiry Response";
     ViewData["BackLinkHref"] = "/";
     ViewData["IncludePrintPage"] = true;
 }
@@ -11,12 +11,12 @@
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.Email"/>
-            <govuk-error-summary-item asp-for="Data.EnquiryText"/>
+            <govuk-error-summary-item asp-for="Data.EnquiryResponseText"/>
+            <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
-            <span>Make an Enquiry</span>
+            <span>Submit Enquiry Response</span>
         </h1>
         
         @if (!string.IsNullOrEmpty(Model.SuccessMessage))
@@ -31,11 +31,11 @@
 </div>
 
 <form method="post">
-    <div data-module="create-enquiry-detail">
+    <div data-module="create-enquiry-response-detail">
         <div class="govuk-form-group">
-            <govuk-textarea asp-for="Data.EnquiryText" ignore-modelstate-errors="true">
+            <govuk-textarea asp-for="Data.EnquiryResponseText" ignore-modelstate-errors="true">
                 <govuk-textarea-label class="govuk-label--m" is-page-heading="true">
-                    Provide the enquiry details
+                    Provide the enquiry response details
                 </govuk-textarea-label>
                 <govuk-textarea-hint>
                     Do not include personal or financial information like your National Insurance number or credit card details.
@@ -43,19 +43,6 @@
             </govuk-textarea>
         </div>
     </div>
-    <div data-module="create-enquiry-email">
-        <div class="govuk-form-group">
-            <div asp-validation-group-for="Data.Email" data-testid="enquiry-email">
-                <label asp-for="Data.Email" class="govuk-label govuk-label--s">
-                    Your email address
-                </label>
-                <span asp-validation-for="Data.Email" class="govuk-error-message"></span>
-                <div class="app-form-group-inline">
-                    <input asp-for="Data.Email" class="govuk-input"
-                           data-testid="enquiry-email-input-box" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
-                </div>
-            </div>
-        </div>
-    </div>
+   
     <govuk-button prevent-double-click="true" type="submit">Confirm and send</govuk-button>
 </form>

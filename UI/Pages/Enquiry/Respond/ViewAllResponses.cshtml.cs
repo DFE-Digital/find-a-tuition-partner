@@ -1,9 +1,9 @@
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 
-namespace UI.Pages;
+namespace UI.Pages.Enquiry.Respond;
 
-public class EnquirerViewAllResponses : PageModel
+public class ViewAllResponses : PageModel
 {
     private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
@@ -12,7 +12,7 @@ public class EnquirerViewAllResponses : PageModel
     private readonly IMediator _mediator;
     private readonly IEncrypt _aesEncrypt;
 
-    public EnquirerViewAllResponses(IMediator mediator, IEncrypt aesEncrypt)
+    public ViewAllResponses(IMediator mediator, IEncrypt aesEncrypt)
     {
         _mediator = mediator;
         _aesEncrypt = aesEncrypt;

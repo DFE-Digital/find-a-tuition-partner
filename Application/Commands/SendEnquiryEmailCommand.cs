@@ -1,6 +1,6 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Build;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
@@ -10,7 +10,7 @@ namespace Application.Commands;
 
 public record SendEnquiryEmailCommand : IRequest<Unit>
 {
-    public EnquiryModel? Data { get; set; }
+    public EnquiryBuildModel? Data { get; set; }
 }
 
 public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCommand, Unit>

@@ -1,5 +1,6 @@
 ﻿@page
 @using UI.HelperFunctions
+@using UI.Pages.Enquiry.Build
 @model UI.Pages.CompareList
 @{
     var clearCompareListUrl = $"/compare-list-clear-confirm?{Model.Data.ToQueryString()}";
@@ -171,7 +172,7 @@
                 </div>
 
                 <div show-if="count > 0" class="govuk-body app-print-hide">
-                    <govuk-button-link data-testid="make-enquiry-link" href="/enquiry">Make an Enquiry</govuk-button-link>
+                    <govuk-button-link data-testid="make-enquiry-link" href="/enquiry/build/enquirer-email?@Model.Data.ToQueryString()">Make an Enquiry</govuk-button-link>
                 </div>
             </div>
             
