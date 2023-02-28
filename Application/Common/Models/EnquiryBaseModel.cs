@@ -1,8 +1,6 @@
-using Domain.Enums;
-
 namespace Application.Common.Models;
 
-public class EnquiryBaseModel
+public record EnquiryBaseModel : SearchModel
 {
     public int EnquiryId { get; set; }
     public string? BaseServiceUrl { get; set; }

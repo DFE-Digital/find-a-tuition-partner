@@ -14,7 +14,7 @@ public static class TuitionPartnerMapping
     {
         TypeAdapterConfig<Domain.TuitionPartner, TuitionPartnerResult>
             .NewConfig()
-            //Mapster has issues mapping Prices, due to circular ref, but ignore it anyway, since done below as needed
+            //Mapster has issues mapping Prices, due to circular ref, but ignore it anyway, since done within code when needed
             .Ignore(dest => dest.Prices!);
     }
 }
