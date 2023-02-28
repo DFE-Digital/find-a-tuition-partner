@@ -165,14 +165,8 @@
                 </div>
             }
 
-            <div class="govuk-button-group">
-                <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
-                    <a class="govuk-link" data-testid="clear-compare-list-link" href="@clearCompareListUrl">Clear my price comparison list</a>
-                </div>
-
-                <div show-if="count > 0" class="govuk-body app-print-hide">
-                    <govuk-button-link data-testid="make-enquiry-link" href="/enquiry">Make an Enquiry</govuk-button-link>
-                </div>
+            <div show-if="count > 0 || Model.Data.InvalidTPs is not null" class="govuk-body app-print-hide">
+                <a class="govuk-link" data-testid="clear-compare-list-link" href="@clearCompareListUrl">Clear my price comparison list</a>
             </div>
             
         </form>

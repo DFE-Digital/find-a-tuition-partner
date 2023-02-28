@@ -1,12 +1,12 @@
-﻿using Domain.Constants;
+﻿using Application.Queries;
+using Domain.Constants;
 using Domain.Enums;
-using UI.Pages;
 
 namespace Tests.TestData;
 
 public static class Basic
 {
-    public static SearchResults.Query SearchResultsQuery => new()
+    public static GetSearchResultsQuery SearchResultsQuery => new()
     {
         KeyStages = new[] { KeyStage.KeyStage1 },
         Subjects = new[] { "KeyStage1-English" },

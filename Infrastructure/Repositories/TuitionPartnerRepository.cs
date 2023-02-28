@@ -14,22 +14,6 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     {
     }
 
-    public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersBySeoUrls(IEnumerable<string> seoUrls, CancellationToken cancellationToken)
-    {
-        var results = new List<TuitionPartnerResult>();
-
-        TuitionPartnerMapping.Configure();
-
-        var matchedTps = await _context.TuitionPartners.AsNoTracking().AsQueryable()
-            .Where(partner => seoUrls.Select(x => x).Contains(partner.SeoUrl)).ToListAsync(cancellationToken);
-
-        if (!matchedTps.Any()) return results;
-
-        results.AddRange(matchedTps.Select(tuitionPartner => tuitionPartner.Adapt<TuitionPartnerResult>()));
-
-        return results;
-    }
-
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();

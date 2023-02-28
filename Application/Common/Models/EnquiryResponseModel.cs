@@ -1,6 +1,6 @@
 namespace Application.Common.Models;
 
-public class EnquiryResponseModel : EnquiryBaseModel
+public record EnquiryResponseModel : EnquiryBaseModel
 {
     public int TuitionPartnerId { get; set; }
     public string Email { get; set; } = string.Empty;

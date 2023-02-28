@@ -101,6 +101,10 @@
                 <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
             </div>
 
+            <div show-if="Model.Data.Results?.Count > 0" class="govuk-body app-print-hide">
+                <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/guidance?@Model.Data.ToQueryString()" role="button">Make an Enquiry</a>
+            </div>
+
             <div class="govuk-form-group app-form-group-inline">
                 <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
                     <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
@@ -220,6 +224,7 @@
         <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
         <input asp-for="Data.CompareListTuitionType" type="hidden" />
         <input asp-for="Data.CompareListGroupSize" type="hidden" />
+        <input asp-for="Data.CompareListShowWithVAT" type="hidden" />
         <input asp-for="Data.PreviousTuitionType" type="hidden" />
     </form>
 </div>

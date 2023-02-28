@@ -1,6 +1,6 @@
 ﻿using Application.Common.Models;
 
-namespace UI.Extensions
+namespace Application.Extensions
 {
     public static class KeyStageSubjectExtensions
     {
