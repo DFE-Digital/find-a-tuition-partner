@@ -34,6 +34,8 @@ public class EnquirerEmail : PageModel
         {
             Data.Email = sessionValue.Value;
         }
+        
+        ModelState.Clear();
 
         return Page();
     }
@@ -47,10 +49,18 @@ public class EnquirerEmail : PageModel
             {
                 await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
                 {
-                    { StringConstants.EnquirerEmail, data.Email!},
-                    { StringConstants.PostCode, data.Postcode!},
+                    { StringConstants.EnquirerEmail, data.Email!}
 
                 });
+
+                if (!string.IsNullOrEmpty(data.Postcode))
+                {
+                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                    {
+                        { StringConstants.PostCode, data.Postcode },
+
+                    });
+                }
 
                 if (data.KeyStages != null)
                 {

@@ -35,6 +35,8 @@ public class CheckYourAnswers : PageModel
         }
 
         if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");
+        
+        ModelState.Clear();
 
         return Page();
     }
