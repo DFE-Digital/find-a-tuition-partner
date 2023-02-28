@@ -48,7 +48,9 @@ public class EnquirerEmail : PageModel
                 await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
                 {
                     { StringConstants.EnquirerEmail, data.Email!},
-                    { StringConstants.PostCode, data.Postcode!}
+                    { StringConstants.PostCode, data.Postcode!},
+                    { StringConstants.KeyStages, string.Join(",", data.KeyStages!)},
+                    { StringConstants.Subjects, string.Join(",", data.Subjects!)},
                 });
             }
 
