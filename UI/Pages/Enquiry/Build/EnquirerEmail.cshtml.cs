@@ -34,7 +34,7 @@ public class EnquirerEmail : PageModel
         {
             Data.Email = sessionValue.Value;
         }
-        
+
         ModelState.Clear();
 
         return Page();

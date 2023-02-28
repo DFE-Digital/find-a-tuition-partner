@@ -29,7 +29,7 @@ public class EnquiryQuestion : PageModel
         {
             Data.EnquiryText = sessionValue.Value;
         }
-        
+
         ModelState.Clear();
 
         return Page();
