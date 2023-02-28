@@ -49,9 +49,17 @@ public class EnquirerEmail : PageModel
                 {
                     { StringConstants.EnquirerEmail, data.Email!},
                     { StringConstants.PostCode, data.Postcode!},
-                    { StringConstants.KeyStages, string.Join(",", data.KeyStages!)},
-                    { StringConstants.Subjects, string.Join(",", data.Subjects!)},
+
                 });
+
+                if (data.KeyStages != null)
+                {
+                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                    {
+                        { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
+                        { StringConstants.Subjects, string.Join(",", data.Subjects!) },
+                    });
+                }
             }
 
             if (data.From == ReferrerList.CheckYourAnswers)
