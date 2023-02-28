@@ -7,6 +7,10 @@ import {
   SkipLink,
 } from "govuk-frontend";
 
+import HMRCFrontend from "hmrc-frontend/hmrc/all";
+
+window.HMRCFrontend = HMRCFrontend;
+
 var $buttons = document.querySelectorAll('[data-module="govuk-button"]');
 if ($buttons) {
   for (var i = 0; i < $buttons.length; i++) {
@@ -58,6 +62,14 @@ if ($optionsSelect) {
     new window.GOVUK.Modules.OptionSelect(el).init()
   );
 }
+
+//var sessionActivityService = new SessionActivityService(window.BroadcastChannel);
+//var $timeoutDialog = document.querySelector('meta[name="hmrc-timeout-dialog"]');
+
+//if ($timeoutDialog) {
+//    new TimeoutDialog($timeoutDialog, null).init();
+//}
+HMRCFrontend.initAll();
 
 import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();

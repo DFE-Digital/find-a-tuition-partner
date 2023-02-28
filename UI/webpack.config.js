@@ -3,7 +3,11 @@ const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: ["./src/index.js", "./src/index.scss"],
+  entry: [
+    "./src/index.js",
+    "./node_modules/hmrc-frontend/hmrc/all.js",
+    "./src/index.scss",
+  ],
   output: {
     path: path.resolve(__dirname, "wwwroot/dist"),
   },

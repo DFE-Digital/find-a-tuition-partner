@@ -7,6 +7,7 @@ using Infrastructure.Analytics;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using UI.Constants;
 using UI.Filters;
 using UI.Routing;
 using UI.Services;
@@ -25,7 +26,7 @@ builder.Services.AddDistributedCache(builder.Configuration);
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.IdleTimeout = TimeSpan.FromMinutes(DoubleConstants.SessionTimeoutInMinutes);
     options.Cookie.IsEssential = true;
     options.Cookie.Name = ".FindATuitionPartner.Session";
     options.Cookie.HttpOnly = true;
