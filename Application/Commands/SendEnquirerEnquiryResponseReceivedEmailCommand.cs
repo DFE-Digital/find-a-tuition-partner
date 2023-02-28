@@ -62,7 +62,7 @@ public class SendEnquirerEnquiryResponseReceivedEmailCommandHandler : IRequestHa
 
     private NotificationsRecipientDto GetNotificationsRecipient(SendEnquirerEnquiryResponseReceivedEmailCommand request, string enquiryResponderText)
     {
-        var pageLink = $"{request.Data?.BaseServiceUrl}/enquirer-view-all-responses?token={request.Data?.Token}";
+        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/all-enquirer-responses?token={request.Data?.Token}";
 
         var result = new NotificationsRecipientDto()
         {

@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
@@ -15,8 +16,6 @@ public class CheckYourAnswers : PageModel
     }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
-
-    [ViewData] public string SuccessMessage { get; set; } = null!;
 
     public async Task<IActionResult> OnGet()
     {
@@ -42,14 +41,9 @@ public class CheckYourAnswers : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        var compareListedTpsQuery = new GetAllCompareListTuitionPartnersQuery();
-
-        var compareListedTps = await _mediator.Send(compareListedTpsQuery);
-
-        if (compareListedTps.Any())
-        {
-            Data.SelectedTuitionPartners = compareListedTps.ToList();
-        }
+        var searchResultsData = new GetSearchResultsQuery(Data);
+        var searchResults = await _mediator.Send(searchResultsData);
+        Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
 
         var command = new AddEnquiryCommand()
         {
@@ -78,11 +72,7 @@ public class CheckYourAnswers : PageModel
 
             await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
 
-            SuccessMessage =
-                $"Enquiry successfully sent to the tuition partners. You will receive a confirmation email shortly to the following email: {Data.Email} {Environment.NewLine}" +
-                $"and a link to view the enquiry response.";
-            ModelState.Clear();
-            Data = new();
+            return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
         }
 
         return Page();

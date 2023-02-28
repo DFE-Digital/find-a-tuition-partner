@@ -36,12 +36,8 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
     {
         var enquirerEmailForTestingPurposes = request.Data?.Email!;
 
-        var matchedTps =
-            await _unitOfWork.TuitionPartnerRepository.GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!,
-                cancellationToken);
-
         var tpNotificationsRecipients = GetTuitionPartnerNotificationsRecipients(request,
-            matchedTps, enquirerEmailForTestingPurposes);
+            request.Data!.TuitionPartnersForEnquiry!.Results, enquirerEmailForTestingPurposes); ;
 
         var magicLinks = tpNotificationsRecipients.Select(recipient => new MagicLink()
         { Token = recipient.Token!, EnquiryId = request.Data?.EnquiryId, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
@@ -64,7 +60,7 @@ public class SendEnquiryEmailCommandHandler : IRequestHandler<SendEnquiryEmailCo
                     = _aesEncryption.GenerateRandomToken()
                 let token = _aesEncryption.Encrypt(
                     $"EnquiryId={request.Data?.EnquiryId}&TuitionPartnerId={recipient.Id}&Type={nameof(MagicLinkType.EnquiryRequest)}&{generateRandomness}")
-                let formLink = $"{request.Data?.BaseServiceUrl}/enquiry-response?token={token}"
+                let formLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/response?token={token}"
                 select new NotificationsRecipientDto()
                 {
                     Email = recipient.Email,

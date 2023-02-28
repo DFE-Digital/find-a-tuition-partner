@@ -20,14 +20,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, int>
 
     public async Task<int> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
-        var matchedTps = await _unitOfWork.TuitionPartnerRepository
-            .GetTuitionPartnersBySeoUrls(request.Data!.SelectedTuitionPartners!, cancellationToken);
+        //TODO - deal with no TPs selected - show a message on UI
+        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return default;
 
-        matchedTps = matchedTps.ToList();
-
-        if (!matchedTps.Any()) return default;
-
-        var tuitionPartnerEnquiry = matchedTps.Select(selectedTuitionPartner =>
+        var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
 
         var enquiry = new Enquiry()

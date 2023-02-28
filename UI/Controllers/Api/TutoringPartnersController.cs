@@ -1,4 +1,4 @@
-﻿using UI.Pages;
+﻿using Application.Common.Models;
 using TuitionType = Domain.Enums.TuitionType;
 
 namespace UI.Controllers.Api;
@@ -15,8 +15,8 @@ public class TutoringPartnersController : ControllerBase
     }
 
     [HttpPost("search")]
-    [ProducesResponseType(typeof(SearchResults.ResultsModel), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Post([FromBody] SearchResults.Query request)
+    [ProducesResponseType(typeof(SearchResultsModel), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Post([FromBody] GetSearchResultsQuery request)
     {
         request.TuitionType ??= TuitionType.Any;
 

@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model UI.Pages.Enquiry.Respond.Response
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
@@ -12,21 +12,12 @@
 
         <govuk-error-summary>
             <govuk-error-summary-item asp-for="Data.EnquiryResponseText"/>
-            <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
+            <govuk-error-summary-item asp-for="Data.ErrorMessage" />
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
             <span>Submit Enquiry Response</span>
         </h1>
-        
-        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-        {
-            <govuk-notification-banner type="Success">
-                <p class="govuk-notification-banner__heading">
-                    @Model.SuccessMessage
-                </p>
-            </govuk-notification-banner>
-        }
     </div>
 </div>
 

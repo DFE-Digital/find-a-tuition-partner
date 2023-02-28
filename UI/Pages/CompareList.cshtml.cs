@@ -3,7 +3,6 @@ using Application.Common.Models;
 using Domain;
 using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
-using KeyStage = Domain.Enums.KeyStage;
 
 namespace UI.Pages;
 public class CompareList : PageModel
@@ -22,10 +21,7 @@ public class CompareList : PageModel
             data.CompareListTuitionType = data.TuitionType.Value;
         }
 
-        if (data.KeyStages == null && data.Subjects != null)
-        {
-            data.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>().Where(x => string.Join(" ", data.Subjects).Contains(x.ToString())).ToArray();
-        }
+        data.KeyStages = data.KeyStages.UpdateFromSubjects(data.Subjects);
 
         var validator = new Validator();
         var results = await validator.ValidateAsync(data);

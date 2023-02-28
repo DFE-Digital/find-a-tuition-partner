@@ -2,7 +2,7 @@ using Application.Common.Models.Enquiry.Build;
 
 namespace Application.Common.Models.Enquiry.Respond;
 
-public class EnquiryResponseModel : EnquiryBaseModel
+public record EnquiryResponseModel : EnquiryBaseModel
 {
     public int TuitionPartnerId { get; set; }
     public string Email { get; set; } = string.Empty;

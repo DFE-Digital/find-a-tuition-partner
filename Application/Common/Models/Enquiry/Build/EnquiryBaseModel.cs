@@ -1,6 +1,6 @@
 namespace Application.Common.Models.Enquiry.Build;
 
-public class EnquiryBaseModel
+public record EnquiryBaseModel : SearchModel
 {
     public int EnquiryId { get; set; }
     public string? BaseServiceUrl { get; set; }
