@@ -2,7 +2,7 @@
 @model EnquirerEmail
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/";
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/guidance";
     ViewData["Title"] = "What is your email address?";
     ViewData["BackLinkHref"] = backLink;
 }
@@ -32,7 +32,6 @@
                     </div>
                 </div>
             </div>
-            <input asp-for="Data.From" type="hidden" />
             @if (Model.Data.KeyStages != null)
             {
                 @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)
@@ -47,6 +46,8 @@
                     <input asp-for="Data.Subjects![i]" type="hidden"/>
                 }
             }
+            <input asp-for="Data.Postcode" type="hidden" />
+            <input asp-for="Data.From" type="hidden" />
             <input type="hidden" name="handler" value="Submit"/>
             <div class="govuk-button-group">
                 <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>

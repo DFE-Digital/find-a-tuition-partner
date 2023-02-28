@@ -25,7 +25,7 @@ public class WhichSubjects : PageModel
             AllSubjects = await _mediator.Send(query)
         };
 
-        if (Data.From == ReferrerList.CheckYourAnswers)
+        if (query.From == ReferrerList.CheckYourAnswers)
         {
             var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 

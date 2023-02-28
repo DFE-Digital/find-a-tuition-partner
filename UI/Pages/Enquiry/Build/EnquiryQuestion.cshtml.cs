@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
@@ -46,7 +47,7 @@ public class EnquiryQuestion : PageModel
                 });
             }
 
-            return RedirectToPage(nameof(CheckYourAnswers), new EnquiryQuestionModel(data));
+            return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
         }
 
         return Page();

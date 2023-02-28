@@ -94,6 +94,7 @@
           </button>
           <input asp-for="Data.Email" type="hidden" />
           <input asp-for="Data.EnquiryText" type="hidden" />
+          <input asp-for="Data.Postcode" type="hidden" />
           @if (Model.Data.KeyStages != null)
           {
             @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)

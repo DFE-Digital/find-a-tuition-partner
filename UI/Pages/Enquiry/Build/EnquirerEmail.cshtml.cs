@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
@@ -11,10 +12,12 @@ public class EnquirerEmail : PageModel
     {
         _sessionService = sessionService;
     }
-    [BindProperty(SupportsGet = true)] public EnquirerEmailModel Data { get; set; } = new();
+    [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet()
+    public async Task<IActionResult> OnGet(EnquirerEmailModel data)
     {
+        Data = data;
+
         var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
         if (sessionId == null)
@@ -32,8 +35,6 @@ public class EnquirerEmail : PageModel
             Data.Email = sessionValue.Value;
         }
 
-        Data.From = ReferrerList.CheckYourAnswers;
-
         return Page();
     }
     public async Task<IActionResult> OnGetSubmit(EnquirerEmailModel data)
@@ -46,7 +47,8 @@ public class EnquirerEmail : PageModel
             {
                 await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
                 {
-                    { StringConstants.EnquirerEmail, data.Email!}
+                    { StringConstants.EnquirerEmail, data.Email!},
+                    { StringConstants.PostCode, data.Postcode!}
                 });
             }
 
@@ -55,7 +57,7 @@ public class EnquirerEmail : PageModel
                 return RedirectToPage(nameof(CheckYourAnswers));
             }
 
-            return RedirectToPage(nameof(EnquiryQuestion), new EnquirerEmailModel(data));
+            return RedirectToPage(nameof(EnquiryQuestion), new SearchModel(data));
         }
 
         return Page();

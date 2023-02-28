@@ -17,8 +17,10 @@ public class CheckYourAnswers : PageModel
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet()
+    public async Task<IActionResult> OnGet(CheckYourAnswersModel data)
     {
+        Data = data;
+
         var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
         if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
@@ -88,6 +90,10 @@ public class CheckYourAnswers : PageModel
 
             case var k when k.Contains(StringConstants.EnquiryText):
                 Data.EnquiryText = value;
+                break;
+
+            case var k when k.Contains(StringConstants.PostCode):
+                Data.Postcode = value;
                 break;
 
             case var k when k.Contains(StringConstants.KeyStages):

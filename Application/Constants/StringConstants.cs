@@ -25,5 +25,7 @@
         public const string KeyStages = "KeyStages";
 
         public const string Subjects = "Subjects";
+
+        public const string PostCode = "PostCode";
     }
 }
