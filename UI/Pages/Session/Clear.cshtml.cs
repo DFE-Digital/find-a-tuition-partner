@@ -1,10 +1,19 @@
+using Application.Common.Interfaces;
+
 namespace UI.Pages.Session
 {
     public class Clear : PageModel
     {
-        //TODO - ensure clears once session handler included
-        public void OnGet()
+        private readonly ISessionService _sessionService;
+
+        public Clear(ISessionService sessionService)
         {
+            _sessionService = sessionService;
+        }
+
+        public async Task OnGetAsync()
+        {
+            await _sessionService.ClearAsync();
         }
     }
 }

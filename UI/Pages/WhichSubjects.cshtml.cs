@@ -27,6 +27,9 @@ public class WhichSubjects : PageModel
 
         if (query.From == ReferrerList.CheckYourAnswers)
         {
+            if (!await _sessionService.SessionDataExistsAsync())
+                return RedirectToPage("/Session/Timeout");
+
             var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
             if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
@@ -60,19 +63,22 @@ public class WhichSubjects : PageModel
             return Page();
         }
 
-        if (Request != null)
+        if (data.From == ReferrerList.CheckYourAnswers)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            if (!await _sessionService.SessionDataExistsAsync())
+                return RedirectToPage("/Session/Timeout");
 
-            if (sessionId != null)
+            if (Request != null)
             {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                {
-                    { StringConstants.Subjects, string.Join(",", data.Subjects!)}
-                });
+                var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
-                if (data.From == ReferrerList.CheckYourAnswers)
+                if (sessionId != null)
                 {
+                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                    {
+                        { StringConstants.Subjects, string.Join(",", data.Subjects!)}
+                    });
+
                     return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
                 }
             }

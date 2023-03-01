@@ -17,6 +17,9 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGet()
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
         if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
@@ -37,6 +40,9 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGetSubmit(EnquiryQuestionModel data)
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         if (ModelState.IsValid)
         {
             var sessionId = Request.Cookies[StringConstants.SessionCookieName];

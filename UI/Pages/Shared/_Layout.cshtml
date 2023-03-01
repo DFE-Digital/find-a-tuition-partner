@@ -1,6 +1,7 @@
 @inject IHostEnvironment HostEnvironment
 @inject IConfiguration Configuration
 @inject IHttpContextAccessor HttpContext
+@inject Application.Common.Interfaces.ISessionService SessionService
 
 @{
     // Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
@@ -21,6 +22,8 @@
 
     var consentCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
     var consentGranted = Convert.ToBoolean(consentCookie);
+
+    var sessionDataExists = await SessionService.SessionDataExistsAsync();
 }
 
 <!DOCTYPE html>
@@ -83,21 +86,24 @@ n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertB
     }
 
 @*    
-    TODO - Add method to see if session set and if not then exclude this
     TODO - Content review, see
         https://design.tax.service.gov.uk/hmrc-design-patterns/service-timeout/
-
 *@
+    @if (sessionDataExists)
+    {
     <meta name="hmrc-timeout-dialog"
-          data-timeout="@HelperFunctions.HelperFunctions.SessionTimeoutInSeconds()"
-          data-countdown="@HelperFunctions.HelperFunctions.SessionCountdownMessageShownBeforeTimeoutInSeconds()"
-          data-keep-alive-url="/session/keep-alive"
-          data-sign-out-url="/session/clear"
-          data-title="Your session is about to expire"
-          data-message="For your security, your session and enquiry answers will expire in"
-          data-message-suffix=""
-          data-keep-alive-button-text="Resume your session"
-          data-sign-out-button-text="Delete your enquiry answers" />
+        data-timeout="@HelperFunctions.HelperFunctions.SessionTimeoutInSeconds()"
+        data-countdown="@HelperFunctions.HelperFunctions.SessionCountdownMessageShownBeforeTimeoutInSeconds()"
+        data-keep-alive-url="/session/keep-alive"
+        data-sign-out-url="/session/clear"
+        data-timeout-url="/session/timeout"
+        data-title="Your session is about to expire"
+        data-message="For your security, your session and enquiry answers will expire in"
+        data-message-suffix=""
+        data-keep-alive-button-text="Resume your session"
+        data-sign-out-button-text="Delete your enquiry answers"
+        data-synchronise-tabs="true" />
+    }
 
     @if (enableGoogleAnalytics)
     {
@@ -156,8 +162,8 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
                 </a>
             </div>
             <div class="govuk-header__content">
-                <a asp-page="@nameof(Index)" class="govuk-header__link govuk-header__service-name"
-                   data-testid="service-name-link">
+                <a class="govuk-header__link govuk-header__service-name"
+                   data-testid="service-name-link" href="/">
                     Find a tuition partner
                 </a>
             </div>
@@ -179,12 +185,13 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
         </div>
 
         @*
-        TODO - add method to see if session set and not then exclude this
         TODO - Content review, see
         https://design-system.dwp.gov.uk/patterns/manage-a-session-timeout
         *@
-        <div class="govuk-notification-banner govuk-notification-banner--blue session-timeout-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-            <div class="govuk-notification-banner__header">
+        @if(sessionDataExists)
+        {
+            <div class="govuk-notification-banner govuk-notification-banner--blue session-timeout-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
                 <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                     Important
                 </h2>
@@ -195,6 +202,7 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
                 </div>
             </div>
         </div>
+        }
 
         @if (includeHomeLink)
         {
