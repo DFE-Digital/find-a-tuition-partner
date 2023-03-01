@@ -63,12 +63,6 @@ if ($optionsSelect) {
   );
 }
 
-//var sessionActivityService = new SessionActivityService(window.BroadcastChannel);
-//var $timeoutDialog = document.querySelector('meta[name="hmrc-timeout-dialog"]');
-
-//if ($timeoutDialog) {
-//    new TimeoutDialog($timeoutDialog, null).init();
-//}
 HMRCFrontend.initAll();
 
 import PrintThisPage from "./javascript/print-this-page";
