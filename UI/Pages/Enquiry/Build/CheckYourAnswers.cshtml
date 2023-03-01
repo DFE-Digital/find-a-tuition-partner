@@ -1,0 +1,116 @@
+@page
+@model UI.Pages.Enquiry.Build.CheckYourAnswers
+@{ 
+    ViewData["Title"] = "Check your answers";
+    ViewData["BackLinkHref"] = "/enquiry/build/enquiry-question";
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+          <govuk-error-summary-item asp-for="Data.EnquiryText"/>
+          <govuk-error-summary-item asp-for="Data.Email"/>
+          <govuk-error-summary-item asp-for="Data.KeyStages"/>
+          <govuk-error-summary-item asp-for="Data.Subjects"/>
+        </govuk-error-summary>
+
+        <h1 class="govuk-heading-l">
+            <span>Check your answers</span>
+        </h1>
+    </div>
+</div>
+
+<div class="govuk-width-container">
+  <main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds-from-desktop">
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Key Stage and Subjects
+            </dt>
+            <dd class="govuk-summary-list__value">
+              <table class="govuk-table">
+                <caption class="govuk-visually-hidden">Key Stage and Subjects</caption>
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th class="govuk-table__header" scope="col"> Key Stage </th>
+                  <th class="govuk-table__header" scope="col"> Subject </th>
+                </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                @foreach (var item in @Model.Data?.KeyStageSubjects!)
+                {
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                      @item.Key
+                    </td>
+                    <td class="govuk-table__cell">
+                      @string.Join(",", item.Value)
+                    </td>
+                  </tr>
+                }
+                </tbody>
+              </table>
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/which-key-stages?From=@ReferrerList.CheckYourAnswers">
+                Change<span class="govuk-visually-hidden"> key stage and subjects</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Enquiry
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data!.EnquiryText
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/enquiry/build/enquiry-question?From=@ReferrerList.CheckYourAnswers">
+                Change<span class="govuk-visually-hidden"> enquiry</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Email address
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data.Email
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/enquiry/build/enquirer-email?From=@ReferrerList.CheckYourAnswers">
+                Change<span class="govuk-visually-hidden"> email address</span>
+              </a>
+            </dd>
+          </div>
+        </dl>
+        <form method="post">
+          <input type="hidden" name="answers-checked" value="true">
+          <button class="govuk-button" data-module="govuk-button">
+            Send enquiry
+          </button>
+          <input asp-for="Data.Email" type="hidden" />
+          <input asp-for="Data.EnquiryText" type="hidden" />
+          <input asp-for="Data.Postcode" type="hidden" />
+          @if (Model.Data.KeyStages != null)
+          {
+            @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)
+            {
+              <input asp-for="Data.KeyStages![i]" type="hidden"/>
+            }
+          }
+          @if (Model.Data!.Subjects != null)
+          {
+            @for (int i = 0; i < Model.Data.Subjects.Count(); i++)
+            {
+              <input asp-for="Data.Subjects![i]" type="hidden"/>
+            }
+          }
+        </form>
+      </div>
+    </div>
+  </main>
+</div>

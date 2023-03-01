@@ -1,6 +1,6 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
 

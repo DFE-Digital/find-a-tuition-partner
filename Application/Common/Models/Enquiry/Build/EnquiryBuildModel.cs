@@ -1,8 +1,8 @@
 using Domain.Search;
 
-namespace Application.Common.Models;
+namespace Application.Common.Models.Enquiry.Build;
 
-public record EnquiryModel : EnquiryBaseModel
+public record EnquiryBuildModel : EnquiryBaseModel
 {
     public string? EnquiryText { get; set; }
 

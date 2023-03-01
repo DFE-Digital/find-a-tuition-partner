@@ -1,0 +1,57 @@
+@page
+@model EnquirerEmail
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/guidance";
+    ViewData["Title"] = "What is your email address?";
+    ViewData["BackLinkHref"] = backLink;
+}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.Email"/>
+        </govuk-error-summary>
+        <form method="get">
+            <h1 class="govuk-heading-l">What is your email address?</h1>
+            <div data-module="create-enquirer-email">
+                <div class="govuk-form-group">
+                    <div asp-validation-group-for="Data.Email" data-testid="enquirer-email">
+                        <label asp-for="Data.Email" class="govuk-label govuk-label--s">
+                            Email address
+                        </label>
+                        <div id="email-hint" class="govuk-hint">
+                            Tution partner won't see your email address untill you agree to share it.
+                        </div>
+                        <span asp-validation-for="Data.Email" class="govuk-error-message"></span>
+                        <div class="app-form-group-inline">
+                            <input asp-for="Data.Email" class="govuk-input"
+                                   data-testid="enquirer-email-input-box" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (Model.Data.KeyStages != null)
+            {
+                @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)
+                {
+                    <input asp-for="Data.KeyStages![i]" type="hidden"/>
+                }
+            }
+            @if (Model.Data!.Subjects != null)
+            {
+                @for (int i = 0; i < Model.Data.Subjects.Count(); i++)
+                {
+                    <input asp-for="Data.Subjects![i]" type="hidden"/>
+                }
+            }
+            <input asp-for="Data.Postcode" type="hidden" />
+            <input asp-for="Data.From" type="hidden" />
+            <input type="hidden" name="handler" value="Submit"/>
+            <div class="govuk-button-group">
+                <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+            </div>
+        </form>
+    </div>
+</div>

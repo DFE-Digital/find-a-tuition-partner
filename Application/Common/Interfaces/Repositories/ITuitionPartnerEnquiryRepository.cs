@@ -1,4 +1,4 @@
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 using Domain;
 
 namespace Application.Common.Interfaces.Repositories;
