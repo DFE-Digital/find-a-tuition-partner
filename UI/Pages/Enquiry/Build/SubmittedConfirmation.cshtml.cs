@@ -21,7 +21,7 @@ namespace UI.Pages.Enquiry.Build
 
             if (sessionId != null)
             {
-                await _sessionService.DeleteDataAsync(sessionId);
+                await _sessionService.DeleteDataAsync();
             }
         }
     }

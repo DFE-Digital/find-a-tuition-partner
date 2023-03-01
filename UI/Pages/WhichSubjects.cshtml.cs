@@ -27,11 +27,11 @@ public class WhichSubjects : PageModel
 
         if (query.From == ReferrerList.CheckYourAnswers)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-            if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
+            if (!isSessionAvailable) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
 
-            var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
+            var sessionValues = await _sessionService.RetrieveDataAsync();
 
             if (sessionValues != null)
             {
@@ -62,11 +62,11 @@ public class WhichSubjects : PageModel
 
         if (Request != null)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-            if (sessionId != null)
+            if (isSessionAvailable)
             {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
                     { StringConstants.Subjects, string.Join(",", data.Subjects!)}
                 });

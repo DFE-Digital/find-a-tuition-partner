@@ -17,11 +17,11 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+        var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-        if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
+        if (!isSessionAvailable) return RedirectToPage(nameof(EnquirerEmail));
 
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
+        var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues == null) return Page();
 
@@ -39,11 +39,11 @@ public class EnquiryQuestion : PageModel
     {
         if (ModelState.IsValid)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-            if (sessionId != null)
+            if (isSessionAvailable)
             {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
                     { StringConstants.EnquiryText, data.EnquiryText!}
                 });

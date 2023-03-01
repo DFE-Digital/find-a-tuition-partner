@@ -18,15 +18,14 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+        var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-        if (sessionId == null)
+        if (!isSessionAvailable)
         {
-            _sessionService.InitSession();
             return Page();
         }
 
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
+        var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues == null) return Page();
 
@@ -43,11 +42,11 @@ public class EnquirerEmail : PageModel
     {
         if (ModelState.IsValid)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-            if (sessionId != null)
+            if (isSessionAvailable)
             {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
                     { StringConstants.EnquirerEmail, data.Email!}
 
@@ -55,7 +54,7 @@ public class EnquirerEmail : PageModel
 
                 if (!string.IsNullOrEmpty(data.Postcode))
                 {
-                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                     {
                         { StringConstants.PostCode, data.Postcode },
 
@@ -64,7 +63,7 @@ public class EnquirerEmail : PageModel
 
                 if (data.KeyStages != null)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                     {
                         { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
                         { StringConstants.Subjects, string.Join(",", data.Subjects!) },

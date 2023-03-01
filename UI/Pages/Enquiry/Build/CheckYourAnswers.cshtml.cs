@@ -21,11 +21,11 @@ public class CheckYourAnswers : PageModel
     {
         Data = data;
 
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+        var isSessionAvailable = _sessionService.IsSessionAvailable();
 
-        if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
+        if (!isSessionAvailable) return RedirectToPage(nameof(EnquirerEmail));
 
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
+        var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues == null) return RedirectToPage(nameof(EnquirerEmail));
 
