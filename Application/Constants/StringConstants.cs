@@ -15,5 +15,17 @@
         public const string PENDING = "PENDING";
 
         public const string RECEIVED = "RECEIVED";
+
+        public const string SessionCookieName = ".FindATuitionPartner.Session";
+
+        public const string EnquirerEmail = "EnquirerEmail";
+
+        public const string EnquiryText = "EnquiryText";
+
+        public const string KeyStages = "KeyStages";
+
+        public const string Subjects = "Subjects";
+
+        public const string PostCode = "PostCode";
     }
 }

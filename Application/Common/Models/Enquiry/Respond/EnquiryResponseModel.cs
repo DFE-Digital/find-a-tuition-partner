@@ -1,4 +1,6 @@
-namespace Application.Common.Models;
+using Application.Common.Models.Enquiry.Build;
+
+namespace Application.Common.Models.Enquiry.Respond;
 
 public record EnquiryResponseModel : EnquiryBaseModel
 {

@@ -1,13 +1,28 @@
+using Application.Common.Interfaces;
 using Application.Common.Models;
 
 namespace UI.Pages.Enquiry.Build
 {
     public class SubmittedConfirmation : PageModel
     {
-        //TODO - Will enquirer magic link to view responses be shown here?
-        //TODO - Confirm if there is a shorter enquiry ref shown
+        private readonly ISessionService _sessionService;
+
+        public SubmittedConfirmation(ISessionService sessionService)
+        {
+            _sessionService = sessionService;
+        }
         public SearchModel Data { get; set; } = new();
 
-        public void OnGet(SearchModel data) => Data = data;
+        public async Task OnGet(SearchModel data)
+        {
+            Data = data;
+
+            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+
+            if (sessionId != null)
+            {
+                await _sessionService.DeleteDataAsync(sessionId);
+            }
+        }
     }
 }

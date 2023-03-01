@@ -27,13 +27,14 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);
     options.Cookie.IsEssential = true;
-    options.Cookie.Name = ".FindATuitionPartner.Session";
+    options.Cookie.Name = StringConstants.SessionCookieName;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
+builder.Services.AddScoped<ISessionService, DistributedSessionService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>
