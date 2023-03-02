@@ -36,6 +36,9 @@ $govuk-page-width: 1180px;
 @import "node_modules/@ministryofjustice/frontend/moj/components/ticket-panel/ticket-panel";
 @import "node_modules/@ministryofjustice/frontend/moj/components/notification-badge/notification-badge";
 
+//HMRC components
+@import "node_modules/hmrc-frontend/hmrc/components/timeout-dialog/_timeout-dialog";
+
 @import "src/sass/options-card";
 @import "src/sass/option-select";
 @import "src/sass/results-filter";
@@ -47,3 +50,4 @@ $govuk-page-width: 1180px;
 @import "src/sass/compare-list";
 @import "src/sass/tuition-partner-page-compare-list";
 @import "src/sass/compare-list-partner-checkbox-partial-page";
+@import "src/sass/core";

@@ -23,6 +23,9 @@ namespace UI.Pages
 
             if (query.From == ReferrerList.CheckYourAnswers)
             {
+                if (!await _sessionService.SessionDataExistsAsync())
+                    return RedirectToPage("/Session/Timeout");
+
                 var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 
                 if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
@@ -48,16 +51,22 @@ namespace UI.Pages
         {
             if (ModelState.IsValid)
             {
-                if (Request != null)
+                if (data.From == ReferrerList.CheckYourAnswers)
                 {
-                    var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+                    if (!await _sessionService.SessionDataExistsAsync())
+                        return RedirectToPage("/Session/Timeout");
 
-                    if (sessionId != null)
+                    if (Request != null)
                     {
-                        await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+
+                        if (sessionId != null)
                         {
-                            { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
-                        });
+                            await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
+                            {
+                                { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
+                            });
+                        }
                     }
                 }
 
