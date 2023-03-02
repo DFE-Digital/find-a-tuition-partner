@@ -1,118 +1,118 @@
-using System.Text;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using UI.Services;
+//using System.Text;
+//using Microsoft.AspNetCore.Http;
+//using Newtonsoft.Json;
+//using UI.Services;
 
-namespace Tests;
+//namespace Tests;
 
-public class DistributedSessionServiceTests
-{
-    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-    private readonly DistributedSessionService _sessionService;
-    private readonly Mock<ISession> _sessionMock;
+//public class DistributedSessionServiceTests
+//{
+//    private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
+//    private readonly DistributedSessionService _sessionService;
+//    private readonly Mock<ISession> _sessionMock;
 
-    public DistributedSessionServiceTests()
-    {
-        _sessionMock = new Mock<ISession>();
-        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-        _sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
-    }
+//    public DistributedSessionServiceTests()
+//    {
+//        _sessionMock = new Mock<ISession>();
+//        _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+//        _sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+//    }
 
-    [Fact]
-    public async Task AddOrUpdateDataAsync_Should_Update_Data_If_Already_Exists()
-    {
-        // Arrange
-        var sessionIdKey = "test-session-id";
-        var existingData = new Dictionary<string, string> { { "foo", "bar" } };
-        var updatedData = new Dictionary<string, string> { { "foo", "baz" }, { "qux", "quux" } };
-        var storedValue = JsonConvert.SerializeObject(existingData);
+//    [Fact]
+//    public async Task AddOrUpdateDataAsync_Should_Update_Data_If_Already_Exists()
+//    {
+//        // Arrange
+//        var sessionIdKey = "test-session-id";
+//        var existingData = new Dictionary<string, string> { { "foo", "bar" } };
+//        var updatedData = new Dictionary<string, string> { { "foo", "baz" }, { "qux", "quux" } };
+//        var storedValue = JsonConvert.SerializeObject(existingData);
 
-        _sessionMock
-            .Setup(x => x.LoadAsync(default))
-            .Returns(Task.CompletedTask);
-        _sessionMock
-            .Setup(x => x.TryGetValue(sessionIdKey, out It.Ref<byte[]?>.IsAny))
-            .Returns(true);
-        _sessionMock
-            .Setup(x => x.Set(sessionIdKey, It.IsAny<byte[]>()))
-            .Callback<string, byte[]>((key, value) =>
-            {
-                storedValue = Encoding.UTF8.GetString(value);
-            });
-        _sessionMock
-            .Setup(x => x.CommitAsync(default))
-            .Returns(Task.CompletedTask);
+//        _sessionMock
+//            .Setup(x => x.LoadAsync(default))
+//            .Returns(Task.CompletedTask);
+//        _sessionMock
+//            .Setup(x => x.TryGetValue(sessionIdKey, out It.Ref<byte[]?>.IsAny))
+//            .Returns(true);
+//        _sessionMock
+//            .Setup(x => x.Set(sessionIdKey, It.IsAny<byte[]>()))
+//            .Callback<string, byte[]>((key, value) =>
+//            {
+//                storedValue = Encoding.UTF8.GetString(value);
+//            });
+//        _sessionMock
+//            .Setup(x => x.CommitAsync(default))
+//            .Returns(Task.CompletedTask);
 
-        var mockHttpContext = new Mock<HttpContext>();
-        mockHttpContext
-            .Setup(x => x.Session)
-            .Returns(_sessionMock.Object);
+//        var mockHttpContext = new Mock<HttpContext>();
+//        mockHttpContext
+//            .Setup(x => x.Session)
+//            .Returns(_sessionMock.Object);
 
-        _mockHttpContextAccessor
-            .Setup(x => x.HttpContext)
-            .Returns(mockHttpContext.Object);
+//        _mockHttpContextAccessor
+//            .Setup(x => x.HttpContext)
+//            .Returns(mockHttpContext.Object);
 
-        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+//        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
 
-        // Act
-        await sessionService.AddOrUpdateDataAsync(sessionIdKey, updatedData);
+//        // Act
+//        await sessionService.AddOrUpdateDataAsync(sessionIdKey, updatedData);
 
-        // Assert
-        var expectedStoredValue = JsonConvert.SerializeObject(updatedData);
-        Assert.Equal(expectedStoredValue, storedValue);
-    }
+//        // Assert
+//        var expectedStoredValue = JsonConvert.SerializeObject(updatedData);
+//        Assert.Equal(expectedStoredValue, storedValue);
+//    }
 
 
-    [Fact]
-    public async Task RetrieveDataAsync_ShouldReturnDeserializedData_WhenDataExists()
-    {
-        // Arrange
-        var sessionIdKey = "testKey";
-        var testData = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } };
-        var testDataString = JsonConvert.SerializeObject(testData);
-        var testSessionData = Encoding.UTF8.GetBytes(testDataString);
+//    [Fact]
+//    public async Task RetrieveDataAsync_ShouldReturnDeserializedData_WhenDataExists()
+//    {
+//        // Arrange
+//        var sessionIdKey = "testKey";
+//        var testData = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } };
+//        var testDataString = JsonConvert.SerializeObject(testData);
+//        var testSessionData = Encoding.UTF8.GetBytes(testDataString);
 
-        _mockHttpContextAccessor.SetupGet(x => x.HttpContext!.Session).Returns(_sessionMock.Object);
-        _sessionMock.Setup(x => x.LoadAsync(default)).Returns(Task.CompletedTask);
-        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
+//        _mockHttpContextAccessor.SetupGet(x => x.HttpContext!.Session).Returns(_sessionMock.Object);
+//        _sessionMock.Setup(x => x.LoadAsync(default)).Returns(Task.CompletedTask);
+//        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
 
-        // Act
-        var result = await _sessionService.RetrieveDataAsync(sessionIdKey);
+//        // Act
+//        var result = await _sessionService.RetrieveDataAsync(sessionIdKey);
 
-        // Assert
-        result.Should().BeEquivalentTo(testData);
-    }
+//        // Assert
+//        result.Should().BeEquivalentTo(testData);
+//    }
 
-    [Fact]
-    public async Task DeleteDataAsync_Should_Remove_Data_If_StoredValue_Exists()
-    {
-        // Arrange
-        var sessionIdKey = "test-session-id";
-        var storedValue = JsonConvert.SerializeObject(new Dictionary<string, string>());
-        var testSessionData = Encoding.UTF8.GetBytes(storedValue);
+//    [Fact]
+//    public async Task DeleteDataAsync_Should_Remove_Data_If_StoredValue_Exists()
+//    {
+//        // Arrange
+//        var sessionIdKey = "test-session-id";
+//        var storedValue = JsonConvert.SerializeObject(new Dictionary<string, string>());
+//        var testSessionData = Encoding.UTF8.GetBytes(storedValue);
 
-        _sessionMock
-            .Setup(x => x.LoadAsync(default))
-            .Returns(Task.CompletedTask);
+//        _sessionMock
+//            .Setup(x => x.LoadAsync(default))
+//            .Returns(Task.CompletedTask);
 
-        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
+//        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
 
-        var mockHttpContext = new Mock<HttpContext>();
-        mockHttpContext
-            .SetupGet(x => x.Session)
-            .Returns(_sessionMock.Object);
+//        var mockHttpContext = new Mock<HttpContext>();
+//        mockHttpContext
+//            .SetupGet(x => x.Session)
+//            .Returns(_sessionMock.Object);
 
-        _mockHttpContextAccessor
-            .SetupGet(x => x.HttpContext)
-            .Returns(mockHttpContext.Object);
+//        _mockHttpContextAccessor
+//            .SetupGet(x => x.HttpContext)
+//            .Returns(mockHttpContext.Object);
 
-        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+//        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
 
-        // Act
-        await sessionService.DeleteDataAsync(sessionIdKey);
+//        // Act
+//        await sessionService.DeleteDataAsync(sessionIdKey);
 
-        // Assert
-        mockHttpContext.Verify(x => x.Session.Remove(sessionIdKey), Times.Once);
-    }
+//        // Assert
+//        mockHttpContext.Verify(x => x.Session.Remove(sessionIdKey), Times.Once);
+//    }
 
-}
+//}

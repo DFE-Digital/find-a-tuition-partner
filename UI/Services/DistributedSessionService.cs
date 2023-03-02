@@ -1,6 +1,5 @@
 using System.Text;
 using Application.Common.Interfaces;
-using Newtonsoft.Json;
 
 namespace UI.Services;
 
@@ -13,63 +12,38 @@ public class DistributedSessionService : ISessionService
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
     }
 
-    public void InitSession()
-    {
-        SetString(StringConstants.SessionCookieName, StringConstants.SessionCookieName);
-    }
-
-    public async Task AddOrUpdateDataAsync(string sessionIdKey, Dictionary<string, string> data)
+    public async Task AddOrUpdateDataAsync(string key, string? value)
     {
         await LoadDataFromDistributedDataStore();
 
-        var dataString = JsonConvert.SerializeObject(data);
-
-        var storedValue = GetString(sessionIdKey);
-
-        if (!string.IsNullOrEmpty(storedValue))
+        if (string.IsNullOrEmpty(value))
         {
-            var existingData = JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
-
-            // Update existing data with new values
-            foreach (var key in data.Keys)
-            {
-                if (existingData!.ContainsKey(key))
-                {
-                    existingData[key] = data[key];
-                }
-                else
-                {
-                    existingData.Add(key, data[key]);
-                }
-            }
-
-            var updatedValue = JsonConvert.SerializeObject(existingData);
-            SetString(sessionIdKey, updatedValue);
+            _contextAccessor!.HttpContext!.Session!.Remove(key);
         }
         else
         {
-            // Add
-            SetString(sessionIdKey, dataString);
+            SetString(key, value);
         }
 
         await CommitDataToDistributedDataStore();
     }
 
-    public async Task<Dictionary<string, string>?> RetrieveDataAsync(string sessionIdKey)
+    public async Task AddOrUpdateDataAsync(Dictionary<string, string> data)
     {
         await LoadDataFromDistributedDataStore();
-        var storedValue = GetString(sessionIdKey);
-        return storedValue == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
+
+        foreach (var key in data.Keys)
+        {
+            SetString(key, data[key]);
+        }
+
+        await CommitDataToDistributedDataStore();
     }
 
-    public async Task DeleteDataAsync(string sessionIdKey)
+    public async Task<string?> RetrieveDataAsync(string key)
     {
         await LoadDataFromDistributedDataStore();
-        var storedValue = GetString(sessionIdKey);
-        if (storedValue != null)
-        {
-            _contextAccessor!.HttpContext!.Session!.Remove(sessionIdKey);
-        }
+        return GetString(key);
     }
 
     public async Task<bool> SessionDataExistsAsync()
@@ -94,14 +68,13 @@ public class DistributedSessionService : ISessionService
         await _contextAccessor!.HttpContext!.Session!.CommitAsync();
     }
 
-    private string? GetString(string sessionIdKey)
+    private string? GetString(string key)
     {
-        var data = _contextAccessor!.HttpContext!.Session!.Get(sessionIdKey);
-        return data == null ? null : Encoding.UTF8.GetString(data);
+        return _contextAccessor!.HttpContext!.Session!.GetString(key);
     }
 
     private void SetString(string key, string value)
     {
-        _contextAccessor!.HttpContext!.Session!.Set(key, Encoding.UTF8.GetBytes(value));
+        _contextAccessor!.HttpContext!.Session!.SetString(key, value);
     }
 }
