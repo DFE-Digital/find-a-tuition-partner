@@ -21,17 +21,14 @@ public class CheckYourAnswers : PageModel
     {
         Data = data;
 
-        var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-        if (!isSessionAvailable) return RedirectToPage(nameof(EnquirerEmail));
-
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionValues == null) return RedirectToPage(nameof(EnquirerEmail));
-
-        foreach (var sessionValue in sessionValues)
+        if (sessionValues != null)
         {
-            ParseSessionValue(sessionValue.Key, sessionValue.Value);
+            foreach (var sessionValue in sessionValues)
+            {
+                ParseSessionValue(sessionValue.Key, sessionValue.Value);
+            }
         }
 
         if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");

@@ -13,63 +13,71 @@ public class DistributedSessionService : ISessionService
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
     }
 
-    public bool IsSessionAvailable()
-    {
-        return _contextAccessor!.HttpContext!.Session.IsAvailable;
-    }
-
     public async Task AddOrUpdateDataAsync(Dictionary<string, string> data)
     {
-        await LoadDataFromDistributedDataStore();
-
-        var dataString = JsonConvert.SerializeObject(data);
-
-        var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
-
-        if (!string.IsNullOrEmpty(storedValue))
+        if (IsSessionAvailable())
         {
-            var existingData = JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
+            await LoadDataFromDistributedDataStore();
 
-            // Update existing data with new values
-            foreach (var key in data.Keys)
+            var dataString = JsonConvert.SerializeObject(data);
+
+            var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
+
+            if (!string.IsNullOrEmpty(storedValue))
             {
-                if (existingData!.ContainsKey(key))
+                var existingData = JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
+
+                // Update existing data with new values
+                foreach (var key in data.Keys)
                 {
-                    existingData[key] = data[key];
+                    if (existingData!.ContainsKey(key))
+                    {
+                        existingData[key] = data[key];
+                    }
+                    else
+                    {
+                        existingData.Add(key, data[key]);
+                    }
                 }
-                else
-                {
-                    existingData.Add(key, data[key]);
-                }
+
+                var updatedValue = JsonConvert.SerializeObject(existingData);
+                SetString(_contextAccessor!.HttpContext!.Session.Id, updatedValue);
+            }
+            else
+            {
+                // Add
+                SetString(_contextAccessor!.HttpContext!.Session.Id, dataString);
             }
 
-            var updatedValue = JsonConvert.SerializeObject(existingData);
-            SetString(_contextAccessor!.HttpContext!.Session.Id, updatedValue);
+            await CommitDataToDistributedDataStore();
         }
-        else
-        {
-            // Add
-            SetString(_contextAccessor!.HttpContext!.Session.Id, dataString);
-        }
-
-        await CommitDataToDistributedDataStore();
     }
 
     public async Task<Dictionary<string, string>?> RetrieveDataAsync()
     {
+        if (!IsSessionAvailable()) return null;
         await LoadDataFromDistributedDataStore();
         var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
         return storedValue == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
+
     }
 
     public async Task DeleteDataAsync()
     {
-        await LoadDataFromDistributedDataStore();
-        var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
-        if (storedValue != null)
+        if (IsSessionAvailable())
         {
-            _contextAccessor!.HttpContext!.Session!.Remove(_contextAccessor!.HttpContext!.Session.Id);
+            await LoadDataFromDistributedDataStore();
+            var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
+            if (storedValue != null)
+            {
+                _contextAccessor!.HttpContext!.Session!.Remove(_contextAccessor!.HttpContext!.Session.Id);
+            }
         }
+    }
+
+    private bool IsSessionAvailable()
+    {
+        return _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
     }
 
     private async Task LoadDataFromDistributedDataStore()

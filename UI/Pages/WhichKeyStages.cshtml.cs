@@ -23,10 +23,6 @@ namespace UI.Pages
 
             if (query.From == ReferrerList.CheckYourAnswers)
             {
-                var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-                if (!isSessionAvailable) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
-
                 var sessionValues = await _sessionService.RetrieveDataAsync();
 
                 if (sessionValues != null)
@@ -48,17 +44,12 @@ namespace UI.Pages
         {
             if (ModelState.IsValid)
             {
-                if (Request != null)
+                if (data.KeyStages != null)
                 {
-                    var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-                    if (isSessionAvailable)
+                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                     {
-                        await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                        {
-                            { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
-                        });
-                    }
+                        { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
+                    });
                 }
 
                 Data = await _mediator.Send(new Query(data));

@@ -17,17 +17,14 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-        if (!isSessionAvailable) return RedirectToPage(nameof(EnquirerEmail));
-
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionValues == null) return Page();
-
-        foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquiryText)))
+        if (sessionValues != null)
         {
-            Data.EnquiryText = sessionValue.Value;
+            foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquiryText)))
+            {
+                Data.EnquiryText = sessionValue.Value;
+            }
         }
 
         ModelState.Clear();
@@ -39,15 +36,10 @@ public class EnquiryQuestion : PageModel
     {
         if (ModelState.IsValid)
         {
-            var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-            if (isSessionAvailable)
+            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
             {
-                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                {
-                    { StringConstants.EnquiryText, data.EnquiryText!}
-                });
-            }
+                { StringConstants.EnquiryText, data.EnquiryText!}
+            });
 
             return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
         }

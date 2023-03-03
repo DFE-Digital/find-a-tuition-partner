@@ -19,30 +19,6 @@ public class DistributedSessionServiceTests
     }
 
     [Fact]
-    public void IsSessionAvailable_ShouldReturnTrue_WhenSessionIsAvailable()
-    {
-        // Arrange
-        _sessionMock.SetupGet(x => x.IsAvailable).Returns(true);
-
-        var mockHttpContext = new Mock<HttpContext>();
-        mockHttpContext
-            .Setup(x => x.Session)
-            .Returns(_sessionMock.Object);
-
-        _mockHttpContextAccessor
-            .SetupGet(x => x.HttpContext)
-            .Returns(mockHttpContext.Object);
-
-        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
-
-        // Act
-        var result = sessionService.IsSessionAvailable();
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
     public async Task AddOrUpdateDataAsync_Should_Update_Data_If_Already_Exists()
     {
         // Arrange
@@ -53,6 +29,7 @@ public class DistributedSessionServiceTests
 
         var testSessionData = Encoding.UTF8.GetBytes(storedValue);
         _sessionMock.SetupGet(x => x.Id).Returns(sessionIdKey);
+        _sessionMock.SetupGet(x => x.IsAvailable).Returns(true);
         _sessionMock
             .Setup(x => x.LoadAsync(default))
             .Returns(Task.CompletedTask);
@@ -98,6 +75,7 @@ public class DistributedSessionServiceTests
         var testDataString = JsonConvert.SerializeObject(testData);
         var testSessionData = Encoding.UTF8.GetBytes(testDataString);
         _sessionMock.SetupGet(x => x.Id).Returns(sessionIdKey);
+        _sessionMock.SetupGet(x => x.IsAvailable).Returns(true);
         _mockHttpContextAccessor.SetupGet(x => x.HttpContext!.Session).Returns(_sessionMock.Object);
         _sessionMock.Setup(x => x.LoadAsync(default)).Returns(Task.CompletedTask);
         _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
@@ -117,6 +95,7 @@ public class DistributedSessionServiceTests
         var storedValue = JsonConvert.SerializeObject(new Dictionary<string, string>());
         var testSessionData = Encoding.UTF8.GetBytes(storedValue);
         _sessionMock.SetupGet(x => x.Id).Returns(sessionIdKey);
+        _sessionMock.SetupGet(x => x.IsAvailable).Returns(true);
         _sessionMock
             .Setup(x => x.LoadAsync(default))
             .Returns(Task.CompletedTask);

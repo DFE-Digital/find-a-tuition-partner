@@ -18,20 +18,14 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-        if (!isSessionAvailable)
-        {
-            return Page();
-        }
-
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionValues == null) return Page();
-
-        foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquirerEmail)))
+        if (sessionValues != null)
         {
-            Data.Email = sessionValue.Value;
+            foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquirerEmail)))
+            {
+                Data.Email = sessionValue.Value;
+            }
         }
 
         ModelState.Clear();
@@ -42,33 +36,28 @@ public class EnquirerEmail : PageModel
     {
         if (ModelState.IsValid)
         {
-            var isSessionAvailable = _sessionService.IsSessionAvailable();
+            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
+            {
+                { StringConstants.EnquirerEmail, data.Email!}
 
-            if (isSessionAvailable)
+            });
+
+            if (!string.IsNullOrEmpty(data.Postcode))
             {
                 await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
-                    { StringConstants.EnquirerEmail, data.Email!}
+                    { StringConstants.PostCode, data.Postcode },
 
                 });
+            }
 
-                if (!string.IsNullOrEmpty(data.Postcode))
+            if (data.KeyStages != null)
+            {
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
-                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                    {
-                        { StringConstants.PostCode, data.Postcode },
-
-                    });
-                }
-
-                if (data.KeyStages != null)
-                {
-                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                    {
-                        { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
-                        { StringConstants.Subjects, string.Join(",", data.Subjects!) },
-                    });
-                }
+                    { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
+                    { StringConstants.Subjects, string.Join(",", data.Subjects!) },
+                });
             }
 
             if (data.From == ReferrerList.CheckYourAnswers)

@@ -27,10 +27,6 @@ public class WhichSubjects : PageModel
 
         if (query.From == ReferrerList.CheckYourAnswers)
         {
-            var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-            if (!isSessionAvailable) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
-
             var sessionValues = await _sessionService.RetrieveDataAsync();
 
             if (sessionValues != null)
@@ -60,22 +56,17 @@ public class WhichSubjects : PageModel
             return Page();
         }
 
-        if (Request != null)
+        if (data.Subjects != null)
         {
-            var isSessionAvailable = _sessionService.IsSessionAvailable();
-
-            if (isSessionAvailable)
+            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
             {
-                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                {
-                    { StringConstants.Subjects, string.Join(",", data.Subjects!)}
-                });
+                { StringConstants.Subjects, string.Join(",", data.Subjects!)}
+            });
+        }
 
-                if (data.From == ReferrerList.CheckYourAnswers)
-                {
-                    return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
-                }
-            }
+        if (data.From == ReferrerList.CheckYourAnswers)
+        {
+            return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
         }
         return RedirectToPage("SearchResults", new SearchModel(data));
     }
