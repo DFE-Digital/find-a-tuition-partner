@@ -23,20 +23,24 @@ namespace UI.Pages.Enquiry.Respond
 
         [ViewData] public string ErrorMessage { get; set; } = string.Empty;
 
+        string _queryToken = string.Empty;
+
         public async Task<IActionResult> OnGet()
         {
-            var token = Request.Query["token"].ToString();
+            _queryToken = Request.Query["token"].ToString();
 
-            if (AddInValidUrlErrorMessage(token)) return Page();
+            if (AddInValidUrlErrorMessage(_queryToken)) return Page();
 
             try
             {
-                var enquiryId = GetEnquiryIdFromToken(token);
+                var enquiryId = GetEnquiryIdFromToken(_queryToken);
 
-                var validMagicLinkToken = await IsValidMagicLinkToken(token);
+                var validMagicLinkToken = await IsValidMagicLinkToken(_queryToken);
                 if (!validMagicLinkToken) return Page();
 
-                Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(enquiryId));
+                var baseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+                Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(enquiryId, baseServiceUrl));
             }
             catch
             {
@@ -49,7 +53,20 @@ namespace UI.Pages.Enquiry.Respond
 
         private int GetEnquiryIdFromToken(string token)
         {
-            var tokenValue = _aesEncrypt.Decrypt(token);
+            string tokenValue;
+
+            try
+            {
+                tokenValue = _aesEncrypt.Decrypt(token);
+            }
+            catch
+            {
+                var parsedToken = ParseTokenFromQueryString();
+
+                tokenValue = _aesEncrypt.Decrypt(parsedToken);
+
+                _queryToken = parsedToken;
+            }
 
             var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
 
@@ -83,7 +100,8 @@ namespace UI.Pages.Enquiry.Respond
 
         private async Task<bool> IsValidMagicLinkToken(string token)
         {
-            var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token));
+            var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token,
+                nameof(MagicLinkType.EnquirerViewAllResponses)));
 
             if (!isValidMagicLinkToken)
             {
@@ -93,6 +111,14 @@ namespace UI.Pages.Enquiry.Respond
             }
 
             return true;
+        }
+
+        private string ParseTokenFromQueryString()
+        {
+            var queryString = Request.QueryString.Value;
+            var tokens = queryString!.Split(new char[] { '=' }, 2);
+            var tokenValue = tokens[1];
+            return tokenValue;
         }
     }
 }
