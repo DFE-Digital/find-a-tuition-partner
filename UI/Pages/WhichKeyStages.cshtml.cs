@@ -25,16 +25,13 @@ namespace UI.Pages
             {
                 var sessionValues = await _sessionService.RetrieveDataAsync();
 
-                if (sessionValues != null)
+                if (sessionValues?.TryGetValue(StringConstants.KeyStages, out var keyStages) == true)
                 {
-                    foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.KeyStages)))
-                    {
-                        query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                            .Where(x => string.Join(" ", sessionValue).Contains(x.ToString())).ToArray();
-                    }
-
-                    Data = await _mediator.Send(query);
+                    query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
+                        .Where(x => string.Join(" ", keyStages).Contains(x.ToString())).ToArray();
                 }
+
+                Data = await _mediator.Send(query);
             }
 
             return Page();

@@ -20,12 +20,9 @@ public class EnquirerEmail : PageModel
 
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionValues != null)
+        if (sessionValues?.TryGetValue(StringConstants.EnquirerEmail, out var email) == true)
         {
-            foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquirerEmail)))
-            {
-                Data.Email = sessionValue.Value;
-            }
+            Data.Email = email;
         }
 
         ModelState.Clear();

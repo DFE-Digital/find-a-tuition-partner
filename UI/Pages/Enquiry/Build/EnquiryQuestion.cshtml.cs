@@ -19,12 +19,9 @@ public class EnquiryQuestion : PageModel
     {
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionValues != null)
+        if (sessionValues?.TryGetValue(StringConstants.EnquiryText, out var enquiryText) == true)
         {
-            foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquiryText)))
-            {
-                Data.EnquiryText = sessionValue.Value;
-            }
+            Data.EnquiryText = enquiryText;
         }
 
         ModelState.Clear();

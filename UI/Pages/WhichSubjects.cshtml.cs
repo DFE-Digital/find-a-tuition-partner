@@ -29,18 +29,15 @@ public class WhichSubjects : PageModel
         {
             var sessionValues = await _sessionService.RetrieveDataAsync();
 
-            if (sessionValues != null)
+            if (sessionValues?.TryGetValue(StringConstants.Subjects, out var subjects) == true)
             {
-                foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.Subjects)))
-                {
-                    query.Subjects = sessionValue.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                }
-
-                Data = new Command(query)
-                {
-                    AllSubjects = await _mediator.Send(query)
-                };
+                query.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
             }
+
+            Data = new Command(query)
+            {
+                AllSubjects = await _mediator.Send(query)
+            };
         }
         return Page();
     }
