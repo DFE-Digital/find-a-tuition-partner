@@ -1,0 +1,36 @@
+@page
+@model UI.Pages.Enquiry.Respond.EnquirerResponse
+@{
+    var baseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+    var backLink = $"{baseServiceUrl}/enquiry/respond/all-enquirer-responses?token={@Model.Data.EnquirerViewAllResponsesToken}";
+    
+    ViewData["Title"] = "Enquirer View Response";
+    ViewData["BackLinkHref"] = backLink;
+    ViewData["IncludePrintPage"] = true;
+}
+
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="ErrorMessage"/>
+        </govuk-error-summary>
+        
+        <h1 class="govuk-heading-l">
+            <span>View response from @Model.Data.TuitionPartnerName</span>
+        </h1>
+
+    </div>
+</div>
+
+<dl class="govuk-summary-list">
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Enquiry Response
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.Data.EnquiryResponseText
+    </dd>
+  </div>
+</dl>

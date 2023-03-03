@@ -2,7 +2,7 @@ using Application.Common.Interfaces;
 
 namespace Application.Queries;
 
-public record IsValidMagicLinkTokenQuery(string Token) : IRequest<bool>;
+public record IsValidMagicLinkTokenQuery(string Token, string TokenType) : IRequest<bool>;
 
 public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLinkTokenQuery, bool>
 {
@@ -17,7 +17,10 @@ public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLin
     {
         if (string.IsNullOrEmpty(request.Token)) return default;
 
-        var tokenFoundInDb = await _unitOfWork.MagicLinkRepository.SingleOrDefaultAsync(x => x.Token == request.Token);
+        var tokenFoundInDb = await _unitOfWork.MagicLinkRepository.
+            SingleOrDefaultAsync(x => x.Token == request.Token
+                                      && x.MagicLinkType!.Name == request.TokenType,
+                "MagicLinkType", false, cancellationToken);
 
         return tokenFoundInDb != null;
     }

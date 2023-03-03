@@ -59,6 +59,8 @@ namespace UI.Pages.Enquiry.Respond
                 var validMagicLinkToken = await IsValidMagicLinkToken(token);
                 if (!validMagicLinkToken) return Page();
 
+                Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
                 var command = new AddEnquiryResponseCommand()
                 {
                     Data = Data
@@ -68,15 +70,6 @@ namespace UI.Pages.Enquiry.Respond
 
                 if (hasDataSaved)
                 {
-                    Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-
-                    var sendEnquirerEnquiryResponseReceivedEmail = new SendEnquirerEnquiryResponseReceivedEmailCommand()
-                    {
-                        Data = Data
-                    };
-
-                    await _mediator.Send(sendEnquirerEnquiryResponseReceivedEmail);
-
                     return RedirectToPage(nameof(ResponseConfirmation));
                 }
             }
@@ -132,7 +125,7 @@ namespace UI.Pages.Enquiry.Respond
 
         private async Task<bool> IsValidMagicLinkToken(string token)
         {
-            var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token));
+            var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token, nameof(MagicLinkType.EnquiryRequest)));
 
             if (!isValidMagicLinkToken)
             {
