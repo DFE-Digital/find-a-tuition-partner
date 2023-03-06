@@ -11,7 +11,7 @@
 @model SearchResults
 @{
     ViewData["Title"] = "Search results";
-    ViewData["BackLinkHref"] = $"/which-subjects?{Model.Data.ToQueryString()}";
+    ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
 }
 
@@ -220,11 +220,9 @@
                 </div>
             }
         </div>
-        <input asp-for="Data.CompareListOrderBy" type="hidden" />
-        <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
-        <input asp-for="Data.CompareListTuitionType" type="hidden" />
-        <input asp-for="Data.CompareListGroupSize" type="hidden" />
-        <input asp-for="Data.CompareListShowWithVAT" type="hidden" />
+
+        <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true}, {"ExcludeSubjects", true}, {"ExcludeTuitionTypes", true}, {"ExcludePostcode", true} }' />
+
         <input asp-for="Data.PreviousTuitionType" type="hidden" />
     </form>
 </div>

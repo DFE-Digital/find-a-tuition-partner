@@ -15,10 +15,12 @@ public class EnquiryQuestion : PageModel
 
     [BindProperty(SupportsGet = true)] public EnquiryQuestionModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet()
+    public async Task<IActionResult> OnGet(EnquiryQuestionModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
+
+        Data = data;
 
         var sessionId = Request.Cookies[StringConstants.SessionCookieName];
 

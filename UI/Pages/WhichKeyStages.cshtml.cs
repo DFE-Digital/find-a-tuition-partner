@@ -19,66 +19,33 @@ namespace UI.Pages
 
         public async Task<IActionResult> OnGet(Query query)
         {
-            Data = await _mediator.Send(query);
-
             if (query.From == ReferrerList.CheckYourAnswers)
             {
                 if (!await _sessionService.SessionDataExistsAsync())
                     return RedirectToPage("/Session/Timeout");
-
-                var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-                if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
-
-                var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-                if (sessionValues != null)
-                {
-                    foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.KeyStages)))
-                    {
-                        query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                            .Where(x => string.Join(" ", sessionValue).Contains(x.ToString())).ToArray();
-                    }
-
-                    Data = await _mediator.Send(query);
-                }
             }
+
+            Data = await _mediator.Send(query);
 
             return Page();
         }
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
-            if (ModelState.IsValid)
+            if (data.From == ReferrerList.CheckYourAnswers)
             {
-                if (data.From == ReferrerList.CheckYourAnswers)
-                {
-                    if (!await _sessionService.SessionDataExistsAsync())
-                        return RedirectToPage("/Session/Timeout");
-
-                    if (Request != null)
-                    {
-                        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-                        if (sessionId != null)
-                        {
-                            await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                            {
-                                { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
-                            });
-                        }
-                    }
-                }
-
-                Data = await _mediator.Send(new Query(data));
-
-                return RedirectToPage("/WhichSubjects", new SearchModel(data));
+                if (!await _sessionService.SessionDataExistsAsync())
+                    return RedirectToPage("/Session/Timeout");
             }
-            else
+
+            Data = await _mediator.Send(new Query(data));
+
+            if (!ModelState.IsValid)
             {
-                Data = await _mediator.Send(new Query(data));
                 return Page();
             }
+
+            return RedirectToPage(nameof(WhichSubjects), new SearchModel(Data));
         }
 
         public record Query : SearchModel, IRequest<Command>
