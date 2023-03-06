@@ -17,10 +17,10 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
-
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
+
+        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
 
         ModelState.Clear();
 
