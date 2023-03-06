@@ -1,8 +1,9 @@
+using Application.Common.DTO;
 using Application.Common.Interfaces.Repositories;
 using Application.Common.Models.Enquiry.Respond;
-using Application.Constants;
 using Domain;
 using Microsoft.EntityFrameworkCore;
+using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Infrastructure.Repositories;
 
@@ -12,12 +13,13 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
     {
     }
 
-    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(int enquiryId)
+    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(int enquiryId, string baseServiceUrl)
     {
         var tuitionPartnerEnquiries = await _context.TuitionPartnersEnquiry.AsNoTracking()
             .Where(e => e.EnquiryId == enquiryId)
             .Include(e => e.Enquiry)
             .Include(e => e.EnquiryResponse)
+            .ThenInclude(e => e!.MagicLink)
             .Include(x => x.TuitionPartner).ToListAsync();
 
         if (!tuitionPartnerEnquiries.Any())
@@ -25,24 +27,56 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             return new EnquirerViewAllResponsesModel();
         }
 
+        var tuitionPartnerEnquiriesWithResponses = tuitionPartnerEnquiries.Where(x =>
+            x.EnquiryResponse != null && !string.IsNullOrEmpty(x.EnquiryResponse.EnquiryResponseText)).ToList();
+
         var result = new EnquirerViewAllResponsesModel
         {
             EnquiryText = tuitionPartnerEnquiries.FirstOrDefault()?.Enquiry.EnquiryText!,
-            EnquirerViewResponses = new List<EnquirerViewResponseModel>()
+            NumberOfTpEnquiryWasSent = tuitionPartnerEnquiries.Count,
+            EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
 
-        foreach (var responseModel in tuitionPartnerEnquiries.Select(er => new EnquirerViewResponseModel
+        foreach (var er in tuitionPartnerEnquiriesWithResponses)
         {
-            TuitionPartnerName = er.TuitionPartner.Name,
-            EnquiryResponse = er.EnquiryResponse?.EnquiryResponseText!,
-            Status = string.IsNullOrEmpty(er.EnquiryResponse?.EnquiryResponseText!) ? StringConstants.PENDING : StringConstants.RECEIVED
-        }))
-        {
+            var responseModel = new EnquirerViewResponseDto
+            {
+                TuitionPartnerName = er.TuitionPartner.Name,
+                EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!,
+                EnquirerEnquiryResponseLink =
+                    $"{baseServiceUrl}/enquiry/respond/enquirer-response?token={er.EnquiryResponse!.MagicLink!.Token}"
+            };
             result.EnquirerViewResponses.Add(responseModel);
         }
 
-        var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses.OrderByDescending(x => x.Status == StringConstants.RECEIVED).ToList();
+        var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses
+            .OrderByDescending(x => x.EnquiryResponseDate).ToList();
         result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
+        return result;
+    }
+
+    public async Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(int enquiryId, int tuitionPartnerId)
+    {
+        var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
+            .Where(e => e.EnquiryId == enquiryId && e.TuitionPartnerId == tuitionPartnerId)
+            .Include(e => e.Enquiry)
+            .ThenInclude(e => e.MagicLinks)
+            .Include(e => e.EnquiryResponse)
+            .Include(x => x.TuitionPartner).SingleOrDefaultAsync();
+
+        if (tuitionPartnerEnquiry == null) return null;
+
+
+        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLinks
+            .SingleOrDefault(x => x.MagicLinkTypeId == (int)MagicLinkType.EnquirerViewAllResponses);
+
+        var result = new EnquirerViewResponseModel()
+        {
+            TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
+            EnquiryResponseText = tuitionPartnerEnquiry.EnquiryResponse!.EnquiryResponseText,
+            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token
+        };
+
         return result;
     }
 }

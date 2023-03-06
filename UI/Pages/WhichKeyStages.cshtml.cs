@@ -26,22 +26,12 @@ namespace UI.Pages
                 if (!await _sessionService.SessionDataExistsAsync())
                     return RedirectToPage("/Session/Timeout");
 
-                var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+                var keyStages = await _sessionService.RetrieveDataAsync(StringConstants.KeyStages);
 
-                if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
+                query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
+                    .Where(x => string.Join(" ", keyStages).Contains(x.ToString())).ToArray();
 
-                var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-                if (sessionValues != null)
-                {
-                    foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.KeyStages)))
-                    {
-                        query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                            .Where(x => string.Join(" ", sessionValue).Contains(x.ToString())).ToArray();
-                    }
-
-                    Data = await _mediator.Send(query);
-                }
+                Data = await _mediator.Send(query);
             }
 
             return Page();
@@ -51,23 +41,12 @@ namespace UI.Pages
         {
             if (ModelState.IsValid)
             {
-                if (data.From == ReferrerList.CheckYourAnswers)
+                if (data.From == ReferrerList.CheckYourAnswers &&
+                    !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
+
+                if (data.KeyStages != null)
                 {
-                    if (!await _sessionService.SessionDataExistsAsync())
-                        return RedirectToPage("/Session/Timeout");
-
-                    if (Request != null)
-                    {
-                        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-                        if (sessionId != null)
-                        {
-                            await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                            {
-                                { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
-                            });
-                        }
-                    }
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.KeyStages, string.Join(",", data.KeyStages!));
                 }
 
                 Data = await _mediator.Send(new Query(data));
