@@ -46,6 +46,22 @@ public class DistributedSessionService : ISessionService
         return GetString(key);
     }
 
+    public async Task<Dictionary<string, string>> RetrieveAllDataAsync()
+    {
+        await LoadDataFromDistributedDataStore();
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        foreach (var key in _contextAccessor!.HttpContext!.Session!.Keys)
+        {
+            var value = GetString(key);
+            if (!string.IsNullOrEmpty(value))
+            {
+                data.Add(key, value);
+            }
+        }
+
+        return data;
+    }
+
     public async Task<bool> SessionDataExistsAsync()
     {
         await LoadDataFromDistributedDataStore();

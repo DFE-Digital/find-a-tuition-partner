@@ -23,20 +23,15 @@ public class CheckYourAnswers : PageModel
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
-        Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
-        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
-        Data.Postcode = await _sessionService.RetrieveDataAsync(StringConstants.PostCode);
-        var keyStages = await _sessionService.RetrieveDataAsync(StringConstants.KeyStages);
-        if (!string.IsNullOrEmpty(keyStages))
+
+        var sessionValues = await _sessionService.RetrieveAllDataAsync();
+
+        if (sessionValues != null)
         {
-            Data.KeyStages = keyStages.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                        .Where(x => Enum.TryParse(x, out KeyStage _)).Select(x => Enum.Parse<KeyStage>(x)).ToArray();
-        }
-        var subjects = await _sessionService.RetrieveDataAsync(StringConstants.Subjects);
-        if (!string.IsNullOrEmpty(subjects))
-        {
-            Data.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            Data.KeyStageSubjects = GetKeyStageSubject(subjects);
+            foreach (var sessionValue in sessionValues)
+            {
+                ParseSessionValue(sessionValue.Key, sessionValue.Value);
+            }
         }
 
         if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");
@@ -92,6 +87,37 @@ public class CheckYourAnswers : PageModel
         }
 
         return Page();
+    }
+
+    private void ParseSessionValue(string key, string value)
+    {
+        switch (key)
+        {
+            case var k when k.Contains(StringConstants.EnquirerEmail):
+                Data.Email = value;
+                break;
+
+            case var k when k.Contains(StringConstants.EnquiryText):
+                Data.EnquiryText = value;
+                break;
+
+            case var k when k.Contains(StringConstants.PostCode):
+                Data.Postcode = value;
+                break;
+
+            case var k when k.Contains(StringConstants.KeyStages):
+                var keyStages = value.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => Enum.TryParse(x, out KeyStage _)).Select(x => Enum.Parse<KeyStage>(x)).ToArray();
+
+                Data.KeyStages = keyStages;
+                break;
+
+            case var k when k.Contains(StringConstants.Subjects):
+                var subjects = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                Data.Subjects = subjects;
+                Data.KeyStageSubjects = GetKeyStageSubject(value);
+                break;
+        }
     }
 
     private static Dictionary<string, List<string>>? GetKeyStageSubject(string value)

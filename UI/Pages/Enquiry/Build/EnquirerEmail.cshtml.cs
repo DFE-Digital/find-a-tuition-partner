@@ -34,8 +34,15 @@ public class EnquirerEmail : PageModel
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data!.Email);
             await _sessionService.AddOrUpdateDataAsync(StringConstants.PostCode, data!.Postcode);
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.KeyStages, data!.KeyStages != null ? string.Join(",", data!.KeyStages) : null);
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.Subjects, data!.Subjects != null ? string.Join(",", data!.Subjects) : null);
+
+            if (data.KeyStages != null)
+            {
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
+                {
+                    { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
+                    { StringConstants.Subjects, string.Join(",", data.Subjects!) },
+                });
+            }
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {
