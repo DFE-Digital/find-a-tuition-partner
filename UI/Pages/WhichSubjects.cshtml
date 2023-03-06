@@ -1,7 +1,7 @@
 ﻿@page
 @model WhichSubjects
 @{
-    ViewData["Title"] = "Which subjects do you need tutoring support for?";
+    ViewData["Title"] = "Which subjects do you need tutoring for?";
     ViewData["BackLinkHref"] = "/which-key-stages?" + Model.Data.ToQueryString();
 }
 
@@ -12,7 +12,7 @@
         </govuk-error-summary>
 
         <form method="get" gfa-prepend-error-summary="false">
-            <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
+            <h1 class="govuk-heading-l">Which subjects do you need tutoring for?</h1>
             <p class="govuk-body">Select all of the subjects that apply</p>
 
             @foreach (var item in Model.Data.AllSubjects.Keys)

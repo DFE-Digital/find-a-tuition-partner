@@ -18,22 +18,7 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-        if (sessionId == null)
-        {
-            _sessionService.InitSession();
-            return Page();
-        }
-
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-        if (sessionValues == null) return Page();
-
-        foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquirerEmail)))
-        {
-            Data.Email = sessionValue.Value;
-        }
+        Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
 
         ModelState.Clear();
 
@@ -43,16 +28,7 @@ public class EnquirerEmail : PageModel
     {
         if (ModelState.IsValid)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-            if (sessionId != null)
-            {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                {
-                    { StringConstants.EnquirerEmail, data.Email!}
-
-                });
-            }
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {

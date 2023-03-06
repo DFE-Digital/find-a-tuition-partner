@@ -20,11 +20,8 @@ public class WhichSubjects : PageModel
 
     public async Task<IActionResult> OnGet(GetWhichSubjectQuery query)
     {
-        if (query.From == ReferrerList.CheckYourAnswers)
-        {
-            if (!await _sessionService.SessionDataExistsAsync())
-                return RedirectToPage("/Session/Timeout");
-        }
+        if (query.From == ReferrerList.CheckYourAnswers &&
+            !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
 
         Data = new Command(query)
         {

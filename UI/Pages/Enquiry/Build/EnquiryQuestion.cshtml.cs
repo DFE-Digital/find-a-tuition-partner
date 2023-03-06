@@ -22,18 +22,7 @@ public class EnquiryQuestion : PageModel
 
         Data = data;
 
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-        if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
-
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-        if (sessionValues == null) return Page();
-
-        foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.EnquiryText)))
-        {
-            Data.EnquiryText = sessionValue.Value;
-        }
+        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
 
         ModelState.Clear();
 
@@ -47,15 +36,7 @@ public class EnquiryQuestion : PageModel
 
         if (ModelState.IsValid)
         {
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-            if (sessionId != null)
-            {
-                await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                {
-                    { StringConstants.EnquiryText, data.EnquiryText!}
-                });
-            }
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryText, data.EnquiryText!);
 
             return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
         }

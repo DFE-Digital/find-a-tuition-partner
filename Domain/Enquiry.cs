@@ -10,4 +10,6 @@ public class Enquiry
     public ICollection<TuitionPartnerEnquiry> TuitionPartnerEnquiry { get; set; } = null!;
 
     public ICollection<EnquiryResponse> EnquiryResponse { get; set; } = null!;
+
+    public ICollection<MagicLink> MagicLinks { get; set; } = null!;
 }

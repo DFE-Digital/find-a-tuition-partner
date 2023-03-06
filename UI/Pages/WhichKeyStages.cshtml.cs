@@ -32,11 +32,8 @@ namespace UI.Pages
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
-            if (data.From == ReferrerList.CheckYourAnswers)
-            {
-                if (!await _sessionService.SessionDataExistsAsync())
-                    return RedirectToPage("/Session/Timeout");
-            }
+            if (data.From == ReferrerList.CheckYourAnswers &&
+                !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
 
             Data = await _mediator.Send(new Query(data));
 

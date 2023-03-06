@@ -24,17 +24,14 @@ public class CheckYourAnswers : PageModel
 
         Data = data;
 
-        var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+        var sessionValues = await _sessionService.RetrieveDataAsync();
 
-        if (sessionId == null) return RedirectToPage(nameof(EnquirerEmail));
-
-        var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-        if (sessionValues == null) return RedirectToPage(nameof(EnquirerEmail));
-
-        foreach (var sessionValue in sessionValues)
+        if (sessionValues != null)
         {
-            ParseSessionValue(sessionValue.Key, sessionValue.Value);
+            foreach (var sessionValue in sessionValues)
+            {
+                ParseSessionValue(sessionValue.Key, sessionValue.Value);
+            }
         }
 
         if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");
@@ -88,12 +85,7 @@ public class CheckYourAnswers : PageModel
 
             await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
 
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-            if (sessionId != null)
-            {
-                await _sessionService.DeleteDataAsync(sessionId);
-            }
+            await _sessionService.DeleteDataAsync();
 
             return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
         }
