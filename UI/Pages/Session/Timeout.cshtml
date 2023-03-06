@@ -4,21 +4,16 @@
     ViewData["IncludeHomeLink"] = true;
 }
 
-@*
-TODO - Content review, see
-https://design-system.dwp.gov.uk/patterns/manage-a-session-timeout
-*@
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">
-            Your enquiry answers have been deleted
+            Your session has expired
         </h1>
         <p class="govuk-body">
-            We have deleted your enquiry answers because you did not do anything for @UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes. This is to protect your information.
+            Your answers have been deleted because you did not do anything for @UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes. This is to protect your personal information.
         </p>
         <p class="govuk-body">
-            You will need to start again.
+            If you still want to use this service, you’ll need to start again.
         </p>
         <a class="govuk-button" data-module="govuk-button" draggable="false" href="/" role="button">Start again</a>
     </div>
