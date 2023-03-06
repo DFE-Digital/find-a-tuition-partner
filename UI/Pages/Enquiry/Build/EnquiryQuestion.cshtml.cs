@@ -17,12 +17,7 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        var sessionValues = await _sessionService.RetrieveDataAsync();
-
-        if (sessionValues?.TryGetValue(StringConstants.EnquiryText, out var enquiryText) == true)
-        {
-            Data.EnquiryText = enquiryText;
-        }
+        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
 
         ModelState.Clear();
 
@@ -33,10 +28,7 @@ public class EnquiryQuestion : PageModel
     {
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-            {
-                { StringConstants.EnquiryText, data.EnquiryText!}
-            });
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryText, data.EnquiryText!);
 
             return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
         }

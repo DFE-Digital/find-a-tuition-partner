@@ -27,12 +27,9 @@ public class WhichSubjects : PageModel
 
         if (query.From == ReferrerList.CheckYourAnswers)
         {
-            var sessionValues = await _sessionService.RetrieveDataAsync();
+            var subjects = await _sessionService.RetrieveDataAsync(StringConstants.Subjects);
 
-            if (sessionValues?.TryGetValue(StringConstants.Subjects, out var subjects) == true)
-            {
-                query.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            }
+            query.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
             Data = new Command(query)
             {
@@ -55,10 +52,7 @@ public class WhichSubjects : PageModel
 
         if (data.Subjects != null)
         {
-            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-            {
-                { StringConstants.Subjects, string.Join(",", data.Subjects!)}
-            });
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.Subjects, string.Join(",", data.Subjects!));
         }
 
         if (data.From == ReferrerList.CheckYourAnswers)

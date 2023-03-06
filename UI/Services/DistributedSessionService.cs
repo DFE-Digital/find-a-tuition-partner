@@ -13,6 +13,14 @@ public class DistributedSessionService : ISessionService
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
     }
 
+    public async Task AddOrUpdateDataAsync(string key, string value)
+    {
+        await AddOrUpdateDataAsync(new Dictionary<string, string>()
+        {
+            { key, value}
+        });
+    }
+
     public async Task AddOrUpdateDataAsync(Dictionary<string, string> data)
     {
         if (IsSessionAvailable())
@@ -53,6 +61,21 @@ public class DistributedSessionService : ISessionService
         }
     }
 
+    public async Task<string> RetrieveDataAsync(string key)
+    {
+        var result = string.Empty;
+
+        if (string.IsNullOrEmpty(key)) return result;
+
+        var sessionValues = await RetrieveDataAsync();
+
+        if (sessionValues?.TryGetValue(key, out var value) == true)
+        {
+            result = value;
+        }
+
+        return result;
+    }
     public async Task<Dictionary<string, string>?> RetrieveDataAsync()
     {
         if (!IsSessionAvailable()) return null;

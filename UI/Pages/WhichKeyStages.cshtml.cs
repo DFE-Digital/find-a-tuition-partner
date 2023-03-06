@@ -23,13 +23,10 @@ namespace UI.Pages
 
             if (query.From == ReferrerList.CheckYourAnswers)
             {
-                var sessionValues = await _sessionService.RetrieveDataAsync();
+                var keyStages = await _sessionService.RetrieveDataAsync(StringConstants.KeyStages);
 
-                if (sessionValues?.TryGetValue(StringConstants.KeyStages, out var keyStages) == true)
-                {
-                    query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                        .Where(x => string.Join(" ", keyStages).Contains(x.ToString())).ToArray();
-                }
+                query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
+                    .Where(x => string.Join(" ", keyStages).Contains(x.ToString())).ToArray();
 
                 Data = await _mediator.Send(query);
             }
@@ -43,10 +40,7 @@ namespace UI.Pages
             {
                 if (data.KeyStages != null)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                    {
-                        { StringConstants.KeyStages, string.Join(",", data.KeyStages!)}
-                    });
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.KeyStages, string.Join(",", data.KeyStages!));
                 }
 
                 Data = await _mediator.Send(new Query(data));

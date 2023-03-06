@@ -18,12 +18,7 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        var sessionValues = await _sessionService.RetrieveDataAsync();
-
-        if (sessionValues?.TryGetValue(StringConstants.EnquirerEmail, out var email) == true)
-        {
-            Data.Email = email;
-        }
+        Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
 
         ModelState.Clear();
 
@@ -33,19 +28,11 @@ public class EnquirerEmail : PageModel
     {
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-            {
-                { StringConstants.EnquirerEmail, data.Email!}
-
-            });
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
 
             if (!string.IsNullOrEmpty(data.Postcode))
             {
-                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                {
-                    { StringConstants.PostCode, data.Postcode },
-
-                });
+                await _sessionService.AddOrUpdateDataAsync(StringConstants.PostCode, data.Postcode);
             }
 
             if (data.KeyStages != null)
