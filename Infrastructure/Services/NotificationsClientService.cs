@@ -2,6 +2,7 @@ using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Domain.Enums;
 using Infrastructure.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
@@ -17,14 +18,16 @@ public class NotificationsClientService : INotificationsClientService
     private readonly ILogger<NotificationsClientService> _logger;
     private readonly GovUkNotifyOptions _notifyConfig;
     private readonly EmailSettings _emailSettingsConfig;
+    private readonly IHostEnvironment _hostEnvironment;
 
     public NotificationsClientService(IOptions<GovUkNotifyOptions> notifyConfig, IOptions<EmailSettings> emailSettingsConfig, ILogger<NotificationsClientService> logger,
-        IAsyncNotificationClient notificationClient)
+        IAsyncNotificationClient notificationClient, IHostEnvironment hostEnvironment)
     {
         _notifyConfig = notifyConfig.Value;
         _emailSettingsConfig = emailSettingsConfig.Value;
         _logger = logger;
         _notificationClient = notificationClient;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType, bool includeChangedFromEmailAddress = true)
@@ -124,11 +127,11 @@ public class NotificationsClientService : INotificationsClientService
             AddPersonalisation(notificationsRecipient.Personalisation, TestExtraInfoKey, $"For testing purposes the email has been {overrideExtraInfoText} {overrideEmail}{extraInfoChangedFrom}.", true);
         }
 
-        var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-        if (!string.IsNullOrWhiteSpace(environmentName) && !string.Equals(environmentName, "Production", StringComparison.InvariantCultureIgnoreCase))
+        if (!_hostEnvironment.IsProduction())
         {
-            AddPersonalisation(notificationsRecipient.Personalisation, TestWebsiteEnvName, $"**** {environmentName} NTP email ****  ");
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (!string.IsNullOrWhiteSpace(environmentName))
+                AddPersonalisation(notificationsRecipient.Personalisation, TestWebsiteEnvName, $"**** {environmentName} NTP email ****  ");
         }
     }
 

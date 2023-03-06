@@ -103,6 +103,18 @@ public class DistributedSessionService : ISessionService
         return _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
     }
 
+    public async Task<bool> SessionDataExistsAsync()
+    {
+        await LoadDataFromDistributedDataStore();
+        return _contextAccessor!.HttpContext!.Session!.Keys.Any();
+    }
+
+    public async Task ClearAsync()
+    {
+        await LoadDataFromDistributedDataStore();
+        _contextAccessor!.HttpContext!.Session!.Clear();
+    }
+
     private async Task LoadDataFromDistributedDataStore()
     {
         await _contextAccessor!.HttpContext!.Session!.LoadAsync();

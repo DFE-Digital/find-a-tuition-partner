@@ -23,6 +23,9 @@ namespace UI.Pages
 
             if (query.From == ReferrerList.CheckYourAnswers)
             {
+                if (!await _sessionService.SessionDataExistsAsync())
+                    return RedirectToPage("/Session/Timeout");
+
                 var keyStages = await _sessionService.RetrieveDataAsync(StringConstants.KeyStages);
 
                 query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
@@ -38,6 +41,9 @@ namespace UI.Pages
         {
             if (ModelState.IsValid)
             {
+                if (data.From == ReferrerList.CheckYourAnswers &&
+                    !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
+
                 if (data.KeyStages != null)
                 {
                     await _sessionService.AddOrUpdateDataAsync(StringConstants.KeyStages, string.Join(",", data.KeyStages!));

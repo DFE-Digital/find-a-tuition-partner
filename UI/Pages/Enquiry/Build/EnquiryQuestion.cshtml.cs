@@ -19,6 +19,9 @@ public class EnquiryQuestion : PageModel
     {
         Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
 
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         ModelState.Clear();
 
         return Page();
@@ -26,6 +29,9 @@ public class EnquiryQuestion : PageModel
 
     public async Task<IActionResult> OnGetSubmit(EnquiryQuestionModel data)
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         if (ModelState.IsValid)
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryText, data.EnquiryText!);

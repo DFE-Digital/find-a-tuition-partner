@@ -2,6 +2,7 @@ using Application.Common.DTO;
 using Domain.Enums;
 using Infrastructure.Configuration;
 using Infrastructure.Services;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using Notify.Models.Responses;
@@ -17,6 +18,7 @@ public class NotificationsClientServiceTests
     private readonly Mock<IOptions<EmailSettings>> _emailSettingsConfigMock;
     private readonly Mock<ILogger<NotificationsClientService>> _loggerMock;
     private readonly Mock<IAsyncNotificationClient> _notificationClientMock;
+    private readonly Mock<IHostEnvironment> _hostEnvironment;
 
     public NotificationsClientServiceTests()
     {
@@ -24,6 +26,7 @@ public class NotificationsClientServiceTests
         _emailSettingsConfigMock = new Mock<IOptions<EmailSettings>>();
         _loggerMock = new Mock<ILogger<NotificationsClientService>>();
         _notificationClientMock = new Mock<IAsyncNotificationClient>();
+        _hostEnvironment = new Mock<IHostEnvironment>();
     }
 
     [Fact]
@@ -50,7 +53,8 @@ public class NotificationsClientServiceTests
             { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent() });
 
         _notificationsClientService =
-            new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object, _loggerMock.Object, _notificationClientMock.Object);
+            new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object,
+                _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
         await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
@@ -79,7 +83,8 @@ public class NotificationsClientServiceTests
             .Returns(new EmailSettings());
 
         _notificationsClientService =
-          new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object, _loggerMock.Object, _notificationClientMock.Object);
+          new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object,
+            _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
         await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
@@ -129,7 +134,7 @@ public class NotificationsClientServiceTests
             .ReturnsAsync(emailResponse);
 
         _notificationsClientService = new NotificationsClientService(mockOptions.Object, _emailSettingsConfigMock.Object,
-            _loggerMock.Object, mockNotificationClient.Object);
+            _loggerMock.Object, mockNotificationClient.Object, _hostEnvironment.Object);
 
         // Act
         await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);

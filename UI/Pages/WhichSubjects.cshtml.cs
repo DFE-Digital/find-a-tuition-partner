@@ -27,6 +27,9 @@ public class WhichSubjects : PageModel
 
         if (query.From == ReferrerList.CheckYourAnswers)
         {
+            if (!await _sessionService.SessionDataExistsAsync())
+                return RedirectToPage("/Session/Timeout");
+
             var subjects = await _sessionService.RetrieveDataAsync(StringConstants.Subjects);
 
             query.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
@@ -49,6 +52,9 @@ public class WhichSubjects : PageModel
             };
             return Page();
         }
+
+        if (data.From == ReferrerList.CheckYourAnswers &&
+            !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
 
         if (data.Subjects != null)
         {

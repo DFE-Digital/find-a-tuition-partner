@@ -7,4 +7,6 @@ public interface ISessionService
     Task<string> RetrieveDataAsync(string key);
     Task<Dictionary<string, string>?> RetrieveDataAsync();
     Task DeleteDataAsync();
+    Task<bool> SessionDataExistsAsync();
+    Task ClearAsync();
 }

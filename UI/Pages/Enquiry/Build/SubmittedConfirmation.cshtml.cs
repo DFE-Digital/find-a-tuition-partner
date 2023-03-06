@@ -1,28 +1,17 @@
-using Application.Common.Interfaces;
 using Application.Common.Models;
 
 namespace UI.Pages.Enquiry.Build
 {
     public class SubmittedConfirmation : PageModel
     {
-        private readonly ISessionService _sessionService;
-
-        public SubmittedConfirmation(ISessionService sessionService)
-        {
-            _sessionService = sessionService;
-        }
         public SearchModel Data { get; set; } = new();
 
-        public async Task OnGet(SearchModel data)
+        public void OnGet(SearchModel data)
         {
+            //TODO - Add enquirer magic link to view responses here
+            //TODO - For cypress testing add in TP magic links, hidden on page - only add if not production
+            //TODO - Add in enquiry ref
             Data = data;
-
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-            if (sessionId != null)
-            {
-                await _sessionService.DeleteDataAsync();
-            }
         }
     }
 }

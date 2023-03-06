@@ -19,6 +19,9 @@ public class CheckYourAnswers : PageModel
 
     public async Task<IActionResult> OnGet(CheckYourAnswersModel data)
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         Data = data;
 
         var sessionValues = await _sessionService.RetrieveDataAsync();
@@ -40,8 +43,12 @@ public class CheckYourAnswers : PageModel
 
     public async Task<IActionResult> OnPost()
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         if (!ModelState.IsValid) return Page();
 
+        //TODO - No Tuition Type filter at the moment
         var searchResultsData = new GetSearchResultsQuery(Data);
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
@@ -51,6 +58,7 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
+        //TODO - Ideally the whole enquiry creation, magic link and emails would be a unit of work - is it worth changing? Possibly look to use events on AddEnquiryCommand to send emails rather than SendEnquiryEmailCommand & SendEnquirerViewAllResponsesEmailCommand mediator calls and save unit at end if no errors?
         var enquiryId = await _mediator.Send(command);
 
         if (enquiryId != default)
@@ -72,6 +80,8 @@ public class CheckYourAnswers : PageModel
             };
 
             await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
+
+            await _sessionService.DeleteDataAsync();
 
             return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
         }
