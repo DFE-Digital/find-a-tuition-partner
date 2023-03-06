@@ -7,6 +7,7 @@
 !include DEVICONS/dotnet.puml
 !include DEVICONS/postgresql.puml
 !include DEVICONS/google_analytics.puml
+!include DEVICONS/redis.puml
 !include FONTAWESOME/file_text.puml
 !include FONTAWESOME_5/users.puml
 !include FONTAWESOME_5/cloud.puml
@@ -27,7 +28,7 @@ Container(googleDrive, "Google Drive", "TP Data spreadsheets and logos stored wi
 System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Service") {
     Container(app, "Web Application", "C#, ASP.NET Core 6.0 Razor Pages", "Search for quality assured Tuition Partners that offer services in a specified location", $sprite="dotnet")
     ContainerDb(db, "Database", "PostgreSQL", "Holds Tuition Partner service coverage and ONS location data", $sprite="postgresql")
-    ContainerDb(cache, "Session Store", "Redis", "Temporary session storage", $sprite="postgresql")
+    ContainerDb(cache, "Session Cache", "Redis", "Temporary session storage. Primarily to hold un-submitted enquiries and responses.", $sprite="redis")
     Container(dataImporter, "Data Importer", "C#, .NET 6.0 console app", "Decrypts and imports Tuition Partner data files. Run as Cloud Foundry task", $sprite="dotnet")
 }
 
@@ -41,8 +42,8 @@ Rel(schoolStaff, app, "Uses", "REST API")
 Rel(tuitionPartner, app, "Responds to enquiries", "REST API")
 Rel(tpQa, googleDrive, "Supplies data via delivery team", "Excel")
 Rel_Up(dataImporter, googleDrive, "Read tuition Partner data in Excel format", "REST API")
-Rel_Right(app, db, "Accesses")
-Rel_Left(app, cache, "Accesses")
+Rel_Right(app, db, "Uses")
+Rel_Left(app, cache, "Uses")
 Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
 Rel_Down(app, logitIo, "Send log events", "TCP Sink")
 Rel_Down(app, googleAnalytics, "Send analytics events", "REST API")
