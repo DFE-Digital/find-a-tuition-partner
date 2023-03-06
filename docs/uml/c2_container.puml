@@ -1,4 +1,4 @@
-@startuml NTP Find a Tuition Partner Container View
+@startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 !define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
@@ -21,12 +21,13 @@ Person(schoolStaff, "School Staff", "Member of the school team that has identifi
 Person_Ext(tpQa, "Tuition Partner Quality Assurance", "Accreditation partner confirming Tuition Partners meet the requirements to be listed on the service", $sprite="users")
 
 Person_Ext(tuitionPartner, "Tuition Partner", "Companies that can supply tutors to schools", $sprite="users")
-
+ 
 Container(googleDrive, "Google Drive", "TP Data spreadsheets and logos stored within a folder", $sprite="google_drive")
 
 System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Service") {
     Container(app, "Web Application", "C#, ASP.NET Core 6.0 Razor Pages", "Search for quality assured Tuition Partners that offer services in a specified location", $sprite="dotnet")
     ContainerDb(db, "Database", "PostgreSQL", "Holds Tuition Partner service coverage and ONS location data", $sprite="postgresql")
+    ContainerDb(cache, "Session Store", "Redis", "Temporary session storage", $sprite="postgresql")
     Container(dataImporter, "Data Importer", "C#, .NET 6.0 console app", "Decrypts and imports Tuition Partner data files. Run as Cloud Foundry task", $sprite="dotnet")
 }
 
@@ -40,7 +41,8 @@ Rel(schoolStaff, app, "Uses", "REST API")
 Rel(tuitionPartner, app, "Responds to enquiries", "REST API")
 Rel(tpQa, googleDrive, "Supplies data via delivery team", "Excel")
 Rel_Up(dataImporter, googleDrive, "Read tuition Partner data in Excel format", "REST API")
-Rel_Right(app, db, "Reads")
+Rel_Right(app, db, "Accesses")
+Rel_Left(app, cache, "Accesses")
 Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
 Rel_Down(app, logitIo, "Send log events", "TCP Sink")
 Rel_Down(app, googleAnalytics, "Send analytics events", "REST API")
