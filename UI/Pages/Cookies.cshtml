@@ -165,11 +165,10 @@
                 <td class="govuk-table__cell">Stores tuition partners you've added to your price comparison list</td>
                 <td class="govuk-table__cell">24 hours</td>
             </tr>
-            @*TODO - Content review*@
             <tr>
                 <td class="govuk-table__cell">@Application.Constants.StringConstants.SessionCookieName</td>
-                <td class="govuk-table__cell">Used for temporary storage of the enquiry details if used</td>
-                <td class="govuk-table__cell">For 20 minutes or when the browser is closed</td>
+                <td class="govuk-table__cell">Temporarily stores any information you provide when sending an enquiry to tuition partners</td>
+                <td class="govuk-table__cell">For @UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes or when the browser is closed</td>
             </tr>
             </tbody>
         </table>
