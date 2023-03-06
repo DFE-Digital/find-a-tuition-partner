@@ -30,24 +30,14 @@ public class WhichSubjects : PageModel
             if (!await _sessionService.SessionDataExistsAsync())
                 return RedirectToPage("/Session/Timeout");
 
-            var sessionId = Request.Cookies[StringConstants.SessionCookieName];
+            var subjects = await _sessionService.RetrieveDataAsync(StringConstants.Subjects);
 
-            if (sessionId == null) return RedirectToPage($"Enquiry/Build/{nameof(EnquirerEmail)}");
+            query.Subjects = subjects.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
-            var sessionValues = await _sessionService.RetrieveDataAsync(sessionId);
-
-            if (sessionValues != null)
+            Data = new Command(query)
             {
-                foreach (var sessionValue in sessionValues.Where(sessionValue => sessionValue.Key.Contains(StringConstants.Subjects)))
-                {
-                    query.Subjects = sessionValue.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                }
-
-                Data = new Command(query)
-                {
-                    AllSubjects = await _mediator.Send(query)
-                };
-            }
+                AllSubjects = await _mediator.Send(query)
+            };
         }
         return Page();
     }
@@ -63,25 +53,17 @@ public class WhichSubjects : PageModel
             return Page();
         }
 
+        if (data.From == ReferrerList.CheckYourAnswers &&
+            !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
+
+        if (data.Subjects != null)
+        {
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.Subjects, string.Join(",", data.Subjects!));
+        }
+
         if (data.From == ReferrerList.CheckYourAnswers)
         {
-            if (!await _sessionService.SessionDataExistsAsync())
-                return RedirectToPage("/Session/Timeout");
-
-            if (Request != null)
-            {
-                var sessionId = Request.Cookies[StringConstants.SessionCookieName];
-
-                if (sessionId != null)
-                {
-                    await _sessionService.AddOrUpdateDataAsync(sessionId, new Dictionary<string, string>()
-                    {
-                        { StringConstants.Subjects, string.Join(",", data.Subjects!)}
-                    });
-
-                    return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
-                }
-            }
+            return RedirectToPage($"Enquiry/Build/{nameof(CheckYourAnswers)}");
         }
         return RedirectToPage("SearchResults", new SearchModel(data));
     }
