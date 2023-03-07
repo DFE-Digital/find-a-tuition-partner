@@ -213,7 +213,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         postcode
         };
 
-        tuitionPartner.Address = string.Join(Environment.NewLine, addressLines.Where(x => x != null));
+        tuitionPartner.Address = string.Join(Environment.NewLine, addressLines.Where(x => x != null).Distinct());
 
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 
