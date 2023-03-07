@@ -19,8 +19,8 @@ When("they click 'Continue'", () => {
 });
 
 When("user clicks 'Make an enquiry'", () => {
-  cy.get('.app-print-hide > .govuk-button').click();
-})
+  cy.get(".app-print-hide > .govuk-button").click();
+});
 
 When("they click 'Search'", () => {
   cy.get('[data-testid="call-to-action"]').click();
@@ -35,5 +35,5 @@ Then("the back link's text is {string}", ($text) => {
 });
 
 When("they click 'Continue' through enquiry", () => {
-  cy.get('.app-print-hide > .govuk-button').click()
-})
+  cy.get(".app-print-hide > .govuk-button").click();
+});

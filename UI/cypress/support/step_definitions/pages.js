@@ -78,24 +78,17 @@ Then("they will be taken to the 'Price comparison list' page", () => {
   cy.location("pathname").should("eq", "/compare-list");
 });
 
-
-
 Then("the user will navigate to the guidance page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/guidance");
 });
 
-
-
 Then("user is redirected to the enter email address page", () => {
-  cy.location("pathname").should("eq", "/enquiry/build/enquirer-email")
-})
-
+  cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
+});
 
 Then("they are redirected to the enquiry question page", () => {
-  cy.location("pathname").should("eq", "/enquiry/build/enquiry-question")
-})
-
-
+  cy.location("pathname").should("eq", "/enquiry/build/enquiry-question");
+});
 
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
@@ -164,9 +157,17 @@ Then("they will see the tribal link", () => {
   );
 });
 
-
 Then("the page has the correct headings", () => {
-  cy.get('.govuk-grid-column-two-thirds > :nth-child(3)').should("contain.text", "How it works")
-  cy.get('.govuk-grid-column-two-thirds > :nth-child(5)').should("contain.text", "How your personal information will be used")
-  cy.get('.govuk-grid-column-two-thirds > :nth-child(8)').should("contain.text", "Before you start")
-})
+  cy.get(".govuk-grid-column-two-thirds > :nth-child(3)").should(
+    "contain.text",
+    "How it works"
+  );
+  cy.get(".govuk-grid-column-two-thirds > :nth-child(5)").should(
+    "contain.text",
+    "How your personal information will be used"
+  );
+  cy.get(".govuk-grid-column-two-thirds > :nth-child(8)").should(
+    "contain.text",
+    "Before you start"
+  );
+});
