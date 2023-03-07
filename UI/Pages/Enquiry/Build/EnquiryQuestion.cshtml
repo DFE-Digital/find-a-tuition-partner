@@ -4,7 +4,7 @@
 @{
     var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/enquirer-email";
     ViewData["Title"] = "What's your enquiry?";
-    ViewData["BackLinkHref"] = backLink;
+    ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
 }
 
 <div class="govuk-grid-row app-print-hide">
@@ -33,8 +33,7 @@
             </govuk-textarea>
         </div>
     </div>
-    <input asp-for="Data.Postcode" type="hidden" />
-    <input asp-for="Data.From" type="hidden" />
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>
     <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
 </form>

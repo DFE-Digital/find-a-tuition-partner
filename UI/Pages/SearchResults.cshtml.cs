@@ -1,4 +1,3 @@
-using System.Threading;
 using Application.Common.Models;
 using Application.Validators;
 using TuitionType = Domain.Enums.TuitionType;
@@ -44,7 +43,7 @@ public class SearchResults : PageModel
             {
                 Subjects = data.Subjects,
             }),
-            AllTuitionTypes = AllTuitionTypes
+            AllTuitionTypes = EnumExtensions.GetAllEnums<TuitionType>()
         };
 
         ModelState.Clear();
@@ -157,12 +156,4 @@ public class SearchResults : PageModel
 
         return selectableTuitionPartnerModels;
     }
-
-    private static List<TuitionType> AllTuitionTypes =>
-        new()
-        {
-            TuitionType.Any,
-            TuitionType.InSchool,
-            TuitionType.Online,
-        };
 }

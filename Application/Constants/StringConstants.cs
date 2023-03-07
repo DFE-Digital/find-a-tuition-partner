@@ -21,11 +21,5 @@
         public const string EnquirerEmail = "EnquirerEmail";
 
         public const string EnquiryText = "EnquiryText";
-
-        public const string KeyStages = "KeyStages";
-
-        public const string Subjects = "Subjects";
-
-        public const string PostCode = "PostCode";
     }
 }
