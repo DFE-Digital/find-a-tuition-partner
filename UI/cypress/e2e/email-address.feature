@@ -20,7 +20,7 @@ When user clicks 'Make an enquiry'
 And they click 'Continue' on enquiry
 Then they enter an invalid email address
 Then they click 'Continue'
-Then they will see 'A valid email is required' as an error message for the 'invalid email adress'
+Then they will see the correct error message for an invalid email address
 
 Scenario: Valid email to navigate to the next page
 Given a user has arrived on the 'Search results' page for 'Key stage 1 English'

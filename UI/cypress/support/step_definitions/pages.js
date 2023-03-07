@@ -164,17 +164,3 @@ Then("they will see the tribal link", () => {
   );
 });
 
-Then("the page has the correct headings", () => {
-  cy.get(".govuk-grid-column-two-thirds > :nth-child(3)").should(
-    "contain.text",
-    "How it works"
-  );
-  cy.get(".govuk-grid-column-two-thirds > :nth-child(5)").should(
-    "contain.text",
-    "How your personal information will be used"
-  );
-  cy.get(".govuk-grid-column-two-thirds > :nth-child(8)").should(
-    "contain.text",
-    "Before you start"
-  );
-});
