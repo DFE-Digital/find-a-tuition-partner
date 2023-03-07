@@ -19,45 +19,30 @@ namespace UI.Pages
 
         public async Task<IActionResult> OnGet(Query query)
         {
-            Data = await _mediator.Send(query);
-
             if (query.From == ReferrerList.CheckYourAnswers)
             {
                 if (!await _sessionService.SessionDataExistsAsync())
                     return RedirectToPage("/Session/Timeout");
-
-                var keyStages = await _sessionService.RetrieveDataAsync(StringConstants.KeyStages);
-
-                query.KeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>()
-                    .Where(x => string.Join(" ", keyStages).Contains(x.ToString())).ToArray();
-
-                Data = await _mediator.Send(query);
             }
+
+            Data = await _mediator.Send(query);
 
             return Page();
         }
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
-            if (ModelState.IsValid)
+            if (data.From == ReferrerList.CheckYourAnswers &&
+                !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
+
+            Data = await _mediator.Send(new Query(data));
+
+            if (!ModelState.IsValid)
             {
-                if (data.From == ReferrerList.CheckYourAnswers &&
-                    !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
-
-                if (data.KeyStages != null)
-                {
-                    await _sessionService.AddOrUpdateDataAsync(StringConstants.KeyStages, string.Join(",", data.KeyStages!));
-                }
-
-                Data = await _mediator.Send(new Query(data));
-
-                return RedirectToPage("/WhichSubjects", new SearchModel(data));
-            }
-            else
-            {
-                Data = await _mediator.Send(new Query(data));
                 return Page();
             }
+
+            return RedirectToPage(nameof(WhichSubjects), new SearchModel(Data));
         }
 
         public record Query : SearchModel, IRequest<Command>

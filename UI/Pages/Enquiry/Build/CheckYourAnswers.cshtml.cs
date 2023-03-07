@@ -36,6 +36,9 @@ public class CheckYourAnswers : PageModel
 
         if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");
 
+        //TODO - This is currently using the subjects string, which contains key stage and subject data, but is not the display version
+        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+
         ModelState.Clear();
 
         return Page();
@@ -46,9 +49,10 @@ public class CheckYourAnswers : PageModel
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
+        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+
         if (!ModelState.IsValid) return Page();
 
-        //TODO - No Tuition Type filter at the moment
         var searchResultsData = new GetSearchResultsQuery(Data);
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
@@ -84,23 +88,6 @@ public class CheckYourAnswers : PageModel
 
             case var k when k.Contains(StringConstants.EnquiryText):
                 Data.EnquiryText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.PostCode):
-                Data.Postcode = value;
-                break;
-
-            case var k when k.Contains(StringConstants.KeyStages):
-                var keyStages = value.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                    .Where(x => Enum.TryParse(x, out KeyStage _)).Select(x => Enum.Parse<KeyStage>(x)).ToArray();
-
-                Data.KeyStages = keyStages;
-                break;
-
-            case var k when k.Contains(StringConstants.Subjects):
-                var subjects = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                Data.Subjects = subjects;
-                Data.KeyStageSubjects = GetKeyStageSubject(value);
                 break;
         }
     }
