@@ -55,6 +55,8 @@ public class EnquirerEmailPageTests
     [InlineData("_______@example.com")]
     [InlineData("firstname-lastname@example.com")]
     [InlineData("firstname'lastname@example.com")]
+    [InlineData("firstname'lastname@example")]
+    [InlineData("firstname'lastname@example_com")]
     public void With_a_valid_email(string email)
     {
         var model = new EnquirerEmailModel { Email = email };
@@ -64,7 +66,7 @@ public class EnquirerEmailPageTests
 
     [Theory]
     [InlineData("email@example.com")]
-    public async void With_a_valid_email_moves_to_next_page(string email)
+    public async Task With_a_valid_email_moves_to_next_page(string email)
     {
         var model = new EnquirerEmailModel { Email = email };
 
@@ -79,7 +81,7 @@ public class EnquirerEmailPageTests
 
     [Theory]
     [InlineData("email@example.com")]
-    public async void With_a_valid_email_moves_to_cya_page(string email)
+    public async Task With_a_valid_email_moves_to_cya_page(string email)
     {
         var model = new EnquirerEmailModel { Email = email, From = Domain.Enums.ReferrerList.CheckYourAnswers };
 

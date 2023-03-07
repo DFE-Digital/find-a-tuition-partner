@@ -26,13 +26,14 @@ public class EnquirerEmail : PageModel
     }
     public async Task<IActionResult> OnGetSubmit(EnquirerEmailModel data)
     {
+        Data = data;
         if (ModelState.IsValid)
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {
-                return RedirectToPage(nameof(CheckYourAnswers));
+                return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
             }
 
             return RedirectToPage(nameof(EnquiryQuestion), new SearchModel(data));
