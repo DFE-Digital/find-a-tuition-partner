@@ -86,6 +86,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         var notificationsRecipient = GetNotificationsRecipient(request, enquirerEnquiryResponseReceivedData.TuitionPartnerName);
 
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
+        request.Data.EnquiryText = tpEnquiry.Enquiry.EnquiryText;
 
         var enquirerViewResponseMagicLink = new MagicLink()
         {
@@ -147,14 +148,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquiryResponseText,
         string enquiryResponderText,
-        string enquirerViewResponsePageLinkKey)
+        string enquirerViewResponsesPageLinkKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
             { EnquiryTextVariableKey, enquiryText },
             { EnquiryResponderVariableKey, enquiryResponderText },
             { EnquiryResponseTextVariableKey, enquiryResponseText },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsePageLinkKey }
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey }
         };
 
         return personalisation;

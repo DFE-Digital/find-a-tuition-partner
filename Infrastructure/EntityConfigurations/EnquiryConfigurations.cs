@@ -9,5 +9,7 @@ public class EnquiryConfigurations : IEntityTypeConfiguration<Enquiry>
     public void Configure(EntityTypeBuilder<Enquiry> builder)
     {
         builder.HasIndex(e => e.Email);
+
+        builder.HasIndex(e => e.SupportReferenceNumber).IsUnique();
     }
 }

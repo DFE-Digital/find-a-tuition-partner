@@ -5,6 +5,8 @@ public class Enquiry
     public string EnquiryText { get; set; } = null!;
     public string Email { get; set; } = null!;
 
+    public string? SupportReferenceNumber { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<TuitionPartnerEnquiry> TuitionPartnerEnquiry { get; set; } = null!;

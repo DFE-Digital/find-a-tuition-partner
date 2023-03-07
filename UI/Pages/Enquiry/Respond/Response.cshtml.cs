@@ -1,3 +1,4 @@
+using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
 
@@ -30,10 +31,10 @@ namespace UI.Pages.Enquiry.Respond
 
             try
             {
-                GetTokenValues(token);
+                if (!IsParsedTokenValues(token)) return Page();
 
-                var validMagicLinkToken = await IsValidMagicLinkToken(token);
-                if (!validMagicLinkToken) return Page();
+                var getMagicLinkToken = await GetMagicLinkToken(token);
+                if (getMagicLinkToken == null) return Page();
             }
             catch
             {
@@ -54,10 +55,10 @@ namespace UI.Pages.Enquiry.Respond
 
             try
             {
-                GetTokenValues(token);
+                if (!IsParsedTokenValues(token)) return Page();
 
-                var validMagicLinkToken = await IsValidMagicLinkToken(token);
-                if (!validMagicLinkToken) return Page();
+                var getMagicLinkToken = await GetMagicLinkToken(token);
+                if (getMagicLinkToken == null) return Page();
 
                 Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
 
@@ -82,17 +83,22 @@ namespace UI.Pages.Enquiry.Respond
             return Page();
         }
 
-        private void GetTokenValues(string token)
+        private bool IsParsedTokenValues(string token)
         {
             var tokenValue = _aesEncrypt.Decrypt(token);
 
             var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
 
-            var splitEnquiryPart = splitTokenValue[0].Split('=', StringSplitOptions.RemoveEmptyEntries);
+            if (!splitTokenValue.Any()) return false;
 
-            if (int.TryParse(splitEnquiryPart[1], out var enquiryId))
+            var splitTokenTypePart = splitTokenValue[0].Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+            var tokenType = splitTokenTypePart[1];
+
+            if (!string.IsNullOrWhiteSpace(tokenType) && tokenType != nameof(MagicLinkType.EnquiryRequest))
             {
-                Data.EnquiryId = enquiryId;
+                AddErrorMessage(InvalidTokenErrorMessage);
+                return false;
             }
 
             var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
@@ -103,6 +109,8 @@ namespace UI.Pages.Enquiry.Respond
             }
 
             Data.Token = token;
+
+            return true;
         }
 
         private void AddErrorMessage(string errorMessage)
@@ -123,18 +131,20 @@ namespace UI.Pages.Enquiry.Respond
             return false;
         }
 
-        private async Task<bool> IsValidMagicLinkToken(string token)
+        private async Task<MagicLinkDto?> GetMagicLinkToken(string token)
         {
-            var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token, nameof(MagicLinkType.EnquiryRequest)));
+            var getMagicLinkTokenQuery = await _mediator.Send(new GetMagicLinkTokenQuery(token, nameof(MagicLinkType.EnquiryRequest)));
 
-            if (!isValidMagicLinkToken)
+            if (getMagicLinkTokenQuery == null)
             {
                 AddErrorMessage(InvalidTokenErrorMessage);
 
-                return false;
+                return null;
             }
 
-            return true;
+            Data.EnquiryId = getMagicLinkTokenQuery.EnquiryId!.Value;
+
+            return getMagicLinkTokenQuery;
         }
     }
 }

@@ -1,24 +1,32 @@
 ﻿@page
 @model UI.Pages.Enquiry.Build.SubmittedConfirmation
-@using GovUk.Frontend.AspNetCore.TagHelpers
 @{
     ViewData["Title"] = "Enquiry submitted confirmation";
     ViewData["IncludePrintPage"] = true;
+    var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <govuk-notification-banner type="Success">
-            <p class="govuk-notification-banner__heading">
-                Request sent
-            </p>
-        </govuk-notification-banner>
-        <h1 class="govuk-heading-l">What happens next</h1>
-        <p class="govuk-body">
-            You'll be notified in 10 working days if tuition partners can work with you.
-        </p>
-        <p class="govuk-body">
-            If you don't get any responses from tuition partners, you'll be emailed in 10 working days with more information about what to do next
-        </p>
-    </div>
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        Request sent
+                    </h1>
+                    <div class="govuk-panel__body">
+                        Your reference number is<br><strong>@supportReferenceNumber</strong>
+                    </div>
+                </div>
+                <br/>
+                <h2 class="govuk-heading-m">What happens next</h2>
+                <p class="govuk-body">
+                    You'll start to be notified by email if tuition partners can work with you.
+                </p>
+                <p class="govuk-body">
+                    Tuition partners will need to contact you within one week.
+                </p>
+            </div>
+        </div>
+    </main>
 </div>
