@@ -2,9 +2,9 @@
 @model EnquirerEmail
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : $"/enquiry/build/guidance?{Model.Data.ToQueryString()}";
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/guidance";
     ViewData["Title"] = "What is your email address?";
-    ViewData["BackLinkHref"] = backLink;
+    ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 
@@ -32,22 +32,7 @@
                     </div>
                 </div>
             </div>
-            @if (Model.Data.KeyStages != null)
-            {
-                @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)
-                {
-                    <input asp-for="Data.KeyStages![i]" type="hidden"/>
-                }
-            }
-            @if (Model.Data!.Subjects != null)
-            {
-                @for (int i = 0; i < Model.Data.Subjects.Count(); i++)
-                {
-                    <input asp-for="Data.Subjects![i]" type="hidden"/>
-                }
-            }
-            <input asp-for="Data.Postcode" type="hidden" />
-            <input asp-for="Data.From" type="hidden" />
+            <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
             <input type="hidden" name="handler" value="Submit"/>
             <div class="govuk-button-group">
                 <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>

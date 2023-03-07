@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Build.CheckYourAnswers
 @{ 
     ViewData["Title"] = "Check your answers";
-    ViewData["BackLinkHref"] = "/enquiry/build/enquiry-question";
+    ViewData["BackLinkHref"] = $"/enquiry/build/enquiry-question?{((Model.Data with { From = null }).ToQueryString())}";
 }
 
 <div class="govuk-grid-row app-print-hide">
@@ -55,8 +55,21 @@
               </table>
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/which-key-stages?From=@ReferrerList.CheckYourAnswers">
+              <a class="govuk-link" href="/which-key-stages?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
                 Change<span class="govuk-visually-hidden"> key stage and subjects</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Type of tuition
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data!.TuitionType?.DisplayName()
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/which-tuition-types?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+                Change<span class="govuk-visually-hidden"> type of tuition</span>
               </a>
             </dd>
           </div>
@@ -68,7 +81,7 @@
               @Model.Data!.EnquiryText
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/enquiry-question?From=@ReferrerList.CheckYourAnswers">
+              <a class="govuk-link" href="/enquiry/build/enquiry-question?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
                 Change<span class="govuk-visually-hidden"> enquiry</span>
               </a>
             </dd>
@@ -81,7 +94,7 @@
               @Model.Data.Email
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/enquirer-email?From=@ReferrerList.CheckYourAnswers">
+              <a class="govuk-link" href="/enquiry/build/enquirer-email?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
                 Change<span class="govuk-visually-hidden"> email address</span>
               </a>
             </dd>
@@ -94,21 +107,7 @@
           </button>
           <input asp-for="Data.Email" type="hidden" />
           <input asp-for="Data.EnquiryText" type="hidden" />
-          <input asp-for="Data.Postcode" type="hidden" />
-          @if (Model.Data.KeyStages != null)
-          {
-            @for (int i = 0; i < Model.Data.KeyStages.Count(); i++)
-            {
-              <input asp-for="Data.KeyStages![i]" type="hidden"/>
-            }
-          }
-          @if (Model.Data!.Subjects != null)
-          {
-            @for (int i = 0; i < Model.Data.Subjects.Count(); i++)
-            {
-              <input asp-for="Data.Subjects![i]" type="hidden"/>
-            }
-          }
+          <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
         </form>
       </div>
     </div>
