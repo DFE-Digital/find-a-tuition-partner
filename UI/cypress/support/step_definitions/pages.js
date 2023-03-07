@@ -163,4 +163,3 @@ Then("they will see the tribal link", () => {
     "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
   );
 });
-
