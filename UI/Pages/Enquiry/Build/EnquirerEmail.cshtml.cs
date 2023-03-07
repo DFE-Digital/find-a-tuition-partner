@@ -30,20 +30,6 @@ public class EnquirerEmail : PageModel
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
 
-            if (!string.IsNullOrEmpty(data.Postcode))
-            {
-                await _sessionService.AddOrUpdateDataAsync(StringConstants.PostCode, data.Postcode);
-            }
-
-            if (data.KeyStages != null)
-            {
-                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                {
-                    { StringConstants.KeyStages, string.Join(",", data.KeyStages) },
-                    { StringConstants.Subjects, string.Join(",", data.Subjects!) },
-                });
-            }
-
             if (data.From == ReferrerList.CheckYourAnswers)
             {
                 return RedirectToPage(nameof(CheckYourAnswers));
