@@ -5,7 +5,7 @@ public class Enquiry
     public string EnquiryText { get; set; } = null!;
     public string Email { get; set; } = null!;
 
-    public string? SupportReferenceNumber { get; set; }
+    public string SupportReferenceNumber { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

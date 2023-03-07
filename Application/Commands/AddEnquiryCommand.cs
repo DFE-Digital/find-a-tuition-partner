@@ -10,12 +10,12 @@ using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Application.Commands;
 
-public record AddEnquiryCommand : IRequest<string?>
+public record AddEnquiryCommand : IRequest<string>
 {
     public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
-public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, string?>
+public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, string>
 {
     private const string EnquiryTextVariableKey = "enquiry";
     private const string EnquiryResponseFormLinkKey = "link_to_tp_response_form";
@@ -38,10 +38,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         _logger = logger;
     }
 
-    public async Task<string?> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
+        var emptyResult = string.Empty;
+
         //TODO - deal with no TPs selected - show a message on UI
-        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return null;
+        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return emptyResult;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
@@ -74,33 +76,37 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
 
         var dataSaved = false;
-        try
-        {
-            _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
-            dataSaved = await _unitOfWork.Complete();
-
-        }
-        catch (DbUpdateException ex)
+        while (!dataSaved)
         {
-            if (ex.InnerException != null &&
-                (ex.InnerException.Message.Contains("duplicate key") ||
-                 ex.InnerException.Message.Contains("unique constraint") ||
-                 ex.InnerException.Message.Contains("violates unique constraint")))
+            try
             {
-                _logger.LogError("Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}", enquiry.SupportReferenceNumber, ex);
-
-                enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
-
-                _logger.LogInformation("Generating new support reference number: {referenceNumber}", enquiry.SupportReferenceNumber);
+                _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
                 dataSaved = await _unitOfWork.Complete();
+
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-            return default;
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null &&
+                    (ex.InnerException.Message.Contains("duplicate key") ||
+                     ex.InnerException.Message.Contains("unique constraint") ||
+                     ex.InnerException.Message.Contains("violates unique constraint")))
+                {
+                    _logger.LogError("Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}", enquiry.SupportReferenceNumber, ex);
+
+                    enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+
+                    _logger.LogInformation("Generating new support reference number: {referenceNumber}", enquiry.SupportReferenceNumber);
+
+                    dataSaved = await _unitOfWork.Complete();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
+                return emptyResult;
+            }
         }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
@@ -120,7 +126,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         }
 
 
-        return dataSaved ? enquiry.SupportReferenceNumber : default;
+        return dataSaved ? enquiry.SupportReferenceNumber : emptyResult;
     }
 
     private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(AddEnquiryCommand request,
