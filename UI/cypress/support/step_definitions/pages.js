@@ -44,6 +44,12 @@ Given(
   }
 );
 
+
+Then("they will be taken to the 'Which key stages' page", () => {
+  cy.visit("/which-key-stages?KeyStages=KeyStage1&KeyStages=KeyStage2")
+})
+
+
 When(
   "they set the {string} query string parameter value to {string}",
   (key, value) => {
@@ -62,8 +68,8 @@ Then(
   }
 );
 
-Then("they will be taken to the 'Which key stages' page", () => {
-  cy.location("pathname").should("eq", "/which-key-stages");
+Then("they will be taken to the 'What type of tuition do you need?' page", () => {
+  cy.location("pathname").should("eq", "/which-tuition-types");
 });
 
 Then("they will be taken to the 'Which subjects' page", () => {
