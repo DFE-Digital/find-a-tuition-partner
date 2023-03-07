@@ -92,5 +92,3 @@ Then("they will see all the keys stages as options", () => {
     cy.wrap(item).should("contain.text", keyStages[index]);
   });
 });
-
-

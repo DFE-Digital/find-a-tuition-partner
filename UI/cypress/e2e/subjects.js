@@ -13,7 +13,6 @@ Given("the 'Which subjects' page is displayed", () => {
   );
 });
 
-
 When("they manually navigate to the 'Which subjects' page", () => {
   cy.visit("/which-subjects");
 });

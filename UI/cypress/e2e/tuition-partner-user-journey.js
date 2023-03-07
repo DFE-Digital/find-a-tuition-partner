@@ -45,7 +45,7 @@ Then("user has journeyed forward to a selected tuition partner page", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page")
+  Step(this, "they will be taken to the 'Type of tuition' page");
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
@@ -72,7 +72,10 @@ Then("they will be journey back to the page they started from", () => {
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Back'");
-  Step(this, "they will be taken to the 'What type of tuition do you need?' page")
+  Step(
+    this,
+    "they will be taken to the 'What type of tuition do you need?' page"
+  );
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which subjects' page");
   Step(this, "they click 'Back'");
@@ -91,7 +94,6 @@ Then(
     );
   }
 );
-
 
 Then("the key stages are correct in the key stages page", () => {
   Step(this, "they click 'Continue'");
@@ -145,12 +147,11 @@ Then("the subjects are correct in the subjects page", () => {
 
 Then("the type of tuition is correct in the type of tuition page", () => {
   Step(this, "they click 'Continue'");
-  cy.get('#any').should("not.be.checked")
-  cy.get('#online').should("not.be.checked")
-  cy.get("in-school").should("be.checked")
+  cy.get("#any").should("not.be.checked");
+  cy.get("#online").should("not.be.checked");
+  cy.get("in-school").should("be.checked");
   Step(this, "they click 'Continue'");
 });
-
 
 Then("the filter selections are correct in the search results page", () => {
   Step(this, "they click 'Back'");
@@ -191,7 +192,7 @@ Then(
     Step(this, "they are shown the subjects for 'Key stage 2'");
     Step(this, "they select 'Key stage 2 English'");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page")
+    Step(this, "they will be taken to the 'Type of tuition' page");
     Step(this, "they select Any");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
