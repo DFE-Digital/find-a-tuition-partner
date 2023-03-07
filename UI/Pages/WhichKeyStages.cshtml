@@ -2,9 +2,9 @@
 @model WhichKeyStages
 @{
 
-    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : $"/?{Model.Data.ToQueryString()}";
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/";
     ViewData["Title"] = "Which key stages do you need tutoring for?";
-    ViewData["BackLinkHref"] = backLink;
+    ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <div class="govuk-grid-row">
@@ -30,22 +30,8 @@
             </div>
 
             <input type="hidden" name="handler" value="Submit"/>
-            <input asp-for="Data.Postcode" type="hidden" />
-            @if (Model.Data!.Subjects != null)
-            {
-                @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
-                {
-                    <input asp-for="Data.Subjects![i]" type="hidden" />
-                }
-            }
-            <input asp-for="Data.TuitionType" type="hidden" />
-            <input asp-for="Data.CompareListOrderBy" type="hidden" />
-            <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
-            <input asp-for="Data.CompareListTuitionType" type="hidden" />
-            <input asp-for="Data.CompareListGroupSize" type="hidden" />
-            <input asp-for="Data.CompareListShowWithVAT" type="hidden" />
-            <input asp-for="Data.From" type="hidden" />
 
+            <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true} }' />
         </form>
     </div>
 </div>

@@ -32,25 +32,7 @@
 
                 var dataQueryString = Model.Data.ToQueryString();
 
-                <input asp-for="Data.From" type="hidden" />
-                <input asp-for="Data.Postcode" type="hidden" />
-                @if (Model.Data.KeyStages != null)
-                {
-                    @for(int i = 0; i < Model.Data.KeyStages.Count(); i++)
-                    {
-                        <input asp-for="Data.KeyStages![i]" type="hidden" />
-                    }
-                }
-                @if (Model.Data.Subjects != null)
-                {
-                    @for(int i = 0; i < Model.Data.Subjects.Count(); i++)
-                    {
-                        <input asp-for="Data.Subjects![i]" type="hidden" />
-                    }
-                }
-                <input asp-for="Data.TuitionType" type="hidden" />
-                <input asp-for="Data.CompareListOrderBy" type="hidden" />
-                <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
+                <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeCompareListTuitionType", true}, {"ExcludeCompareListGroupSize", true}, {"ExcludeCompareListShowWithVAT", true} }' />
 
                 <div data-module="compare-list-refinement">
                     <h2 class="govuk-heading-m refine-pricing-heading">Refine pricing</h2>

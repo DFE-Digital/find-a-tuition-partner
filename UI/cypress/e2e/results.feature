@@ -13,16 +13,17 @@ Feature: User is shown search results
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: Back click returns to subjects page
+  Scenario: Back click returns to type of tuition page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     When they click 'Back'
-    Then they will be taken to the 'Which subjects' page
-    And they are shown the subjects for 'Key stage 1'
-    And they will see 'Key stage 1 English' selected
+    Then they will be taken to the 'Type of tuition' page
+    Then they will see the tuition type 'Any' is selected
+
 
   Scenario: Back to the start
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     When they click 'Back'
+    And they click 'Back'
     And they click 'Back'
     And they click 'Back'
     Then they will be taken to the 'Find a tuition partner' journey start page

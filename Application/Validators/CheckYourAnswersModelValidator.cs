@@ -12,7 +12,16 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
 
         RuleFor(request => request.EnquiryText)
             .NotEmpty()
-            .WithMessage("Enquiry Text is required.");
+            .WithMessage("Enquiry Text is required");
+
+        //TODO - Postcode needs to be validated, but not shown on check your answers page, so what to do if invalid?
+        RuleFor(m => m.Postcode)
+            .NotEmpty()
+            .WithMessage("A postcode is required");
+
+        RuleFor(m => m.TuitionType)
+            .NotEmpty()
+            .WithMessage("A type of tuition is required");
 
         RuleFor(m => m.KeyStages)
             .NotEmpty()

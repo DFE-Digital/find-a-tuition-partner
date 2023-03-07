@@ -76,7 +76,7 @@ public class SearchForKeyStages : IAsyncLifetime
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("/WhichSubjects");
+        resultPage.PageName.Should().Be("WhichSubjects");
         resultPage.RouteValues.Should().ContainKey("Postcode")
             .WhoseValue.Should().Be("AB00BA");
         resultPage.RouteValues.Should().ContainKey("Subjects")
