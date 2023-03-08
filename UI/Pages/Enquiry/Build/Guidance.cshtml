@@ -2,37 +2,57 @@
 @model UI.Pages.Enquiry.Build.Guidance
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    ViewData["Title"] = "Make an enquiry guidance";
+    ViewData["Title"] = "Send an enquiry to tuition partners";
     ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Ask tuition partners to work with you</h1>
+        <h1 class="govuk-heading-l">Send an enquiry to tuition partners</h1>
         <p class="govuk-body">
-            You'll need to provide some more information about your school's needs.
+            If you can provide more information about your school’s needs, we can contact tuition partners anonymously for you.
+        </p>
+        <h2 class="govuk-heading-m">How it works</h2>
+        <ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
+            <li>
+                You’ll be asked some more questions about your school’s needs.
+            </li>
+            <li>
+                You’ll then start to get email notifications from suitable tuition partners – tuition partners will have one week to respond.
+            </li>
+            <li>
+                You can then contact the tuition partners you want to work with yourself
+            </li>
+        </ol>
+        <h2 class="govuk-heading-m">How your personal information will be used</h2>
+        <p class="govuk-body">
+            We’ll ask you for an email address so that you can receive notifications from tuition partners.
         </p>
         <p class="govuk-body">
-            You'll then be notified by email if tuition partners think they can meet your needs.
+            You’ll only get responses via the find a tuition partner service – tuition partners  won’t contact you directly.
+        </p>
+        <h2 class="govuk-heading-m"> Before you start </h2>
+        <p class="govuk-body">
+            You’ll need to have an email address.
         </p>
         <p class="govuk-body">
-            You'll then be able to select the tuition partners you want to work with.
+            It’s helpful if you:
         </p>
-        <p class="govuk-body">
-            If you do not get any responses in 10 working days, you'll get an email explaining what you can do next.
-        </p>
-
-        <govuk-details data-testid="qatp-details">
-            <govuk-details-summary>
-                How tuition partners will use your information
-            </govuk-details-summary>
-            <govuk-details-text>
-                <p class="govuk-body">Tuition partners won’t see your email or school details until you agree to it.</p>
-                <p class="govuk-body">All tuition partners in this service have been briefed etc on how to respond properly to requests</p>
-            </govuk-details-text>
-        </govuk-details>
-
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>
+                know when you want the tuition partner to start
+            </li>
+            <li>
+                know how long you’ll need the tuition partner for
+            </li>
+            <li>
+                know how many pupils you want to give tutoring to and possible group sizes
+            </li>
+            <li>
+                can include any SEND information about your pupils
+            </li>
+        </ul>
         <div class="govuk-body app-print-hide">
             <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/enquirer-email?@Model.Data.ToQueryString()" role="button">Continue</a>
         </div>
