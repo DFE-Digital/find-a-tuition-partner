@@ -1,3 +1,4 @@
+using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
 
@@ -33,8 +34,8 @@ public class EnquirerResponse : PageModel
         {
             var (enquiryId, tuitionPartnerId) = GetTokenValues(_queryToken);
 
-            var validMagicLinkToken = await IsValidMagicLinkToken(_queryToken);
-            if (!validMagicLinkToken) return Page();
+            var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
+            if (getMagicLinkToken == null) return Page();
 
             var getEnquirerViewResponseQuery = new GetEnquirerViewResponseQuery(enquiryId, tuitionPartnerId);
 
@@ -100,19 +101,19 @@ public class EnquirerResponse : PageModel
         return false;
     }
 
-    private async Task<bool> IsValidMagicLinkToken(string token)
+    private async Task<MagicLinkDto?> GetMagicLinkToken(string token)
     {
-        var isValidMagicLinkToken = await _mediator.Send(new IsValidMagicLinkTokenQuery(token,
+        var getMagicLinkTokenQuery = await _mediator.Send(new GetMagicLinkTokenQuery(token,
             nameof(MagicLinkType.EnquirerViewResponse)));
 
-        if (!isValidMagicLinkToken)
+        if (getMagicLinkTokenQuery == null)
         {
             AddErrorMessage(InvalidTokenErrorMessage);
 
-            return false;
+            return null;
         }
 
-        return true;
+        return getMagicLinkTokenQuery;
     }
 
     private string ParseTokenFromQueryString()

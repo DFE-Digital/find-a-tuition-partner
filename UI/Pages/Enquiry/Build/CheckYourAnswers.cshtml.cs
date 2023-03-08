@@ -57,33 +57,18 @@ public class CheckYourAnswers : PageModel
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
 
+        Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
         var command = new AddEnquiryCommand()
         {
             Data = Data
         };
 
-        //TODO - Ideally the whole enquiry creation, magic link and emails would be a unit of work - is it worth changing? Possibly look to use events on AddEnquiryCommand to send emails rather than SendEnquiryEmailCommand & SendEnquirerViewAllResponsesEmailCommand mediator calls and save unit at end if no errors?
-        var enquiryId = await _mediator.Send(command);
+        var supportReferenceNumber = await _mediator.Send(command);
 
-        if (enquiryId != default)
+        if (!string.IsNullOrEmpty(supportReferenceNumber))
         {
-            Data.EnquiryId = enquiryId;
-
-            Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-
-            var sendEnquiryEmailCommand = new SendEnquiryEmailCommand()
-            {
-                Data = Data
-            };
-
-            await _mediator.Send(sendEnquiryEmailCommand);
-
-            var sendEnquirerViewResponsesEmailCommand = new SendEnquirerViewAllResponsesEmailCommand()
-            {
-                Data = Data
-            };
-
-            await _mediator.Send(sendEnquirerViewResponsesEmailCommand);
+            Data.SupportReferenceNumber = supportReferenceNumber;
 
             await _sessionService.DeleteDataAsync();
 
