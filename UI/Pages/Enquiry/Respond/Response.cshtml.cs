@@ -25,6 +25,18 @@ namespace UI.Pages.Enquiry.Respond
 
         public async Task<IActionResult> OnGet()
         {
+            /*
+            TODO:
+            Once confirmed update the error content and logic if:
+                No token supplied; 
+                Invalid URL/token supplied (possibly same message as previous error);
+                Token has expired; - The expiry date is stored in db, but not inspected on this page at the moment, so is not being used.
+                The enquiry has already been answered (I assume error message is shown for MVP rather than a read only version of the answers supplied?) - how to deal with this?  Possibly after validated the magic link is OK ensure that the response answers are empty?
+            Ensure that the input fields are not shown on page if the above happens.
+            Ensure that the above happens on all magic link pages - this authorisation kind of logic might apply to all these response pages?
+            Update the magic links for TPs to be 7 days, confirm what to set for the enquiry as initial expiry date
+            */
+
             var token = Request.Query["token"].ToString();
 
             if (AddInValidUrlErrorMessage(token)) return Page();

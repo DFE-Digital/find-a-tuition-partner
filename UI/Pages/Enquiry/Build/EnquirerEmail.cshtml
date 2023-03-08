@@ -7,29 +7,16 @@
     ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.Email"/>
-        </govuk-error-summary>
         <form method="get">
             <h1 class="govuk-heading-l">What is your email address?</h1>
-            <div data-module="create-enquirer-email">
-                <div class="govuk-form-group">
-                    <div asp-validation-group-for="Data.Email" data-testid="enquirer-email">
-                        <label asp-for="Data.Email" class="govuk-label govuk-label--s">
-                            Email address
-                        </label>
-                        <div id="email-hint" class="govuk-hint">
-                            Tution partner won't see your email address untill you agree to share it.
-                        </div>
-                        <span asp-validation-for="Data.Email" class="govuk-error-message"></span>
-                        <div class="app-form-group-inline">
-                            <input asp-for="Data.Email" class="govuk-input"
-                                   data-testid="enquirer-email-input-box" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
-                        </div>
-                    </div>
+            <div class="govuk-form-group">
+                <div asp-validation-group-for="Data.Email" data-testid="enquirer-email">
+                    <govuk-input asp-for="Data.Email" input-class="govuk-input govuk-!-width-three-quarters" autocomplete="email" data-testid="enquirer-email-input-box" type="email" spellcheck="false" autocomplete="email">
+                        <govuk-input-label>Email address</govuk-input-label>
+                        <govuk-input-hint>Tuition partners won&#8217;t see your email address until you agree to share it.  We&#8217;ll use this email to notify you if you get a response from a tuition partner.</govuk-input-hint>
+                    </govuk-input>
                 </div>
             </div>
             <partial name="_SearchModelHiddenInputs" model="@Model.Data" />

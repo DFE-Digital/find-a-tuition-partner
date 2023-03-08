@@ -34,6 +34,8 @@ public class EnquiryQuestion : PageModel
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
+        Data = data;
+
         if (ModelState.IsValid)
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryText, data.EnquiryText!);

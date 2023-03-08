@@ -86,9 +86,17 @@ Then("they will be taken to the 'Price comparison list' page", () => {
   cy.location("pathname").should("eq", "/compare-list");
 });
 
-Then("the confirmation page is shown", () => {
-  cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
-})
+Then("the user will navigate to the guidance page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/guidance");
+});
+
+Then("user is redirected to the enter email address page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
+});
+
+Then("they are redirected to the enquiry question page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/enquiry-question");
+});
 
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
