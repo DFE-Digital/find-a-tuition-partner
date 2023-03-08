@@ -37,13 +37,13 @@ Scenario: all quality-assured tuition partners page url is '/all-tuition-partner
     Given a user has arrived on the all quality-assured tuition partners page
     Then the website link for each tuition partner opens their website in a new tab
 
-  Scenario: tuition partner summaries' phone number link initiates device's calling options
+  Scenario: tuition partner summaries' phone number link initiates device's calling options and is not empty
     Given a user has arrived on the all quality-assured tuition partners page
-    Then the phone number link for each tuition partner initiates their device's calling options
+    Then the phone number link for each tuition partner initiates their device's calling options and is not empty
 
-  Scenario: tuition partner summaries' email link initiates email client options
+  Scenario: tuition partner summaries' email link initiates email client options and is not empty
     Given a user has arrived on the all quality-assured tuition partners page
-    Then the email link for each tuition partner initiates their email client options
+    Then the email link for each tuition partner initiates their email client options and is not empty
 
   Scenario: tuition partner details page linked from all quality-assured tuition partners page has 'Back to tuition partners' back link
     Given a user has arrived on the all quality-assured tuition partners page

@@ -117,18 +117,23 @@ Then(
 );
 
 Then(
-  "the phone number link for each tuition partner initiates their device's calling options",
+  "the phone number link for each tuition partner initiates their device's calling options and is not empty",
   () => {
     cy.get('a[data-testid="tuition-partner-phone-number-link"]').each(
       ($element) => {
         cy.wrap($element).should("have.attr", "href", `tel:${$element.text()}`);
       }
     );
+    cy.get('a[data-testid="tuition-partner-phone-number-link"]').each(
+      ($element) => {
+        cy.wrap($element).should("not.be.empty");
+      }
+    );
   }
 );
 
 Then(
-  "the email link for each tuition partner initiates their email client options",
+  "the email link for each tuition partner initiates their email client options and is not empty",
   () => {
     cy.get('a[data-testid="tuition-partner-email-link"]').each(($element) => {
       cy.wrap($element).should(
@@ -137,6 +142,11 @@ Then(
         `mailto:${$element.text()}`
       );
     });
+    cy.get('a[data-testid="tuition-partner-email-link"]').each(
+      ($element) => {
+        cy.wrap($element).should("not.be.empty");
+      }
+    );
   }
 );
 
@@ -169,6 +179,7 @@ Then(
         .then(parseInt)
         .should("equal", countOfElements);
     });
+    countOfElements > 60
   }
 );
 
