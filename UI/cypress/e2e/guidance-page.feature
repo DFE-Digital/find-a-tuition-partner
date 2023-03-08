@@ -4,7 +4,6 @@ Scenario: Guidance page is at the begininng of the enquiry builder
 Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
 When user clicks 'Make an enquiry'
 And the user will navigate to the guidance page
-And click the link on text 'How tuition partners will use your information'
 And they click 'Continue' on enquiry
 Then user is redirected to the enter email address page
 
@@ -17,7 +16,7 @@ Then they will be taken to the 'Search Results' page
 Scenario: Guidance page has expected structure
 Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
 When user clicks 'Make an enquiry'
-Then the page's title is 'Make an enquiry guidance'
+Then the page's title is 'Send an enquiry to tuition partners'
 
 Scenario: user clicks service name on guidance page
 Given a user has arrived on the 'Which key stages' page
