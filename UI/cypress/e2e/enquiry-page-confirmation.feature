@@ -17,9 +17,10 @@ When they click back on browser
 Then the session timeout page is shown
 
 Scenario: User has different reference numbers for new enquires
-Given user has navigated to check your answers page
-And user can view answer selections
-Then they click 'Send enquiry'
-And a unique reference number is shown
+Given a user has started the 'Find a tuition partner' journey
+When user has journeyed forward to the check your answers page
+And they click 'Send enquiry'
+Then the confirmation page is shown
 When user creates another enquiry
+And they click 'Send enquiry'
 Then the second reference number is dfferent to the first
