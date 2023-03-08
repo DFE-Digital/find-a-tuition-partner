@@ -172,12 +172,12 @@ Then(
     let countOfElements = 0;
     cy.get('[data-testid="tuition-partner-summary"]').then(($elements) => {
       countOfElements = $elements.length;
+      $elements.length > 60 == true;
       cy.get('[data-testid="result-count"]')
         .invoke("text")
         .then(parseInt)
         .should("equal", countOfElements);
     });
-    countOfElements > 60;
   }
 );
 
