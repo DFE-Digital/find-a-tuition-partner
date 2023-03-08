@@ -142,11 +142,9 @@ Then(
         `mailto:${$element.text()}`
       );
     });
-    cy.get('a[data-testid="tuition-partner-email-link"]').each(
-      ($element) => {
-        cy.wrap($element).should("not.be.empty");
-      }
-    );
+    cy.get('a[data-testid="tuition-partner-email-link"]').each(($element) => {
+      cy.wrap($element).should("not.be.empty");
+    });
   }
 );
 
@@ -179,7 +177,7 @@ Then(
         .then(parseInt)
         .should("equal", countOfElements);
     });
-    countOfElements > 60
+    countOfElements > 60;
   }
 );
 
