@@ -44,7 +44,6 @@ Given(
   }
 );
 
-
 Then("they will be taken to the 'Which key stages' page", () => {
   cy.visit("/which-key-stages?KeyStages=KeyStage1&KeyStages=KeyStage2");
 });
@@ -99,8 +98,8 @@ Then("they are redirected to the enquiry question page", () => {
 });
 
 Then("the confirmation page is shown", () => {
-  cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation")
-})
+  cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
+});
 
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
@@ -168,4 +167,3 @@ Then("they will see the tribal link", () => {
     "https://www.tribalgroup.com/become-an-ntp-tuition-partner-0"
   );
 });
-
