@@ -1,6 +1,7 @@
 ﻿@page
 @using Application.Common.Models
 @using Domain.Enums
+@using Domain.Search;
 @using UI.HelperFunctions
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -10,12 +11,18 @@
 @using AnchorTagHelper = GovUk.Frontend.AspNetCore.TagHelpers.AnchorTagHelper
 @model SearchResults
 @{
-    ViewData["Title"] = "Search results";
+    ViewData["Title"] = "Your options for choosing a tuition partner";
     ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
+
+    var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityName != null);
+    var results = !validResults ? new List<TuitionPartnerResult>() : Model!.Data!.Results!.Results;
+    var count = results!.Count();
+    var partnersPlural = count == 1 ? "partner" : "partners";
+    var resultPlural = count == 1 ? "result": "results";
 }
 
-<div class="govuk-grid-row app-print-hide">
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
@@ -24,11 +31,38 @@
             <govuk-error-summary-item asp-for="Data.TuitionType"/>
         </govuk-error-summary>
 
+        <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityName</strong></span>
         <h1 class="govuk-heading-l">
-            <span class="app-results-filter--desktop">Find a tuition partner</span>
-            <span class="app-results-filter--non-desktop">Search results</span>
+            <span class="app-results-filter--desktop">Your options for choosing a tuition partner</span>
+            <span class="app-results-filter--non-desktop">Your options now</span>
         </h1>
 
+    </div>
+</div>
+
+<div show-if="@count > 0" class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">
+            You can either:
+        </p>
+        <ol class="govuk-list govuk-list--number govuk-!-margin-left-4">
+            <li>
+                Send a tailored enquiry to tuition partners anonymously.
+            </li>
+            <li>
+                Use the search results on this page to contact tuition partners yourself.
+            </li>
+            <li>
+                Select tuition partners and compare prices between them.
+            </li>
+        </ol>
+        <div class="app-print-hide enquire-nudge">
+            <h2 class="govuk-heading-m">Send an enquiry to tuition partners</h2>
+            <p class="govuk-body">
+                If you can provide more information about your school’s needs, we can contact tuition partners anonymously for you.
+            </p>
+            <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/guidance?@Model.Data.ToQueryString()" role="button">Start now</a>
+        </div>
     </div>
 </div>
 
@@ -36,60 +70,71 @@
     <form method="POST">
 
         <div class="govuk-grid-column-one-third">
-            <div class="app-results-filter" data-module="results-filter" data-testid="results-filter">
-                <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
-                    <h2 class="govuk-heading-m">Filter results</h2>
-                </div>
-                <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
-                    <div class="app-results-filter-overlay--heading">
-                        <div class="app-results-filter-overlay--heading-left">
-                            <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
+            <div class="app-results-filter-wrapper" data-module="results-filter" data-testid="results-filter">
+                <div class="app-results-filter">
+                    <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
+                        <h2 class="govuk-heading-m">Filter results</h2>
+                    </div>
+                    <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
+                        <div class="app-results-filter-overlay--heading">
+                            <div class="app-results-filter-overlay--heading-left">
+                                <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
+                            </div>
+                            <div class="app-results-filter-overlay--heading-right">
+                                <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline"
+                                   data-module="return-to-results-link" data-testid="return-to-results-link">
+                                    Return to results
+                                </a>
+                            </div>
                         </div>
-                        <div class="app-results-filter-overlay--heading-right">
-                            <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline"
-                               data-module="return-to-results-link" data-testid="return-to-results-link">
-                                Return to results
-                            </a>
+                        <p show-if="@validResults" class="govuk-body" data-testid="overlay-filter-results-count">
+                            <span>@count @resultPlural</span>
+                        </p>
+                        <h2 class="govuk-heading-m">Subjects</h2>
+                    </div>
+
+                    @foreach (var item in Model.Data!.AllSubjects!.Keys)
+                    {
+                        <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) "/>
+                    }
+
+                    <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
+                        <govuk-radios-fieldset>
+                            <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                                Type of tuition
+                            </govuk-radios-fieldset-legend>
+                            @foreach (var item in Model.Data.AllTuitionTypes)
+                            {
+                                <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+                            }
+                        </govuk-radios-fieldset>
+                    </govuk-radios>
+
+                    <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline"
+                       asp-route-postcode=@Model.Data.Postcode>
+                        Clear all filters
+                    </a>
+
+                    <div class="govuk-!-margin-top-7">
+                        <div class="govuk-button-group app-results-filter--apply-filters">
+                            <govuk-button type="submit">Apply filters</govuk-button>
                         </div>
                     </div>
-                    <p show-if="Model.Data.Results != null" class="govuk-body" data-testid="overlay-filter-results-count">
-                        @{
-                            var countInitial = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
-                            var resultPluralInitial = Model.Data.Results.Count != 1 ? "results" : "result";
-                        }
-                        <span>@countInitial @resultPluralInitial</span>
-                    </p>
-                    <h2 class="govuk-heading-m">Subjects</h2>
                 </div>
 
-                @foreach (var item in Model.Data.AllSubjects.Keys)
-                {
-                    <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) "/>
-                }
-
-                <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
-                    <govuk-radios-fieldset>
-                        <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-                            Type of tuition
-                        </govuk-radios-fieldset-legend>
-                        @foreach (var item in Model.Data.AllTuitionTypes)
-                        {
-                            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
-                        }
-                    </govuk-radios-fieldset>
-                </govuk-radios>
-
-                <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline"
-                   asp-route-postcode=@Model.Data.Postcode>
-                    Clear all filters
-                </a>
-
-                <div class="govuk-!-margin-top-7">
-                    <div class="govuk-button-group app-results-filter--apply-filters">
-                        <govuk-button type="submit">Apply filters</govuk-button>
+                <div class="govuk-form-group app-form-group-inline app-results-filter postcode-group" data-module="results-filter">
+                    <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
+                        <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
+                            Enter your school's postcode
+                        </label>
+                        <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
+                        <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
+                        <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
                     </div>
-                    <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
-                        <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
+                    <div class="govuk-!-margin-top-7">
+                        <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
+                            <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,56 +146,34 @@
                 <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
             </div>
 
-            <div show-if="Model.Data.Results?.Count > 0" class="govuk-body app-print-hide">
-                <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/guidance?@Model.Data.ToQueryString()" role="button">Make an Enquiry</a>
-            </div>
-
-            <div class="govuk-form-group app-form-group-inline">
-                <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
-                    <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
-                        Enter your school's postcode
-                    </label>
-                    <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
-                    <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
-                    <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
-                </div>
-            </div>
-
-            <div show-if="Model.Data.Results != null" class="govuk-body" data-testid="results-summary">
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                @{
-                    var count = Model.Data.Results!.Count == 0 ? "No" : Model.Data.Results.Count.ToString();
-                    var resultPlural = Model.Data.Results.Count != 1 ? "results" : "result";
-                }
-                <span class="govuk-!-font-size-24">
-                    <strong data-testid="result-count">@count</strong> @(resultPlural)
-                    <span show-if="@Model.Data.Results.LocalAuthorityName != null">for <strong>@Model.Data.Results.LocalAuthorityName</strong></span>
-                </span><br/>
-                Your results are in a random order.
-                <div class="govuk-grid-row govuk-!-margin-top-2">
-                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
-                        <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
-                            Update price comparison list
-                        </govuk-button>
-                    </div>
-                    <div class="govuk-grid-column-full">
-                        <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
-                           module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
-                            Compare tuition partner prices
-                            <span id="totalCompareListedTuitionPartners" class="moj-notification-badge my-compare-listed-partners-badge">
-                                @Model.TotalCompareListedTuitionPartners
-                            </span>
-                        </a>
-                    </div>
-                </div>
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-            </div>
-
-            @if (Model.Data.Results != null)
+            @if (count > 0)
             {
                 var i = 0;
                 var dataQueryString = Model.Data.ToQueryString();
-                foreach (var item in Model.Data.Results.Results)
+
+                <div class="govuk-body" data-testid="results-summary">
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    Your results are in a random order.
+                    <div class="govuk-grid-row govuk-!-margin-top-2">
+                        <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+                            <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
+                                Update price comparison list
+                            </govuk-button>
+                        </div>
+                        <div class="govuk-grid-column-full">
+                            <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
+                               module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
+                                Compare tuition partner prices
+                                <span id="totalCompareListedTuitionPartners" class="moj-notification-badge my-compare-listed-partners-badge">
+                                    @Model.TotalCompareListedTuitionPartners
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                </div>
+
+                @foreach (var item in results!)
                 {
                     i++;
                     var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
@@ -209,14 +232,22 @@
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
-                }
-                <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
-                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
-                        <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
-                                      class="govuk-!-margin-bottom-2">
-                            Update price comparison list
-                        </govuk-button>
+                    <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
+                        <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+                            <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
+                                          class="govuk-!-margin-bottom-2">
+                                Update price comparison list
+                            </govuk-button>
+                        </div>
                     </div>
+                }
+            }
+            else if (validResults && count == 0)
+            {
+                <div class="govuk-body" data-testid="results-summary">
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                    No tuition partners have been found, updating your filters may change this
+                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                 </div>
             }
         </div>

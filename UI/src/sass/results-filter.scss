@@ -28,7 +28,7 @@
     display: none;
   }
 
-  .js-enabled .app-results-filter {
+  .js-enabled .app-results-filter-wrapper {
     @include govuk-media-query($until: tablet) {
       display: none;
 
@@ -116,5 +116,20 @@
         margin-left: govuk-spacing(2);
       }
     }
+  }
+}
+
+.app-results-filter.postcode-group {
+  margin-top: 20px;
+}
+
+.enquire-nudge {
+  border-style: solid;
+  border-color: #1d70b8;
+  margin-bottom: 20px;
+  padding: 15px;
+
+  .govuk-button {
+    margin-bottom: 0px;
   }
 }
