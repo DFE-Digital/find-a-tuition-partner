@@ -97,6 +97,10 @@ Then("they are redirected to the enquiry question page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/enquiry-question");
 });
 
+Then("the confirmation page is shown", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
+});
+
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
 });

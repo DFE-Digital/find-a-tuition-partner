@@ -86,3 +86,24 @@ Feature: Tuition partner details mobile view page tests
     And they select the 'Show search results' button
     Then subject 'KeyStage1-Maths' is selected on the filter
     And only the postcode and results sections are displayed
+
+  Scenario: Type of tuition page mobile structure
+    Given a user begins journey from a mobile
+    Then the postcode is edited in the start page
+    And a user has arrived on the 'Which subjects' page for 'Key stage 3, Key stage 4'
+    Then they select subjects for the key stages
+    When they click 'Continue'
+    And they will be taken to the type of tuition page
+    Then the correct options will display
+    When user clicks the button with text 'In School'
+    And they click 'Continue'
+    Then they will be taken to the 'Search Results' page
+    And the filter results show the expected selection
+
+  Scenario: Make an enquiry journey
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
+    When user clicks 'Make an enquiry'
+    And they click 'Continue' on enquiry
+    Then they enter an valid email address
+    When they click 'Continue'
+    Then they are redirected to the enquiry question page
