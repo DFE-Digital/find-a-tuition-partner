@@ -19,6 +19,6 @@ When user clicks 'Make an enquiry'
 Then the page's title is 'Send an enquiry to tuition partners'
 
 Scenario: user clicks service name on guidance page
-Given a user has arrived on the 'Which key stages' page
+Given the user will navigate to the guidance page
 When they click the 'Find a tuition partner' service name link
 Then they will be taken to the 'Find a tuition partner' journey start page

@@ -14,7 +14,7 @@ Scenario: all quality-assured tuition partners page url is '/all-tuition-partner
 
   Scenario: link from the service start page
     Given a user has started the 'Find a tuition partner' journey
-    When they click the 'All quality-assured tuition partners' link
+    When they click the 'Check the full list of quality-assured tuition partners' link
     Then they will see the 'All quality-assured tuition partners' page
 
   Scenario: full list of quality-assured tuition partners is in alphabetical order by name
@@ -89,5 +89,5 @@ Scenario: Logos are not displayed for tution partners
 
   Scenario: From the full list we can visit each TP details page and see the Type of Tuition details and the pricing in the correct order then is returned to the location of the selected TP on the list
     Given a user has started the 'Find a tuition partner' journey
-    When they click the 'All quality-assured tuition partners' link
+    When they click the 'Check the full list of quality-assured tuition partners' link
     Then they can visit each TP details page and see the Type of Tuition details and the pricing in the correct order
