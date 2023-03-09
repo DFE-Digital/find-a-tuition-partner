@@ -18,7 +18,7 @@ public class KeyStageSubjectsIdMapExtensionsTests
         var keyStageSubjects = new[]
         {
             new KeyStageSubject(KeyStage.KeyStage1, StringConstants.English),
-            new KeyStageSubject(KeyStage.KeyStage2, StringConstants.Math),
+            new KeyStageSubject(KeyStage.KeyStage2, StringConstants.Maths),
             new KeyStageSubject(KeyStage.KeyStage3, StringConstants.Science),
             new KeyStageSubject(KeyStage.KeyStage4, StringConstants.Humanities)
         };

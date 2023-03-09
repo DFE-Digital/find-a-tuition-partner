@@ -9,6 +9,7 @@ using Domain.Search;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MagicLinkType = Domain.Enums.MagicLinkType;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Application.Commands;
 
@@ -76,16 +77,23 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             return emptyResult;
         }
 
-        var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
+        var postCode = request.Data.Postcode;
 
-        foreach (var (keyStageId, subjectId) in keyStageSubjects.GetIdsForKeyStageSubjects())
+        if (string.IsNullOrEmpty(postCode))
         {
-            keyStageSubjectEnquiry.Add(new KeyStageSubjectEnquiry()
-            {
-                KeyStageId = keyStageId,
-                SubjectId = subjectId
-            });
+            _logger.LogError("The {request} Input contains no PostCode.", nameof(AddEnquiryCommand));
+            return emptyResult;
         }
+
+        var localAuthorityDistrictName = request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName;
+
+        if (string.IsNullOrEmpty(localAuthorityDistrictName))
+        {
+            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.", nameof(AddEnquiryCommand));
+            return emptyResult;
+        }
+
+        var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
 
         var enquiry = new Enquiry()
         {
@@ -94,7 +102,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             MagicLinks = enquiryRequestMagicLinks,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
-            KeyStageSubjectEnquiry = keyStageSubjectEnquiry
+            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(keyStageSubjects),
+            PostCode = postCode,
+            LocalAuthorityDistrict = localAuthorityDistrictName,
+            TuitionTypeId = tuitionTypeId
         };
 
         var dataSaved = false;
@@ -208,5 +219,32 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
 
         return personalisation;
+    }
+
+    private int? GetTuitionTypeId(TuitionType? tuitionType)
+    {
+        return tuitionType switch
+        {
+            null => null,
+            TuitionType.InSchool => (int)TuitionType.InSchool,
+            TuitionType.Online => (int)TuitionType.Online,
+            _ => null
+        };
+    }
+
+    private List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(IEnumerable<KeyStageSubject> keyStageSubjects)
+    {
+        var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
+
+        foreach (var (keyStageId, subjectId) in keyStageSubjects.ToArray().GetIdsForKeyStageSubjects())
+        {
+            keyStageSubjectEnquiry.Add(new KeyStageSubjectEnquiry()
+            {
+                KeyStageId = keyStageId,
+                SubjectId = subjectId
+            });
+        }
+
+        return keyStageSubjectEnquiry;
     }
 }

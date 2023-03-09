@@ -15,13 +15,13 @@
 
         public const string English = "English";
 
-        public const string Math = "Math";
+        public const string Maths = "Maths";
 
         public const string Science = "Science";
 
         public const string Humanities = "Humanities";
 
-        public const string ModernForeignLanguages = "ModernForeignLanguages";
+        public const string ModernForeignLanguages = "Modern foreign languages";
 
         public const string SessionCookieName = ".FindATuitionPartner.Session";
 

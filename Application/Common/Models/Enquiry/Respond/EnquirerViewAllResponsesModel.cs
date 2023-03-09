@@ -12,6 +12,7 @@ public class EnquirerViewAllResponsesModel
 
     public string SupportReferenceNumber { get; set; } = null!;
 
+    public string TuitionTypeName { get; set; } = null!;
     public List<string> KeyStageSubjects { get; set; } = null!;
     public DateTime EnquiryCreatedDateTime { get; set; }
 

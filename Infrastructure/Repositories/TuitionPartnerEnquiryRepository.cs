@@ -5,6 +5,7 @@ using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using MagicLinkType = Domain.Enums.MagicLinkType;
+using TuitionType = Domain.Enums.TuitionType;
 
 namespace Infrastructure.Repositories;
 
@@ -42,12 +43,15 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
             .GroupByKeyAndConcatenateValues();
 
+        var tuitionTypeName = GetTuitionTypeName(tuitionPartnerEnquiries.First().Enquiry.TuitionTypeId);
+
         var result = new EnquirerViewAllResponsesModel
         {
             EnquiryText = tuitionPartnerEnquiries.FirstOrDefault()?.Enquiry.EnquiryText!,
             SupportReferenceNumber = tuitionPartnerEnquiries.First().Enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = tuitionPartnerEnquiries.Count,
             KeyStageSubjects = keyStageSubjects,
+            TuitionTypeName = tuitionTypeName,
             EnquiryCreatedDateTime = tuitionPartnerEnquiries.First().Enquiry.CreatedAt,
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
@@ -93,5 +97,16 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         };
 
         return result;
+    }
+
+    private string GetTuitionTypeName(int? tuitionTypeId)
+    {
+        return tuitionTypeId switch
+        {
+            null => TuitionType.Any.ToString(),
+            (int)TuitionType.Online => TuitionType.Online.ToString(),
+            (int)TuitionType.InSchool => TuitionType.InSchool.ToString(),
+            _ => TuitionType.Any.ToString()
+        };
     }
 }

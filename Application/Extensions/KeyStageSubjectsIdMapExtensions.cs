@@ -28,7 +28,7 @@ public static class KeyStageSubjectsIdMapExtensions
                 }
             },
             {
-                StringConstants.Math, new Dictionary<int, int>()
+                StringConstants.Maths, new Dictionary<int, int>()
                 {
                     { KeyStages.Id.One, Subjects.Id.KeyStage1Maths },
                     { KeyStages.Id.Two, Subjects.Id.KeyStage2Maths },

@@ -5,6 +5,9 @@
     ViewData["Title"] = "Enquirer View All Responses";
     ViewData["BackLinkHref"] = "/";
     ViewData["IncludePrintPage"] = true;
+
+    var numberOfTpEnquiryResponseReceived = !Model.Data.EnquirerViewResponses.Any()
+        ? 0 : Model.Data.EnquirerViewResponses.Count;
 }
 
 <div class="govuk-grid-row app-print-hide">
@@ -15,12 +18,20 @@
         </govuk-error-summary>
 
 
-        <h2 class="govuk-heading-m">
+        <p class="govuk-body">
             <span>@Model.Data.SupportReferenceNumber</span>
-        </h2>
+        </p>
         <h1 class="govuk-heading-l">
             <span>View responses to your tuition enquiry</span>
         </h1>
+        <div class="govuk-inset-text">
+            You should bookmark this page for your future reference and quicker access to your enquiry.
+        </div>
+
+        <h3 class="govuk-heading-s">
+            <span>Your tuition enquiry summary</span>
+        </h3>
+        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mm tt dddd, MMMM dd, yyyy")</span></p>
 
         <govuk-details open="false">
             <govuk-details-summary>
@@ -36,7 +47,10 @@
                         </li>
                     }
                     <li>
-                        @Model.Data?.EnquiryText
+                        Enquiry: @Model.Data?.EnquiryText
+                    </li>
+                    <li>
+                        Tuition type: @Model.Data?.TuitionTypeName
                     </li>
                 </ul>
             </govuk-details-text>
@@ -45,16 +59,15 @@
     </div>
 </div>
 
-<h1 class="govuk-heading-l">
+<h3 class="govuk-heading-s">
     <span>All tuition partner responses</span>
-</h1>
+</h3>
 
-@if (!Model.Data.EnquirerViewResponses.Any())
-{
-    <div class="govuk-inset-text">
-        You have 0 out of @Model.Data.NumberOfTpEnquiryWasSent responses at the moment.
-    </div>
-}
+<div class="govuk-inset-text">
+    <p class="govuk-body"><strong> @numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners </strong> have responded at the moment.</p>
+    <p class="govuk-body">We have asked tuition partners to respond within 5 days of creating this enquiry.</p>
+    <p class="govuk-body">You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.</p>
+</div>
 
 @if (Model.Data.EnquirerViewResponses.Any())
 {
