@@ -144,3 +144,13 @@ Then("subject {string} is selected on the filter", (subject) => {
 Then("subject {string} is no longer selected", (subject) => {
   cy.url().should("not.contain", subject);
 });
+
+Given("a user begins journey from a mobile", () => {
+  Step(this, "a user has started the 'Find a tuition partner' journey");
+  Step(this, "a user is using a 'phone'");
+});
+
+When("the postcode is edited in the start page", () => {
+  Step(this, "they enter 'YO11 1AA' as the school's postcode");
+  Step(this, "they click 'Continue'");
+});
