@@ -14,4 +14,6 @@ public class Enquiry
     public ICollection<EnquiryResponse> EnquiryResponse { get; set; } = null!;
 
     public ICollection<MagicLink> MagicLinks { get; set; } = null!;
+
+    public ICollection<KeyStageSubjectEnquiry> KeyStageSubjectEnquiry { get; set; } = null!;
 }

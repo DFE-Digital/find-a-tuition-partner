@@ -1,8 +1,9 @@
 ﻿@page
 @model WhichTuitionTypes
 @{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/which-subjects";
     ViewData["Title"] = "What type of tuition do you need?";
-    ViewData["BackLinkHref"] = "/which-subjects?" + Model.Data.ToQueryString();
+    ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <div class="govuk-grid-row">

@@ -13,9 +13,15 @@
         public const string UrlUnsafeCharacters = "[^a-zA-Z0-9_{}()\\-~/]";
         public const string MultipleUnderscores = @"[-]{2,}";
 
-        public const string PENDING = "PENDING";
+        public const string English = "English";
 
-        public const string RECEIVED = "RECEIVED";
+        public const string Math = "Math";
+
+        public const string Science = "Science";
+
+        public const string Humanities = "Humanities";
+
+        public const string ModernForeignLanguages = "ModernForeignLanguages";
 
         public const string SessionCookieName = ".FindATuitionPartner.Session";
 

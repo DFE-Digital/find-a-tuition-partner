@@ -14,16 +14,31 @@
             <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         </govuk-error-summary>
 
+
+        <h2 class="govuk-heading-m">
+            <span>@Model.Data.SupportReferenceNumber</span>
+        </h2>
         <h1 class="govuk-heading-l">
             <span>View responses to your tuition enquiry</span>
         </h1>
 
         <govuk-details open="false">
             <govuk-details-summary>
-                Reveal your enquiry
+                Your tuition requirements
             </govuk-details-summary>
             <govuk-details-text>
-                @Model.Data?.EnquiryText
+                This is the tuition requirements you asked for:
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                    @foreach (var item in Model.Data.KeyStageSubjects)
+                    {
+                        <li>
+                            @item
+                        </li>
+                    }
+                    <li>
+                        @Model.Data?.EnquiryText
+                    </li>
+                </ul>
             </govuk-details-text>
         </govuk-details>
 

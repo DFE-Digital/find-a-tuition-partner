@@ -1,6 +1,7 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces.Repositories;
 using Application.Common.Models.Enquiry.Respond;
+using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using MagicLinkType = Domain.Enums.MagicLinkType;
@@ -18,9 +19,15 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         var tuitionPartnerEnquiries = await _context.TuitionPartnersEnquiry.AsNoTracking()
             .Where(e => e.EnquiryId == enquiryId)
             .Include(e => e.Enquiry)
+            .ThenInclude(e => e.KeyStageSubjectEnquiry)
+            .ThenInclude(ks => ks.KeyStage)
+            .Include(e => e.Enquiry)
+            .ThenInclude(e => e.KeyStageSubjectEnquiry)
+            .ThenInclude(s => s.Subject)
             .Include(e => e.EnquiryResponse)
             .ThenInclude(e => e!.MagicLink)
-            .Include(x => x.TuitionPartner).ToListAsync();
+            .Include(x => x.TuitionPartner)
+            .ToListAsync();
 
         if (!tuitionPartnerEnquiries.Any())
         {
@@ -30,10 +37,18 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         var tuitionPartnerEnquiriesWithResponses = tuitionPartnerEnquiries.Where(x =>
             x.EnquiryResponse != null && !string.IsNullOrEmpty(x.EnquiryResponse.EnquiryResponseText)).ToList();
 
+        var keyStageSubjects = tuitionPartnerEnquiries.First().Enquiry
+            .KeyStageSubjectEnquiry
+            .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
+            .GroupByKeyAndConcatenateValues();
+
         var result = new EnquirerViewAllResponsesModel
         {
             EnquiryText = tuitionPartnerEnquiries.FirstOrDefault()?.Enquiry.EnquiryText!,
+            SupportReferenceNumber = tuitionPartnerEnquiries.First().Enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = tuitionPartnerEnquiries.Count,
+            KeyStageSubjects = keyStageSubjects,
+            EnquiryCreatedDateTime = tuitionPartnerEnquiries.First().Enquiry.CreatedAt,
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
 

@@ -1,6 +1,8 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Application.Extensions;
 using Domain;
 using Domain.Enums;
 using Domain.Search;
@@ -66,13 +68,33 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         enquiryRequestMagicLinks.Add(enquirerViewAllResponsesMagicLink);
 
+        var keyStageSubjects = request.Data.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+
+        if (!keyStageSubjects.Any())
+        {
+            _logger.LogError("The {request} Input contains no KeyStage and Subjects.", nameof(AddEnquiryCommand));
+            return emptyResult;
+        }
+
+        var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
+
+        foreach (var (keyStageId, subjectId) in keyStageSubjects.GetIdsForKeyStageSubjects())
+        {
+            keyStageSubjectEnquiry.Add(new KeyStageSubjectEnquiry()
+            {
+                KeyStageId = keyStageId,
+                SubjectId = subjectId
+            });
+        }
+
         var enquiry = new Enquiry()
         {
             EnquiryText = request.Data?.EnquiryText!,
             Email = request.Data?.Email!,
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             MagicLinks = enquiryRequestMagicLinks,
-            SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber()
+            SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
+            KeyStageSubjectEnquiry = keyStageSubjectEnquiry
         };
 
         var dataSaved = false;
