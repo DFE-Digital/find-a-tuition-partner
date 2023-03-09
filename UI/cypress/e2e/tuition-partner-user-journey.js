@@ -220,9 +220,15 @@ Then("they select the {string} tuition partner page", (tp) => {
   Step(this, "the page's title is '" + tp + "'");
 });
 
-When("they click the 'Check the full list of quality-assured tuition partners.'link", () => {
-  cy.get('[data-testid="full-list-link"]')
-    .should("exist")
-    .should("have.text", "Check the full list of quality-assured tuition partners")
-    .click();
-});
+When(
+  "they click the 'Check the full list of quality-assured tuition partners.'link",
+  () => {
+    cy.get('[data-testid="full-list-link"]')
+      .should("exist")
+      .should(
+        "have.text",
+        "Check the full list of quality-assured tuition partners"
+      )
+      .click();
+  }
+);
