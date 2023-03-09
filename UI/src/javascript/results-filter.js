@@ -1,9 +1,6 @@
 function ResultsFilter() {
   this.$body = document.querySelector("body");
   this.$filters = document.querySelector('[data-module="results-filter"]');
-  this.$overlayApplyFilters = document.querySelector(
-    '[data-module="overlay-apply-filters"]'
-  );
   this.$timeout = null;
 }
 
@@ -33,13 +30,6 @@ ResultsFilter.prototype.init = function () {
 ResultsFilter.prototype.filterChangedEvent = function (e) {
   if (this.$timeout) {
     clearTimeout(this.$timeout);
-  }
-
-  if (this.$overlayApplyFilters.offsetParent == null) {
-    this.$timeout = setTimeout(
-      () => document.querySelector("form").submit(),
-      500
-    );
   }
 };
 

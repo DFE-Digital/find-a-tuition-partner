@@ -120,7 +120,27 @@
 }
 
 .app-results-filter.postcode-group {
-  margin-top: 20px;
+  @include govuk-media-query($from: tablet) {
+    margin-top: 20px;
+    background-color: #ffffff;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    border-top: 2px solid #b1b4b6;
+    margin-bottom: 0px;
+  }
+
+  .postcode-search {
+    @include govuk-media-query($until: tablet) {
+      display: none;
+    }
+  }
+}
+
+.error-summary-filter-prompt {
+  @include govuk-media-query($from: tablet) {
+    display: none;
+  }
 }
 
 .enquire-nudge {

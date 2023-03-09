@@ -25,7 +25,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
-        <govuk-error-summary>
+        <govuk-error-summary show-if="!Model.ModelState.IsValid">
+            <govuk-error-summary-item show-if="!Model.ModelState.IsValid" class="error-summary-filter-prompt">Use the filters secion below to update the following details:</govuk-error-summary-item>
             <govuk-error-summary-item asp-for="Data.Postcode"/>
             <govuk-error-summary-item asp-for="Data.Subjects"/>
             <govuk-error-summary-item asp-for="Data.TuitionType"/>
@@ -110,7 +111,7 @@
                         </govuk-radios-fieldset>
                     </govuk-radios>
 
-                    <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="govuk-link govuk-link--no-underline"
+                    <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="app-print-hide govuk-link govuk-link--no-underline"
                        asp-route-postcode=@Model.Data.Postcode>
                         Clear all filters
                     </a>
@@ -129,7 +130,7 @@
                         </label>
                         <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
                         <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
-                        <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
+                        <govuk-button class="govuk-button--secondary postcode-search" type="submit" data-testid="call-to-action">Search</govuk-button>
                     </div>
                     <div class="govuk-!-margin-top-7">
                         <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
@@ -232,21 +233,21 @@
                             <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                         </div>
                     </div>
-                    <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
-                        <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
-                            <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
-                                          class="govuk-!-margin-bottom-2">
-                                Update price comparison list
-                            </govuk-button>
-                        </div>
-                    </div>
                 }
+                <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
+                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+                        <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
+                                        class="govuk-!-margin-bottom-2">
+                            Update price comparison list
+                        </govuk-button>
+                    </div>
+                </div>                
             }
             else if (validResults && count == 0)
             {
                 <div class="govuk-body" data-testid="results-summary">
                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                    No tuition partners have been found, updating your filters may change this
+                    No tuition partners have been found, updating your selected filters may change this.
                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                 </div>
             }
