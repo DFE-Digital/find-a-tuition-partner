@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230308190912_KeyStageSubjectEnquiry")]
+    partial class KeyStageSubjectEnquiry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,20 +43,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("LocalAuthorityDistrict")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PostCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("SupportReferenceNumber")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("TuitionTypeId")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -62,8 +53,6 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
-
-                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Enquiries");
                 });
@@ -4658,15 +4647,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("DataProtectionKeys");
                 });
 
-            modelBuilder.Entity("Domain.Enquiry", b =>
-                {
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId");
-
-                    b.Navigation("TuitionType");
-                });
-
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
                 {
                     b.HasOne("Domain.Enquiry", "Enquiry")
@@ -4687,7 +4667,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
                 {
                     b.HasOne("Domain.Enquiry", "Enquiry")
-                        .WithMany("KeyStageSubjectEnquiry")
+                        .WithMany()
                         .HasForeignKey("EnquiryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -4945,8 +4925,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.Navigation("EnquiryResponse");
-
-                    b.Navigation("KeyStageSubjectEnquiry");
 
                     b.Navigation("MagicLinks");
 

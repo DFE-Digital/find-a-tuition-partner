@@ -16,7 +16,7 @@ public class GetEnquirerViewAllResponsesQueryHandler : IRequestHandler<GetEnquir
 
     public async Task<EnquirerViewAllResponsesModel> Handle(GetEnquirerViewAllResponsesQuery request, CancellationToken cancellationToken)
     {
-        var result = await _unitOfWork.TuitionPartnerEnquiryRepository
+        var result = await _unitOfWork.EnquiryRepository
             .GetEnquirerViewAllResponses(request.EnquiryId, request.BaseServiceUrl);
         return result;
     }

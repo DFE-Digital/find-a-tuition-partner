@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230309145736_AddPostCodeLadAndTpTypeIdToEnquiry")]
+    partial class AddPostCodeLadAndTpTypeIdToEnquiry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,8 +64,6 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
-
-                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Enquiries");
                 });
@@ -4656,15 +4656,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataProtectionKeys");
-                });
-
-            modelBuilder.Entity("Domain.Enquiry", b =>
-                {
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId");
-
-                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
