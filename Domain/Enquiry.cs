@@ -13,6 +13,8 @@ public class Enquiry
     public int? TuitionTypeId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public TuitionType TuitionType { get; set; } = null!;
+
     public ICollection<TuitionPartnerEnquiry> TuitionPartnerEnquiry { get; set; } = null!;
 
     public ICollection<EnquiryResponse> EnquiryResponse { get; set; } = null!;
