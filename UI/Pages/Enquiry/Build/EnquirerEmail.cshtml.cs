@@ -36,7 +36,7 @@ public class EnquirerEmail : PageModel
                 return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
             }
 
-            return RedirectToPage(nameof(EnquiryQuestion), new SearchModel(data));
+            return RedirectToPage(nameof(TutoringLogistics), new SearchModel(data));
         }
 
         return Page();

@@ -73,9 +73,17 @@ public class SliceFixture : IAsyncLifetime
                     LocalAuthorityDistrict = District.Dacorum.Name,
                     LocalAuthority = District.Dacorum.LocalAuthorityName
                 });
+
+
+            SessionService = Substitute.For<ISessionService>();
+
+            SessionService
+                .SessionDataExistsAsync()
+                .Returns(true);
         }
 
         public ILocationFilterService LocationFilter { get; }
+        public ISessionService SessionService { get; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -102,6 +110,9 @@ public class SliceFixture : IAsyncLifetime
 
                 services.Remove<ILocationFilterService>();
                 services.AddSingleton(LocationFilter);
+
+                services.Remove<ISessionService>();
+                services.AddSingleton(SessionService);
 
                 services.AddMvc().AddControllersAsServices();
             });

@@ -1,5 +1,5 @@
 ﻿using Application.Common.Models.Enquiry.Build;
-using Application.Validators;
+using Application.Validators.Enquiry.Build;
 using FluentValidation.TestHelper;
 using UI.Pages.Enquiry.Build;
 using EnquirerEmail = UI.Pages.Enquiry.Build.EnquirerEmail;
@@ -76,7 +76,7 @@ public class EnquirerEmailPageTests
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(EnquiryQuestion));
+        redirect.PageName.Should().Be(nameof(TutoringLogistics));
     }
 
     [Theory]

@@ -27,6 +27,10 @@
 
         public const string EnquirerEmail = "EnquirerEmail";
 
-        public const string EnquiryText = "EnquiryText";
+        public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";
+
+        public const string EnquirySendRequirements = "EnquirySendRequirements";
+
+        public const string EnquiryAdditionalInformation = "EnquiryAdditionalInformation";
     }
 }

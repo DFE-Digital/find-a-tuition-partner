@@ -86,8 +86,16 @@ public class CheckYourAnswers : PageModel
                 Data.Email = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquiryText):
-                Data.EnquiryText = value;
+            case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
+                Data.TutoringLogistics = value;
+                break;
+
+            case var k when k.Contains(StringConstants.EnquirySendRequirements):
+                Data.SendRequirements = value;
+                break;
+
+            case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):
+                Data.AdditionalInformation = value;
                 break;
         }
     }

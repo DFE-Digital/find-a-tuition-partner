@@ -2,7 +2,7 @@ using Application.Common.Models.Enquiry.Build;
 using Application.Constants;
 using FluentValidation;
 
-namespace Application.Validators;
+namespace Application.Validators.Enquiry.Build;
 
 public class EnquirerEmailModelValidator : AbstractValidator<EnquirerEmailModel>
 {
