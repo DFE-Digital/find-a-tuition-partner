@@ -84,7 +84,7 @@ public class GetSearchResultsQueryHandler : IRequestHandler<GetSearchResultsQuer
             request,
             cancellationToken);
 
-        var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
+        var result = new TuitionPartnersResult(results, location.Data.LocalAuthority, location.Data.LocalAuthorityDistrict);
 
         return Result.Success(result);
     }

@@ -58,4 +58,23 @@ public static class StringExtensions
 
         return commaSeparated.Remove(lastCommaIndex, 1).Insert(lastCommaIndex, " and");
     }
+
+    public static List<string> GroupByKeyAndConcatenateValues(this IEnumerable<string> keyValuePairs)
+    {
+        var groupedPairs = keyValuePairs.GroupBy(kv =>
+            kv.Substring(0, kv.IndexOf(":", StringComparison.Ordinal)).Trim());
+        return (from @group in groupedPairs
+                let key = @group.Key
+                let values = @group.Select(kv => kv.Substring(kv.IndexOf(":", StringComparison.Ordinal) + 1).Trim())
+                    .ToList()
+                let valuesCount = values.Count
+                let valueString = valuesCount switch
+                {
+                    1 => values[0],
+                    2 => $"{values[0]} and {values[1]}",
+                    _ => $"{string.Join(", ", values.Take(valuesCount - 1))} and {values.Last()}"
+                }
+                select $"{key}: {valueString}").ToList();
+    }
+
 }

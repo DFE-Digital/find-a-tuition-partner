@@ -103,7 +103,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         if (tpResult is IErrorResult tpError)
             return tpError.Cast<TuitionPartnersResult>();
 
-        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority);
+        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority, location.LocalAuthorityDistrict);
 
         return Result.Success(result);
     }

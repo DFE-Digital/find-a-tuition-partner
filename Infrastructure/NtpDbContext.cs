@@ -32,6 +32,7 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<OrganisationType> OrganisationType { get; set; } = null!;
 
     public DbSet<TuitionPartnerEnquiry> TuitionPartnersEnquiry { get; set; } = null!;
+    public DbSet<KeyStageSubjectEnquiry> KeyStageSubjectsEnquiry { get; set; } = null!;
 
     public Task<int> SaveChangesAsync()
     {

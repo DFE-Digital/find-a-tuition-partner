@@ -167,4 +167,19 @@ public class StringExtensionsTests
         List<string> list = new List<string>(stringArray);
         list.DisplayList().Should().Be(output);
     }
+
+    [Fact]
+    public void GroupByKeyAndConcatenateValues_ReturnsCorrectOutput()
+    {
+        // Arrange
+        var keyValuePairs = new List<string>() { "Key1: Value1", "Key2: Value2", "Key2: Value3", "Key3: Value4", "Key3: Value5", "Key3: Value6", "Key3: Value7" };
+        var expectedOutput = new List<string>() { "Key1: Value1", "Key2: Value2 and Value3", "Key3: Value4, Value5, Value6 and Value7" };
+
+        // Act
+        var actualOutput = keyValuePairs.GroupByKeyAndConcatenateValues();
+
+        // Assert
+
+        actualOutput.Should().BeEquivalentTo(expectedOutput);
+    }
 }

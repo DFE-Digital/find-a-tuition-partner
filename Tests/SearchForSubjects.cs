@@ -147,4 +147,15 @@ public class SearchForSubjects : CleanSliceFixture
         var parsed = new[] { keyStageSubject }.ParseKeyStageSubjects();
         parsed.Should().BeEmpty();
     }
+
+    [Theory]
+    [InlineData("KeyStage1-English")]
+    [InlineData("KeyStage1-Maths")]
+    [InlineData("KeyStage2-Science")]
+    [InlineData("KeyStage4-Humanities")]
+    public void Parses_valid_KeyStageSubject_without_error(string keyStageSubject)
+    {
+        var parsed = new[] { keyStageSubject }.ParseKeyStageSubjects();
+        parsed.Should().NotBeEmpty();
+    }
 }
