@@ -1,0 +1,24 @@
+﻿@page
+@model UI.Pages.Enquiry.Build.SendRequirements
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/tutoring-logistics";
+    ViewData["Title"] = "Do you need tuition partners who can support with SEND?";
+    ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
+}
+
+<form method="get">
+    <div class="govuk-form-group">
+        <govuk-character-count asp-for="Data.SendRequirements" threshold="95" rows="12" max-length="@Application.Constants.IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+            <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+                Do you need tuition partners who can support with SEND? (optional)
+            </govuk-character-count-label>
+            <govuk-character-count-hint>
+                Hint text TBC..............
+            </govuk-character-count-hint>
+        </govuk-character-count>
+    </div>
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+    <input type="hidden" name="handler" value="Submit"/>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+</form>

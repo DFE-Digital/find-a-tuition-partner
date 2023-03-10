@@ -1,0 +1,52 @@
+using Application.Common.Interfaces;
+using Application.Common.Models;
+using Application.Common.Models.Enquiry.Build;
+
+namespace UI.Pages.Enquiry.Build;
+
+public class TutoringLogistics : PageModel
+{
+    private readonly ISessionService _sessionService;
+
+    public TutoringLogistics(ISessionService sessionService)
+    {
+        _sessionService = sessionService;
+    }
+
+    [BindProperty(SupportsGet = true)] public TutoringLogisticsModel Data { get; set; } = new();
+
+    public async Task<IActionResult> OnGet(TutoringLogisticsModel data)
+    {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
+        Data = data;
+
+        Data.TutoringLogistics = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryTutoringLogistics);
+
+        ModelState.Clear();
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnGetSubmit(TutoringLogisticsModel data)
+    {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
+        Data = data;
+        if (ModelState.IsValid)
+        {
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryTutoringLogistics, data.TutoringLogistics!);
+
+            if (data.From == ReferrerList.CheckYourAnswers)
+            {
+                return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
+            }
+
+            return RedirectToPage(nameof(SendRequirements), new SearchModel(data));
+        }
+
+        return Page();
+    }
+}
