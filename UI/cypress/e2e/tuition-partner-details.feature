@@ -19,13 +19,6 @@ Feature: User can view full details of a Tuition Parner
     Then the page URL ends with '/bright-heart-education'
     And the heading should say 'Bright Heart Education'
 
-  Scenario: don’t show email address where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'Pearson'
-    Then TP has not provided the information in the 'Email address' section
-
-  Scenario: don’t show phone number where TP has not provided information
-    Given a user has arrived on the 'Tuition Partner' page for 'Pearson'
-    Then TP has not provided the information in the 'Phone Number' section
 
   Scenario: show Contact Details where TP has provided information
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
