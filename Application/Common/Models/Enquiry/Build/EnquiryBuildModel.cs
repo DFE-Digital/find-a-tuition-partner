@@ -6,7 +6,7 @@ public record EnquiryBuildModel : EnquiryBaseModel
 {
     public string? Email { get; set; }
     public string? TutoringLogistics { get; set; }
-    public string? SendRequirements { get; set; }
+    public string? SENDRequirements { get; set; }
     public string? AdditionalInformation { get; set; }
 
     public TuitionPartnersResult? TuitionPartnersForEnquiry { get; set; }

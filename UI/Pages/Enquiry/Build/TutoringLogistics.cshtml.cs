@@ -44,7 +44,7 @@ public class TutoringLogistics : PageModel
                 return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
             }
 
-            return RedirectToPage(nameof(SendRequirements), new SearchModel(data));
+            return RedirectToPage(nameof(SENDRequirements), new SearchModel(data));
         }
 
         return Page();

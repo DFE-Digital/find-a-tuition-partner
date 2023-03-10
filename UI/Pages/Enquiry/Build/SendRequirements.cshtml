@@ -1,6 +1,6 @@
 ﻿@page
 @using Application.Constants
-@model UI.Pages.Enquiry.Build.SendRequirements
+@model UI.Pages.Enquiry.Build.SENDRequirements
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
     var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/tutoring-logistics";
@@ -10,7 +10,7 @@
 
 <form method="post">
     <div class="govuk-form-group">
-        <govuk-character-count asp-for="Data.SendRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
                 Do you need tuition partners who can support pupils with SEND? (optional)
             </govuk-character-count-label>

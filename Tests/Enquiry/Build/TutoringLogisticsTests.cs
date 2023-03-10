@@ -58,11 +58,11 @@ public class TutoringLogisticsTests
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(SendRequirements));
+        redirect.PageName.Should().Be(nameof(SENDRequirements));
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class TutoringLogisticsTests
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;

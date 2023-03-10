@@ -55,7 +55,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -72,7 +72,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -86,7 +86,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -100,7 +100,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -114,7 +114,7 @@ public class CheckYourAnswersTests
                 //TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -128,7 +128,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 //Email = "test@test.com",
                 TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };
@@ -142,7 +142,7 @@ public class CheckYourAnswersTests
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 //TutoringLogistics = "Test content",
-                SendRequirements = "some SEND reqs",
+                SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information"
             }
         };

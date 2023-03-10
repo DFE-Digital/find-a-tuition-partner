@@ -72,7 +72,7 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
@@ -87,7 +87,7 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;

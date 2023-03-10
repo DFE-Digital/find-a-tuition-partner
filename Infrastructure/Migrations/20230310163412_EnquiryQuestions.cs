@@ -20,7 +20,7 @@ namespace Infrastructure.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "SendRequirements",
+                name: "SENDRequirements",
                 table: "Enquiries",
                 type: "text",
                 nullable: true);
@@ -33,7 +33,7 @@ namespace Infrastructure.Migrations
                 table: "Enquiries");
 
             migrationBuilder.DropColumn(
-                name: "SendRequirements",
+                name: "SENDRequirements",
                 table: "Enquiries");
 
             migrationBuilder.RenameColumn(

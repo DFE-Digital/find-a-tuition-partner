@@ -50,7 +50,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("SendRequirements")
+                    b.Property<string>("SENDRequirements")
                         .HasColumnType("text");
 
                     b.Property<string>("SupportReferenceNumber")

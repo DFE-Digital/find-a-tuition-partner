@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace Application.Validators.Enquiry.Build;
 
-public class SendRequirementsModelValidator : AbstractValidator<SendRequirementsModel>
+public class SENDRequirementsModelValidator : AbstractValidator<SENDRequirementsModel>
 {
-    public SendRequirementsModelValidator()
+    public SENDRequirementsModelValidator()
     {
-        RuleFor(request => request.SendRequirements)
+        RuleFor(request => request.SENDRequirements)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"Do you need tuition partners who can support pupils with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
     }

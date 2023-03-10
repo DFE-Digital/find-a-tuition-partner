@@ -3,7 +3,7 @@ public class Enquiry
 {
     public int Id { get; set; }
     public string TutoringLogistics { get; set; } = null!;
-    public string? SendRequirements { get; set; }
+    public string? SENDRequirements { get; set; }
     public string? AdditionalInformation { get; set; }
     public string Email { get; set; } = null!;
     public string SupportReferenceNumber { get; set; } = null!;

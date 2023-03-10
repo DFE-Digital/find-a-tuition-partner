@@ -55,7 +55,7 @@ public class AdditionalInformationTests
 
         var result = await _fixture.GetPage<AdditionalInformation>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
@@ -69,7 +69,7 @@ public class AdditionalInformationTests
 
         var result = await _fixture.GetPage<AdditionalInformation>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;

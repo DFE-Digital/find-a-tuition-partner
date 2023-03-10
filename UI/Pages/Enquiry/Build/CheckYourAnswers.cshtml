@@ -14,7 +14,7 @@
             <govuk-error-summary-item asp-for="Data.TuitionType" />
             <govuk-error-summary-item asp-for="Data.Email" />
             <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
-            <govuk-error-summary-item asp-for="Data.SendRequirements" />
+            <govuk-error-summary-item asp-for="Data.SENDRequirements" />
             <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
         </govuk-error-summary>
 
@@ -106,7 +106,7 @@
                         Do you need tuition partners who can support pupils with SEND?
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.SendRequirements) ? "Not specified" : Model.Data.SendRequirements)
+              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? "Not specified" : Model.Data.SENDRequirements)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
@@ -135,7 +135,7 @@
           </button>
           <input asp-for="Data.Email" type="hidden" />
           <input asp-for="Data.TutoringLogistics" type="hidden" />
-          <input asp-for="Data.SendRequirements" type="hidden" />
+          <input asp-for="Data.SENDRequirements" type="hidden" />
           <input asp-for="Data.AdditionalInformation" type="hidden" />
           <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
         </form>

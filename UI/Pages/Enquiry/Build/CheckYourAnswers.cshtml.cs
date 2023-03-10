@@ -90,8 +90,8 @@ public class CheckYourAnswers : PageModel
                 Data.TutoringLogistics = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquirySendRequirements):
-                Data.SendRequirements = value;
+            case var k when k.Contains(StringConstants.EnquirySENDRequirements):
+                Data.SENDRequirements = value;
                 break;
 
             case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):

@@ -29,7 +29,7 @@
 
         public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";
 
-        public const string EnquirySendRequirements = "EnquirySendRequirements";
+        public const string EnquirySENDRequirements = "EnquirySENDRequirements";
 
         public const string EnquiryAdditionalInformation = "EnquiryAdditionalInformation";
     }

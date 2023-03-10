@@ -35,7 +35,7 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"What type of tuition plan do you need must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
-        RuleFor(request => request.SendRequirements)
+        RuleFor(request => request.SENDRequirements)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"Do you need tuition partners who can support pupils with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
