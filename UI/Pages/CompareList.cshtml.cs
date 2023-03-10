@@ -273,7 +273,7 @@ public class CompareList : PageModel
                         },
                         cancellationToken);
 
-            var result = new TuitionPartnersResult(results, location.Data.LocalAuthority, location.Data.LocalAuthorityDistrict);
+            var result = new TuitionPartnersResult(results, location.Data.LocalAuthorityDistrict);
 
             return Result.Success(result);
         }

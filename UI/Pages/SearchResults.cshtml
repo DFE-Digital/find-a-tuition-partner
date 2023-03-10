@@ -15,7 +15,7 @@
     ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
     ViewData["IncludePrintPage"] = true;
 
-    var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityName != null);
+    var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityDistrictName != null);
     var results = !validResults ? new List<TuitionPartnerResult>() : Model!.Data!.Results!.Results;
     var count = results!.Count();
     var partnersPlural = count == 1 ? "partner" : "partners";
@@ -32,7 +32,7 @@
             <govuk-error-summary-item asp-for="Data.TuitionType"/>
         </govuk-error-summary>
 
-        <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityName</strong></span>
+        <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityDistrictName</strong></span>
         <h1 class="govuk-heading-l">
             <span class="app-results-filter--desktop">Your options for choosing a tuition partner</span>
             <span class="app-results-filter--non-desktop">Your options now</span>

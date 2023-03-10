@@ -68,7 +68,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             lads,
             allPrices,
             tp.OrganisationTypeName,
-            tpResult.Result.Data.LocalAuthorityName,
+            tpResult.Result.Data.LocalAuthorityDistrictName,
             request.ShowFullInfo ? tp.TPLastUpdatedData : null,
             request.ShowFullInfo ? tp.ImportProcessLastUpdatedData : null,
             request.ShowFullInfo ? tp.ImportId : null,
@@ -103,7 +103,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         if (tpResult is IErrorResult tpError)
             return tpError.Cast<TuitionPartnersResult>();
 
-        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority, location.LocalAuthorityDistrict);
+        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthorityDistrict);
 
         return Result.Success(result);
     }
