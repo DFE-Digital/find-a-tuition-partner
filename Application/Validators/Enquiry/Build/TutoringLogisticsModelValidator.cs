@@ -10,7 +10,7 @@ public class TutoringLogisticsModelValidator : AbstractValidator<TutoringLogisti
     {
         RuleFor(request => request.TutoringLogistics)
              .NotEmpty()
-             .WithMessage("What type of tuition plan do you need is required")
+             .WithMessage("Enter the type of tuition plan that you need")
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"What type of tuition plan do you need must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
     }

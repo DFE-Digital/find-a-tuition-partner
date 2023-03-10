@@ -13,7 +13,7 @@ public class SendRequirements : PageModel
         _sessionService = sessionService;
     }
 
-    [BindProperty(SupportsGet = true)] public SendRequirementsModel Data { get; set; } = new();
+    [BindProperty] public SendRequirementsModel Data { get; set; } = new();
 
     public async Task<IActionResult> OnGet(SendRequirementsModel data)
     {
@@ -29,7 +29,7 @@ public class SendRequirements : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetSubmit(SendRequirementsModel data)
+    public async Task<IActionResult> OnPostAsync(SendRequirementsModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");

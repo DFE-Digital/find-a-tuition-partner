@@ -10,6 +10,6 @@ public class SendRequirementsModelValidator : AbstractValidator<SendRequirements
     {
         RuleFor(request => request.SendRequirements)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"Do you need tuition partners who can support with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"Do you need tuition partners who can support pupils with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
     }
 }

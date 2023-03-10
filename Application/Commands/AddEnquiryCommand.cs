@@ -97,8 +97,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         var enquiry = new Enquiry()
         {
-            EnquiryText = request.Data?.TutoringLogistics!,
             Email = request.Data?.Email!,
+            TutoringLogistics = request.Data?.TutoringLogistics!,
+            SendRequirements = request.Data?.SendRequirements!,
+            AdditionalInformation = request.Data?.AdditionalInformation!,
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             MagicLinks = enquiryRequestMagicLinks,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),

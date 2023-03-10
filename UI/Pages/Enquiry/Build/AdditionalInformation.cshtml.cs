@@ -13,9 +13,9 @@ public class AdditionalInformation : PageModel
         _sessionService = sessionService;
     }
 
-    [BindProperty(SupportsGet = true)] public AdditionalInformationModel Data { get; set; } = new();
+    [BindProperty] public AdditionalInformationModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(AdditionalInformationModel data)
+    public async Task<IActionResult> OnGetAsync(AdditionalInformationModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
@@ -29,7 +29,7 @@ public class AdditionalInformation : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetSubmit(AdditionalInformationModel data)
+    public async Task<IActionResult> OnPostAsync(AdditionalInformationModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");

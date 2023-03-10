@@ -1,22 +1,26 @@
 ﻿@page
+@using Application.Constants
 @model UI.Pages.Enquiry.Build.SendRequirements
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
     var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/tutoring-logistics";
-    ViewData["Title"] = "Do you need tuition partners who can support with SEND?";
+    ViewData["Title"] = "Do you need tuition partners who can support pupils with SEND?";
     ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
 }
 
-<form method="get">
+<form method="post">
     <div class="govuk-form-group">
-        <govuk-character-count asp-for="Data.SendRequirements" threshold="95" rows="12" max-length="@Application.Constants.IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <govuk-character-count asp-for="Data.SendRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-                Do you need tuition partners who can support with SEND? (optional)
+                Do you need tuition partners who can support pupils with SEND? (optional)
             </govuk-character-count-label>
             <govuk-character-count-hint>
-                Hint text TBC..............
+                Hint text
             </govuk-character-count-hint>
         </govuk-character-count>
+    </div>
+    <div class="govuk-inset-text">
+        <p class="govuk-body">Do not include any information that would allow anyone to identify pupils, such as names or specific characteristics.</p>
     </div>
     <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>

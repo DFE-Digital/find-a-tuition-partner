@@ -24,6 +24,20 @@ ResultsFilter.prototype.init = function () {
       .querySelector('[data-module="show-filters-button-group"]')
       .querySelector("button")
       .addEventListener("click", this.showFiltersEvent.bind(this));
+
+    //If the error summary filter prompt is shown then when click on error link display filters
+    var errorSummaryFilterPrompt = document.querySelector(
+      ".error-summary-filter-prompt"
+    );
+    if (
+      errorSummaryFilterPrompt &&
+      window.getComputedStyle(errorSummaryFilterPrompt).display != "none"
+    ) {
+      document
+        .querySelector(".govuk-error-summary")
+        .querySelector("a")
+        .addEventListener("click", this.showFiltersEvent.bind(this));
+    }
   }
 };
 

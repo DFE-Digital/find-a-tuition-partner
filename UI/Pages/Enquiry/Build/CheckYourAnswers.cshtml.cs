@@ -17,7 +17,7 @@ public class CheckYourAnswers : PageModel
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(CheckYourAnswersModel data)
+    public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
@@ -44,7 +44,7 @@ public class CheckYourAnswers : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");

@@ -11,7 +11,7 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
         //TODO - Postcode needs to be validated, but not shown on check your answers page, so what to do if invalid?
         RuleFor(m => m.Postcode)
             .NotEmpty()
-            .WithMessage("A postcode is required");
+            .WithMessage("Enter a postcode");
 
         //TODO - Key stages and subjects can be cleared on the search pages - how does that flow work?
         RuleFor(m => m.KeyStages)
@@ -24,20 +24,20 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
 
         RuleFor(m => m.TuitionType)
             .NotEmpty()
-            .WithMessage("A type of tuition is required");
+            .WithMessage("Enter a type of tuition");
 
-        RuleFor(request => request.Email).NotEmpty().WithMessage("Email address is required")
+        RuleFor(request => request.Email).NotEmpty().WithMessage("Enter an email address")
             .Matches(StringConstants.EmailRegExp).WithMessage("You must enter an email address in the correct format");
 
         RuleFor(request => request.TutoringLogistics)
              .NotEmpty()
-             .WithMessage("What type of tuition plan do you need is required")
+             .WithMessage("Enter the type of tuition plan that you need")
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"What type of tuition plan do you need must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.SendRequirements)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"Do you need tuition partners who can support with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"Do you need tuition partners who can support pupils with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.AdditionalInformation)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)

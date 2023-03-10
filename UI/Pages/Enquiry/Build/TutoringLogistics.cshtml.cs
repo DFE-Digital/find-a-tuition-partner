@@ -13,9 +13,9 @@ public class TutoringLogistics : PageModel
         _sessionService = sessionService;
     }
 
-    [BindProperty(SupportsGet = true)] public TutoringLogisticsModel Data { get; set; } = new();
+    [BindProperty] public TutoringLogisticsModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(TutoringLogisticsModel data)
+    public async Task<IActionResult> OnGetAsync(TutoringLogisticsModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
@@ -29,7 +29,7 @@ public class TutoringLogistics : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetSubmit(TutoringLogisticsModel data)
+    public async Task<IActionResult> OnPostAsync(TutoringLogisticsModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");

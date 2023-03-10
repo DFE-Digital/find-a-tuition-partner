@@ -22,7 +22,7 @@ public class EnquirerEmailPageTests
         var model = new EnquirerEmailModel { Email = email };
         var result = new EnquirerEmailModelValidator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage("Email address is required");
+            .WithErrorMessage("Enter an email address");
     }
 
     [Theory]

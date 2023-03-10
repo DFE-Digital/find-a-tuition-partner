@@ -1,4 +1,5 @@
 @page
+@using Application.Constants
 @model UI.Pages.Enquiry.Build.TutoringLogistics
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
@@ -6,14 +7,14 @@
     ViewData["Title"] = "What type of tuition plan do you need?";
     ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
 }
-<form method="get">
+<form method="post">
     <div class="govuk-form-group">
-        <govuk-character-count asp-for="Data.TutoringLogistics" threshold="95" rows="12" max-length="@Application.Constants.IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
                 What type of tuition plan do you need?
             </govuk-character-count-label>
             <govuk-character-count-hint>
-                Hint text TBC..............
+                For example, number of pupils, tuition hours per pupil, specific start date, length of tuition, preferred tutoring time of day
             </govuk-character-count-hint>
         </govuk-character-count>
     </div>

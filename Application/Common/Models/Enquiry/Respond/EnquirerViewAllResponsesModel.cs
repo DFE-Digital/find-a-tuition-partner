@@ -4,7 +4,7 @@ namespace Application.Common.Models.Enquiry.Respond;
 
 public class EnquirerViewAllResponsesModel
 {
-    public string EnquiryText { get; set; } = null!;
+    public string TutoringLogistics { get; set; } = null!;
 
     public string? ErrorMessage { get; set; }
 

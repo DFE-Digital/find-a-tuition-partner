@@ -25,7 +25,7 @@ public class CheckYourAnswersTests
     }
 
     [Theory]
-    [MemberData(nameof(InalidTestData))]
+    [MemberData(nameof(InValidTestData))]
     public void Has_invalid_data(CheckYourAnswersModel model)
     {
         var result = new CheckYourAnswersModelValidator().TestValidate(model);
@@ -61,7 +61,7 @@ public class CheckYourAnswersTests
         };
     }
 
-    public static IEnumerable<object[]> InalidTestData()
+    public static IEnumerable<object[]> InValidTestData()
     {
         yield return new object[]
         {

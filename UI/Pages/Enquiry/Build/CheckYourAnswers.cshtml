@@ -103,14 +103,14 @@
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Do you need tuition partners who can support with SEND?
+                        Do you need tuition partners who can support pupils with SEND?
             </dt>
             <dd class="govuk-summary-list__value">
               @(string.IsNullOrWhiteSpace(Model.Data.SendRequirements) ? "Not specified" : Model.Data.SendRequirements)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
-                Change<span class="govuk-visually-hidden"> if you need tuition partners who can support with SEND</span>
+                            Change<span class="govuk-visually-hidden"> if you need tuition partners who can support pupils with SEND</span>
               </a>
             </dd>
           </div>
