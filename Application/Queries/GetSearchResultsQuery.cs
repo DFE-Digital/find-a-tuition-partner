@@ -28,15 +28,13 @@ public class GetSearchResultsQueryHandler : IRequestHandler<GetSearchResultsQuer
     private readonly ILocationFilterService _locationService;
     private readonly ITuitionPartnerService _tuitionPartnerService;
     private readonly ILookupDataService _lookupDataService;
-    private readonly IMediator _mediator;
 
     public GetSearchResultsQueryHandler(ILocationFilterService locationService, ITuitionPartnerService tuitionPartnerService,
-        ILookupDataService lookupDataService, IMediator mediator)
+        ILookupDataService lookupDataService)
     {
         _locationService = locationService;
         _tuitionPartnerService = tuitionPartnerService;
         _lookupDataService = lookupDataService;
-        _mediator = mediator;
     }
 
     public async Task<SearchResultsModel> Handle(GetSearchResultsQuery request, CancellationToken cancellationToken)
@@ -84,7 +82,7 @@ public class GetSearchResultsQueryHandler : IRequestHandler<GetSearchResultsQuer
             request,
             cancellationToken);
 
-        var result = new TuitionPartnersResult(results, location.Data.LocalAuthority);
+        var result = new TuitionPartnersResult(results, location.Data.LocalAuthorityDistrict);
 
         return Result.Success(result);
     }

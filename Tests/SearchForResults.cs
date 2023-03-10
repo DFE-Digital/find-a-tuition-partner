@@ -151,14 +151,14 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Displays_local_authority()
+    public async Task Displays_local_authority_district()
     {
         // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
         // Assert
-        result?.Results?.LocalAuthorityName.Should().Be("Hertfordshire");
+        result?.Results?.LocalAuthorityDistrictName.Should().Be("Dacorum");
     }
 
     [Fact]
