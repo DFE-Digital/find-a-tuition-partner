@@ -18,7 +18,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     private const string EnquiryTextVariableKey = "enquiry";
     private const string EnquiryResponderVariableKey = "enquiry_responder";
     private const string EnquiryResponseTextVariableKey = "enquiry_response";
-    private const string EnquirerViewResponsePageLinkKey = "link_to_enquirer_view_all_responses_page";
+    private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
 
     private readonly INotificationsClientService _notificationsClientService;
 
@@ -59,15 +59,38 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                                        x.TuitionPartnerId == tuitionPartnerId, "Enquiry,TuitionPartner,EnquiryResponse",
                 true, cancellationToken);
 
-        if (tpEnquiry == null) return false;
+        if (tpEnquiry == null)
+        {
+            _logger.LogError("Unable to find TuitionPartnerEnquiry with the enquiry Id {enquiryId} and tuition partnerId {tuitionPartnerId}",
+                enquiryId, tuitionPartnerId);
+            return false;
+        }
 
-        request.Data.Email = tpEnquiry.Enquiry.Email;
+        var enquirerEnquiryResponseReceivedData =
+            await _unitOfWork.MagicLinkRepository.
+                GetEnquirerEnquiryResponseReceivedData(request.Data.EnquiryId!, request.Data.TuitionPartnerId);
 
-        var notificationsRecipient = GetNotificationsRecipient(request, tpEnquiry.TuitionPartner.Name);
+        if (enquirerEnquiryResponseReceivedData == null)
+        {
+            _logger.LogError("Unable to send enquirer enquiry response received email. " +
+                             "Can't find magic link token with the type {type} by enquiry Id {enquiryId}",
+                MagicLinkType.EnquirerViewAllResponses.ToString(), request.Data.EnquiryId);
+
+            return false;
+        }
+
+        request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
+        request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
+        request.Data.EnquiryText = enquirerEnquiryResponseReceivedData.EnquiryText!;
+
+        var notificationsRecipient = GetNotificationsRecipient(request, enquirerEnquiryResponseReceivedData.TuitionPartnerName);
+
+        GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
+        request.Data.EnquiryText = tpEnquiry.Enquiry.EnquiryText;
 
         var enquirerViewResponseMagicLink = new MagicLink()
         {
-            Token = notificationsRecipient.Token!,
+            Token = enquirerViewResponseMagicLinkToken,
             EnquiryId = request.Data?.EnquiryId,
             MagicLinkTypeId = (int)MagicLinkType.EnquirerViewResponse
         };
@@ -101,19 +124,23 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         return false;
     }
 
-    private NotificationsRecipientDto GetNotificationsRecipient(AddEnquiryResponseCommand request, string enquiryResponderText)
+    private void GenerateEnquirerViewResponseToken(AddEnquiryResponseCommand request,
+        out string enquirerViewResponseMagicLinkToken)
     {
         var generateRandomness
             = _aesEncryption.GenerateRandomToken();
-        var token = _aesEncryption.Encrypt(
+        enquirerViewResponseMagicLinkToken = _aesEncryption.Encrypt(
             $"EnquiryId={request.Data?.EnquiryId}&TuitionPartnerId={request.Data!.TuitionPartnerId}&Type={nameof(MagicLinkType.EnquirerViewResponse)}&{generateRandomness}");
-        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/enquirer-response?token={token}";
+    }
+
+    private NotificationsRecipientDto GetNotificationsRecipient(AddEnquiryResponseCommand request, string enquiryResponderText)
+    {
+        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/all-enquirer-responses?token={request.Data?.Token}";
 
         var result = new NotificationsRecipientDto()
         {
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Token = token,
             Personalisation = GetPersonalisation(request.Data?.EnquiryText!, request.Data?.EnquiryResponseText!, enquiryResponderText, pageLink)
         };
         return result;
@@ -121,14 +148,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquiryResponseText,
         string enquiryResponderText,
-        string enquirerViewResponsePageLinkKey)
+        string enquirerViewResponsesPageLinkKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
             { EnquiryTextVariableKey, enquiryText },
             { EnquiryResponderVariableKey, enquiryResponderText },
             { EnquiryResponseTextVariableKey, enquiryResponseText },
-            { EnquirerViewResponsePageLinkKey, enquirerViewResponsePageLinkKey }
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey }
         };
 
         return personalisation;

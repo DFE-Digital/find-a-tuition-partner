@@ -10,18 +10,29 @@
         <form method="get">
             <h1 class="govuk-heading-l">Find a tuition partner</h1>
             <p class="govuk-body">
-                You can use your National Tutoring Programme funding to get a tuition partner, who will arrange tutoring for your pupils in school or online.
+                Use this service to:
             </p>
-            <p class="govuk-body">
-                This service will help match you with a partner who meets your requirements from the full list of quality-assured tuition partners.
-            </p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                <li>
+                    contact tuition partners in your area 
+                </li>
+                <li>
+                    compare prices
+                </li>
+                <li>
+                    send an enquiry to tuition partners
+                </li>
+            </ul>
 
-            <partial name="_QualityAssuredDetails" />
+            <p class="govuk-body">
+                All tuition partners in the service are quality assured.
+                 <partial name="_QualityAssuredDetails" />
+            </p>
 
             <div class="app-option-card">
-                <h2 class="govuk-heading-m">What is your school’s postcode?</h2>
                 <govuk-input asp-for="Data.Postcode" input-class="govuk-input--width-10" autocomplete="postal-code" data-testid="postcode">
-                    <govuk-input-label>Enter your school’s postcode</govuk-input-label>
+                    <govuk-input-label is-page-heading="true" class="govuk-label--m">What is your school’s postcode?</govuk-input-label>
+                    <govuk-input-hint></govuk-input-hint>
                 </govuk-input>
                 <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
             </div>
@@ -29,39 +40,19 @@
             <input type="hidden" name="handler" value="Submit" />
 
             <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludePostcode", true} }' />
-
-            <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
-            <p class="govuk-body">You can use your National Tutoring Programme funding to mix and match tutoring options.</p>
-            <div class="app-align-sibling-div-height-wrapper">
-                <div class="govuk-grid-column-one-half govuk-!-padding-0 app-align-height-with-sibling">
-                    <div class="app-option-card app-option-card-left">
-                        <h2 class="govuk-heading-m">Academic mentors</h2>
-                        <p class="govuk-body">
-                            Select your own candidate or apply to a central agency for an academic mentor. You’ll employ them full-time to focus on individual and small-group tuition.
-                        </p>
-                        <div>
-                            <govuk-button-link asp-page="/AcademicMentors" data-testid="academic-mentors-link">Read more</govuk-button-link>
-                        </div>
-                    </div>
-                </div>
-                <div class="govuk-grid-column-one-half govuk-!-padding-0 app-align-height-with-sibling">
-                    <div class="app-option-card app-option-card-right">
-                        <h2 class="govuk-heading-m">School-led tutoring</h2>
-                        <p class="govuk-body">
-                            Select and employ your own tutors directly, for example current members of staff, retired teachers, parents or supply teachers.
-                        </p>
-                        <div class="app-bottom-left">
-                            <govuk-button-link asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">Read more</govuk-button-link>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </form>
     </div>
     <div class="govuk-grid-column-one-third">
-        <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
-        <p class="govuk-body"><a asp-page="/FundingAndReporting" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a></p>
-        <h2 class="govuk-heading-m">Full list of tuition partners</h2>
-        <p class="govuk-body"><a asp-page="@nameof(AllTuitionPartners)" class="govuk-link" data-testid="full-list-link">All quality-assured tuition partners</a></p>
+        <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
+        <p class="govuk-body">
+            Find a tuition partner is part of the national tutoring programme (NTP).
+            You can also get an
+            <a class="govuk-link" asp-page="/AcademicMentors" data-testid="academic-mentors-link">academic mentor</a>
+            or use
+            <a class="govuk-link" asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">school led tutoring</a>.
+        </p>
+        <h2 class="govuk-heading-m" data-testid="check-your-tp-quality-assured">Check your tuition partner is quality assured</h2>
+        <p class="govuk-body">You can only use your NTP funding with quality-assured tuition partners.</p>
+        <p class="govuk-body"><a asp-page="@nameof(AllTuitionPartners)" class="govuk-link" data-testid="full-list-link">Check the full list of quality-assured tuition partners</a>.</p>
     </div>
 </div>

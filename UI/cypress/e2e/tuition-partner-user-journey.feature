@@ -34,6 +34,6 @@ Feature: User can travel forwards and backwards
     And they journey back to the search page
     And they update the postcode on the search page to 'NR1 1BD' and go to a selected tuition partner page
     And they will be journey back to the page they started from
-    When they click the 'All quality-assured tuition partners' link
+    When they click the 'Check the full list of quality-assured tuition partners.'link
     And they select the 'Action Tutoring' tuition partner page
     Then they see the tuition types 'In School, Online'

@@ -4,11 +4,7 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import {
-  kebabCase,
-  camelCaseKeyStage,
-  KeyStageSubjects,
-} from "../support/utils";
+import { kebabCase } from "../support/utils";
 
 When("the key stages are edited in the key stages page", () => {
   Step(this, "they select 'Key stage 1, Key stage 2, Key stage 3'");
@@ -220,9 +216,15 @@ Then("they select the {string} tuition partner page", (tp) => {
   Step(this, "the page's title is '" + tp + "'");
 });
 
-When("they click the 'All quality-assured tuition partners' link", () => {
-  cy.get('[data-testid="full-list-link"]')
-    .should("exist")
-    .should("have.text", "All quality-assured tuition partners")
-    .click();
-});
+When(
+  "they click the 'Check the full list of quality-assured tuition partners.'link",
+  () => {
+    cy.get('[data-testid="full-list-link"]')
+      .should("exist")
+      .should(
+        "have.text",
+        "Check the full list of quality-assured tuition partners"
+      )
+      .click();
+  }
+);
