@@ -70,26 +70,13 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         enquiryRequestMagicLinks.Add(enquirerViewAllResponsesMagicLink);
 
         var keyStageSubjects = request.Data.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-
-        if (!keyStageSubjects.Any())
-        {
-            _logger.LogError("The {request} Input contains no KeyStage and Subjects.", nameof(AddEnquiryCommand));
-            return emptyResult;
-        }
-
         var postCode = request.Data.Postcode;
-
-        if (string.IsNullOrEmpty(postCode))
-        {
-            _logger.LogError("The {request} Input contains no PostCode.", nameof(AddEnquiryCommand));
-            return emptyResult;
-        }
-
         var localAuthorityDistrictName = request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName;
 
-        if (string.IsNullOrEmpty(localAuthorityDistrictName))
+        var validationResult = ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
+
+        if (string.IsNullOrEmpty(validationResult))
         {
-            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.", nameof(AddEnquiryCommand));
             return emptyResult;
         }
 
@@ -105,8 +92,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             MagicLinks = enquiryRequestMagicLinks,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
             KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(keyStageSubjects),
-            PostCode = postCode,
-            LocalAuthorityDistrict = localAuthorityDistrictName,
+            PostCode = postCode!,
+            LocalAuthorityDistrict = localAuthorityDistrictName!,
             TuitionTypeId = tuitionTypeId
         };
 
@@ -150,10 +137,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         {
             await _notificationsClientService.SendEmailAsync(
                 getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
+                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
 
             await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
-                EmailTemplateType.EnquirySubmittedToTp);
+                EmailTemplateType.EnquirySubmittedToTp, enquiry.SupportReferenceNumber);
         }
         catch (Exception ex)
         {
@@ -248,5 +235,30 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         }
 
         return keyStageSubjectEnquiry;
+    }
+
+    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode, string? localAuthorityDistrictName)
+    {
+        var result = "Valid";
+
+        if (!keyStageSubject.Any())
+        {
+            _logger.LogError("The {request} Input contains no KeyStage and Subjects.", nameof(AddEnquiryCommand));
+            return string.Empty;
+        }
+
+        if (string.IsNullOrEmpty(postCode))
+        {
+            _logger.LogError("The {request} Input contains no PostCode.", nameof(AddEnquiryCommand));
+            return string.Empty;
+        }
+
+        if (string.IsNullOrEmpty(localAuthorityDistrictName))
+        {
+            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.", nameof(AddEnquiryCommand));
+            return string.Empty;
+        }
+
+        return result;
     }
 }

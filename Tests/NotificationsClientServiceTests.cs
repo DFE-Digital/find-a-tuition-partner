@@ -19,6 +19,7 @@ public class NotificationsClientServiceTests
     private readonly Mock<ILogger<NotificationsClientService>> _loggerMock;
     private readonly Mock<IAsyncNotificationClient> _notificationClientMock;
     private readonly Mock<IHostEnvironment> _hostEnvironment;
+    private const string demoSupportReferenceNumber = "RW6685";
 
     public NotificationsClientServiceTests()
     {
@@ -57,7 +58,7 @@ public class NotificationsClientServiceTests
                 _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
 
         // Assert
         _notificationClientMock.Verify(x =>
@@ -87,7 +88,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
 
         // Assert
         VerifyLogging(_loggerMock, LogLevel.Error, $"No email address was supplied for the recipient: {notificationsRecipients.First()}.",
@@ -137,7 +138,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, mockNotificationClient.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
 
         // Assert
         mockNotificationClient.Verify(nc =>

@@ -112,7 +112,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
             await _notificationsClientService.SendEmailAsync(
                 notificationsRecipient,
-                EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer);
+                EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer, tpEnquiry.Enquiry.SupportReferenceNumber);
 
             return true;
         }

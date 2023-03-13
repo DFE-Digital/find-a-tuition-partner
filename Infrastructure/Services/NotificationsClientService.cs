@@ -30,7 +30,8 @@ public class NotificationsClientService : INotificationsClientService
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType, bool includeChangedFromEmailAddress = true)
+    public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
+        string supportReferenceNumber, bool includeChangedFromEmailAddress = true)
     {
         if (string.IsNullOrWhiteSpace(notificationsRecipient.Email))
         {
@@ -52,7 +53,7 @@ public class NotificationsClientService : INotificationsClientService
             _logger.LogInformation("Preparing to send to {target}", notificationsRecipient.Email);
 
             var result = await _notificationClient.SendEmailAsync(notificationsRecipient.Email,
-                emailTemplateId, personalisation: notificationsRecipient.Personalisation);
+                emailTemplateId, personalisation: notificationsRecipient.Personalisation, supportReferenceNumber);
 
             _logger.LogInformation("Email successfully sent to: {email}", notificationsRecipient.Email);
             _logger.LogInformation("Result: {id} {reference} {uri}", result.id, result.reference, result.uri);
@@ -68,7 +69,8 @@ public class NotificationsClientService : INotificationsClientService
         return false;
     }
 
-    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients, EmailTemplateType emailTemplateType)
+    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+        EmailTemplateType emailTemplateType, string supportReferenceNumber)
     {
         notificationsRecipients = notificationsRecipients.ToList();
 
@@ -81,16 +83,16 @@ public class NotificationsClientService : INotificationsClientService
         {
             var allEmailsSent = true;
 
-            //See if we need to amalgamate multiuple emails for testing purposes
+            //See if we need to amalgamate multiple emails for testing purposes
             if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1)
             {
-                allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
+                allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType, supportReferenceNumber);
             }
             else
             {
                 foreach (var recipient in notificationsRecipients.Where(recipient => !string.IsNullOrEmpty(recipient.Email)))
                 {
-                    var emailSent = await SendEmailAsync(recipient, emailTemplateType);
+                    var emailSent = await SendEmailAsync(recipient, emailTemplateType, supportReferenceNumber);
                     allEmailsSent = !allEmailsSent ? allEmailsSent : emailSent;
                 }
             }
@@ -135,7 +137,8 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients, EmailTemplateType emailTemplateType)
+    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+        EmailTemplateType emailTemplateType, string supportReferenceNumber)
     {
         var initialRecipient = notificationsRecipients.First();
         var keys = new List<string>(initialRecipient.Personalisation.Keys);
@@ -154,7 +157,7 @@ public class NotificationsClientService : INotificationsClientService
 
         AddPersonalisation(initialRecipient.Personalisation, TestExtraInfoKey, $"This is an amalgamated email for testing purposes.", true);
 
-        return await SendEmailAsync(initialRecipient, emailTemplateType, false);
+        return await SendEmailAsync(initialRecipient, emailTemplateType, supportReferenceNumber, false);
     }
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions notifyConfig)
@@ -189,7 +192,8 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    private static void AddPersonalisation(Dictionary<string, dynamic> personalisation, string key, dynamic value, bool addNewLine = false, bool addAsPrefix = true)
+    private static void AddPersonalisation(Dictionary<string, dynamic> personalisation, string key, dynamic value,
+        bool addNewLine = false, bool addAsPrefix = true)
     {
         personalisation ??= new Dictionary<string, dynamic>();
 
