@@ -99,8 +99,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         {
             Email = request.Data?.Email!,
             TutoringLogistics = request.Data?.TutoringLogistics!,
-            SENDRequirements = request.Data?.SENDRequirements!,
-            AdditionalInformation = request.Data?.AdditionalInformation!,
+            SENDRequirements = request.Data?.SENDRequirements ?? null,
+            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             MagicLinks = enquiryRequestMagicLinks,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
