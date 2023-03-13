@@ -2,17 +2,20 @@
 @model UI.Pages.Enquiry.Build.CheckYourAnswers
 @{ 
     ViewData["Title"] = "Check your answers";
-    ViewData["BackLinkHref"] = $"/enquiry/build/enquiry-question?{((Model.Data with { From = null }).ToQueryString())}";
+    ViewData["BackLinkHref"] = $"/enquiry/build/additional-information?{((Model.Data with { From = null }).ToQueryString())}";
 }
 
 <div class="govuk-grid-row app-print-hide">
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-          <govuk-error-summary-item asp-for="Data.EnquiryText"/>
-          <govuk-error-summary-item asp-for="Data.Email"/>
-          <govuk-error-summary-item asp-for="Data.KeyStages"/>
-          <govuk-error-summary-item asp-for="Data.Subjects"/>
+            <govuk-error-summary-item asp-for="Data.KeyStages" />
+            <govuk-error-summary-item asp-for="Data.Subjects" />
+            <govuk-error-summary-item asp-for="Data.TuitionType" />
+            <govuk-error-summary-item asp-for="Data.Email" />
+            <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
+            <govuk-error-summary-item asp-for="Data.SENDRequirements" />
+            <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
         </govuk-error-summary>
 
         <h1 class="govuk-heading-l">
@@ -74,19 +77,6 @@
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Enquiry
-            </dt>
-            <dd class="govuk-summary-list__value">
-              @Model.Data!.EnquiryText
-            </dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/enquiry-question?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
-                Change<span class="govuk-visually-hidden"> enquiry</span>
-              </a>
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
               Email address
             </dt>
             <dd class="govuk-summary-list__value">
@@ -98,6 +88,45 @@
               </a>
             </dd>
           </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              What type of tuition plan do you need?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data!.TutoringLogistics
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/enquiry/build/tutoring-logistics?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+                Change<span class="govuk-visually-hidden"> what type of tuition plan do you need</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                        Do you need tuition partners who can support pupils with SEND?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? "Not specified" : Model.Data.SENDRequirements)
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+                            Change<span class="govuk-visually-hidden"> if you need tuition partners who can support pupils with SEND</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Is there anything else that you want tuition partners to consider?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? "Not specified" : Model.Data.AdditionalInformation)
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="/enquiry/build/additional-information?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+                Change<span class="govuk-visually-hidden"> anything else that you want tuition partners to consider</span>
+              </a>
+            </dd>
+          </div>
         </dl>
         <form method="post">
           <input type="hidden" name="answers-checked" value="true">
@@ -105,7 +134,9 @@
             Send enquiry
           </button>
           <input asp-for="Data.Email" type="hidden" />
-          <input asp-for="Data.EnquiryText" type="hidden" />
+          <input asp-for="Data.TutoringLogistics" type="hidden" />
+          <input asp-for="Data.SENDRequirements" type="hidden" />
+          <input asp-for="Data.AdditionalInformation" type="hidden" />
           <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
         </form>
       </div>

@@ -1,5 +1,5 @@
 ﻿using Application.Common.Models.Enquiry.Build;
-using Application.Validators;
+using Application.Validators.Enquiry.Build;
 using FluentValidation.TestHelper;
 using UI.Pages.Enquiry.Build;
 using EnquirerEmail = UI.Pages.Enquiry.Build.EnquirerEmail;
@@ -22,7 +22,7 @@ public class EnquirerEmailPageTests
         var model = new EnquirerEmailModel { Email = email };
         var result = new EnquirerEmailModelValidator().TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email)
-            .WithErrorMessage("Email address is required");
+            .WithErrorMessage("Enter an email address");
     }
 
     [Theory]
@@ -72,11 +72,11 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(EnquiryQuestion));
+        redirect.PageName.Should().Be(nameof(TutoringLogistics));
     }
 
     [Theory]
@@ -87,7 +87,7 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
-            return page.OnGetSubmit(model);
+            return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;

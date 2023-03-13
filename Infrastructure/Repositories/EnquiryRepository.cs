@@ -47,7 +47,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
         var result = new EnquirerViewAllResponsesModel
         {
-            EnquiryText = enquiry.EnquiryText!,
+            TutoringLogistics = enquiry.TutoringLogistics!,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,

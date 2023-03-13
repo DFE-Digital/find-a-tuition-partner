@@ -14,7 +14,7 @@ public class EnquirerEmail : PageModel
     }
     [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(EnquirerEmailModel data)
+    public async Task<IActionResult> OnGetAsync(EnquirerEmailModel data)
     {
         Data = data;
 
@@ -24,7 +24,7 @@ public class EnquirerEmail : PageModel
 
         return Page();
     }
-    public async Task<IActionResult> OnGetSubmit(EnquirerEmailModel data)
+    public async Task<IActionResult> OnPostAsync(EnquirerEmailModel data)
     {
         Data = data;
         if (ModelState.IsValid)
@@ -36,7 +36,7 @@ public class EnquirerEmail : PageModel
                 return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
             }
 
-            return RedirectToPage(nameof(EnquiryQuestion), new SearchModel(data));
+            return RedirectToPage(nameof(TutoringLogistics), new SearchModel(data));
         }
 
         return Page();

@@ -4,41 +4,41 @@ using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
 
-public class EnquiryQuestion : PageModel
+public class AdditionalInformation : PageModel
 {
     private readonly ISessionService _sessionService;
 
-    public EnquiryQuestion(ISessionService sessionService)
+    public AdditionalInformation(ISessionService sessionService)
     {
         _sessionService = sessionService;
     }
 
-    [BindProperty(SupportsGet = true)] public EnquiryQuestionModel Data { get; set; } = new();
+    [BindProperty] public AdditionalInformationModel Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(EnquiryQuestionModel data)
+    public async Task<IActionResult> OnGetAsync(AdditionalInformationModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
-        Data.EnquiryText = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryText);
+        Data.AdditionalInformation = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryAdditionalInformation);
 
         ModelState.Clear();
 
         return Page();
     }
 
-    public async Task<IActionResult> OnGetSubmit(EnquiryQuestionModel data)
+    public async Task<IActionResult> OnPostAsync(AdditionalInformationModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
-
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryText, data.EnquiryText!);
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryAdditionalInformation,
+                string.IsNullOrWhiteSpace(data.AdditionalInformation) ? string.Empty : data.AdditionalInformation);
 
             return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
         }

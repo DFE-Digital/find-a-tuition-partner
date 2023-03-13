@@ -5,6 +5,7 @@ import {
   ErrorSummary,
   Radios,
   SkipLink,
+  CharacterCount,
 } from "govuk-frontend";
 
 import HMRCFrontend from "hmrc-frontend/hmrc/all";
@@ -49,6 +50,15 @@ if ($radios) {
 var $skipLink = document.querySelector('[data-module="govuk-skip-link"]');
 if ($skipLink) {
   new SkipLink($skipLink).init();
+}
+
+var $characterCount = document.querySelectorAll(
+  '[data-module="govuk-character-count"]'
+);
+if ($characterCount) {
+  for (var i = 0; i < $characterCount.length; i++) {
+    new CharacterCount($characterCount[i]).init();
+  }
 }
 
 import ResultsFilter from "./javascript/results-filter";

@@ -81,12 +81,12 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
         request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
-        request.Data.EnquiryText = enquirerEnquiryResponseReceivedData.EnquiryText!;
+        request.Data.TutoringLogistics = enquirerEnquiryResponseReceivedData.TutoringLogistics!;
 
         var notificationsRecipient = GetNotificationsRecipient(request, enquirerEnquiryResponseReceivedData.TuitionPartnerName);
 
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
-        request.Data.EnquiryText = tpEnquiry.Enquiry.EnquiryText;
+        request.Data.TutoringLogistics = tpEnquiry.Enquiry.TutoringLogistics;
 
         var enquirerViewResponseMagicLink = new MagicLink()
         {
@@ -141,7 +141,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetPersonalisation(request.Data?.EnquiryText!, request.Data?.EnquiryResponseText!, enquiryResponderText, pageLink)
+            Personalisation = GetPersonalisation(request.Data?.TutoringLogistics!, request.Data?.EnquiryResponseText!, enquiryResponderText, pageLink)
         };
         return result;
     }

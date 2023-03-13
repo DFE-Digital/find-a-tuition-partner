@@ -97,8 +97,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         var enquiry = new Enquiry()
         {
-            EnquiryText = request.Data?.EnquiryText!,
             Email = request.Data?.Email!,
+            TutoringLogistics = request.Data?.TutoringLogistics!,
+            SENDRequirements = request.Data?.SENDRequirements ?? null,
+            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             MagicLinks = enquiryRequestMagicLinks,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
@@ -176,7 +178,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
                     Email = recipient.Email,
                     EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
-                    Personalisation = GetEnquirySubmittedToTpPersonalisation(request.Data!.EnquiryText!, formLink)
+                    Personalisation = GetEnquirySubmittedToTpPersonalisation(request.Data!.TutoringLogistics!, formLink)
                 }).ToList();
     }
 
@@ -204,7 +206,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
-            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data?.EnquiryText!, pageLink)
+            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data?.TutoringLogistics!, pageLink)
         };
         return result;
     }

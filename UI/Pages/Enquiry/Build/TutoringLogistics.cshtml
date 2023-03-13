@@ -1,0 +1,24 @@
+@page
+@using Application.Constants
+@model UI.Pages.Enquiry.Build.TutoringLogistics
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/enquirer-email";
+    ViewData["Title"] = "What type of tuition plan do you need?";
+    ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
+}
+<form method="post">
+    <div class="govuk-form-group">
+        <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+            <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+                What type of tuition plan do you need?
+            </govuk-character-count-label>
+            <govuk-character-count-hint>
+                For example, number of pupils, tuition hours per pupil, specific start date, length of tuition, preferred tutoring time of day
+            </govuk-character-count-hint>
+        </govuk-character-count>
+    </div>
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+    <input type="hidden" name="handler" value="Submit"/>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+</form>
