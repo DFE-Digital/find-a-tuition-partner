@@ -22,12 +22,12 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Search results page heading is 'Find a tuition partner' in tablet and above view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'tablet'
-    Then the search results page heading is 'Find a tuition partner'
+    Then the search results page heading is 'Your options for choosing a tuition partner'
   
   Scenario: Search results page heading is 'Search results' in mobile phone view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'phone'
-    Then the search results page heading is 'Search results'
+    Then the search results page heading is 'Your options now'
   
   Scenario: Search results filter heading is 'Filter results' in tablet and above view
     Given a user has arrived on the 'Search results' page
@@ -44,7 +44,7 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Search results page does not show filters in mobile phone view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'phone'
-    Then only the postcode and results sections are displayed
+    Then the search filters are not displayed
   
   Scenario: Search results page does not have show filters button in tablet and above view
     Given a user has arrived on the 'Search results' page
@@ -54,7 +54,7 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Search results page does has show filters button in mobile phone view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'phone'
-    Then the show filters button is displayed
+    Then the show filters button is displayed 
   
   Scenario: Clicking show filters overlays filters in mobile phone view
     Given a user has arrived on the 'Search results' page
@@ -78,14 +78,14 @@ Feature: Tuition partner details mobile view page tests
     When they select subject 'Key stage 1 Maths'
     And they select the 'Return to results' link
     Then subject 'KeyStage1-Maths' is no longer selected
-    And only the postcode and results sections are displayed
+    And the search filters are not displayed
 
   Scenario: Selecting show search results button applies filter changes
     Given a mobile user has opened the mobile filters overlay
     When they select subject 'Key stage 1 Maths'
     And they select the 'Show search results' button
     Then subject 'KeyStage1-Maths' is selected on the filter
-    And only the postcode and results sections are displayed
+    And the search filters are not displayed
 
   Scenario: Type of tuition page mobile structure
     Given a user begins journey from a mobile
@@ -107,3 +107,9 @@ Feature: Tuition partner details mobile view page tests
     Then they enter an valid email address
     When they click 'Continue'
     Then they are redirected to the enquiry question page
+
+Scenario: Tuition partner details are not displayed when no postcode entered
+    Given a mobile user has opened the mobile filters overlay
+    Then a user has arrived on the 'Search results' page without subjects for postcode ''
+    And a user is using a 'phone'
+    Then they will see 'Enter a postcode' as an error message for the 'postcode'

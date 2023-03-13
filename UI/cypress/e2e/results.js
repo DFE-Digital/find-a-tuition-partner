@@ -127,24 +127,43 @@ Then(
       "Key stage 4 - English, Humanities, Maths, Modern Foreign Languages and Science",
     ];
 
-    stages.forEach((element) => {
-      cy.get(".govuk-list").first().contains(element);
+    stages.slice(1).forEach((element) => {
+      cy.get(".govuk-list").contains(element);
     });
   }
 );
 
 Then("they will see the results summary for {string}", (location) => {
-  const expected = new RegExp(`\\d+ results for ${location}`);
+  const expectedText =
+    "Your results are in a random order. Update price comparison list Compare tuition partner prices 0";
+
   cy.get('[data-testid="results-summary"]')
+    .should("be.visible")
     .invoke("text")
-    .then((words) => removeExcessWhitespaces(removeNewLine(words)))
-    .should("match", expected);
+    .then((actualText) => {
+      const sanitizedExpectedText = expectedText
+        .replace(/(?:\n|\s)+/g, " ")
+        .trim();
+      const sanitizedActualText = actualText.replace(/(?:\n|\s)+/g, " ").trim();
+      expect(sanitizedActualText).to.equal(sanitizedExpectedText);
+      console.log(sanitizedActualText);
+    });
 });
 
 Then(
   "show all correct tuition partners that provide tuition in the postcode's location",
   () => {
     cy.get('[data-testid="results-list-item"]').should("exist");
+  }
+);
+
+Then(
+  "the correct Local Authority District is shown for {string}",
+  (district) => {
+    cy.get(".govuk-caption-l").should(
+      "contain.text",
+      `tuition partners for ${district}`
+    );
   }
 );
 

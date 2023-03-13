@@ -59,6 +59,27 @@ When(
 );
 
 Then(
+  "the correct Local Authority District is shown for {string}",
+  (district) => {
+    const tuitionPartnersText = `Tuition partner for ${district}`;
+    const tuitionPartnersTextPlural = `Tuition partners for ${district}`;
+    cy.get('[data-testid="la-name"]')
+      .invoke("text")
+      .then((text) => {
+        if (text.includes(tuitionPartnersText)) {
+          expect(text).to.include(tuitionPartnersText);
+        } else if (text.includes(tuitionPartnersTextPlural)) {
+          expect(text).to.include(tuitionPartnersTextPlural);
+        } else {
+          throw new Error(
+            `Neither "${tuitionPartnersText}" nor "${tuitionPartnersTextPlural}" found in text: "${text}"`
+          );
+        }
+      });
+  }
+);
+
+Then(
   "{string} is entry {int} on the price comparison list page",
   (tpName, entry) => {
     tpName = removeExcessWhitespaces(removeNewLine(tpName));

@@ -6,7 +6,7 @@ Feature: User is shown search results
 
   Scenario: page title is 'Search results'
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
-    Then the page's title is 'Search results'
+    Then the page's title is 'Your options for choosing a tuition partner'
 
   Scenario: user clicks service name
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -111,9 +111,13 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     Then they will see the results summary for 'Stockport'
 
-  Scenario: Local Education Authority name is displayed for postcode
+  Scenario: Local Education Authority District name is displayed for postcode
     Given a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'HP4 3LG'
-    Then they will see the results summary for 'Hertfordshire'
+    Then they will see the results summary for 'Dacorum'
+    Then the correct Local Authority District is shown for 'Dacorum'
+    When  a user has arrived on the 'Search results' page for 'Key stage 2 Maths' for postcode 'YO8 1SE'
+    Then they will see the results summary for 'Selby'
+    Then the correct Local Authority District is shown for 'Selby'
 
   Scenario: Nothing is selected if when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
