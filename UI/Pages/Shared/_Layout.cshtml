@@ -11,7 +11,7 @@
     var backLinkHref = ViewData["BackLinkHref"] as string; 
     var backLinkText = ViewData["BackLinkText"] as string;
     backLinkText = backLinkText ?? "Back";
-    var includeBackLink = backLinkHref is not null;
+    var includeBackLink = !string.IsNullOrEmpty(backLinkHref);
     var includePrintPage = includeBackLink && ViewData["IncludePrintPage"] as bool? == true; 
 
     var containerId = Configuration["GoogleTagManager:ContainerId"];
