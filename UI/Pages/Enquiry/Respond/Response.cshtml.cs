@@ -21,7 +21,7 @@ namespace UI.Pages.Enquiry.Respond
             _sessionService = sessionService;
         }
 
-        [BindProperty] public EnquiryResponseModel Data { get; set; } = new();
+        [BindProperty] public ViewAndCaptureEnquiryResponseModel Data { get; set; } = new();
 
         [ViewData] public string? ErrorMessage { get; set; }
 
@@ -66,7 +66,7 @@ namespace UI.Pages.Enquiry.Respond
             {
                 foreach (var sessionValue in sessionValues)
                 {
-                    ParseSessionValue(sessionValue.Key, sessionValue.Value);
+                    Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
                 }
             }
             else
@@ -81,7 +81,7 @@ namespace UI.Pages.Enquiry.Respond
                     Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
                     Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
                     Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
-                    Data.AdditionalInformationText = enquiryData.AdditionalInformation;
+                    Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
                 }
             }
 
@@ -121,7 +121,7 @@ namespace UI.Pages.Enquiry.Respond
                     { StringConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
                     { StringConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
                     { StringConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
-                    { StringConstants.EnquiryAdditionalInformation, Data.AdditionalInformationText ?? string.Empty },
+                    { StringConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
                 });
 
                 return RedirectToPage(nameof(CheckYourAnswers));
@@ -221,60 +221,6 @@ namespace UI.Pages.Enquiry.Respond
             Data.EnquiryId = getMagicLinkTokenQuery.EnquiryId!.Value;
 
             return getMagicLinkTokenQuery;
-        }
-
-        private void ParseSessionValue(string key, string value)
-        {
-            switch (key)
-            {
-                case var k when k.Contains(StringConstants.LocalAuthorityDistrict):
-                    Data.LocalAuthorityDistrict = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
-                    Data.EnquiryTutoringLogistics = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseTutoringLogistics):
-                    Data.TutoringLogisticsText = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryKeyStageSubjects):
-                    Data.EnquiryKeyStageSubjects = value.Split(Environment.NewLine).ToList();
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseKeyStageAndSubjectsText):
-                    Data.KeyStageAndSubjectsText = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryTuitionType):
-                    Data.EnquiryTuitionType = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseTuitionTypeText):
-                    Data.TuitionTypeText = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquirySENDRequirements):
-                    Data.EnquirySENDRequirements = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseSENDRequirements):
-                    Data.SENDRequirementsText = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):
-                    Data.EnquiryAdditionalInformation = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseAdditionalInformation):
-                    Data.AdditionalInformationText = value;
-                    break;
-
-                case var k when k.Contains(StringConstants.EnquiryResponseToken):
-                    Data.Token = value;
-                    break;
-            }
         }
 
         private string ParseTokenFromQueryString()

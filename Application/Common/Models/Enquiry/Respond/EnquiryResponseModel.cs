@@ -11,19 +11,19 @@ public record EnquiryResponseModel : EnquiryBaseModel
 
     public string LocalAuthorityDistrict { get; set; } = null!;
     public List<string> EnquiryKeyStageSubjects { get; set; } = null!;
-    public string KeyStageAndSubjectsText { get; set; } = null!;
+    public string? KeyStageAndSubjectsText { get; set; } = string.Empty;
 
-    public string TuitionTypeText { get; set; } = null!;
+    public string? TuitionTypeText { get; set; } = string.Empty;
 
-    public string EnquiryTuitionType { get; set; } = null!;
+    public string EnquiryTuitionType { get; set; } = string.Empty;
 
-    public string TutoringLogisticsText { get; set; } = null!;
+    public string? TutoringLogisticsText { get; set; } = string.Empty;
 
     public string EnquiryTutoringLogistics { get; set; } = null!;
-    public string? SENDRequirementsText { get; set; }
+    public string? SENDRequirementsText { get; set; } = string.Empty;
 
     public string? EnquirySENDRequirements { get; set; }
 
     public string? EnquiryAdditionalInformation { get; set; }
-    public string? AdditionalInformationText { get; set; }
+    public string? AdditionalInformationText { get; set; } = string.Empty;
 }

@@ -101,9 +101,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             EnquiryId = enquiryId,
             MagicLink = enquirerViewResponseMagicLink,
-            TutoringLogisticsText = request.Data!.TutoringLogisticsText,
-            KeyStageAndSubjectsText = request.Data.KeyStageAndSubjectsText,
-            TuitionTypeText = request.Data.TuitionTypeText,
+            TutoringLogisticsText = request.Data!.TutoringLogisticsText!,
+            KeyStageAndSubjectsText = request.Data!.KeyStageAndSubjectsText!,
+            TuitionTypeText = request.Data.TuitionTypeText!,
             SENDRequirementsText = request.Data.SENDRequirementsText ?? null,
             AdditionalInformationText = request.Data.AdditionalInformationText ?? null
         };

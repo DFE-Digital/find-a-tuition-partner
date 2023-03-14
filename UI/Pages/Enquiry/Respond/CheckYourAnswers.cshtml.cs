@@ -1,3 +1,4 @@
+using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Respond;
@@ -10,11 +11,19 @@ public class CheckYourAnswers : PageModel
 
     private readonly ISessionService _sessionService;
     private readonly IMediator _mediator;
+    private readonly IEncrypt _aesEncrypt;
 
-    public CheckYourAnswers(ISessionService sessionService, IMediator mediator)
+    private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
+
+    private const string InvalidUrlErrorMessage = "Invalid Url";
+
+    [ViewData] public string? ErrorMessage { get; set; }
+
+    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt)
     {
         _sessionService = sessionService;
         _mediator = mediator;
+        _aesEncrypt = aesEncrypt;
     }
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
@@ -30,9 +39,14 @@ public class CheckYourAnswers : PageModel
         {
             foreach (var sessionValue in sessionValues)
             {
-                ParseSessionValue(sessionValue.Key, sessionValue.Value);
+                Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
             }
         }
+
+        var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
+        if (getMagicLinkToken == null) return Page();
+
+        ParsedTokenValuesFromToken(Data.Token);
 
         ModelState.Clear();
 
@@ -45,6 +59,11 @@ public class CheckYourAnswers : PageModel
             return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
+
+        var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
+        if (getMagicLinkToken == null) return Page();
+
+        ParsedTokenValuesFromToken(Data.Token);
 
         var command = new AddEnquiryResponseCommand()
         {
@@ -65,57 +84,84 @@ public class CheckYourAnswers : PageModel
         return Page();
     }
 
-    private void ParseSessionValue(string key, string value)
+    private void ParsedTokenValuesFromToken(string token)
     {
-        switch (key)
+        string tokenValue;
+
+        try
         {
-            case var k when k.Contains(StringConstants.LocalAuthorityDistrict):
-                Data.LocalAuthorityDistrict = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
-                Data.EnquiryTutoringLogistics = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseTutoringLogistics):
-                Data.TutoringLogisticsText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryKeyStageSubjects):
-                Data.EnquiryKeyStageSubjects = value.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseKeyStageAndSubjectsText):
-                Data.KeyStageAndSubjectsText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryTuitionType):
-                Data.EnquiryTuitionType = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseTuitionTypeText):
-                Data.TuitionTypeText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquirySENDRequirements):
-                Data.EnquirySENDRequirements = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseSENDRequirements):
-                Data.SENDRequirementsText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):
-                Data.EnquiryAdditionalInformation = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseAdditionalInformation):
-                Data.AdditionalInformationText = value;
-                break;
-
-            case var k when k.Contains(StringConstants.EnquiryResponseToken):
-                Data.Token = value;
-                break;
+            tokenValue = _aesEncrypt.Decrypt(token);
         }
+        catch
+        {
+            var parsedToken = ParseTokenFromQueryString();
+
+            try
+            {
+                tokenValue = _aesEncrypt.Decrypt(parsedToken);
+            }
+            catch
+            {
+                tokenValue = string.Empty;
+            }
+        }
+
+        if (string.IsNullOrEmpty(tokenValue))
+        {
+            AddErrorMessage(InvalidUrlErrorMessage);
+            return;
+        }
+
+        var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
+
+        if (!splitTokenValue.Any()) return;
+
+        var splitTokenTypePart = splitTokenValue[0].Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+        var tokenType = splitTokenTypePart[1];
+
+        if (!string.IsNullOrWhiteSpace(tokenType) && tokenType != nameof(MagicLinkType.EnquiryRequest))
+        {
+            AddErrorMessage(InvalidUrlErrorMessage);
+            return;
+        }
+
+        var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
+
+        if (int.TryParse(splitTuitionPartnerPart[1], out var tuitionPartnerId))
+        {
+            Data.TuitionPartnerId = tuitionPartnerId;
+        }
+    }
+
+    private async Task<MagicLinkDto?> GetMagicLinkToken(string token)
+    {
+        var getMagicLinkTokenQuery = await _mediator.Send(new GetMagicLinkTokenQuery(token, nameof(MagicLinkType.EnquiryRequest)));
+
+        if (getMagicLinkTokenQuery == null)
+        {
+            AddErrorMessage(InvalidTokenErrorMessage);
+
+            return null;
+        }
+
+        Data.EnquiryId = getMagicLinkTokenQuery.EnquiryId!.Value;
+
+        return getMagicLinkTokenQuery;
+    }
+
+    private void AddErrorMessage(string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+
+        ModelState.AddModelError("Data.ErrorMessage", ErrorMessage);
+    }
+
+    private string ParseTokenFromQueryString()
+    {
+        var queryString = Request.QueryString.Value;
+        var tokens = queryString!.Split(new char[] { '=' }, 2);
+        var tokenValue = tokens[1];
+        return tokenValue;
     }
 }

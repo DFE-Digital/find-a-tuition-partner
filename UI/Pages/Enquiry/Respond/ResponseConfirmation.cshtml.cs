@@ -5,8 +5,9 @@ namespace UI.Pages.Enquiry.Respond
     public class ResponseConfirmation : PageModel
     {
         public SearchModel Data { get; set; } = new();
-        public void OnGet()
+        public void OnGet(SearchModel data)
         {
+            Data = data;
         }
     }
 }
