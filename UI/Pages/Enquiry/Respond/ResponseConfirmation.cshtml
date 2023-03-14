@@ -4,24 +4,30 @@
 @{
     ViewData["Title"] = "Enquiry response confirmation";
     ViewData["IncludePrintPage"] = true;
+    var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <govuk-notification-banner type="Success">
-            <p class="govuk-notification-banner__heading">
-                Application complete
-            </p>
-        </govuk-notification-banner>
-        <p class="govuk-body">
-            We have sent you a confirmation email.
-        </p>
-        <h1 class="govuk-heading-l">What happens next</h1>
-        <p class="govuk-body">
-            We've sent your application.
-        </p>
-        <p class="govuk-body">
-            They will contact you either to confirm your registration, or to ask for more information.
-        </p>
-    </div>
+<div class="govuk-width-container">
+    <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        Response sent
+                    </h1>
+                    <div class="govuk-panel__body">
+                        Your reference number is<br><strong>@supportReferenceNumber</strong>
+                    </div>
+                </div>
+                <div class="govuk-inset-text">
+                    <p class="govuk-body">We have sent you a confirmation email that gives you a summary of your <br/>
+                        response. <strong>You should save this confirmation email to keep a record of <br/>
+                            this response</strong>.</p>
+                </div>
+                <br/>
+                <h2 class="govuk-heading-m">What happens next</h2>
+                <p class="govuk-body">
+                    We will notify the school and asked them to review your response.
+                </p>
+            </div>
+        </div>
 </div>

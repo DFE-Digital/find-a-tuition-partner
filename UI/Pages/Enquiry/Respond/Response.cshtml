@@ -7,33 +7,169 @@
     ViewData["IncludePrintPage"] = true;
 }
 
-<div class="govuk-grid-row app-print-hide">
+<div class="govuk-grid-row app-print-hide" xmlns="http://www.w3.org/1999/html">
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.EnquiryResponseText"/>
-            <govuk-error-summary-item asp-for="Data.ErrorMessage" />
+            <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         </govuk-error-summary>
 
-        <h1 class="govuk-heading-l">
-            <span>Submit Enquiry Response</span>
+        <p class="govuk-body govuk-!-margin-bottom-0"> School enquiry from @Model.Data.LocalAuthorityDistrict area</p>
+        <h1 class="govuk-heading-l govuk-!-padding-top-0">
+            <span>View the school’s tution requirements</span>
         </h1>
+
+        <p class="govuk-body">
+            To increase your chance of building a working relationship with this school,
+            <br/> you should
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+
+                <li>
+                    answers as accurately and honestly as possible.
+                </li>
+
+                <li>
+                    provide alternative offers if you cannot exactly match their criteria
+                </li>
+                <li>
+                    discuss budget in your response
+                </li>
+            </ul>
+        </p>
+        <div class="govuk-inset-text">
+            <p class="govuk-body"> You have <strong> 7 days </strong> to respond to this enquiry</p>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+        </div>
     </div>
 </div>
 
 <form method="post">
-    <div data-module="create-enquiry-response-detail">
-        <div class="govuk-form-group">
-            <govuk-textarea asp-for="Data.EnquiryResponseText" ignore-modelstate-errors="true">
-                <govuk-textarea-label class="govuk-label--m" is-page-heading="true">
-                    Provide the enquiry response details
-                </govuk-textarea-label>
-                <govuk-textarea-hint>
-                    Do not include personal or financial information like your National Insurance number or credit card details.
-                </govuk-textarea-hint>
-            </govuk-textarea>
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds-from-desktop">
+                <h1 class="govuk-heading-l govuk-!-padding-top-0">
+                    <span>Respond to this enquiry</span>
+                </h1>
+                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
+                    <span>Key stage and subjects:</span>
+                </h3>
+
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                    @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
+                    {
+                        <li>
+                            @item
+                        </li>
+                    }
+                </ul>
+
+                <div class="govuk-form-group">
+                    <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                        <govuk-character-count-label class="govuk-label--m" is-page-heading="true">
+                            Can you support these key stages and subjects?
+                        </govuk-character-count-label>
+                        <govuk-character-count-hint>
+                            For example, you may be able to support all of these but not at the same time
+                        </govuk-character-count-hint>
+                    </govuk-character-count>
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
+                    <span>Tuition type:</span>
+                </h3>
+
+                <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
+
+                <div class="govuk-form-group">
+                    <govuk-character-count asp-for="Data.TuitionTypeText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                        <govuk-character-count-label class="govuk-label--m" is-page-heading="true">
+                            To what extent can you support that type of tuition?
+                        </govuk-character-count-label>
+                        <govuk-character-count-hint>
+                            For example, you may be able to offer a mix of online and in-school tuition
+                        </govuk-character-count-hint>
+                    </govuk-character-count>
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
+                    <span>Tuition plan:</span>
+                </h3>
+
+                <p class="govuk-body"> @Model.Data.EnquiryTutoringLogistics</p>
+
+                <div class="govuk-form-group">
+                    <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                        <govuk-character-count-label class="govuk-label--m" is-page-heading="true">
+                            Can you support that tuition plan?
+                        </govuk-character-count-label>
+                        <govuk-character-count-hint>
+                            You can suggest alternative to parts of this tuition plan, for example, a different start date
+                        </govuk-character-count-hint>
+                    </govuk-character-count>
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
+                    <span>SEND requirements:</span>
+                </h3>
+
+                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? "Not specified" : Model.Data.EnquirySENDRequirements)</p>
+
+                <div class="govuk-form-group">
+                    <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                        <govuk-character-count-label class="govuk-label--m" is-page-heading="true">
+                            Can you support those SEND requirements?
+                        </govuk-character-count-label>
+                        <govuk-character-count-hint>
+                            For example, you may have specialist tutors who can support pupils with specific SEND requirements
+                        </govuk-character-count-hint>
+                    </govuk-character-count>
+                </div>
+                <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+                <h3 class="govuk-heading-m govuk-!-margin-bottom-0">
+                    <span>Other tuition considerations:</span>
+                </h3>
+
+                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? "Not specified" : Model.Data.EnquiryAdditionalInformation)</p>
+
+                <div class="govuk-form-group">
+                    <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                        <govuk-character-count-label class="govuk-label--m" is-page-heading="true">
+                            Can you support those considerations?
+                        </govuk-character-count-label>
+                        <govuk-character-count-hint>
+                            Give as much detail as possible to increase your chance of matching the school’s tuition requirements
+                        </govuk-character-count-hint>
+                    </govuk-character-count>
+                </div>
+            </div>
         </div>
     </div>
-   
-    <govuk-button prevent-double-click="true" type="submit">Confirm and send</govuk-button>
+    <input type="hidden" name="handler" value="Submit"/>
+    <input asp-for="Data.LocalAuthorityDistrict" type="hidden"/>
+    @if (Model.Data.EnquiryKeyStageSubjects.Any())
+    {
+        @for (int i = 0; i < Model.Data.EnquiryKeyStageSubjects.Count(); i++)
+        {
+            <input asp-for="@Model.Data.EnquiryKeyStageSubjects![i]" type="hidden"/>
+        }
+    }
+    <input asp-for="Data.EnquiryTuitionType" type="hidden"/>
+    <input asp-for="Data.EnquiryTutoringLogistics" type="hidden"/>
+    <input asp-for="Data.EnquirySENDRequirements" type="hidden"/>
+    <input asp-for="Data.EnquiryAdditionalInformation" type="hidden"/>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
 </form>

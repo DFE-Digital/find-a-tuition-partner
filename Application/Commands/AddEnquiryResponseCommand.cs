@@ -8,12 +8,12 @@ using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Application.Commands;
 
-public record AddEnquiryResponseCommand : IRequest<bool>
+public record AddEnquiryResponseCommand : IRequest<string>
 {
     public EnquiryResponseModel Data { get; set; } = null!;
 }
 
-public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, bool>
+public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, string>
 {
     private const string EnquiryTextVariableKey = "enquiry";
     private const string EnquiryResponderVariableKey = "enquiry_responder";
@@ -37,22 +37,24 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         _logger = logger;
     }
 
-    public async Task<bool> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
     {
+        var emptyResult = string.Empty;
+
         var enquiryId = request.Data.EnquiryId;
 
         var tuitionPartnerId = request.Data.TuitionPartnerId;
 
         if (string.IsNullOrEmpty(request.Data.Token))
         {
-            return false;
+            return emptyResult;
         }
 
         var magicLink =
             await _unitOfWork.MagicLinkRepository
                 .SingleOrDefaultAsync(x => x.Token == request.Data.Token, null, true, cancellationToken);
 
-        if (enquiryId == default || tuitionPartnerId == default) return false;
+        if (enquiryId == default || tuitionPartnerId == default) return emptyResult;
 
         var tpEnquiry = await _unitOfWork.TuitionPartnerEnquiryRepository
             .SingleOrDefaultAsync(x => x.EnquiryId == enquiryId &&
@@ -63,7 +65,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             _logger.LogError("Unable to find TuitionPartnerEnquiry with the enquiry Id {enquiryId} and tuition partnerId {tuitionPartnerId}",
                 enquiryId, tuitionPartnerId);
-            return false;
+            return emptyResult;
         }
 
         var enquirerEnquiryResponseReceivedData =
@@ -76,17 +78,17 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                              "Can't find magic link token with the type {type} by enquiry Id {enquiryId}",
                 MagicLinkType.EnquirerViewAllResponses.ToString(), request.Data.EnquiryId);
 
-            return false;
+            return emptyResult;
         }
 
         request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
         request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
-        request.Data.TutoringLogistics = enquirerEnquiryResponseReceivedData.TutoringLogistics!;
+        request.Data.TutoringLogisticsText = enquirerEnquiryResponseReceivedData.TutoringLogisticsText!;
 
         var notificationsRecipient = GetNotificationsRecipient(request, enquirerEnquiryResponseReceivedData.TuitionPartnerName);
 
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
-        request.Data.TutoringLogistics = tpEnquiry.Enquiry.TutoringLogistics;
+        request.Data.TutoringLogisticsText = tpEnquiry.Enquiry.TutoringLogistics;
 
         var enquirerViewResponseMagicLink = new MagicLink()
         {
@@ -97,9 +99,13 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         tpEnquiry.EnquiryResponse = new EnquiryResponse()
         {
-            EnquiryResponseText = request.Data?.EnquiryResponseText!,
             EnquiryId = enquiryId,
-            MagicLink = enquirerViewResponseMagicLink
+            MagicLink = enquirerViewResponseMagicLink,
+            TutoringLogisticsText = request.Data!.TutoringLogisticsText,
+            KeyStageAndSubjectsText = request.Data.KeyStageAndSubjectsText,
+            TuitionTypeText = request.Data.TuitionTypeText,
+            SENDRequirementsText = request.Data.SENDRequirementsText ?? null,
+            AdditionalInformationText = request.Data.AdditionalInformationText ?? null
         };
 
         tpEnquiry.MagicLinkId = magicLink?.Id;
@@ -114,14 +120,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                 notificationsRecipient,
                 EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer, tpEnquiry.Enquiry.SupportReferenceNumber);
 
-            return true;
+            return tpEnquiry.Enquiry.SupportReferenceNumber;
         }
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while trying to save the enquiry response. Error: {ex}", ex);
         }
 
-        return false;
+        return emptyResult;
     }
 
     private void GenerateEnquirerViewResponseToken(AddEnquiryResponseCommand request,
@@ -141,7 +147,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetPersonalisation(request.Data?.TutoringLogistics!, request.Data?.EnquiryResponseText!, enquiryResponderText, pageLink)
+            Personalisation = GetPersonalisation(request.Data?.TutoringLogisticsText!, request.Data?.TutoringLogisticsText!, enquiryResponderText, pageLink)
         };
         return result;
     }

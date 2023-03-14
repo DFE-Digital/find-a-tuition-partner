@@ -33,7 +33,7 @@ public class MagicLinkRepository : GenericRepository<MagicLink>, IMagicLinkRepos
         {
             TuitionPartnerName = tpName,
             Email = magicLink.Enquiry.Email,
-            TutoringLogistics = magicLink.Enquiry.TutoringLogistics,
+            TutoringLogisticsText = magicLink.Enquiry.TutoringLogistics,
             Token = magicLink.Token
         };
     }

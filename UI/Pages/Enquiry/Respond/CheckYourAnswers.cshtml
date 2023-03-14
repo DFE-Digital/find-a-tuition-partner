@@ -1,0 +1,124 @@
+@page
+@model UI.Pages.Enquiry.Respond.CheckYourAnswers
+
+@{
+  var backUrl = $"/enquiry/respond/response?token={@Model.Data.Token}";
+  ViewData["Title"] = "Check your answers";
+  ViewData["BackLinkHref"] = backUrl;
+}
+
+<div class="govuk-grid-row app-print-hide">
+    <div class="govuk-grid-column-full">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText" />
+            <govuk-error-summary-item asp-for="Data.TuitionTypeText" />
+            <govuk-error-summary-item asp-for="Data.TutoringLogisticsText" />
+            <govuk-error-summary-item asp-for="Data.SENDRequirementsText" />
+            <govuk-error-summary-item asp-for="Data.AdditionalInformationText" />
+        </govuk-error-summary>
+
+      <h1 class="govuk-heading-l">
+        <span>Check your answers before sending your response</span>
+      </h1>
+      <p class="govuk-body">This is an enquiry about your tuition services from a school in @Model.Data.LocalAuthorityDistrict.</p>
+    </div>
+</div>
+
+<div class="govuk-width-container">
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds-from-desktop">
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Key stage and subjects:
+              <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
+                {
+                  <li>
+                    @item
+                  </li>
+                }
+              </ul>
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data.KeyStageAndSubjectsText
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href=@backUrl>
+                Change<span class="govuk-visually-hidden"> key stage and subjects</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Tuition type:
+              <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data.TuitionTypeText
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href=@backUrl>
+                Change<span class="govuk-visually-hidden"> tuition type </span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Tuition plan:
+              <p class="govuk-body"> @Model.Data.EnquiryTutoringLogistics</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @Model.Data.TutoringLogisticsText
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href=@backUrl>
+                Change<span class="govuk-visually-hidden"> tuition plan </span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              SEND requirements:                
+              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? "Not specified" : Model.Data.EnquirySENDRequirements)</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? "Not specified" : Model.Data.SENDRequirementsText)
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href=@backUrl>
+                Change<span class="govuk-visually-hidden"> SEND requirements</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Other school considerations:
+              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? "Not specified" : Model.Data.EnquiryAdditionalInformation)</p>
+            </dt>
+            <dd class="govuk-summary-list__value">
+              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? "Not specified" : Model.Data.AdditionalInformationText)
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href=@backUrl>
+                Change<span class="govuk-visually-hidden"> other school considerations</span>
+              </a>
+            </dd>
+          </div>
+        </dl>
+        <form method="post">
+          <input type="hidden" name="answers-checked" value="true">
+          <button class="govuk-button" data-module="govuk-button">
+            Submit
+          </button>
+          <input asp-for="Data.KeyStageAndSubjectsText" type="hidden"/>
+          <input asp-for="Data.TuitionTypeText" type="hidden"/>
+          <input asp-for="Data.TutoringLogisticsText" type="hidden"/>
+          <input asp-for="Data.SENDRequirementsText" type="hidden"/>
+          <input asp-for="Data.AdditionalInformationText" type="hidden"/>
+          <input asp-for="Data.Token" type="hidden"/>
+        </form>
+      </div>
+    </div>
+</div>
