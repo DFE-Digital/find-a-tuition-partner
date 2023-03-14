@@ -81,10 +81,10 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
     {
         return tuitionTypeId switch
         {
-            null => TuitionType.Any.ToString(),
-            (int)TuitionType.Online => TuitionType.Online.ToString(),
-            (int)TuitionType.InSchool => TuitionType.InSchool.ToString(),
-            _ => TuitionType.Any.ToString()
+            null => TuitionType.Any.DisplayName(),
+            (int)TuitionType.Online => TuitionType.Online.DisplayName(),
+            (int)TuitionType.InSchool => TuitionType.InSchool.DisplayName(),
+            _ => TuitionType.Any.DisplayName()
         };
     }
 }
