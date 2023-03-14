@@ -154,8 +154,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
-        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, DateTime.Now, request.Data!.BaseServiceUrl!);
-        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, DateTime.Now, request.Data!.BaseServiceUrl!));
+        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!);
+        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!));
         try
         {
             await _notificationsClientService.SendEmailAsync(
