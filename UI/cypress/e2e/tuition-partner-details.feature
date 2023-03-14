@@ -19,7 +19,6 @@ Feature: User can view full details of a Tuition Parner
     Then the page URL ends with '/bright-heart-education'
     And the heading should say 'Bright Heart Education'
 
-
   Scenario: show Contact Details where TP has provided information
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then TP has provided full contact details
