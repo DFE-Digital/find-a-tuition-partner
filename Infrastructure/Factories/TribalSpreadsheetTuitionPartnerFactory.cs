@@ -39,7 +39,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         TuitionPartner tpMapping = new();
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
-            { "Organisation_Ref_ID_s", new ImportMap(tpMapping, nameof(tpMapping.ImportId)) },
+            { "Organisation_ID_s", new ImportMap(tpMapping, nameof(tpMapping.ImportId)) },
+            { "Organisation_Ref_ID_s", new ImportMap() },
             { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) { RecommendedMaxStringLength = 120 } },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) { RecommendedMaxStringLength = 100 } },
             { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true, RecommendedMaxStringLength = 100 } },
@@ -52,7 +53,6 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             { "Organisation_Email_s", new ImportMap(tpMapping, nameof(tpMapping.Email)) { RecommendedMaxStringLength = 100 } },
             { "Organisation_Introduction_s", new ImportMap(tpMapping, nameof(tpMapping.Description)) { RecommendedMaxStringLength = 350 } },
             { "Organisation_LegalStatus_s", new ImportMap() { IsStoredInNtp = true, IsRequired = true } },
-            { "Organisation_LogoVector_s", new ImportMap() },
             { "Organisation_ChargeVAT_s", new ImportMap(tpMapping, nameof(tpMapping.IsVatCharged)) {IsRequired = false} },
             { "Organisation_LastUpdated_d", new ImportMap(tpMapping, nameof(tpMapping.TPLastUpdatedData)) },
         };
@@ -213,7 +213,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         postcode
         };
 
-        tuitionPartner.Address = string.Join(Environment.NewLine, addressLines.Where(x => x != null));
+        tuitionPartner.Address = string.Join(Environment.NewLine, addressLines.Where(x => x != null).Distinct());
 
         tuitionPartner.SeoUrl = tuitionPartner.Name.ToSeoUrl() ?? "";
 

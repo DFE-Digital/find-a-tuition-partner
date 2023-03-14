@@ -123,18 +123,23 @@ Then(
 );
 
 Then(
-  "the phone number link for each tuition partner initiates their device's calling options",
+  "the phone number link for each tuition partner initiates their device's calling options and is not empty",
   () => {
     cy.get('a[data-testid="tuition-partner-phone-number-link"]').each(
       ($element) => {
         cy.wrap($element).should("have.attr", "href", `tel:${$element.text()}`);
       }
     );
+    cy.get('a[data-testid="tuition-partner-phone-number-link"]').each(
+      ($element) => {
+        cy.wrap($element).should("not.be.empty");
+      }
+    );
   }
 );
 
 Then(
-  "the email link for each tuition partner initiates their email client options",
+  "the email link for each tuition partner initiates their email client options and is not empty",
   () => {
     cy.get('a[data-testid="tuition-partner-email-link"]').each(($element) => {
       cy.wrap($element).should(
@@ -142,6 +147,9 @@ Then(
         "href",
         `mailto:${$element.text()}`
       );
+    });
+    cy.get('a[data-testid="tuition-partner-email-link"]').each(($element) => {
+      cy.wrap($element).should("not.be.empty");
     });
   }
 );
@@ -170,6 +178,7 @@ Then(
     let countOfElements = 0;
     cy.get('[data-testid="tuition-partner-summary"]').then(($elements) => {
       countOfElements = $elements.length;
+      $elements.length > 60 == true;
       cy.get('[data-testid="result-count"]')
         .invoke("text")
         .then(parseInt)
