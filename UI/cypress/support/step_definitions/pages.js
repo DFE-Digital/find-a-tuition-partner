@@ -94,7 +94,7 @@ Then("user is redirected to the enter email address page", () => {
 });
 
 Then("they are redirected to the enquiry question page", () => {
-  cy.location("pathname").should("eq", "/enquiry/build/enquiry-question");
+  cy.location("pathname").should("eq", "/enquiry/build/tutoring-logistics");
 });
 
 Then("the confirmation page is shown", () => {

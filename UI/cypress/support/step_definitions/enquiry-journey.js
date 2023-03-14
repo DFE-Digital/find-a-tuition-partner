@@ -27,7 +27,11 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
-  Step(this, "they enter an enquiry");
+  Step(this, "they enter an answer for tuition plan");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for SEND requirements");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for other requirements");
   Step(this, "they click 'Continue'");
 });
 
@@ -58,9 +62,22 @@ Then("the page has title Request sent", () => {
   cy.get(".govuk-panel__title").should("contain.text", "Request sent");
 });
 
-Then("they enter an enquiry", () => {
-  cy.get("#Data_EnquiryText").type("enquiry");
+Then("they enter an answer for tuition plan", () => {
+  cy.get('.govuk-label').should("contain.text", "What type of tuition plan do you need?")
+  cy.get('#Data_TutoringLogistics').type("enquiry");
 });
+
+Then("they enter an answer for SEND requirements", () => {
+  cy.get('.govuk-label').should("contain.text", "Do you need tuition partners who can support pupils with SEND? (optional)")
+  cy.get('#Data_SENDRequirements').type("enquiry");
+});
+
+
+Then("they enter an answer for other requirements", () => {
+  cy.get('.govuk-label').should("contain.text", "Is there anything else that you want tuition partners to consider? (optional)")
+  cy.get('#Data_AdditionalInformation').type("enquiry");
+});
+
 
 Then("click first change button", () => {
   cy.get(":nth-child(1) > .govuk-summary-list__actions > .govuk-link").click();
@@ -97,7 +114,11 @@ When("user creates another enquiry", () => {
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
-  Step(this, "they enter an enquiry");
+  Step(this, "they enter an answer for tuition plan");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for SEND requirements");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for other requirements");
   Step(this, "they click 'Continue'");
 });
 
