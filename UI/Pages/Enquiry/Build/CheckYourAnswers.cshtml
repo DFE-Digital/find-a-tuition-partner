@@ -16,8 +16,10 @@
             <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
             <govuk-error-summary-item asp-for="Data.SENDRequirements" />
             <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
+            <govuk-error-summary-item asp-for="Data.ConfirmTermsAndConditions" />
         </govuk-error-summary>
 
+        <span show-if="!string.IsNullOrWhiteSpace(Model.Data.LocalAuthorityDistrictName)" class="govuk-caption-l">Enquiry for <strong>@Model.Data.LocalAuthorityDistrictName</strong></span>
         <h1 class="govuk-heading-l">
             <span>Check your answers</span>
         </h1>
@@ -26,18 +28,18 @@
 
 <div class="govuk-width-container">
   <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds-from-desktop">
+        <div class="govuk-grid-column-three-quarters">
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Key Stage and Subjects
+              Key stages and subjects
             </dt>
             <dd class="govuk-summary-list__value">
               <table class="govuk-table">
-                <caption class="govuk-visually-hidden">Key Stage and Subjects</caption>
+                            <caption class="govuk-visually-hidden">Key stages and subjects</caption>
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                  <th class="govuk-table__header" scope="col"> Key Stage </th>
+                  <th class="govuk-table__header" scope="col"> Key stage </th>
                   <th class="govuk-table__header" scope="col"> Subject </th>
                 </tr>
                 </thead>
@@ -46,10 +48,10 @@
                 {
                   <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
-                      @item.Key
+                      @item.Key.DisplayName()
                     </td>
                     <td class="govuk-table__cell">
-                      @string.Join(",", item.Value)
+                      @item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList()
                     </td>
                   </tr>
                 }
@@ -83,56 +85,63 @@
               @Model.Data.Email
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/enquirer-email?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+              <a class="govuk-link" href="/enquiry/build/enquirer-email?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_Email">
                 Change<span class="govuk-visually-hidden"> email address</span>
               </a>
             </dd>
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              What type of tuition plan do you need?
+              Tuition plan
             </dt>
             <dd class="govuk-summary-list__value">
               @Model.Data!.TutoringLogistics
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/tutoring-logistics?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+              <a class="govuk-link" href="/enquiry/build/tutoring-logistics?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_TutoringLogistics">
                 Change<span class="govuk-visually-hidden"> what type of tuition plan do you need</span>
               </a>
             </dd>
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                        Do you need tuition partners who can support pupils with SEND?
+                SEND
             </dt>
             <dd class="govuk-summary-list__value">
               @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? "Not specified" : Model.Data.SENDRequirements)
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+              <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_SENDRequirements">
                             Change<span class="govuk-visually-hidden"> if you need tuition partners who can support pupils with SEND</span>
               </a>
             </dd>
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Is there anything else that you want tuition partners to consider?
+              Other
             </dt>
             <dd class="govuk-summary-list__value">
               @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? "Not specified" : Model.Data.AdditionalInformation)
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="/enquiry/build/additional-information?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
+              <a class="govuk-link" href="/enquiry/build/additional-information?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_AdditionalInformation">
                 Change<span class="govuk-visually-hidden"> anything else that you want tuition partners to consider</span>
               </a>
             </dd>
           </div>
         </dl>
         <form method="post">
-          <input type="hidden" name="answers-checked" value="true">
+                <div asp-validation-group-for="Data.ConfirmTermsAndConditions">
+        <govuk-checkboxes name="Data.ConfirmTermsAndConditions" class="t-and-c-checkbox">
+            <govuk-checkboxes-item id="Data_ConfirmTermsAndConditions" value="True" checked="@Model.Data.ConfirmTermsAndConditions">
+                I confirm that I have not included any information that would allow anyone to identify pupils, such as names or specific characteristics.
+            </govuk-checkboxes-item>
+        </govuk-checkboxes>
+                </div>
           <button class="govuk-button" data-module="govuk-button">
             Send enquiry
           </button>
+          <input asp-for="Data.LocalAuthorityDistrictName" type="hidden" />
           <input asp-for="Data.Email" type="hidden" />
           <input asp-for="Data.TutoringLogistics" type="hidden" />
           <input asp-for="Data.SENDRequirements" type="hidden" />

@@ -199,7 +199,7 @@ public class CompareList : PageModel
                 if (invalidSeoUrls.Any())
                 {
                     invalidResults = await FindInvalidTuitionPartners(invalidSeoUrls.ToArray(), compareListOrderBy, compareListOrderByDirection, cancellationToken);
-                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on price comparison page for postcode '{Postcode}'", invalidSeoUrls.Count(), string.Join(", ", invalidSeoUrls), request.Postcode);
+                    _logger.LogInformation("{Count} invalid SeoUrls '{InvalidSeoUrls}' provided on price comparison page for postcode '{Postcode}'", invalidSeoUrls.Count, string.Join(", ", invalidSeoUrls), request.Postcode);
                 }
             }
 
