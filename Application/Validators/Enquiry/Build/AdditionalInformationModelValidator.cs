@@ -10,6 +10,6 @@ public class AdditionalInformationModelValidator : AbstractValidator<AdditionalI
     {
         RuleFor(request => request.AdditionalInformation)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"Is there anything else that you want tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }
