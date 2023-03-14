@@ -130,7 +130,7 @@
                     <span>SEND requirements:</span>
                 </h3>
 
-                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? "Not specified" : Model.Data.EnquirySENDRequirements)</p>
+                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.SENDRequirementsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -148,7 +148,7 @@
                     <span>Other tuition considerations:</span>
                 </h3>
 
-                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? "Not specified" : Model.Data.EnquiryAdditionalInformation)</p>
+                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.AdditionalInformationText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">

@@ -106,7 +106,7 @@
                         Do you need tuition partners who can support pupils with SEND?
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? "Not specified" : Model.Data.SENDRequirements)
+              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? StringConstants.NotSpecified : Model.Data.SENDRequirements)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
@@ -119,7 +119,7 @@
               Is there anything else that you want tuition partners to consider?
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? "Not specified" : Model.Data.AdditionalInformation)
+              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? StringConstants.NotSpecified : Model.Data.AdditionalInformation)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/additional-information?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">

@@ -82,10 +82,10 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               SEND requirements:                
-              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? "Not specified" : Model.Data.EnquirySENDRequirements)</p>
+              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? "Not specified" : Model.Data.SENDRequirementsText)
+              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -96,10 +96,10 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Other school considerations:
-              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? "Not specified" : Model.Data.EnquiryAdditionalInformation)</p>
+              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? "Not specified" : Model.Data.AdditionalInformationText)
+              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
