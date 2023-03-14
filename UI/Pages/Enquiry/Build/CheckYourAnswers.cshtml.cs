@@ -35,11 +35,11 @@ public class CheckYourAnswers : PageModel
         }
 
         //TODO - Test and handle errors:
-        //  No postcode, subjects, TT. email, logistics etc
+        //  No postcode, subjects, TT, email, logistics etc
         //  Invalid data supplied - postcode in Wales, invalid email etc
         //  errors when calling _mediator
 
-        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+        Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
 
         if (!string.IsNullOrWhiteSpace(Data.Postcode))
         {
@@ -57,7 +57,7 @@ public class CheckYourAnswers : PageModel
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
-        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+        Data.KeyStageSubjects = GetKeyStageSubject( Data.Subjects);
 
         if (!ModelState.IsValid) return Page();
 
@@ -107,33 +107,23 @@ public class CheckYourAnswers : PageModel
                 break;
         }
     }
-    private static Dictionary<KeyStage, List<Subject>> GetKeyStageSubject(string value)
+    private static Dictionary<KeyStage, List<Subject>> GetKeyStageSubject(string[]? subjects)
     {
-        var keyStageSubjects = new Dictionary<KeyStage, List<Subject>>();
+        if (subjects == null || subjects.Length == 0)
+            return new Dictionary<KeyStage, List<Subject>>();
 
-        var allKeyStages = Enum.GetValues(typeof(KeyStage)).Cast<KeyStage>();
+        var keyStageSubjects = subjects.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
 
         var allSubjects = Enum.GetValues(typeof(Subject)).Cast<Subject>();
 
-        var groupedByKeyStage = value.Split(',')
-            .Select(x => x.Split('-'))
-            .GroupBy(x => x[0])
-            .ToDictionary(x => x.Key, x => string.Join(',', x.Select(y => y[1]).ToList()))
-            .OrderBy(x => x.Key);
-
-        foreach (var kvp in groupedByKeyStage)
-        {
-            var keyStage = allKeyStages.Where(x => x.ToString().ToSeoUrl() == kvp.Key.ToSeoUrl());
-            if (keyStage?.Count() == 1)
-            {
-                var subjects = allSubjects.Where(x => kvp.Value.ToSeoUrl().Contains(x.ToString().ToSeoUrl())).ToList();
-                if (subjects?.Count > 0)
-                {
-                    keyStageSubjects.Add(keyStage.First(), subjects);
-                }
-            }
-        }
-
-        return keyStageSubjects;
+        return keyStageSubjects
+            .GroupBy(x => x.KeyStage)
+            .OrderBy(x => x.Key.DisplayName())
+            .Select(x => new { x.Key, Values = x
+                .Select(y => allSubjects
+                .FirstOrDefault(allsub => allsub.ToString().ToSeoUrl() == y.Subject.ToSeoUrl()))
+                .Where(x => x != Subject.Unspecified) })
+            .Where(x => x.Values.Any())
+            .ToDictionary(x => x.Key, x => x.Values.ToList());
     }
 }
