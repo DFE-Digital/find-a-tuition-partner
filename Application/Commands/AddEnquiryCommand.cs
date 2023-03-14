@@ -20,9 +20,11 @@ public record AddEnquiryCommand : IRequest<string>
 
 public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, string>
 {
-    private const string EnquiryTextVariableKey = "enquiry";
-    private const string EnquiryResponseFormLinkKey = "link_to_tp_response_form";
+    private const string EnquiryNumberOfTpsContactedKey = "number_of_tps_contacted";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
+    private const string EnquiryTpNameKey = "tp_name";
+    private const string EnquiryLadNameKey = "local_area_district";
+    private const string EnquiryResponseFormLinkKey = "link_to_tp_response_form";
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEncrypt _aesEncryption;
@@ -45,7 +47,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
     {
         var emptyResult = string.Empty;
 
-        //TODO - deal with no TPs selected - show a message on UI
+        //TODO - deal with error and show a message on UI
+        //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return emptyResult below
+        //  Unexpected errors - database issues etc
+        //  Errors to TP emails - log error, but don't show error to enquirer?
         if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return emptyResult;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
@@ -111,11 +116,14 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
 
         var dataSaved = false;
+        var loop = 0;
 
-        while (!dataSaved)
+        while (!dataSaved && loop < 10)
         {
             try
             {
+                loop++;
+
                 _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
                 dataSaved = await _unitOfWork.Complete();
@@ -146,6 +154,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
+        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!);
+        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!));
         try
         {
             await _notificationsClientService.SendEmailAsync(
@@ -178,16 +188,19 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
                     Email = recipient.Email,
                     EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
-                    Personalisation = GetEnquirySubmittedToTpPersonalisation(request.Data!.TutoringLogistics!, formLink)
+                    Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink, request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
+                    PersonalisationPropertiesToAmalgamate = new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
                 }).ToList();
     }
 
-    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string enquiryText, string responseFormLink)
+    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName, string responseFormLink,
+        string ladNameKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
-            { EnquiryTextVariableKey, enquiryText },
-            { EnquiryResponseFormLinkKey, responseFormLink }
+            { EnquiryTpNameKey, tpName },
+            { EnquiryResponseFormLinkKey, responseFormLink },
+            {EnquiryLadNameKey, ladNameKey }
         };
 
         return personalisation;
@@ -206,24 +219,24 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
-            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data?.TutoringLogistics!, pageLink)
+            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)
         };
         return result;
     }
 
-    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(string enquiryText,
+    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(int numberOfTpsContacted,
         string enquirerViewAllResponsesPageLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
-            { EnquiryTextVariableKey, enquiryText },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink }
+            { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
         };
 
         return personalisation;
     }
 
-    private int? GetTuitionTypeId(TuitionType? tuitionType)
+    private static int? GetTuitionTypeId(TuitionType? tuitionType)
     {
         return tuitionType switch
         {
@@ -234,7 +247,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
     }
 
-    private List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(IEnumerable<KeyStageSubject> keyStageSubjects)
+    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(IEnumerable<KeyStageSubject> keyStageSubjects)
     {
         var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
 

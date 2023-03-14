@@ -82,7 +82,7 @@ public class NotificationsClientService : INotificationsClientService
             var allEmailsSent = true;
 
             //See if we need to amalgamate multiuple emails for testing purposes
-            if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1)
+            if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
             {
                 allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
             }
@@ -141,14 +141,20 @@ public class NotificationsClientService : INotificationsClientService
         var keys = new List<string>(initialRecipient.Personalisation.Keys);
         foreach (string key in keys)
         {
-            initialRecipient.Personalisation[key] = $"{initialRecipient.Email} - {initialRecipient.Personalisation[key]}";
+            if (initialRecipient.PersonalisationPropertiesToAmalgamate.Contains(key))
+            {
+                initialRecipient.Personalisation[key] = $"{initialRecipient.Email} - {initialRecipient.Personalisation[key]}";
+            }
         }
 
         for (int i = 1; i < notificationsRecipients.Count(); i++)
         {
             foreach (var personalisation in notificationsRecipients.ElementAt(i).Personalisation)
             {
-                AddPersonalisation(initialRecipient.Personalisation, personalisation.Key, $"{notificationsRecipients.ElementAt(i).Email} - {personalisation.Value}", true, false);
+                if (initialRecipient.PersonalisationPropertiesToAmalgamate.Contains(personalisation.Key))
+                {
+                    AddPersonalisation(initialRecipient.Personalisation, personalisation.Key, $"{notificationsRecipients.ElementAt(i).Email} - {personalisation.Value}", true, false);
+                }
             }
         }
 
