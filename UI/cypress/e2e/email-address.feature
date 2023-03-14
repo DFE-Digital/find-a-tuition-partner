@@ -37,7 +37,7 @@ Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
 When user clicks 'Make an enquiry'
 And they click 'Continue' on enquiry
 Then they click 'Continue'
-Then they will see 'Email address is required' as an error message for the 'no email adress'
+Then they will see 'Enter an email address' as an error message for the 'no email adress'
 
 
 Scenario: Data is saved when returning to email address page
