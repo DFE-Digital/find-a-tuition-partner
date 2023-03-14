@@ -27,6 +27,8 @@
 
         public const string LocalAuthorityDistrict = "LocalAuthorityDistrict";
 
+        public const string NotSpecified = "Not specified";
+
         public const string EnquirerEmail = "EnquirerEmail";
 
         public const string EnquiryTuitionType = "EnquiryTuitionType";

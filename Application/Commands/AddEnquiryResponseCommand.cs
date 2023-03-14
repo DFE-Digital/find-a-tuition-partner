@@ -1,6 +1,7 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
+using Application.Constants;
 using Domain;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -15,10 +16,22 @@ public record AddEnquiryResponseCommand : IRequest<string>
 
 public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, string>
 {
-    private const string EnquiryTextVariableKey = "enquiry";
-    private const string EnquiryResponderVariableKey = "enquiry_responder";
-    private const string EnquiryResponseTextVariableKey = "enquiry_response";
+    private const string EnquiryReferenceNumberKey = "ref_number";
+    private const string EnquiryLadNameKey = "local_area_district";
+    private const string EnquiryCreatedDateTime = "created_on_date_time";
+    private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
+    private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
+    private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
+    private const string EnquiryResponseTuitionTypeKey = "enquiry_response_tuition_type";
+    private const string EnquiryTuitionPlanKey = "enquiry_tuition_plan";
+    private const string EnquiryResponseTuitionPlanKey = "enquiry_response_tuition_plan";
+    private const string EnquirySENDSupportKey = "enquiry_send_support";
+    private const string EnquiryResponseSENDSupportKey = "enquiry_response_send_support";
+    private const string EnquiryAdditionalInformationKey = "enquiry_additional_information";
+    private const string EnquiryResponseAdditionalInformationKey = "enquiry_response_additional_information";
+    private const string EnquiryTuitionPartnerNameKey = "tuition_partner_name";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
+    private const string ContactUsLink = "contact_us_link";
 
     private readonly INotificationsClientService _notificationsClientService;
 
@@ -85,7 +98,19 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
         request.Data.TutoringLogisticsText = enquirerEnquiryResponseReceivedData.TutoringLogisticsText!;
 
-        var notificationsRecipient = GetNotificationsRecipient(request, enquirerEnquiryResponseReceivedData.TuitionPartnerName);
+        var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
+
+        var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
+            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
+            enquirerEnquiryResponseReceivedData.TuitionPartnerName, contactUsLink);
+
+        var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
+            GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
+                request,
+                tpEnquiry.TuitionPartner.Name,
+                tpEnquiry.Enquiry.SupportReferenceNumber,
+                contactUsLink,
+                tpEnquiry.Enquiry.CreatedAt);
 
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
         request.Data.TutoringLogisticsText = tpEnquiry.Enquiry.TutoringLogistics;
@@ -117,8 +142,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             await _unitOfWork.Complete();
 
             await _notificationsClientService.SendEmailAsync(
-                notificationsRecipient,
+                enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient,
                 EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer, tpEnquiry.Enquiry.SupportReferenceNumber);
+
+            await _notificationsClientService.SendEmailAsync(
+                enquiryResponseSubmittedConfirmationToTpNotificationsRecipient,
+            EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp,
+                tpEnquiry.Enquiry.SupportReferenceNumber
+            );
 
             return tpEnquiry.Enquiry.SupportReferenceNumber;
         }
@@ -139,7 +170,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             $"EnquiryId={request.Data?.EnquiryId}&TuitionPartnerId={request.Data!.TuitionPartnerId}&Type={nameof(MagicLinkType.EnquirerViewResponse)}&{generateRandomness}");
     }
 
-    private NotificationsRecipientDto GetNotificationsRecipient(AddEnquiryResponseCommand request, string enquiryResponderText)
+    private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
+        string tpName, string contactusLink)
     {
         var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/all-enquirer-responses?token={request.Data?.Token}";
 
@@ -147,23 +179,79 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetPersonalisation(request.Data?.TutoringLogisticsText!, request.Data?.TutoringLogisticsText!, enquiryResponderText, pageLink)
+            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, pageLink, contactusLink)
         };
         return result;
     }
 
-    private static Dictionary<string, dynamic> GetPersonalisation(string enquiryText, string enquiryResponseText,
-        string enquiryResponderText,
-        string enquirerViewResponsesPageLinkKey)
+    private static Dictionary<string, dynamic> GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(string tpName,
+        string enquirerViewResponsesPageLinkKey, string contactusLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
-            { EnquiryTextVariableKey, enquiryText },
-            { EnquiryResponderVariableKey, enquiryResponderText },
-            { EnquiryResponseTextVariableKey, enquiryResponseText },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey }
+            { EnquiryTuitionPartnerNameKey, tpName },
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey },
+            { ContactUsLink, contactusLink }
         };
 
         return personalisation;
     }
+
+    private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
+        string tpName, string supportRefNumber, string contactusLink, DateTime enquiryCreateDateTime)
+    {
+        var personalisationInput = new EnquiryResponseToTpPersonalisationInput
+        {
+            TpName = tpName,
+            SupportRefNumber = supportRefNumber,
+            LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
+            CreatedOnDateTime = enquiryCreateDateTime.ToString("dd/MM/yyyy HH:mm"),
+            EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
+            EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText,
+            EnquiryTuitionType = request.Data.EnquiryTuitionType,
+            EnquiryResponseTuitionType = request.Data.TuitionTypeText,
+            EnquiryTuitionPlan = request.Data.EnquiryTutoringLogistics,
+            EnquiryResponseTuitionPlan = request.Data.TutoringLogisticsText,
+            EnquirySendSupport = request.Data.EnquirySENDRequirements ?? StringConstants.NotSpecified,
+            EnquiryResponseSendSupport = request.Data.SENDRequirementsText ?? StringConstants.NotSpecified,
+            EnquiryAdditionalInformation = request.Data.EnquiryAdditionalInformation ?? StringConstants.NotSpecified,
+            EnquiryResponseAdditionalInformation =
+                request.Data.AdditionalInformationText ?? StringConstants.NotSpecified,
+            ContactUsLink = contactusLink
+        };
+
+        var result = new NotificationsRecipientDto()
+        {
+            Email = request.Data?.Email!,
+            EnquirerEmailForTestingPurposes = request.Data?.Email!,
+            Personalisation = GetEnquiryResponseSubmittedConfirmationToTpPersonalisation(personalisationInput)
+        };
+        return result;
+    }
+
+    private static Dictionary<string, dynamic>
+        GetEnquiryResponseSubmittedConfirmationToTpPersonalisation(EnquiryResponseToTpPersonalisationInput input)
+    {
+        var personalisation = new Dictionary<string, dynamic>()
+        {
+            { EnquiryTuitionPartnerNameKey, input.TpName! },
+            { EnquiryReferenceNumberKey, input.SupportRefNumber! },
+            { EnquiryLadNameKey, input.LocalAreaDistrict! },
+            { EnquiryCreatedDateTime, input.CreatedOnDateTime! },
+            { EnquiryKeyStageAndSubjects, input.EnquiryKeyStageSubjects! },
+            { EnquiryResponseKeyStageAndSubjects, input.EnquiryResponseKeyStageSubjects! },
+            { EnquiryTuitionTypeKey, input.EnquiryTuitionType! },
+            { EnquiryResponseTuitionTypeKey, input.EnquiryResponseTuitionType! },
+            { EnquiryTuitionPlanKey, input.EnquiryTuitionPlan! },
+            { EnquiryResponseTuitionPlanKey, input.EnquiryResponseTuitionPlan! },
+            { EnquirySENDSupportKey, input.EnquirySendSupport! },
+            { EnquiryResponseSENDSupportKey, input.EnquiryResponseSendSupport! },
+            { EnquiryAdditionalInformationKey, input.EnquiryAdditionalInformation! },
+            { EnquiryResponseAdditionalInformationKey, input.EnquiryResponseAdditionalInformation! },
+            { ContactUsLink, input.ContactUsLink! }
+        };
+
+        return personalisation;
+    }
+
 }

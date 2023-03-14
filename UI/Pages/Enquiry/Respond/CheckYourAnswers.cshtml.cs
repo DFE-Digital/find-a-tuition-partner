@@ -65,6 +65,8 @@ public class CheckYourAnswers : PageModel
 
         ParsedTokenValuesFromToken(Data.Token);
 
+        Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
         var command = new AddEnquiryResponseCommand()
         {
             Data = Data

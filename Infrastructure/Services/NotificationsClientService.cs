@@ -181,6 +181,10 @@ public class NotificationsClientService : INotificationsClientService
                 !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryResponseReceivedConfirmationToEnquirer)
                 ? notifyConfig.TemplateIdEnquiryResponseReceivedConfirmationToEnquirer
                 : string.Empty,
+            EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp =>
+                !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryResponseSubmittedConfirmationToTp)
+                    ? notifyConfig.TemplateIdEnquiryResponseSubmittedConfirmationToTp
+                    : string.Empty,
             _ => string.Empty
         };
     }
