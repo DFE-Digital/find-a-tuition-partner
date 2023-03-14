@@ -13,10 +13,6 @@
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: page has link to back button
-    Given a user has arrived on the contact us page
-    Then they will see the back link
-
   Scenario: page has link to ftp mail 
     Given a user has arrived on the contact us page
     Then they will see link to tutoring mail address

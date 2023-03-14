@@ -33,14 +33,14 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
              .NotEmpty()
              .WithMessage("Enter the type of tuition plan that you need")
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"What type of tuition plan do you need must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.SENDRequirements)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"Do you need tuition partners who can support pupils with SEND must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.AdditionalInformation)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"Is there anything else that you want tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }

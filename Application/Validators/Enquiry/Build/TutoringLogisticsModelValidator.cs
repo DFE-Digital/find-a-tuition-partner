@@ -12,6 +12,6 @@ public class TutoringLogisticsModelValidator : AbstractValidator<TutoringLogisti
              .NotEmpty()
              .WithMessage("Enter the type of tuition plan that you need")
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"What type of tuition plan do you need must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+             .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }
