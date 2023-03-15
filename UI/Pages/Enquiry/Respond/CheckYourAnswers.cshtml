@@ -87,13 +87,16 @@
                                                ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
-             <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
+              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
             </dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href=@backUrl>
-                Change<span class="govuk-visually-hidden"> SEND requirements</span>
-              </a>
-            </dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
+            {
+              <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href=@backUrl>
+                  Change<span class="govuk-visually-hidden"> SEND requirements</span>
+                </a>
+              </dd>
+            }
           </div>
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
@@ -104,13 +107,16 @@
             </dt>
             <dd class="govuk-summary-list__value">
               <p class="govuk-body"> <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) 
-                   ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span></p>
+                                                                      ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span></p>
             </dd>
-            <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href=@backUrl>
-                Change<span class="govuk-visually-hidden"> other school considerations</span>
-              </a>
-            </dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
+            {
+              <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href=@backUrl>
+                  Change<span class="govuk-visually-hidden"> other school considerations</span>
+                </a>
+              </dd>
+            }
           </div>
         </dl>
         <form method="post">

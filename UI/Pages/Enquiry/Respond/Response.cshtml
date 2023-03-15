@@ -132,18 +132,21 @@
 
                 <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) 
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
-                
-                <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-                        <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-                            Can you support those SEND requirements?
-                        </govuk-character-count-label>
-                        <govuk-character-count-hint>
-                            For example, you may have specialist tutors who can support pupils with specific SEND requirements
-                        </govuk-character-count-hint>
-                    </govuk-character-count>
-                </div>
-                <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+                @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
+                {
+                    <div class="govuk-form-group">
+                        <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                            <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
+                                Can you support those SEND requirements?
+                            </govuk-character-count-label>
+                            <govuk-character-count-hint>
+                                For example, you may have specialist tutors who can support pupils with specific SEND requirements
+                            </govuk-character-count-hint>
+                        </govuk-character-count>
+                    </div>
+                    <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+                }
 
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>Other tuition considerations:</span>
@@ -152,16 +155,19 @@
                 <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) 
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
 
-                <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-                        <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-                            Can you support those considerations?
-                        </govuk-character-count-label>
-                        <govuk-character-count-hint>
-                            Give as much detail as possible to increase your chance of matching the school’s tuition requirements
-                        </govuk-character-count-hint>
-                    </govuk-character-count>
-                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
+                {
+                    <div class="govuk-form-group">
+                        <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                            <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
+                                Can you support those considerations?
+                            </govuk-character-count-label>
+                            <govuk-character-count-hint>
+                                Give as much detail as possible to increase your chance of matching the school’s tuition requirements
+                            </govuk-character-count-hint>
+                        </govuk-character-count>
+                    </div>
+                }
             </div>
         </div>
     </div>
