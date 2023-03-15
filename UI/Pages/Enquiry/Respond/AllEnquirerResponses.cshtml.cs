@@ -38,7 +38,7 @@ namespace UI.Pages.Enquiry.Respond
 
                 var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
 
-                var baseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                var baseServiceUrl = Request.GetBaseServiceUrl();
 
                 if (getMagicLinkToken != null)
                 {

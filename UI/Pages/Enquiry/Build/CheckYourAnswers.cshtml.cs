@@ -34,10 +34,18 @@ public class CheckYourAnswers : PageModel
             }
         }
 
-        if (Data.KeyStages == null) return RedirectToPage("../../WhichKeyStages");
+        //TODO - Test and handle errors:
+        //  No postcode, subjects, TT, email, logistics etc
+        //  Invalid data supplied - postcode in Wales, invalid email etc
+        //  errors when calling _mediator
 
-        //TODO - This is currently using the subjects string, which contains key stage and subject data, but is not the display version
-        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+        Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
+
+        if (!string.IsNullOrWhiteSpace(Data.Postcode))
+        {
+            var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
+            Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
+        }
 
         ModelState.Clear();
 
@@ -49,7 +57,7 @@ public class CheckYourAnswers : PageModel
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
-        Data.KeyStageSubjects = GetKeyStageSubject(string.Join(",", Data.Subjects!));
+        Data.KeyStageSubjects = GetKeyStageSubject( Data.Subjects);
 
         if (!ModelState.IsValid) return Page();
 
@@ -57,7 +65,7 @@ public class CheckYourAnswers : PageModel
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
 
-        Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+        Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
         var command = new AddEnquiryCommand()
         {
@@ -99,11 +107,23 @@ public class CheckYourAnswers : PageModel
                 break;
         }
     }
-    private static Dictionary<string, List<string>>? GetKeyStageSubject(string value)
+    private static Dictionary<KeyStage, List<Subject>> GetKeyStageSubject(string[]? subjects)
     {
-        return value.Split(',')
-            .Select(x => x.Split('-'))
-            .GroupBy(x => x[0])
-            .ToDictionary(x => x.Key, x => x.Select(y => y[1]).ToList());
+        if (subjects == null || subjects.Length == 0)
+            return new Dictionary<KeyStage, List<Subject>>();
+
+        var keyStageSubjects = subjects.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
+
+        var allSubjects = Enum.GetValues(typeof(Subject)).Cast<Subject>();
+
+        return keyStageSubjects
+            .GroupBy(x => x.KeyStage)
+            .OrderBy(x => x.Key.DisplayName())
+            .Select(x => new { x.Key, Values = x
+                .Select(y => allSubjects
+                .FirstOrDefault(allsub => allsub.ToString().ToSeoUrl() == y.Subject.ToSeoUrl()))
+                .Where(x => x != Subject.Unspecified) })
+            .Where(x => x.Values.Any())
+            .ToDictionary(x => x.Key, x => x.Values.ToList());
     }
 }

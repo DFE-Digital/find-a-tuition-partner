@@ -1,3 +1,11 @@
 ﻿.js-enabled .session-timeout-banner {
   display: none;
 }
+
+.display-pre-wrap {
+  white-space: pre-wrap;
+}
+
+.govuk-error-summary:not(.cya-error-summary) {
+  display: none;
+}

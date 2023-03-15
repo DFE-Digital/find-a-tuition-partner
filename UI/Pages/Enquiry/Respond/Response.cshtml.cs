@@ -72,7 +72,7 @@ namespace UI.Pages.Enquiry.Respond
                 var getMagicLinkToken = await GetMagicLinkToken(token);
                 if (getMagicLinkToken == null) return Page();
 
-                Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
                 var command = new AddEnquiryResponseCommand()
                 {
