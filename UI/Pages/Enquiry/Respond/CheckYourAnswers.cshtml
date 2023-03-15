@@ -98,10 +98,9 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Other school considerations:
-              <p class="govuk-body"><span class="display-pre-wrap">
-                @(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation)
-                       ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)
-              </span></p>
+              <p class="govuk-body">
+                <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation)
+                    ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
               <p class="govuk-body"> <span class="display-pre-wrap">
