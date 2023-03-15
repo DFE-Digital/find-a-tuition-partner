@@ -19,7 +19,7 @@
             <govuk-error-summary-item asp-for="Data.AdditionalInformationText"/>
         </govuk-error-summary>
 
-        <p class="govuk-body govuk-!-margin-bottom-0"> School enquiry from @Model.Data.LocalAuthorityDistrict area</p>
+        <p class="govuk-body govuk-!-margin-bottom-0"> School enquiry from the @Model.Data.LocalAuthorityDistrict area</p>
         <h1 class="govuk-heading-l govuk-!-padding-top-0">
             <span>View the school’s tution requirements</span>
         </h1>
@@ -66,7 +66,7 @@
                     <span>Key stage and subjects:</span>
                 </h3>
 
-                <ul class="govuk-list govuk-list-bullets-mobile-view govuk-!-margin-left-4">
+                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
                     @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
                     {
                         <li>
@@ -78,7 +78,7 @@
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-                            Can you support these key stages and subjects?
+                            Can you support those key stages and subjects?
                         </govuk-character-count-label>
                         <govuk-character-count-hint>
                             For example, you may be able to support all of these but not at the same time
