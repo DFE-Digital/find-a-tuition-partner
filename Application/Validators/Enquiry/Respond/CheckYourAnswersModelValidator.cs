@@ -22,7 +22,7 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
 
         RuleFor(request => request.TutoringLogisticsText)
             .NotEmpty()
-            .WithMessage("Enter the type of tuition plan that you need")
+            .WithMessage("Enter can you support that tuition plan")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
             .WithMessage($"Tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
