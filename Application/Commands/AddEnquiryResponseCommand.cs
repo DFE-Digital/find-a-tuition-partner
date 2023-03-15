@@ -16,9 +16,9 @@ public record AddEnquiryResponseCommand : IRequest<string>
 
 public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, string>
 {
-    private const string EnquiryReferenceNumberKey = "ref_number";
+    private const string EnquiryReferenceNumberKey = "enquiry_ref_number";
     private const string EnquiryLadNameKey = "local_area_district";
-    private const string EnquiryCreatedDateTime = "created_on_date_time";
+    private const string EnquiryCreatedDateTime = "date_time";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
     private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
     private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
