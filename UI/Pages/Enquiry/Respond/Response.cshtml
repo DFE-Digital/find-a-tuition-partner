@@ -55,7 +55,7 @@
     </div>
 </div>
 
-<form method="post">
+<form method="post" class="cya-form">
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds-from-desktop">
@@ -76,7 +76,7 @@
                 </ul>
 
                 <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                    <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                             Can you support those key stages and subjects?
                         </govuk-character-count-label>
@@ -95,7 +95,7 @@
                 <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
 
                 <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.TuitionTypeText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                    <govuk-character-count asp-for="Data.TuitionTypeText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                             To what extent can you support that type of tuition?
                         </govuk-character-count-label>
@@ -114,7 +114,7 @@
                 <p class="govuk-body"><span class="display-pre-wrap"> @Model.Data.EnquiryTutoringLogistics</span></p>
 
                 <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.TutoringLogisticsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                    <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                             Can you support that tuition plan?
                         </govuk-character-count-label>
@@ -134,7 +134,7 @@
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
 
                 <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.SENDRequirementsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                    <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                             Can you support those SEND requirements?
                         </govuk-character-count-label>
@@ -153,7 +153,7 @@
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
 
                 <div class="govuk-form-group">
-                    <govuk-character-count asp-for="Data.AdditionalInformationText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+                    <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                             Can you support those considerations?
                         </govuk-character-count-label>
