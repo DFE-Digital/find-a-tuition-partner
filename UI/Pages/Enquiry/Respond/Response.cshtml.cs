@@ -103,7 +103,7 @@ namespace UI.Pages.Enquiry.Respond
                 var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
                 if (getMagicLinkToken == null) return Page();
 
-                Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
                 await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {

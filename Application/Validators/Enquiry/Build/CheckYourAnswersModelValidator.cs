@@ -42,5 +42,9 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
         RuleFor(request => request.AdditionalInformation)
              .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
              .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(m => m.ConfirmTermsAndConditions)
+            .NotEqual(false)
+            .WithMessage("Select to confirm that you have not included any information that would allow anyone to identify pupils, such as names or specific characteristics");
     }
 }

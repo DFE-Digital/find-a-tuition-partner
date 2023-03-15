@@ -5,11 +5,6 @@ using TuitionType = Domain.Enums.TuitionType;
 
 namespace UI.Pages;
 
-/*
-TODOs:
-Merge session service
-*/
-
 public class WhichTuitionTypes : PageModel
 {
     private readonly ISessionService _sessionService;

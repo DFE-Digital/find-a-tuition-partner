@@ -42,7 +42,8 @@ public class CheckYourAnswersTests
                 Subjects = new string[] { "test-subject" },
                 TuitionType = TuitionType.Online,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content"
+                TutoringLogistics = "Test content",
+                ConfirmTermsAndConditions = true
             }
         };
 
@@ -56,7 +57,8 @@ public class CheckYourAnswersTests
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
     }
