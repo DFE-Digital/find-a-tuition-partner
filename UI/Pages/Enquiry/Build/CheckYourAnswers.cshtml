@@ -29,37 +29,21 @@
 <div class="govuk-width-container">
   <div class="govuk-grid-row">
       <div class="govuk-grid-column-three-quarters">
-            <p class="govuk-body">
-                Your email will not be shared with tuition partners
-            </p>
+        <p class="govuk-body">
+          Your email will not be shared with tuition partners
+        </p>
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Key stages and subjects
             </dt>
             <dd class="govuk-summary-list__value">
-              <table class="govuk-table">
-                <caption class="govuk-visually-hidden">Key stages and subjects</caption>
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                  <th class="govuk-table__header" scope="col"> Key stage </th>
-                  <th class="govuk-table__header" scope="col"> Subject </th>
-                </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                @foreach (var item in @Model.Data?.KeyStageSubjects!)
-                {
-                  <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                      @item.Key.DisplayName()
-                    </td>
-                    <td class="govuk-table__cell">
-                      @item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList()
-                    </td>
-                  </tr>
-                }
-                </tbody>
-              </table>
+              <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
+              @foreach (var item in @Model.Data?.KeyStageSubjects!)
+              {
+                <li>@(item.Key.DisplayName()) - @(item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList())</li>
+              }
+              </ul>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/which-key-stages?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())">
