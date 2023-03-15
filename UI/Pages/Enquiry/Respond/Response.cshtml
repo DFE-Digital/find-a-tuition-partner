@@ -92,7 +92,7 @@
                     <span>Tuition type:</span>
                 </h3>
 
-                <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
+                <p class="govuk-body">@Model.Data.EnquiryTuitionType</p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.TuitionTypeText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -111,7 +111,7 @@
                     <span>Tuition plan:</span>
                 </h3>
 
-                <p class="govuk-body"><span class="display-pre-wrap"> @Model.Data.EnquiryTutoringLogistics</span></p>
+                <p class="govuk-body"><span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span></p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -132,7 +132,7 @@
 
                 <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) 
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
-
+                
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
                         <govuk-character-count-label class="govuk-label--s" is-page-heading="true">

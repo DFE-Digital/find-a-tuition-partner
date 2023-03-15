@@ -43,7 +43,7 @@
               </ul>
             </dt>
             <dd class="govuk-summary-list__value">
-             <span class="display-pre-wrap"> @Model.Data.KeyStageAndSubjectsText</span>
+             <span class="display-pre-wrap">@Model.Data.KeyStageAndSubjectsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -54,10 +54,10 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Tuition type:
-              <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
+              <p class="govuk-body">@Model.Data.EnquiryTuitionType</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              <span class="display-pre-wrap"> @Model.Data.TuitionTypeText</span>
+              <span class="display-pre-wrap">@Model.Data.TuitionTypeText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -71,7 +71,7 @@
               <p class="govuk-body"><span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
-              <span class="display-pre-wrap"> @Model.Data.TutoringLogisticsText</span>
+              <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -87,7 +87,7 @@
                                                ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
-             <span class="display-pre-wrap"> @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
+             <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -103,10 +103,8 @@
                     ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
-              <p class="govuk-body"> <span class="display-pre-wrap">
-                 @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) 
-                   ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)
-              </span> </p>
+              <p class="govuk-body"> <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) 
+                   ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span></p>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>

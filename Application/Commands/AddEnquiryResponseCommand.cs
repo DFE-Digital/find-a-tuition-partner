@@ -96,13 +96,12 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
         request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
-        request.Data.TutoringLogisticsText = enquirerEnquiryResponseReceivedData.TutoringLogisticsText!;
 
         var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
 
         var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
             GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
-            enquirerEnquiryResponseReceivedData.TuitionPartnerName, contactUsLink);
+            enquirerEnquiryResponseReceivedData.TuitionPartnerName, tpEnquiry.Enquiry.SupportReferenceNumber, contactUsLink);
 
         var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
             GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
@@ -113,7 +112,6 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                 tpEnquiry.Enquiry.CreatedAt);
 
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
-        request.Data.TutoringLogisticsText = tpEnquiry.Enquiry.TutoringLogistics;
 
         var enquirerViewResponseMagicLink = new MagicLink()
         {
@@ -171,7 +169,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string contactusLink)
+        string tpName, string supportRefNumber, string contactusLink)
     {
         var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/respond/all-enquirer-responses?token={request.Data?.Token}";
 
@@ -179,16 +177,17 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, pageLink, contactusLink)
+            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, supportRefNumber, pageLink, contactusLink)
         };
         return result;
     }
 
     private static Dictionary<string, dynamic> GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(string tpName,
-        string enquirerViewResponsesPageLinkKey, string contactusLink)
+        string supportRefNumber, string enquirerViewResponsesPageLinkKey, string contactusLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
+            { EnquiryReferenceNumberKey, supportRefNumber},
             { EnquiryTuitionPartnerNameKey, tpName },
             { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey },
             { ContactUsLink, contactusLink }
