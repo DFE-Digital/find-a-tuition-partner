@@ -33,7 +33,7 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Key stage and subjects:
-              <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+              <ul class="govuk-list govuk-list-bullets-mobile-view govuk-!-margin-left-4">
                 @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
                 {
                   <li>
@@ -68,7 +68,7 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Tuition plan:
-              <p class="govuk-body"> @Model.Data.EnquiryTutoringLogistics</p>
+              <p class="govuk-body"><span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
               <span class="display-pre-wrap"> @Model.Data.TutoringLogisticsText</span>
@@ -82,7 +82,9 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               SEND requirements:                
-              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</p>
+              <p class="govuk-body">
+              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) 
+                                               ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
             </dt>
             <dd class="govuk-summary-list__value">
              <span class="display-pre-wrap"> @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
@@ -96,10 +98,16 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Other school considerations:
-              <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</p>
+              <p class="govuk-body"><span class="display-pre-wrap">
+                @(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation)
+                       ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)
+              </span></p>
             </dt>
             <dd class="govuk-summary-list__value">
-             <span class="display-pre-wrap"> @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span>
+              <p class="govuk-body"> <span class="display-pre-wrap">
+                 @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) 
+                   ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)
+              </span> </p>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>

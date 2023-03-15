@@ -66,7 +66,7 @@
                     <span>Key stage and subjects:</span>
                 </h3>
 
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+                <ul class="govuk-list govuk-list-bullets-mobile-view govuk-!-margin-left-4">
                     @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
                     {
                         <li>
@@ -111,7 +111,7 @@
                     <span>Tuition plan:</span>
                 </h3>
 
-                <p class="govuk-body"> @Model.Data.EnquiryTutoringLogistics</p>
+                <p class="govuk-body"><span class="display-pre-wrap"> @Model.Data.EnquiryTutoringLogistics</span></p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.TutoringLogisticsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -130,7 +130,8 @@
                     <span>SEND requirements:</span>
                 </h3>
 
-                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</p>
+                <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) 
+                                                                         ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.SENDRequirementsText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -148,7 +149,8 @@
                     <span>Other tuition considerations:</span>
                 </h3>
 
-                <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</p>
+                <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) 
+                                                                         ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
 
                 <div class="govuk-form-group">
                     <govuk-character-count asp-for="Data.AdditionalInformationText" ignore-modelstate-errors="true" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
