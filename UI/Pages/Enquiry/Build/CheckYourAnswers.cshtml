@@ -38,7 +38,7 @@
               Key stages and subjects
             </dt>
             <dd class="govuk-summary-list__value">
-              <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
+              <ul class="govuk-list govuk-list-bullets-mobile-view">
               @foreach (var item in @Model.Data?.KeyStageSubjects!)
               {
                 <li>@(item.Key.DisplayName()) - @(item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList())</li>
