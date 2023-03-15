@@ -58,7 +58,7 @@ namespace UI.Pages.Enquiry.Respond
                 return Page();
             }
 
-            Data.BaseServiceUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+            Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
             var sessionValues = await _sessionService.RetrieveDataAsync();
 

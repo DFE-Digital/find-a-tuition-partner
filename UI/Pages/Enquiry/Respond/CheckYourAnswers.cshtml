@@ -43,7 +43,7 @@
               </ul>
             </dt>
             <dd class="govuk-summary-list__value">
-              @Model.Data.KeyStageAndSubjectsText
+             <span class="display-pre-wrap"> @Model.Data.KeyStageAndSubjectsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -57,7 +57,7 @@
               <p class="govuk-body"> @Model.Data.EnquiryTuitionType</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @Model.Data.TuitionTypeText
+              <span class="display-pre-wrap"> @Model.Data.TuitionTypeText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -71,7 +71,7 @@
               <p class="govuk-body"> @Model.Data.EnquiryTutoringLogistics</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @Model.Data.TutoringLogisticsText
+              <span class="display-pre-wrap"> @Model.Data.TutoringLogisticsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -85,7 +85,7 @@
               <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)
+             <span class="display-pre-wrap"> @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
@@ -99,7 +99,7 @@
               <p class="govuk-body">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</p>
             </dt>
             <dd class="govuk-summary-list__value">
-              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)
+             <span class="display-pre-wrap"> @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href=@backUrl>
