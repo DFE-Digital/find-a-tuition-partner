@@ -32,7 +32,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         var result = new EnquirerViewResponseModel()
         {
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
-            EnquiryResponseText = tuitionPartnerEnquiry.EnquiryResponse!.EnquiryResponseText,
+            EnquiryResponseText = tuitionPartnerEnquiry.EnquiryResponse!.TutoringLogisticsText,
             EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token
         };
 

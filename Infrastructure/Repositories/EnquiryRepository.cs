@@ -36,7 +36,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         }
 
         var tuitionPartnerEnquiriesWithResponses = enquiry.TuitionPartnerEnquiry.Where(x =>
-            x.EnquiryResponse != null && !string.IsNullOrEmpty(x.EnquiryResponse.EnquiryResponseText)).ToList();
+            x.EnquiryResponse != null).ToList();
 
         var keyStageSubjects = enquiry
             .KeyStageSubjectEnquiry
@@ -47,11 +47,14 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
         var result = new EnquirerViewAllResponsesModel
         {
+            LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
             TutoringLogistics = enquiry.TutoringLogistics!,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,
             TuitionTypeName = tuitionTypeName,
+            SENDRequirements = enquiry.SENDRequirements ?? string.Empty,
+            AdditionalInformation = enquiry.AdditionalInformation ?? string.Empty,
             EnquiryCreatedDateTime = enquiry.CreatedAt,
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
@@ -78,10 +81,10 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
     {
         return tuitionTypeId switch
         {
-            null => TuitionType.Any.ToString(),
-            (int)TuitionType.Online => TuitionType.Online.ToString(),
-            (int)TuitionType.InSchool => TuitionType.InSchool.ToString(),
-            _ => TuitionType.Any.ToString()
+            null => TuitionType.Any.DisplayName(),
+            (int)TuitionType.Online => TuitionType.Online.DisplayName(),
+            (int)TuitionType.InSchool => TuitionType.InSchool.DisplayName(),
+            _ => TuitionType.Any.DisplayName()
         };
     }
 }

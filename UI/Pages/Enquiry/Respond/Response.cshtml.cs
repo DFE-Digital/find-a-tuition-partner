@@ -8,22 +8,26 @@ namespace UI.Pages.Enquiry.Respond
     {
         private readonly IMediator _mediator;
         private readonly IEncrypt _aesEncrypt;
+        private readonly ISessionService _sessionService;
 
         private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
         private const string InvalidUrlErrorMessage = "Invalid Url";
 
-        public Response(IMediator mediator, IEncrypt aesEncrypt)
+        public Response(IMediator mediator, IEncrypt aesEncrypt, ISessionService sessionService)
         {
             _mediator = mediator;
             _aesEncrypt = aesEncrypt;
+            _sessionService = sessionService;
         }
 
-        [BindProperty] public EnquiryResponseModel Data { get; set; } = new();
+        [BindProperty] public ViewAndCaptureEnquiryResponseModel Data { get; set; } = new();
 
         [ViewData] public string? ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGet()
+        string _queryToken = string.Empty;
+
+        public async Task<IActionResult> OnGetAsync()
         {
             /*
             TODO:
@@ -37,15 +41,15 @@ namespace UI.Pages.Enquiry.Respond
             Update the magic links for TPs to be 7 days, confirm what to set for the enquiry as initial expiry date
             */
 
-            var token = Request.Query["token"].ToString();
+            _queryToken = Request.Query["token"].ToString();
 
-            if (AddInValidUrlErrorMessage(token)) return Page();
+            if (AddInValidUrlErrorMessage(_queryToken)) return Page();
 
             try
             {
-                if (!IsParsedTokenValues(token)) return Page();
+                if (!IsParsedTokenValues(_queryToken)) return Page();
 
-                var getMagicLinkToken = await GetMagicLinkToken(token);
+                var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
                 if (getMagicLinkToken == null) return Page();
             }
             catch
@@ -54,50 +58,110 @@ namespace UI.Pages.Enquiry.Respond
                 return Page();
             }
 
+            Data.BaseServiceUrl = Request.GetBaseServiceUrl();
+
+            var sessionValues = await _sessionService.RetrieveDataAsync();
+
+            if (sessionValues != null)
+            {
+                foreach (var sessionValue in sessionValues)
+                {
+                    Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
+                }
+            }
+            else
+            {
+                var enquiryData = await _mediator.Send(new
+                    GetEnquirerViewAllResponsesQuery(Data.EnquiryId, Data.BaseServiceUrl));
+
+                if (enquiryData != null)
+                {
+                    Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
+                    Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
+                    Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
+                    Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
+                    Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
+                    Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
+                }
+            }
+
             return Page();
         }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) return Page();
 
-            var token = Request.Query["token"].ToString();
+            _queryToken = Request.Query["token"].ToString();
 
-            if (AddInValidUrlErrorMessage(token)) return Page();
+            if (AddInValidUrlErrorMessage(_queryToken)) return Page();
 
             try
             {
-                if (!IsParsedTokenValues(token)) return Page();
+                if (!IsParsedTokenValues(_queryToken)) return Page();
 
-                var getMagicLinkToken = await GetMagicLinkToken(token);
+                var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
                 if (getMagicLinkToken == null) return Page();
 
                 Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-                var command = new AddEnquiryResponseCommand()
+                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
-                    Data = Data
-                };
+                    { StringConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
+                    { StringConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
+                    { StringConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
+                    { StringConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
+                    { StringConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
+                    {
+                        StringConstants.EnquiryResponseAdditionalInformation,
+                        Data.AdditionalInformationText ?? string.Empty
+                    },
+                    { StringConstants.EnquiryResponseToken, Data.Token! },
+                    { StringConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
+                    { StringConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
+                    { StringConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
+                    { StringConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
+                    { StringConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
+                });
 
-                var hasDataSaved = await _mediator.Send(command);
-
-                if (hasDataSaved)
-                {
-                    return RedirectToPage(nameof(ResponseConfirmation));
-                }
+                return RedirectToPage(nameof(CheckYourAnswers));
             }
             catch
             {
                 AddErrorMessage(InvalidTokenErrorMessage);
                 return Page();
             }
-
-            return Page();
         }
 
         private bool IsParsedTokenValues(string token)
         {
-            var tokenValue = _aesEncrypt.Decrypt(token);
+            string tokenValue;
+
+            try
+            {
+                tokenValue = _aesEncrypt.Decrypt(token);
+            }
+            catch
+            {
+                var parsedToken = ParseTokenFromQueryString();
+
+                try
+                {
+                    tokenValue = _aesEncrypt.Decrypt(parsedToken);
+                }
+                catch
+                {
+                    tokenValue = string.Empty;
+                }
+
+                _queryToken = parsedToken;
+
+                if (string.IsNullOrWhiteSpace(tokenValue))
+                {
+                    AddErrorMessage(InvalidUrlErrorMessage);
+                    return false;
+                };
+            }
 
             var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
 
@@ -120,7 +184,7 @@ namespace UI.Pages.Enquiry.Respond
                 Data.TuitionPartnerId = tuitionPartnerId;
             }
 
-            Data.Token = token;
+            Data.Token = _queryToken;
 
             return true;
         }
@@ -157,6 +221,14 @@ namespace UI.Pages.Enquiry.Respond
             Data.EnquiryId = getMagicLinkTokenQuery.EnquiryId!.Value;
 
             return getMagicLinkTokenQuery;
+        }
+
+        private string ParseTokenFromQueryString()
+        {
+            var queryString = Request.QueryString.Value;
+            var tokens = queryString!.Split(new char[] { '=' }, 2);
+            var tokenValue = tokens[1];
+            return tokenValue;
         }
     }
 }

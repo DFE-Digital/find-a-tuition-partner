@@ -57,7 +57,7 @@ public class CheckYourAnswers : PageModel
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
-        Data.KeyStageSubjects = GetKeyStageSubject( Data.Subjects);
+        Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
 
         if (!ModelState.IsValid) return Page();
 
@@ -119,10 +119,14 @@ public class CheckYourAnswers : PageModel
         return keyStageSubjects
             .GroupBy(x => x.KeyStage)
             .OrderBy(x => x.Key.DisplayName())
-            .Select(x => new { x.Key, Values = x
+            .Select(x => new
+            {
+                x.Key,
+                Values = x
                 .Select(y => allSubjects
                 .FirstOrDefault(allsub => allsub.ToString().ToSeoUrl() == y.Subject.ToSeoUrl()))
-                .Where(x => x != Subject.Unspecified) })
+                .Where(x => x != Subject.Unspecified)
+            })
             .Where(x => x.Values.Any())
             .ToDictionary(x => x.Key, x => x.Values.ToList());
     }

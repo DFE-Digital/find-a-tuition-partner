@@ -95,7 +95,7 @@
                 SEND
             </dt>
             <dd class="govuk-summary-list__value">
-              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? "Not specified" : Model.Data.SENDRequirements)</span>
+              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? StringConstants.NotSpecified : Model.Data.SENDRequirements)</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/send-requirements?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_SENDRequirements">
@@ -108,7 +108,7 @@
               Other
             </dt>
             <dd class="govuk-summary-list__value">
-              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? "Not specified" : Model.Data.AdditionalInformation)</span>
+              <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? StringConstants.NotSpecified : Model.Data.AdditionalInformation)</span>
             </dd>
             <dd class="govuk-summary-list__actions">
               <a class="govuk-link" href="/enquiry/build/additional-information?@((Model.Data with { From = ReferrerList.CheckYourAnswers }).ToQueryString())#Data_AdditionalInformation">
