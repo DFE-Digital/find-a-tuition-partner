@@ -40,6 +40,7 @@ public class CheckYourAnswers : PageModel
         //  errors when calling _mediator
 
         Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
+        Data.HasKeyStageSubjects = Data.KeyStageSubjects.Any();
 
         if (!string.IsNullOrWhiteSpace(Data.Postcode))
         {
