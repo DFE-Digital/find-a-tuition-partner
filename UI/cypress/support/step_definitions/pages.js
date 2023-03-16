@@ -2,7 +2,7 @@ import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import { mapTextToNumberIndexZeroToTenth } from "../utils";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
-  cy.visit("/");
+  cy.visit(`/`);
 });
 
 Given("a user has arrived on the funding and reporting page", () => {
@@ -95,6 +95,18 @@ Then("user is redirected to the enter email address page", () => {
 
 Then("they are redirected to the enquiry question page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/tutoring-logistics");
+});
+
+Then("they are redirected to the SEND requirements page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/send-requirements");
+});
+
+Then("they are redirected to the other requirements page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/additional-information");
+});
+
+Then("they are redirected to the check your answers page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/check-your-answers");
 });
 
 Then("the confirmation page is shown", () => {

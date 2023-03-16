@@ -104,7 +104,7 @@ Feature: Tuition partner details mobile view page tests
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
     When user clicks 'Make an enquiry'
     And they click 'Continue' on enquiry
-    Then they enter an valid email address
+    Then they enter a valid email address
     When they click 'Continue'
     Then they are redirected to the enquiry question page
 
@@ -113,3 +113,150 @@ Scenario: Tuition partner details are not displayed when no postcode entered
     Then a user has arrived on the 'Search results' page without subjects for postcode ''
     And a user is using a 'phone'
     Then they will see 'Enter a postcode' as an error message for the 'postcode'
+
+Scenario: Tuition plan question shows correct error when no input provided
+    Given user navigates to the first enquiry question
+    And a user is using a 'phone' 
+    When they click 'Continue'
+    Then they will see 'Enter the type of tuition plan that you need' as an error message for the 'no input error'
+
+Scenario: Tuition plan question shows correct warning when reaching close to Max char limit
+    Given user navigates to the first enquiry question
+    And a user is using a 'phone' 
+    When they type '7600' characters for question 1
+    Then the warning should be displayed showing they have '2400' characters left 
+    When they type '11000' characters for question 1
+    Then the warning should be displayed showing they are over by '1000' characters 
+
+Scenario: Tuition plan second question shows correct warning when reaching close to Max char limit
+    Given user navigates to the first enquiry question
+    And a user is using a 'phone' 
+    When they enter an answer for tuition plan
+    And they click 'Continue'
+    When they type '7600' characters for question 2
+    Then the warning should be displayed showing they have '2400' characters left 
+    When they type '11000' characters for question 2
+    Then the warning should be displayed showing they are over by '1000' characters
+
+Scenario: User can skip second and third question in Enquiry Builder and will show as Not specified on check your answers 
+    Given user navigates to the first enquiry question
+    And a user is using a 'phone' 
+    When they enter an answer for tuition plan
+    And they click 'Continue'
+    Then they click 'Continue'
+    And they click 'Continue'
+    Then the text by the second and third questions is 'Not specified'
+
+Scenario: Tuition plan third question shows correct warning when reaching close to Max char limit
+    Given user navigates to the first enquiry question
+    And a user is using a 'phone' 
+    When they enter an answer for tuition plan
+    And they click 'Continue'
+    Then they enter an answer for SEND requirements
+    And they click 'Continue'
+    When they type '7600' characters for question 3
+    Then the warning should be displayed showing they have '2400' characters left
+    When they type '11000' characters for question 3
+    Then the warning should be displayed showing they are over by '1000' characters
+
+Scenario: Navigate to the Check Your Answers page
+    Given a user has started the 'Find a tuition partner' journey
+    And a user is using a 'phone' 
+    When user has journeyed forward to the check your answers page
+    Then they are redirected to the check your answers page
+
+Scenario: Verify Check Your Answers page content
+    Given a user has started the 'Find a tuition partner' journey
+    And a user is using a 'phone' 
+    When user has journeyed forward to the check your answers page
+    Then they are redirected to the check your answers page    
+    Then the Check Your Answers page displays the following:
+        | Section Name           | Expected Content                       |
+        | Key stages and subjects| Displays Key Stages and subjects table |
+        | Type of Tuition        | Any                                    |
+        | Email Address          | email@email.com                        |
+        | Tuition Plan           | enquiry                                |
+        | SEND Support           | enquiry                                |
+        | Other Considerations   | enquiry                                |
+        
+
+Scenario: Change selections in each section
+    Given a user has started the 'Find a tuition partner' journey
+    And a user is using a 'phone' 
+    And user has journeyed forward to the check your answers page
+    When the user clicks the change button '1'
+    Then the user is taken back to the key-stage page to change their selection
+    And they will see 'Key stage 1, Key stage 2' selected
+    When they select Key stage 3
+    And they click 'Continue'
+    Then the user is taken to the subjects page to change their selection
+    When they select science for all three key stages
+    And they click 'Continue'
+    When they are redirected to the check your answers page
+    Then the Check Your Answers page displays the following with the key stage and subjects updates:
+        | Section Name           | Expected Content                      |
+        | Key stages and subjects| Displays Key Stage and Subjects table |
+        | Type of Tuition        | Any                                   |
+        | Email Address          | email@email.com                       |
+        | Tuition Plan           | enquiry                               |
+        | SEND Support           | enquiry                               |
+        | Other Considerations   | enquiry                               |
+    When the user clicks the change button '2' 
+    Then the user is taken back to the type of tuition page
+    And they select 'Online'
+    And they click 'Continue'
+    Then they are redirected to the check your answers page
+    Then the Check Your Answers page displays the following with the type of tuition update:
+        | Section Name           | Expected Content                      |
+        | Key stages and subjects| Displays Key Stage and Subjects table |
+        | Type of Tuition        | Online                                |
+        | Email Address          | email@email.com                       |
+        | Tuition Plan           | enquiry                               |
+        | SEND Support           | enquiry                               |
+        | Other Considerations   | enquiry                               |
+    When the user clicks the change button '3' 
+    Then the user is taken back to the email address page
+    And they enter another email address
+    And they click 'Continue'
+    Then they are redirected to the check your answers page
+    Then the Check Your Answers page displays the following with the email address update:
+        | Section Name           | Expected Content                      |
+        | Key stages and subjects| Displays Key Stage and Subjects table |
+        | Type of Tuition        | Online                                |
+        | Email Address          | new@new.com                           |
+        | Tuition Plan           | enquiry                               |
+        | SEND Support           | enquiry                               |
+        | Other Considerations   | enquiry                               |
+    When the user clicks the change button '4' 
+    Then they are redirected to the enquiry question page
+    When they type '5' characters for question 1
+    And they click 'Continue'
+    Then they are redirected to the check your answers page
+    When the user clicks the change button '5' 
+    Then they are redirected to the SEND requirements page
+    When they type '5' characters for question 2
+    And they click 'Continue'
+    Then they are redirected to the check your answers page
+    When the user clicks the change button '6' 
+    Then they are redirected to the other requirements page
+    When they type '0' characters for question 3
+    And they click 'Continue'
+    Then they are redirected to the check your answers page
+        Then the Check Your Answers page displays the following with the email address update:
+        | Section Name           | Expected Content                      |
+        | Key stages and subjects| Displays Key Stage and Subjects table |
+        | Type of Tuition        | Online                                |
+        | Email Address          | new@new.com                           |
+        | Tuition Plan           | aaaaa                                 |
+        | SEND Support           | aaaaa                                 |
+        | Other Considerations   | Not specified                         |
+
+
+
+Scenario: Clear search filters in search page and attempt to make an enquiry
+    Given user navigates to check your answers unselecting filter results
+    And a user is using a 'phone' 
+    And they select terms and conditions
+    Then they click send enquiry
+    Then the correct error message should display for no keystage and subjects selected
+    

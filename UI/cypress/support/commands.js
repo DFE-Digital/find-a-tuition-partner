@@ -96,3 +96,9 @@ Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
     cy.isWithinViewPort($el);
   });
 });
+
+Cypress.Commands.add("checkTextContent", (selector, expectedText) => {
+  cy.get(selector)
+    .invoke("text")
+    .then((text) => expect(text.trim()).to.equal(expectedText));
+});

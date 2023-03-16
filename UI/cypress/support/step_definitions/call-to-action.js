@@ -37,3 +37,11 @@ Then("the back link's text is {string}", ($text) => {
 When("they click 'Continue' through enquiry", () => {
   cy.get(".app-print-hide > .govuk-button").click();
 });
+
+When("they click back on the browser", () => {
+  cy.go("back");
+});
+
+When("they click send enquiry", () => {
+  cy.get('.govuk-grid-column-three-quarters > .govuk-button').click()
+})

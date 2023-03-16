@@ -26,7 +26,7 @@ Scenario: Valid email to navigate to the next page
 Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
 When user clicks 'Make an enquiry'
 And they click 'Continue' on enquiry
-Then they enter an valid email address
+Then they enter a valid email address
 When they click 'Continue'
 Then they are redirected to the enquiry question page
 When they click 'Back'
@@ -44,7 +44,7 @@ Scenario: Data is saved when returning to email address page
 Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
 When user clicks 'Make an enquiry'
 And they click 'Continue' on enquiry
-Then they enter an valid email address
+Then they enter a valid email address
 When they click 'Continue'
 Then they are redirected to the enquiry question page
 When they click 'Back'
