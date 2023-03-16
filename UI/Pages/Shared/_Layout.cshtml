@@ -10,9 +10,10 @@
     var includeHomeLink = ViewData["IncludeHomeLink"] as bool? == true; 
     var backLinkHref = ViewData["BackLinkHref"] as string; 
     var backLinkText = ViewData["BackLinkText"] as string;
-    backLinkText = backLinkText ?? "Back";
     var includeBackLink = !string.IsNullOrEmpty(backLinkHref);
-    var includePrintPage = includeBackLink && ViewData["IncludePrintPage"] as bool? == true; 
+    backLinkText = backLinkText ?? "Back";
+    
+    var includePrintPage = ViewData["IncludePrintPage"] as bool? == true; 
 
     var containerId = Configuration["GoogleTagManager:ContainerId"];
     var enableGoogleTagManager = !string.IsNullOrWhiteSpace(containerId);
@@ -210,10 +211,12 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
         @if (includePrintPage)
         {
             <div class="app-print-this-page--container">
-                <div class="app-print-this-page--container-left">
-                    <a href="@backLinkHref" data-testid="back-link" class="govuk-back-link">@backLinkText</a>
-                </div>
-
+                @if (includeBackLink)
+                {
+                    <div class="app-print-this-page--container-left">
+                        <a href="@backLinkHref" data-testid="back-link" class="govuk-back-link">@backLinkText</a>
+                    </div>
+                }
                 <div class="govuk-body app-print-this-page--container-right">
                     <a href="#" class="govuk-link app-print-this-page--link" data-module="print-this-page-link" data-testid="print-this-page-link">Print this page</a>
                 </div>

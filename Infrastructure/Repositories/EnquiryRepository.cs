@@ -4,7 +4,6 @@ using Application.Common.Models.Enquiry.Respond;
 using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using TuitionType = Domain.Enums.TuitionType;
 
 namespace Infrastructure.Repositories;
 
@@ -53,8 +52,8 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,
             TuitionTypeName = enquiry.TuitionTypeId.GetTuitionTypeName(),
-            SENDRequirements = enquiry.SENDRequirements ?? string.Empty,
-            AdditionalInformation = enquiry.AdditionalInformation ?? string.Empty,
+            SENDRequirements = enquiry.SENDRequirements,
+            AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt,
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
