@@ -5,6 +5,7 @@
   var backUrl = $"/enquiry/respond/response?token={@Model.Data.Token}";
   ViewData["Title"] = "Check your answers";
   ViewData["BackLinkHref"] = backUrl;
+  ViewData["IncludePrintPage"] = true;
 }
 
 <div class="govuk-grid-row app-print-hide">
@@ -46,7 +47,7 @@
              <span class="display-pre-wrap">@Model.Data.KeyStageAndSubjectsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href=@backUrl>
+              <a class="govuk-link" href=@backUrl#Data_KeyStageAndSubjectsText>
                 Change<span class="govuk-visually-hidden"> key stage and subjects</span>
               </a>
             </dd>
@@ -60,7 +61,7 @@
               <span class="display-pre-wrap">@Model.Data.TuitionTypeText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href=@backUrl>
+              <a class="govuk-link" href=@backUrl#Data_TuitionTypeText>
                 Change<span class="govuk-visually-hidden"> tuition type </span>
               </a>
             </dd>
@@ -74,7 +75,7 @@
               <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
             </dd>
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href=@backUrl>
+              <a class="govuk-link" href=@backUrl#Data_TutoringLogisticsText>
                 Change<span class="govuk-visually-hidden"> tuition plan </span>
               </a>
             </dd>
@@ -92,7 +93,7 @@
                                                  ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
               </dd>
               <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href=@backUrl>
+                <a class="govuk-link" href=@backUrl#Data_SENDRequirementsText>
                   Change<span class="govuk-visually-hidden"> SEND requirements</span>
                 </a>
               </dd>
@@ -111,7 +112,7 @@
                                                                         ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span>
               </dd>
               <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href=@backUrl>
+                <a class="govuk-link" href=@backUrl#Data_AdditionalInformationText>
                   Change<span class="govuk-visually-hidden"> other school considerations</span>
                 </a>
               </dd>
