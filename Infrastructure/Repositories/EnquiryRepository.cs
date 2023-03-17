@@ -4,7 +4,6 @@ using Application.Common.Models.Enquiry.Respond;
 using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using TuitionType = Domain.Enums.TuitionType;
 
 namespace Infrastructure.Repositories;
 
@@ -43,7 +42,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
             .GroupByKeyAndConcatenateValues();
 
-        var tuitionTypeName = GetTuitionTypeName(enquiry.TuitionTypeId);
+
 
         var result = new EnquirerViewAllResponsesModel
         {
@@ -52,9 +51,9 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,
-            TuitionTypeName = tuitionTypeName,
-            SENDRequirements = enquiry.SENDRequirements ?? string.Empty,
-            AdditionalInformation = enquiry.AdditionalInformation ?? string.Empty,
+            TuitionTypeName = enquiry.TuitionTypeId.GetTuitionTypeName(),
+            SENDRequirements = enquiry.SENDRequirements,
+            AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt,
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
@@ -75,16 +74,5 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .OrderByDescending(x => x.EnquiryResponseDate).ToList();
         result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
         return result;
-    }
-
-    private string GetTuitionTypeName(int? tuitionTypeId)
-    {
-        return tuitionTypeId switch
-        {
-            null => TuitionType.Any.DisplayName(),
-            (int)TuitionType.Online => TuitionType.Online.DisplayName(),
-            (int)TuitionType.InSchool => TuitionType.InSchool.DisplayName(),
-            _ => TuitionType.Any.DisplayName()
-        };
     }
 }

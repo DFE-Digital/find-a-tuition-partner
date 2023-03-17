@@ -2,8 +2,7 @@
 @model UI.Pages.Enquiry.Respond.AllEnquirerResponses
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    ViewData["Title"] = "Enquirer View All Responses";
-    ViewData["BackLinkHref"] = "/";
+    ViewData["Title"] = "View all responses";
     ViewData["IncludePrintPage"] = true;
 
     var numberOfTpEnquiryResponseReceived = !Model.Data.EnquirerViewResponses.Any()
@@ -18,20 +17,20 @@
         </govuk-error-summary>
 
 
-        <p class="govuk-body">
-            <span>@Model.Data.SupportReferenceNumber</span>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+            <span class="govuk-caption-l">@Model.Data.SupportReferenceNumber</span>
         </p>
-        <h1 class="govuk-heading-l">
+        <h1 class="govuk-heading-l govuk-!-padding-top-0">
             <span>View responses to your tuition enquiry</span>
         </h1>
         <div class="govuk-inset-text">
             You should bookmark this page for your future reference and quicker access to your enquiry.
         </div>
 
-        <h3 class="govuk-heading-s">
+        <h2 class="govuk-heading-s">
             <span>Your tuition enquiry summary</span>
-        </h3>
-        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mm tt dddd, MMMM dd, yyyy")</span></p>
+        </h2>
+        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mmtt 'on' dddd d MMMM")</span></p>
 
         <govuk-details open="false">
             <govuk-details-summary>
@@ -47,11 +46,26 @@
                         </li>
                     }
                     <li>
-                        The type of tuition plan needed: @Model.Data?.TutoringLogistics
+                        @Model.Data.TuitionTypeName
                     </li>
                     <li>
-                        Tuition type: @Model.Data?.TuitionTypeName
+                        <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
                     </li>
+                    
+                    @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))
+                    {
+                        <li>
+                            <span class="display-pre-wrap">@Model.Data.SENDRequirements</span>
+                        </li>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation))
+                    {
+                        <li>
+                            <span class="display-pre-wrap">@Model.Data.AdditionalInformation</span>
+                        </li>
+                    }
+                    
                 </ul>
             </govuk-details-text>
         </govuk-details>
@@ -59,13 +73,13 @@
     </div>
 </div>
 
-<h3 class="govuk-heading-s">
+<h2 class="govuk-heading-s">
     <span>All tuition partner responses</span>
-</h3>
+</h2>
 
 <div class="govuk-inset-text">
     <p class="govuk-body"><strong> @numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners </strong> have responded at the moment.</p>
-    <p class="govuk-body">We have asked tuition partners to respond within 5 days of creating this enquiry.</p>
+    <p class="govuk-body">We have asked tuition partners to respond within 7 days of creating this enquiry.</p>
     <p class="govuk-body">You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.</p>
 </div>
 
@@ -76,8 +90,8 @@
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col"> Date </th>
-            <th class="govuk-table__header" scope="col"> Tuition Partner </th>
-            <th class="govuk-table__header" scope="col"> Their Response </th>
+            <th class="govuk-table__header" scope="col"> Tuition partner </th>
+            <th class="govuk-table__header" scope="col"> Their response </th>
         </tr>
         </thead>
         <tbody class="govuk-table__body">
