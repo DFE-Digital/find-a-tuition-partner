@@ -2,7 +2,7 @@
 {
     public static class DoubleConstants
     {
-        public const double SessionTimeoutInMinutes = 20;
-        public const double SessionCountdownMessageShownBeforeTimeoutInSeconds = 120;
+        public const double SessionTimeoutInMinutes = 60;
+        public const double SessionCountdownMessageShownBeforeTimeoutInSeconds = 20*60;
     }
 }
