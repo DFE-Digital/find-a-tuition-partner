@@ -62,9 +62,9 @@
                 <h1 class="govuk-heading-m govuk-!-padding-top-0">
                     <span>Respond to this enquiry</span>
                 </h1>
-                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>Key stage and subjects:</span>
-                </h3>
+                </h2>
 
                 <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
                     @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
@@ -88,9 +88,9 @@
 
                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
-                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>Tuition type:</span>
-                </h3>
+                </h2>
 
                 <p class="govuk-body">@Model.Data.EnquiryTuitionType</p>
 
@@ -107,9 +107,9 @@
 
                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
-                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>Tuition plan:</span>
-                </h3>
+                </h2>
 
                 <p class="govuk-body"><span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span></p>
 
@@ -126,9 +126,9 @@
 
                 <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
-                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>SEND requirements:</span>
-                </h3>
+                </h2>
 
                 <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) 
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span></p>
@@ -148,9 +148,9 @@
                     <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
                 }
 
-                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
                     <span>Other tuition considerations:</span>
-                </h3>
+                </h2>
 
                 <p class="govuk-body"><span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) 
                                                                          ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span></p>
