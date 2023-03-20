@@ -1,6 +1,6 @@
 ﻿namespace Application.Common.Models.Enquiry.Respond;
 
-public record EnquirerViewTutionPartnerDetailsModel
+public record EnquirerViewTuitionPartnerDetailsModel
 {
     public string SupportReferenceNumber { get; set; } = null!;
 

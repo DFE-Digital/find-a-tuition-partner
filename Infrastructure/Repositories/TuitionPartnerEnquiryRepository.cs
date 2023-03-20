@@ -62,7 +62,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         return result;
     }
 
-    public async Task<EnquirerViewTutionPartnerDetailsModel?> GetEnquirerViewTutionPartnerDetailsResponse(int enquiryId, int tuitionPartnerId)
+    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(int enquiryId, int tuitionPartnerId)
     {
         var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
             .Where(e => e.EnquiryId == enquiryId && e.TuitionPartnerId == tuitionPartnerId)
@@ -81,7 +81,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         var enquiry = tuitionPartnerEnquiry.Enquiry;
         var enquiryTP = tuitionPartnerEnquiry.TuitionPartner;
 
-        var result = new EnquirerViewTutionPartnerDetailsModel
+        var result = new EnquirerViewTuitionPartnerDetailsModel
         {
             TuitionPartnerName = enquiryTP.Name,
             TuitionPartnerPhoneNumber = enquiryTP.PhoneNumber,

@@ -5,7 +5,7 @@ using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
 {
-    public class EnquirerViewTutionPartnerDetails : PageModel
+    public class EnquirerViewTuitionPartnerDetails : PageModel
     {
         private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
@@ -13,12 +13,12 @@ namespace UI.Pages.Enquiry.Respond
 
         private readonly IMediator _mediator;
         private readonly IEncrypt _aesEncrypt;
-        [BindProperty] public EnquirerViewTutionPartnerDetailsModel Data { get; set; } = new();
+        [BindProperty] public EnquirerViewTuitionPartnerDetailsModel Data { get; set; } = new();
         [ViewData] public string ErrorMessage { get; set; } = string.Empty;
 
         string _queryToken = string.Empty;
 
-        public EnquirerViewTutionPartnerDetails(IMediator mediator, IEncrypt aesEncrypt)
+        public EnquirerViewTuitionPartnerDetails(IMediator mediator, IEncrypt aesEncrypt)
         {
             _mediator = mediator;
             _aesEncrypt = aesEncrypt;
@@ -39,9 +39,9 @@ namespace UI.Pages.Enquiry.Respond
                 var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
                 if (getMagicLinkToken == null) return Page();
 
-                var getEnquirerViewTutionPartnerDetailsQuery = new GetEnquirerViewTutionPartnerDetailsQuery(enquiryId, tuitionPartnerId);
+                var getEnquirerViewTuitionPartnerDetailsQuery = new GetEnquirerViewTuitionPartnerDetailsQuery(enquiryId, tuitionPartnerId);
 
-                var data = await _mediator.Send(getEnquirerViewTutionPartnerDetailsQuery);
+                var data = await _mediator.Send(getEnquirerViewTuitionPartnerDetailsQuery);
 
                 if (data != null)
                 {

@@ -97,8 +97,8 @@ Then("they will see an expanded subject filter for {string}", (keystage) => {
   });
 });
 
-Then("they will see the tuition type {string} is selected", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).should("be.checked");
+Then("they will see the tuition type {string} is selected", (tuitionType) => {
+  cy.get(`input[id="${kebabCase(tuitionType)}"]`).should("be.checked");
 });
 
 Then("the subjects in the filter displayed in alphabetical order", () => {

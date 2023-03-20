@@ -48,7 +48,7 @@ public class DataImporterService : IHostedService
 
                 await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
-                await ImportTutionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
+                await ImportTuitionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             });
@@ -377,7 +377,7 @@ public class DataImporterService : IHostedService
         tp.IsActive = isActive;
     }
 
-    private async Task ImportTutionPartnerLogos(NtpDbContext dbContext, ILogoFileEnumerable logoFileEnumerable, CancellationToken cancellationToken)
+    private async Task ImportTuitionPartnerLogos(NtpDbContext dbContext, ILogoFileEnumerable logoFileEnumerable, CancellationToken cancellationToken)
     {
         var partners = await dbContext.TuitionPartners
             .Where(x => x.IsActive)
@@ -417,7 +417,7 @@ public class DataImporterService : IHostedService
 
         foreach (var import in matching)
         {
-            _logger.LogInformation("Retrieving logo file for Tution Partner {Name}", import.Partner.SeoUrl);
+            _logger.LogInformation("Retrieving logo file for Tuition Partner {Name}", import.Partner.SeoUrl);
             var b64 = Convert.ToBase64String(import.Logo.Stream.Value.ReadAllBytes());
 
             var tp = dbContext.TuitionPartners.Find(import.Partner.Id);

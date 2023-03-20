@@ -3,7 +3,7 @@
 @{
     var baseServiceUrl = Request.GetBaseServiceUrl();
     var backLink = $"{baseServiceUrl}/enquiry/respond/all-enquirer-responses?token={@Model.Data.EnquirerViewAllResponsesToken}";
-    var tpDetails = $"{baseServiceUrl}/enquiry/respond/enquirer-view-tution-partner-details?token={@Model.Data.EnquirerViewResponseToken}";
+    var tpDetails = $"{baseServiceUrl}/enquiry/respond/enquirer-view-tuition-partner-details?token={@Model.Data.EnquirerViewResponseToken}";
     
     ViewData["Title"] = "View a response";
     ViewData["BackLinkText"] = "Back to view all your responses";
