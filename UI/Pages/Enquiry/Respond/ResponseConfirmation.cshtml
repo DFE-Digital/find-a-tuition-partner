@@ -4,6 +4,7 @@
     ViewData["Title"] = "Response sent confirmation";
     ViewData["IncludePrintPage"] = true;
     var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
+    var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/respond/all-enquirer-responses?token={Model.Data.EnquirerMagicLink}";
 }
 
 <div class="govuk-width-container">
@@ -39,6 +40,16 @@
                     It may be you were not able to meet the school's tuition needs at this time or <br/>
                     the school was unable to get back to you.
                 </p>
+                @if(!string.IsNullOrWhiteSpace(enquirerLink))
+                {
+                <h2 class="govuk-heading-m">Test links</h2>
+                <p class="govuk-body">
+                  NOTE: the following links are only displayed in the non-production websites for testing purposes...
+                </p>
+                <p class="govuk-body">
+                  <a href="@enquirerLink">Enquirer link</a>
+                </p>
+                }
             </div>
         </div>
 </div>

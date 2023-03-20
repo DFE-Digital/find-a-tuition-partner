@@ -1,15 +1,22 @@
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build
 {
     public class SubmittedConfirmation : PageModel
     {
-        public SearchModel Data { get; set; } = new();
+        public SubmittedConfirmationModel Data { get; set; } = new();
 
-        public void OnGet(SearchModel data)
+        public void OnGet(SubmittedConfirmationModel data)
         {
-            //TODO - Add enquirer magic link to view responses here
-            //TODO - For cypress testing add in TP magic links, hidden on page - only add if not production
+            foreach (var tpLink in Request.Query["TuitionPartnerMagicLinks"])
+            {
+                if (!string.IsNullOrWhiteSpace(tpLink))
+                {
+                    var split = tpLink.Trim('[', ']').Split(',');
+                    data.TuitionPartnerMagicLinks!.Add(split[0].Trim(), split[1].Trim());
+                }
+            }
+
             Data = data;
         }
     }
