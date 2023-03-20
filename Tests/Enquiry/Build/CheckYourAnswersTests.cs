@@ -38,8 +38,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1},
-                Subjects = new string[] { "test-subject" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Online,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -51,8 +54,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -69,8 +75,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 //Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -83,8 +92,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                //KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                //KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                //{
+                //    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                //},
+                //HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -97,22 +109,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                //Subjects = new string[] { "test-subject", "test-subject2" },
-                TuitionType = TuitionType.Any,
-                Email = "test@test.com",
-                TutoringLogistics = "Test content",
-                SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
-            }
-        };
-
-        yield return new object[]
-        {
-            new CheckYourAnswersModel {
-                Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 //TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -125,8 +126,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
                 //Email = "test@test.com",
                 TutoringLogistics = "Test content",
@@ -139,8 +143,11 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStages = new KeyStage[] {KeyStage.KeyStage1, KeyStage.KeyStage4},
-                Subjects = new string[] { "test-subject", "test-subject2" },
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
                 Email = "test@test.com",
                 //TutoringLogistics = "Test content",
