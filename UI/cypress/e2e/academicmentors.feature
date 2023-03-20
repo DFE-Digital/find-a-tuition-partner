@@ -11,7 +11,7 @@
     Given a user has arrived on the academic mentors page
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
-    
+
   Scenario: page has header Academic Mentors
     Given a user has arrived on the academic mentors page
     Then they will see the academic mentor header
@@ -29,7 +29,7 @@
     Given a user has arrived on the academic mentors page
     When they click 'Home'
     Then they will be taken to the 'Find a tuition partner' journey start page
- 
+
   Scenario: page has link to dbs check link
     Given a user has arrived on the academic mentors page
     Then they will see the dbs check link
