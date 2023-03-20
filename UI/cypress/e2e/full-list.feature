@@ -78,11 +78,11 @@ Scenario: all quality-assured tuition partners page url is '/all-tuition-partner
     When they search by tuition partner name 'zzz'
     Then they will see there are no search results for 'zzz'
     
-Scenario: Logos are displayed for tution partners
+Scenario: Logos are displayed for tuition partners
     Given a user has arrived on the all quality-assured tuition partners page
     Then logos are shown for tuition partners
 
-Scenario: Logos are not displayed for tution partners
+Scenario: Logos are not displayed for tuition partners
     Given a user is using a 'phone'
     Given a user has arrived on the all quality-assured tuition partners page
     Then logos are not shown for tuition partners

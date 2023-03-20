@@ -43,7 +43,7 @@ public class EnquirerResponse : PageModel
 
             if (data != null)
             {
-                Data = data;
+                Data = data with { EnquirerViewResponseToken = _queryToken };
             }
         }
         catch

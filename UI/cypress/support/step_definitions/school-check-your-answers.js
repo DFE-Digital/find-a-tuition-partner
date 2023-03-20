@@ -290,7 +290,7 @@ When("they enter another email address", () => {
 Then("the user clears the current sessions data", () => {
   Cypress.session.clearCurrentSessionData();
   Cypress.session.clearCurrentSessionData();
-  cy.wait(500)
+  cy.wait(500);
 });
 
 Then("they will see the correct error for not checking the t and c", () => {
@@ -307,8 +307,10 @@ Then("they will see the correct error for not checking the t and c", () => {
 Then(
   "the correct error message should display for no keystage and subjects selected",
   () => {
-    cy.get('.govuk-error-summary__list > li > a').should("contain.text", "Select at least one key stage and related subject")
-
+    cy.get(".govuk-error-summary__list > li > a").should(
+      "contain.text",
+      "Select at least one key stage and related subject"
+    );
   }
 );
 
@@ -318,4 +320,3 @@ Then("the key stages and subjects show {string}", (keystageandsubjects) => {
     keystageandsubjects
   );
 });
-
