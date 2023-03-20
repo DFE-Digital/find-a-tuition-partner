@@ -29,6 +29,9 @@ public class CompareList : PageModel
             return RedirectToPage(nameof(SearchResults), new SearchModel(data));
 
         Data = await _mediator.Send(data);
+
+        HttpContext.AddLadNameToAnalytics(Data.Results);
+
         return Page();
     }
 
