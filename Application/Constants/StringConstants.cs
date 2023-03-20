@@ -54,5 +54,19 @@
         public const string EnquiryResponseKeyStageAndSubjectsText = "EnquiryResponseKeyStageAndSubjectsText";
 
         public const string EnquiryResponseToken = "EnquiryResponseToken";
+
+        public const string SupportReferenceNumber = "SupportReferenceNumber";
+
+        public const string EnquirerEmailSentStatus = "EnquirerEmailSentStatus";
+
+        public const string EnquirerEmailSentStatus4xxErrorValue = "4xxError";
+
+        public const string EnquirerEmailSentStatus5xxErrorValue = "5xxError";
+
+        public const string EnquirerEmailSentStatusDeliveredValue = "delivered";
+
+        public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
+
+        public const string EnquirerInvalidEmailAddress = "EnquirerInvalidEmailAddress";
     }
 }

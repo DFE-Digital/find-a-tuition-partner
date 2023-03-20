@@ -1,7 +1,9 @@
+using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Application.Constants;
 using Application.Extensions;
 using Domain;
 using Domain.Enums;
@@ -30,17 +32,19 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
     private readonly IEncrypt _aesEncryption;
     private readonly INotificationsClientService _notificationsClientService;
     private readonly IGenerateReferenceNumber _generateReferenceNumber;
+    private readonly ISessionService _sessionService;
     private readonly ILogger<AddEnquiryCommandHandler> _logger;
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IEncrypt aesEncryption,
         INotificationsClientService notificationsClientService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger)
+        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger, ISessionService sessionService)
     {
         _unitOfWork = unitOfWork;
         _aesEncryption = aesEncryption;
         _notificationsClientService = notificationsClientService;
         _generateReferenceNumber = generateReferenceNumber;
         _logger = logger;
+        _sessionService = sessionService;
     }
 
     public async Task<string> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
@@ -51,6 +55,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return emptyResult below
         //  Unexpected errors - database issues etc
         //  Errors to TP emails - log error, but don't show error to enquirer?
+
         if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return emptyResult;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
@@ -87,6 +92,17 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
 
+        // We do this check to prevent creating enquiry with the invalid email address
+        var enquirerEmailSentStatusValue = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailSentStatus);
+
+        var processedEnquiryEmailStatus = await ProcessEnquiryEmailStatus(enquirerEmailSentStatusValue,
+            request,
+            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
+            getEnquirySubmittedToTpNotificationsRecipients,
+            cancellationToken);
+
+        if (!string.IsNullOrEmpty(processedEnquiryEmailStatus)) return processedEnquiryEmailStatus;
+
         var enquiry = new Enquiry()
         {
             Email = request.Data?.Email!,
@@ -103,60 +119,48 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
 
         var dataSaved = false;
-        var loop = 0;
 
-        while (!dataSaved && loop < 10)
+        try
         {
-            try
-            {
-                loop++;
+            _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
-                _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
+            dataSaved = await _unitOfWork.Complete();
 
-                dataSaved = await _unitOfWork.Complete();
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.SupportReferenceNumber, enquiry.SupportReferenceNumber);
 
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException != null &&
-                    (ex.InnerException.Message.Contains("duplicate key") ||
-                     ex.InnerException.Message.Contains("unique constraint") ||
-                     ex.InnerException.Message.Contains("violates unique constraint")))
-                {
-                    _logger.LogError("Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}", enquiry.SupportReferenceNumber, ex);
-
-                    enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
-
-                    _logger.LogInformation("Generating new support reference number: {referenceNumber}", enquiry.SupportReferenceNumber);
-
-                    dataSaved = await _unitOfWork.Complete();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-                return emptyResult;
-            }
+        }
+        catch (DbUpdateException ex)
+        {
+            dataSaved = await HandleDbUpdateException(ex, enquiry);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
+            return emptyResult;
         }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
         getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!);
         getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!));
-        try
-        {
-            await _notificationsClientService.SendEmailAsync(
-                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
 
+        var enquirerEmailSentStatus = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
+            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
+            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue
+            || enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
+        {
+            return enquirerEmailSentStatus;
+        }
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
+            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatusDeliveredValue)
+        {
             await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
                 EmailTemplateType.EnquirySubmittedToTp, enquiry.SupportReferenceNumber);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
-        }
 
+        }
 
         return dataSaved ? enquiry.SupportReferenceNumber : emptyResult;
     }
@@ -187,7 +191,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         {
             { EnquiryTpNameKey, tpName },
             { EnquiryResponseFormLinkKey, responseFormLink },
-            {EnquiryLadNameKey, ladNameKey }
+            { EnquiryLadNameKey, ladNameKey }
         };
 
         return personalisation;
@@ -274,4 +278,134 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         return result;
     }
+
+    private async Task<bool> HandleDbUpdateException(DbUpdateException ex, Enquiry enquiry)
+    {
+        var dataSaved = false;
+
+        while (!dataSaved)
+        {
+            if (ex.InnerException != null &&
+                (ex.InnerException.Message.Contains("duplicate key") ||
+                 ex.InnerException.Message.Contains("unique constraint") ||
+                 ex.InnerException.Message.Contains("violates unique constraint")))
+            {
+                _logger.LogError(
+                    "Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}",
+                    enquiry.SupportReferenceNumber, ex);
+
+                enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+
+                _logger.LogInformation("Generating new support reference number: {referenceNumber}",
+                    enquiry.SupportReferenceNumber);
+
+                dataSaved = await _unitOfWork.Complete();
+            }
+            else
+            {
+                // Handle unique constraint violation error; otherwise, exit from the while loop.
+                dataSaved = true;
+            }
+        }
+
+        return dataSaved;
+    }
+
+    private async Task<string> TrySendEnquirySubmittedConfirmationToEnquirerEmail(Enquiry enquiry,
+        NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient)
+    {
+        var result = string.Empty;
+        try
+        {
+            var enquirerEmailSent = false;
+
+            while (!enquirerEmailSent)
+            {
+                (var emailSent, HttpStatusCode status) = await _notificationsClientService.SendEmailAsync(
+                    getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
+                    EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
+
+                if (emailSent && status == HttpStatusCode.OK)
+                {
+                    enquirerEmailSent = true;
+                    result = StringConstants.EnquirerEmailSentStatusDeliveredValue;
+                }
+
+                if (!emailSent && status == HttpStatusCode.BadRequest)
+                {
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatus4xxErrorValue);
+                    return StringConstants.EnquirerEmailSentStatus4xxErrorValue;
+                }
+
+                if (!emailSent && status == HttpStatusCode.InternalServerError)
+                {
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatus5xxErrorValue);
+                    return StringConstants.EnquirerEmailSentStatus5xxErrorValue;
+                }
+            }
+
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatusDeliveredValue);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
+        }
+
+        return result;
+    }
+
+    private async Task<string> ProcessEnquiryEmailStatus(string enquirerEmailSentStatus,
+        AddEnquiryCommand request,
+        NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
+        List<NotificationsRecipientDto> getEnquirySubmittedToTpNotificationsRecipients,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrEmpty(enquirerEmailSentStatus) ||
+            (enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus4xxErrorValue
+             && enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus5xxErrorValue)) return string.Empty;
+        var supportReferenceNumber =
+            await _sessionService.RetrieveDataAsync(StringConstants.SupportReferenceNumber);
+
+        if (string.IsNullOrEmpty(supportReferenceNumber)) return string.Empty;
+        var existingEnquiry = await _unitOfWork.EnquiryRepository
+            .SingleOrDefaultAsync(x => x.SupportReferenceNumber == supportReferenceNumber,
+                cancellationToken: cancellationToken);
+
+        if (existingEnquiry != null)
+        {
+            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation
+                .AddDefaultEnquiryPersonalisation(
+                    existingEnquiry.SupportReferenceNumber, existingEnquiry.CreatedAt,
+                    request.Data!.BaseServiceUrl!);
+            var enquirerEmailSent = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(existingEnquiry,
+                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
+
+            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+                x.Personalisation.AddDefaultEnquiryPersonalisation(existingEnquiry.SupportReferenceNumber,
+                    existingEnquiry.CreatedAt, request.Data!.BaseServiceUrl!));
+
+            if (!string.IsNullOrEmpty(enquirerEmailSent) &&
+                (enquirerEmailSent == StringConstants.EnquirerEmailSentStatus4xxErrorValue
+                 || enquirerEmailSent == StringConstants.EnquirerEmailSentStatus5xxErrorValue))
+            {
+                return enquirerEmailSent;
+            }
+
+            if (!string.IsNullOrEmpty(enquirerEmailSent) &&
+                enquirerEmailSent == StringConstants.EnquirerEmailSentStatusDeliveredValue)
+            {
+                existingEnquiry.Email = request.Data?.Email!;
+
+                await _unitOfWork.Complete();
+
+                await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
+                    EmailTemplateType.EnquirySubmittedToTp, existingEnquiry.SupportReferenceNumber);
+
+                return enquirerEmailSent;
+            }
+        }
+
+        return string.Empty;
+    }
+
 }
