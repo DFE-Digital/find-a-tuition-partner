@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [closed]
 
+concurrency: pr-${{ github.event.number }}
+
 env:
   PR_NUMBER: pr-${{ github.event.number }}
   CF_API: "https://api.london.cloud.service.gov.uk"
@@ -14,7 +16,6 @@ jobs:
   teardown_deployment:
     name: Teardown Deployment
     runs-on: ubuntu-latest
-    concurrency: pr-${{ github.event.number }}
 
     steps:
     - name: Install the CF CLI
