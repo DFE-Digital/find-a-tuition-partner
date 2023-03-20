@@ -12,7 +12,7 @@ public class ViewAndCaptureEnquiryResponseModelValidator : AbstractValidator<Vie
             .NotEmpty()
             .WithMessage("Enter can you support those key stages and subjects")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Tuition type must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Key stages and subjects must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.TuitionTypeText)
             .NotEmpty()
