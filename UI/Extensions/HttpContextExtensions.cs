@@ -15,7 +15,7 @@ namespace UI.Extensions
 
         public static void AddLadNameToAnalytics(this HttpContext httpContext, string? ladName)
         {
-            if (!string.IsNullOrWhiteSpace(ladName))
+            if (httpContext != null && !string.IsNullOrWhiteSpace(ladName))
             {
                 httpContext.GetWebRequestEvent().AddData("LAD_Name", ladName);
             }
