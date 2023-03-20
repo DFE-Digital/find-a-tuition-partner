@@ -14,3 +14,4 @@ govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: 0aad4d76
 override-email-address: 
 email-amalgamate-responses: false
 email-all-sent-to-enquirer: false
+feature-flag-enquiry-builder: true

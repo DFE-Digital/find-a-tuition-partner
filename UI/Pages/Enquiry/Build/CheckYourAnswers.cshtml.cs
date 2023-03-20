@@ -1,6 +1,8 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace UI.Pages.Enquiry.Build;
 
@@ -8,11 +10,13 @@ public class CheckYourAnswers : PageModel
 {
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
+    private readonly FeatureFlags _featureFlagsConfig;
 
-    public CheckYourAnswers(IMediator mediator, ISessionService sessionService)
+    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IOptions<FeatureFlags> featureFlagsConfig)
     {
         _mediator = mediator;
         _sessionService = sessionService;
+        _featureFlagsConfig = featureFlagsConfig.Value;
     }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
@@ -55,6 +59,9 @@ public class CheckYourAnswers : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        if (!_featureFlagsConfig.EnquiryBuilder)
+            throw new InvalidOperationException("User is trying to submit an enquiry when the feature is disabled");
+
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 

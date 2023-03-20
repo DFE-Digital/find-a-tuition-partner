@@ -1,6 +1,8 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Domain;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace UI.Pages;
 
@@ -8,15 +10,18 @@ public partial class Index : PageModel
 {
     private readonly ILogger<Index> _logger;
     private readonly IMediator _mediator;
+    private readonly FeatureFlags _featureFlagsConfig;
 
-    public Index(ILogger<Index> logger, IMediator mediator)
+    public Index(ILogger<Index> logger, IMediator mediator, IOptions<FeatureFlags> featureFlagsConfig)
     {
         _logger = logger;
         _mediator = mediator;
+        _featureFlagsConfig = featureFlagsConfig.Value;
     }
 
     [BindProperty(SupportsGet = true)]
     public Command Data { get; set; } = new Command();
+    public bool IncludeEnquiryBuilder { get; set; } = true;
 
     public record Command : SearchModel, IRequest<Domain.IResult> { }
 
@@ -26,6 +31,8 @@ public partial class Index : PageModel
         // This is not appropriate for this page either when first arriving on this page or using a back link.
         // Therefore clear any model state validation errors
         ModelState.Clear();
+
+        IncludeEnquiryBuilder = _featureFlagsConfig.EnquiryBuilder;
 
         return Page();
     }
