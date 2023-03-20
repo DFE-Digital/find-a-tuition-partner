@@ -113,6 +113,35 @@ Then("the confirmation page is shown", () => {
   cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
 });
 
+Then("the user has arrived on the tuition response page", () => {
+  cy.location("pathname").should("eq", "/enquiry/respond/response");
+});
+
+Then(
+  "the user has arrived on the tuition response check your answers page",
+  () => {
+    cy.location("pathname").should("eq", "/enquiry/respond/check-your-answers");
+  }
+);
+
+Then("the user has arrived on the tuition response confirmation page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/response-confirmation"
+  );
+});
+
+Then("the user has arrived on the view all enquiry responses page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/all-enquirer-responses"
+  );
+});
+
+Then("the tuition partners response page is shown", () => {
+  cy.location("pathname").should("eq", "/enquiry/respond/enquirer-response");
+});
+
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
 });
