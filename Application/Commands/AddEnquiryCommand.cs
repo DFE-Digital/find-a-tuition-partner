@@ -15,12 +15,12 @@ using TuitionType = Domain.Enums.TuitionType;
 
 namespace Application.Commands;
 
-public record AddEnquiryCommand : IRequest<string>
+public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
 {
     public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
-public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, string>
+public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, SubmittedConfirmationModel>
 {
     private const string EnquiryNumberOfTpsContactedKey = "number_of_tps_contacted";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
@@ -37,7 +37,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IEncrypt aesEncryption,
         INotificationsClientService notificationsClientService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger, ISessionService sessionService)
+        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger,
+        ISessionService sessionService)
     {
         _unitOfWork = unitOfWork;
         _aesEncryption = aesEncryption;
@@ -47,16 +48,16 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         _sessionService = sessionService;
     }
 
-    public async Task<string> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
+    public async Task<SubmittedConfirmationModel> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
-        var emptyResult = string.Empty;
+        var result = new SubmittedConfirmationModel();
 
         //TODO - deal with error and show a message on UI
-        //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return emptyResult below
+        //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return result below
         //  Unexpected errors - database issues etc
         //  Errors to TP emails - log error, but don't show error to enquirer?
-
-        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return emptyResult;
+        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null ||
+            request.Data.TuitionPartnersForEnquiry.Count == 0) return result;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
@@ -66,10 +67,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         var getEnquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(request,
             request.Data!.TuitionPartnersForEnquiry!.Results, enquirerEmailForTestingPurposes);
 
-        var enquiryRequestMagicLinks = getEnquirySubmittedToTpNotificationsRecipients.Select(recipient => new MagicLink()
-        { Token = recipient.Token!, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
+        var enquiryRequestMagicLinks = getEnquirySubmittedToTpNotificationsRecipients.Select(recipient =>
+            new MagicLink()
+            { Token = recipient.Token!, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
 
-        var getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient = GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
+        var getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient =
+            GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
 
         var enquirerViewAllResponsesMagicLink = new MagicLink()
         {
@@ -83,25 +86,27 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         var postCode = request.Data.Postcode;
         var localAuthorityDistrictName = request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName;
 
-        var validationResult = ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
+        var validationResult =
+            ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
 
         if (string.IsNullOrEmpty(validationResult))
         {
-            return emptyResult;
+            return result;
         }
 
         var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
 
         // We do this check to prevent creating enquiry with the invalid email address
-        var enquirerEmailSentStatusValue = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailSentStatus);
-
-        var processedEnquiryEmailStatus = await ProcessEnquiryEmailStatus(enquirerEmailSentStatusValue,
+        var processFailedEnquiryEmail = await ProcessFailedEnquiryEmail(
             request,
             getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
             getEnquirySubmittedToTpNotificationsRecipients,
             cancellationToken);
 
-        if (!string.IsNullOrEmpty(processedEnquiryEmailStatus)) return processedEnquiryEmailStatus;
+        if (!string.IsNullOrEmpty(processFailedEnquiryEmail.EnquirerEmailSentStatus))
+        {
+            return processFailedEnquiryEmail;
+        }
 
         var enquiry = new Enquiry()
         {
@@ -126,7 +131,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
             dataSaved = await _unitOfWork.Complete();
 
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.SupportReferenceNumber, enquiry.SupportReferenceNumber);
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.SupportReferenceNumber,
+                enquiry.SupportReferenceNumber);
 
         }
         catch (DbUpdateException ex)
@@ -136,13 +142,17 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-            return emptyResult;
+            return result;
         }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
-        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!);
-        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!));
+        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation
+            .AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
+                request.Data!.BaseServiceUrl!);
+        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+            x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
+                request.Data!.BaseServiceUrl!));
 
         var enquirerEmailSentStatus = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
             getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
@@ -151,7 +161,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue
             || enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
         {
-            return enquirerEmailSentStatus;
+            result.EnquirerEmailSentStatus = enquirerEmailSentStatus;
+            return result;
         }
 
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
@@ -159,14 +170,22 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         {
             await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
                 EmailTemplateType.EnquirySubmittedToTp, enquiry.SupportReferenceNumber);
-
         }
 
-        return dataSaved ? enquiry.SupportReferenceNumber : emptyResult;
+        if (dataSaved)
+        {
+            result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
+            result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
+            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+                result.TuitionPartnerMagicLinks!.Add(x.Email, x.Token!));
+        }
+
+        return result;
     }
 
-    private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(AddEnquiryCommand request,
-        IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
+    private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(
+            AddEnquiryCommand request,
+            IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
     {
         return (from recipient in recipients
                 let generateRandomness
@@ -179,25 +198,29 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
                     Email = recipient.Email,
                     EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
-                    Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink, request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
-                    PersonalisationPropertiesToAmalgamate = new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
+                    Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink,
+                        request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
+                    PersonalisationPropertiesToAmalgamate = new List<string>()
+                        { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
                 }).ToList();
     }
 
-    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName, string responseFormLink,
+    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName,
+        string responseFormLink,
         string ladNameKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EnquiryTpNameKey, tpName },
-            { EnquiryResponseFormLinkKey, responseFormLink },
-            { EnquiryLadNameKey, ladNameKey }
-        };
+            {
+                { EnquiryTpNameKey, tpName },
+                { EnquiryResponseFormLinkKey, responseFormLink },
+                { EnquiryLadNameKey, ladNameKey }
+            };
 
         return personalisation;
     }
 
-    private NotificationsRecipientDto GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(AddEnquiryCommand request)
+    private NotificationsRecipientDto GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(
+        AddEnquiryCommand request)
     {
         var generateRandomness
             = _aesEncryption.GenerateRandomToken();
@@ -210,19 +233,22 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             Email = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
-            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)
+            Personalisation =
+                GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
+                    request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)
         };
         return result;
     }
 
-    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(int numberOfTpsContacted,
+    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
+        int numberOfTpsContacted,
         string enquirerViewAllResponsesPageLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
-        };
+            {
+                { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
+                { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
+            };
 
         return personalisation;
     }
@@ -238,7 +264,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         };
     }
 
-    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(IEnumerable<KeyStageSubject> keyStageSubjects)
+    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
+        IEnumerable<KeyStageSubject> keyStageSubjects)
     {
         var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
 
@@ -254,7 +281,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         return keyStageSubjectEnquiry;
     }
 
-    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode, string? localAuthorityDistrictName)
+    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode,
+        string? localAuthorityDistrictName)
     {
         var result = "Valid";
 
@@ -272,7 +300,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         if (string.IsNullOrEmpty(localAuthorityDistrictName))
         {
-            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.", nameof(AddEnquiryCommand));
+            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.",
+                nameof(AddEnquiryCommand));
             return string.Empty;
         }
 
@@ -333,18 +362,21 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
                 if (!emailSent && status == HttpStatusCode.BadRequest)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatus4xxErrorValue);
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
+                        StringConstants.EnquirerEmailSentStatus4xxErrorValue);
                     return StringConstants.EnquirerEmailSentStatus4xxErrorValue;
                 }
 
                 if (!emailSent && status == HttpStatusCode.InternalServerError)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatus5xxErrorValue);
+                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
+                        StringConstants.EnquirerEmailSentStatus5xxErrorValue);
                     return StringConstants.EnquirerEmailSentStatus5xxErrorValue;
                 }
             }
 
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus, StringConstants.EnquirerEmailSentStatusDeliveredValue);
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
+                StringConstants.EnquirerEmailSentStatusDeliveredValue);
         }
         catch (Exception ex)
         {
@@ -354,19 +386,26 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         return result;
     }
 
-    private async Task<string> ProcessEnquiryEmailStatus(string enquirerEmailSentStatus,
+    private async Task<SubmittedConfirmationModel> ProcessFailedEnquiryEmail(
         AddEnquiryCommand request,
         NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
         List<NotificationsRecipientDto> getEnquirySubmittedToTpNotificationsRecipients,
         CancellationToken cancellationToken)
     {
+        var result = new SubmittedConfirmationModel();
+
+        var enquirerEmailSentStatus =
+            await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailSentStatus);
+
         if (string.IsNullOrEmpty(enquirerEmailSentStatus) ||
             (enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus4xxErrorValue
-             && enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus5xxErrorValue)) return string.Empty;
+             && enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus5xxErrorValue))
+            return result;
+
         var supportReferenceNumber =
             await _sessionService.RetrieveDataAsync(StringConstants.SupportReferenceNumber);
 
-        if (string.IsNullOrEmpty(supportReferenceNumber)) return string.Empty;
+        if (string.IsNullOrEmpty(supportReferenceNumber)) return result;
         var existingEnquiry = await _unitOfWork.EnquiryRepository
             .SingleOrDefaultAsync(x => x.SupportReferenceNumber == supportReferenceNumber,
                 cancellationToken: cancellationToken);
@@ -388,7 +427,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
                 (enquirerEmailSent == StringConstants.EnquirerEmailSentStatus4xxErrorValue
                  || enquirerEmailSent == StringConstants.EnquirerEmailSentStatus5xxErrorValue))
             {
-                return enquirerEmailSent;
+                result.EnquirerEmailSentStatus = enquirerEmailSent;
+                return result;
             }
 
             if (!string.IsNullOrEmpty(enquirerEmailSent) &&
@@ -396,16 +436,22 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             {
                 existingEnquiry.Email = request.Data?.Email!;
 
+                result.SupportReferenceNumber = existingEnquiry.SupportReferenceNumber;
+
+                result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
+                getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+                    result.TuitionPartnerMagicLinks!.Add(x.Email, x.Token!));
+
                 await _unitOfWork.Complete();
 
                 await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
                     EmailTemplateType.EnquirySubmittedToTp, existingEnquiry.SupportReferenceNumber);
 
-                return existingEnquiry.SupportReferenceNumber;
+                return result;
             }
         }
 
-        return string.Empty;
+        return result;
     }
 
 }

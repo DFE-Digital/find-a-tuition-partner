@@ -70,7 +70,7 @@ public class NotificationsClientService : INotificationsClientService
 
             if (statusCode.Is4xxError())
             {
-                _logger.LogError("A 4xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
+                _logger.LogWarning("A 4xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
 
                 return (false, HttpStatusCode.BadRequest);
             }

@@ -8,11 +8,13 @@ public class CheckYourAnswers : PageModel
 {
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public CheckYourAnswers(IMediator mediator, ISessionService sessionService)
+    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment)
     {
         _mediator = mediator;
         _sessionService = sessionService;
+        _hostEnvironment = hostEnvironment;
     }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
@@ -73,11 +75,13 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
-        var response = await _mediator.Send(command);
+        var submittedConfirmationModel = await _mediator.Send(command);
 
-        if (!string.IsNullOrEmpty(response))
+        var enquirerEmailSentStatus = submittedConfirmationModel.EnquirerEmailSentStatus;
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
         {
-            if (response == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
             {
                 Data.From = ReferrerList.CheckYourAnswers;
 
@@ -89,15 +93,29 @@ public class CheckYourAnswers : PageModel
                 return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
             }
 
-            if (response == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
             {
                 return RedirectToPage(nameof(ErrorModel));
             }
-            Data.SupportReferenceNumber = response;
+        }
 
+        if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
+        {
             await _sessionService.DeleteDataAsync();
 
-            return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
+            var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
+            {
+                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber
+            };
+
+            if (!_hostEnvironment.IsProduction())
+            {
+                submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks.OrderBy(x => x.Key).Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
+            }
+
+            return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }
 
         return Page();
