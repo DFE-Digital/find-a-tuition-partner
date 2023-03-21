@@ -401,7 +401,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
                 await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
                     EmailTemplateType.EnquirySubmittedToTp, existingEnquiry.SupportReferenceNumber);
 
-                return enquirerEmailSent;
+                return existingEnquiry.SupportReferenceNumber;
             }
         }
 
