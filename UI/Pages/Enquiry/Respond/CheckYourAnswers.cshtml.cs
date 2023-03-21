@@ -1,6 +1,5 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
-using Application.Common.Models;
 using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond;
@@ -12,6 +11,7 @@ public class CheckYourAnswers : PageModel
     private readonly ISessionService _sessionService;
     private readonly IMediator _mediator;
     private readonly IEncrypt _aesEncrypt;
+    private readonly IHostEnvironment _hostEnvironment;
 
     private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
@@ -19,11 +19,12 @@ public class CheckYourAnswers : PageModel
 
     [ViewData] public string? ErrorMessage { get; set; }
 
-    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt)
+    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt, IHostEnvironment hostEnvironment)
     {
         _sessionService = sessionService;
         _mediator = mediator;
         _aesEncrypt = aesEncrypt;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
@@ -72,15 +73,18 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
-        var supportReferenceNumber = await _mediator.Send(command);
+        var submittedConfirmationModel = await _mediator.Send(command);
 
-        if (!string.IsNullOrEmpty(supportReferenceNumber))
+        if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
-            Data.SupportReferenceNumber = supportReferenceNumber;
-
             await _sessionService.DeleteDataAsync();
 
-            return RedirectToPage(nameof(ResponseConfirmation), new SearchModel(Data));
+            if (_hostEnvironment.IsProduction())
+            {
+                submittedConfirmationModel.EnquirerMagicLink = string.Empty;
+            }
+
+            return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
         }
 
         return Page();
