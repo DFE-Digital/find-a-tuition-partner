@@ -1,11 +1,11 @@
-using Application.Common.Models;
+using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
 {
     public class ResponseConfirmation : PageModel
     {
-        public SearchModel Data { get; set; } = new();
-        public void OnGet(SearchModel data)
+        public SubmittedConfirmationModel Data { get; set; } = new();
+        public void OnGet(SubmittedConfirmationModel data)
         {
             Data = data;
         }

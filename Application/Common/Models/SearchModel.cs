@@ -24,7 +24,6 @@ namespace Application.Common.Models
             CompareListTuitionType = model.CompareListTuitionType;
             CompareListGroupSize = model.CompareListGroupSize;
             CompareListShowWithVAT = model.CompareListShowWithVAT;
-            SupportReferenceNumber = model.SupportReferenceNumber;
         }
 
         public ReferrerList? From { get; set; }
@@ -48,7 +47,5 @@ namespace Application.Common.Models
         public GroupSize? CompareListGroupSize { get; set; }
 
         public bool? CompareListShowWithVAT { get; set; }
-
-        public string? SupportReferenceNumber { get; set; }
     }
 }
