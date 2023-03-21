@@ -3,7 +3,7 @@
 Then("they will see the accessibility statement header", () => {
   cy.get('[data-testid="accessibility-header"]').should(
     "contain.text",
-    "Accessibility statement for Find a tution partner"
+    "Accessibility statement for Find a tuition partner"
   );
 });
 

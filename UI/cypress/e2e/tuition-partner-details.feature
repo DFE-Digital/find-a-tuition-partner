@@ -72,10 +72,10 @@ Feature: User can view full details of a Tuition Parner
     Then the tuition partner locations covered table is displayed
 
   Scenario Outline: tuition cost table shows available tuition types
-    Given a user has arrived on the 'Tuition Partner' page for '<tution-partner>'
+    Given a user has arrived on the 'Tuition Partner' page for '<tuition-partner>'
     Then the tuition partner pricing table is displayed for '<tuition-types>'
     Examples:
-      | tution-partner     | tuition-types     |
+      | tuition-partner    | tuition-types     |
       | Fledge Tuition Ltd | Online            |
       | FFT Education      | In school         |
       | career-tree        | In school, Online |
@@ -119,11 +119,11 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then all tuition partner details are populated correctly
 
-  Scenario: Logos are displayed for tution partners
+  Scenario: Logos are displayed for tuition partners
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is shown
 
-  Scenario: Logos are not displayed for tution partners
+  Scenario: Logos are not displayed for tuition partners
     Given a user is using a 'phone'
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is not shown

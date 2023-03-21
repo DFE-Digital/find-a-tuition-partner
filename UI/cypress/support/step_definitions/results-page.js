@@ -209,7 +209,7 @@ Then(
   }
 );
 
-When("the user selects tuition type {string}", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
+When("the user selects tuition type {string}", (tuitionType) => {
+  cy.get(`input[id="${kebabCase(tuitionType)}"]`).click();
   cy.wait(500);
 });

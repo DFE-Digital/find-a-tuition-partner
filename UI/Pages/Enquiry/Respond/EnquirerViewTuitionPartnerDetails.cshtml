@@ -1,0 +1,58 @@
+﻿@page
+@model UI.Pages.Enquiry.Respond.EnquirerViewTuitionPartnerDetails
+@{
+  var baseServiceUrl = Request.GetBaseServiceUrl();
+  var backLink = $"{baseServiceUrl}/enquiry/respond/enquirer-response?token={@Model.Data.EnquirerViewResponseToken}";
+  var allList = $"{baseServiceUrl}/enquiry/respond/all-enquirer-responses?token={@Model.Data.EnquirerViewAllResponsesToken}";
+
+  ViewData["Title"] = "Contact " + Model.Data.TuitionPartnerName;
+  ViewData["BackLinkHref"] = backLink;
+  ViewData["BackLinkText"] = "Back to view tuition partner's response";
+  ViewData["IncludePrintPage"] = true;
+}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <govuk-error-summary>
+            <govuk-error-summary-item asp-for="ErrorMessage"/>
+        </govuk-error-summary>
+        
+        <h1 class="govuk-heading-l">
+            <span>Contact @Model.Data.TuitionPartnerName</span>
+        </h1>
+
+        <h2 class="govuk-heading-m">
+            When contacting this tuition partner
+        </h2>
+        
+        <p class="govuk-body">
+            To help build a working relationship, you should reveal the following details:
+        </p>
+
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>your reference number @Model.Data.SupportReferenceNumber</li>
+            <li>the school you’re from</li>
+            <li>that you’ve discovered them through this service (Find a tuition partner)</li>
+        </ul>
+
+        <p class="govuk-body">
+            <strong>Contact information</strong>
+        </p>
+        
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+            <li>email: <a href="mailto:@(Model.Data.TuitionPartnerEmailAddress)" class="govuk-link">@Model.Data.TuitionPartnerEmailAddress</a></li>
+            <li>contact number: @Model.Data.TuitionPartnerPhoneNumber</li>
+        </ul>
+
+        <h2 class="govuk-heading-m solid-line-top">
+            After contacting this tuition partner
+        </h2>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@allList">Return to your enquiry list</a> to  view responses from other tuition partners.
+        </p>
+        
+    </div>
+</div>

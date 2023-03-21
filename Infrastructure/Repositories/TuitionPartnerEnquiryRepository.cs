@@ -61,4 +61,35 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
 
         return result;
     }
+
+    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(int enquiryId, int tuitionPartnerId)
+    {
+        var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
+            .Where(e => e.EnquiryId == enquiryId && e.TuitionPartnerId == tuitionPartnerId)
+            .Include(e => e.Enquiry)
+            .ThenInclude(m => m.MagicLinks)
+            .Include(x => x.TuitionPartner)
+            .AsSplitQuery()
+            .SingleOrDefaultAsync();
+
+        if (tuitionPartnerEnquiry == null) return null;
+
+        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLinks
+            .SingleOrDefault(x => x.EnquiryId == enquiryId
+                                       && x.MagicLinkTypeId == (int)MagicLinkType.EnquirerViewAllResponses);
+
+        var enquiry = tuitionPartnerEnquiry.Enquiry;
+        var enquiryTP = tuitionPartnerEnquiry.TuitionPartner;
+
+        var result = new EnquirerViewTuitionPartnerDetailsModel
+        {
+            TuitionPartnerName = enquiryTP.Name,
+            TuitionPartnerPhoneNumber = enquiryTP.PhoneNumber,
+            TuitionPartnerEmailAddress = enquiryTP.Email,
+            SupportReferenceNumber = enquiry.SupportReferenceNumber,
+            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token
+        };
+
+        return result;
+    }
 }
