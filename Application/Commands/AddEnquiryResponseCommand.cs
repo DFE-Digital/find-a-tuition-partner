@@ -9,12 +9,12 @@ using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Application.Commands;
 
-public record AddEnquiryResponseCommand : IRequest<string>
+public record AddEnquiryResponseCommand : IRequest<SubmittedConfirmationModel>
 {
     public EnquiryResponseModel Data { get; set; } = null!;
 }
 
-public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, string>
+public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, SubmittedConfirmationModel>
 {
     private const string EnquiryReferenceNumberKey = "enquiry_ref_number";
     private const string EnquiryLadNameKey = "local_area_district";
@@ -50,9 +50,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         _logger = logger;
     }
 
-    public async Task<string> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
+    public async Task<SubmittedConfirmationModel> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
     {
-        var emptyResult = string.Empty;
+        var result = new SubmittedConfirmationModel();
 
         var enquiryId = request.Data.EnquiryId;
 
@@ -60,14 +60,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         if (string.IsNullOrEmpty(request.Data.Token))
         {
-            return emptyResult;
+            return result;
         }
 
         var magicLink =
             await _unitOfWork.MagicLinkRepository
                 .SingleOrDefaultAsync(x => x.Token == request.Data.Token, null, true, cancellationToken);
 
-        if (enquiryId == default || tuitionPartnerId == default) return emptyResult;
+        if (enquiryId == default || tuitionPartnerId == default) return result;
 
         var tpEnquiry = await _unitOfWork.TuitionPartnerEnquiryRepository
             .SingleOrDefaultAsync(x => x.EnquiryId == enquiryId &&
@@ -78,7 +78,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             _logger.LogError("Unable to find TuitionPartnerEnquiry with the enquiry Id {enquiryId} and tuition partnerId {tuitionPartnerId}",
                 enquiryId, tuitionPartnerId);
-            return emptyResult;
+            return result;
         }
 
         var enquirerEnquiryResponseReceivedData =
@@ -91,7 +91,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                              "Can't find magic link token with the type {type} by enquiry Id {enquiryId}",
                 MagicLinkType.EnquirerViewAllResponses.ToString(), request.Data.EnquiryId);
 
-            return emptyResult;
+            return result;
         }
 
         request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
@@ -149,14 +149,18 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                 tpEnquiry.Enquiry.SupportReferenceNumber
             );
 
-            return tpEnquiry.Enquiry.SupportReferenceNumber;
+
+            result.SupportReferenceNumber = tpEnquiry.Enquiry.SupportReferenceNumber;
+            result.EnquirerMagicLink = request.Data?.Token;
+
+            return result;
         }
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while trying to save the enquiry response. Error: {ex}", ex);
         }
 
-        return emptyResult;
+        return result;
     }
 
     private void GenerateEnquirerViewResponseToken(AddEnquiryResponseCommand request,

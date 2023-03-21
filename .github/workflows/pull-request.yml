@@ -5,6 +5,8 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
+concurrency: pr-${{ github.event.number }}
+
 env:
   PR_NUMBER: pr-${{ github.event.number }}
   BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
@@ -16,7 +18,6 @@ jobs:
   build_deploy_test:
     name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
-    concurrency: pr-${{ github.event.number }}
 
     steps:
     - name: Checkout
