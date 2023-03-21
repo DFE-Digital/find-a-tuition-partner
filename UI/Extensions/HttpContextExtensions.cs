@@ -13,11 +13,11 @@ namespace UI.Extensions
             }
         }
 
-        public static void AddLadNameToAnalytics(this HttpContext httpContext, string? ladName)
+        public static void AddLadNameToAnalytics(this HttpContext httpContext, string? localAuthorityDistrictName)
         {
-            if (httpContext != null && !string.IsNullOrWhiteSpace(ladName))
+            if (httpContext != null && !string.IsNullOrWhiteSpace(localAuthorityDistrictName))
             {
-                httpContext.GetWebRequestEvent().AddData("LAD_Name", ladName);
+                httpContext.GetWebRequestEvent().AddData("LocalAuthorityDistrictName", localAuthorityDistrictName);
             }
         }
     }

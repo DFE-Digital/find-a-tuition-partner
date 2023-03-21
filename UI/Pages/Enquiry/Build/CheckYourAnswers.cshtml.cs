@@ -46,6 +46,7 @@ public class CheckYourAnswers : PageModel
         {
             var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
             Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
+            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName);
         }
 
         ModelState.Clear();
