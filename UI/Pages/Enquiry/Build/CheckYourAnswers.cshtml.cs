@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using UI.Extensions;
 
 namespace UI.Pages.Enquiry.Build;
 
@@ -98,6 +99,8 @@ public class CheckYourAnswers : PageModel
             HttpContext.AddHasSENDQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
             HttpContext.AddHasAdditionalInformationQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
             HttpContext.AddTuitionPartnerNameCsvAnalytics(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
+            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(submittedConfirmationModel.SupportReferenceNumber);
 
             return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }

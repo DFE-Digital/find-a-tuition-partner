@@ -90,6 +90,10 @@ public class CheckYourAnswers : PageModel
                 submittedConfirmationModel.EnquirerMagicLink = string.Empty;
             }
 
+            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
+
             return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
         }
 
