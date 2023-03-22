@@ -124,13 +124,6 @@ Then(
   }
 );
 
-Then("the user has arrived on the tuition response confirmation page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/response-confirmation"
-  );
-});
-
 Then("the user has arrived on the view all enquiry responses page", () => {
   cy.location("pathname").should(
     "eq",
@@ -140,6 +133,13 @@ Then("the user has arrived on the view all enquiry responses page", () => {
 
 Then("the tuition partners response page is shown", () => {
   cy.location("pathname").should("eq", "/enquiry/respond/enquirer-response");
+});
+
+Then("the user has arrived on the contact tuition partner page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/enquirer-view-tuition-partner-details"
+  );
 });
 
 Then("the page URL ends with {string}", (url) => {
