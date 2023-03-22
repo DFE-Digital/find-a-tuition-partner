@@ -118,6 +118,9 @@ builder.AddAnalytics();
 
 var app = builder.Build();
 
+StaticLoggerFactory.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
+
+
 app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
