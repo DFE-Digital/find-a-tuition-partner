@@ -6,7 +6,7 @@
   ViewData["IncludePrintPage"] = true;
 }
 <form method="post">
-  <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
+  <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions" class="app-print-hide">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
     <govuk-error-summary-item asp-for="Data.TuitionType" />
     <govuk-error-summary-item asp-for="Data.Email" />
@@ -127,7 +127,7 @@
             I confirm that I have not included any information that would allow anyone to identify pupils, such as names or specific characteristics.
           </govuk-checkboxes-item>
         </govuk-checkboxes>
-        <button class="govuk-button" data-module="govuk-button">
+        <button class="govuk-button app-print-hide" data-module="govuk-button">
           Send enquiry
         </button>
         <input asp-for="Data.LocalAuthorityDistrictName" type="hidden" />

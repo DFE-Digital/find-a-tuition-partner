@@ -27,7 +27,7 @@
 
     @if (!Model.IncludeEnquiryBuilder)
     {
-      <div class="govuk-notification-banner govuk-notification-banner--blue" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner govuk-notification-banner--blue app-print-hide" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
         <div class="govuk-notification-banner__header">
           <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
             Important
@@ -50,7 +50,7 @@
         </govuk-error-summary>
 
         <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityDistrictName</strong></span>
-        <h1 class="govuk-heading-l">
+        <h1 class="govuk-heading-l app-print-hide">
             <span class="app-results-filter--desktop">Your options for choosing a tuition partner</span>
             <span class="app-results-filter--non-desktop">Your options now</span>
         </h1>
@@ -58,7 +58,7 @@
     </div>
 </div>
 
-<div show-if="@count > 0" class="govuk-grid-row">
+<div show-if="@count > 0" class="govuk-grid-row app-print-hide">
     <div class="govuk-grid-column-two-thirds">
         <p class="govuk-body">
             You can either:
@@ -79,7 +79,7 @@
         </ol>
         @if(Model.IncludeEnquiryBuilder)
         {
-        <div class="app-print-hide enquire-nudge">
+        <div class="enquire-nudge">
             <h2 class="govuk-heading-m">Send an enquiry to tuition partners</h2>
             <p class="govuk-body">
                 If you can provide more information about your school’s needs, we can contact tuition partners anonymously for you.
@@ -178,7 +178,7 @@
                 <div class="govuk-body" data-testid="results-summary">
                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                     Your results are in a random order.
-                    <div class="govuk-grid-row govuk-!-margin-top-2">
+                    <div class="govuk-grid-row govuk-!-margin-top-2 app-print-hide">
                         <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
                             <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
                                 Update price comparison list

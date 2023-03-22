@@ -12,10 +12,10 @@
 }
 
 
-<div class="govuk-grid-row app-print-hide" xmlns="http://www.w3.org/1999/html">
+<div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
     <div class="govuk-grid-column-full">
 
-        <govuk-error-summary>
+        <govuk-error-summary class="app-print-hide">
             <govuk-error-summary-item asp-for="ErrorMessage"/>
         </govuk-error-summary>
         
@@ -23,15 +23,15 @@
             <span>View @Model.Data.TuitionPartnerName’s <br/> response</span>
         </h1>
 
-        <p class="govuk-body">
+        <p class="govuk-body app-print-hide">
             You can view and compare their response to your tuition requirements.
             This will help you decide if its a good match to <br/> your pupils' needs.
         </p>
         
-        <p class="govuk-body">
+        <p class="govuk-body app-print-hide">
             After you’ve viewed their response, you can either:
         </p>
-        <ul class="govuk-list govuk-list--bullet">
+        <ul class="govuk-list govuk-list--bulle app-print-hidet">
 
             <li>
                 contact them to discuss your enquiry such as budget, funding, alternative arrangements and tutors available.
@@ -167,36 +167,36 @@
     </div>
 </div>
 
-<hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+<hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7 app-print-hide">
 
-<div class="govuk-width-container">
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds-from-desktop">
-        <h2 class="govuk-heading-l govuk-!-padding-top-0">
-            What you can do next
-        </h2>
-        <p class="govuk-body">
-            <strong>If you are interested in working with this tuition partner</strong>
-        </p>
-        <p class="govuk-body">
-            You can contact them to further discuss your pupils' needs. <br/>
-            We will also give you guidance about what information you should give to them. <br/>
-            Even if the tuition partner can’t fully meet all of your tuition requirements, you can still discuss any flexibility.
-        </p>
-        <a class="govuk-button" data-module="govuk-button" draggable="false" href="@tpDetails" role="button">View tuition partner’s contact details</a>
-        <p class="govuk-body">
-            <strong>If you do not want to contact this tuition partner</strong>
-        </p>
+<div class="govuk-width-container app-print-hide">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <h2 class="govuk-heading-l govuk-!-padding-top-0">
+                What you can do next
+            </h2>
+            <p class="govuk-body">
+                <strong>If you are interested in working with this tuition partner</strong>
+            </p>
+            <p class="govuk-body">
+                You can contact them to further discuss your pupils' needs. <br/>
+                We will also give you guidance about what information you should give to them. <br/>
+                Even if the tuition partner can’t fully meet all of your tuition requirements, you can still discuss any flexibility.
+            </p>
+            <a class="govuk-button" data-module="govuk-button" draggable="false" href="@tpDetails" role="button">View tuition partner’s contact details</a>
+            <p class="govuk-body">
+                <strong>If you do not want to contact this tuition partner</strong>
+            </p>
 
-        <p class="govuk-body">
-            Select ‘cancel’ to return to the enquiry list. <br/>
-            This will let you view responses from other tuition partners. <br/>
-            We will not inform @Model.Data.TuitionPartnerName that you have chosen not to contact them. <br/>
-        </p>
+            <p class="govuk-body">
+                Select ‘cancel’ to return to the enquiry list. <br/>
+                This will let you view responses from other tuition partners. <br/>
+                We will not inform @Model.Data.TuitionPartnerName that you have chosen not to contact them. <br/>
+            </p>
         
-        <a href="@backLink" class="govuk-link">
-            Cancel
-        </a>
+            <a href="@backLink" class="govuk-link">
+                Cancel
+            </a>
+        </div>
     </div>
-</div>
 </div>
