@@ -47,7 +47,7 @@ public class TuitionPartner : PageModel
 
         await GetCompareListCheckboxModel(Data.Name, Data.Id.Trim(), nameof(CompareListedCheckbox));
 
-        HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName);
+        HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName, _logger);
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();

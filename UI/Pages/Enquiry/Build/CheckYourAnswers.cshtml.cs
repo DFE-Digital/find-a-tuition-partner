@@ -95,6 +95,10 @@ public class CheckYourAnswers : PageModel
                 submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
             }
 
+            HttpContext.AddHasSENDQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
+            HttpContext.AddHasAdditionalInformationQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
+            HttpContext.AddTuitionPartnerNameCsvAnalytics(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
+
             return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }
 
