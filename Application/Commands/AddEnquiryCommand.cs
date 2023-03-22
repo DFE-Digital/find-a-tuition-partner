@@ -317,7 +317,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 // Handle unique constraint violation error; otherwise, exit from the while loop.
                 dataSaved = true;
-                
+
                 _logger.LogError("A DbUpdateException error occurred while adding an enquiry. Error: {ex}", ex);
             }
         }

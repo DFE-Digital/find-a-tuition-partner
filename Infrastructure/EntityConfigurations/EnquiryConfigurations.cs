@@ -11,10 +11,5 @@ public class EnquiryConfigurations : IEntityTypeConfiguration<Enquiry>
         builder.HasIndex(e => e.Email);
 
         builder.HasIndex(e => e.SupportReferenceNumber).IsUnique();
-
-        builder.HasMany(e => e.MagicLinks)
-            .WithOne()
-            .HasForeignKey("EnquiryId")
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
