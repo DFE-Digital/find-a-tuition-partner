@@ -2,15 +2,43 @@ import {
   Given,
   When,
   Then,
+  And,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
 Given(
   "a tuition partner clicks the magic link to respond to a schools enquiry",
   () => {
-    cy.visit(
-      "/enquiry/respond/response?token=YbyXWr3a39wY7Ah7atZ0%2BlGuYsqx21KDv6E4%2BMhPpnH1vv6kT9tbrbb/dbwcBTVwSf3v6R%2BzlSTwgogSK0Ab%2BhHyegPFXppNgqZVWCgzkQ5kqDq6lmBCioHQJT5Ds1u21Ei/s346p3oKGCn6NFxRWQ=="
+    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which key stages' page");
+    Step(this, "they will see all the keys stages as options");
+    Step(this, "they select 'Key stage 1, Key stage 2'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which subjects' page");
+    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+    Step(
+      this,
+      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Search Results' page");
+    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Continue' button");
+    Step(this, "they enter a valid email address");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for tuition plan");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for SEND requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for other requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they select terms and conditions")
+    Step(this, "they click send enquiry");
+    cy.get(':nth-child(11) > a').click()
   }
 );
 
@@ -135,7 +163,7 @@ Then("they type {string} characters for section 2", (numOfChars) => {
 
 Then("they type {string} characters for section 3", (numOfChars) => {
   const totalText = "a".repeat(numOfChars);
-  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", totalText);
+  cy.get('#Data_TutoringLogisticsText').clear().invoke("val", totalText);
 });
 
 Then("they type {string} characters for section 4", (numOfChars) => {
@@ -177,3 +205,26 @@ Then(
     );
   }
 );
+
+Then("the page has the correct content information", () => {
+  cy.get(':nth-child(5) > strong').should("contain.text", "Contact information")
+})
+
+And("the page shows contact information such as the following:", (dataTable) => {
+  dataTable.hashes().forEach((column) => {
+    switch (column["Section Name"]) {
+      case "email:":
+        cy.contains(column["Value"]).should('be.visible');
+        break;
+      case "contact number:":
+        cy.contains(column["Value"]).should('be.visible');
+        break;
+      default:
+        throw new Error(`Unrecognized section name: ${column["Section Name"]}`);
+    }
+  })
+})
+
+When("they click return to your enquiry list", () => {
+  cy.get(':nth-child(8) > .govuk-link').click()
+})

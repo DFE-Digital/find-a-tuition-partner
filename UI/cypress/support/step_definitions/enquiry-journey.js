@@ -212,15 +212,10 @@ Then("the text by the second and third questions is {string}", (text) => {
   );
 });
 
-Then(
-  "the warning should be displayed showing they have {string} characters left",
-  (numOfCharsLeft) => {
-    cy.get(".govuk-character-count__status").should(
-      "contain.text",
-      `You have ${numOfCharsLeft} characters remaining`
-    );
-  }
-);
+Then("the warning should be displayed showing they have {string} characters left", (numOfCharsLeft) => {
+  const expectedText = `You have ${numOfCharsLeft.replace(",", "")} characters remaining`;
+  cy.get(".govuk-character-count__status").should("contain.text", expectedText);
+});
 
 Then(
   "the warning should be displayed showing they are over by {string} characters",
