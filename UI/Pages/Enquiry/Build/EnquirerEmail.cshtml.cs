@@ -26,7 +26,6 @@ public class EnquirerEmail : PageModel
 
         if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerInvalidEmailAddress, data.Email!);
             ModelState.AddModelError("ErrorMessage", ErrorMessage);
             return Page();
         }
