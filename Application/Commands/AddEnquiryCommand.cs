@@ -32,7 +32,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     private readonly IEncrypt _aesEncryption;
     private readonly INotificationsClientService _notificationsClientService;
     private readonly IGenerateReferenceNumber _generateReferenceNumber;
-    private readonly ISessionService _sessionService;
     private readonly ILogger<AddEnquiryCommandHandler> _logger;
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IEncrypt aesEncryption,
@@ -45,7 +44,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         _notificationsClientService = notificationsClientService;
         _generateReferenceNumber = generateReferenceNumber;
         _logger = logger;
-        _sessionService = sessionService;
     }
 
     public async Task<SubmittedConfirmationModel> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
@@ -319,6 +317,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 // Handle unique constraint violation error; otherwise, exit from the while loop.
                 dataSaved = true;
+                
+                _logger.LogError("A DbUpdateException error occurred while adding an enquiry. Error: {ex}", ex);
             }
         }
 
