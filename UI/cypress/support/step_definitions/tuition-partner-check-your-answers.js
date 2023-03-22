@@ -6,9 +6,6 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("Tuition partner has journeyed to the check your answers page", () => {
-  cy.visit(
-    "/enquiry/respond/response?token=YbyXWr3a39wY7Ah7atZ0%2BlGuYsqx21KDv6E4%2BMhPpnH1vv6kT9tbrbb/dbwcBTVwSf3v6R%2BzlSTwgogSK0Ab%2BhHyegPFXppNgqZVWCgzkQ5kqDq6lmBCioHQJT5Ds1u21Ei/s346p3oKGCn6NFxRWQ=="
-  );
   cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
   cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
   cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
