@@ -96,18 +96,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
 
-        // We do this check to prevent creating enquiry with the invalid email address
-        var processFailedEnquiryEmail = await ProcessFailedEnquiryEmail(
-            request,
-            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-            getEnquirySubmittedToTpNotificationsRecipients,
-            cancellationToken);
-
-        if (!string.IsNullOrEmpty(processFailedEnquiryEmail.EnquirerEmailSentStatus))
-        {
-            return processFailedEnquiryEmail;
-        }
-
         var enquiry = new Enquiry()
         {
             Email = request.Data?.Email!,
@@ -130,9 +118,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
             dataSaved = await _unitOfWork.Complete();
-
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.SupportReferenceNumber,
-                enquiry.SupportReferenceNumber);
 
         }
         catch (DbUpdateException ex)
@@ -362,21 +347,18 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
                 if (!emailSent && status == HttpStatusCode.BadRequest)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
-                        StringConstants.EnquirerEmailSentStatus4xxErrorValue);
+                    _unitOfWork.EnquiryRepository.Remove(enquiry);
+                    await _unitOfWork.Complete();
                     return StringConstants.EnquirerEmailSentStatus4xxErrorValue;
                 }
 
                 if (!emailSent && status == HttpStatusCode.InternalServerError)
                 {
-                    await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
-                        StringConstants.EnquirerEmailSentStatus5xxErrorValue);
+                    _unitOfWork.EnquiryRepository.Remove(enquiry);
+                    await _unitOfWork.Complete();
                     return StringConstants.EnquirerEmailSentStatus5xxErrorValue;
                 }
             }
-
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailSentStatus,
-                StringConstants.EnquirerEmailSentStatusDeliveredValue);
         }
         catch (Exception ex)
         {
@@ -385,73 +367,4 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         return result;
     }
-
-    private async Task<SubmittedConfirmationModel> ProcessFailedEnquiryEmail(
-        AddEnquiryCommand request,
-        NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-        List<NotificationsRecipientDto> getEnquirySubmittedToTpNotificationsRecipients,
-        CancellationToken cancellationToken)
-    {
-        var result = new SubmittedConfirmationModel();
-
-        var enquirerEmailSentStatus =
-            await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailSentStatus);
-
-        if (string.IsNullOrEmpty(enquirerEmailSentStatus) ||
-            (enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus4xxErrorValue
-             && enquirerEmailSentStatus != StringConstants.EnquirerEmailSentStatus5xxErrorValue))
-            return result;
-
-        var supportReferenceNumber =
-            await _sessionService.RetrieveDataAsync(StringConstants.SupportReferenceNumber);
-
-        if (string.IsNullOrEmpty(supportReferenceNumber)) return result;
-        var existingEnquiry = await _unitOfWork.EnquiryRepository
-            .SingleOrDefaultAsync(x => x.SupportReferenceNumber == supportReferenceNumber,
-                cancellationToken: cancellationToken);
-
-        if (existingEnquiry != null)
-        {
-            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation
-                .AddDefaultEnquiryPersonalisation(
-                    existingEnquiry.SupportReferenceNumber, existingEnquiry.CreatedAt,
-                    request.Data!.BaseServiceUrl!);
-            var enquirerEmailSent = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(existingEnquiry,
-                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
-
-            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-                x.Personalisation.AddDefaultEnquiryPersonalisation(existingEnquiry.SupportReferenceNumber,
-                    existingEnquiry.CreatedAt, request.Data!.BaseServiceUrl!));
-
-            if (!string.IsNullOrEmpty(enquirerEmailSent) &&
-                (enquirerEmailSent == StringConstants.EnquirerEmailSentStatus4xxErrorValue
-                 || enquirerEmailSent == StringConstants.EnquirerEmailSentStatus5xxErrorValue))
-            {
-                result.EnquirerEmailSentStatus = enquirerEmailSent;
-                return result;
-            }
-
-            if (!string.IsNullOrEmpty(enquirerEmailSent) &&
-                enquirerEmailSent == StringConstants.EnquirerEmailSentStatusDeliveredValue)
-            {
-                existingEnquiry.Email = request.Data?.Email!;
-
-                result.SupportReferenceNumber = existingEnquiry.SupportReferenceNumber;
-
-                result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-                getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-                    result.TuitionPartnerMagicLinks!.Add(x.Email, x.Token!));
-
-                await _unitOfWork.Complete();
-
-                await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
-                    EmailTemplateType.EnquirySubmittedToTp, existingEnquiry.SupportReferenceNumber);
-
-                return result;
-            }
-        }
-
-        return result;
-    }
-
 }

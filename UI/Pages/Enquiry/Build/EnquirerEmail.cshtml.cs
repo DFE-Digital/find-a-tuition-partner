@@ -40,23 +40,14 @@ public class EnquirerEmail : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
+            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
+
             var errorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
-                var invalidEmail = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerInvalidEmailAddress);
-
-                if (!string.IsNullOrEmpty(invalidEmail) && invalidEmail.Equals(data.Email, StringComparison.OrdinalIgnoreCase))
-                {
-                    ErrorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
-                    ModelState.AddModelError("ErrorMessage", ErrorMessage);
-                    return Page();
-                }
-
                 await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, string.Empty);
             }
-
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {
