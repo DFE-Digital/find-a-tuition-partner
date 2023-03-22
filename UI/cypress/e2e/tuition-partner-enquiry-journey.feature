@@ -1,14 +1,16 @@
 Feature: Tuition Partner Enquiry Response Journey
 
     Scenario: Response page has correct url and headings
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         Then the page heading should show School Enquiry from 'Stockport' area
         Then the page should display You have '7' days to respond
         And the responses should have heading 'Respond to this enquiry'
 
     Scenario: Enquiry Questions have the expected data
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And the first response section is to be Key stage and subjects
         Then the key stages and subjects should match the request:
@@ -22,7 +24,8 @@ Feature: Tuition Partner Enquiry Response Journey
         And the last response section is to be 'Other tuition considerations:' with text 'enquiry'
 
     Scenario: Clicking continue on successful tuition responses shows check your answers page
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '10' characters for section 1
         When they type '10' characters for section 2
@@ -52,7 +55,8 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the check your answers page does not include SEND and Other considerations
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for Key-stage and subjects
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '7700' characters for section 1
         Then the warning should be displayed showing they have '2300' characters left
@@ -66,7 +70,8 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the error message shows 'Key stages and subjects must be 10000 characters or less'
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for tuition type
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '70' characters for section 1
         When they type '8800' characters for section 2
@@ -81,7 +86,8 @@ Feature: Tuition Partner Enquiry Response Journey
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for tuition plan
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '70' characters for section 1
         When they type '80' characters for section 2
@@ -96,7 +102,8 @@ Feature: Tuition Partner Enquiry Response Journey
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for SEND requirements
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '70' characters for section 1
         When they type '80' characters for section 2
@@ -111,7 +118,8 @@ Feature: Tuition Partner Enquiry Response Journey
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for Other school considerations
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '70' characters for section 1
         When they type '80' characters for section 2
@@ -125,7 +133,8 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the error message shows 'Other tuition considerations must be 10000 characters or less'
 
     Scenario: Tuition responses show correct warning when there is no input for Key-stage and subjects
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '0' characters for section 1
         When they type '80' characters for section 2
@@ -137,7 +146,8 @@ Feature: Tuition Partner Enquiry Response Journey
 
 
     Scenario: Tuition responses show correct warning when there is no input for Tuition Type
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '10' characters for section 1
         When they type '0' characters for section 2
@@ -148,7 +158,8 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the error message shows 'Enter to what extent can you support that type of tuition'
 
     Scenario: Tuition responses show correct warning when there is no input for Tuition Plan
-        Given a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a user has started the 'Find a tuition partner' journey
+        Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         And they type '10' characters for section 1
         When they type '10' characters for section 2
