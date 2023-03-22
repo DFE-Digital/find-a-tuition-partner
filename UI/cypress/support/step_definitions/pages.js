@@ -143,8 +143,11 @@ Then("the tuition partners response page is shown", () => {
 });
 
 Then("the user has arrived on the contact tuition partner page", () => {
-  cy.location("pathname").should("eq", "/enquiry/respond/enquirer-view-tuition-partner-details")
-})
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/enquirer-view-tuition-partner-details"
+  );
+});
 
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));

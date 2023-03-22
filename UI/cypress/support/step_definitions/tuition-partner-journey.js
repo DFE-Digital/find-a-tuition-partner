@@ -36,9 +36,9 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for other requirements");
     Step(this, "they click 'Continue'");
-    Step(this, "they select terms and conditions")
+    Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get(':nth-child(11) > a').click()
+    cy.get(":nth-child(11) > a").click();
   }
 );
 
@@ -163,7 +163,7 @@ Then("they type {string} characters for section 2", (numOfChars) => {
 
 Then("they type {string} characters for section 3", (numOfChars) => {
   const totalText = "a".repeat(numOfChars);
-  cy.get('#Data_TutoringLogisticsText').clear().invoke("val", totalText);
+  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", totalText);
 });
 
 Then("they type {string} characters for section 4", (numOfChars) => {
@@ -207,24 +207,32 @@ Then(
 );
 
 Then("the page has the correct content information", () => {
-  cy.get(':nth-child(5) > strong').should("contain.text", "Contact information")
-})
+  cy.get(":nth-child(5) > strong").should(
+    "contain.text",
+    "Contact information"
+  );
+});
 
-And("the page shows contact information such as the following:", (dataTable) => {
-  dataTable.hashes().forEach((column) => {
-    switch (column["Section Name"]) {
-      case "email:":
-        cy.contains(column["Value"]).should('be.visible');
-        break;
-      case "contact number:":
-        cy.contains(column["Value"]).should('be.visible');
-        break;
-      default:
-        throw new Error(`Unrecognized section name: ${column["Section Name"]}`);
-    }
-  })
-})
+And(
+  "the page shows contact information such as the following:",
+  (dataTable) => {
+    dataTable.hashes().forEach((column) => {
+      switch (column["Section Name"]) {
+        case "email:":
+          cy.contains(column["Value"]).should("be.visible");
+          break;
+        case "contact number:":
+          cy.contains(column["Value"]).should("be.visible");
+          break;
+        default:
+          throw new Error(
+            `Unrecognized section name: ${column["Section Name"]}`
+          );
+      }
+    });
+  }
+);
 
 When("they click return to your enquiry list", () => {
-  cy.get(':nth-child(8) > .govuk-link').click()
-})
+  cy.get(":nth-child(8) > .govuk-link").click();
+});
