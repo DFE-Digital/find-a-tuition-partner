@@ -13,13 +13,13 @@ public class CheckYourAnswers : PageModel
     private readonly IHostEnvironment _hostEnvironment;
     private readonly FeatureFlags _featureFlagsConfig;
 
-  public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment, IOptions<FeatureFlags> featureFlagsConfig)
+    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment, IOptions<FeatureFlags> featureFlagsConfig)
     {
         _mediator = mediator;
         _sessionService = sessionService;
         _hostEnvironment = hostEnvironment;
         _featureFlagsConfig = featureFlagsConfig.Value;
-  }
+    }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
