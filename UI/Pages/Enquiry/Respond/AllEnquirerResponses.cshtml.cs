@@ -43,6 +43,8 @@ namespace UI.Pages.Enquiry.Respond
                 if (getMagicLinkToken != null)
                 {
                     Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(getMagicLinkToken.EnquiryId!.Value, baseServiceUrl));
+                    HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
+                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
                 }
             }
             catch

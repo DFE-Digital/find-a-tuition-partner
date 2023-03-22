@@ -84,7 +84,8 @@ public class CheckYourAnswers : PageModel
 
             var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
             {
-                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber
+                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber,
+                LocalAuthorityDistrictName = Data.LocalAuthorityDistrictName
             };
 
             if (!_hostEnvironment.IsProduction())

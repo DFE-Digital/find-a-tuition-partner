@@ -44,6 +44,9 @@ public class EnquirerResponse : PageModel
             if (data != null)
             {
                 Data = data with { EnquirerViewResponseToken = _queryToken };
+                HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
+                HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
+                HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
             }
         }
         catch

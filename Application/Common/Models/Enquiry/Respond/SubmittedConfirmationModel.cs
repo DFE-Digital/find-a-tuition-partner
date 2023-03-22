@@ -4,4 +4,6 @@ public record SubmittedConfirmationModel
 {
     public string? SupportReferenceNumber { get; set; }
     public string? EnquirerMagicLink { get; set; }
+    public string? LocalAuthorityDistrictName { get; set; }
+    public string TuitionPartnerName { get; set; } = string.Empty;
 }

@@ -74,14 +74,24 @@ namespace UI.Pages.Enquiry.Respond
                 var enquiryData = await _mediator.Send(new
                     GetEnquirerViewAllResponsesQuery(Data.EnquiryId, Data.BaseServiceUrl));
 
-                if (enquiryData != null)
+                var tpResponseData = await _mediator.Send(new
+                    GetEnquirerViewResponseQuery(Data.EnquiryId, Data.TuitionPartnerId));
+
+                //TODO - if previously completed response then show error - check when tpResponseData.KeyStageAndSubjectsText is not empty
+                if (enquiryData != null && tpResponseData != null)
                 {
                     Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
+                    Data.TuitionPartnerName = tpResponseData.TuitionPartnerName!;
+                    Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
                     Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
                     Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
                     Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
                     Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
                     Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
+
+                    HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
+                    HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
+                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
                 }
             }
 
@@ -108,6 +118,8 @@ namespace UI.Pages.Enquiry.Respond
                 await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
                     { StringConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
+                    { StringConstants.EnquirySupportReferenceNumber, Data.SupportReferenceNumber! },
+                    { StringConstants.TuitionPartnerName, Data.TuitionPartnerName! },
                     { StringConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
                     { StringConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
                     { StringConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },

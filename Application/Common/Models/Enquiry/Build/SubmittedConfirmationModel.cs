@@ -10,4 +10,5 @@ public record SubmittedConfirmationModel : SearchModel
     public string? EnquirerMagicLink { get; set; }
     public Dictionary<string, string> TuitionPartnerMagicLinks { get; set; }
     public int? TuitionPartnerMagicLinksCount { get; set; }
+    public string? LocalAuthorityDistrictName { get; set; }
 }

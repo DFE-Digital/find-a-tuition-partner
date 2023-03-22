@@ -42,6 +42,9 @@ public class CheckYourAnswers : PageModel
             {
                 Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
             }
+            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
         }
 
         var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
@@ -78,6 +81,9 @@ public class CheckYourAnswers : PageModel
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
             await _sessionService.DeleteDataAsync();
+
+            submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
+            submittedConfirmationModel.TuitionPartnerName = Data.TuitionPartnerName;
 
             if (_hostEnvironment.IsProduction())
             {

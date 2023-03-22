@@ -161,7 +161,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         {
             result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
             result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => result.TuitionPartnerMagicLinks!.Add(x.Email, x.Token!));
+            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => result.TuitionPartnerMagicLinks!.Add(x.OriginalEmail, x.Token!));
         }
 
         return result;
@@ -179,6 +179,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 select new NotificationsRecipientDto()
                 {
                     Email = recipient.Email,
+                    OriginalEmail = recipient.Email,
                     EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
                     Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink, request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
@@ -210,6 +211,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var result = new NotificationsRecipientDto()
         {
             Email = request.Data?.Email!,
+            OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
             Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)

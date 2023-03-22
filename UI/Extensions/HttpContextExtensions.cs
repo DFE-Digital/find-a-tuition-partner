@@ -15,9 +15,25 @@ namespace UI.Extensions
 
         public static void AddLadNameToAnalytics(this HttpContext httpContext, string? localAuthorityDistrictName)
         {
-            if (httpContext != null && !string.IsNullOrWhiteSpace(localAuthorityDistrictName))
+            httpContext.AddToAnalytics("LocalAuthorityDistrictName", localAuthorityDistrictName);
+        }
+
+        public static void AddTuitionPartnerNameToAnalytics(this HttpContext httpContext, string? tuitionPartnerName)
+        {
+            httpContext.AddToAnalytics("TuitionPartnerName", tuitionPartnerName);
+        }
+
+        public static void AddEnquirySupportReferenceNumberToAnalytics(this HttpContext httpContext, string? enquirySupportReferenceNumber)
+        {
+            httpContext.AddToAnalytics("EnquirySupportReferenceNumber", enquirySupportReferenceNumber);
+        }
+
+
+        public static void AddToAnalytics(this HttpContext httpContext, string? key, string? value)
+        {
+            if (httpContext != null && !string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))
             {
-                httpContext.GetWebRequestEvent().AddData("LocalAuthorityDistrictName", localAuthorityDistrictName);
+                httpContext.GetWebRequestEvent().AddData(key, value);
             }
         }
     }

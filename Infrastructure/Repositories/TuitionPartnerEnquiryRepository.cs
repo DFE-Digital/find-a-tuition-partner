@@ -36,7 +36,6 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
                                        && x.MagicLinkTypeId == (int)MagicLinkType.EnquirerViewAllResponses);
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
-        var enquiryResponse = tuitionPartnerEnquiry.EnquiryResponse!;
 
         var keyStageSubjects = enquiry
             .KeyStageSubjectEnquiry
@@ -47,17 +46,25 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         {
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
             EnquiryKeyStageSubjects = keyStageSubjects,
-            KeyStageAndSubjectsText = enquiryResponse.KeyStageAndSubjectsText!,
             EnquiryTuitionType = enquiry.TuitionTypeId.GetTuitionTypeName(),
-            TuitionTypeText = enquiryResponse.TuitionTypeText,
             EnquiryTutoringLogistics = enquiry.TutoringLogistics,
-            TutoringLogisticsText = enquiryResponse.TutoringLogisticsText,
             EnquirySENDRequirements = enquiry.SENDRequirements,
-            SENDRequirementsText = enquiryResponse.SENDRequirementsText,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,
-            AdditionalInformationText = enquiryResponse.AdditionalInformationText,
-            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token
+            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
+            LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
+            SupportReferenceNumber = enquiry.SupportReferenceNumber
         };
+
+        var enquiryResponse = tuitionPartnerEnquiry.EnquiryResponse;
+
+        if (enquiryResponse != null)
+        {
+            result.KeyStageAndSubjectsText = enquiryResponse.KeyStageAndSubjectsText;
+            result.TuitionTypeText = enquiryResponse.TuitionTypeText;
+            result.TutoringLogisticsText = enquiryResponse.TutoringLogisticsText;
+            result.SENDRequirementsText = enquiryResponse.SENDRequirementsText;
+            result.AdditionalInformationText = enquiryResponse.AdditionalInformationText;
+        }
 
         return result;
     }
@@ -87,7 +94,8 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerPhoneNumber = enquiryTP.PhoneNumber,
             TuitionPartnerEmailAddress = enquiryTP.Email,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
-            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token
+            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
+            LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!
         };
 
         return result;

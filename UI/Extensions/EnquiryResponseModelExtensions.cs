@@ -12,6 +12,14 @@ public static class EnquiryResponseModelExtensions
                 data.LocalAuthorityDistrict = value;
                 break;
 
+            case var k when k.Contains(StringConstants.TuitionPartnerName):
+                data.TuitionPartnerName = value;
+                break;
+
+            case var k when k.Contains(StringConstants.EnquirySupportReferenceNumber):
+                data.SupportReferenceNumber = value;
+                break;
+
             case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
                 data.EnquiryTutoringLogistics = value;
                 break;
