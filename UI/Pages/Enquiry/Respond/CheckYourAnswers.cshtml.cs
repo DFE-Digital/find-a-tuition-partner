@@ -4,12 +4,10 @@ using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond;
 
-public class CheckYourAnswers : PageModel
+public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 {
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
-    private readonly ISessionService _sessionService;
-    private readonly IMediator _mediator;
     private readonly IEncrypt _aesEncrypt;
     private readonly IHostEnvironment _hostEnvironment;
 
@@ -19,22 +17,20 @@ public class CheckYourAnswers : PageModel
 
     [ViewData] public string? ErrorMessage { get; set; }
 
-    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt, IHostEnvironment hostEnvironment)
+    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt, IHostEnvironment hostEnvironment) : base(sessionService, mediator)
     {
-        _sessionService = sessionService;
-        _mediator = mediator;
         _aesEncrypt = aesEncrypt;
         _hostEnvironment = hostEnvironment;
     }
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync())
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey("TBC", "TBC")))
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
-        var sessionValues = await _sessionService.RetrieveDataAsync();
+        var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey("TBC", "TBC"));
 
         if (sessionValues != null)
         {
@@ -56,7 +52,7 @@ public class CheckYourAnswers : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!await _sessionService.SessionDataExistsAsync())
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey("TBC", "TBC")))
             return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
@@ -77,7 +73,7 @@ public class CheckYourAnswers : PageModel
 
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
-            await _sessionService.DeleteDataAsync();
+            await _sessionService.DeleteDataAsync(GetSessionKey("TBC", "TBC"));
 
             if (_hostEnvironment.IsProduction())
             {

@@ -18,7 +18,7 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
+        Data.Email = await _sessionService.RetrieveDataByKeyAsync(StringConstants.EnquirerEmail);
 
         ModelState.Clear();
 

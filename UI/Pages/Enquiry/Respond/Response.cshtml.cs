@@ -4,21 +4,17 @@ using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
 {
-    public class Response : PageModel
+    public class Response : ResponsePageModel<Response>
     {
-        private readonly IMediator _mediator;
         private readonly IEncrypt _aesEncrypt;
-        private readonly ISessionService _sessionService;
 
         private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
         private const string InvalidUrlErrorMessage = "Invalid Url";
 
-        public Response(IMediator mediator, IEncrypt aesEncrypt, ISessionService sessionService)
+        public Response(IMediator mediator, IEncrypt aesEncrypt, ISessionService sessionService) : base(sessionService, mediator)
         {
-            _mediator = mediator;
             _aesEncrypt = aesEncrypt;
-            _sessionService = sessionService;
         }
 
         [BindProperty] public ViewAndCaptureEnquiryResponseModel Data { get; set; } = new();
@@ -60,7 +56,7 @@ namespace UI.Pages.Enquiry.Respond
 
             Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-            var sessionValues = await _sessionService.RetrieveDataAsync();
+            var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey("TBC", "TBC"));
 
             if (sessionValues != null)
             {
@@ -122,7 +118,9 @@ namespace UI.Pages.Enquiry.Respond
                     { StringConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
                     { StringConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
                     { StringConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
-                });
+                },
+                GetSessionKey("TBC", "TBC")
+                );
 
                 return RedirectToPage(nameof(CheckYourAnswers));
             }

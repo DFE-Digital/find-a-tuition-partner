@@ -24,7 +24,7 @@
     var consentCookie = HttpContext?.HttpContext?.Request.Cookies[Cookies.ConsentCookieName];
     var consentGranted = Convert.ToBoolean(consentCookie);
 
-    var sessionDataExists = await SessionService.SessionDataExistsAsync();
+    var sessionDataExists = await SessionService.AnySessionDataExistsAsync();
 }
 
 <!DOCTYPE html>

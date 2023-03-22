@@ -22,7 +22,7 @@ public class TutoringLogistics : PageModel
 
         Data = data;
 
-        Data.TutoringLogistics = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryTutoringLogistics);
+        Data.TutoringLogistics = await _sessionService.RetrieveDataByKeyAsync(StringConstants.EnquiryTutoringLogistics);
 
         ModelState.Clear();
 

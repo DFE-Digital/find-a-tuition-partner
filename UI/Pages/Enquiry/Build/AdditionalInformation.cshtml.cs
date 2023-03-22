@@ -22,7 +22,7 @@ public class AdditionalInformation : PageModel
 
         Data = data;
 
-        Data.AdditionalInformation = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryAdditionalInformation);
+        Data.AdditionalInformation = await _sessionService.RetrieveDataByKeyAsync(StringConstants.EnquiryAdditionalInformation);
 
         ModelState.Clear();
 

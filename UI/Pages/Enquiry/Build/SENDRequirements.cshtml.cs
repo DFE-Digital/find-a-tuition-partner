@@ -22,7 +22,7 @@ public class SENDRequirements : PageModel
 
         Data = data;
 
-        Data.SENDRequirements = await _sessionService.RetrieveDataAsync(StringConstants.EnquirySENDRequirements);
+        Data.SENDRequirements = await _sessionService.RetrieveDataByKeyAsync(StringConstants.EnquirySENDRequirements);
 
         ModelState.Clear();
 
