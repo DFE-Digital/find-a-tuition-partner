@@ -25,6 +25,23 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
+    @if (!Model.IncludeEnquiryBuilder)
+    {
+      <div class="govuk-notification-banner govuk-notification-banner--blue" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Important
+          </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+          <div class="govuk-body">
+            <p class="govuk-notification-banner__heading">Enquiry builder is temporally unavailable.</p>
+            <p class="govuk-body">You will be able to use this feature later.</p>
+          </div>
+        </div>
+      </div>
+    }
+
         <govuk-error-summary show-if="!Model.ModelState.IsValid" class="app-print-hide">
             <govuk-error-summary-item show-if="!Model.ModelState.IsValid" class="error-summary-filter-prompt">Use the filters section below to update the following details:</govuk-error-summary-item>
             <govuk-error-summary-item asp-for="Data.Postcode"/>

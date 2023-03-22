@@ -10,14 +10,16 @@ public class CheckYourAnswers : PageModel
 {
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly FeatureFlags _featureFlagsConfig;
 
-    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IOptions<FeatureFlags> featureFlagsConfig)
+  public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment, IOptions<FeatureFlags> featureFlagsConfig)
     {
         _mediator = mediator;
         _sessionService = sessionService;
+        _hostEnvironment = hostEnvironment;
         _featureFlagsConfig = featureFlagsConfig.Value;
-    }
+  }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
@@ -80,15 +82,25 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
-        var supportReferenceNumber = await _mediator.Send(command);
+        var submittedConfirmationModel = await _mediator.Send(command);
 
-        if (!string.IsNullOrEmpty(supportReferenceNumber))
+        if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
-            Data.SupportReferenceNumber = supportReferenceNumber;
-
             await _sessionService.DeleteDataAsync();
 
-            return RedirectToPage(nameof(SubmittedConfirmation), new SearchModel(Data));
+            var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
+            {
+                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber
+            };
+
+            if (!_hostEnvironment.IsProduction())
+            {
+                submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks.OrderBy(x => x.Key).Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
+            }
+
+            return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }
 
         return Page();

@@ -13,12 +13,12 @@ using TuitionType = Domain.Enums.TuitionType;
 
 namespace Application.Commands;
 
-public record AddEnquiryCommand : IRequest<string>
+public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
 {
     public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
-public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, string>
+public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, SubmittedConfirmationModel>
 {
     private const string EnquiryNumberOfTpsContactedKey = "number_of_tps_contacted";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
@@ -43,15 +43,15 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         _logger = logger;
     }
 
-    public async Task<string> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
+    public async Task<SubmittedConfirmationModel> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
     {
-        var emptyResult = string.Empty;
+        var result = new SubmittedConfirmationModel();
 
         //TODO - deal with error and show a message on UI
-        //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return emptyResult below
+        //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return result below
         //  Unexpected errors - database issues etc
         //  Errors to TP emails - log error, but don't show error to enquirer?
-        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return emptyResult;
+        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return result;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
@@ -82,7 +82,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
 
         if (string.IsNullOrEmpty(validationResult))
         {
-            return emptyResult;
+            return result;
         }
 
         var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
@@ -135,7 +135,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             catch (Exception ex)
             {
                 _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-                return emptyResult;
+                return result;
             }
         }
 
@@ -157,8 +157,14 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
             _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
         }
 
+        if (dataSaved)
+        {
+            result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
+            result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
+            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => result.TuitionPartnerMagicLinks!.Add(x.Email, x.Token!));
+        }
 
-        return dataSaved ? enquiry.SupportReferenceNumber : emptyResult;
+        return result;
     }
 
     private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(AddEnquiryCommand request,
@@ -187,7 +193,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, strin
         {
             { EnquiryTpNameKey, tpName },
             { EnquiryResponseFormLinkKey, responseFormLink },
-            {EnquiryLadNameKey, ladNameKey }
+            { EnquiryLadNameKey, ladNameKey }
         };
 
         return personalisation;
