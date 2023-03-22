@@ -6,7 +6,7 @@
   ViewData["IncludePrintPage"] = true;
 }
 <form method="post">
-  <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions" class="app-print-hide">
+  <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
     <govuk-error-summary-item asp-for="Data.TuitionType" />
     <govuk-error-summary-item asp-for="Data.Email" />

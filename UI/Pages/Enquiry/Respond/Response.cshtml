@@ -6,7 +6,7 @@
     ViewData["IncludePrintPage"] = true;
 }
 
-<form method="post" gfa-prepend-error-summary="false" class="app-print-hide">
+<form method="post" gfa-prepend-error-summary="false">
     <govuk-error-summary show-if="!Model.ModelState.IsValid">
         <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText"/>
