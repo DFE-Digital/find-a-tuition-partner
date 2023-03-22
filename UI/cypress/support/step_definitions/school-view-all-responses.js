@@ -6,22 +6,53 @@ import {
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
-let refrenceNumber;
+let firstStatementUrl;
 Given(
   "a school clicks the magic link to respond to a view all responses",
   () => {
-    cy.visit(
-      "https://localhost:7036/enquiry/respond/response-confirmation?SupportReferenceNumber=SJ4798&EnquirerMagicLink=FmeOs4T1Y9uTU0Q8rR3Qo9xDopWyHBBD5GKuukQHsUoevwBuM3ftXccCD22NBmdLITdbrgKl84xRd%2FOCFvcRReP0w3Nv%2BKVrsehSIboFCk4f%2FVYPMLNbPxTij7fnvEkED7mce6UnnPga%2FfEYNbLyMQ%3D%3D"
+    cy.visit("/");
+    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which key stages' page");
+    Step(this, "they will see all the keys stages as options");
+    Step(this, "they select 'Key stage 1, Key stage 2'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which subjects' page");
+    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+    Step(
+      this,
+      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Search Results' page");
+    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Continue' button");
+    Step(this, "they enter a valid email address");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for tuition plan");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for SEND requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for other requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they select terms and conditions");
+    Step(this, "they click send enquiry");
+
     cy.get(".govuk-panel__body > strong")
       .invoke("text")
-      .then((text) => (refrenceNumber = text));
-    cy.get(":nth-child(12) > a").click();
+      .then((text) => (referenceNumber = text));
+    cy.get(":nth-child(8) > a").click();
+    cy.url().then((url) => {
+      firstStatementUrl = url;
+    });
   }
 );
 
-And("the enquiry response page contains the same reference number", () => {
-  cy.get(".govuk-caption-l").should("contain.text", refrenceNumber);
+Given("A user has arrived on the view all responses page", () => {
+  cy.visit(firstStatementUrl);
 });
 
 And("there is text {string}", (text) => {
@@ -87,9 +118,24 @@ Then(
     dataTable.hashes().forEach((column) => {
       switch (column["Column"]) {
         case "Date":
-          cy.get(
-            ".govuk-table__body > .govuk-table__row > :nth-child(1)"
-          ).should("contain.text", column["Value"]);
+          const currentDate = new Date();
+          const currentDay = currentDate.getDate();
+          const currentMonth = currentDate.getMonth() + 1; // Month is zero-indexed, so add 1
+          const currentYear = currentDate.getFullYear();
+          // Get the date value from the table
+          cy.get(".govuk-table__body > .govuk-table__row > :nth-child(1)").then(
+            ($cell) => {
+              const tableDate = $cell.text();
+              // Extract the day, month, and year values from the table date
+              const tableDay = parseInt(tableDate.split("/")[0], 10);
+              const tableMonth = parseInt(tableDate.split("/")[1], 10);
+              const tableYear = parseInt(tableDate.split("/")[2], 10);
+              // Assert that the table date matches the current date
+              expect(tableDay).to.equal(currentDay);
+              expect(tableMonth).to.equal(currentMonth);
+              expect(tableYear).to.equal(currentYear);
+            }
+          );
           break;
         case "Tuition Partner":
           cy.get(
