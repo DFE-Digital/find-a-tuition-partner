@@ -40,7 +40,9 @@ Then("they click {string} button", (buttonText) => {
 });
 
 Then("they enter a valid email address", () => {
-  cy.get("#Data_Email").clear().type("simulate-delivered@notifications.service.gov.uk");
+  cy.get("#Data_Email")
+    .clear()
+    .type("simulate-delivered@notifications.service.gov.uk");
 });
 
 let refNumOne;

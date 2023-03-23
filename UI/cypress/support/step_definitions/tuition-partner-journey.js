@@ -40,14 +40,14 @@ Given("An enquiry has been submitted", async () => {
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
 
-    cy.get('main').then(($el) => {
+    cy.get("main").then(($el) => {
       enquiry = {
-        enquirerHref: $el.find('a:contains("Enquirer link")').attr('href'),
-        tpHrefs: []
+        enquirerHref: $el.find('a:contains("Enquirer link")').attr("href"),
+        tpHrefs: [],
       };
 
       $el.find('a:contains("Response link")').each((i, responseEl) => {
-        enquiry.tpHrefs.push(responseEl.getAttribute('href'));
+        enquiry.tpHrefs.push(responseEl.getAttribute("href"));
       });
     });
   }
@@ -59,7 +59,7 @@ Given(
     Step(this, "An enquiry has been submitted");
     cy.then(() => {
       cy.visit(enquiry.tpHrefs.shift());
-    })
+    });
   }
 );
 
@@ -93,14 +93,14 @@ Given("An enquiry with no optional info has been submitted", async () => {
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
 
-    cy.get('main').then(($el) => {
+    cy.get("main").then(($el) => {
       enquiryNoInfo = {
-        enquirerHref: $el.find('a:contains("Enquirer link")').attr('href'),
-        tpHrefs: []
+        enquirerHref: $el.find('a:contains("Enquirer link")').attr("href"),
+        tpHrefs: [],
       };
 
       $el.find('a:contains("Response link")').each((i, responseEl) => {
-        enquiryNoInfo.tpHrefs.push(responseEl.getAttribute('href'));
+        enquiryNoInfo.tpHrefs.push(responseEl.getAttribute("href"));
       });
     });
   }
@@ -112,7 +112,7 @@ Given(
     Step(this, "An enquiry with no optional info has been submitted");
     cy.then(() => {
       cy.visit(enquiryNoInfo.tpHrefs.shift());
-    })
+    });
   }
 );
 
