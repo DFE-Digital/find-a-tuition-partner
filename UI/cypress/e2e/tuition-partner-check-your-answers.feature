@@ -9,16 +9,14 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Back button redirects to the enquiry response page
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When they click 'Back'
         Then the user has arrived on the tuition response page
 
     Scenario: Verify Check Your Answers page content
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         Then the Tuition Partner Check Your Answers page displays the following:
@@ -32,8 +30,7 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Change selections for Key Stages and Subjects on TP response
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '1'
@@ -50,8 +47,7 @@ Feature: Check your answers page for tuition partner response
             | Other school considerations:                                                          | 80               |
 
     Scenario: Change selections for Tuition type on TP response
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '2'
@@ -69,8 +65,7 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Change selections for Tuition plan on TP response
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '3'
@@ -88,8 +83,7 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Change selections for SEND Requirements on TP response
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '4'
@@ -108,8 +102,7 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Change selections for Other school considerations on TP response
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '5'
@@ -127,8 +120,7 @@ Feature: Check your answers page for tuition partner response
 
 
     Scenario: Cancelling change selections for Key Stages and Subjects on TP response by clicking back
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When the user clicks the change button '1'
@@ -144,8 +136,7 @@ Feature: Check your answers page for tuition partner response
             | Other school considerations:                                                          | 80               |
 
     Scenario: Clicking the contact us link and going back redirects back to the check your answers page
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When they click the contact us link
@@ -154,8 +145,7 @@ Feature: Check your answers page for tuition partner response
         Then the user has arrived on the tuition response check your answers page
 
     Scenario: Submitting a successful response shows the confirmation page correctly
-        Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        Given a tuition partner has arrived on respond to an enquiry page
         Then Tuition partner has journeyed to the check your answers page
         When  the user has arrived on the tuition response check your answers page
         And they click 'Submit'

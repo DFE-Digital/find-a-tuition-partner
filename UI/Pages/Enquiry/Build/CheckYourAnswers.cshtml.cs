@@ -1,6 +1,8 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace UI.Pages.Enquiry.Build;
 
@@ -9,12 +11,14 @@ public class CheckYourAnswers : PageModel
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly FeatureFlags _featureFlagsConfig;
 
-    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment)
+    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment, IOptions<FeatureFlags> featureFlagsConfig)
     {
         _mediator = mediator;
         _sessionService = sessionService;
         _hostEnvironment = hostEnvironment;
+        _featureFlagsConfig = featureFlagsConfig.Value;
     }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
@@ -57,6 +61,9 @@ public class CheckYourAnswers : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        if (!_featureFlagsConfig.EnquiryBuilder)
+            throw new InvalidOperationException("User is trying to submit an enquiry when the feature is disabled");
+
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
@@ -76,6 +83,28 @@ public class CheckYourAnswers : PageModel
         };
 
         var submittedConfirmationModel = await _mediator.Send(command);
+
+        var enquirerEmailSentStatus = submittedConfirmationModel.EnquirerEmailSentStatus;
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
+        {
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
+            {
+                Data.From = ReferrerList.CheckYourAnswers;
+
+                var errorMessage =
+                    $"There was a problem sending the email and you should check the email address and try again";
+
+                await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, errorMessage);
+
+                return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
+            }
+
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
+            {
+                return RedirectToPage(nameof(ErrorModel));
+            }
+        }
 
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
@@ -103,19 +132,19 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
-            case var k when k.Contains(StringConstants.EnquirerEmail):
+            case var k when k.Equals(StringConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
                 Data.Email = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
+            case var k when k.Equals(StringConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 Data.TutoringLogistics = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquirySENDRequirements):
+            case var k when k.Equals(StringConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
                 Data.SENDRequirements = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):
+            case var k when k.Equals(StringConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 Data.AdditionalInformation = value;
                 break;
         }

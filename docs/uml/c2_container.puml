@@ -7,21 +7,28 @@
 !include DEVICONS/dotnet.puml
 !include DEVICONS/postgresql.puml
 !include DEVICONS/google_analytics.puml
+!include DEVICONS/redis.puml
 !include FONTAWESOME/file_text.puml
 !include FONTAWESOME_5/users.puml
 !include FONTAWESOME_5/cloud.puml
 !include FONTAWESOME_5/map_marked.puml
 !include FONTAWESOME_5/file_excel.puml
 !include FONTAWESOME_5/database.puml
+!include FONTAWESOME_5/google_drive.puml
+!include FONTAWESOME_5/envelope.puml
 
 Person(schoolStaff, "School Staff", "Member of the school team that has identified a set of pupils with tutoring needs", $sprite="users")
 
-Person_Ext(tuitionPartners, "Tuition Partners", "Companies that can supply tutors to schools", $sprite="users")
-System(tpQaProcess, "Tuition Partner QA Process", "Currently performed by delivery team, will be performed by external Tuition Partner QA", $sprite="file_excel")
+Person_Ext(tpQa, "Tuition Partner Quality Assurance", "Accreditation partner confirming Tuition Partners meet the requirements to be listed on the service", $sprite="users")
+
+Person_Ext(tuitionPartner, "Tuition Partner", "Companies that can supply tutors to schools", $sprite="users")
+ 
+Container(googleDrive, "Google Drive", "TP Data spreadsheets and logos stored within a folder", $sprite="google_drive")
 
 System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Service") {
     Container(app, "Web Application", "C#, ASP.NET Core 6.0 Razor Pages", "Search for quality assured Tuition Partners that offer services in a specified location", $sprite="dotnet")
     ContainerDb(db, "Database", "PostgreSQL", "Holds Tuition Partner service coverage and ONS location data", $sprite="postgresql")
+    ContainerDb(cache, "Session Cache", "Redis", "Temporary session storage. Primarily to hold un-submitted enquiries and responses.", $sprite="redis")
     Container(dataImporter, "Data Importer", "C#, .NET 6.0 console app", "Decrypts and imports Tuition Partner data files. Run as Cloud Foundry task", $sprite="dotnet")
 }
 
@@ -29,16 +36,22 @@ System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="f
 System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
 System_Ext(postcodesIo, "postcodes.io", "Maps postcode to Local Authority District code", $sprite="map_marked")
 System_Ext(bigQuery, "Google BigQuery", "Stores web request data for analytics", $sprite="database")
+System_Ext(notify, "GOV.UK Notify", "Send OTPs and other notifications to the user", $sprite="envelope")
 
-Rel_Down(schoolStaff, app, "Uses", "HTTPS")
-Rel_Down(tuitionPartners, tpQaProcess, "Suplies data directly to delivery team", "Excel")
-Rel_Down(tpQaProcess, dataImporter, "Tuition Partner data in Excel format", "Encrypted via AES")
-Rel_Right(app, db, "Reads")
+Rel(schoolStaff, app, "Uses", "REST API")
+Rel(tuitionPartner, app, "Responds to enquiries", "REST API")
+Rel(tpQa, googleDrive, "Supplies data via delivery team", "Excel")
+Rel_Up(dataImporter, googleDrive, "Read tuition Partner data in Excel format", "REST API")
+Rel_Right(app, db, "Read TP Data\nRead/Write Enquiry")
+Rel_Left(app, cache, "Store Session")
 Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
-Rel_Down(app, logitIo, "TCP Sink", "TLS")
-Rel_Down(app, googleAnalytics, "JavaScript", "HTTPS")
-Rel_Down(app, postcodesIo, "REST API", "HTTPS")
-Rel_Down(app, bigQuery, "REST API", "HTTPS")
+Rel_Down(app, logitIo, "Send log events", "TCP Sink")
+Rel_Down(app, googleAnalytics, "Send analytics events", "REST API")
+Rel_Down(app, postcodesIo, "Query postcode data", "REST API")
+Rel_Down(app, bigQuery, "Send analytics events", "REST API")
+Rel(app, notify, "Trigger notifications", "REST API")
+Rel(notify, schoolStaff, "Enquiry responses", "Email")
+Rel(notify, tuitionPartner, "Enquiries", "Email")
 
 SHOW_LEGEND()
 @enduml

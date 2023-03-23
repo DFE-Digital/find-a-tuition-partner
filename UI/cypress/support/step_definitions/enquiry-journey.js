@@ -215,14 +215,14 @@ Then("the text by the second and third questions is {string}", (text) => {
 Then(
   "the warning should be displayed showing they have {string} characters left",
   (numOfCharsLeft) => {
-    const expectedText = `You have ${numOfCharsLeft.replace(
-      ",",
-      ""
-    )} characters remaining`;
-    cy.get(".govuk-character-count__status").should(
-      "contain.text",
-      expectedText
-    );
+    const expectedText = `You have ${numOfCharsLeft} characters remaining`;
+
+    cy.get(".govuk-character-count__status")
+      .invoke("text")
+      .should((text) => {
+        const cleanText = text.replace(/,\s*/g, "");
+        expect(cleanText).to.contain(expectedText);
+      });
   }
 );
 

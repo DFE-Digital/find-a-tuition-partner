@@ -13,4 +13,14 @@ public static class IntExtensions
             _ => TuitionType.Any.DisplayName()
         };
     }
+
+    public static bool Is4xxError(this int statusCode)
+    {
+        return statusCode >= 400 && statusCode < 500;
+    }
+
+    public static bool Is5xxError(this int statusCode)
+    {
+        return statusCode >= 500 && statusCode < 600;
+    }
 }

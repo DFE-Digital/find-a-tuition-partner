@@ -32,3 +32,4 @@ applications:
     EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
     AesEncryption:Key: ((magiclink-aes-encryption-key))
     AesEncryption:IV: ((magiclink-aes-encryption-iv))
+    FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))
