@@ -30,7 +30,7 @@ public class CompareList : PageModel
 
         Data = await _mediator.Send(data);
 
-        HttpContext.AddLadNameToAnalytics(Data.Results);
+        HttpContext.AddLadNameToAnalytics<CompareList>(Data.Results);
 
         return Page();
     }

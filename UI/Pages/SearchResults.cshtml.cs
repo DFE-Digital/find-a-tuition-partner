@@ -78,7 +78,7 @@ public class SearchResults : PageModel
 
         await SetSelectableTuitionPartners();
 
-        HttpContext.AddLadNameToAnalytics(Data.Results);
+        HttpContext.AddLadNameToAnalytics<SearchResults>(Data.Results);
 
         return Page();
     }

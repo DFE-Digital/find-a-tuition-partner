@@ -66,5 +66,5 @@
         public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
 
         public const string EnquirySupportReferenceNumber = "EnquirySupportReferenceNumber";
-  }
+    }
 }

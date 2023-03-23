@@ -42,9 +42,9 @@ public class CheckYourAnswers : PageModel
             {
                 Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
             }
-            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
         }
 
         var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
@@ -90,9 +90,9 @@ public class CheckYourAnswers : PageModel
                 submittedConfirmationModel.EnquirerMagicLink = string.Empty;
             }
 
-            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
 
             return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
         }

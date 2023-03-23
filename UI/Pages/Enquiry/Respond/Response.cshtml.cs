@@ -89,9 +89,9 @@ namespace UI.Pages.Enquiry.Respond
                     Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
                     Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
 
-                    HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
-                    HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
-                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
+                    HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
+                    HttpContext.AddTuitionPartnerNameToAnalytics<Response>(Data.TuitionPartnerName);
+                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
                 }
             }
 

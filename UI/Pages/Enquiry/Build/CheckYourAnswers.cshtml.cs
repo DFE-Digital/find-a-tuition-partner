@@ -52,7 +52,7 @@ public class CheckYourAnswers : PageModel
         {
             var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
             Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
-            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName);
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
         }
 
         ModelState.Clear();
@@ -124,11 +124,11 @@ public class CheckYourAnswers : PageModel
                 submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
             }
 
-            HttpContext.AddHasSENDQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
-            HttpContext.AddHasAdditionalInformationQuestionToAnalytics((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
-            HttpContext.AddTuitionPartnerNameCsvAnalytics(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
-            HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrictName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics(submittedConfirmationModel.SupportReferenceNumber);
+            HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
+            HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
+            HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
 
             return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }

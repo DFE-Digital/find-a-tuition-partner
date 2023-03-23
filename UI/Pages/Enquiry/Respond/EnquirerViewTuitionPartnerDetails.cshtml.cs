@@ -45,9 +45,9 @@ namespace UI.Pages.Enquiry.Respond
                 if (data != null)
                 {
                     Data = data with { EnquirerViewResponseToken = _queryToken };
-                    HttpContext.AddLadNameToAnalytics(Data.LocalAuthorityDistrict);
-                    HttpContext.AddTuitionPartnerNameToAnalytics(Data.TuitionPartnerName);
-                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics(Data.SupportReferenceNumber);
+                    HttpContext.AddLadNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.LocalAuthorityDistrict);
+                    HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.TuitionPartnerName);
+                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.SupportReferenceNumber);
                 }
             }
             catch

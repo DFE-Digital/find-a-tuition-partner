@@ -5,50 +5,45 @@ namespace UI.Extensions
 {
     public static class HttpContextExtensions
     {
-        public static void AddLadNameToAnalytics(this HttpContext httpContext, TuitionPartnersResult? result)
+        public static void AddLadNameToAnalytics<T>(this HttpContext httpContext, TuitionPartnersResult? result)
         {
             if (result != null)
             {
-                httpContext.AddLadNameToAnalytics(result.LocalAuthorityDistrictName);
+                httpContext.AddLadNameToAnalytics<T>(result.LocalAuthorityDistrictName);
             }
         }
 
-        public static void AddLadNameToAnalytics(this HttpContext httpContext, string? localAuthorityDistrictName)
+        public static void AddLadNameToAnalytics<T>(this HttpContext httpContext, string? localAuthorityDistrictName)
         {
-            httpContext.AddToAnalytics("LocalAuthorityDistrictName", localAuthorityDistrictName, null);
+            httpContext.AddToAnalytics<T>("LocalAuthorityDistrictName", localAuthorityDistrictName);
         }
 
-        public static void AddLadNameToAnalytics(this HttpContext httpContext, string? localAuthorityDistrictName, ILogger? logger)
+        public static void AddTuitionPartnerNameToAnalytics<T>(this HttpContext httpContext, string? tuitionPartnerName)
         {
-            httpContext.AddToAnalytics("LocalAuthorityDistrictName", localAuthorityDistrictName, logger);
+            httpContext.AddToAnalytics<T>("TuitionPartnerName", tuitionPartnerName);
         }
 
-        public static void AddTuitionPartnerNameToAnalytics(this HttpContext httpContext, string? tuitionPartnerName)
+        public static void AddEnquirySupportReferenceNumberToAnalytics<T>(this HttpContext httpContext, string? enquirySupportReferenceNumber)
         {
-            httpContext.AddToAnalytics("TuitionPartnerName", tuitionPartnerName, null);
+            httpContext.AddToAnalytics<T>("EnquirySupportReferenceNumber", enquirySupportReferenceNumber);
         }
 
-        public static void AddEnquirySupportReferenceNumberToAnalytics(this HttpContext httpContext, string? enquirySupportReferenceNumber)
+        public static void AddHasSENDQuestionToAnalytics<T>(this HttpContext httpContext, string? hasSENDQuestion)
         {
-            httpContext.AddToAnalytics("EnquirySupportReferenceNumber", enquirySupportReferenceNumber, null);
+            httpContext.AddToAnalytics<T>("HasSENDQuestion", hasSENDQuestion);
         }
 
-        public static void AddHasSENDQuestionToAnalytics(this HttpContext httpContext, string? hasSENDQuestion)
+        public static void AddHasAdditionalInformationQuestionToAnalytics<T>(this HttpContext httpContext, string? hasAdditionalInformationQuestion)
         {
-            httpContext.AddToAnalytics("HasSENDQuestion", hasSENDQuestion, null);
+            httpContext.AddToAnalytics<T>("HasAdditionalInformationQuestion", hasAdditionalInformationQuestion);
         }
 
-        public static void AddHasAdditionalInformationQuestionToAnalytics(this HttpContext httpContext, string? hasAdditionalInformationQuestion)
+        public static void AddTuitionPartnerNameCsvAnalytics<T>(this HttpContext httpContext, string? tuitionPartnerNameCsv)
         {
-            httpContext.AddToAnalytics("HasAdditionalInformationQuestion", hasAdditionalInformationQuestion, null);
+            httpContext.AddToAnalytics<T>("TuitionPartnerNameCsv", tuitionPartnerNameCsv);
         }
 
-        public static void AddTuitionPartnerNameCsvAnalytics(this HttpContext httpContext, string? tuitionPartnerNameCsv)
-        {
-            httpContext.AddToAnalytics("TuitionPartnerNameCsv", tuitionPartnerNameCsv, null);
-        }
-
-        private static void AddToAnalytics(this HttpContext httpContext, string? key, string? value, ILogger? logger)
+        private static void AddToAnalytics<T>(this HttpContext httpContext, string? key, string? value)
         {
             if (httpContext != null && !string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))
             {
@@ -58,7 +53,9 @@ namespace UI.Extensions
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError("Error adding data to DfE Analytics", ex);
+                    var Logger = GetStaticLogger<T>();
+
+                    Logger?.LogError("Error adding data to DfE Analytics", ex);
                 }
             }
         }
