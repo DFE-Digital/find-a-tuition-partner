@@ -1,6 +1,6 @@
 Feature: Search By Type of Tuition Page
 
- Scenario: Clicking continue from subjects navigates to type of tuition
+  Scenario: Clicking continue from subjects navigates to type of tuition
     Given a user has arrived on the 'Which subjects' page for 'Key stage 3, Key stage 4'
     And they select subjects for the key stages
     When they click 'Continue'

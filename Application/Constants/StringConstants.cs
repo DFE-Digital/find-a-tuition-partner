@@ -57,6 +57,14 @@
 
         public const string EnquiryResponseToken = "EnquiryResponseToken";
 
+        public const string EnquirerEmailSentStatus4xxErrorValue = "4xxError";
+
+        public const string EnquirerEmailSentStatus5xxErrorValue = "5xxError";
+
+        public const string EnquirerEmailSentStatusDeliveredValue = "delivered";
+
+        public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
+
         public const string EnquirySupportReferenceNumber = "EnquirySupportReferenceNumber";
-    }
+  }
 }

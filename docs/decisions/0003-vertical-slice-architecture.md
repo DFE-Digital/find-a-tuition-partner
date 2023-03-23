@@ -1,6 +1,6 @@
 ---
 # These are optional elements. Feel free to remove any of them.
-status: proposed 
+status: rejected
 date: 2022-06-22
 deciders: NTP developers
 ---
@@ -45,5 +45,13 @@ Chosen option: "organise code in vertical slices", because it promotes encapsula
 ## More Information
 
 https://jimmybogard.com/vertical-slice-architecture/
+
+### Reason for rejection
+
+In a development team meeting on 16th Feb 2023, it was decided that we would continue with the clean architecture approach:
+
+* Most of the codebase is already using a clean architecture approach
+* The development team are more familiar with a clean architectural approach
+* The limited lifespan of the service means that long term supportability is less of an issue
 
 <!-- markdownlint-disable-file MD013 -->

@@ -1,5 +1,7 @@
 using Application.Common.Models;
 using Application.Validators;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 using TuitionType = Domain.Enums.TuitionType;
 
 namespace UI.Pages;
@@ -7,13 +9,20 @@ namespace UI.Pages;
 public class SearchResults : PageModel
 {
     private readonly IMediator _mediator;
-    public SearchResults(IMediator mediator) => _mediator = mediator;
+    private readonly FeatureFlags _featureFlagsConfig;
+    public SearchResults(IMediator mediator, IOptions<FeatureFlags> featureFlagsConfig)
+    {
+        _mediator = mediator;
+        _featureFlagsConfig = featureFlagsConfig.Value;
+    }
 
     public SearchResultsModel Data { get; set; } = new();
     [BindProperty(SupportsGet = true)] public List<string> CompareListedTuitionPartners { get; set; } = new();
     public List<SelectableTuitionPartnerModel> SelectableTuitionPartners { get; set; } = new();
     public int TotalCompareListedTuitionPartners { get; set; }
     [BindProperty(SupportsGet = true)] public string? UpdateMyCompareList { get; set; }
+
+    public bool IncludeEnquiryBuilder { get; set; } = true;
 
     // Name keys : Tps => TuitionPartners,Tp => TuitionPartner
 
@@ -34,6 +43,8 @@ public class SearchResults : PageModel
 
     private async Task<IActionResult> CommonOnGetPostLogic(GetSearchResultsQuery data)
     {
+        IncludeEnquiryBuilder = _featureFlagsConfig.EnquiryBuilder;
+
         data.TuitionType ??= TuitionType.Any;
         data.KeyStages = data.KeyStages.UpdateFromSubjects(data.Subjects);
 

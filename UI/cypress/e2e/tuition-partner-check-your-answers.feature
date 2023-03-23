@@ -29,8 +29,6 @@ Feature: Check your answers page for tuition partner response
             | SEND requirements:                                                                    | 80               |
             | Other school considerations:                                                          | 80               |
 
-
-
     Scenario: Change selections for Key Stages and Subjects on TP response
         Given a user has started the 'Find a tuition partner' journey
         When a tuition partner clicks the magic link to respond to a schools enquiry

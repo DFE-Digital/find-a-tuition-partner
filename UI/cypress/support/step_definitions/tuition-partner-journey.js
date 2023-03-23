@@ -38,7 +38,41 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
+    cy.get("p a").eq(2).click();
+  }
+);
+
+Given(
+  "a tuition partner clicks a magic link with no info for optional inputs",
+  () => {
+    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which key stages' page");
+    Step(this, "they will see all the keys stages as options");
+    Step(this, "they select 'Key stage 1, Key stage 2'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which subjects' page");
+    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+    Step(
+      this,
+      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
+    );
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Search Results' page");
+    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Continue' button");
+    Step(this, "they enter a valid email address");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for tuition plan");
+    Step(this, "they click 'Continue'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they select terms and conditions");
+    Step(this, "they click send enquiry");
+    cy.get("p a").eq(2).click();
   }
 );
 
@@ -89,21 +123,6 @@ Then("the key stages and subjects should match the request:", (dataTable) => {
 });
 
 Then(
-  "the key stages and subjects should match the new request:",
-  (dataTable) => {
-    dataTable.hashes().forEach((row) => {
-      switch (row["Section Name"]) {
-        case "Key stages and subjects":
-          cy.checkTextContent(
-            ".govuk-grid-column-two-thirds-from-desktop > .govuk-list > :nth-child(1)",
-            "Key stage 4: Science"
-          );
-      }
-    });
-  }
-);
-
-Then(
   "the second response section is to be {string} with Type {string}",
   (header, text) => {
     cy.contains(":nth-child(6) > span", header);
@@ -146,11 +165,6 @@ Then(
   }
 );
 
-function typeCharactersInSection(sectionId, numOfChars) {
-  const totalText = "a".repeat(numOfChars);
-  cy.get(sectionId).clear().invoke("val", totalText);
-}
-
 Then("they type {string} characters for section 1", (numOfChars) => {
   const totalText = "a".repeat(numOfChars);
   cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", totalText);
@@ -182,15 +196,6 @@ Then("the error message shows {string}", (errorText) => {
     errorText
   );
 });
-
-Given(
-  "a tuition partner clicks a magic link with no info for optional inputs",
-  () => {
-    cy.visit(
-      "https://localhost:7036/enquiry/respond/response?token=YbyXWr3a39wY7Ah7atZ0%2BlGuYsqx21KDv6E4%2BMhPpnFqg2LchHfmOUh%2BkQRNlYzN20cNUQHH5iSbQJ2qGC2f1bRvD9uyxwuQVuPHjnf7Rcu4UuGjI6htRPzT9wPWFcrMGa0HpbTt0V/SIZOpoq7mqbGBMre%2B0w8jy1diHTCJcxflLLi7RhPHrEMOldP08rFx"
-    );
-  }
-);
 
 Then(
   "the check your answers page does not include SEND and Other considerations",

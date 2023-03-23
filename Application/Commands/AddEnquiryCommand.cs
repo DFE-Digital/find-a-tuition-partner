@@ -1,7 +1,9 @@
+using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Application.Constants;
 using Application.Extensions;
 using Domain;
 using Domain.Enums;
@@ -34,7 +36,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IEncrypt aesEncryption,
         INotificationsClientService notificationsClientService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger)
+        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger,
+        ISessionService sessionService)
     {
         _unitOfWork = unitOfWork;
         _aesEncryption = aesEncryption;
@@ -51,7 +54,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         //  Expected errors - no TPs, enquirer email failed with 400 to Gov Notify - where return result below
         //  Unexpected errors - database issues etc
         //  Errors to TP emails - log error, but don't show error to enquirer?
-        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0) return result;
+        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null ||
+            request.Data.TuitionPartnersForEnquiry.Count == 0) return result;
 
         var tuitionPartnerEnquiry = request.Data.TuitionPartnersForEnquiry.Results.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry() { TuitionPartnerId = selectedTuitionPartner.Id }).ToList();
@@ -61,10 +65,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var getEnquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(request,
             request.Data!.TuitionPartnersForEnquiry!.Results, enquirerEmailForTestingPurposes);
 
-        var enquiryRequestMagicLinks = getEnquirySubmittedToTpNotificationsRecipients.Select(recipient => new MagicLink()
-        { Token = recipient.Token!, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
+        var enquiryRequestMagicLinks = getEnquirySubmittedToTpNotificationsRecipients.Select(recipient =>
+            new MagicLink()
+            { Token = recipient.Token!, MagicLinkTypeId = (int)MagicLinkType.EnquiryRequest }).ToList();
 
-        var getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient = GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
+        var getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient =
+            GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
 
         var enquirerViewAllResponsesMagicLink = new MagicLink()
         {
@@ -78,7 +84,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var postCode = request.Data.Postcode;
         var localAuthorityDistrictName = request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName;
 
-        var validationResult = ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
+        var validationResult =
+            ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
 
         if (string.IsNullOrEmpty(validationResult))
         {
@@ -103,72 +110,65 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         };
 
         var dataSaved = false;
-        var loop = 0;
 
-        while (!dataSaved && loop < 10)
+        try
         {
-            try
-            {
-                loop++;
+            _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
-                _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
+            dataSaved = await _unitOfWork.Complete();
 
-                dataSaved = await _unitOfWork.Complete();
-
-            }
-            catch (DbUpdateException ex)
-            {
-                if (ex.InnerException != null &&
-                    (ex.InnerException.Message.Contains("duplicate key") ||
-                     ex.InnerException.Message.Contains("unique constraint") ||
-                     ex.InnerException.Message.Contains("violates unique constraint")))
-                {
-                    _logger.LogError("Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}", enquiry.SupportReferenceNumber, ex);
-
-                    enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
-
-                    _logger.LogInformation("Generating new support reference number: {referenceNumber}", enquiry.SupportReferenceNumber);
-
-                    dataSaved = await _unitOfWork.Complete();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-                return result;
-            }
+        }
+        catch (DbUpdateException ex)
+        {
+            dataSaved = await HandleDbUpdateException(ex, enquiry);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
+            return result;
         }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
-        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!);
-        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt, request.Data!.BaseServiceUrl!));
-        try
-        {
-            await _notificationsClientService.SendEmailAsync(
-                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
+        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation
+            .AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
+                request.Data!.BaseServiceUrl!);
+        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+            x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
+                request.Data!.BaseServiceUrl!));
 
+        var enquirerEmailSentStatus = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
+            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
+            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue
+            || enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
+        {
+            result.EnquirerEmailSentStatus = enquirerEmailSentStatus;
+            return result;
+        }
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
+            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatusDeliveredValue)
+        {
             await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
                 EmailTemplateType.EnquirySubmittedToTp, enquiry.SupportReferenceNumber);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
         }
 
         if (dataSaved)
         {
             result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
             result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x => result.TuitionPartnerMagicLinks!.Add(x.OriginalEmail, x.Token!));
+            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+                result.TuitionPartnerMagicLinks!.Add(x.OriginalEmail, x.Token!));
         }
 
         return result;
     }
 
-    private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(AddEnquiryCommand request,
-        IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
+    private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(
+            AddEnquiryCommand request,
+            IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
     {
         return (from recipient in recipients
                 let generateRandomness
@@ -182,25 +182,29 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                     OriginalEmail = recipient.Email,
                     EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
                     Token = token,
-                    Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink, request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
-                    PersonalisationPropertiesToAmalgamate = new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
+                    Personalisation = GetEnquirySubmittedToTpPersonalisation(recipient.Name, formLink,
+                        request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!),
+                    PersonalisationPropertiesToAmalgamate = new List<string>()
+                        { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
                 }).ToList();
     }
 
-    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName, string responseFormLink,
+    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName,
+        string responseFormLink,
         string ladNameKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EnquiryTpNameKey, tpName },
-            { EnquiryResponseFormLinkKey, responseFormLink },
-            { EnquiryLadNameKey, ladNameKey }
-        };
+            {
+                { EnquiryTpNameKey, tpName },
+                { EnquiryResponseFormLinkKey, responseFormLink },
+                { EnquiryLadNameKey, ladNameKey }
+            };
 
         return personalisation;
     }
 
-    private NotificationsRecipientDto GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(AddEnquiryCommand request)
+    private NotificationsRecipientDto GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(
+        AddEnquiryCommand request)
     {
         var generateRandomness
             = _aesEncryption.GenerateRandomToken();
@@ -214,19 +218,22 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Token = token,
-            Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)
+            Personalisation =
+                GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
+                    request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), pageLink)
         };
         return result;
     }
 
-    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(int numberOfTpsContacted,
+    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
+        int numberOfTpsContacted,
         string enquirerViewAllResponsesPageLink)
     {
         var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
-        };
+            {
+                { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
+                { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
+            };
 
         return personalisation;
     }
@@ -242,7 +249,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         };
     }
 
-    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(IEnumerable<KeyStageSubject> keyStageSubjects)
+    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
+        IEnumerable<KeyStageSubject> keyStageSubjects)
     {
         var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
 
@@ -258,7 +266,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return keyStageSubjectEnquiry;
     }
 
-    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode, string? localAuthorityDistrictName)
+    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode,
+        string? localAuthorityDistrictName)
     {
         var result = "Valid";
 
@@ -276,8 +285,86 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         if (string.IsNullOrEmpty(localAuthorityDistrictName))
         {
-            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.", nameof(AddEnquiryCommand));
+            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.",
+                nameof(AddEnquiryCommand));
             return string.Empty;
+        }
+
+        return result;
+    }
+
+    private async Task<bool> HandleDbUpdateException(DbUpdateException ex, Enquiry enquiry)
+    {
+        var dataSaved = false;
+
+        while (!dataSaved)
+        {
+            if (ex.InnerException != null &&
+                (ex.InnerException.Message.Contains("duplicate key") ||
+                 ex.InnerException.Message.Contains("unique constraint") ||
+                 ex.InnerException.Message.Contains("violates unique constraint")))
+            {
+                _logger.LogError(
+                    "Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}",
+                    enquiry.SupportReferenceNumber, ex);
+
+                enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+
+                _logger.LogInformation("Generating new support reference number: {referenceNumber}",
+                    enquiry.SupportReferenceNumber);
+
+                dataSaved = await _unitOfWork.Complete();
+            }
+            else
+            {
+                // Handle unique constraint violation error; otherwise, exit from the while loop.
+                dataSaved = true;
+
+                _logger.LogError("A DbUpdateException error occurred while adding an enquiry. Error: {ex}", ex);
+            }
+        }
+
+        return dataSaved;
+    }
+
+    private async Task<string> TrySendEnquirySubmittedConfirmationToEnquirerEmail(Enquiry enquiry,
+        NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient)
+    {
+        var result = string.Empty;
+        try
+        {
+            var enquirerEmailSent = false;
+
+            while (!enquirerEmailSent)
+            {
+                (var emailSent, HttpStatusCode status) = await _notificationsClientService.SendEmailAsync(
+                    getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
+                    EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
+
+                if (emailSent && status == HttpStatusCode.OK)
+                {
+                    enquirerEmailSent = true;
+                    result = StringConstants.EnquirerEmailSentStatusDeliveredValue;
+                }
+
+                if (!emailSent && status == HttpStatusCode.BadRequest)
+                {
+                    _unitOfWork.EnquiryRepository.Remove(enquiry);
+                    await _unitOfWork.Complete();
+                    return StringConstants.EnquirerEmailSentStatus4xxErrorValue;
+                }
+
+                if (!emailSent && status == HttpStatusCode.InternalServerError)
+                {
+                    _unitOfWork.EnquiryRepository.Remove(enquiry);
+                    await _unitOfWork.Complete();
+                    return StringConstants.EnquirerEmailSentStatus5xxErrorValue;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
         }
 
         return result;

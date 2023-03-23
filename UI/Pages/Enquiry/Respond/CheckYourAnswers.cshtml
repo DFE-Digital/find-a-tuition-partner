@@ -121,7 +121,7 @@
         </dl>
         <form method="post">
           <input type="hidden" name="answers-checked" value="true">
-          <button class="govuk-button" data-module="govuk-button">
+          <button data-prevent-double-click="true" class="govuk-button" data-module="govuk-button">
             Submit
           </button>
           <input asp-for="Data.KeyStageAndSubjectsText" type="hidden"/>

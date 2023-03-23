@@ -77,4 +77,17 @@ public static class StringExtensions
                 select $"{key}: {valueString}").ToList();
     }
 
+    public static int GetGovNotifyStatusCodeFromExceptionMessage(this string errorMessage)
+    {
+        var regex = new Regex(@"Status code (\d+)");
+        var match = regex.Match(errorMessage);
+
+        if (match.Success)
+        {
+            return int.Parse(match.Groups[1].Value);
+        }
+
+        return -1; // Return an invalid status code if no match is found
+    }
+
 }
