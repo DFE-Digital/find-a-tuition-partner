@@ -1,5 +1,4 @@
-Feature: View all responses page
-
+Feature: View all responses page and Tuition partner contact page
 
     Scenario: Submitting a successful response shows the confirmation page correctly
         Given a user has started the 'Find a tuition partner' journey
@@ -13,7 +12,7 @@ Feature: View all responses page
 
 
     Scenario: View all responses page to have the expected structure
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         When the user has arrived on the view all enquiry responses page
         Then the heading of the page is 'View responses to your tuition enquiry'
         And there is text 'Your tuition requirements'
@@ -31,7 +30,7 @@ Feature: View all responses page
 
 
     Scenario: A tuition partners name and response date is shown on view all responses page
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         Then The tuition partner responses are shown at the bottom of the page as follows:
             | Column          | Value                            |
             | Date            |                                  |
@@ -39,12 +38,12 @@ Feature: View all responses page
             | Their Response  | View response from Sherpa Online |
 
     Scenario: Clicking on a Tuition Partners Response redirects to their response page
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         And they click View response from a tuition partner
         Then the tuition partners response page is shown
 
     Scenario: Tuiton Partners Response Page has the expected structure
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         And they click View response from a tuition partner
         When they click all the view your tuition requirement links the text shows
         Then the response page has the following information:
@@ -58,7 +57,7 @@ Feature: View all responses page
 
 
     Scenario: Contact us page has the expected content structure
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         And they click View response from a tuition partner
         And they click contact tuition partner
         Then the user has arrived on the contact tuition partner page
@@ -70,7 +69,7 @@ Feature: View all responses page
             | contact number: | 01628 337 590            |
 
     Scenario: Clicking back redirects to tuition partner's response page
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         And they click View response from a tuition partner
         And they click contact tuition partner
         Then the user has arrived on the contact tuition partner page
@@ -78,7 +77,7 @@ Feature: View all responses page
         Then the tuition partners response page is shown
 
     Scenario: Clicking return to enquiry list returns to all enquiries page
-        Given A school has arrived on view all responses page with a response
+        Given a school views a tuition partners response
         And they click View response from a tuition partner
         And they click contact tuition partner
         Then the user has arrived on the contact tuition partner page

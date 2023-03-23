@@ -84,6 +84,28 @@ public class CheckYourAnswers : PageModel
 
         var submittedConfirmationModel = await _mediator.Send(command);
 
+        var enquirerEmailSentStatus = submittedConfirmationModel.EnquirerEmailSentStatus;
+
+        if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
+        {
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
+            {
+                Data.From = ReferrerList.CheckYourAnswers;
+
+                var errorMessage =
+                    $"There was a problem sending the email and you should check the email address and try again";
+
+                await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, errorMessage);
+
+                return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
+            }
+
+            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
+            {
+                return RedirectToPage(nameof(ErrorModel));
+            }
+        }
+
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
             await _sessionService.DeleteDataAsync();
@@ -110,19 +132,19 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
-            case var k when k.Contains(StringConstants.EnquirerEmail):
+            case var k when k.Equals(StringConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
                 Data.Email = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquiryTutoringLogistics):
+            case var k when k.Equals(StringConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 Data.TutoringLogistics = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquirySENDRequirements):
+            case var k when k.Equals(StringConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
                 Data.SENDRequirements = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquiryAdditionalInformation):
+            case var k when k.Equals(StringConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 Data.AdditionalInformation = value;
                 break;
         }
