@@ -8,8 +8,6 @@ public class EnquirerEmail : PageModel
 {
     private readonly ISessionService _sessionService;
 
-    private ILogger Logger => GetStaticLogger<EnquirerEmail>();
-
     public EnquirerEmail(ISessionService sessionService)
     {
         _sessionService = sessionService;
@@ -28,7 +26,6 @@ public class EnquirerEmail : PageModel
 
         if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            Logger.LogInformation(ErrorMessage);
             ModelState.AddModelError("ErrorMessage", ErrorMessage);
             return Page();
         }

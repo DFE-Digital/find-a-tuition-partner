@@ -27,6 +27,8 @@
 
         public const string LocalAuthorityDistrict = "LocalAuthorityDistrict";
 
+        public const string TuitionPartnerName = "TuitionPartnerName";
+
         public const string NotSpecified = "Not specified";
 
         public const string IsRequiredLabel = "This field is required";
@@ -62,5 +64,7 @@
         public const string EnquirerEmailSentStatusDeliveredValue = "delivered";
 
         public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
+
+        public const string EnquirySupportReferenceNumber = "EnquirySupportReferenceNumber";
     }
 }

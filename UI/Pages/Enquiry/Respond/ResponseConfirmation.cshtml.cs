@@ -8,6 +8,7 @@ namespace UI.Pages.Enquiry.Respond
         public void OnGet(SubmittedConfirmationModel data)
         {
             Data = data;
+            HttpContext.AddLadNameToAnalytics<ResponseConfirmation>(Data.LocalAuthorityDistrictName);
         }
     }
 }

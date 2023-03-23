@@ -38,6 +38,9 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             {
                 Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
             }
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
         }
 
         var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
@@ -75,10 +78,17 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         {
             await _sessionService.DeleteDataAsync(GetSessionKey("TBC", "TBC"));
 
+            submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
+            submittedConfirmationModel.TuitionPartnerName = Data.TuitionPartnerName;
+
             if (_hostEnvironment.IsProduction())
             {
                 submittedConfirmationModel.EnquirerMagicLink = string.Empty;
             }
+
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
 
             return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
         }

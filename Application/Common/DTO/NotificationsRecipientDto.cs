@@ -7,6 +7,9 @@ public class NotificationsRecipientDto
         PersonalisationPropertiesToAmalgamate = new List<string>();
     }
 
+
+    public string OriginalEmail { get; set; } = null!;
+
     public string Email { get; set; } = null!;
 
     public string EnquirerEmailForTestingPurposes { get; set; } = null!;

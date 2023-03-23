@@ -52,6 +52,7 @@ public class CheckYourAnswers : PageModel
         {
             var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
             Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
         }
 
         ModelState.Clear();
@@ -112,7 +113,8 @@ public class CheckYourAnswers : PageModel
 
             var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
             {
-                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber
+                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber,
+                LocalAuthorityDistrictName = Data.LocalAuthorityDistrictName
             };
 
             if (!_hostEnvironment.IsProduction())
@@ -121,6 +123,12 @@ public class CheckYourAnswers : PageModel
                 submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks.OrderBy(x => x.Key).Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
                 submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
             }
+
+            HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
+            HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
+            HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
+            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
 
             return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
         }
