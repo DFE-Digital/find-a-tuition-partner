@@ -7,22 +7,13 @@ namespace UI.Pages.Enquiry.Respond
         protected readonly ISessionService _sessionService;
         protected readonly IMediator _mediator;
 
-        public ResponsePageModel(params object[] list)
+        public ResponsePageModel(ISessionService sessionService, IMediator mediator)
         {
-            foreach (var item in list)
-            {
-                if (item is ISessionService sessionService)
-                {
-                    _sessionService = sessionService;
-                }
-                if (item is IMediator mediator)
-                {
-                    _mediator = mediator;
-                }
-            }
+            _sessionService = sessionService;
+            _mediator = mediator;
 
-            if (_sessionService == null) throw new ArgumentNullException("sessionService");
-            if (_mediator == null) throw new ArgumentNullException("mediator");
+            if (_sessionService == null) throw new ArgumentNullException(nameof(sessionService));
+            if (_mediator == null) throw new ArgumentNullException(nameof(mediator));
         }
 
         protected string GetSessionKey(string tuitionPartnerName, string enquiryRef)
