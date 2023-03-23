@@ -209,7 +209,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             TpName = tpName,
             SupportRefNumber = supportRefNumber,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            CreatedOnDateTime = enquiryCreateDateTime.ToString("dd/MM/yyyy HH:mm"),
+            CreatedOnDateTime = enquiryCreateDateTime.ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText,
             EnquiryTuitionType = request.Data.EnquiryTuitionType,

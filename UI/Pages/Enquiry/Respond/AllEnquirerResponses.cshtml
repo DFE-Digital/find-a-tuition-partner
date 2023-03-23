@@ -30,7 +30,7 @@
         <h2 class="govuk-heading-s">
             <span>Your tuition enquiry summary</span>
         </h2>
-        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mmtt 'on' dddd d MMMM")</span></p>
+        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString(StringConstants.DateFormatGDS)</span></p>
 
         <govuk-details open="false">
             <govuk-details-summary>
