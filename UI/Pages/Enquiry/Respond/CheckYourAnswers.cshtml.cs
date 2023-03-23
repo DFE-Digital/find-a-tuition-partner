@@ -25,12 +25,12 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey("TBC", "TBC")))
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(data.TuitionPartnerName.ToSeoUrl(), data.SupportReferenceNumber)))
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
-        var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey("TBC", "TBC"));
+        var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(data.TuitionPartnerName.ToSeoUrl(), data.SupportReferenceNumber));
 
         if (sessionValues != null)
         {
@@ -39,8 +39,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
                 Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
             }
             HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
         }
 
         var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
@@ -55,7 +53,7 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey("TBC", "TBC")))
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerName.ToSeoUrl(), Data.SupportReferenceNumber)))
             return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
@@ -76,7 +74,7 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
-            await _sessionService.DeleteDataAsync(GetSessionKey("TBC", "TBC"));
+            await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerName.ToSeoUrl(), Data.SupportReferenceNumber));
 
             submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
             submittedConfirmationModel.TuitionPartnerName = Data.TuitionPartnerName;

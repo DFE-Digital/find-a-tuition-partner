@@ -22,7 +22,7 @@ public class SENDRequirements : PageModel
 
         Data = data;
 
-        Data.SENDRequirements = await _sessionService.RetrieveDataByKeyAsync(StringConstants.EnquirySENDRequirements);
+        Data.SENDRequirements = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirySENDRequirements);
 
         ModelState.Clear();
 
@@ -37,7 +37,7 @@ public class SENDRequirements : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirySENDRequirements,
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirySENDRequirements,
                 string.IsNullOrWhiteSpace(data.SENDRequirements) ? string.Empty : data.SENDRequirements);
 
             if (data.From == ReferrerList.CheckYourAnswers)

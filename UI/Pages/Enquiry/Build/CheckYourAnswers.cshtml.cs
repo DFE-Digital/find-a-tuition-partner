@@ -96,7 +96,7 @@ public class CheckYourAnswers : PageModel
                 var errorMessage =
                     $"There was a problem sending the email and you should check the email address and try again";
 
-                await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, errorMessage);
+                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
 
                 return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
             }
@@ -140,19 +140,19 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
-            case var k when k.Equals(StringConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
                 Data.Email = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 Data.TutoringLogistics = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
                 Data.SENDRequirements = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 Data.AdditionalInformation = value;
                 break;
         }
