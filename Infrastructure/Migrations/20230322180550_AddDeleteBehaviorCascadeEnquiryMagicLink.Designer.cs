@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230322180550_AddDeleteBehaviorCascadeEnquiryMagicLink")]
+    partial class AddDeleteBehaviorCascadeEnquiryMagicLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3953,6 +3955,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("EnquiryId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("EnquiryId1")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -3966,6 +3971,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EnquiryId");
+
+                    b.HasIndex("EnquiryId1");
 
                     b.HasIndex("MagicLinkTypeId");
 
@@ -4790,10 +4797,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.MagicLink", b =>
                 {
-                    b.HasOne("Domain.Enquiry", "Enquiry")
+                    b.HasOne("Domain.Enquiry", null)
                         .WithMany("MagicLinks")
                         .HasForeignKey("EnquiryId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Domain.Enquiry", "Enquiry")
+                        .WithMany()
+                        .HasForeignKey("EnquiryId1");
 
                     b.HasOne("Domain.MagicLinkType", "MagicLinkType")
                         .WithMany()
