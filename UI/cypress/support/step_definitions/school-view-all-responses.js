@@ -1,16 +1,9 @@
-import {
-  Given,
-  When,
-  And,
-  Then,
-  Step,
-} from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, And, Then, Step, } from "@badeball/cypress-cucumber-preprocessor";
 
-let firstStatementUrl;
 Given(
-  "a school clicks the magic link to respond to a view all responses",
+  "a school views a tuition partners response",
   () => {
-    cy.visit("/");
+    cy.visit("/")
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
@@ -40,20 +33,17 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-
-    cy.get(".govuk-panel__body > strong")
-      .invoke("text")
-      .then((text) => (referenceNumber = text));
-    cy.get(":nth-child(8) > a").click();
-    cy.url().then((url) => {
-      firstStatementUrl = url;
-    });
+    cy.get(":nth-child(11) > a").click();
+    cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
+    cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
+    cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
+    cy.get("#Data_SENDRequirementsText").clear().invoke("val", 80);
+    cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
+    cy.get('[data-testid="call-to-action"]').click();
+    Step("this", "they click 'Submit'")
+    cy.get(':nth-child(12) > a').click()
   }
 );
-
-Given("A user has arrived on the view all responses page", () => {
-  cy.visit(firstStatementUrl);
-});
 
 And("there is text {string}", (text) => {
   cy.get(".govuk-details__summary-text").should("contain.text", text);

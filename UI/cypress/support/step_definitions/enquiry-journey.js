@@ -229,10 +229,14 @@ Then(
 Then(
   "the warning should be displayed showing they are over by {string} characters",
   (numOfCharsOver) => {
-    cy.get(".govuk-character-count__status").should(
-      "contain.text",
-      `You have ${numOfCharsOver} characters too many`
-    );
+    const expectedText = `You have ${numOfCharsOver} characters too many`;
+
+    cy.get(".govuk-character-count__status")
+      .invoke("text")
+      .should((text) => {
+        const cleanText = text.replace(/,\s*/g, "");
+        expect(cleanText).to.contain(expectedText);
+      });
   }
 );
 

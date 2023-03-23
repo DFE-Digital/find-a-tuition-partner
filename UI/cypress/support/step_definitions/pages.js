@@ -124,6 +124,14 @@ Then(
   }
 );
 
+
+Then("the user has arrived on the tuition response confirmation page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/response-confirmation"
+  );
+});
+
 Then("the user has arrived on the view all enquiry responses page", () => {
   cy.location("pathname").should(
     "eq",
