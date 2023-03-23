@@ -119,6 +119,9 @@ builder.AddAnalytics();
 
 var app = builder.Build();
 
+Initialize(app.Services.GetRequiredService<ILoggerFactory>());
+
+
 app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())

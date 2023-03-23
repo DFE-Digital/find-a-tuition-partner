@@ -8,17 +8,30 @@ public class EnquirerEmail : PageModel
 {
     private readonly ISessionService _sessionService;
 
+    private ILogger Logger => GetStaticLogger<EnquirerEmail>();
+
     public EnquirerEmail(ISessionService sessionService)
     {
         _sessionService = sessionService;
     }
     [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
 
+    [ViewData] public string? ErrorMessage { get; set; }
+
     public async Task<IActionResult> OnGetAsync(EnquirerEmailModel data)
     {
         Data = data;
 
+        ErrorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
+
         Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
+
+        if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            Logger.LogInformation(ErrorMessage);
+            ModelState.AddModelError("ErrorMessage", ErrorMessage);
+            return Page();
+        }
 
         ModelState.Clear();
 
@@ -30,6 +43,13 @@ public class EnquirerEmail : PageModel
         if (ModelState.IsValid)
         {
             await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
+
+            var errorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, string.Empty);
+            }
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {
