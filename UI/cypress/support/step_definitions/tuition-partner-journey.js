@@ -76,7 +76,6 @@ Given(
   }
 );
 
-
 Then(
   "the page heading should show School Enquiry from {string} area",
   (LAD) => {
@@ -242,4 +241,3 @@ And(
 When("they click return to your enquiry list", () => {
   cy.get(":nth-child(8) > .govuk-link").click();
 });
-

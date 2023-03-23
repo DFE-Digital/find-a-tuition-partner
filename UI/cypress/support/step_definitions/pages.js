@@ -124,7 +124,6 @@ Then(
   }
 );
 
-
 Then("the user has arrived on the tuition response confirmation page", () => {
   cy.location("pathname").should(
     "eq",

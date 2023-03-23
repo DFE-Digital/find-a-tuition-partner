@@ -1,49 +1,52 @@
-import { Given, When, And, Then, Step, } from "@badeball/cypress-cucumber-preprocessor";
+import {
+  Given,
+  When,
+  And,
+  Then,
+  Step,
+} from "@badeball/cypress-cucumber-preprocessor";
 
-Given(
-  "a school views a tuition partners response",
-  () => {
-    cy.visit("/")
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
-    Step(this, "they will see all the keys stages as options");
-    Step(this, "they select 'Key stage 1, Key stage 2'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
-    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
-    Step(
-      this,
-      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
-    );
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
-    Step(this, "they click 'Continue' button");
-    Step(this, "they enter a valid email address");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for tuition plan");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for SEND requirements");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for other requirements");
-    Step(this, "they click 'Continue'");
-    Step(this, "they select terms and conditions");
-    Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
-    cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
-    cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
-    cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
-    cy.get("#Data_SENDRequirementsText").clear().invoke("val", 80);
-    cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
-    cy.get('[data-testid="call-to-action"]').click();
-    Step("this", "they click 'Submit'")
-    cy.get(':nth-child(12) > a').click()
-  }
-);
+Given("a school views a tuition partners response", () => {
+  cy.visit("/");
+  Step(this, "they enter 'SK1 1EB' as the school's postcode");
+  Step(this, "they click 'Continue'");
+  Step(this, "they will be taken to the 'Which key stages' page");
+  Step(this, "they will see all the keys stages as options");
+  Step(this, "they select 'Key stage 1, Key stage 2'");
+  Step(this, "they click 'Continue'");
+  Step(this, "they will be taken to the 'Which subjects' page");
+  Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+  Step(
+    this,
+    "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
+  );
+  Step(this, "they click 'Continue'");
+  Step(this, "they will be taken to the 'Type of tuition' page");
+  Step(this, "they select Any");
+  Step(this, "they click 'Continue'");
+  Step(this, "they will be taken to the 'Search Results' page");
+  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Continue' button");
+  Step(this, "they enter a valid email address");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for tuition plan");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for SEND requirements");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter an answer for other requirements");
+  Step(this, "they click 'Continue'");
+  Step(this, "they select terms and conditions");
+  Step(this, "they click send enquiry");
+  cy.get(":nth-child(11) > a").click();
+  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
+  cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
+  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
+  cy.get("#Data_SENDRequirementsText").clear().invoke("val", 80);
+  cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
+  cy.get('[data-testid="call-to-action"]').click();
+  Step("this", "they click 'Submit'");
+  cy.get(":nth-child(12) > a").click();
+});
 
 And("there is text {string}", (text) => {
   cy.get(".govuk-details__summary-text").should("contain.text", text);
