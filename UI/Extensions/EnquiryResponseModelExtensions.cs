@@ -8,60 +8,52 @@ public static class EnquiryResponseModelExtensions
     {
         switch (key)
         {
-            case var k when k.Equals(StringConstants.LocalAuthorityDistrict, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.LocalAuthorityDistrict, StringComparison.OrdinalIgnoreCase):
                 data.LocalAuthorityDistrict = value;
                 break;
 
-            case var k when k.Equals(StringConstants.TuitionPartnerName, StringComparison.OrdinalIgnoreCase):
-                data.TuitionPartnerName = value;
-                break;
-
-            case var k when k.Equals(StringConstants.EnquirySupportReferenceNumber, StringComparison.OrdinalIgnoreCase):
-                data.SupportReferenceNumber = value;
-                break;
-
-            case var k when k.Equals(StringConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 data.EnquiryTutoringLogistics = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseTutoringLogistics, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 data.TutoringLogisticsText = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryKeyStageSubjects, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryKeyStageSubjects, StringComparison.OrdinalIgnoreCase):
                 data.EnquiryKeyStageSubjects =
                     value.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseKeyStageAndSubjectsText, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseKeyStageAndSubjectsText, StringComparison.OrdinalIgnoreCase):
                 data.KeyStageAndSubjectsText = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryTuitionType, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryTuitionType, StringComparison.OrdinalIgnoreCase):
                 data.EnquiryTuitionType = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseTuitionTypeText, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseTuitionTypeText, StringComparison.OrdinalIgnoreCase):
                 data.TuitionTypeText = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
                 data.EnquirySENDRequirements = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseSENDRequirements, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseSENDRequirements, StringComparison.OrdinalIgnoreCase):
                 data.SENDRequirementsText = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 data.EnquiryAdditionalInformation = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseAdditionalInformation, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 data.AdditionalInformationText = value;
                 break;
 
-            case var k when k.Equals(StringConstants.EnquiryResponseToken, StringComparison.InvariantCultureIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseToken, StringComparison.InvariantCultureIgnoreCase):
                 data.Token = value;
                 break;
         }

@@ -13,7 +13,7 @@ namespace UI.Pages.Session
 
         public async Task OnGetAsync()
         {
-            await _sessionService.ClearAsync();
+            await _sessionService.ClearAllAsync();
         }
     }
 }

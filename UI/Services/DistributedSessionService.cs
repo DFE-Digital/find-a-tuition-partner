@@ -6,6 +6,7 @@ namespace UI.Services;
 
 public class DistributedSessionService : ISessionService
 {
+    private const string DefaultPreKey = "General";
     private readonly IHttpContextAccessor? _contextAccessor;
 
     public DistributedSessionService(IHttpContextAccessor contextAccessor)
@@ -13,15 +14,16 @@ public class DistributedSessionService : ISessionService
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
     }
 
-    public async Task AddOrUpdateDataAsync(string key, string value)
+    public async Task AddOrUpdateDataAsync(string key, string value, string preKey = DefaultPreKey)
     {
         await AddOrUpdateDataAsync(new Dictionary<string, string>()
         {
             { key, value}
-        });
+        },
+        preKey);
     }
 
-    public async Task AddOrUpdateDataAsync(Dictionary<string, string> data)
+    public async Task AddOrUpdateDataAsync(Dictionary<string, string> data, string preKey = DefaultPreKey)
     {
         if (IsSessionAvailable())
         {
@@ -29,7 +31,9 @@ public class DistributedSessionService : ISessionService
 
             var dataString = JsonConvert.SerializeObject(data);
 
-            var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
+            var sessionKey = GetSessionKey(preKey);
+
+            var storedValue = GetString(sessionKey);
 
             if (!string.IsNullOrEmpty(storedValue))
             {
@@ -49,25 +53,25 @@ public class DistributedSessionService : ISessionService
                 }
 
                 var updatedValue = JsonConvert.SerializeObject(existingData);
-                SetString(_contextAccessor!.HttpContext!.Session.Id, updatedValue);
+                SetString(sessionKey, updatedValue);
             }
             else
             {
                 // Add
-                SetString(_contextAccessor!.HttpContext!.Session.Id, dataString);
+                SetString(sessionKey, dataString);
             }
 
             await CommitDataToDistributedDataStore();
         }
     }
 
-    public async Task<string> RetrieveDataAsync(string key)
+    public async Task<string> RetrieveDataByKeyAsync(string key, string preKey = DefaultPreKey)
     {
         var result = string.Empty;
 
         if (string.IsNullOrEmpty(key)) return result;
 
-        var sessionValues = await RetrieveDataAsync();
+        var sessionValues = await RetrieveDataAsync(preKey);
 
         if (sessionValues?.TryGetValue(key, out var value) == true)
         {
@@ -76,43 +80,52 @@ public class DistributedSessionService : ISessionService
 
         return result;
     }
-    public async Task<Dictionary<string, string>?> RetrieveDataAsync()
+    public async Task<Dictionary<string, string>?> RetrieveDataAsync(string preKey = DefaultPreKey)
     {
         if (!IsSessionAvailable()) return null;
         await LoadDataFromDistributedDataStore();
-        var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
+        var sessionKey = GetSessionKey(preKey);
+        var storedValue = GetString(sessionKey);
         return storedValue == null ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(storedValue);
 
     }
 
-    public async Task DeleteDataAsync()
+    public async Task DeleteDataAsync(string preKey = DefaultPreKey)
     {
         if (IsSessionAvailable())
         {
             await LoadDataFromDistributedDataStore();
-            var storedValue = GetString(_contextAccessor!.HttpContext!.Session.Id);
+            var sessionKey = GetSessionKey(preKey);
+            var storedValue = GetString(sessionKey);
             if (storedValue != null)
             {
-                _contextAccessor!.HttpContext!.Session!.Remove(_contextAccessor!.HttpContext!.Session.Id);
+                _contextAccessor!.HttpContext!.Session!.Remove(sessionKey);
             }
         }
     }
 
-    private bool IsSessionAvailable()
+    public async Task<bool> SessionDataExistsAsync(string preKey = DefaultPreKey)
     {
-        return _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
+        await LoadDataFromDistributedDataStore();
+        var sessionKey = GetSessionKey(preKey);
+        return GetString(sessionKey) != null;
     }
 
-    public async Task<bool> SessionDataExistsAsync()
+    public async Task<bool> AnySessionDataExistsAsync()
     {
         await LoadDataFromDistributedDataStore();
         return _contextAccessor!.HttpContext!.Session!.Keys.Any();
     }
 
-    public async Task ClearAsync()
+    public async Task ClearAllAsync()
     {
         await LoadDataFromDistributedDataStore();
         _contextAccessor!.HttpContext!.Session!.Clear();
+    }
+
+    private bool IsSessionAvailable()
+    {
+        return _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
     }
 
     private async Task LoadDataFromDistributedDataStore()
@@ -134,5 +147,10 @@ public class DistributedSessionService : ISessionService
     private void SetString(string key, string value)
     {
         _contextAccessor!.HttpContext!.Session!.Set(key, Encoding.UTF8.GetBytes(value));
+    }
+
+    private string GetSessionKey(string preKey)
+    {
+        return $"{preKey}_{_contextAccessor!.HttpContext!.Session.Id}";
     }
 }

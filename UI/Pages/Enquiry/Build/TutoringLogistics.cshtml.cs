@@ -22,7 +22,7 @@ public class TutoringLogistics : PageModel
 
         Data = data;
 
-        Data.TutoringLogistics = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryTutoringLogistics);
+        Data.TutoringLogistics = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTutoringLogistics);
 
         ModelState.Clear();
 
@@ -37,7 +37,7 @@ public class TutoringLogistics : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryTutoringLogistics, data.TutoringLogistics!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryTutoringLogistics, data.TutoringLogistics!);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {

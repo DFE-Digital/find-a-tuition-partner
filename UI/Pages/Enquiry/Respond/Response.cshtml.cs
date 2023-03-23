@@ -4,21 +4,17 @@ using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
 {
-    public class Response : PageModel
+    public class Response : ResponsePageModel<Response>
     {
-        private readonly IMediator _mediator;
         private readonly IEncrypt _aesEncrypt;
-        private readonly ISessionService _sessionService;
 
         private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
 
         private const string InvalidUrlErrorMessage = "Invalid Url";
 
-        public Response(IMediator mediator, IEncrypt aesEncrypt, ISessionService sessionService)
+        public Response(IMediator mediator, IEncrypt aesEncrypt, ISessionService sessionService) : base(sessionService, mediator)
         {
-            _mediator = mediator;
             _aesEncrypt = aesEncrypt;
-            _sessionService = sessionService;
         }
 
         [BindProperty] public ViewAndCaptureEnquiryResponseModel Data { get; set; } = new();
@@ -60,26 +56,27 @@ namespace UI.Pages.Enquiry.Respond
 
             Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-            var sessionValues = await _sessionService.RetrieveDataAsync();
+            //TODO - When Hasan refactors this so that the enquiry ref and TP name is part of the URL this could be collected from the route for the session rather than having to get data at this point...
+            var enquiryData = await _mediator.Send(new
+                GetEnquirerViewAllResponsesQuery(Data.EnquiryId, Data.BaseServiceUrl));
 
-            if (sessionValues != null)
+            var tpResponseData = await _mediator.Send(new
+                GetEnquirerViewResponseQuery(Data.EnquiryId, Data.TuitionPartnerId));
+
+            if (enquiryData != null && tpResponseData != null)
             {
-                foreach (var sessionValue in sessionValues)
+                var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(tpResponseData.TuitionPartnerName.ToSeoUrl(), enquiryData.SupportReferenceNumber));
+
+                if (sessionValues != null)
                 {
-                    Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
+                    foreach (var sessionValue in sessionValues)
+                    {
+                        Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
+                    }
                 }
-            }
-            else
-            {
-                var enquiryData = await _mediator.Send(new
-                    GetEnquirerViewAllResponsesQuery(Data.EnquiryId, Data.BaseServiceUrl));
-
-                var tpResponseData = await _mediator.Send(new
-                    GetEnquirerViewResponseQuery(Data.EnquiryId, Data.TuitionPartnerId));
-
-                //TODO - if previously completed response then show error - check when tpResponseData.KeyStageAndSubjectsText is not empty
-                if (enquiryData != null && tpResponseData != null)
+                else
                 {
+                    //TODO - if previously completed response then show error - check when tpResponseData.KeyStageAndSubjectsText is not empty
                     Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
                     Data.TuitionPartnerName = tpResponseData.TuitionPartnerName!;
                     Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
@@ -90,6 +87,7 @@ namespace UI.Pages.Enquiry.Respond
                     Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
 
                     HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
+                    //TODO - When Hasan refactors this so that the enquiry ref and TP name is part of the URL we could consider removing the following
                     HttpContext.AddTuitionPartnerNameToAnalytics<Response>(Data.TuitionPartnerName);
                     HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
                 }
@@ -117,26 +115,26 @@ namespace UI.Pages.Enquiry.Respond
 
                 await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
                 {
-                    { StringConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
-                    { StringConstants.EnquirySupportReferenceNumber, Data.SupportReferenceNumber! },
-                    { StringConstants.TuitionPartnerName, Data.TuitionPartnerName! },
-                    { StringConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
-                    { StringConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
-                    { StringConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
-                    { StringConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
+                    { SessionKeyConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
+                    { SessionKeyConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
+                    { SessionKeyConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
+                    { SessionKeyConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
+                    { SessionKeyConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
                     {
-                        StringConstants.EnquiryResponseAdditionalInformation,
+                        SessionKeyConstants.EnquiryResponseAdditionalInformation,
                         Data.AdditionalInformationText ?? string.Empty
                     },
-                    { StringConstants.EnquiryResponseToken, Data.Token! },
-                    { StringConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
-                    { StringConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
-                    { StringConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
-                    { StringConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
-                    { StringConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
-                });
+                    { SessionKeyConstants.EnquiryResponseToken, Data.Token! },
+                    { SessionKeyConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
+                    { SessionKeyConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
+                    { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
+                    { SessionKeyConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
+                    { SessionKeyConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
+                },
+                GetSessionKey(Data.TuitionPartnerName.ToSeoUrl(), Data.SupportReferenceNumber)
+                );
 
-                return RedirectToPage(nameof(CheckYourAnswers));
+                return RedirectToPage(nameof(CheckYourAnswers), new CheckYourAnswersModel() { SupportReferenceNumber = Data.SupportReferenceNumber, TuitionPartnerName = Data.TuitionPartnerName });
             }
             catch
             {

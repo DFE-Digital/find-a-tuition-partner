@@ -2,11 +2,13 @@ namespace Application.Common.Interfaces;
 
 public interface ISessionService
 {
-    Task AddOrUpdateDataAsync(string key, string value);
-    Task AddOrUpdateDataAsync(Dictionary<string, string> data);
-    Task<string> RetrieveDataAsync(string key);
-    Task<Dictionary<string, string>?> RetrieveDataAsync();
-    Task DeleteDataAsync();
-    Task<bool> SessionDataExistsAsync();
-    Task ClearAsync();
+    private const string DefaultPreKey = "General";
+    Task AddOrUpdateDataAsync(string key, string value, string preKey = DefaultPreKey);
+    Task AddOrUpdateDataAsync(Dictionary<string, string> data, string preKey = DefaultPreKey);
+    Task<string> RetrieveDataByKeyAsync(string key, string preKey = DefaultPreKey);
+    Task<Dictionary<string, string>?> RetrieveDataAsync(string preKey = DefaultPreKey);
+    Task DeleteDataAsync(string preKey = DefaultPreKey);
+    Task<bool> SessionDataExistsAsync(string preKey = DefaultPreKey);
+    Task<bool> AnySessionDataExistsAsync();
+    Task ClearAllAsync();
 }
