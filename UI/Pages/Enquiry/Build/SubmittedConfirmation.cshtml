@@ -33,7 +33,7 @@
               NOTE: the following links are only displayed in the non-production websites for testing purposes...
             </p>
             <p class="govuk-body">
-                <a href="@enquirerLink">Enquirer link</a>
+                <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
             </p>
             }
             @if(Model.Data.TuitionPartnerMagicLinks != null)
@@ -43,9 +43,10 @@
                 </p>
                 foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
                 {
+                    var dataTestId = $"tp-response-magic-link{tpLink.Key}";
                     var tpHref = $"/enquiry/respond/response?token={tpLink.Value}";
                 <p class="govuk-body">
-                    @tpLink.Key: <a href="@tpHref">Response link</a>
+                    @tpLink.Key: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
                 </p>
                 }
             }

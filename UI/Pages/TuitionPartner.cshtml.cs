@@ -1,4 +1,5 @@
 using Application.Common.Models;
+using UI.Extensions;
 using UI.Models;
 
 namespace UI.Pages;
@@ -46,6 +47,8 @@ public class TuitionPartner : PageModel
         }
 
         await GetCompareListCheckboxModel(Data.Name, Data.Id.Trim(), nameof(CompareListedCheckbox));
+
+        HttpContext.AddLadNameToAnalytics<TuitionPartner>(Data.LocalAuthorityDistrictName);
 
         _logger.LogInformation("Tuition Partner {Name} found for id '{Id}'", Data.Name, query.Id);
         return Page();
