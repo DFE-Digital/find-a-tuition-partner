@@ -6,8 +6,6 @@ import {
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
-let firstStatementUrl;
-
 Given(
   "a tuition partner clicks the magic link to respond to a schools enquiry",
   () => {
@@ -40,21 +38,43 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
-    cy.url().then((url) => {
-      firstStatementUrl = url;
-    });
+    cy.get("p a").eq(2).click();
   }
 );
 
-Given("a tuition partner has arrived on respond to an enquiry page", () => {
-  cy.visit(firstStatementUrl);
-});
-
-Given("A school has arrived on view all responses page", () => {
-  console.log(firstStatementUrl);
-  cy.visit(firstStatementUrl);
-});
+Given(
+  "a tuition partner clicks a magic link with no info for optional inputs",
+  () => {
+    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which key stages' page");
+    Step(this, "they will see all the keys stages as options");
+    Step(this, "they select 'Key stage 1, Key stage 2'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which subjects' page");
+    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+    Step(
+      this,
+      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
+    );
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Search Results' page");
+    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Continue' button");
+    Step(this, "they enter a valid email address");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for tuition plan");
+    Step(this, "they click 'Continue'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they select terms and conditions");
+    Step(this, "they click send enquiry");
+    cy.get("p a").eq(2).click();
+  }
+);
 
 Then(
   "the page heading should show School Enquiry from {string} area",
@@ -177,40 +197,6 @@ Then("the error message shows {string}", (errorText) => {
   );
 });
 
-Given(
-  "a tuition partner clicks a magic link with no info for optional inputs",
-  () => {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
-    Step(this, "they will see all the keys stages as options");
-    Step(this, "they select 'Key stage 1, Key stage 2'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
-    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
-    Step(
-      this,
-      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
-    );
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
-    Step(this, "they click 'Continue' button");
-    Step(this, "they enter a valid email address");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for tuition plan");
-    Step(this, "they click 'Continue'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they select terms and conditions");
-    Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
-  }
-);
-
 Then(
   "the check your answers page does not include SEND and Other considerations",
   () => {
@@ -254,20 +240,4 @@ And(
 
 When("they click return to your enquiry list", () => {
   cy.get(":nth-child(8) > .govuk-link").click();
-});
-
-let secondStatementUrl;
-Then("the user has arrived on the tuition response confirmation page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/response-confirmation"
-  );
-  cy.url().then((url) => {
-    secondStatementUrl = url;
-  });
-});
-
-Given("A school has arrived on view all responses page with a response", () => {
-  cy.visit(secondStatementUrl);
-  cy.get(":nth-child(12) > a").click();
 });
