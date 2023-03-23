@@ -45,7 +45,7 @@ Given("a school views a tuition partners response", () => {
   cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
   cy.get('[data-testid="call-to-action"]').click();
   Step("this", "they click 'Submit'");
-  cy.get(":nth-child(12) > a").click();
+  cy.get("p a").eq(1).click();
 });
 
 And("there is text {string}", (text) => {

@@ -38,7 +38,7 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
+    cy.get("p a").eq(2).click();
   }
 );
 
@@ -72,7 +72,7 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get(":nth-child(11) > a").click();
+    cy.get("p a").eq(2).click();
   }
 );
 
