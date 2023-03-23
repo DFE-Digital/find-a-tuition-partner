@@ -8,6 +8,17 @@ import {
 
 let enquiry, enquiryNoInfo;
 
+// Returns the first valid link in the array, also removing any which are now invalid
+const getFirstValidLink = async (links) => {
+  while (links.length) {
+    const link = links[0];
+    if ((await fetch(link)).ok) {
+      return link;
+    }
+    links.shift();
+  }
+};
+
 Given("An enquiry has been submitted", async () => {
   if (!enquiry) {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
@@ -57,14 +68,14 @@ Given(
   "a tuition partner clicks the magic link to respond to a schools enquiry",
   () => {
     Step(this, "An enquiry has been submitted");
-    cy.then(() => {
-      cy.visit(enquiry.tpHrefs.shift());
+    cy.then(async () => {
+      cy.visit(await getFirstValidLink(enquiry.tpHrefs));
     });
   }
 );
 
 Given("An enquiry with no optional info has been submitted", async () => {
-  if (!enquiry) {
+  if (!enquiryNoInfo) {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
@@ -82,7 +93,7 @@ Given("An enquiry with no optional info has been submitted", async () => {
     Step(this, "they select Any");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Start now' button");
     Step(this, "they click 'Continue' button");
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
@@ -110,8 +121,8 @@ Given(
   "a tuition partner clicks a magic link with no info for optional inputs",
   () => {
     Step(this, "An enquiry with no optional info has been submitted");
-    cy.then(() => {
-      cy.visit(enquiryNoInfo.tpHrefs.shift());
+    cy.then(async () => {
+      cy.visit(await getFirstValidLink(enquiryNoInfo.tpHrefs));
     });
   }
 );

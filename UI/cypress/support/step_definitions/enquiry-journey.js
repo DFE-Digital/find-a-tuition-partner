@@ -146,7 +146,10 @@ Then("they enter an invalid email address", () => {
 });
 
 Then("the email address is visible in input field", () => {
-  cy.get("#Data_Email").should("have.value", "email@email.com");
+  cy.get("#Data_Email").should(
+    "have.value",
+    "simulate-delivered@notifications.service.gov.uk"
+  );
 });
 
 Then("click the link on text {string}", (linkText) => {

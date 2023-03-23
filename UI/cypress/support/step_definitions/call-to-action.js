@@ -19,7 +19,7 @@ When("they click 'Continue'", () => {
 });
 
 When("user clicks 'Make an enquiry'", () => {
-  cy.get(".app-print-hide > .govuk-button").click();
+  cy.get(".govuk-button").contains("Start now").click();
 });
 
 When("they click 'Search'", () => {
@@ -35,7 +35,7 @@ Then("the back link's text is {string}", ($text) => {
 });
 
 When("they click 'Continue' through enquiry", () => {
-  cy.get(".app-print-hide > .govuk-button").click();
+  cy.get(".govuk-button").contains("Continue").click();
 });
 
 When("they click back on the browser", () => {
