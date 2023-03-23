@@ -1,6 +1,5 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
-using Application.Common.Models;
 using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
@@ -46,6 +45,9 @@ namespace UI.Pages.Enquiry.Respond
                 if (data != null)
                 {
                     Data = data with { EnquirerViewResponseToken = _queryToken };
+                    HttpContext.AddLadNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.LocalAuthorityDistrict);
+                    HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.TuitionPartnerName);
+                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.SupportReferenceNumber);
                 }
             }
             catch

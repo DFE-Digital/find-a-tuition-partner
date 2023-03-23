@@ -180,6 +180,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         var result = new NotificationsRecipientDto()
         {
             Email = request.Data?.Email!,
+            OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, supportRefNumber, pageLink, contactusLink)
         };
@@ -226,6 +227,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         var result = new NotificationsRecipientDto()
         {
             Email = request.Data?.Email!,
+            OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Personalisation = GetEnquiryResponseSubmittedConfirmationToTpPersonalisation(personalisationInput)
         };

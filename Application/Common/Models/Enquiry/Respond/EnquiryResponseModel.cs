@@ -26,4 +26,5 @@ public record EnquiryResponseModel : EnquiryBaseModel
 
     public string? EnquiryAdditionalInformation { get; set; }
     public string? AdditionalInformationText { get; set; } = string.Empty;
+    public string SupportReferenceNumber { get; set; } = null!;
 }
