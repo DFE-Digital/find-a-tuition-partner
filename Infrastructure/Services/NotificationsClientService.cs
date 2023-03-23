@@ -1,10 +1,13 @@
+using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Application.Extensions;
 using Domain.Enums;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Notify.Exceptions;
 using Notify.Interfaces;
 
 namespace Infrastructure.Services;
@@ -30,7 +33,7 @@ public class NotificationsClientService : INotificationsClientService
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
+    public async Task<(bool, HttpStatusCode)> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
         string supportReferenceNumber, bool includeChangedFromEmailAddress = true)
     {
         if (string.IsNullOrWhiteSpace(notificationsRecipient.Email))
@@ -43,7 +46,7 @@ public class NotificationsClientService : INotificationsClientService
         if (string.IsNullOrEmpty(emailTemplateId))
         {
             _logger.LogError("No templateId was supplied for the {emailType}.", emailTemplateType);
-            return false;
+            return (false, HttpStatusCode.BadRequest);
         }
 
         AddTestingInformation(notificationsRecipient, includeChangedFromEmailAddress);
@@ -59,17 +62,35 @@ public class NotificationsClientService : INotificationsClientService
             _logger.LogInformation("Result: {id} {reference} {uri}", result.id, result.reference, result.uri);
             _logger.LogInformation("Result: {content}", result.content);
 
-            return true;
+            return (true, HttpStatusCode.OK);
+        }
+        catch (NotifyClientException ex)
+        {
+            var statusCode = ex.Message.GetGovNotifyStatusCodeFromExceptionMessage();
+
+            if (statusCode.Is4xxError())
+            {
+                _logger.LogWarning("A 4xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
+
+                return (false, HttpStatusCode.BadRequest);
+            }
+
+            if (statusCode.Is5xxError())
+            {
+                _logger.LogError("A 5xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
+
+                return (false, HttpStatusCode.InternalServerError);
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while attempting to SendEmailAsync: {ex}", ex);
         }
 
-        return false;
+        return (false, HttpStatusCode.BadRequest);
     }
 
-    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+    public async Task<(bool, HttpStatusCode)> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
         EmailTemplateType emailTemplateType, string supportReferenceNumber)
     {
         notificationsRecipients = notificationsRecipients.ToList();
@@ -86,25 +107,30 @@ public class NotificationsClientService : INotificationsClientService
             //See if we need to amalgamate multiuple emails for testing purposes
             if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
             {
-                allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType, supportReferenceNumber);
+                (allEmailsSent, HttpStatusCode status) = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType, supportReferenceNumber);
             }
             else
             {
-                foreach (var recipient in notificationsRecipients.Where(recipient => !string.IsNullOrEmpty(recipient.Email)))
-                {
-                    var emailSent = await SendEmailAsync(recipient, emailTemplateType, supportReferenceNumber);
-                    allEmailsSent = !allEmailsSent ? allEmailsSent : emailSent;
-                }
+                // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
+                // which can significantly improve performance when dealing with multiple recipients
+                var sendEmailTasks = notificationsRecipients
+                    .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
+                    .Select(recipient => SendEmailAsync(recipient, emailTemplateType, supportReferenceNumber))
+                    .ToList();
+
+                var results = await Task.WhenAll(sendEmailTasks);
+
+                allEmailsSent = results.All(result => result.Item1);
             }
 
-            return allEmailsSent;
+            return (allEmailsSent, HttpStatusCode.OK);
         }
         catch (Exception ex)
         {
             _logger.LogError("An error has occurred while attempting to SendEmailAsync: {ex}", ex);
         }
 
-        return false;
+        return (false, HttpStatusCode.BadRequest);
     }
 
     private void AddTestingInformation(NotificationsRecipientDto notificationsRecipient, bool includeChangedFromEmailAddress = true)
@@ -137,7 +163,7 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+    private async Task<(bool, HttpStatusCode)> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
         EmailTemplateType emailTemplateType, string supportReferenceNumber)
     {
         var initialRecipient = notificationsRecipients.First();

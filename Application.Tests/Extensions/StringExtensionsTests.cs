@@ -182,4 +182,17 @@ public class StringExtensionsTests
 
         actualOutput.Should().BeEquivalentTo(expectedOutput);
     }
+
+    [Theory]
+    [InlineData("An error occurred. Status code 400.", 400)]
+    [InlineData("An error occurred. Status code 500.", 500)]
+    public void GetGovNotifyStatusCodeFromExceptionMessage_ReturnsStatusCode_WhenMatchFound(string errormessage, int expectedStatusCode)
+    {
+        // Act
+        var statusCode = errormessage.GetGovNotifyStatusCodeFromExceptionMessage();
+
+        // Assert
+
+        statusCode.Should().Be(expectedStatusCode);
+    }
 }
