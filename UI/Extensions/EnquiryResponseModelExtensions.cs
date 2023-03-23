@@ -12,11 +12,11 @@ public static class EnquiryResponseModelExtensions
                 data.LocalAuthorityDistrict = value;
                 break;
 
-            case var k when k.Contains(StringConstants.TuitionPartnerName, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(StringConstants.TuitionPartnerName, StringComparison.OrdinalIgnoreCase):
                 data.TuitionPartnerName = value;
                 break;
 
-            case var k when k.Contains(StringConstants.EnquirySupportReferenceNumber, StringComparison.OrdinalIgnoreCase):
+            case var k when k.Equals(StringConstants.EnquirySupportReferenceNumber, StringComparison.OrdinalIgnoreCase):
                 data.SupportReferenceNumber = value;
                 break;
 
