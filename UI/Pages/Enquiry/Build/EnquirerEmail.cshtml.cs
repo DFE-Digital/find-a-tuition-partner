@@ -20,9 +20,9 @@ public class EnquirerEmail : PageModel
     {
         Data = data;
 
-        ErrorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
+        ErrorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
 
-        Data.Email = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmail);
+        Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
 
         if (!string.IsNullOrEmpty(ErrorMessage))
         {
@@ -39,13 +39,13 @@ public class EnquirerEmail : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmail, data.Email!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmail, data.Email!);
 
-            var errorMessage = await _sessionService.RetrieveDataAsync(StringConstants.EnquirerEmailErrorMessage);
+            var errorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
-                await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquirerEmailErrorMessage, string.Empty);
+                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, string.Empty);
             }
 
             if (data.From == ReferrerList.CheckYourAnswers)

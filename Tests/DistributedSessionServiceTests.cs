@@ -10,6 +10,7 @@ public class DistributedSessionServiceTests
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
     private readonly DistributedSessionService _sessionService;
     private readonly Mock<ISession> _sessionMock;
+    private const string DefaultPreKey = "General";
 
     public DistributedSessionServiceTests()
     {
@@ -23,6 +24,7 @@ public class DistributedSessionServiceTests
     {
         // Arrange
         var sessionIdKey = "test-session-id";
+        var sessionKey = GetSessionKey(sessionIdKey);
         var existingData = new Dictionary<string, string> { { "foo", "bar" } };
         var updatedData = new Dictionary<string, string> { { "foo", "baz" }, { "qux", "quux" } };
         var storedValue = JsonConvert.SerializeObject(existingData);
@@ -34,10 +36,10 @@ public class DistributedSessionServiceTests
             .Setup(x => x.LoadAsync(default))
             .Returns(Task.CompletedTask);
         _sessionMock
-            .Setup(x => x.TryGetValue(sessionIdKey, out testSessionData))
+            .Setup(x => x.TryGetValue(sessionKey, out testSessionData))
             .Returns(true);
         _sessionMock
-            .Setup(x => x.Set(sessionIdKey, It.IsAny<byte[]>()))
+            .Setup(x => x.Set(sessionKey, It.IsAny<byte[]>()))
             .Callback<string, byte[]>((key, value) =>
             {
                 storedValue = Encoding.UTF8.GetString(value);
@@ -71,6 +73,7 @@ public class DistributedSessionServiceTests
     {
         // Arrange
         var sessionIdKey = "testKey";
+        var sessionKey = GetSessionKey(sessionIdKey);
         var testData = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } };
         var testDataString = JsonConvert.SerializeObject(testData);
         var testSessionData = Encoding.UTF8.GetBytes(testDataString);
@@ -78,7 +81,7 @@ public class DistributedSessionServiceTests
         _sessionMock.SetupGet(x => x.IsAvailable).Returns(true);
         _mockHttpContextAccessor.SetupGet(x => x.HttpContext!.Session).Returns(_sessionMock.Object);
         _sessionMock.Setup(x => x.LoadAsync(default)).Returns(Task.CompletedTask);
-        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
+        _sessionMock.Setup(x => x.TryGetValue(sessionKey, out testSessionData)).Returns(true);
 
         // Act
         var result = await _sessionService.RetrieveDataAsync();
@@ -92,6 +95,7 @@ public class DistributedSessionServiceTests
     {
         // Arrange
         var sessionIdKey = "test-session-id";
+        var sessionKey = GetSessionKey(sessionIdKey);
         var storedValue = JsonConvert.SerializeObject(new Dictionary<string, string>());
         var testSessionData = Encoding.UTF8.GetBytes(storedValue);
         _sessionMock.SetupGet(x => x.Id).Returns(sessionIdKey);
@@ -100,7 +104,7 @@ public class DistributedSessionServiceTests
             .Setup(x => x.LoadAsync(default))
             .Returns(Task.CompletedTask);
 
-        _sessionMock.Setup(x => x.TryGetValue(sessionIdKey, out testSessionData)).Returns(true);
+        _sessionMock.Setup(x => x.TryGetValue(sessionKey, out testSessionData)).Returns(true);
 
         var mockHttpContext = new Mock<HttpContext>();
         mockHttpContext
@@ -117,7 +121,11 @@ public class DistributedSessionServiceTests
         await sessionService.DeleteDataAsync();
 
         // Assert
-        mockHttpContext.Verify(x => x.Session.Remove(sessionIdKey), Times.Once);
+        mockHttpContext.Verify(x => x.Session.Remove(sessionKey), Times.Once);
     }
 
+    private string GetSessionKey(string sessionIdKey)
+    {
+        return $"{DefaultPreKey}_{sessionIdKey}";
+    }
 }

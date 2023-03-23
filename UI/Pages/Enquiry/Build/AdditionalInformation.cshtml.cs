@@ -22,7 +22,7 @@ public class AdditionalInformation : PageModel
 
         Data = data;
 
-        Data.AdditionalInformation = await _sessionService.RetrieveDataAsync(StringConstants.EnquiryAdditionalInformation);
+        Data.AdditionalInformation = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryAdditionalInformation);
 
         ModelState.Clear();
 
@@ -37,7 +37,7 @@ public class AdditionalInformation : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(StringConstants.EnquiryAdditionalInformation,
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryAdditionalInformation,
                 string.IsNullOrWhiteSpace(data.AdditionalInformation) ? string.Empty : data.AdditionalInformation);
 
             return RedirectToPage(nameof(CheckYourAnswers), new SearchModel(data));
