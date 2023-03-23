@@ -18,6 +18,9 @@
             </govuk-character-count-hint>
         </govuk-character-count>
     </div>
+    <div class="govuk-inset-text">
+        <p class="govuk-body">Do not include any information that would allow anyone to identify pupils, such as names or specific characteristics.</p>
+    </div>
     <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>
     <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
