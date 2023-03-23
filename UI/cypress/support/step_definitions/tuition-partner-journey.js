@@ -6,9 +6,10 @@ import {
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
-Given(
-  "a tuition partner clicks the magic link to respond to a schools enquiry",
-  () => {
+let enquiry, enquiryNoInfo;
+
+Given("An enquiry has been submitted", async () => {
+  if (!enquiry) {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
@@ -26,7 +27,7 @@ Given(
     Step(this, "they select Any");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
+    Step(this, "they click 'Start now' button");
     Step(this, "they click 'Continue' button");
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
@@ -38,13 +39,32 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get("p a").eq(2).click();
+
+    cy.get('main').then(($el) => {
+      enquiry = {
+        enquirerHref: $el.find('a:contains("Enquirer link")').attr('href'),
+        tpHrefs: []
+      };
+
+      $el.find('a:contains("Response link")').each((i, responseEl) => {
+        enquiry.tpHrefs.push(responseEl.getAttribute('href'));
+      });
+    });
+  }
+});
+
+Given(
+  "a tuition partner clicks the magic link to respond to a schools enquiry",
+  () => {
+    Step(this, "An enquiry has been submitted");
+    cy.then(() => {
+      cy.visit(enquiry.tpHrefs.shift());
+    })
   }
 );
 
-Given(
-  "a tuition partner clicks a magic link with no info for optional inputs",
-  () => {
+Given("An enquiry with no optional info has been submitted", async () => {
+  if (!enquiry) {
     Step(this, "they enter 'SK1 1EB' as the school's postcode");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Which key stages' page");
@@ -72,7 +92,27 @@ Given(
     Step(this, "they click 'Continue'");
     Step(this, "they select terms and conditions");
     Step(this, "they click send enquiry");
-    cy.get("p a").eq(2).click();
+
+    cy.get('main').then(($el) => {
+      enquiryNoInfo = {
+        enquirerHref: $el.find('a:contains("Enquirer link")').attr('href'),
+        tpHrefs: []
+      };
+
+      $el.find('a:contains("Response link")').each((i, responseEl) => {
+        enquiryNoInfo.tpHrefs.push(responseEl.getAttribute('href'));
+      });
+    });
+  }
+});
+
+Given(
+  "a tuition partner clicks a magic link with no info for optional inputs",
+  () => {
+    Step(this, "An enquiry with no optional info has been submitted");
+    cy.then(() => {
+      cy.visit(enquiryNoInfo.tpHrefs.shift());
+    })
   }
 );
 

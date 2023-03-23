@@ -23,7 +23,7 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -35,12 +35,12 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "they click 'Continue'");
 });
 
-Then("they click {string} button", () => {
-  cy.get(".app-print-hide > .govuk-button").click();
+Then("they click {string} button", (buttonText) => {
+  cy.get(".govuk-button").contains(buttonText).click();
 });
 
 Then("they enter a valid email address", () => {
-  cy.get("#Data_Email").clear().type("email@email.com");
+  cy.get("#Data_Email").clear().type("simulate-delivered@notifications.service.gov.uk");
 });
 
 let refNumOne;
@@ -113,7 +113,7 @@ When("user creates another enquiry", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -180,7 +180,7 @@ When("user navigates to the first enquiry question", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -264,7 +264,7 @@ When("user navigates to check your answers unselecting filter results", () => {
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they unselect filter results");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
