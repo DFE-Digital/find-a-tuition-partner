@@ -30,43 +30,66 @@
         <h2 class="govuk-heading-s">
             <span>Your tuition enquiry summary</span>
         </h2>
-        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mmtt 'on' dddd d MMMM")</span></p>
+        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString(StringConstants.DateFormatGDS)</span></p>
 
         <govuk-details open="false">
             <govuk-details-summary>
                 Your tuition requirements
             </govuk-details-summary>
             <govuk-details-text>
-                This is the tuition requirements you asked for:
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-                    @foreach (var item in Model.Data.KeyStageSubjects)
-                    {
-                        <li>
-                            @item
-                        </li>
-                    }
-                    <li>
-                        @Model.Data.TuitionTypeName
-                    </li>
-                    <li>
-                        <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
-                    </li>
-                    
-                    @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))
-                    {
-                        <li>
+                <govuk-summary-list>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Key stage and subjects
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                        @foreach (var item in Model.Data.KeyStageSubjects)
+                        {
+                            <li>
+                                @item
+                            </li>
+                        }
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Tuition type
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            @Model.Data.TuitionTypeName
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Tuition plan
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                        @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))
+                        {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            SEND requirements
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
                             <span class="display-pre-wrap">@Model.Data.SENDRequirements</span>
-                        </li>
-                    }
-
-                    @if (!string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation))
-                    {
-                        <li>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation))
+                        {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Other tuition requirements
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
                             <span class="display-pre-wrap">@Model.Data.AdditionalInformation</span>
-                        </li>
-                    }
-                    
-                </ul>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                        }
+                </govuk-summary-list>
             </govuk-details-text>
         </govuk-details>
 
