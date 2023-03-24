@@ -65,6 +65,9 @@ namespace UI.Pages.Enquiry.Respond
 
             if (enquiryData != null && tpResponseData != null)
             {
+                Data.TuitionPartnerName = tpResponseData.TuitionPartnerName!;
+                Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
+
                 var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(tpResponseData.TuitionPartnerName.ToSeoUrl(), enquiryData.SupportReferenceNumber));
 
                 if (sessionValues != null)
@@ -78,8 +81,6 @@ namespace UI.Pages.Enquiry.Respond
                 {
                     //TODO - if previously completed response then show error - check when tpResponseData.KeyStageAndSubjectsText is not empty
                     Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
-                    Data.TuitionPartnerName = tpResponseData.TuitionPartnerName!;
-                    Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
                     Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
                     Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
                     Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;

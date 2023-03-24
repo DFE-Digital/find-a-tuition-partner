@@ -1,4 +1,6 @@
-﻿namespace Application.Extensions;
+﻿using Application.Constants;
+
+namespace Application.Extensions;
 
 public static class DictionaryExtensions
 {
@@ -12,7 +14,7 @@ public static class DictionaryExtensions
         if (personalisation != null)
         {
             personalisation.Add(EnquiryRefKeyKey, enquiryRef);
-            personalisation.Add(EnquiryDateTimeKey, dateTime.ToString("dd/MM/yyyy HH:mm"));
+            personalisation.Add(EnquiryDateTimeKey, dateTime.ToString(StringConstants.DateFormatGDS));
             personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
         }
 

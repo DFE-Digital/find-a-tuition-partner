@@ -1,7 +1,6 @@
 @page
 @model WhichKeyStages
 @{
-
     var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/";
     ViewData["Title"] = "Which key stages do you need tutoring for?";
     ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
@@ -12,7 +11,7 @@
         <form method="get">
             <govuk-checkboxes asp-for="Data.KeyStages">
                 <govuk-checkboxes-fieldset>
-                    <govuk-checkboxes-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+          <govuk-checkboxes-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l govuk-!-margin-bottom-6">
                         Which key stages do you need tutoring for?
                     </govuk-checkboxes-fieldset-legend>
                     <govuk-checkboxes-hint>
