@@ -25,7 +25,7 @@ Given("a school views a tuition partners response", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
