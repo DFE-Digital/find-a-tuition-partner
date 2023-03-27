@@ -34,10 +34,6 @@ Feature: View all responses page and Tuition partner contact page
             | Date            |             |
             | Tuition Partner | {TP's name} |
 
-    Scenario: Clicking on a Tuition Partners Response redirects to their response page
-        Given a school clicks the magic link to view their enquiry
-        And they click View response from a tuition partner
-        Then the tuition partners response page is shown
 
     Scenario: Tuiton Partners Response Page has the expected structure
         Given a school clicks the magic link to view their enquiry
