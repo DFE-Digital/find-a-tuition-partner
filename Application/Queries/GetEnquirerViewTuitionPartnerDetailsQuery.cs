@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Queries;
 
-public record GetEnquirerViewTuitionPartnerDetailsQuery(int EnquiryId, int TuitionPartnerId) : IRequest<EnquirerViewTuitionPartnerDetailsModel?>;
+public record GetEnquirerViewTuitionPartnerDetailsQuery(string SupportReferenceNumber, string MagicLinkToken) : IRequest<EnquirerViewTuitionPartnerDetailsModel?>;
 
 public class GetEnquirerViewTuitionPartnerDetailsQueryHandler : IRequestHandler<GetEnquirerViewTuitionPartnerDetailsQuery, EnquirerViewTuitionPartnerDetailsModel?>
 {
@@ -21,12 +21,12 @@ public class GetEnquirerViewTuitionPartnerDetailsQueryHandler : IRequestHandler<
     public async Task<EnquirerViewTuitionPartnerDetailsModel?> Handle(GetEnquirerViewTuitionPartnerDetailsQuery request, CancellationToken cancellationToken)
     {
         var result = await _unitOfWork.TuitionPartnerEnquiryRepository
-            .GetEnquirerViewTuitionPartnerDetailsResponse(request.EnquiryId, request.TuitionPartnerId);
+            .GetEnquirerViewTuitionPartnerDetailsResponse(request.SupportReferenceNumber, request.MagicLinkToken);
 
         if (result == null)
         {
-            _logger.LogWarning("Enquiry response TP details not found for the given enquiryId: {enquiryId} and tuitionPartnerId: {tuitionPartnerId}",
-                request.EnquiryId, request.TuitionPartnerId);
+            _logger.LogWarning("Enquiry response not found for the given SupportReferenceNumber: {supportReferenceNumber} and MagicLinkToken: {magicLinkToken}",
+                request.SupportReferenceNumber, request.MagicLinkToken);
         }
         return result;
     }

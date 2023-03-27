@@ -4,7 +4,7 @@
     ViewData["Title"] = "Response sent confirmation";
     ViewData["IncludePrintPage"] = true;
     var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
-    var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/respond/all-enquirer-responses?token={Model.Data.EnquirerMagicLink}";
+    var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerMagicLink}";
 }
 
 <div class="govuk-width-container">

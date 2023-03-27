@@ -13,17 +13,33 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
     {
     }
 
-    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(int enquiryId, string baseServiceUrl)
+    public async Task<Enquiry?> GetEnquiryBySupportReferenceNumber(string supportReferenceNumber)
     {
         var enquiry = await _context.Enquiries.AsNoTracking()
-            .Where(e => e.Id == enquiryId)
+            .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
+            .Include(x => x.MagicLink)
+            .Include(x => x.TuitionPartnerEnquiry)
+            .ThenInclude(x => x.MagicLink)
+            .Include(x => x.TuitionPartnerEnquiry)
+            .ThenInclude(x => x.EnquiryResponse)
+            .SingleOrDefaultAsync();
+
+        return enquiry ?? null;
+    }
+
+    public async Task<EnquirerViewAllResponsesModel?> GetEnquirerViewAllResponses(string baseServiceUrl, string supportReferenceNumber)
+    {
+        var enquiry = await _context.Enquiries.AsNoTracking()
+            .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
+            .Include(e => e.MagicLink)
             .Include(e => e.KeyStageSubjectEnquiry)
             .ThenInclude(ks => ks.KeyStage)
             .Include(e => e.KeyStageSubjectEnquiry)
             .ThenInclude(s => s.Subject)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.EnquiryResponse)
-            .ThenInclude(e => e!.MagicLink)
+            .Include(x => x.TuitionPartnerEnquiry)
+            .ThenInclude(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.TuitionPartner)
             .AsSplitQuery()
@@ -31,7 +47,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
         if (enquiry == null)
         {
-            return new EnquirerViewAllResponsesModel();
+            return null;
         }
 
         var tuitionPartnerEnquiriesWithResponses = enquiry.TuitionPartnerEnquiry.Where(x =>
@@ -65,7 +81,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
                 TuitionPartnerName = er.TuitionPartner.Name,
                 EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!,
                 EnquirerEnquiryResponseLink =
-                    $"{baseServiceUrl}/enquiry/respond/enquirer-response?token={er.EnquiryResponse!.MagicLink!.Token}"
+                    $"{baseServiceUrl}/enquiry/{supportReferenceNumber}/respond/enquirer-response/{er.TuitionPartner.Name.ToSeoUrl()}?Token={er.MagicLink!.Token}"
             };
             result.EnquirerViewResponses.Add(responseModel);
         }

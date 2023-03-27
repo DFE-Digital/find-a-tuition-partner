@@ -15,17 +15,6 @@ public class AesEncryption : IEncrypt
         _config = options.Value;
     }
 
-    public string GenerateRandomToken()
-    {
-        using var rng = RandomNumberGenerator.Create();
-        var bytes = new byte[32]; // 256 bits
-
-        rng.GetBytes(bytes);
-
-        var result = Convert.ToBase64String(bytes);
-
-        return result;
-    }
     public string Encrypt(string plaintext)
     {
         byte[] encryptedBytes;

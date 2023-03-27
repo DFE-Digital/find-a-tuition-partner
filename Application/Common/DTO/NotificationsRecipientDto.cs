@@ -8,13 +8,16 @@ public class NotificationsRecipientDto
     }
 
 
+    public int TuitionPartnerId { get; set; }
+
+    public string? TuitionPartnerName { get; set; }
     public string OriginalEmail { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 
     public string EnquirerEmailForTestingPurposes { get; set; } = null!;
 
-    public string? Token { get; set; } = null!;
+    public string? Token { get; set; }
 
     public Dictionary<string, dynamic> Personalisation { get; set; } = null!;
 

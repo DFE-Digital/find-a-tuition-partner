@@ -1,3 +1,4 @@
+using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
@@ -87,6 +88,18 @@ public class CheckYourAnswers : PageModel
 
         var enquirerEmailSentStatus = submittedConfirmationModel.EnquirerEmailSentStatus;
 
+        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
+        {
+            TempData["Status"] = HttpStatusCode.NotFound;
+            return RedirectToPage(nameof(ErrorModel));
+        }
+
+        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
+        {
+            TempData["Status"] = HttpStatusCode.InternalServerError;
+            return RedirectToPage(nameof(ErrorModel));
+        }
+
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
         {
             if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
@@ -103,6 +116,7 @@ public class CheckYourAnswers : PageModel
 
             if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
             {
+                TempData["Status"] = HttpStatusCode.InternalServerError;
                 return RedirectToPage(nameof(ErrorModel));
             }
         }
@@ -120,8 +134,8 @@ public class CheckYourAnswers : PageModel
             if (!_hostEnvironment.IsProduction())
             {
                 submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
-                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks.OrderBy(x => x.Key).Take(10).ToDictionary(pair => pair.Key, pair => pair.Value);
-                submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinks.Count;
+
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks;
             }
 
             HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());

@@ -1,50 +1,60 @@
-using Application.Common.DTO;
-using Application.Common.Interfaces;
+using System.Net;
 using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
 {
     public class EnquirerViewTuitionPartnerDetails : PageModel
     {
-        private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
-
-        private const string InvalidUrlErrorMessage = "Invalid Url";
-
         private readonly IMediator _mediator;
-        private readonly IEncrypt _aesEncrypt;
         [BindProperty] public EnquirerViewTuitionPartnerDetailsModel Data { get; set; } = new();
-        [ViewData] public string ErrorMessage { get; set; } = string.Empty;
 
-        string _queryToken = string.Empty;
+        [FromRoute(Name = "support-reference-number")] public string SupportReferenceNumber { get; set; } = string.Empty;
 
-        public EnquirerViewTuitionPartnerDetails(IMediator mediator, IEncrypt aesEncrypt)
+        [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
+
+        public EnquirerViewTuitionPartnerDetails(IMediator mediator)
         {
             _mediator = mediator;
-            _aesEncrypt = aesEncrypt;
         }
-
 
         public async Task<IActionResult> OnGetAsync()
         {
+            var queryToken = Request.Query["Token"].ToString();
 
-            _queryToken = Request.Query["token"].ToString();
+            if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
+            {
+                TempData["Status"] = HttpStatusCode.NotFound;
+                return RedirectToPage(nameof(ErrorModel));
+            }
 
-            if (AddInValidUrlErrorMessage(_queryToken)) return Page();
+            if (!string.IsNullOrEmpty(SupportReferenceNumber))
+            {
+                Data.SupportReferenceNumber = SupportReferenceNumber;
+            }
+            if (!string.IsNullOrEmpty(TuitionPartnerSeoUrl))
+            {
+                Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
+            }
+
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
+
+            if (!isValidMagicLink)
+            {
+                TempData["Status"] = HttpStatusCode.NotFound;
+                return RedirectToPage(nameof(ErrorModel));
+            }
 
             try
             {
-                var (enquiryId, tuitionPartnerId) = GetTokenValues(_queryToken);
-
-                var getMagicLinkToken = await GetMagicLinkToken(_queryToken);
-                if (getMagicLinkToken == null) return Page();
-
-                var getEnquirerViewTuitionPartnerDetailsQuery = new GetEnquirerViewTuitionPartnerDetailsQuery(enquiryId, tuitionPartnerId);
+                var getEnquirerViewTuitionPartnerDetailsQuery = new
+                    GetEnquirerViewTuitionPartnerDetailsQuery(SupportReferenceNumber, queryToken);
 
                 var data = await _mediator.Send(getEnquirerViewTuitionPartnerDetailsQuery);
 
                 if (data != null)
                 {
-                    Data = data with { EnquirerViewResponseToken = _queryToken };
+                    Data = data with { EnquirerViewResponseToken = queryToken };
                     HttpContext.AddLadNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.LocalAuthorityDistrict);
                     HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.TuitionPartnerName);
                     HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.SupportReferenceNumber);
@@ -52,81 +62,10 @@ namespace UI.Pages.Enquiry.Respond
             }
             catch
             {
-                AddErrorMessage(InvalidTokenErrorMessage);
                 return Page();
             }
 
             return Page();
-        }
-
-        //TODO - review repeated code with the other response pages that have magic links - to be looked at as part of https://dfedigital.atlassian.net/browse/NTP-1041
-        private (int enquiryId, int tuitionPartnerId) GetTokenValues(string token)
-        {
-            string tokenValue;
-
-            try
-            {
-                tokenValue = _aesEncrypt.Decrypt(token);
-            }
-            catch
-            {
-                var parsedToken = ParseTokenFromQueryString();
-
-                tokenValue = _aesEncrypt.Decrypt(parsedToken);
-
-                _queryToken = parsedToken;
-            }
-
-            var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
-
-            var splitEnquiryPart = splitTokenValue[0].Split('=', StringSplitOptions.RemoveEmptyEntries);
-            var enquiryId = int.Parse(splitEnquiryPart[1]);
-
-            var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
-            var tuitionPartnerId = int.Parse(splitTuitionPartnerPart[1]);
-
-            return (enquiryId, tuitionPartnerId);
-        }
-
-        private void AddErrorMessage(string errorMessage)
-        {
-            ErrorMessage = errorMessage;
-
-            ModelState.AddModelError("ErrorMessage", ErrorMessage);
-        }
-
-        private bool AddInValidUrlErrorMessage(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                AddErrorMessage(InvalidUrlErrorMessage);
-                return true;
-            }
-
-            return false;
-        }
-
-        private async Task<MagicLinkDto?> GetMagicLinkToken(string token)
-        {
-            var getMagicLinkTokenQuery = await _mediator.Send(new GetMagicLinkTokenQuery(token,
-                nameof(MagicLinkType.EnquirerViewResponse)));
-
-            if (getMagicLinkTokenQuery == null)
-            {
-                AddErrorMessage(InvalidTokenErrorMessage);
-
-                return null;
-            }
-
-            return getMagicLinkTokenQuery;
-        }
-
-        private string ParseTokenFromQueryString()
-        {
-            var queryString = Request.QueryString.Value;
-            var tokens = queryString!.Split(new char[] { '=' }, 2);
-            var tokenValue = tokens[1];
-            return tokenValue;
         }
     }
 }

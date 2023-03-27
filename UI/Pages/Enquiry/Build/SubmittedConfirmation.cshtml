@@ -3,8 +3,8 @@
 @{
   ViewData["Title"] = "Enquiry submitted confirmation";
   ViewData["IncludePrintPage"] = true;
-  var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
-  var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/respond/all-enquirer-responses?token={Model.Data.EnquirerMagicLink}";
+  var supportReferenceNumber = Model.Data.SupportReferenceNumber ?? string.Empty;
+  var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerMagicLink}";
 }
 
 <div class="govuk-width-container">
@@ -36,17 +36,19 @@
                 <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
             </p>
             }
-            @if(Model.Data.TuitionPartnerMagicLinks != null)
+            @if(Model.Data.TuitionPartnerMagicLinks != null && Model.Data.TuitionPartnerMagicLinks.Any())
             {
+                var tuitionPartnerMagicLinksToDisplayForTesting = Model.Data.TuitionPartnerMagicLinks.Take(10)
+                    .OrderBy(x => x.Email).ToList();  
                 <p class="govuk-body">
-                    Tuition Partner links (displaying @Model.Data.TuitionPartnerMagicLinks.Count() of @Model.Data.TuitionPartnerMagicLinksCount)
+                    Tuition Partner links (displaying @tuitionPartnerMagicLinksToDisplayForTesting.Count of @Model.Data.TuitionPartnerMagicLinks.Count)
                 </p>
-                foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
+                foreach (var tpLink in tuitionPartnerMagicLinksToDisplayForTesting)
                 {
-                    var dataTestId = $"tp-response-magic-link{tpLink.Key}";
-                    var tpHref = $"/enquiry/respond/response?token={tpLink.Value}";
+                    var dataTestId = $"tp-response-magic-link{tpLink.Email}";
+                    var tpHref = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{tpLink.TuitionPartnerSeoUrl}?Token={tpLink.MagicLinkToken}";
                 <p class="govuk-body">
-                    @tpLink.Key: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
+                    @tpLink.Email: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
                 </p>
                 }
             }
