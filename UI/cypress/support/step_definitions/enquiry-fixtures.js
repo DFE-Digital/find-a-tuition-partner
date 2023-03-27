@@ -77,8 +77,16 @@ Given(
 Given("a school clicks the magic link to view their enquiry", () => {
   Step(this, "An enquiry has been submitted");
   cy.then(async () => {
-    cy.visit(enquiry.enquirerHref);
+    cy.visit(await getFirstValidLink(enquiry.tpHrefs));
   });
+  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", "80");
+  cy.get("#Data_TuitionTypeText").clear().invoke("val", "80");
+  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", "80");
+  cy.get("#Data_SENDRequirementsText").clear().invoke("val", "80");
+  cy.get("#Data_AdditionalInformationText").clear().invoke("val", "80");
+  Step(this, "they click 'Continue'");
+  Step(this, "they click 'Submit'");
+  cy.get('[data-testid="enquirer-magic-link"]').click();
 });
 
 Given("An enquiry with no optional info has been submitted", async () => {
