@@ -2,6 +2,7 @@ using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
 using Application.Constants;
+using Application.Extensions;
 using Domain;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
@@ -211,16 +212,16 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
             ResponseCreatedOnDateTime = responseCreateDateTime.ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
-            EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText,
+            EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
-            EnquiryResponseTuitionType = request.Data.TuitionTypeText,
-            EnquiryTuitionPlan = request.Data.EnquiryTutoringLogistics,
-            EnquiryResponseTuitionPlan = request.Data.TutoringLogisticsText,
-            EnquirySendSupport = request.Data.EnquirySENDRequirements ?? StringConstants.NotSpecified,
-            EnquiryResponseSendSupport = request.Data.SENDRequirementsText ?? StringConstants.NotSpecified,
-            EnquiryAdditionalInformation = request.Data.EnquiryAdditionalInformation ?? StringConstants.NotSpecified,
+            EnquiryResponseTuitionType = request.Data.TuitionTypeText.EscapeNotifyText(true),
+            EnquiryTuitionPlan = request.Data.EnquiryTutoringLogistics.EscapeNotifyText(),
+            EnquiryResponseTuitionPlan = request.Data.TutoringLogisticsText.EscapeNotifyText(true),
+            EnquirySendSupport = request.Data.EnquirySENDRequirements.EscapeNotifyText() ?? StringConstants.NotSpecified,
+            EnquiryResponseSendSupport = request.Data.SENDRequirementsText.EscapeNotifyText(true) ?? StringConstants.NotSpecified,
+            EnquiryAdditionalInformation = request.Data.EnquiryAdditionalInformation.EscapeNotifyText() ?? StringConstants.NotSpecified,
             EnquiryResponseAdditionalInformation =
-                request.Data.AdditionalInformationText ?? StringConstants.NotSpecified,
+                request.Data.AdditionalInformationText.EscapeNotifyText(true) ?? StringConstants.NotSpecified,
             ContactUsLink = contactusLink
         };
 
