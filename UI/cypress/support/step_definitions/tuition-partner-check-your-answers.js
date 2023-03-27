@@ -5,13 +5,13 @@ import {
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("Tuition partner has journeyed to the check your answers page", () => {
-  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
-  cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
-  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
-  cy.get("#Data_SENDRequirementsText").clear().invoke("val", 80);
-  cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
-  cy.get('[data-testid="call-to-action"]').click();
+Then("Tuition partner has journeyed to the check your answers page", () => {
+  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", "80");
+  cy.get("#Data_TuitionTypeText").clear().invoke("val", "80");
+  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", "80");
+  cy.get("#Data_SENDRequirementsText").clear().invoke("val", "80");
+  cy.get("#Data_AdditionalInformationText").clear().invoke("val", "80");
+  Step(this, "they click 'Continue'");
 });
 
 Then("the heading of the page is {string}", (heading) => {
