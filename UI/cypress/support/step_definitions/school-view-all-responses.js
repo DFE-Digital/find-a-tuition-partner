@@ -104,7 +104,7 @@ Then(
 );
 
 When("they click View response from a tuition partner", () => {
-  cy.get(".govuk-table__body > .govuk-table__row > :nth-child(3)").click();
+  cy.get('[data-testid="view-enquiry-response-link"]').click();
 });
 
 When(
