@@ -85,10 +85,7 @@
             </p>
           </dt>
           <dd class="govuk-summary-list__value">
-            <span class="display-pre-wrap">
-              @(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText)
-                  ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)
-            </span>
+            <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirementsText) ? StringConstants.NotSpecified : Model.Data.SENDRequirementsText)</span>
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link" href=@backUrl#Data_SENDRequirementsText>
@@ -107,10 +104,7 @@
             </p>
           </dt>
           <dd class="govuk-summary-list__value">
-            <span class="display-pre-wrap">
-              @(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText)
-                  ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)
-            </span>
+            <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformationText) ? StringConstants.NotSpecified : Model.Data.AdditionalInformationText)</span>
           </dd>
           <dd class="govuk-summary-list__actions">
             <a class="govuk-link" href=@backUrl#Data_AdditionalInformationText>

@@ -127,10 +127,7 @@
         </h2>
 
         <p class="govuk-body">
-          <span class="display-pre-wrap">
-            @(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements)
-                ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)
-          </span>
+          <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span>
         </p>
 
         @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
@@ -153,10 +150,7 @@
         </h2>
 
         <p class="govuk-body">
-          <span class="display-pre-wrap">
-            @(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation)
-                ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)
-          </span>
+          <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span>
         </p>
 
         @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
