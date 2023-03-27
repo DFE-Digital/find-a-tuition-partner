@@ -55,7 +55,7 @@ namespace UI.Extensions
                 {
                     var Logger = GetStaticLogger<T>();
 
-                    Logger?.LogError("Error adding data to DfE Analytics", ex);
+                    Logger?.LogError("Error adding data to DfE Analytics. Error: {ex}", ex);
                 }
             }
         }

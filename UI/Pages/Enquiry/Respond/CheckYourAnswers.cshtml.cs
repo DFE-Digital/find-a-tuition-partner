@@ -1,4 +1,4 @@
-using Application.Common.DTO;
+using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
 
@@ -8,29 +8,21 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 {
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
 
-    private readonly IEncrypt _aesEncrypt;
     private readonly IHostEnvironment _hostEnvironment;
 
-    private const string InvalidTokenErrorMessage = "Invalid token provided in the URl.";
-
-    private const string InvalidUrlErrorMessage = "Invalid Url";
-
-    [ViewData] public string? ErrorMessage { get; set; }
-
-    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IEncrypt aesEncrypt, IHostEnvironment hostEnvironment) : base(sessionService, mediator)
+    public CheckYourAnswers(ISessionService sessionService, IMediator mediator, IHostEnvironment hostEnvironment) : base(sessionService, mediator)
     {
-        _aesEncrypt = aesEncrypt;
         _hostEnvironment = hostEnvironment;
     }
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(data.TuitionPartnerName.ToSeoUrl(), data.SupportReferenceNumber)))
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(data.TuitionPartnerSeoUrl!, data.SupportReferenceNumber)))
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
-        var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(data.TuitionPartnerName.ToSeoUrl(), data.SupportReferenceNumber));
+        var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(data.TuitionPartnerSeoUrl!, data.SupportReferenceNumber));
 
         if (sessionValues != null)
         {
@@ -41,10 +33,14 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
         }
 
-        var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
-        if (getMagicLinkToken == null) return Page();
+        var isValidMagicLink =
+            await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, true));
 
-        ParsedTokenValuesFromToken(Data.Token);
+        if (!isValidMagicLink)
+        {
+            TempData["Status"] = HttpStatusCode.NotFound;
+            return RedirectToPage(nameof(ErrorModel));
+        }
 
         ModelState.Clear();
 
@@ -53,15 +49,19 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerName.ToSeoUrl(), Data.SupportReferenceNumber)))
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
             return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
 
-        var getMagicLinkToken = await GetMagicLinkToken(Data.Token);
-        if (getMagicLinkToken == null) return Page();
+        var isValidMagicLink =
+            await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, true));
 
-        ParsedTokenValuesFromToken(Data.Token);
+        if (!isValidMagicLink)
+        {
+            TempData["Status"] = HttpStatusCode.NotFound;
+            return RedirectToPage(nameof(ErrorModel));
+        }
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
@@ -72,12 +72,23 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         var submittedConfirmationModel = await _mediator.Send(command);
 
+        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
+        {
+            TempData["Status"] = HttpStatusCode.NotFound;
+            return RedirectToPage(nameof(ErrorModel));
+        }
+
+        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
+        {
+            TempData["Status"] = HttpStatusCode.InternalServerError;
+            return RedirectToPage(nameof(ErrorModel));
+        }
+
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
         {
-            await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerName.ToSeoUrl(), Data.SupportReferenceNumber));
+            await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 
             submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
-            submittedConfirmationModel.TuitionPartnerName = Data.TuitionPartnerName;
 
             if (_hostEnvironment.IsProduction())
             {
@@ -85,93 +96,12 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             }
 
             HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(Data.TuitionPartnerName);
+            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(submittedConfirmationModel.TuitionPartnerName);
             HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
 
             return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
         }
 
         return Page();
-    }
-
-    private void ParsedTokenValuesFromToken(string token)
-    {
-        string tokenValue;
-
-        try
-        {
-            tokenValue = _aesEncrypt.Decrypt(token);
-        }
-        catch
-        {
-            var parsedToken = ParseTokenFromQueryString();
-
-            try
-            {
-                tokenValue = _aesEncrypt.Decrypt(parsedToken);
-            }
-            catch
-            {
-                tokenValue = string.Empty;
-            }
-        }
-
-        if (string.IsNullOrEmpty(tokenValue))
-        {
-            AddErrorMessage(InvalidUrlErrorMessage);
-            return;
-        }
-
-        var splitTokenValue = tokenValue.Split('&', StringSplitOptions.RemoveEmptyEntries);
-
-        if (!splitTokenValue.Any()) return;
-
-        var splitTokenTypePart = splitTokenValue[0].Split('=', StringSplitOptions.RemoveEmptyEntries);
-
-        var tokenType = splitTokenTypePart[1];
-
-        if (!string.IsNullOrWhiteSpace(tokenType) && tokenType != nameof(MagicLinkType.EnquiryRequest))
-        {
-            AddErrorMessage(InvalidUrlErrorMessage);
-            return;
-        }
-
-        var splitTuitionPartnerPart = splitTokenValue[1].Split('=', StringSplitOptions.RemoveEmptyEntries);
-
-        if (int.TryParse(splitTuitionPartnerPart[1], out var tuitionPartnerId))
-        {
-            Data.TuitionPartnerId = tuitionPartnerId;
-        }
-    }
-
-    private async Task<MagicLinkDto?> GetMagicLinkToken(string token)
-    {
-        var getMagicLinkTokenQuery = await _mediator.Send(new GetMagicLinkTokenQuery(token, nameof(MagicLinkType.EnquiryRequest)));
-
-        if (getMagicLinkTokenQuery == null)
-        {
-            AddErrorMessage(InvalidTokenErrorMessage);
-
-            return null;
-        }
-
-        Data.EnquiryId = getMagicLinkTokenQuery.EnquiryId!.Value;
-
-        return getMagicLinkTokenQuery;
-    }
-
-    private void AddErrorMessage(string errorMessage)
-    {
-        ErrorMessage = errorMessage;
-
-        ModelState.AddModelError("Data.ErrorMessage", ErrorMessage);
-    }
-
-    private string ParseTokenFromQueryString()
-    {
-        var queryString = Request.QueryString.Value;
-        var tokens = queryString!.Split(new char[] { '=' }, 2);
-        var tokenValue = tokens[1];
-        return tokenValue;
     }
 }

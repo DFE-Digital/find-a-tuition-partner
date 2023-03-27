@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/enquiry/{supportReferenceNumber}/respond/response/{tuitionPartnerSeoUrl}"
 @model UI.Pages.Enquiry.Respond.Response
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
@@ -8,7 +8,6 @@
 
 <form method="post" gfa-prepend-error-summary="false">
   <govuk-error-summary show-if="!Model.ModelState.IsValid">
-    <govuk-error-summary-item asp-for="Data.ErrorMessage" />
     <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText" />
     <govuk-error-summary-item asp-for="Data.TuitionTypeText" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsText" />
@@ -172,7 +171,7 @@
   <input type="hidden" name="handler" value="Submit" />
   <input asp-for="Data.LocalAuthorityDistrict" type="hidden" />
   <input asp-for="Data.SupportReferenceNumber" type="hidden" />
-  <input asp-for="Data.TuitionPartnerName" type="hidden" />
+  <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
   @if (Model.Data.EnquiryKeyStageSubjects.Any())
   {
     @for (int i = 0; i < Model.Data.EnquiryKeyStageSubjects.Count(); i++)
