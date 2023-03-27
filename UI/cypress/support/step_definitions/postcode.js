@@ -6,7 +6,7 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 
 When("they enter {string} as the school's postcode", (postcode) => {
-  cy.get('input[name="Data.Postcode').type(`{selectAll}{del}${postcode}`);
+  cy.get("#Data_Postcode").type(`{selectAll}{del}${postcode}`);
 });
 
 When("they click on the postcode error", () => {

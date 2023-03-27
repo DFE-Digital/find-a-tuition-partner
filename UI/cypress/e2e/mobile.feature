@@ -102,7 +102,7 @@ Feature: Tuition partner details mobile view page tests
 
   Scenario: Make an enquiry journey
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
-    When user clicks 'Make an enquiry'
+    When they click 'Start now'
     And they click 'Continue' on enquiry
     Then they enter a valid email address
     When they click 'Continue'
@@ -167,17 +167,16 @@ Feature: Tuition partner details mobile view page tests
 
   Scenario: Verify Check Your Answers page content
     Given a user has started the 'Find a tuition partner' journey
-    And a user is using a 'phone'
     When user has journeyed forward to the check your answers page
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following:
-      | Section Name            | Expected Content                       |
-      | Key stages and subjects | Displays Key Stages and subjects table |
-      | Type of Tuition         | Any                                    |
-      | Email Address           | email@email.com                        |
-      | Tuition Plan            | enquiry                                |
-      | SEND Support            | enquiry                                |
-      | Other Considerations    | enquiry                                |
+      | Section Name            | Expected Content                                |
+      | Key stages and subjects | Displays Key Stages and subjects table          |
+      | Type of Tuition         | Any                                             |
+      | Email Address           | simulate-delivered@notifications.service.gov.uk |
+      | Tuition Plan            | enquiry                                         |
+      | SEND Support            | enquiry                                         |
+      | Other Considerations    | enquiry                                         |
 
 
   Scenario: Change selections for Key Stages and Subjects
@@ -193,13 +192,13 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     When they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the key stage and subjects updates:
-      | Section Name            | Expected Content                      |
-      | Key stages and subjects | Displays Key Stage and Subjects table |
-      | Type of Tuition         | Any                                   |
-      | Email Address           | email@email.com                       |
-      | Tuition Plan            | enquiry                               |
-      | SEND Support            | enquiry                               |
-      | Other Considerations    | enquiry                               |
+      | Section Name            | Expected Content                                |
+      | Key stages and subjects | Displays Key Stage and Subjects table           |
+      | Type of Tuition         | Any                                             |
+      | Email Address           | simulate-delivered@notifications.service.gov.uk |
+      | Tuition Plan            | enquiry                                         |
+      | SEND Support            | enquiry                                         |
+      | Other Considerations    | enquiry                                         |
 
   Scenario: Change selections for Type of Tuition
     Given a user has started the 'Find a tuition partner' journey
@@ -210,13 +209,13 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the type of tuition update:
-      | Section Name            | Expected Content                      |
-      | Key stages and subjects | Displays Key Stage and Subjects table |
-      | Type of Tuition         | Online                                |
-      | Email Address           | email@email.com                       |
-      | Tuition Plan            | enquiry                               |
-      | SEND Support            | enquiry                               |
-      | Other Considerations    | enquiry                               |
+      | Section Name            | Expected Content                                |
+      | Key stages and subjects | Displays Key Stage and Subjects table           |
+      | Type of Tuition         | Online                                          |
+      | Email Address           | simulate-delivered@notifications.service.gov.uk |
+      | Tuition Plan            | enquiry                                         |
+      | SEND Support            | enquiry                                         |
+      | Other Considerations    | enquiry                                         |
 
   Scenario: Change selections for email address
     Given a user has started the 'Find a tuition partner' journey
@@ -254,13 +253,14 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the email address update:
-      | Section Name            | Expected Content                      |
-      | Key stages and subjects | Displays Key Stage and Subjects table |
-      | Type of Tuition         | Any                                   |
-      | Email Address           | email@email.com                       |
-      | Tuition Plan            | aaaaa                                 |
-      | SEND Support            | aaaaa                                 |
-      | Other Considerations    | Not specified                         |
+      | Section Name            | Expected Content                                |
+      | Key stages and subjects | Displays Key Stage and Subjects table           |
+      | Type of Tuition         | Any                                             |
+      | Email Address           | simulate-delivered@notifications.service.gov.uk |
+      | Tuition Plan            | aaaaa                                           |
+      | SEND Support            | aaaaa                                           |
+      | Other Considerations    | Not specified                                   |
+
 
 
   Scenario: Clear search filters in search page and attempt to make an enquiry

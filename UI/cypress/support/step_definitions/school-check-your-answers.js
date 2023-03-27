@@ -216,7 +216,10 @@ Then(
 
 Then("the user is taken back to the email address page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
-  cy.get("#Data_Email").should("have.value", "email@email.com");
+  cy.get("#Data_Email").should(
+    "have.value",
+    "simulate-delivered@notifications.service.gov.uk"
+  );
 });
 
 Then(

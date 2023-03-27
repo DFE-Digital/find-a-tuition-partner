@@ -6,76 +6,6 @@ import {
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
 
-Given(
-  "a tuition partner clicks the magic link to respond to a schools enquiry",
-  () => {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
-    Step(this, "they will see all the keys stages as options");
-    Step(this, "they select 'Key stage 1, Key stage 2'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
-    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
-    Step(
-      this,
-      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
-    );
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
-    Step(this, "they click 'Continue' button");
-    Step(this, "they enter a valid email address");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for tuition plan");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for SEND requirements");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for other requirements");
-    Step(this, "they click 'Continue'");
-    Step(this, "they select terms and conditions");
-    Step(this, "they click send enquiry");
-    cy.get("p a").eq(2).click();
-  }
-);
-
-Given(
-  "a tuition partner clicks a magic link with no info for optional inputs",
-  () => {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
-    Step(this, "they will see all the keys stages as options");
-    Step(this, "they select 'Key stage 1, Key stage 2'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
-    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
-    Step(
-      this,
-      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
-    );
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
-    Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they click 'Make an enquiry' button");
-    Step(this, "they click 'Continue' button");
-    Step(this, "they enter a valid email address");
-    Step(this, "they click 'Continue'");
-    Step(this, "they enter an answer for tuition plan");
-    Step(this, "they click 'Continue'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they click 'Continue'");
-    Step(this, "they select terms and conditions");
-    Step(this, "they click send enquiry");
-    cy.get("p a").eq(2).click();
-  }
-);
-
 Then(
   "the page heading should show School Enquiry from {string} area",
   (LAD) => {
@@ -237,7 +167,3 @@ And(
     });
   }
 );
-
-When("they click return to your enquiry list", () => {
-  cy.get(":nth-child(8) > .govuk-link").click();
-});
