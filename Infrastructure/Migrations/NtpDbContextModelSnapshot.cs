@@ -44,6 +44,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("MagicLinkId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PostCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -66,6 +69,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
+                    b.HasIndex("MagicLinkId");
+
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
 
@@ -85,18 +90,15 @@ namespace Infrastructure.Migrations
                     b.Property<string>("AdditionalInformationText")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EnquiryId")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("KeyStageAndSubjectsText")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("MagicLinkId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("SENDRequirementsText")
                         .HasColumnType("text");
@@ -110,10 +112,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EnquiryId");
-
-                    b.HasIndex("MagicLinkId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -3950,63 +3948,13 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("EnquiryId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("MagicLinkTypeId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnquiryId");
-
-                    b.HasIndex("MagicLinkTypeId");
-
                     b.ToTable("MagicLinks");
-                });
-
-            modelBuilder.Entity("Domain.MagicLinkType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("MagicLinkTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "EnquiryRequest"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "EnquirerViewResponse"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "EnquirerViewAllResponses"
-                        });
                 });
 
             modelBuilder.Entity("Domain.OrganisationType", b =>
@@ -4582,8 +4530,11 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("EnquiryResponseId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("MagicLinkId")
+                    b.Property<int>("MagicLinkId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("ResponseCloseDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
@@ -4680,28 +4631,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
+                    b.HasOne("Domain.MagicLink", "MagicLink")
+                        .WithMany()
+                        .HasForeignKey("MagicLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.TuitionType", "TuitionType")
                         .WithMany()
                         .HasForeignKey("TuitionTypeId");
 
-                    b.Navigation("TuitionType");
-                });
-
-            modelBuilder.Entity("Domain.EnquiryResponse", b =>
-                {
-                    b.HasOne("Domain.Enquiry", "Enquiry")
-                        .WithMany("EnquiryResponse")
-                        .HasForeignKey("EnquiryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.MagicLink", "MagicLink")
-                        .WithMany()
-                        .HasForeignKey("MagicLinkId");
-
-                    b.Navigation("Enquiry");
-
                     b.Navigation("MagicLink");
+
+                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -4786,22 +4728,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("TuitionPartner");
 
                     b.Navigation("TuitionType");
-                });
-
-            modelBuilder.Entity("Domain.MagicLink", b =>
-                {
-                    b.HasOne("Domain.Enquiry", "Enquiry")
-                        .WithMany("MagicLinks")
-                        .HasForeignKey("EnquiryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Domain.MagicLinkType", "MagicLinkType")
-                        .WithMany()
-                        .HasForeignKey("MagicLinkTypeId");
-
-                    b.Navigation("Enquiry");
-
-                    b.Navigation("MagicLinkType");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -4937,7 +4863,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.MagicLink", "MagicLink")
                         .WithMany()
-                        .HasForeignKey("MagicLinkId");
+                        .HasForeignKey("MagicLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.TuitionPartner", "TuitionPartner")
                         .WithMany()
@@ -4965,11 +4893,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
-                    b.Navigation("EnquiryResponse");
-
                     b.Navigation("KeyStageSubjectEnquiry");
-
-                    b.Navigation("MagicLinks");
 
                     b.Navigation("TuitionPartnerEnquiry");
                 });

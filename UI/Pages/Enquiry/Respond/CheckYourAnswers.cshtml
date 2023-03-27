@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Respond.CheckYourAnswers
 
 @{
-  var backUrl = $"/enquiry/respond/response?token={@Model.Data.Token}";
+  var backUrl = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{Model.Data.TuitionPartnerSeoUrl}?token={@Model.Data.Token}";
   ViewData["Title"] = "Check your answers";
   ViewData["BackLinkHref"] = backUrl;
   ViewData["IncludePrintPage"] = true;
@@ -12,7 +12,6 @@
   <div class="govuk-grid-column-full">
 
       <govuk-error-summary>
-        <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
         <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText"/>
         <govuk-error-summary-item asp-for="Data.TuitionTypeText"/>
         <govuk-error-summary-item asp-for="Data.TutoringLogisticsText"/>
@@ -141,7 +140,7 @@
               }
           <input asp-for="Data.EnquiryAdditionalInformation" type="hidden"/>
           <input asp-for="Data.LocalAuthorityDistrict" type="hidden"/>
-          <input asp-for="Data.TuitionPartnerName" type="hidden"/>
+          <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden"/>
           <input asp-for="Data.SupportReferenceNumber" type="hidden"/>
           <input asp-for="Data.Token" type="hidden"/>
         </form>

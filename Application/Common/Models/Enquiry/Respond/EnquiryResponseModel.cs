@@ -4,8 +4,9 @@ namespace Application.Common.Models.Enquiry.Respond;
 
 public record EnquiryResponseModel : EnquiryBaseModel
 {
-    public int TuitionPartnerId { get; set; }
     public string TuitionPartnerName { get; set; } = string.Empty;
+
+    public string? TuitionPartnerSeoUrl { get; set; }
     public string Email { get; set; } = string.Empty;
     public string Token { get; set; } = string.Empty;
 

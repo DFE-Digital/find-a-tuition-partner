@@ -28,7 +28,6 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<Enquiry> Enquiries { get; set; } = null!;
     public DbSet<EnquiryResponse> EnquiryResponses { get; set; } = null!;
     public DbSet<MagicLink> MagicLinks { get; set; } = null!;
-    public DbSet<MagicLinkType> MagicLinkTypes { get; set; } = null!;
     public DbSet<OrganisationType> OrganisationType { get; set; } = null!;
 
     public DbSet<TuitionPartnerEnquiry> TuitionPartnersEnquiry { get; set; } = null!;
