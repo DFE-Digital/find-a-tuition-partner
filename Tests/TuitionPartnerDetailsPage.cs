@@ -99,7 +99,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
 
         result!.Name.Should().Be("A Tuition Partner");
         result.Description.Should().Be("A Tuition Partner Description");
-        result.Subjects.Should().BeEquivalentTo("Key stage 3 - English and Maths");
+        result.Subjects.Should().BeEquivalentTo("Key stage 3: English and Maths");
         result.Ratios.Should().BeEquivalentTo("1 to 2", "1 to 3");
         result.Prices.Should().BeEquivalentTo(new Dictionary<int, GroupPrice>
         {

@@ -44,7 +44,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         var tp = tpResult.Result.Data.FirstResult;
 
         var subjects = tp.SubjectsCoverage!.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
-            .Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
+            .Select(x => $"{((KeyStage)x.Key).DisplayName()}: {x.DisplayList()}");
         var types = tp.TuitionTypes!.Select(x => x.Name).Distinct();
         var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"{((GroupSize)x).DisplayName()}");
         var prices = GetPricing(tp.Prices!);

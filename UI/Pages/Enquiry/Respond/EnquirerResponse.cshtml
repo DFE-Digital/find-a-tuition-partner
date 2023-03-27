@@ -61,13 +61,13 @@
                 <strong>Your requirement</strong>
             </p>
 
-            <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-                @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
-                {
-                    <li>
-                        @item
-                    </li>
-                }
+            <ul class="govuk-list govuk-list-bullets-mobile-view">
+            @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
+            {
+                <li>
+                    @item
+                </li>
+            }
             </ul>
 
             <p class="govuk-body govuk-!-margin-bottom-0">

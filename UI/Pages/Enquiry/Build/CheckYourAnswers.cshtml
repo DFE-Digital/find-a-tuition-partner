@@ -46,7 +46,7 @@
               <ul class="govuk-list govuk-list-bullets-mobile-view">
                 @foreach (var item in @Model.Data?.KeyStageSubjects!)
                 {
-                  <li>@(item.Key.DisplayName()) - @(item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList())</li>
+                  <li>@(item.Key.DisplayName()): @(item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList())</li>
                 }
               </ul>
               }
