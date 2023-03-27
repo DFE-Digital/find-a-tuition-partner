@@ -36,18 +36,15 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private readonly INotificationsClientService _notificationsClientService;
 
-    private readonly IRandomTokenGenerator _randomTokenGenerator;
-
     private readonly IUnitOfWork _unitOfWork;
 
     private readonly ILogger<AddEnquiryResponseCommandHandler> _logger;
 
     public AddEnquiryResponseCommandHandler(IUnitOfWork unitOfWork, INotificationsClientService notificationsClientService,
-        ILogger<AddEnquiryResponseCommandHandler> logger, IRandomTokenGenerator randomTokenGenerator)
+        ILogger<AddEnquiryResponseCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _notificationsClientService = notificationsClientService;
-        _randomTokenGenerator = randomTokenGenerator;
         _logger = logger;
     }
 
