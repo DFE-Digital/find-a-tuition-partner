@@ -67,6 +67,7 @@ namespace UI.Pages.Enquiry.Respond
             {
                 Data.TuitionPartnerName = tpResponseData.TuitionPartnerName!;
                 Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
+                Data.EnquiryCreatedDateTime = enquiryData.EnquiryCreatedDateTime;
 
                 var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(tpResponseData.TuitionPartnerName.ToSeoUrl(), enquiryData.SupportReferenceNumber));
 

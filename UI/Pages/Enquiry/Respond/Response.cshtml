@@ -40,7 +40,7 @@
             </ul>
         </p>
         <div class="govuk-inset-text">
-            <p class="govuk-body"> You have <strong> 7 days </strong> to respond to this enquiry</p>
+        <p class="govuk-body"> You have until <strong>@Model.Data.EnquiryCreatedDateTime.ToString("h:mmtt 'on' dddd d MMMM yyyy")</strong> to respond to this enquiry</p>
         </div>
     </div>
 </div>
