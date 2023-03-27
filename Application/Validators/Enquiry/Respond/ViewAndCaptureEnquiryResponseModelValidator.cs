@@ -36,8 +36,8 @@ public class ViewAndCaptureEnquiryResponseModelValidator : AbstractValidator<Vie
         RuleFor(request => request.AdditionalInformationText)
             .NotEmpty()
             .When(m => !string.IsNullOrWhiteSpace(m.EnquiryAdditionalInformation))
-            .WithMessage("Enter can you support the other tuition considerations")
+            .WithMessage("Enter can you support the other school considerations")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Other tuition considerations must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Other school considerations must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
     }
 }
