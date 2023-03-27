@@ -14,6 +14,8 @@ public record EnquirerViewTuitionPartnerDetailsModel
 
     public string TuitionPartnerEmailAddress { get; set; } = null!;
 
+    public string TuitionPartnerWebsite { get; set; } = null!;
+
     public string LocalAuthorityDistrict { get; set; } = null!;
 
 }

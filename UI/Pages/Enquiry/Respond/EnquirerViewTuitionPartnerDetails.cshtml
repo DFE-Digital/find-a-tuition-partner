@@ -19,6 +19,7 @@
             <govuk-error-summary-item asp-for="ErrorMessage"/>
         </govuk-error-summary>
         
+        <span class="govuk-caption-l">Reference number @Model.Data.SupportReferenceNumber</span>
         <h1 class="govuk-heading-l">
             <span>Contact @Model.Data.TuitionPartnerName</span>
         </h1>
@@ -44,6 +45,7 @@
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
             <li>email: <a href="mailto:@(Model.Data.TuitionPartnerEmailAddress)" class="govuk-link">@Model.Data.TuitionPartnerEmailAddress</a></li>
             <li>contact number: @Model.Data.TuitionPartnerPhoneNumber</li>
+            <li>website: <a href="@Model.Data.TuitionPartnerWebsite" class="govuk-link" rel="noreferrer noopener" target="_blank">@(Model.Data.TuitionPartnerWebsite) (opens in new tab)</a></li>
         </ul>
 
         <h2 class="govuk-heading-m solid-line-top app-print-hide">
