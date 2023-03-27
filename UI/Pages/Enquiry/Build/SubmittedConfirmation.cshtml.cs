@@ -31,6 +31,10 @@ namespace UI.Pages.Enquiry.Build
                 data.TuitionPartnerMagicLinks = tpMagicLinks;
             }
 
+            var tpMagicLinksCountFromQueryString = Request.Query["TuitionPartnerMagicLinksCount"];
+
+            data.TuitionPartnerMagicLinksCount = Convert.ToInt32(tpMagicLinksCountFromQueryString);
+
             Data = data;
         }
     }

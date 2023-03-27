@@ -38,12 +38,10 @@
             }
             @if(Model.Data.TuitionPartnerMagicLinks != null && Model.Data.TuitionPartnerMagicLinks.Any())
             {
-                var tuitionPartnerMagicLinksToDisplayForTesting = Model.Data.TuitionPartnerMagicLinks.Take(10)
-                    .OrderBy(x => x.Email).ToList();  
                 <p class="govuk-body">
-                    Tuition Partner links (displaying @tuitionPartnerMagicLinksToDisplayForTesting.Count of @Model.Data.TuitionPartnerMagicLinks.Count)
+                    Tuition Partner links (displaying @Model.Data.TuitionPartnerMagicLinks.Count of @Model.Data.TuitionPartnerMagicLinksCount)
                 </p>
-                foreach (var tpLink in tuitionPartnerMagicLinksToDisplayForTesting)
+                foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
                 {
                     var dataTestId = $"tp-response-magic-link{tpLink.Email}";
                     var tpHref = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{tpLink.TuitionPartnerSeoUrl}?Token={tpLink.MagicLinkToken}";

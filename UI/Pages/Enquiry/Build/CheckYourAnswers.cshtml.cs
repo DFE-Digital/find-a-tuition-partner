@@ -135,7 +135,12 @@ public class CheckYourAnswers : PageModel
             {
                 submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
 
-                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = submittedConfirmationModel.TuitionPartnerMagicLinks;
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinksCount;
+
+                var tuitionPartnerMagicLinksToDisplayForTesting = submittedConfirmationModel.TuitionPartnerMagicLinks.Take(10)
+                    .OrderBy(x => x.Email).ToList();
+
+                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = tuitionPartnerMagicLinksToDisplayForTesting;
             }
 
             HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());

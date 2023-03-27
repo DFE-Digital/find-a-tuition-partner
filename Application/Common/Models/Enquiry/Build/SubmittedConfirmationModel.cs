@@ -11,6 +11,8 @@ public record SubmittedConfirmationModel : SearchModel
     public string? EnquirerEmailSentStatus { get; set; }
     public string? EnquirerMagicLink { get; set; }
     public List<TuitionPartnerMagicLinkModel> TuitionPartnerMagicLinks { get; set; }
+
+    public int TuitionPartnerMagicLinksCount { get; set; }
     public string? LocalAuthorityDistrictName { get; set; }
 
     public string ErrorStatus { get; set; } = string.Empty;

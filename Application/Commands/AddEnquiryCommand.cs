@@ -186,6 +186,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 }));
 
             result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
+
+            result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
         }
 
         return result;
