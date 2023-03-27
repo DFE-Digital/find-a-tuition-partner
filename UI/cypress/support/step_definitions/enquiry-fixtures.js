@@ -74,8 +74,33 @@ Given(
   }
 );
 
-Given("a school clicks the magic link to view their enquiry", () => {
+Given("a school clicks the magic link to view their new enquiry", () => {
   Step(this, "An enquiry has been submitted");
+  cy.then(async () => {
+    cy.visit(await getFirstValidLink(enquiry.tpHrefs));
+  });
+  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", "80");
+  cy.get("#Data_TuitionTypeText").clear().invoke("val", "80");
+  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", "80");
+  cy.get("#Data_SENDRequirementsText").clear().invoke("val", "80");
+  cy.get("#Data_AdditionalInformationText").clear().invoke("val", "80");
+  Step(this, "they click 'Continue'");
+  Step(this, "they click 'Submit'");
+
+  cy.get("main").then(($el) => {
+    enquiry = {
+      enquirerHref: $el.find('a:contains("Enquirer link")').attr("href"),
+      tpHrefs: [],
+    };
+
+    $el.find('a:contains("Response link")').each((i, responseEl) => {
+      enquiry.tpHrefs.push(responseEl.getAttribute("href"));
+    });
+  });
+});
+
+Given("a school clicks the magic link to view their enquiry", () => {
+  Step(this, "a school clicks the magic link to view their new enquiry");
   cy.then(async () => {
     cy.visit(enquiry.enquirerHref);
   });
