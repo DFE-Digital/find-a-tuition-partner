@@ -203,7 +203,7 @@ public class StringExtensionsTests
     {
         var result = text.EscapeNotifyText();
 
-        (result).Should().Be(expectedResult);
+        result.Should().Be(expectedResult);
     }
 
     public static IEnumerable<object[]> EscapeNotifyTestData()
@@ -233,7 +233,7 @@ public class StringExtensionsTests
     {
         var result = text.EscapeNotifyText(true);
 
-        (result).Should().Be(expectedResult);
+        result.Should().Be(expectedResult);
     }
 
     public static IEnumerable<object[]> EscapeNotifyTestDataWithInset()
@@ -262,7 +262,7 @@ public class StringExtensionsTests
     {
         var result = string.Empty;
 
-        (result).Should().BeEmpty();
+        result.Should().BeEmpty();
     }
 
 
@@ -271,6 +271,6 @@ public class StringExtensionsTests
     {
         string? result = null;
 
-        (result).Should().BeNull();
+        result.Should().BeNull();
     }
 }

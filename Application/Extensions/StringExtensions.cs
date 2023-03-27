@@ -97,7 +97,7 @@ public static class StringExtensions
         var escapedText = text;
         if (!string.IsNullOrWhiteSpace(escapedText))
         {
-            string pattern = @"^(\*|\^|\---|\#).*$";
+            var pattern = @"^(\*|\^|\---|\#).*$";
 
             escapedText = Regex.Replace(escapedText, pattern, match => "\\" + match.Value, RegexOptions.Multiline);
 
