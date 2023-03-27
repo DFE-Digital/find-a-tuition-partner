@@ -21,7 +21,7 @@ Feature: Tuition Partner Enquiry Response Journey
         And the second response section is to be 'Tuition type:' with Type 'Any'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
         Then the fourth response section is to be 'SEND requirements:' with text 'enquiry'
-        And the last response section is to be 'Other tuition considerations:' with text 'enquiry'
+        And the last response section is to be 'Other school considerations:' with text 'enquiry'
 
     Scenario: Clicking continue on successful tuition responses shows check your answers page
         Given a user has started the 'Find a tuition partner' journey
@@ -111,7 +111,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '10002' characters for section 5
         Then the warning should be displayed showing they are over by '2' characters
         When they click 'Continue'
-        Then the error message shows 'Other tuition considerations must be 10000 characters or less'
+        Then the error message shows 'Other school considerations must be 10000 characters or less'
 
     Scenario: Tuition responses show correct warning when there is no input for Key-stage and subjects
         Given a user has started the 'Find a tuition partner' journey
@@ -163,7 +163,7 @@ Feature: Tuition Partner Enquiry Response Journey
         And the second response section is to be 'Tuition type:' with Type 'Any'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
         Then the fourth response section is to be 'SEND requirements:' with text 'Not specified'
-        And the Other considerations section is to be 'Other tuition considerations:' with text 'Not specified'
+        And the Other considerations section is to be 'Other school considerations:' with text 'Not specified'
         When they type '70' characters for section 1
         And they type '80' characters for section 2
         And they type '90' characters for section 3

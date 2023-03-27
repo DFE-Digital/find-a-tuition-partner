@@ -1,9 +1,9 @@
-@page
+@page "/enquiry/{supportReferenceNumber}/respond/enquirer-response/{tuitionPartnerSeoUrl}"
 @model UI.Pages.Enquiry.Respond.EnquirerResponse
 @{
     var baseServiceUrl = Request.GetBaseServiceUrl();
-    var backLink = $"{baseServiceUrl}/enquiry/respond/all-enquirer-responses?token={@Model.Data.EnquirerViewAllResponsesToken}";
-    var tpDetails = $"{baseServiceUrl}/enquiry/respond/enquirer-view-tuition-partner-details?token={@Model.Data.EnquirerViewResponseToken}";
+    var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerViewAllResponsesToken}";
+    var tpDetails = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/enquirer-view-tuition-partner-details/{Model.TuitionPartnerSeoUrl}?Token={Model.Data.EnquirerViewResponseToken}";
     
     ViewData["Title"] = "View a response";
     ViewData["BackLinkText"] = "Back to view all your responses";
@@ -14,10 +14,6 @@
 
 <div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
     <div class="govuk-grid-column-full">
-
-        <govuk-error-summary>
-            <govuk-error-summary-item asp-for="ErrorMessage"/>
-        </govuk-error-summary>
         
         <span class="govuk-caption-l">Reference number @Model.Data.SupportReferenceNumber</span>
         <h1 class="govuk-heading-l">

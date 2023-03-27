@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Queries;
 
-public record GetEnquirerViewResponseQuery(int EnquiryId, int TuitionPartnerId) : IRequest<EnquirerViewResponseModel?>;
+public record GetEnquirerViewResponseQuery(string SupportReferenceNumber, string MagicLinkToken) : IRequest<EnquirerViewResponseModel?>;
 
 public class GetEnquirerViewResponseQueryHandler : IRequestHandler<GetEnquirerViewResponseQuery, EnquirerViewResponseModel?>
 {
@@ -21,12 +21,12 @@ public class GetEnquirerViewResponseQueryHandler : IRequestHandler<GetEnquirerVi
     public async Task<EnquirerViewResponseModel?> Handle(GetEnquirerViewResponseQuery request, CancellationToken cancellationToken)
     {
         var result = await _unitOfWork.TuitionPartnerEnquiryRepository
-            .GetEnquirerViewResponse(request.EnquiryId, request.TuitionPartnerId);
+            .GetEnquirerViewResponse(request.SupportReferenceNumber, request.MagicLinkToken);
 
         if (result == null)
         {
-            _logger.LogWarning("Enquiry response not found for the given enquiryId: {enquiryId} and tuitionPartnerId: {tuitionPartnerId}",
-                request.EnquiryId, request.TuitionPartnerId);
+            _logger.LogWarning("Enquiry response not found for the given SupportReferenceNumber: {supportReferenceNumber} and MagicLinkToken: {magicLinkToken}",
+                request.SupportReferenceNumber, request.MagicLinkToken);
         }
         return result;
     }

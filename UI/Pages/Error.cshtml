@@ -27,9 +27,18 @@
                     <p class="govuk-body">
                         If you pasted the web address, check you copied the entire address.
                     </p>
-                    <p class="govuk-body">
-                        If the web address is correct or you selected a link or button, you can email<br> <a href="mailto:tutoring.support@service.education.gov.uk" class="govuk-link">tutoring.support@service.education.gov.uk</a> for support.
-                    </p>
+                    @if (Model.IncludeEnquiryBuilder)
+                    {
+                        <p class="govuk-body">
+                            If your enquiry or your response to an enquiry has expired or could not be found, <br> <a href="/contact-us" class="govuk-link">contact the Find a tuition partner service</a>.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="govuk-body">
+                            If the web address is correct or you selected a link or button, <br> <a href="/contact-us" class="govuk-link">contact the Find a tuition partner service</a> for support.
+                        </p>
+                    }
                 }
                 else
                 {
@@ -40,9 +49,18 @@
                     <p class="govuk-body">
                         If you pasted the web address, check you copied the entire address.
                     </p>
-                    <p class="govuk-body">
-                        If you have any questions, you can email<br> <a href="mailto:tutoring.support@service.education.gov.uk" class="govuk-link">tutoring.support@service.education.gov.uk</a>
-                    </p>
+                    @if (Model.IncludeEnquiryBuilder)
+                    {
+                        <p class="govuk-body">
+                            If your enquiry or your response to an enquiry has expired or could not be found, <br> <a href="/contact-us" class="govuk-link">contact the Find a tuition partner service</a>.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="govuk-body">
+                            If the web address is correct or you selected a link or button, <br> <a href="/contact-us" class="govuk-link">contact the Find a tuition partner service</a> for support.
+                        </p>
+                    }
                 }
             </div>
         </div>

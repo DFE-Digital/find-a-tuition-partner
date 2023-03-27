@@ -6,39 +6,7 @@ public record EnquiryResponseToTpPersonalisationInput
     {
 
     }
-    public EnquiryResponseToTpPersonalisationInput(
-        string tpName,
-        string supportRefNumber,
-        string localAreaDistrict,
-        string responseCreatedOnDateTime,
-        string enquiryKeyStageSubjects,
-        string enquiryResponseKeyStageSubjects,
-        string enquiryTuitionType,
-        string enquiryResponseTuitionType,
-        string enquiryTuitionPlan,
-        string enquiryResponseTuitionPlan,
-        string enquirySendSupport,
-        string enquiryResponseSendSupport,
-        string enquiryAdditionalInformation,
-        string enquiryResponseAdditionalInformation,
-        string contactUsLink)
-    {
-        TpName = tpName;
-        SupportRefNumber = supportRefNumber;
-        LocalAreaDistrict = localAreaDistrict;
-        ResponseCreatedOnDateTime = responseCreatedOnDateTime;
-        EnquiryKeyStageSubjects = enquiryKeyStageSubjects;
-        EnquiryResponseKeyStageSubjects = enquiryResponseKeyStageSubjects;
-        EnquiryTuitionType = enquiryTuitionType;
-        EnquiryResponseTuitionType = enquiryResponseTuitionType;
-        EnquiryTuitionPlan = enquiryTuitionPlan;
-        EnquiryResponseTuitionPlan = enquiryResponseTuitionPlan;
-        EnquirySendSupport = enquirySendSupport;
-        EnquiryResponseSendSupport = enquiryResponseSendSupport;
-        EnquiryAdditionalInformation = enquiryAdditionalInformation;
-        EnquiryResponseAdditionalInformation = enquiryResponseAdditionalInformation;
-        ContactUsLink = contactUsLink;
-    }
+
     public string? TpName { get; init; }
     public string? SupportRefNumber { get; init; }
     public string? LocalAreaDistrict { get; init; }

@@ -61,7 +61,6 @@ builder.Services.AddServices();
 builder.Services.AddNotificationConfig(builder.Configuration)
     .AddNotificationClientServiceConfiguration(builder.Configuration);
 builder.Services.AddEmailSettingsConfig(builder.Configuration);
-builder.Services.AddAesEncryption(builder.Configuration);
 builder.Services.AddFeatureFlagConfig(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();

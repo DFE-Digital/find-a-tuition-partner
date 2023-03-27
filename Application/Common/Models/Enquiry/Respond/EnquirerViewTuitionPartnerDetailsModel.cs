@@ -18,4 +18,6 @@ public record EnquirerViewTuitionPartnerDetailsModel
 
     public string LocalAuthorityDistrict { get; set; } = null!;
 
+    public string? TuitionPartnerSeoUrl { get; set; }
+
 }
