@@ -18,7 +18,7 @@ public class ViewAndCaptureEnquiryResponseModelValidator : AbstractValidator<Vie
             .NotEmpty()
             .WithMessage("Enter to what extent can you support that type of tuition")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Tuition type must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Type of tuition must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.TutoringLogisticsText)
             .NotEmpty()
