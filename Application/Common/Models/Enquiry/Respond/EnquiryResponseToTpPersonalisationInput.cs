@@ -10,7 +10,7 @@ public record EnquiryResponseToTpPersonalisationInput
         string tpName,
         string supportRefNumber,
         string localAreaDistrict,
-        string createdOnDateTime,
+        string responseCreatedOnDateTime,
         string enquiryKeyStageSubjects,
         string enquiryResponseKeyStageSubjects,
         string enquiryTuitionType,
@@ -26,7 +26,7 @@ public record EnquiryResponseToTpPersonalisationInput
         TpName = tpName;
         SupportRefNumber = supportRefNumber;
         LocalAreaDistrict = localAreaDistrict;
-        CreatedOnDateTime = createdOnDateTime;
+        ResponseCreatedOnDateTime = responseCreatedOnDateTime;
         EnquiryKeyStageSubjects = enquiryKeyStageSubjects;
         EnquiryResponseKeyStageSubjects = enquiryResponseKeyStageSubjects;
         EnquiryTuitionType = enquiryTuitionType;
@@ -42,7 +42,7 @@ public record EnquiryResponseToTpPersonalisationInput
     public string? TpName { get; init; }
     public string? SupportRefNumber { get; init; }
     public string? LocalAreaDistrict { get; init; }
-    public string? CreatedOnDateTime { get; init; }
+    public string? ResponseCreatedOnDateTime { get; init; }
     public string? EnquiryKeyStageSubjects { get; init; }
     public string? EnquiryResponseKeyStageSubjects { get; init; }
     public string? EnquiryTuitionType { get; init; }

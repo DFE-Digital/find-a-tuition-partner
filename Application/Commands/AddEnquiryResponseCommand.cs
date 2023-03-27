@@ -18,7 +18,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 {
     private const string EnquiryReferenceNumberKey = "enquiry_ref_number";
     private const string EnquiryLadNameKey = "local_area_district";
-    private const string EnquiryCreatedDateTime = "date_time";
+    private const string EnquiryResponseCreatedDateTime = "date_time";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
     private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
     private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
@@ -97,20 +97,6 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         request.Data.Token = enquirerEnquiryResponseReceivedData.Token!;
         request.Data.Email = enquirerEnquiryResponseReceivedData.Email!;
 
-        var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
-
-        var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
-            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
-            enquirerEnquiryResponseReceivedData.TuitionPartnerName, tpEnquiry.Enquiry.SupportReferenceNumber, contactUsLink);
-
-        var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
-            GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
-                request,
-                tpEnquiry.TuitionPartner.Name,
-                tpEnquiry.Enquiry.SupportReferenceNumber,
-                contactUsLink,
-                tpEnquiry.Enquiry.CreatedAt);
-
         GenerateEnquirerViewResponseToken(request, out var enquirerViewResponseMagicLinkToken);
 
         var enquirerViewResponseMagicLink = new MagicLink()
@@ -134,6 +120,20 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         tpEnquiry.MagicLinkId = magicLink?.Id;
 
         _unitOfWork.MagicLinkRepository.AddAsync(enquirerViewResponseMagicLink, cancellationToken);
+
+        var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
+
+        var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
+            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
+            enquirerEnquiryResponseReceivedData.TuitionPartnerName, tpEnquiry.Enquiry.SupportReferenceNumber, contactUsLink);
+
+        var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
+            GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
+                request,
+                tpEnquiry.TuitionPartner.Name,
+                tpEnquiry.Enquiry.SupportReferenceNumber,
+                contactUsLink,
+                tpEnquiry.EnquiryResponse.CreatedAt);
 
         try
         {
@@ -202,14 +202,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string supportRefNumber, string contactusLink, DateTime enquiryCreateDateTime)
+        string tpName, string supportRefNumber, string contactusLink, DateTime responseCreateDateTime)
     {
         var personalisationInput = new EnquiryResponseToTpPersonalisationInput
         {
             TpName = tpName,
             SupportRefNumber = supportRefNumber,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            CreatedOnDateTime = enquiryCreateDateTime.ToString(StringConstants.DateFormatGDS),
+            ResponseCreatedOnDateTime = responseCreateDateTime.ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText,
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
@@ -242,7 +242,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             { EnquiryTuitionPartnerNameKey, input.TpName! },
             { EnquiryReferenceNumberKey, input.SupportRefNumber! },
             { EnquiryLadNameKey, input.LocalAreaDistrict! },
-            { EnquiryCreatedDateTime, input.CreatedOnDateTime! },
+            { EnquiryResponseCreatedDateTime, input.ResponseCreatedOnDateTime! },
             { EnquiryKeyStageAndSubjects, input.EnquiryKeyStageSubjects! },
             { EnquiryResponseKeyStageAndSubjects, input.EnquiryResponseKeyStageSubjects! },
             { EnquiryTuitionTypeKey, input.EnquiryTuitionType! },
