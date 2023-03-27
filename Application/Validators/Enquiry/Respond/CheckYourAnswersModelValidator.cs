@@ -32,6 +32,6 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
 
         RuleFor(request => request.AdditionalInformationText)
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Other tuition considerations must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Other school considerations must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
     }
 }
