@@ -132,7 +132,7 @@ Given(
 Given("a school clicks the magic link to view their enquiry", () => {
   Step(this, "A school views a new enquiry");
   cy.then(async () => {
-    cy.visit(enquiry.enquirerHref);
+    cy.visit("/" + enquiry.enquirerHref);
   });
 });
 
