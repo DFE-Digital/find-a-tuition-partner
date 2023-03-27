@@ -7,45 +7,7 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("a school views a tuition partners response", () => {
-  cy.visit("/");
-  Step(this, "they enter 'SK1 1EB' as the school's postcode");
-  Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which key stages' page");
-  Step(this, "they will see all the keys stages as options");
-  Step(this, "they select 'Key stage 1, Key stage 2'");
-  Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which subjects' page");
-  Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
-  Step(
-    this,
-    "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
-  );
-  Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
-  Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
-  Step(this, "they click 'Continue' button");
-  Step(this, "they enter a valid email address");
-  Step(this, "they click 'Continue'");
-  Step(this, "they enter an answer for tuition plan");
-  Step(this, "they click 'Continue'");
-  Step(this, "they enter an answer for SEND requirements");
-  Step(this, "they click 'Continue'");
-  Step(this, "they enter an answer for other requirements");
-  Step(this, "they click 'Continue'");
-  Step(this, "they select terms and conditions");
-  Step(this, "they click send enquiry");
-  cy.get(":nth-child(11) > a").click();
-  cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", 80);
-  cy.get("#Data_TuitionTypeText").clear().invoke("val", 80);
-  cy.get("#Data_TutoringLogisticsText").clear().invoke("val", 80);
-  cy.get("#Data_SENDRequirementsText").clear().invoke("val", 80);
-  cy.get("#Data_AdditionalInformationText").clear().invoke("val", 80);
-  cy.get('[data-testid="call-to-action"]').click();
-  Step("this", "they click 'Submit'");
-  cy.get("p a").eq(1).click();
+  Step(this, "a school clicks the magic link to view their enquiry");
 });
 
 And("there is text {string}", (text) => {
@@ -58,52 +20,41 @@ When("the user clicks Your tuition requirements", () => {
 
 Then("The correct enquiry information is shown as follows:", (dataTable) => {
   dataTable.hashes().forEach((row, index) => {
-    switch (row["Enquiry information"]) {
-      case "This is the tuition requirements you asked for:":
-        cy.get(".govuk-details__text").should(
+    switch (row["Question"]) {
+      case "Key stage and subjects":
+        cy.get(
+          ":nth-child(1) > .govuk-summary-list__value > :nth-child(1)"
+        ).should("contain.text", row["Your Requirements"]);
+        break;
+      case "Tuition type":
+        cy.get(":nth-child(2) > .govuk-summary-list__value").should(
           "contain.text",
-          row["Enquiry information"]
+          row["Your Requirements"]
         );
         break;
-      case "Key stage 1: English and Maths":
-        cy.get(".govuk-list > :nth-child(1)").should(
+      case "Tuition plan":
+        cy.get(":nth-child(3) > .govuk-summary-list__value").should(
           "contain.text",
-          row["Enquiry information"]
+          row["Your Requirements"]
         );
         break;
-      case "Key stage 2: English and Maths":
-        cy.get(".govuk-list > :nth-child(2)").should(
+      case "Can you support SEND":
+        cy.get(":nth-child(4) > .govuk-summary-list__value").should(
           "contain.text",
-          row["Enquiry information"]
+          row["Your Requirements"]
         );
         break;
-      case "Any":
-        cy.get(".govuk-list > :nth-child(3)").should(
+      case "Other tuition considerations":
+        cy.get(":nth-child(5) > .govuk-summary-list__value").should(
           "contain.text",
-          row["Enquiry information"]
-        );
-        break;
-      case "enquiry":
-        cy.get(".govuk-list > :nth-child(4)").should(
-          "contain.text",
-          row["Enquiry information"]
+          row["Your Requirements"]
         );
         break;
       default:
-        throw new Error(`Unexpected SectionName: ${row["Section Name"]}`);
+        throw new Error(`Unexpected Question: ${row["Question"]}`);
     }
   });
 });
-
-And(
-  "there should be text stating the amount of tuition partners that responded",
-  () => {
-    cy.contains(
-      "#main-content > :nth-child(3) > :nth-child(1)",
-      "1 out of 46 tuition partners have responded at the moment."
-    );
-  }
-);
 
 Then(
   "The tuition partner responses are shown at the bottom of the page as follows:",
@@ -131,14 +82,19 @@ Then(
           );
           break;
         case "Tuition Partner":
-          cy.get(
-            ".govuk-table__body > .govuk-table__row > :nth-child(2)"
-          ).should("contain.text", column["Value"]);
-          break;
-        case "Their Response":
-          cy.get(
-            ".govuk-table__body > .govuk-table__row > :nth-child(3)"
-          ).should("contain.text", column["Value"]);
+          let tpName1;
+          let tpName2;
+          cy.get(".govuk-table__body > .govuk-table__row > :nth-child(2)")
+            .invoke("text")
+            .then((text) => {
+              tpName1 = text.trim();
+            });
+          cy.get(".govuk-table__body > .govuk-table__row > :nth-child(3)")
+            .invoke("text")
+            .then((text) => {
+              tpName2 = text.trim();
+              expect(tpName2).to.contain(tpName1);
+            });
           break;
         default:
           throw new Error(`Unexpected column name: ${column["Column"]}`);
@@ -174,7 +130,7 @@ Then("the response page has the following information:", (dataTable) => {
   dataTable.hashes().forEach((row) => {
     const requirement = row["Requirement"];
     const yourResponse = row["Your Response"];
-    const sherpaResponse = row["Sherpa Online's Response"];
+    const tpResponse = row["{TP's name}'s Response"];
 
     switch (requirement) {
       case "Key stage and subjects:":
@@ -191,7 +147,7 @@ Then("the response page has the following information:", (dataTable) => {
         cy.get(
           ":nth-child(3) > .govuk-grid-row > .govuk-grid-column-two-thirds-from-desktop > :nth-child(6)"
         )
-          .should("contain.text", sherpaResponse)
+          .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Tuition type:":
@@ -199,7 +155,7 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", yourResponse)
           .should("be.visible");
         cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(11)")
-          .should("contain.text", sherpaResponse)
+          .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Tuition plan:":
@@ -207,7 +163,7 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", yourResponse)
           .should("be.visible");
         cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(16)")
-          .should("contain.text", sherpaResponse)
+          .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Can you support SEND?:":
@@ -215,7 +171,7 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", yourResponse)
           .should("be.visible");
         cy.get(":nth-child(21)")
-          .should("contain.text", sherpaResponse)
+          .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Other tuition considerations?:":
@@ -223,7 +179,7 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", yourResponse)
           .should("be.visible");
         cy.get(":nth-child(26)")
-          .should("contain.text", sherpaResponse)
+          .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       default:
@@ -238,4 +194,8 @@ And("they click contact tuition partner", () => {
 
 And("they click cancel on the response page", () => {
   cy.get(".govuk-grid-column-two-thirds-from-desktop > .govuk-link").click();
+});
+
+When("they click return to your enquiry list", () => {
+  cy.get(":nth-child(8) > .govuk-link").click();
 });
