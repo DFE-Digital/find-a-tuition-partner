@@ -1,5 +1,5 @@
 @model Application.Common.Models.CompareListCheckboxModel
-<govuk-checkboxes class="govuk-checkboxes--small govuk-!-padding-bottom-0 govuk-!-margin-1" name="@Model.CheckboxName" data-module="compare-list-checkbox">
+<govuk-checkboxes class="govuk-checkboxes--small govuk-!-padding-bottom-0 govuk-!-margin-1 app-print-hide" name="@Model.CheckboxName" data-module="compare-list-checkbox">
     <govuk-checkboxes-item id="@Model.Id" value="@Model.SeoUrl" checked="@Model.IsCompareListed">
             <span class="compare-list-partner-checkbox-label--font-style">Add @Model.LabelValue to my price comparison list</span>
         </govuk-checkboxes-item>

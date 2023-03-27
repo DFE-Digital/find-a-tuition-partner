@@ -1,6 +1,7 @@
 import {
   Given,
   When,
+  And,
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
@@ -23,7 +24,7 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -35,12 +36,14 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "they click 'Continue'");
 });
 
-Then("they click {string} button", () => {
-  cy.get(".app-print-hide > .govuk-button").click();
+Then("they click {string} button", (buttonText) => {
+  cy.get(".govuk-button").contains(buttonText).click();
 });
 
 Then("they enter a valid email address", () => {
-  cy.get("#Data_Email").clear().type("email@email.com");
+  cy.get("#Data_Email")
+    .clear()
+    .type("simulate-delivered@notifications.service.gov.uk");
 });
 
 let refNumOne;
@@ -113,7 +116,7 @@ When("user creates another enquiry", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -144,7 +147,10 @@ Then("they enter an invalid email address", () => {
 });
 
 Then("the email address is visible in input field", () => {
-  cy.get("#Data_Email").should("have.value", "email@email.com");
+  cy.get("#Data_Email").should(
+    "have.value",
+    "simulate-delivered@notifications.service.gov.uk"
+  );
 });
 
 Then("click the link on text {string}", (linkText) => {
@@ -180,7 +186,7 @@ When("user navigates to the first enquiry question", () => {
   Step(this, "they select Any");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -264,7 +270,7 @@ When("user navigates to check your answers unselecting filter results", () => {
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they unselect filter results");
-  Step(this, "they click 'Make an enquiry' button");
+  Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
@@ -283,3 +289,42 @@ Then("they unselect filter results", () => {
   cy.get("#key-stage-2-maths").click();
   cy.wait(500);
 });
+
+When("they enter an email address causing an error", () => {
+  cy.get("#Data_Email").clear().type("email+1@email.com");
+});
+
+When(
+  "user has journeyed forward to the check your answers page for an invalid email address",
+  () => {
+    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which key stages' page");
+    Step(this, "they will see all the keys stages as options");
+    Step(this, "they select 'Key stage 1, Key stage 2'");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Which subjects' page");
+    Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+    Step(
+      this,
+      "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
+    );
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Search Results' page");
+    Step(this, "they click 'Start now'");
+    Step(this, "they click 'Continue' button");
+    Step(this, "they enter an email address causing an error");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for tuition plan");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for SEND requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter an answer for other requirements");
+    Step(this, "they click 'Continue'");
+    Step(this, "they select terms and conditions");
+    Step(this, "they click send enquiry");
+  }
+);

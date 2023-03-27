@@ -14,7 +14,7 @@
         <govuk-error-summary-item asp-for="Data.SENDRequirementsText"/>
         <govuk-error-summary-item asp-for="Data.AdditionalInformationText"/>
     </govuk-error-summary>
-<div class="govuk-grid-row app-print-hide" xmlns="http://www.w3.org/1999/html">
+<div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
     <div class="govuk-grid-column-full">
         <p class="govuk-body govuk-!-margin-bottom-0">School enquiry from the <span class="govuk-caption-l govuk-!-display-inline">@Model.Data.LocalAuthorityDistrict</span> area</p>
         <h1 class="govuk-heading-l govuk-!-padding-top-0">
@@ -200,5 +200,5 @@
     <input asp-for="Data.EnquiryTutoringLogistics" type="hidden"/>
     <input asp-for="Data.EnquirySENDRequirements" type="hidden"/>
     <input asp-for="Data.EnquiryAdditionalInformation" type="hidden"/>
-    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action" class="app-print-hide">Continue</govuk-button>
 </form>

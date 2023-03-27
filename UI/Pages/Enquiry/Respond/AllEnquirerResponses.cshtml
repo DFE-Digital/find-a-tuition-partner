@@ -6,14 +6,14 @@
     ViewData["IncludePrintPage"] = true;
 
     var numberOfTpEnquiryResponseReceived = !Model.Data.EnquirerViewResponses.Any()
-        ? 0 : Model.Data.EnquirerViewResponses.Count;
+    ? 0 : Model.Data.EnquirerViewResponses.Count;
 }
 
-<div class="govuk-grid-row app-print-hide">
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         <govuk-error-summary>
-            <govuk-error-summary-item asp-for="Data.ErrorMessage"/>
+            <govuk-error-summary-item asp-for="Data.ErrorMessage" />
         </govuk-error-summary>
 
 
@@ -23,50 +23,77 @@
         <h1 class="govuk-heading-l govuk-!-padding-top-0">
             <span>View responses to your tuition enquiry</span>
         </h1>
-        <div class="govuk-inset-text">
+        <div class="govuk-inset-text app-print-hide">
             You should bookmark this page for your future reference and quicker access to your enquiry.
         </div>
 
         <h2 class="govuk-heading-s">
             <span>Your tuition enquiry summary</span>
         </h2>
-        <p class="govuk-body">Created on <span>@Model.Data.EnquiryCreatedDateTime.ToString("h:mmtt 'on' dddd d MMMM")</span></p>
+        <p class="govuk-body">Created on
+            <span>@Model.Data.EnquiryCreatedDateTime.ToString(StringConstants.DateFormatGDS)</span>
+        </p>
 
         <govuk-details open="false">
             <govuk-details-summary>
                 Your tuition requirements
             </govuk-details-summary>
             <govuk-details-text>
-                This is the tuition requirements you asked for:
-                <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-                    @foreach (var item in Model.Data.KeyStageSubjects)
-                    {
-                        <li>
-                            @item
-                        </li>
-                    }
-                    <li>
-                        @Model.Data.TuitionTypeName
-                    </li>
-                    <li>
-                        <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
-                    </li>
-                    
+                <govuk-summary-list>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Key stage and subjects
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <ul>
+                                @foreach (var item in Model.Data.KeyStageSubjects)
+                                {
+                                    <li>
+                                        @item
+                                    </li>
+                                }
+                            </ul>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Tuition type
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            @Model.Data.TuitionTypeName
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Tuition plan
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
                     @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))
                     {
-                        <li>
-                            <span class="display-pre-wrap">@Model.Data.SENDRequirements</span>
-                        </li>
+                        <govuk-summary-list-row>
+                            <govuk-summary-list-row-key>
+                                SEND requirements
+                            </govuk-summary-list-row-key>
+                            <govuk-summary-list-row-value>
+                                <span class="display-pre-wrap">@Model.Data.SENDRequirements</span>
+                            </govuk-summary-list-row-value>
+                        </govuk-summary-list-row>
                     }
-
                     @if (!string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation))
                     {
-                        <li>
-                            <span class="display-pre-wrap">@Model.Data.AdditionalInformation</span>
-                        </li>
+                        <govuk-summary-list-row>
+                            <govuk-summary-list-row-key>
+                                Other tuition requirements
+                            </govuk-summary-list-row-key>
+                            <govuk-summary-list-row-value>
+                                <span class="display-pre-wrap">@Model.Data.AdditionalInformation</span>
+                            </govuk-summary-list-row-value>
+                        </govuk-summary-list-row>
                     }
-                    
-                </ul>
+                </govuk-summary-list>
             </govuk-details-text>
         </govuk-details>
 
@@ -78,40 +105,42 @@
 </h2>
 
 <div class="govuk-inset-text">
-    <p class="govuk-body"><strong> @numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners </strong> have responded at the moment.</p>
+    <p class="govuk-body"><strong> @numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent
+            tuition partners </strong> have responded at the moment.</p>
     <p class="govuk-body">We have asked tuition partners to respond within 7 days of creating this enquiry.</p>
-    <p class="govuk-body">You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.</p>
+    <p class="govuk-body">You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and
+        tuition needs.</p>
 </div>
 
 @if (Model.Data.EnquirerViewResponses.Any())
 {
     <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
-        <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
-        <thead class="govuk-table__head">
+    <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
+    <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col"> Date </th>
             <th class="govuk-table__header" scope="col"> Tuition partner </th>
-            <th class="govuk-table__header" scope="col"> Their response </th>
+            <th class="govuk-table__header app-print-hide" scope="col"> Their response </th>
         </tr>
-        </thead>
-        <tbody class="govuk-table__body">
+    </thead>
+    <tbody class="govuk-table__body">
 
         @foreach (var item in @Model.Data.EnquirerViewResponses!)
-        {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
-                    @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
-                </td>
-                <td class="govuk-table__cell">
-                    @item.TuitionPartnerName
-                </td>
-                <td class="govuk-table__cell">
-                    <a href="@item.EnquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
-                        View response from @item.TuitionPartnerName and contact info
-                    </a>
-                </td>
-            </tr>
-        }
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
+                    </td>
+                    <td class="govuk-table__cell">
+                        @item.TuitionPartnerName
+                    </td>
+                    <td class="govuk-table__cell app-print-hide">
+                        <a href="@item.EnquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
+                            View response from @item.TuitionPartnerName and contact info
+                        </a>
+                    </td>
+                </tr>
+            }
 
         </tbody>
     </table>

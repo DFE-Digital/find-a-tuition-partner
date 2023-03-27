@@ -18,8 +18,8 @@ When("they click 'Continue'", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
 
-When("user clicks 'Make an enquiry'", () => {
-  cy.get(".app-print-hide > .govuk-button").click();
+When("they click 'Start now'", () => {
+  cy.get(".enquire-nudge > .govuk-button").click();
 });
 
 When("they click 'Search'", () => {
