@@ -50,7 +50,7 @@ namespace UI.Pages.Enquiry.Respond
                 return RedirectToPage(nameof(ErrorModel));
             }
 
-            Data.EnquiryResponseCloseDate = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond);
+            Data.EnquiryResponseCloseDateFormatted = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond).ToString("h:mmtt 'on' dddd d MMMM yyyy");
 
             var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 
