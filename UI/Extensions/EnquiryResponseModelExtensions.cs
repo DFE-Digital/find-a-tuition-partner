@@ -53,7 +53,7 @@ public static class EnquiryResponseModelExtensions
                 data.AdditionalInformationText = value;
                 break;
 
-            case var k when k.Equals(SessionKeyConstants.EnquiryResponseToken, StringComparison.InvariantCultureIgnoreCase):
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseToken, StringComparison.OrdinalIgnoreCase):
                 data.Token = value;
                 break;
         }

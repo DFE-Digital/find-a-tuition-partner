@@ -3,7 +3,6 @@ using Application.Common.Models.Enquiry.Respond;
 using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using MagicLinkType = Domain.Enums.MagicLinkType;
 
 namespace Infrastructure.Repositories;
 
@@ -13,12 +12,12 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
     {
     }
 
-    public async Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(int enquiryId, int tuitionPartnerId)
+    public async Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(string supportReferenceNumber, string magicLinkToken)
     {
         var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
-            .Where(e => e.EnquiryId == enquiryId && e.TuitionPartnerId == tuitionPartnerId)
+            .Include(e => e.MagicLink)
             .Include(e => e.Enquiry)
-            .ThenInclude(m => m.MagicLinks)
+            .ThenInclude(e => e.MagicLink)
             .Include(e => e.EnquiryResponse)
             .Include(x => x.TuitionPartner)
             .Include(e => e.Enquiry.KeyStageSubjectEnquiry)
@@ -26,14 +25,13 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             .Include(e => e.Enquiry.KeyStageSubjectEnquiry)
             .ThenInclude(s => s.Subject)
             .AsSplitQuery()
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
+                                  && e.MagicLink!.Token == magicLinkToken);
 
         if (tuitionPartnerEnquiry == null) return null;
 
 
-        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLinks
-            .SingleOrDefault(x => x.EnquiryId == enquiryId
-                                       && x.MagicLinkTypeId == (int)MagicLinkType.EnquirerViewAllResponses);
+        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLink;
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
 
@@ -69,21 +67,21 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         return result;
     }
 
-    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(int enquiryId, int tuitionPartnerId)
+    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(string supportReferenceNumber,
+        string magicLinkToken)
     {
         var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
-            .Where(e => e.EnquiryId == enquiryId && e.TuitionPartnerId == tuitionPartnerId)
+            .Where(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
+                        && e.MagicLink!.Token == magicLinkToken)
             .Include(e => e.Enquiry)
-            .ThenInclude(m => m.MagicLinks)
+            .ThenInclude(e => e.MagicLink)
             .Include(x => x.TuitionPartner)
             .AsSplitQuery()
             .SingleOrDefaultAsync();
 
         if (tuitionPartnerEnquiry == null) return null;
 
-        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLinks
-            .SingleOrDefault(x => x.EnquiryId == enquiryId
-                                       && x.MagicLinkTypeId == (int)MagicLinkType.EnquirerViewAllResponses);
+        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLink;
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
         var enquiryTP = tuitionPartnerEnquiry.TuitionPartner;
@@ -93,6 +91,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerName = enquiryTP.Name,
             TuitionPartnerPhoneNumber = enquiryTP.PhoneNumber,
             TuitionPartnerEmailAddress = enquiryTP.Email,
+            TuitionPartnerWebsite = enquiryTP.Website,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!

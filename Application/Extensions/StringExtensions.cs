@@ -90,4 +90,29 @@ public static class StringExtensions
         return -1; // Return an invalid status code if no match is found
     }
 
+    public static string? EscapeNotifyText(this string? text, bool updateForInsetFormat = false)
+    {
+        //Any notify special characters that are at the start of a new line need to be escaped by prefixing with \
+        //The notify special characters are ^ (inset), * (bullet), # (titkes), ---- (horizontal line)
+        var escapedText = text;
+        if (!string.IsNullOrWhiteSpace(escapedText))
+        {
+            //Match on first character on line, ignore white space and tabs at start of line
+            var pattern = @"^[ \t]*(\*|\^|\---|\#).*$";
+
+            //We can trim here, since Notify trims the content anyway
+            escapedText = Regex.Replace(escapedText, pattern, match => "\\" + match.Value.TrimStart(new char[] { ' ', '\t' }), RegexOptions.Multiline);
+
+            if (updateForInsetFormat)
+            {
+                //In notify if there are multiple lines it breaks the inset layout, so we add the inset ^ at the start of each line to ensure it is maintained in the email
+                escapedText = escapedText.Replace(Environment.NewLine, Environment.NewLine + "^");
+
+                //If they had started with ^ then we need to replace that
+                escapedText = escapedText.Replace(Environment.NewLine + "^\\^", Environment.NewLine + "\\^");
+            }
+        }
+        return escapedText;
+    }
+
 }

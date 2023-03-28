@@ -33,6 +33,7 @@ $govuk-page-width: 1180px;
 @import "node_modules/govuk-frontend/govuk/components/tag/index";
 @import "node_modules/govuk-frontend/govuk/components/panel/index";
 @import "node_modules/govuk-frontend/govuk/components/character-count/index";
+@import "node_modules/govuk-frontend/govuk/components/warning-text/index";
 
 //MoJ components
 @import "node_modules/@ministryofjustice/frontend/moj/components/ticket-panel/ticket-panel";
@@ -54,3 +55,4 @@ $govuk-page-width: 1180px;
 @import "src/sass/compare-list-partner-checkbox-partial-page";
 @import "src/sass/core";
 @import "src/sass/enquiry-build";
+@import "src/sass/enquiry-respond";

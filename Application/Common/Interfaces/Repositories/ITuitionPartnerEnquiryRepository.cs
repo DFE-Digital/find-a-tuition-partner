@@ -5,6 +5,6 @@ namespace Application.Common.Interfaces.Repositories;
 
 public interface ITuitionPartnerEnquiryRepository : IGenericRepository<TuitionPartnerEnquiry>
 {
-    Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(int enquiryId, int tuitionPartnerId);
-    Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(int enquiryId, int tuitionPartnerId);
+    Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(string supportReferenceNumber, string magicLinkToken);
+    Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(string supportReferenceNumber, string magicLinkToken);
 }

@@ -127,6 +127,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITuitionPartnerService, TuitionPartnerService>();
         services.AddScoped<ILookupDataService, LookupDataService>();
         services.AddSingleton<IGenerateReferenceNumber, GenerateSupportReferenceNumber>();
+        services.AddSingleton<IRandomTokenGenerator, RandomTokenGeneratorService>();
 
         return services;
     }

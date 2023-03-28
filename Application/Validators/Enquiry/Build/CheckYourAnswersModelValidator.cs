@@ -22,7 +22,7 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
         RuleFor(m => m.TuitionType)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("Select a tuition type option");
+            .WithMessage("Select a type of tuition option");
 
         RuleFor(request => request.Email)
             .NotEmpty()
