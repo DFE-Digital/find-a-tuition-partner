@@ -23,7 +23,7 @@ public class Cookies : PageModel
         }
         else
         {
-            ReturnUrl = Request.Headers["Referer"].ToString();
+            ReturnUrl = Request.GetNtpReferer();
         }
         if (Request.Cookies.ContainsKey(ConsentCookieName))
         {
@@ -41,6 +41,11 @@ public class Cookies : PageModel
             {
                 return Redirect(ReturnUrl);
             }
+        }
+
+        if (string.IsNullOrEmpty(ReturnUrl))
+        {
+            ReturnUrl = "/";
         }
 
         return Page();

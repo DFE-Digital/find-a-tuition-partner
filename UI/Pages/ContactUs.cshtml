@@ -1,8 +1,7 @@
 ﻿@page
-@model ContactUsModel
 @{
     ViewData["Title"] = "Contact us";
-    ViewData["BackLinkHref"] = Model.ReturnPath;
+    ViewData["UseRefererBackLinkElseHome"] = true;
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

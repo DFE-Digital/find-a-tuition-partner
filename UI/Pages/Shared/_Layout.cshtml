@@ -10,9 +10,24 @@
     var includeHomeLink = ViewData["IncludeHomeLink"] as bool? == true; 
     var backLinkHref = ViewData["BackLinkHref"] as string; 
     var backLinkText = ViewData["BackLinkText"] as string;
-    var includeBackLink = !string.IsNullOrEmpty(backLinkHref);
     backLinkText = backLinkText ?? "Back";
+
+    var useRefererBackLinkElseHome = ViewData["UseRefererBackLinkElseHome"] as bool? == true; 
+    if(useRefererBackLinkElseHome)
+    {
+        var ntpReferer = HttpContext?.HttpContext?.Request.GetNtpReferer();
+        if(string.IsNullOrWhiteSpace(ntpReferer))
+        {
+            includeHomeLink = true;
+        }
+        else
+        {
+            backLinkHref = ntpReferer;
+        }
+    }
     
+    var includeBackLink = !string.IsNullOrEmpty(backLinkHref);
+
     var includePrintPage = ViewData["IncludePrintPage"] as bool? == true; 
 
     var containerId = Configuration["GoogleTagManager:ContainerId"];
