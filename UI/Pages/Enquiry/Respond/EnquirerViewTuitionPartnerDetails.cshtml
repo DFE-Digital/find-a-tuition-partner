@@ -1,9 +1,9 @@
-﻿@page "/enquiry/{supportReferenceNumber}/respond/enquirer-view-tuition-partner-details/{tuitionPartnerSeoUrl}"
+﻿@page "/enquiry/{supportReferenceNumber}/{tuitionPartnerSeoUrl}/contact-details"
 @model UI.Pages.Enquiry.Respond.EnquirerViewTuitionPartnerDetails
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
-  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/enquirer-response/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.EnquirerViewResponseToken}";
-  var allList = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/all-enquirer-responses?Token={@Model.Data.EnquirerViewAllResponsesToken}";
+  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.EnquirerViewResponseToken}";
+  var allList = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.EnquirerViewAllResponsesToken}";
 
   ViewData["Title"] = "Contact " + Model.Data.TuitionPartnerName;
   ViewData["BackLinkHref"] = backLink;

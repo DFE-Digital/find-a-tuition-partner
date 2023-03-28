@@ -4,7 +4,7 @@
   ViewData["Title"] = "Enquiry submitted confirmation";
   ViewData["IncludePrintPage"] = true;
   var supportReferenceNumber = Model.Data.SupportReferenceNumber ?? string.Empty;
-  var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerMagicLink}";
+  var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}?Token={Model.Data.EnquirerMagicLink}";
 }
 
 <div class="govuk-width-container">
@@ -46,7 +46,7 @@
                 foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
                 {
                     var dataTestId = $"tp-response-magic-link{tpLink.Email}";
-                    var tpHref = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{tpLink.TuitionPartnerSeoUrl}?Token={tpLink.MagicLinkToken}";
+                    var tpHref = $"/enquiry-response/{tpLink.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}?Token={tpLink.MagicLinkToken}";
                 <p class="govuk-body">
                     @tpLink.Email: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
                 </p>

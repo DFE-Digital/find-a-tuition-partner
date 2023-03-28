@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /enquiry/build/*
 Disallow: /enquiry/*
+Disallow: /enquiry-response/*
