@@ -71,7 +71,7 @@ namespace UI.Pages.Enquiry.Respond
                 Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
 
                 HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
-                HttpContext.AddLadNameToAnalytics<Response>(Data.SupportReferenceNumber);
+                HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
             }
 
             return Page();
