@@ -26,15 +26,8 @@ namespace UI.Pages.Enquiry.Respond
                 return RedirectToPage(nameof(ErrorModel));
             }
 
-            if (!string.IsNullOrEmpty(SupportReferenceNumber))
-            {
-                Data.SupportReferenceNumber = SupportReferenceNumber;
-            }
-            if (!string.IsNullOrEmpty(TuitionPartnerSeoUrl))
-            {
-                Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
-            }
-
+            Data.SupportReferenceNumber = SupportReferenceNumber;
+            Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
             Data.Token = queryToken;
 
             var isValidMagicLink =
@@ -48,6 +41,17 @@ namespace UI.Pages.Enquiry.Respond
 
             Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
+            var enquiryData = await _mediator.Send(new
+                GetEnquirerViewAllResponsesQuery(Data.BaseServiceUrl, SupportReferenceNumber));
+
+            if (enquiryData == null)
+            {
+                TempData["Status"] = HttpStatusCode.NotFound;
+                return RedirectToPage(nameof(ErrorModel));
+            }
+
+            Data.EnquiryResponseCloseDate = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond);
+
             var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 
             if (sessionValues != null)
@@ -59,17 +63,7 @@ namespace UI.Pages.Enquiry.Respond
             }
             else
             {
-                var enquiryData = await _mediator.Send(new
-                    GetEnquirerViewAllResponsesQuery(Data.BaseServiceUrl, SupportReferenceNumber));
-
-                if (enquiryData == null)
-                {
-                    TempData["Status"] = HttpStatusCode.NotFound;
-                    return RedirectToPage(nameof(ErrorModel));
-                }
-
                 Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
-                Data.SupportReferenceNumber = enquiryData.SupportReferenceNumber!;
                 Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
                 Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
                 Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;

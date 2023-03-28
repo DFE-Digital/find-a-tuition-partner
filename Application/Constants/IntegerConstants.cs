@@ -4,5 +4,6 @@
     {
         public const int EnquiryQuestionsMaxCharacterSize = 10000;
         public const int EnquiryQuestionsMaxCharacterThreshold = 75;
+        public const int EnquiryDaysToRespond = 7;
     }
 }

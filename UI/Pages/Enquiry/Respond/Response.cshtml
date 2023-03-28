@@ -36,7 +36,7 @@
         </ul>
       </p>
       <div class="govuk-inset-text">
-        You have <strong>7 days</strong> to respond to this enquiry
+        You have until <strong>@Model.Data.EnquiryResponseCloseDate.ToString("h:mmtt 'on' dddd d MMMM yyyy")</strong> to respond to this enquiry
       </div>
     </div>
   </div>
@@ -59,7 +59,7 @@
           <span>Key stage and subjects:</span>
         </h2>
 
-        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+        <ul class="govuk-list govuk-list-bullets-mobile-view">
           @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
           {
             <li>

@@ -91,6 +91,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerName = enquiryTP.Name,
             TuitionPartnerPhoneNumber = enquiryTP.PhoneNumber,
             TuitionPartnerEmailAddress = enquiryTP.Email,
+            TuitionPartnerWebsite = enquiryTP.Website,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!

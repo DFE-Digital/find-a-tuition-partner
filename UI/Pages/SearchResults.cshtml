@@ -222,7 +222,7 @@
                                                 .OrderBy(e => e.KeyStageId)
                                                 .ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
                                             {
-                                                <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()) - @keyStageSubjects.DisplayList()</li>
+                                                <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()): @keyStageSubjects.DisplayList()</li>
                                             }
                                         </ul>
                                     </govuk-summary-list-row-value>

@@ -14,6 +14,7 @@
 <div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
   <div class="govuk-grid-column-full">
 
+    <span class="govuk-caption-l">Reference number @Model.Data.SupportReferenceNumber</span>
     <h1 class="govuk-heading-l">
       View @Model.Data.TuitionPartnerName’s response
     </h1>
@@ -50,11 +51,11 @@
         Key stage and subjects:
       </h3>
 
-      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+      <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Your requirement</strong>
       </p>
 
-      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+      <ul class="govuk-list govuk-list-bullets-mobile-view">
         @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
         {
           <li>
@@ -74,7 +75,7 @@
         Type of tuition:
       </h3>
 
-      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+      <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Your requirement</strong>
       </p>
       <p class="govuk-body">
@@ -91,7 +92,7 @@
       <h3 class="govuk-heading-m">
         Tuition plan:
       </h3>
-      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+      <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Your requirement</strong>
       </p>
       <govuk-details open="false">
@@ -114,7 +115,7 @@
         <h3 class="govuk-heading-m">
           <span>Can you support the following SEND requirements:</span>
         </h3>
-        <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+        <p class="govuk-body govuk-!-margin-bottom-0">
           <strong>Your requirement</strong>
         </p>
         <govuk-details open="false">
@@ -138,7 +139,7 @@
         <h3 class="govuk-heading-m">
           <span>Other tuition considerations?:</span>
         </h3>
-        <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+        <p class="govuk-body govuk-!-margin-bottom-0">
           <strong>Your requirement</strong>
         </p>
         <govuk-details open="false">

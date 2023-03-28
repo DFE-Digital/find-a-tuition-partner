@@ -39,12 +39,14 @@
               Key stage and subjects
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
+              <ul class="govuk-list govuk-list-bullets-mobile-view">
               @foreach (var item in Model.Data.KeyStageSubjects)
               {
                 <li>
                   @item
                 </li>
               }
+              </ul>
             </govuk-summary-list-row-value>
           </govuk-summary-list-row>
           <govuk-summary-list-row>
@@ -98,7 +100,7 @@
 
 <div class="govuk-inset-text">
   <strong>@numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners</strong> have responded at the moment.<br>
-  We have asked tuition partners to respond within 7 days of creating this enquiry.<br>
+  We have asked tuition partners to respond within @IntegerConstants.EnquiryDaysToRespond days of creating this enquiry.<br>
   You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.
 </div>
 
