@@ -50,7 +50,7 @@ namespace UI.Pages.Enquiry.Respond
                 return RedirectToPage(nameof(ErrorModel));
             }
 
-            Data.EnquiryCreatedDateTime = enquiryData.EnquiryCreatedDateTime;
+            Data.EnquiryResponseCloseDate = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond);
 
             var sessionValues = await _sessionService.RetrieveDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 
@@ -63,6 +63,7 @@ namespace UI.Pages.Enquiry.Respond
             }
             else
             {
+                Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
                 Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
                 Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
                 Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
