@@ -19,7 +19,7 @@ Then("the heading of the page is {string}", (heading) => {
 });
 
 Then("the heading of the page has text {string}", (heading) => {
-  cy.get('.govuk-heading-l').should("contain.text", heading);
+  cy.get(".govuk-heading-l").should("contain.text", heading);
 });
 
 Then(

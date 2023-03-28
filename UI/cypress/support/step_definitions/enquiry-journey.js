@@ -139,7 +139,7 @@ Then("the second reference number is dfferent to the first", () => {
 });
 
 Then("they click 'Continue' on enquiry", () => {
-  cy.get('.govuk-grid-column-two-thirds > .govuk-button').click();
+  cy.get(".govuk-grid-column-two-thirds > .govuk-button").click();
 });
 
 Then("they enter an invalid email address", () => {

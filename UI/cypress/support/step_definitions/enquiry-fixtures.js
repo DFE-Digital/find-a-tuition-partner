@@ -69,21 +69,18 @@ Given(
   () => {
     Step(this, "An enquiry has been submitted");
     cy.then(async () => {
-      console.log(enquiry.tpHrefs)
+      console.log(enquiry.tpHrefs);
       cy.visit(await getFirstValidLink(enquiry.tpHrefs));
     });
   }
 );
 
-Given(
-  "a school clicks the magic link to view their enquiry",
-  () => {
-    Step(this, "An enquiry has been submitted");
-    cy.then(async () => {
-      cy.visit(enquiry.enquirerHref);
-    });
-  }
-);
+Given("a school clicks the magic link to view their enquiry", () => {
+  Step(this, "An enquiry has been submitted");
+  cy.then(async () => {
+    cy.visit(enquiry.enquirerHref);
+  });
+});
 
 Given("An enquiry with no optional info has been submitted", async () => {
   if (!enquiryNoInfo) {

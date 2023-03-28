@@ -8,12 +8,14 @@ Then("they will see the privacy notice header", () => {
 });
 
 Then("they will see personal information link", () => {
-  cy.get('[data-testid="personal-information-link"][class="govuk-link"]')
-    .should("have.attr", "href", "https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter")
+  cy.get(
+    '[data-testid="personal-information-link"][class="govuk-link"]'
+  ).should(
+    "have.attr",
+    "href",
+    "https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter"
+  );
 });
-
-
-
 
 Then("they will see contact form link", () => {
   cy.get('[data-testid="contact-form-link"]').should(
@@ -23,7 +25,6 @@ Then("they will see contact form link", () => {
   );
 });
 
-
 Then("they will see contact form dfe link", () => {
   cy.get('[data-testid="contact-dfe-link"]').should(
     "have.attr",
@@ -31,7 +32,6 @@ Then("they will see contact form dfe link", () => {
     "https://www.gov.uk/contact-dfe"
   );
 });
-
 
 Then("they will see information commissioner link", () => {
   cy.get('[data-testid="data-matters-link"]').should(

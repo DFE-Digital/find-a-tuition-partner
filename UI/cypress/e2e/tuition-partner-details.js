@@ -157,8 +157,10 @@ Then("the tuition cost information states declares differences", () => {
 });
 
 Then("all tuition partner details are populated correctly", () => {
-  cy.get('[data-testid="results-subjects"] > li:first')
-    .should("contain.text", "Key stage 1: English, Maths and Science");
+  cy.get('[data-testid="results-subjects"] > li:first').should(
+    "contain.text",
+    "Key stage 1: English, Maths and Science"
+  );
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
   cy.get('[data-testid="organisation-type"]').first().should("not.be.empty");

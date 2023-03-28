@@ -22,11 +22,15 @@ Then("The correct enquiry information is shown as follows:", (dataTable) => {
   dataTable.hashes().forEach((row, index) => {
     switch (row["Question"]) {
       case "Key stage and subjects":
-        cy.get('.govuk-summary-list__value > ul > :nth-child(1)')
-          .should("contain.text", "Key stage 1: English and Maths");
+        cy.get(".govuk-summary-list__value > ul > :nth-child(1)").should(
+          "contain.text",
+          "Key stage 1: English and Maths"
+        );
 
-        cy.get('.govuk-summary-list__value > ul > :nth-child(2)')
-          .should("contain.text", "Key stage 2: English and Maths");
+        cy.get(".govuk-summary-list__value > ul > :nth-child(2)").should(
+          "contain.text",
+          "Key stage 2: English and Maths"
+        );
         break;
       case "Tuition type":
         cy.get(":nth-child(2) > .govuk-summary-list__value").should(
@@ -199,5 +203,5 @@ And("they click cancel on the response page", () => {
 });
 
 When("they click return to your enquiry list", () => {
-  cy.get('.govuk-body.app-print-hide > .govuk-link').click();
+  cy.get(".govuk-body.app-print-hide > .govuk-link").click();
 });
