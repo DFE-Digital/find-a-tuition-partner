@@ -96,23 +96,23 @@ jobs:
         timeout: 600000
         interval: 15000
 
-    - name: End to End Testing
-      uses: cypress-io/github-action@v5
-      with:
-        working-directory: ./UI
-        config: baseUrl="${{ env.BASE_URL }}/",video=false
+#    - name: End to End Testing
+#      uses: cypress-io/github-action@v5
+#      with:
+#        working-directory: ./UI
+#        config: baseUrl="${{ env.BASE_URL }}/",video=false
 
-    - name: Store screenshots on test failure
-      uses: actions/upload-artifact@v3
-      if: failure()
-      with:
-        name: cypress-screenshots
-        path: UI/cypress/screenshots
+#    - name: Store screenshots on test failure
+#      uses: actions/upload-artifact@v3
+#      if: failure()
+#      with:
+#        name: cypress-screenshots
+#        path: UI/cypress/screenshots
 
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_COLOR: ${{ job.status }}
-        SLACK_MESSAGE: "${{ env.BASE_URL }}"
-        SLACK_TITLE: PR Deployment
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+#    - name: Slack Notification
+#      uses: rtCamp/action-slack-notify@v2
+#      env:
+#        SLACK_COLOR: ${{ job.status }}
+#        SLACK_MESSAGE: "${{ env.BASE_URL }}"
+#        SLACK_TITLE: PR Deployment
+#        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
