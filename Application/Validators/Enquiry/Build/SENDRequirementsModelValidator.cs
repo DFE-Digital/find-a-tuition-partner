@@ -9,7 +9,7 @@ public class SENDRequirementsModelValidator : AbstractValidator<SENDRequirements
     public SENDRequirementsModelValidator()
     {
         RuleFor(request => request.SENDRequirements)
-             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace(Environment.NewLine, " ").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }
