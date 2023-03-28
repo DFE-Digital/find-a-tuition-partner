@@ -11,19 +11,19 @@
 @using AnchorTagHelper = GovUk.Frontend.AspNetCore.TagHelpers.AnchorTagHelper
 @model SearchResults
 @{
-    ViewData["Title"] = "Your options for choosing a tuition partner";
-    ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
-    ViewData["IncludePrintPage"] = true;
+  ViewData["Title"] = "Your options for choosing a tuition partner";
+  ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
+  ViewData["IncludePrintPage"] = true;
 
-    var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityDistrictName != null);
-    var results = !validResults ? new List<TuitionPartnerResult>() : Model!.Data!.Results!.Results;
-    var count = results!.Count();
-    var partnersPlural = count == 1 ? "partner" : "partners";
-    var resultPlural = count == 1 ? "result": "results";
+  var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityDistrictName != null);
+  var results = !validResults ? new List<TuitionPartnerResult>() : Model!.Data!.Results!.Results;
+  var count = results!.Count();
+  var partnersPlural = count == 1 ? "partner" : "partners";
+  var resultPlural = count == 1 ? "result" : "results";
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-full">
 
     @if (!Model.IncludeEnquiryBuilder)
     {
@@ -42,242 +42,242 @@
       </div>
     }
 
-        <govuk-error-summary show-if="!Model.ModelState.IsValid">
-            <govuk-error-summary-item show-if="!Model.ModelState.IsValid" class="error-summary-filter-prompt">Use the filters section below to update the following details:</govuk-error-summary-item>
-            <govuk-error-summary-item asp-for="Data.Postcode"/>
-            <govuk-error-summary-item asp-for="Data.Subjects"/>
-            <govuk-error-summary-item asp-for="Data.TuitionType"/>
-        </govuk-error-summary>
+    <govuk-error-summary show-if="!Model.ModelState.IsValid">
+      <govuk-error-summary-item show-if="!Model.ModelState.IsValid" class="error-summary-filter-prompt">Use the filters section below to update the following details:</govuk-error-summary-item>
+      <govuk-error-summary-item asp-for="Data.Postcode" />
+      <govuk-error-summary-item asp-for="Data.Subjects" />
+      <govuk-error-summary-item asp-for="Data.TuitionType" />
+    </govuk-error-summary>
 
-        <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityDistrictName</strong></span>
-        <h1 class="govuk-heading-l app-print-hide">
-            <span class="app-results-filter--desktop">Your options for choosing a tuition partner</span>
-            <span class="app-results-filter--non-desktop">Your options now</span>
-        </h1>
+    <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityDistrictName</strong></span>
+    <h1 class="govuk-heading-l app-print-hide">
+      <span class="app-results-filter--desktop">Your options for choosing a tuition partner</span>
+      <span class="app-results-filter--non-desktop">Your options now</span>
+    </h1>
 
-    </div>
+  </div>
 </div>
 
 <div show-if="@count > 0" class="govuk-grid-row app-print-hide">
-    <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      You can either:
+    </p>
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+      @if (Model.IncludeEnquiryBuilder)
+      {
+        <li>
+          send a tailored enquiry to tuition partners anonymously.
+        </li>
+      }
+      <li>
+        use the search results on this page to contact tuition partners yourself.
+      </li>
+      <li>
+        select tuition partners and compare prices between them.
+      </li>
+    </ul>
+    @if (Model.IncludeEnquiryBuilder)
+    {
+      <div class="enquire-nudge">
+        <h2 class="govuk-heading-m">Send an enquiry to tuition partners</h2>
         <p class="govuk-body">
-            You can either:
+          If you can provide more information about your school’s needs, we can contact tuition partners anonymously for you.
         </p>
-        <ul class="govuk-list govuk-list--number govuk-!-margin-left-4">
-            @if(Model.IncludeEnquiryBuilder)
-            {
-            <li>
-                send a tailored enquiry to tuition partners anonymously.
-            </li>
-            }
-            <li>
-                use the search results on this page to contact tuition partners yourself.
-            </li>
-            <li>
-                select tuition partners and compare prices between them.
-            </li>
-        </ul>
-        @if(Model.IncludeEnquiryBuilder)
-        {
-        <div class="enquire-nudge">
-            <h2 class="govuk-heading-m">Send an enquiry to tuition partners</h2>
-            <p class="govuk-body">
-                If you can provide more information about your school’s needs, we can contact tuition partners anonymously for you.
-            </p>
-            <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/guidance?@Model.Data.ToQueryString()" role="button">Start now</a>
-        </div>
-        }
-    </div>
+        <a class="govuk-button" data-module="govuk-button" draggable="false" href="/enquiry/build/guidance?@Model.Data.ToQueryString()" role="button">Start now</a>
+      </div>
+    }
+  </div>
 </div>
 
 <div class="govuk-grid-row">
-    <form method="POST">
+  <form method="POST">
 
-        <div class="govuk-grid-column-one-third">
-            <div class="app-results-filter-wrapper" data-module="results-filter" data-testid="results-filter">
-                <div class="app-results-filter">
-                    <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
-                        <h2 class="govuk-heading-m">Filter results</h2>
-                    </div>
-                    <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
-                        <div class="app-results-filter-overlay--heading">
-                            <div class="app-results-filter-overlay--heading-left">
-                                <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
-                            </div>
-                            <div class="app-results-filter-overlay--heading-right">
-                                <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline"
-                                   data-module="return-to-results-link" data-testid="return-to-results-link">
-                                    Return to results
-                                </a>
-                            </div>
-                        </div>
-                        <p show-if="@validResults" class="govuk-body" data-testid="overlay-filter-results-count">
-                            <span>@count @resultPlural</span>
-                        </p>
-                        <h2 class="govuk-heading-m">Subjects</h2>
-                    </div>
-
-                    @foreach (var item in Model.Data!.AllSubjects!.Keys)
-                    {
-                        <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) "/>
-                    }
-
-                    <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
-                        <govuk-radios-fieldset>
-                            <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-                                Type of tuition
-                            </govuk-radios-fieldset-legend>
-                            @foreach (var item in Model.Data.AllTuitionTypes)
-                            {
-                                <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
-                            }
-                        </govuk-radios-fieldset>
-                    </govuk-radios>
-
-                    <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="app-print-hide govuk-link govuk-link--no-underline"
-                       asp-route-postcode=@Model.Data.Postcode>
-                        Clear all filters
-                    </a>
-
-                    <div class="govuk-!-margin-top-7">
-                        <div class="govuk-button-group app-results-filter--apply-filters">
-                            <govuk-button type="submit">Apply filters</govuk-button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="govuk-form-group app-form-group-inline app-results-filter postcode-group" data-module="results-filter">
-                    <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
-                        <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
-                            Enter your school's postcode
-                        </label>
-                        <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
-                        <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
-                        <govuk-button class="govuk-button--secondary postcode-search" type="submit" data-testid="call-to-action">Search</govuk-button>
-                    </div>
-                    <div class="govuk-!-margin-top-7">
-                        <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
-                            <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
-                        </div>
-                    </div>
-                </div>
+    <div class="govuk-grid-column-one-third">
+      <div class="app-results-filter-wrapper" data-module="results-filter" data-testid="results-filter">
+        <div class="app-results-filter">
+          <div class="app-results-filter-overlay--not-visible" data-testid="filter-results-heading">
+            <h2 class="govuk-heading-m">Filter results</h2>
+          </div>
+          <div class="app-results-filter-overlay--visible" data-testid="overlay-filter-results-heading">
+            <div class="app-results-filter-overlay--heading">
+              <div class="app-results-filter-overlay--heading-left">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">Filters</h1>
+              </div>
+              <div class="app-results-filter-overlay--heading-right">
+                <a href="/search-results?@Model.Data.ToQueryString()" class="govuk-link govuk-link--no-underline"
+                   data-module="return-to-results-link" data-testid="return-to-results-link">
+                  Return to results
+                </a>
+              </div>
             </div>
+            <p show-if="@validResults" class="govuk-body" data-testid="overlay-filter-results-count">
+              <span>@count @resultPlural</span>
+            </p>
+            <h2 class="govuk-heading-m">Subjects</h2>
+          </div>
+
+          @foreach (var item in Model.Data!.AllSubjects!.Keys)
+          {
+            <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) " />
+          }
+
+          <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
+            <govuk-radios-fieldset>
+              <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                Type of tuition
+              </govuk-radios-fieldset-legend>
+              @foreach (var item in Model.Data.AllTuitionTypes)
+              {
+                <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+              }
+            </govuk-radios-fieldset>
+          </govuk-radios>
+
+          <a asp-page-handler="ClearAllFilters" data-testid="clear-all-filters" class="app-print-hide govuk-link govuk-link--no-underline"
+             asp-route-postcode=@Model.Data.Postcode>
+            Clear all filters
+          </a>
+
+          <div class="govuk-!-margin-top-7">
+            <div class="govuk-button-group app-results-filter--apply-filters">
+              <govuk-button type="submit">Apply filters</govuk-button>
+            </div>
+          </div>
         </div>
 
-        <div class="govuk-grid-column-two-thirds">
-
-            <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
-                <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
+        <div class="govuk-form-group app-form-group-inline app-results-filter postcode-group" data-module="results-filter">
+          <div asp-validation-group-for="Data.Postcode" data-testid="postcode">
+            <label asp-for="Data.Postcode" class="govuk-label govuk-label--s">
+              Enter your school's postcode
+            </label>
+            <span asp-validation-for="Data.Postcode" class="govuk-error-message"></span>
+            <input asp-for="Data.Postcode" class="govuk-input" data-testid="postcode-input-box" type="text">
+            <govuk-button class="govuk-button--secondary postcode-search" type="submit" data-testid="call-to-action">Search</govuk-button>
+          </div>
+          <div class="govuk-!-margin-top-7">
+            <div class="govuk-button-group app-results-filter-overlay--visible" data-module="overlay-apply-filters">
+              <govuk-button type="submit" data-testid="show-search-results-button">Show search results</govuk-button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            @if (count > 0)
-            {
-                var i = 0;
-                var dataQueryString = Model.Data.ToQueryString();
+    <div class="govuk-grid-column-two-thirds">
 
-                <div class="govuk-body" data-testid="results-summary">
-                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                    Your results are in a random order.
-                    <div class="govuk-grid-row govuk-!-margin-top-2 app-print-hide">
-                        <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
-                            <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
-                                Update price comparison list
-                            </govuk-button>
-                        </div>
-                        <div class="govuk-grid-column-full">
-                            <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
-                               module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
-                                Compare tuition partner prices
-                                <span id="totalCompareListedTuitionPartners" class="moj-notification-badge my-compare-listed-partners-badge">
-                                    @Model.TotalCompareListedTuitionPartners
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                </div>
+      <div class="govuk-button-group app-results-filter-overlay--show-filters" data-module="show-filters-button-group">
+        <govuk-button class="govuk-button--secondary" data-testid="show-filters-button">Show filters</govuk-button>
+      </div>
 
-                @foreach (var item in results!)
-                {
-                    i++;
-                    var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
-                    var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{HelperFunctions.JumpToLocationQueryName}=sr-tp-jtl-{@item.SeoUrl}";
+      @if (count > 0)
+      {
+        var i = 0;
+        var dataQueryString = Model.Data.ToQueryString();
 
-                    <div id="sr-tp-jtl-@item.SeoUrl" data-testid="results-list-item" data-position="@i">
-                        <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
-                            <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
-                            <h2 class="govuk-heading-m">
-                                <a href="@tpUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a>
-                            </h2>
-                            <govuk-summary-list class="govuk-!-margin-bottom-0">
-                                <govuk-summary-list-row class="govuk-body-s">
-                                    <govuk-summary-list-row-key>
-                                        Subjects covered
-                                    </govuk-summary-list-row-key>
-                                    <govuk-summary-list-row-value>
-                                        <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                                            @foreach (var keyStageSubjects in item.SubjectsCoverage!
-                                                .Select(e => e.Subject)
-                                                .Distinct()
-                                                .OrderBy(e => e.KeyStageId)
-                                                .ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
-                                            {
-                                                <li>@(((KeyStage) keyStageSubjects.Key).DisplayName()): @keyStageSubjects.DisplayList()</li>
-                                            }
-                                        </ul>
-                                    </govuk-summary-list-row-value>
-                                </govuk-summary-list-row>
-                                <govuk-summary-list-row class="govuk-body-s">
-                                    <govuk-summary-list-row-key>
-                                        Type of tuition
-                                    </govuk-summary-list-row-key>
-                                    <govuk-summary-list-row-value data-testid="type-of-tuition">
-                                        @string.Join(", ", item.TuitionTypes!.Select(e => e.Name))
-                                    </govuk-summary-list-row-value>
-                                </govuk-summary-list-row>
-                                <govuk-summary-list-row class="govuk-body-s">
-                                    <govuk-summary-list-row-key>
-                                        Tuition partner information
-                                    </govuk-summary-list-row-key>
-                                    <govuk-summary-list-row-value data-testid="results-description">
-                                        @item.Description
-                                    </govuk-summary-list-row-value>
-                                </govuk-summary-list-row>
-                            </govuk-summary-list>
-                            @{
-                                var compareList = Model.SelectableTuitionPartners
-                                    .First(tp => tp.SeoUrl == item.SeoUrl);
-                                var compareListCheckboxModel = new CompareListCheckboxModel($"compare-list-cb-{compareList.SeoUrl}",
-                                    compareList.SeoUrl, item.Name, "CompareListedTuitionPartners", compareList.IsSelected);
-                            }
-                            <div>
-                                <partial name="Shared/_CompareListCheckbox" model="compareListCheckboxModel"/>
-                            </div>
-                            <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
-                        </div>
-                    </div>
-                }
-                <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
-                    <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
-                        <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
-                                        class="govuk-!-margin-bottom-2">
-                            Update price comparison list
-                        </govuk-button>
-                    </div>
-                </div>                
-            }
-            else if (validResults && count == 0)
-            {
-                <div class="govuk-body" data-testid="results-summary">
-                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                    No tuition partners have been found, updating your selected filters may change this.
-                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                </div>
-            }
+        <div class="govuk-body" data-testid="results-summary">
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          Your results are in a random order.
+          <div class="govuk-grid-row govuk-!-margin-top-2 app-print-hide">
+            <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+              <govuk-button type="submit" class="govuk-!-margin-bottom-2" name="UpdateMyCompareList" value="Update price comparison list">
+                Update price comparison list
+              </govuk-button>
+            </div>
+            <div class="govuk-grid-column-full">
+              <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
+                 module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
+                Compare tuition partner prices
+                <span id="totalCompareListedTuitionPartners" class="moj-notification-badge my-compare-listed-partners-badge">
+                  @Model.TotalCompareListedTuitionPartners
+                </span>
+              </a>
+            </div>
+          </div>
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         </div>
 
-        <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true}, {"ExcludeSubjects", true}, {"ExcludeTuitionTypes", true}, {"ExcludePostcode", true} }' />
+        @foreach (var item in results!)
+        {
+          i++;
+          var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
+          var tpUrl = $"/tuition-partner/{item.SeoUrl}?{dataQueryString}&{HelperFunctions.JumpToLocationQueryName}=sr-tp-jtl-{@item.SeoUrl}";
 
-        <input asp-for="Data.PreviousTuitionType" type="hidden" />
-    </form>
+          <div id="sr-tp-jtl-@item.SeoUrl" data-testid="results-list-item" data-position="@i">
+            <div class="search-results-logo" data-testid="results-list-item-@item.SeoUrl">
+              <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name" />
+              <h2 class="govuk-heading-m">
+                <a href="@tpUrl" class="govuk-link" data-testid="tuition-partner-name-link">@item.Name</a>
+              </h2>
+              <govuk-summary-list class="govuk-!-margin-bottom-0">
+                <govuk-summary-list-row class="govuk-body-s">
+                  <govuk-summary-list-row-key>
+                    Subjects covered
+                  </govuk-summary-list-row-key>
+                  <govuk-summary-list-row-value>
+                    <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                      @foreach (var keyStageSubjects in item.SubjectsCoverage!
+                     .Select(e => e.Subject)
+                     .Distinct()
+                     .OrderBy(e => e.KeyStageId)
+                     .ThenBy(e => e.Name).GroupBy(e => e.KeyStageId))
+                      {
+                        <li>@(((KeyStage)keyStageSubjects.Key).DisplayName()): @keyStageSubjects.DisplayList()</li>
+                      }
+                    </ul>
+                  </govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row class="govuk-body-s">
+                  <govuk-summary-list-row-key>
+                    Type of tuition
+                  </govuk-summary-list-row-key>
+                  <govuk-summary-list-row-value data-testid="type-of-tuition">
+                    @string.Join(", ", item.TuitionTypes!.Select(e => e.Name))
+                  </govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+                <govuk-summary-list-row class="govuk-body-s">
+                  <govuk-summary-list-row-key>
+                    Tuition partner information
+                  </govuk-summary-list-row-key>
+                  <govuk-summary-list-row-value data-testid="results-description">
+                    @item.Description
+                  </govuk-summary-list-row-value>
+                </govuk-summary-list-row>
+              </govuk-summary-list>
+              @{
+                var compareList = Model.SelectableTuitionPartners
+                .First(tp => tp.SeoUrl == item.SeoUrl);
+                var compareListCheckboxModel = new CompareListCheckboxModel($"compare-list-cb-{compareList.SeoUrl}",
+                compareList.SeoUrl, item.Name, "CompareListedTuitionPartners", compareList.IsSelected);
+              }
+              <div>
+                <partial name="Shared/_CompareListCheckbox" model="compareListCheckboxModel" />
+              </div>
+              <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+            </div>
+          </div>
+        }
+        <div class="govuk-grid-row update-my-compare-list-button--top-margin-ne-2">
+          <div class="govuk-grid-column-full update-my-compare-list-button--apply-visibility">
+            <govuk-button type="submit" name="UpdateMyCompareList" value="Update price comparison list"
+                          class="govuk-!-margin-bottom-2">
+              Update price comparison list
+            </govuk-button>
+          </div>
+        </div>
+      }
+      else if (validResults && count == 0)
+      {
+        <div class="govuk-body" data-testid="results-summary">
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          No tuition partners have been found, updating your selected filters may change this.
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        </div>
+      }
+    </div>
+
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true}, {"ExcludeSubjects", true}, {"ExcludeTuitionTypes", true}, {"ExcludePostcode", true} }' />
+
+    <input asp-for="Data.PreviousTuitionType" type="hidden" />
+  </form>
 </div>
