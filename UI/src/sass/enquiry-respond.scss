@@ -1,0 +1,9 @@
+﻿@include govuk-media-query($from: tablet) {
+  .cya-summary-tp .govuk-summary-list__actions {
+    width: 12%;
+  }
+
+  .cya-summary-tp .govuk-summary-list__key {
+    width: 35%;
+  }
+}

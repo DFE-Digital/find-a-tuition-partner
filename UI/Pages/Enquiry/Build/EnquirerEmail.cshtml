@@ -18,13 +18,11 @@
         
         <form method="post">
             <h1 class="govuk-heading-l">What is your email address?</h1>
-            <div class="govuk-form-group">
-                <div asp-validation-group-for="Data.Email" data-testid="enquirer-email">
-                    <govuk-input asp-for="Data.Email" input-class="govuk-input govuk-!-width-three-quarters" autocomplete="email" data-testid="enquirer-email-input-box" type="email" spellcheck="false" autocomplete="email">
-                        <govuk-input-label>Email address</govuk-input-label>
-                        <govuk-input-hint>Tuition partners won&#8217;t see your email address. We&#8217;ll use this email to notify you if you get a response from a tuition partner.</govuk-input-hint>
-                    </govuk-input>
-                </div>
+            <div asp-validation-group-for="Data.Email" data-testid="enquirer-email">
+                <govuk-input asp-for="Data.Email" input-class="govuk-input govuk-!-width-three-quarters" autocomplete="email" data-testid="enquirer-email-input-box" type="email" spellcheck="false" autocomplete="email">
+                    <govuk-input-label>Email address</govuk-input-label>
+                    <govuk-input-hint>Tuition partners won&#8217;t see your email address. We&#8217;ll use this email to notify you if you get a response from a tuition partner.</govuk-input-hint>
+                </govuk-input>
             </div>
             <partial name="_SearchModelHiddenInputs" model="@Model.Data"/>
             <input type="hidden" name="handler" value="Submit"/>

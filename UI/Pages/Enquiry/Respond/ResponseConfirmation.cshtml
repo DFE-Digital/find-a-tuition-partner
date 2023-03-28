@@ -1,55 +1,53 @@
 ﻿@page
 @model UI.Pages.Enquiry.Respond.ResponseConfirmation
 @{
-    ViewData["Title"] = "Response sent confirmation";
-    ViewData["IncludePrintPage"] = true;
-    var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
-    var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerMagicLink}";
+  ViewData["Title"] = "Response sent confirmation";
+  ViewData["IncludePrintPage"] = true;
+  var supportReferenceNumber = @Model.Data.SupportReferenceNumber ?? string.Empty;
+  var enquirerLink = string.IsNullOrWhiteSpace(Model.Data.EnquirerMagicLink) ? string.Empty : $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerMagicLink}";
 }
 
 <div class="govuk-width-container">
-    <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-panel govuk-panel--confirmation">
-                    <h1 class="govuk-panel__title">
-                        Response sent
-                    </h1>
-                    <div class="govuk-panel__body">
-                        Your reference number is<br><strong>@supportReferenceNumber</strong>
-                    </div>
-                </div>
-                <div class="govuk-inset-text">
-                    <p class="govuk-body">We have sent you a confirmation email that gives you a summary of your <br/>
-                        response. <strong>You should save this confirmation email to keep a record of <br/>
-                            this response</strong>.</p>
-                </div>
-                <br/>
-                <h2 class="govuk-heading-m">What happens next</h2>
-                <p class="govuk-body">
-                    We will notify the school and asked them to review your response.
-                </p>
-
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">If the school does contact you</h2>
-                <p class="govuk-body">
-                    The school will use your contact details provided on this service.<br/>
-                    We will ask them to share the name of their school and the reference number <br/>
-                    from this service with you.
-                </p>
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">If the school does not contact you</h2>
-                <p class="govuk-body">
-                    It may be you were not able to meet the school's tuition needs at this time or <br/>
-                    the school was unable to get back to you.
-                </p>
-                @if(!string.IsNullOrWhiteSpace(enquirerLink))
-                {
-                <h2 class="govuk-heading-m">Test links</h2>
-                <p class="govuk-body">
-                  NOTE: the following links are only displayed in the non-production websites for testing purposes...
-                </p>
-                <p class="govuk-body">
-                  <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
-                </p>
-                }
-            </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+          Response sent
+        </h1>
+        <div class="govuk-panel__body">
+          Your reference number is<br>
+          <strong>@supportReferenceNumber</strong>
         </div>
+      </div>
+      <div class="govuk-inset-text">
+        We have sent you a confirmation email that gives you a summary of your response.<br>
+        <strong>You should save this confirmation email to keep a record of this response.</strong>
+      </div>
+      <br>
+      <h2 class="govuk-heading-m">What happens next</h2>
+      <p class="govuk-body">
+        We will notify the school and asked them to review your response.
+      </p>
+
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-0">If the school does contact you</h2>
+      <p class="govuk-body">
+        The school will use your contact details provided on this service.<br>
+        We will ask them to share the name of their school and the reference number from this service with you.
+      </p>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-0">If the school does not contact you</h2>
+      <p class="govuk-body">
+        It may be you were not able to meet the school's tuition needs at this time or the school was unable to get back to you.
+      </p>
+      @if (!string.IsNullOrWhiteSpace(enquirerLink))
+      {
+        <h2 class="govuk-heading-m">Test links</h2>
+        <p class="govuk-body">
+          NOTE: the following links are only displayed in the non-production websites for testing purposes...
+        </p>
+        <p class="govuk-body">
+          <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
+        </p>
+      }
+    </div>
+  </div>
 </div>

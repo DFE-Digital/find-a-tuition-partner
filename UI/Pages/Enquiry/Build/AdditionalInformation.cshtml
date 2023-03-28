@@ -9,19 +9,15 @@
 }
 
 <form method="post">
-    <div class="govuk-form-group">
-        <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-            <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-                Is there anything else that you want tuition partners to consider? (optional)
-            </govuk-character-count-label>
-            <govuk-character-count-hint>
-                For example, your school budget or National Tutoring Programme funding
-            </govuk-character-count-hint>
-        </govuk-character-count>
-    </div>
-    <div class="govuk-inset-text">
-        <p class="govuk-body">Do not include any information that would allow anyone to identify pupils, such as names or specific characteristics.</p>
-    </div>
+    <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+            Is there anything else that you want tuition partners to consider? (optional)
+        </govuk-character-count-label>
+        <govuk-character-count-hint>
+            For example, your school budget or National Tutoring Programme funding
+        </govuk-character-count-hint>
+    </govuk-character-count>
+    <partial name="_PIIWarning" />
     <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>
     <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
