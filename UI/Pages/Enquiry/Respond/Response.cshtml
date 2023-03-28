@@ -36,7 +36,7 @@
         </ul>
       </p>
       <div class="govuk-inset-text">
-        You have until <strong>@Model.Data.EnquiryResponseCloseDate.ToString("h:mmtt 'on' dddd d MMMM yyyy")</strong> to respond to this enquiry
+        You have until <strong>@Model.Data.EnquiryResponseCloseDateFormatted</strong> to respond to this enquiry
       </div>
     </div>
   </div>
@@ -183,5 +183,6 @@
   <input asp-for="Data.EnquiryTutoringLogistics" type="hidden" />
   <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
   <input asp-for="Data.EnquiryAdditionalInformation" type="hidden" />
+  <input asp-for="Data.EnquiryResponseCloseDateFormatted" type="hidden" />
   <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action" class="app-print-hide">Continue</govuk-button>
 </form>
