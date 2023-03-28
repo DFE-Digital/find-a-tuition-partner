@@ -69,7 +69,6 @@ Given(
   () => {
     Step(this, "An enquiry has been submitted");
     cy.then(async () => {
-      console.log(enquiry.tpHrefs);
       cy.visit(await getFirstValidLink(enquiry.tpHrefs));
     });
   }
