@@ -14,7 +14,7 @@ public static class DictionaryExtensions
         if (personalisation != null)
         {
             personalisation.Add(EnquiryRefKeyKey, enquiryRef);
-            personalisation.Add(EnquiryDateTimeKey, dateTime.ToString(StringConstants.DateFormatGDS));
+            personalisation.Add(EnquiryDateTimeKey, dateTime.ToLocalDateTime().ToString(StringConstants.DateFormatGDS));
             personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
         }
 
