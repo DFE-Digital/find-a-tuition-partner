@@ -6,7 +6,7 @@
   ViewData["IncludePrintPage"] = true;
 
   var numberOfTpEnquiryResponseReceived = !Model.Data.EnquirerViewResponses.Any()
-      ? 0 : Model.Data.EnquirerViewResponses.Count;
+  ? 0 : Model.Data.EnquirerViewResponses.Count;
 }
 
 <div class="govuk-grid-row">
@@ -100,24 +100,24 @@
 
 <div class="govuk-inset-text">
   <strong>@numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners</strong> have responded at the moment.<br>
-  We have asked tuition partners to respond within @IntegerConstants.EnquiryDaysToRespond days of creating this enquiry.<br>
+  We have asked tuition partners to respond within 7 days of creating this enquiry.<br>
   You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.
 </div>
 
 @if (Model.Data.EnquirerViewResponses.Any())
 {
   <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
-    <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Date</th>
-        <th class="govuk-table__header" scope="col">Tuition partner</th>
-        <th class="govuk-table__header app-print-hide" scope="col">Their response</th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
+  <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th class="govuk-table__header" scope="col">Date</th>
+      <th class="govuk-table__header" scope="col">Tuition partner</th>
+      <th class="govuk-table__header app-print-hide" scope="col">Their response</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
 
-      @foreach (var item in @Model.Data.EnquirerViewResponses!)
+    @foreach (var item in @Model.Data.EnquirerViewResponses!)
       {
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">

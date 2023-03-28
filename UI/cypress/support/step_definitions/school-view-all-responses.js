@@ -22,9 +22,11 @@ Then("The correct enquiry information is shown as follows:", (dataTable) => {
   dataTable.hashes().forEach((row, index) => {
     switch (row["Question"]) {
       case "Key stage and subjects":
-        cy.get(
-          ":nth-child(1) > .govuk-summary-list__value > :nth-child(1)"
-        ).should("contain.text", row["Your Requirements"]);
+        cy.get('.govuk-summary-list__value > ul > :nth-child(1)')
+          .should("contain.text", "Key stage 1: English and Maths");
+
+        cy.get('.govuk-summary-list__value > ul > :nth-child(2)')
+          .should("contain.text", "Key stage 2: English and Maths");
         break;
       case "Tuition type":
         cy.get(":nth-child(2) > .govuk-summary-list__value").should(

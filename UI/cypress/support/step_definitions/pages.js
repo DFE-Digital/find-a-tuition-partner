@@ -132,21 +132,15 @@ Then("the user has arrived on the tuition response confirmation page", () => {
 });
 
 Then("the user has arrived on the view all enquiry responses page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/all-enquirer-responses"
-  );
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/respond\/all-enquirer-responses/);
 });
 
 Then("the tuition partners response page is shown", () => {
-  cy.location("pathname").should("eq", "/enquiry/respond/enquirer-response");
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/respond\/enquirer-response/);
 });
 
 Then("the user has arrived on the contact tuition partner page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/enquirer-view-tuition-partner-details"
-  );
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/respond\/enquirer-view-tuition-partner-details/);
 });
 
 Then("the page URL ends with {string}", (url) => {

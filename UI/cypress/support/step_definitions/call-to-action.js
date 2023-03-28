@@ -43,7 +43,7 @@ When("they click back on the browser", () => {
 });
 
 When("they click send enquiry", () => {
-  cy.get(".govuk-grid-column-three-quarters > .govuk-button").click();
+  cy.get('.govuk-grid-column-full > .govuk-button').click();
 });
 
 When("they click 'Submit'", () => {

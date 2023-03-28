@@ -14,7 +14,7 @@ Feature: View all responses page and Tuition partner contact page
     Scenario: View all responses page to have the expected structure
         Given a school clicks the magic link to view their enquiry
         When the user has arrived on the view all enquiry responses page
-        Then the heading of the page is 'View responses to your tuition enquiry'
+        Then the heading of the page has text 'View responses to your tuition enquiry'
         And there is text 'Your tuition requirements'
         When the user clicks Your tuition requirements
         Then The correct enquiry information is shown as follows:
