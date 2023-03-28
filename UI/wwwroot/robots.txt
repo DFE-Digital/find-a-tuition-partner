@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /enquiry/build/*
+Disallow: /enquiry/*
