@@ -1,197 +1,194 @@
 @page "/enquiry/{supportReferenceNumber}/respond/enquirer-response/{tuitionPartnerSeoUrl}"
 @model UI.Pages.Enquiry.Respond.EnquirerResponse
 @{
-    var baseServiceUrl = Request.GetBaseServiceUrl();
-    var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/all-enquirer-responses?Token={Model.Data.EnquirerViewAllResponsesToken}";
-    var tpDetails = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/enquirer-view-tuition-partner-details/{Model.TuitionPartnerSeoUrl}?Token={Model.Data.EnquirerViewResponseToken}";
-    
-    ViewData["Title"] = "View a response";
-    ViewData["BackLinkText"] = "Back to view all your responses";
-    ViewData["BackLinkHref"] = backLink;
-    ViewData["IncludePrintPage"] = true;
+  var baseServiceUrl = Request.GetBaseServiceUrl();
+  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/all-enquirer-responses?token={@Model.Data.EnquirerViewAllResponsesToken}";
+  var tpDetails = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/respond/enquirer-view-tuition-partner-details?token={@Model.Data.EnquirerViewResponseToken}";
+
+  ViewData["Title"] = "View a response";
+  ViewData["BackLinkText"] = "Back to view all your responses";
+  ViewData["BackLinkHref"] = backLink;
+  ViewData["IncludePrintPage"] = true;
 }
 
-
 <div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
-    <div class="govuk-grid-column-full">
-        
-        <h1 class="govuk-heading-l">
-            <span>View @Model.Data.TuitionPartnerName’s <br/> response</span>
-        </h1>
+  <div class="govuk-grid-column-full">
 
-        <p class="govuk-body app-print-hide">
-            You can view and compare their response to your tuition requirements.
-            This will help you decide if its a good match to <br/> your pupils' needs.
-        </p>
-        
-        <p class="govuk-body app-print-hide">
-            After you’ve viewed their response, you can either:
-        </p>
-        <ul class="govuk-list govuk-list--bulle app-print-hidet">
+    <h1 class="govuk-heading-l">
+      View response from @Model.Data.TuitionPartnerName
+    </h1>
 
-            <li>
-                contact them to discuss your enquiry such as budget, funding, alternative arrangements and tutors available.
-            </li>
+    <p class="govuk-body app-print-hide">
+      You can view and compare their response to your tuition requirements.<br>
+      This will help you decide if its a good match to your pupils' needs.
+    </p>
 
-            <li>
-                return to your enquiry list to view other tuition partner’s responses
-            </li>
-        </ul>
-    </div>
+    <p class="govuk-body app-print-hide">
+      After you’ve viewed their response, you can either:
+    </p>
+    <ul class="govuk-list govuk-list--bullet app-print-hide">
+      <li>
+        contact them to discuss your enquiry such as budget, funding, alternative arrangements and tutors available.
+      </li>
+      <li>
+        return to your enquiry list to view other tuition partner’s responses
+      </li>
+    </ul>
+  </div>
 </div>
 
 <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
 <div class="govuk-width-container">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
-            <h2 class="govuk-heading-l govuk-!-padding-top-0">
-                Their response to your enquiry
-            </h2>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <h2 class="govuk-heading-l govuk-!-padding-top-0">
+        Their response to your enquiry
+      </h2>
 
-            <h3 class="govuk-heading-m">
-                <span>Key stage and subjects:</span>
-            </h3>
-        
-            <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
-                <strong>Your requirement</strong>
-            </p>
+      <h3 class="govuk-heading-m">
+        Key stage and subjects:
+      </h3>
 
-            <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
-                @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
-                {
-                    <li>
-                        @item
-                    </li>
-                }
-            </ul>
+      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+        <strong>Your requirement</strong>
+      </p>
 
-            <p class="govuk-body govuk-!-margin-bottom-0">
-                <strong>@Model.Data.TuitionPartnerName’s response</strong>
-            </p>
-            <p class="govuk-body">
-                <span class="display-pre-wrap">@Model.Data.KeyStageAndSubjectsText</span>
-            </p>
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+        @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
+        {
+          <li>
+            @item
+          </li>
+        }
+      </ul>
 
-            <h3 class="govuk-heading-m">
-                <span>Type of tuition:</span>
-            </h3>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+      </p>
+      <p class="govuk-body">
+        <span class="display-pre-wrap">@Model.Data.KeyStageAndSubjectsText</span>
+      </p>
 
-            <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
-                <strong>Your requirement</strong>
-            </p>
-            <p class="govuk-body">
-                @Model.Data.EnquiryTuitionType
-            </p>
+      <h3 class="govuk-heading-m">
+        Type of tuition:
+      </h3>
 
-            <p class="govuk-body govuk-!-margin-bottom-0">
-                <strong>@Model.Data.TuitionPartnerName’s response</strong>
-            </p>
-            <p class="govuk-body">
-                <span class="display-pre-wrap">@Model.Data.TuitionTypeText</span>
-            </p>
+      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+        <strong>Your requirement</strong>
+      </p>
+      <p class="govuk-body">
+        @Model.Data.EnquiryTuitionType
+      </p>
 
-            <h3 class="govuk-heading-m">
-                <span>Tuition plan:</span>
-            </h3>
-            <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
-                <strong>Your requirement</strong>
-            </p>
-            <govuk-details open="false">
-                <govuk-details-summary>
-                    View your tuition requirement
-                </govuk-details-summary>
-                <govuk-details-text>
-                    <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
-                </govuk-details-text>
-            </govuk-details>
-            <p class="govuk-body govuk-!-margin-bottom-0">
-                <strong>@Model.Data.TuitionPartnerName’s response</strong>
-            </p>
-            <p class="govuk-body">
-                <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
-            </p>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+      </p>
+      <p class="govuk-body">
+        <span class="display-pre-wrap">@Model.Data.TuitionTypeText</span>
+      </p>
 
-            @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
-            {
-                <h3 class="govuk-heading-m">
-                    <span>SEND requirements:</span>
-                </h3>
-                <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
-                    <strong>Your requirement</strong>
-                </p>
-                <govuk-details open="false">
-                    <govuk-details-summary>
-                        View your tuition requirement
-                    </govuk-details-summary>
-                    <govuk-details-text>
-                        <span class="display-pre-wrap">@Model.Data.EnquirySENDRequirements</span>
-                    </govuk-details-text>
-                </govuk-details>
-                <p class="govuk-body govuk-!-margin-bottom-0">
-                    <strong>@Model.Data.TuitionPartnerName’s response</strong>
-                </p>
-                <p class="govuk-body">
-                    <span class="display-pre-wrap">@Model.Data.SENDRequirementsText</span>
-                </p>
-            }
+      <h3 class="govuk-heading-m">
+        Tuition plan:
+      </h3>
+      <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+        <strong>Your requirement</strong>
+      </p>
+      <govuk-details open="false">
+        <govuk-details-summary>
+          View your tuition requirement
+        </govuk-details-summary>
+        <govuk-details-text>
+          <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
+        </govuk-details-text>
+      </govuk-details>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+      </p>
+      <p class="govuk-body">
+        <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
+      </p>
 
-            @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
-            {
-                <h3 class="govuk-heading-m">
-                    <span>Other tuition requirements:</span>
-                </h3>
-                <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
-                    <strong>Your requirement</strong>
-                </p>
-                <govuk-details open="false">
-                    <govuk-details-summary>
-                        View your tuition requirement
-                    </govuk-details-summary>
-                    <govuk-details-text>
-                        <span class="display-pre-wrap">@Model.Data.EnquiryAdditionalInformation</span>
-                    </govuk-details-text>
-                </govuk-details>
-                <p class="govuk-body govuk-!-margin-bottom-0">
-                    <strong>@Model.Data.TuitionPartnerName’s response</strong>
-                </p>
-                <p class="govuk-body">
-                    <span class="display-pre-wrap">@Model.Data.AdditionalInformationText</span>
-                </p>
-            }
-        </div>
+      @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
+      {
+        <h3 class="govuk-heading-m">
+          <span>Can you support the following SEND requirements:</span>
+        </h3>
+        <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+          <strong>Your requirement</strong>
+        </p>
+        <govuk-details open="false">
+          <govuk-details-summary>
+            View your tuition requirement
+          </govuk-details-summary>
+          <govuk-details-text>
+            <span class="display-pre-wrap">@Model.Data.EnquirySENDRequirements</span>
+          </govuk-details-text>
+        </govuk-details>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <strong>Response from @Model.Data.TuitionPartnerName</strong>
+        </p>
+        <p class="govuk-body">
+          <span class="display-pre-wrap">@Model.Data.SENDRequirementsText</span>
+        </p>
+      }
+
+      @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
+      {
+        <h3 class="govuk-heading-m">
+          <span>Other tuition considerations?:</span>
+        </h3>
+        <p class="govuk-body govuk-!-margin-bottom-0 app-print-hide">
+          <strong>Your requirement</strong>
+        </p>
+        <govuk-details open="false">
+          <govuk-details-summary>
+            View your tuition requirement
+          </govuk-details-summary>
+          <govuk-details-text>
+            <span class="display-pre-wrap">@Model.Data.EnquiryAdditionalInformation</span>
+          </govuk-details-text>
+        </govuk-details>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <strong>Response from @Model.Data.TuitionPartnerName</strong>
+        </p>
+        <p class="govuk-body">
+          <span class="display-pre-wrap">@Model.Data.AdditionalInformationText</span>
+        </p>
+      }
     </div>
+  </div>
 </div>
 
 <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7 app-print-hide">
 
 <div class="govuk-width-container app-print-hide">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
-            <h2 class="govuk-heading-l govuk-!-padding-top-0">
-                What you can do next
-            </h2>
-            <p class="govuk-body">
-                <strong>If you are interested in working with this tuition partner</strong>
-            </p>
-            <p class="govuk-body">
-                You can contact them to further discuss your pupils' needs. <br/>
-                We will also give you guidance about what information you should give to them. <br/>
-                Even if the tuition partner can’t fully meet all of your tuition requirements, you can still discuss any flexibility.
-            </p>
-            <a class="govuk-button" data-module="govuk-button" draggable="false" href="@tpDetails" role="button">View tuition partner’s contact details</a>
-            <p class="govuk-body">
-                <strong>If you do not want to contact this tuition partner</strong>
-            </p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <h2 class="govuk-heading-l govuk-!-padding-top-0">
+        What you can do next
+      </h2>
+      <p class="govuk-body">
+        <strong>If you are interested in working with this tuition partner</strong>
+      </p>
+      <p class="govuk-body">
+        You can contact them to further discuss your pupils' needs.<br>
+        We will also give you guidance about what information you should give to them.<br>
+        You can also discuss any flexibility around your requirements.
+      </p>
+      <a class="govuk-button" data-module="govuk-button" draggable="false" href="@tpDetails" role="button">View tuition partner’s contact details</a>
+      <p class="govuk-body">
+        <strong>If you do not want to contact this tuition partner</strong>
+      </p>
 
-            <p class="govuk-body">
-                Select ‘Return to your enquiry list’ to view responses from other tuition partners. <br />
-                We will not inform @Model.Data.TuitionPartnerName that you have chosen not to contact them. <br/>
-            </p>
-        
-            <a href="@backLink" class="govuk-link">
-                Return to your enquiry list
-            </a>
-        </div>
+      <p class="govuk-body">
+        Select ‘Return to your enquiry list’ to view responses from other tuition partners.<br>
+        We will not inform @Model.Data.TuitionPartnerName that you have chosen not to contact them.<br>
+      </p>
+
+      <p class="govuk-body">
+        <a href="@backLink" class="govuk-link">Return to your enquiry list</a>
+      </p>
     </div>
+  </div>
 </div>
