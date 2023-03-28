@@ -225,6 +225,18 @@ public class StringExtensionsTests
             $"* * * test line 1{Environment.NewLine}^ ^ ^test line 2{Environment.NewLine}# # # test line 3{Environment.NewLine}--- --- --------test line 4{Environment.NewLine}test # line 5",
             $"\\* * * test line 1{Environment.NewLine}\\^ ^ ^test line 2{Environment.NewLine}\\# # # test line 3{Environment.NewLine}\\--- --- --------test line 4{Environment.NewLine}test # line 5"
         };
+
+        yield return new object[]
+        {
+            $"  *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}     #test line 3{Environment.NewLine}    ---test line 4{Environment.NewLine}   test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}\\#test line 3{Environment.NewLine}\\---test line 4{Environment.NewLine}   test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"      *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}       #test line 3{Environment.NewLine}       ---test line 4{Environment.NewLine}     test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}\\#test line 3{Environment.NewLine}\\---test line 4{Environment.NewLine}     test # line 5"
+        };
     }
 
     [Theory]
@@ -254,6 +266,18 @@ public class StringExtensionsTests
         {
             $"* * * test line 1{Environment.NewLine}^ ^ ^test line 2{Environment.NewLine}# # # test line 3{Environment.NewLine}--- --- --------test line 4{Environment.NewLine}test # line 5",
             $"\\* * * test line 1{Environment.NewLine}\\^ ^ ^test line 2{Environment.NewLine}^\\# # # test line 3{Environment.NewLine}^\\--- --- --------test line 4{Environment.NewLine}^test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"  *test line 1{Environment.NewLine}  ^test line 2{Environment.NewLine}  #test line 3{Environment.NewLine}     ---test line 4{Environment.NewLine}  test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}^\\#test line 3{Environment.NewLine}^\\---test line 4{Environment.NewLine}^  test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"      *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}       #test line 3{Environment.NewLine}   ---test line 4{Environment.NewLine}     test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}^\\#test line 3{Environment.NewLine}^\\---test line 4{Environment.NewLine}^     test # line 5"
         };
     }
 

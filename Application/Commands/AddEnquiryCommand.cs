@@ -26,6 +26,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     private const string EnquiryTpNameKey = "tp_name";
     private const string EnquiryLadNameKey = "local_area_district";
     private const string EnquiryResponseFormLinkKey = "link_to_tp_response_form";
+    private const string EnquiryDaysToRespond = "number_days_to_respond";
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRandomTokenGenerator _randomTokenGenerator;
@@ -76,7 +77,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 MagicLink = new MagicLink()
                 {
                     Token = selectedTuitionPartner.Token!
-                }
+                },
+                ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
             }).ToList();
 
         var keyStageSubjects = request.Data.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
@@ -219,7 +221,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 { EnquiryTpNameKey, tpName },
                 { EnquiryResponseFormLinkKey, responseFormLink },
-                { EnquiryLadNameKey, ladNameKey }
+                { EnquiryLadNameKey, ladNameKey },
+                { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
             };
 
         return personalisation;
@@ -248,6 +251,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
                 { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
+                { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
             };
 
         return personalisation;

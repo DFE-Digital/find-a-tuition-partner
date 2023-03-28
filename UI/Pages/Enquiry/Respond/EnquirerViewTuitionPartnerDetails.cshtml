@@ -15,6 +15,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
+    <span class="govuk-caption-l">Reference number @Model.Data.SupportReferenceNumber</span>
     <h1 class="govuk-heading-l">
       Contact @Model.Data.TuitionPartnerName
     </h1>
@@ -40,6 +41,7 @@
     <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
       <li>email: <a href="mailto:@(Model.Data.TuitionPartnerEmailAddress)" class="govuk-link">@Model.Data.TuitionPartnerEmailAddress</a></li>
       <li>contact number: <a href="tel:@Model.Data.TuitionPartnerPhoneNumber" class="govuk-link">@Model.Data.TuitionPartnerPhoneNumber</a></li>
+      <li>website: <a href="@Model.Data.TuitionPartnerWebsite" class="govuk-link" rel="noreferrer noopener" target="_blank">@(Model.Data.TuitionPartnerWebsite) (opens in new tab)</a></li>
     </ul>
 
     <h2 class="govuk-heading-m solid-line-top app-print-hide">

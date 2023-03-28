@@ -8,51 +8,50 @@
 }
 
 <div class="govuk-width-container">
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">
-          Request sent
-        </h1>
-        <div class="govuk-panel__body">
-          Your reference number is<br><strong>@supportReferenceNumber</strong>
-        </div>
-      </div>
-      <br/>
-      <h2 class="govuk-heading-m">What happens next</h2>
-      <p class="govuk-body">
-        You'll start to be notified by email if tuition partners can work with you.
-      </p>
-      <p class="govuk-body">
-        If you haven’t received any responses, you may need to check your email spam or junk folder.
-      </p>
-      <p class="govuk-body">
-        Tuition partners will need to contact you within 7 days.
-      </p>
-      @if (!string.IsNullOrWhiteSpace(enquirerLink))
-      {
-        <h2 class="govuk-heading-m">Test links</h2>
-        <p class="govuk-body">
-          NOTE: the following links are only displayed in the non-production websites for testing purposes...
-        </p>
-        <p class="govuk-body">
-          <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
-        </p>
-      }
-      @if (Model.Data.TuitionPartnerMagicLinks != null && Model.Data.TuitionPartnerMagicLinks.Any())
-      {
-        <p class="govuk-body">
-          Tuition Partner links (displaying @Model.Data.TuitionPartnerMagicLinks.Count of @Model.Data.TuitionPartnerMagicLinksCount)
-        </p>
-        foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
-        {
-          var dataTestId = $"tp-response-magic-link{tpLink.Email}";
-          var tpHref = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{tpLink.TuitionPartnerSeoUrl}?Token={tpLink.MagicLinkToken}";
-          <p class="govuk-body">
-            @tpLink.Email: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
-          </p>
-        }
-      }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Request sent
+                </h1>
+                <div class="govuk-panel__body">
+                    Your reference number is<br><strong>@supportReferenceNumber</strong>
+                </div>
+            </div>
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <p class="govuk-body">
+                You'll start to be notified by email if tuition partners can work with you.
+            </p>
+            <p class="govuk-body">
+                If you haven’t received any responses, you may need to check your email spam or junk folder.
+            </p>
+            <p class="govuk-body">
+                Tuition partners will need to contact you within @IntegerConstants.EnquiryDaysToRespond days.
+            </p>
+            @if(!string.IsNullOrWhiteSpace(enquirerLink))
+            {
+            <h2 class="govuk-heading-m">Test links</h2>
+            <p class="govuk-body">
+              NOTE: the following links are only displayed in the non-production websites for testing purposes...
+            </p>
+            <p class="govuk-body">
+                <a href="@enquirerLink" data-testid="enquirer-magic-link">Enquirer link</a>
+            </p>
+            }
+            @if(Model.Data.TuitionPartnerMagicLinks != null && Model.Data.TuitionPartnerMagicLinks.Any())
+            {
+                <p class="govuk-body">
+                    Tuition Partner links (displaying @Model.Data.TuitionPartnerMagicLinks.Count of @Model.Data.TuitionPartnerMagicLinksCount)
+                </p>
+                foreach (var tpLink in Model.Data.TuitionPartnerMagicLinks)
+                {
+                    var dataTestId = $"tp-response-magic-link{tpLink.Email}";
+                    var tpHref = $"/enquiry/{Model.Data.SupportReferenceNumber}/respond/response/{tpLink.TuitionPartnerSeoUrl}?Token={tpLink.MagicLinkToken}";
+                <p class="govuk-body">
+                    @tpLink.Email: <a href="@tpHref" data-testid="@dataTestId">Response link</a>
+                </p>
+                }
+            }
     </div>
   </div>
 </div>

@@ -19,7 +19,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 {
     private const string EnquiryReferenceNumberKey = "enquiry_ref_number";
     private const string EnquiryLadNameKey = "local_area_district";
-    private const string EnquiryCreatedDateTime = "date_time";
+    private const string EnquiryResponseCreatedDateTime = "date_time";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
     private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
     private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
@@ -36,18 +36,15 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private readonly INotificationsClientService _notificationsClientService;
 
-    private readonly IRandomTokenGenerator _randomTokenGenerator;
-
     private readonly IUnitOfWork _unitOfWork;
 
     private readonly ILogger<AddEnquiryResponseCommandHandler> _logger;
 
     public AddEnquiryResponseCommandHandler(IUnitOfWork unitOfWork, INotificationsClientService notificationsClientService,
-        ILogger<AddEnquiryResponseCommandHandler> logger, IRandomTokenGenerator randomTokenGenerator)
+        ILogger<AddEnquiryResponseCommandHandler> logger)
     {
         _unitOfWork = unitOfWork;
         _notificationsClientService = notificationsClientService;
-        _randomTokenGenerator = randomTokenGenerator;
         _logger = logger;
     }
 
@@ -78,6 +75,16 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         request.Data.Email = tpEnquiry.Enquiry.Email;
 
+        tpEnquiry.EnquiryResponse = new EnquiryResponse()
+        {
+            TutoringLogisticsText = request.Data!.TutoringLogisticsText!,
+            KeyStageAndSubjectsText = request.Data!.KeyStageAndSubjectsText!,
+            TuitionTypeText = request.Data.TuitionTypeText!,
+            SENDRequirementsText = request.Data.SENDRequirementsText ?? null,
+            AdditionalInformationText = request.Data.AdditionalInformationText ?? null,
+            CompletedAt = DateTime.UtcNow
+        };
+
         var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
 
         var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
@@ -91,17 +98,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                 tpEnquiry.TuitionPartner.Email,
                 tpEnquiry.Enquiry.SupportReferenceNumber,
                 contactUsLink,
-                tpEnquiry.Enquiry.CreatedAt);
-
-        tpEnquiry.EnquiryResponse = new EnquiryResponse()
-        {
-            TutoringLogisticsText = request.Data!.TutoringLogisticsText!,
-            KeyStageAndSubjectsText = request.Data!.KeyStageAndSubjectsText!,
-            TuitionTypeText = request.Data.TuitionTypeText!,
-            SENDRequirementsText = request.Data.SENDRequirementsText ?? null,
-            AdditionalInformationText = request.Data.AdditionalInformationText ?? null,
-            CompletedAt = DateTime.UtcNow
-        };
+                tpEnquiry.EnquiryResponse.CreatedAt);
 
         try
         {
@@ -162,14 +159,14 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string tpEmail, string supportRefNumber, string contactusLink, DateTime enquiryCreateDateTime)
+        string tpName, string tpEmail, string supportRefNumber, string contactusLink, DateTime responseCreateDateTime)
     {
         var personalisationInput = new EnquiryResponseToTpPersonalisationInput
         {
             TpName = tpName,
             SupportRefNumber = supportRefNumber,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            CreatedOnDateTime = enquiryCreateDateTime.ToString(StringConstants.DateFormatGDS),
+            ResponseCreatedOnDateTime = responseCreateDateTime.ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
@@ -202,7 +199,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             { EnquiryTuitionPartnerNameKey, input.TpName! },
             { EnquiryReferenceNumberKey, input.SupportRefNumber! },
             { EnquiryLadNameKey, input.LocalAreaDistrict! },
-            { EnquiryCreatedDateTime, input.CreatedOnDateTime! },
+            { EnquiryResponseCreatedDateTime, input.ResponseCreatedOnDateTime! },
             { EnquiryKeyStageAndSubjects, input.EnquiryKeyStageSubjects! },
             { EnquiryResponseKeyStageAndSubjects, input.EnquiryResponseKeyStageSubjects! },
             { EnquiryTuitionTypeKey, input.EnquiryTuitionType! },

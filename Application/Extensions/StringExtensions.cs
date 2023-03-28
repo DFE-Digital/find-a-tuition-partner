@@ -97,9 +97,11 @@ public static class StringExtensions
         var escapedText = text;
         if (!string.IsNullOrWhiteSpace(escapedText))
         {
-            var pattern = @"^(\*|\^|\---|\#).*$";
+            //Match on first character on line, ignore white space and tabs at start of line
+            var pattern = @"^[ \t]*(\*|\^|\---|\#).*$";
 
-            escapedText = Regex.Replace(escapedText, pattern, match => "\\" + match.Value, RegexOptions.Multiline);
+            //We can trim here, since Notify trims the content anyway
+            escapedText = Regex.Replace(escapedText, pattern, match => "\\" + match.Value.TrimStart(new char[] { ' ', '\t' }), RegexOptions.Multiline);
 
             if (updateForInsetFormat)
             {

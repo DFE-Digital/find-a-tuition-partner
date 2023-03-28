@@ -10,7 +10,7 @@ public record EnquiryResponseToTpPersonalisationInput
     public string? TpName { get; init; }
     public string? SupportRefNumber { get; init; }
     public string? LocalAreaDistrict { get; init; }
-    public string? CreatedOnDateTime { get; init; }
+    public string? ResponseCreatedOnDateTime { get; init; }
     public string? EnquiryKeyStageSubjects { get; init; }
     public string? EnquiryResponseKeyStageSubjects { get; init; }
     public string? EnquiryTuitionType { get; init; }
