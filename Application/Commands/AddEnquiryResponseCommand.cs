@@ -132,7 +132,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
         string tpName, string supportRefNumber, string contactusLink)
     {
-        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}/respond/all-enquirer-responses?token={request.Data?.Token}";
+        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={request.Data?.Token}";
 
         var result = new NotificationsRecipientDto()
         {

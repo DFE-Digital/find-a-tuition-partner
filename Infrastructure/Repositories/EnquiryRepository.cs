@@ -81,7 +81,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
                 TuitionPartnerName = er.TuitionPartner.Name,
                 EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!,
                 EnquirerEnquiryResponseLink =
-                    $"{baseServiceUrl}/enquiry/{supportReferenceNumber}/respond/enquirer-response/{er.TuitionPartner.Name.ToSeoUrl()}?Token={er.MagicLink!.Token}"
+                    $"{baseServiceUrl}/enquiry/{supportReferenceNumber}/{er.TuitionPartner.Name.ToSeoUrl()}?Token={er.MagicLink!.Token}"
             };
             result.EnquirerViewResponses.Add(responseModel);
         }

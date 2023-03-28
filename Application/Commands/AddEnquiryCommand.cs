@@ -136,7 +136,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
         var enquirerViewAllResponsesPageLink =
-            $"{request.Data?.BaseServiceUrl}/enquiry/{enquiry.SupportReferenceNumber}/respond/all-enquirer-responses?Token={enquirerMagicLink.Token}";
+            $"{request.Data?.BaseServiceUrl}/enquiry/{enquiry.SupportReferenceNumber}?Token={enquirerMagicLink.Token}";
 
         getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
                     request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), enquirerViewAllResponsesPageLink);
@@ -147,7 +147,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
             x.Personalisation = GetEnquirySubmittedToTpPersonalisation(x.TuitionPartnerName!,
-                $"{request.Data!.BaseServiceUrl}/enquiry/{enquiry.SupportReferenceNumber}/respond/response/{x.TuitionPartnerName.ToSeoUrl()}?Token={x.Token}",
+                $"{request.Data!.BaseServiceUrl}/enquiry-response/{x.TuitionPartnerName.ToSeoUrl()}/{enquiry.SupportReferenceNumber}?Token={x.Token}",
                 request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!
                 ));
 
