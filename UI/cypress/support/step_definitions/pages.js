@@ -114,7 +114,7 @@ Then("the confirmation page is shown", () => {
 });
 
 Then("the user has arrived on the tuition response page", () => {
-  cy.location("pathname").should("eq", "/enquiry/respond/response");
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/respond\/response\/.*$/);
 });
 
 Then(

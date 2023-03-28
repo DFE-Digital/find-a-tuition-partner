@@ -199,5 +199,5 @@ And("they click cancel on the response page", () => {
 });
 
 When("they click return to your enquiry list", () => {
-  cy.get(":nth-child(8) > .govuk-link").click();
+  cy.get('.govuk-body.app-print-hide > .govuk-link').click();
 });
