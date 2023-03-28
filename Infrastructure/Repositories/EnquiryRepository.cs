@@ -70,7 +70,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             TuitionTypeName = enquiry.TuitionTypeId.GetTuitionTypeName(),
             SENDRequirements = enquiry.SENDRequirements,
             AdditionalInformation = enquiry.AdditionalInformation,
-            EnquiryCreatedDateTime = enquiry.CreatedAt,
+            EnquiryCreatedDateTime = enquiry.CreatedAt.ToLocalDateTime(),
             EnquirerViewResponses = new List<EnquirerViewResponseDto>()
         };
 
