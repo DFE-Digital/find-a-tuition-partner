@@ -12,13 +12,13 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .NotEmpty()
             .WithMessage("Enter can you support those key stages and subjects")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Tuition type must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Key stages and subjects must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.TuitionTypeText)
             .NotEmpty()
             .WithMessage("Enter to what extent can you support that type of tuition")
             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Tuition type must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
+            .WithMessage($"Type of tuition must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize} characters or less");
 
         RuleFor(request => request.TutoringLogisticsText)
             .NotEmpty()
