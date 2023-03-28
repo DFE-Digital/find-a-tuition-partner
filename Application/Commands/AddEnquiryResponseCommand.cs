@@ -166,7 +166,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             TpName = tpName,
             SupportRefNumber = supportRefNumber,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            ResponseCreatedOnDateTime = responseCreateDateTime.ToString(StringConstants.DateFormatGDS),
+            ResponseCreatedOnDateTime = responseCreateDateTime.ToLocalDateTime().ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
