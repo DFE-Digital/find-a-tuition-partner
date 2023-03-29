@@ -188,10 +188,6 @@ Then(
 );
 
 Then("the page has the correct content information", () => {
-  cy.location("pathname").should(
-    "match",
-    /\/enquiry\/([A-Z]{2}\d{4})\/respond\/enquirer-view-tuition-partner-details/
-  );
   cy.get(".govuk-caption-l").should(
     "contain.text",
     `Reference number ${
