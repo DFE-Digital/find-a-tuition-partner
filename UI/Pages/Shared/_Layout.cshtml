@@ -10,6 +10,7 @@
     var includeHomeLink = ViewData["IncludeHomeLink"] as bool? == true; 
     var backLinkHref = ViewData["BackLinkHref"] as string; 
     var backLinkText = ViewData["BackLinkText"] as string;
+    var includeBackLink = !string.IsNullOrEmpty(backLinkHref);
     backLinkText = backLinkText ?? "Back";
 
     var useRefererBackLinkElseHome = ViewData["UseRefererBackLinkElseHome"] as bool? == true; 
@@ -195,6 +196,22 @@ height="0" width="0" class="govuk-!-display-none"></iframe></noscript>
                 </span>
             </p>
         </div>
+
+        @if(sessionDataExists)
+        {
+            <div class="govuk-notification-banner govuk-notification-banner--blue session-timeout-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Important
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <div class="govuk-body">
+                    <p>We will delete your answers if you do not do anything for <strong>@UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes</strong> and you will have to start again. This is to protect your information.</p>
+                </div>
+            </div>
+        </div>
+        }
 
         @if(sessionDataExists)
         {
