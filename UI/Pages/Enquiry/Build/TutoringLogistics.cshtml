@@ -19,5 +19,7 @@
     <partial name="_PIIWarning" />
     <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>
+    <p>Raw count: @Model.ContentCountRaw</p>
+    <p>Replaced count: @Model.ContentCountReplaced</p>
     <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
 </form>

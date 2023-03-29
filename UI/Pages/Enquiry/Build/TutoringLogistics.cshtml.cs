@@ -15,12 +15,18 @@ public class TutoringLogistics : PageModel
 
     [BindProperty] public TutoringLogisticsModel Data { get; set; } = new();
 
+    public int ContentCountRaw { get; set; } = 0;
+    public int ContentCountReplaced { get; set; } = 0;
+
     public async Task<IActionResult> OnGetAsync(TutoringLogisticsModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
+
+        ContentCountRaw = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Length;
+        ContentCountReplaced = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, " ").Length;
 
         Data.TutoringLogistics = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTutoringLogistics);
 
@@ -35,6 +41,10 @@ public class TutoringLogistics : PageModel
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
+        ContentCountRaw = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Length;
+        ContentCountReplaced = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, " ").Length;
+
+
         if (ModelState.IsValid)
         {
             await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryTutoringLogistics, data.TutoringLogistics!);
