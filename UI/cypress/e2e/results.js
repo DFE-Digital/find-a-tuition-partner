@@ -121,10 +121,10 @@ Then(
   "the subjects covered by a tuition partner are in alphabetical order",
   () => {
     const stages = [
-      "Key stage 1 - English, Maths and Science",
-      "Key stage 2 - English, Maths and Science",
-      "Key stage 3 - English, Humanities, Maths, Modern Foreign Languages and Science",
-      "Key stage 4 - English, Humanities, Maths, Modern Foreign Languages and Science",
+      "Key stage 1: English, Maths and Science",
+      "Key stage 2: English, Maths and Science",
+      "Key stage 3: English, Humanities, Maths, Modern Foreign Languages and Science",
+      "Key stage 4: English, Humanities, Maths, Modern Foreign Languages and Science",
     ];
 
     stages.slice(1).forEach((element) => {

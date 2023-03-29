@@ -16,11 +16,11 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
         );
         cy.checkTextContent(
           ".govuk-list > :nth-child(1)",
-          "Key stage 1 - English and Maths"
+          "Key stage 1: English and Maths"
         );
         cy.checkTextContent(
           ".govuk-list > :nth-child(2)",
-          "Key stage 2 - English and Maths"
+          "Key stage 2: English and Maths"
         );
         break;
       case "Type of Tuition":
@@ -105,15 +105,15 @@ Then(
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(1)",
-            "Key stage 1 - English, Maths and Science"
+            "Key stage 1: English, Maths and Science"
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(2)",
-            "Key stage 2 - English, Maths and Science"
+            "Key stage 2: English, Maths and Science"
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(3)",
-            "Key stage 3 - Science"
+            "Key stage 3: Science"
           );
           break;
         case "Type of Tuition":
@@ -170,11 +170,11 @@ Then(
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(1)",
-            "Key stage 1 - English and Maths"
+            "Key stage 1: English and Maths"
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(2)",
-            "Key stage 2 - English and Maths"
+            "Key stage 2: English and Maths"
           );
           break;
         case "Type of Tuition":
@@ -234,11 +234,11 @@ Then(
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(1)",
-            "Key stage 1 - English and Maths"
+            "Key stage 1: English and Maths"
           );
           cy.checkTextContent(
             ".govuk-list > :nth-child(2)",
-            "Key stage 2 - English and Maths"
+            "Key stage 2: English and Maths"
           );
           break;
         case "Type of Tuition":

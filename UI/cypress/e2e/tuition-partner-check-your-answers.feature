@@ -5,7 +5,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        Then the heading of the page is 'Check your answers before sending your response'
+        Then the heading of the page has text 'Check your answers before sending your response'
 
 
     Scenario: Back button redirects to the enquiry response page

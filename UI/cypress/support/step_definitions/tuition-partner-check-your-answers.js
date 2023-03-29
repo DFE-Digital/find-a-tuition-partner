@@ -18,6 +18,10 @@ Then("the heading of the page is {string}", (heading) => {
   cy.get(".govuk-heading-l > span").should("contain.text", heading);
 });
 
+Then("the heading of the page has text {string}", (heading) => {
+  cy.get(".govuk-heading-l").should("contain.text", heading);
+});
+
 Then(
   "the Tuition Partner Check Your Answers page displays the following:",
   (dataTable) => {

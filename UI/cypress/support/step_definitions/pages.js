@@ -114,7 +114,10 @@ Then("the confirmation page is shown", () => {
 });
 
 Then("the user has arrived on the tuition response page", () => {
-  cy.location("pathname").should("eq", "/enquiry/respond/response");
+  cy.location("pathname").then((actualPath) => {
+    console.log("Actual path:", actualPath);
+    expect(actualPath).to.match(/enquiry-response\/.*\/[A-Z]{2}\d{4}/);
+  });
 });
 
 Then(
@@ -132,21 +135,20 @@ Then("the user has arrived on the tuition response confirmation page", () => {
 });
 
 Then("the user has arrived on the view all enquiry responses page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/all-enquirer-responses"
-  );
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}/);
 });
 
 Then("the tuition partners response page is shown", () => {
-  cy.location("pathname").should("eq", "/enquiry/respond/enquirer-response");
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/.*$/);
 });
 
 Then("the user has arrived on the contact tuition partner page", () => {
-  cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/enquirer-view-tuition-partner-details"
-  );
+  cy.location("pathname").then((actualPath) => {
+    console.log("Actual path:", actualPath);
+    expect(actualPath).to.match(
+      /\/enquiry\/[A-Z]{2}\d{4}\/.*\/contact-details/
+    );
+  });
 });
 
 Then("the page URL ends with {string}", (url) => {

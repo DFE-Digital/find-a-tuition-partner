@@ -120,7 +120,7 @@ Feature: The Check Your Answers page for the Enquiry Builder
         When they select 'Key stage 3 Science'
         And they click 'Continue'
         When they are redirected to the check your answers page
-        Then the key stages and subjects show 'Key stage 3 - Science'
+        Then the key stages and subjects show 'Key stage 3: Science'
 
     Scenario: user clicks service name on check your answers page
         Given a user has started the 'Find a tuition partner' journey

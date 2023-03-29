@@ -33,22 +33,22 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .WithMessage("You must enter an email address in the correct format");
 
         RuleFor(request => request.TutoringLogistics)
-             .NotEmpty()
-             .When(m => m.ConfirmTermsAndConditions)
-             .WithMessage("Enter the type of tuition plan that you need")
-             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .When(m => m.ConfirmTermsAndConditions)
-             .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .NotEmpty()
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("Enter the type of tuition plan that you need")
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace(Environment.NewLine, " ").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize)
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.SENDRequirements)
-             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .When(m => m.ConfirmTermsAndConditions)
-             .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace(Environment.NewLine, " ").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.AdditionalInformation)
-             .MaximumLength(IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-             .When(m => m.ConfirmTermsAndConditions)
-             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace(Environment.NewLine, " ").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(m => m.ConfirmTermsAndConditions)
             .NotEqual(false)

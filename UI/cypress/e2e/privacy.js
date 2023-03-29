@@ -8,18 +8,12 @@ Then("they will see the privacy notice header", () => {
 });
 
 Then("they will see personal information link", () => {
-  cy.get('[data-testid="personal-information-link"]').should(
+  cy.get(
+    '[data-testid="personal-information-link"][class="govuk-link"]'
+  ).should(
     "have.attr",
     "href",
     "https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter"
-  );
-});
-
-Then("the personal information link opens in a new window", () => {
-  cy.get('[data-testid="personal-information-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
   );
 });
 
@@ -31,14 +25,6 @@ Then("they will see contact form link", () => {
   );
 });
 
-Then("the contact form link opens in a new window", () => {
-  cy.get('[data-testid="contact-form-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
-  );
-});
-
 Then("they will see contact form dfe link", () => {
   cy.get('[data-testid="contact-dfe-link"]').should(
     "have.attr",
@@ -47,27 +33,11 @@ Then("they will see contact form dfe link", () => {
   );
 });
 
-Then("the contact dfe form link opens in a new window", () => {
-  cy.get('[data-testid="contact-dfe-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
-  );
-});
-
 Then("they will see information commissioner link", () => {
   cy.get('[data-testid="data-matters-link"]').should(
     "have.attr",
     "href",
     "https://ico.org.uk/your-data-matters/"
-  );
-});
-
-Then("the contact information commissioner link opens in a new window", () => {
-  cy.get('[data-testid="contact-dfe-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
   );
 });
 
@@ -95,26 +65,10 @@ Then("they will see contact secure dfe form link", () => {
   );
 });
 
-Then("the contact secure dfe link opens in a new window", () => {
-  cy.get('[data-testid="contact-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
-  );
-});
-
 Then("they will see contact secure dfe online form link", () => {
   cy.get('[data-testid="contact-form-secure-online-link"]').should(
     "have.attr",
     "href",
     "https://form.education.gov.uk/service/Contact-the-Department-for-Education"
-  );
-});
-
-Then("the contact secure dfe online form link opens in a new window", () => {
-  cy.get('[data-testid="contact-link"]').should(
-    "have.attr",
-    "target",
-    "_blank"
   );
 });

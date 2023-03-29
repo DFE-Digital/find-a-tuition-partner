@@ -5,7 +5,7 @@ Feature: Tuition Partner Enquiry Response Journey
         Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
         Then the page heading should show School Enquiry from 'Stockport' area
-        Then the page should display You have '7' days to respond
+        Then the page should display the correct date format for the response deadline
         And the responses should have heading 'Respond to this enquiry'
 
     Scenario: Enquiry Questions have the expected data
@@ -18,7 +18,7 @@ Feature: Tuition Partner Enquiry Response Journey
             | Key stages and subjects | Displays Key Stages and subjects table with the following data: |
             |                         | Key stage 1: English and Maths                                  |
             |                         | Key stage 2: English and Maths                                  |
-        And the second response section is to be 'Tuition type:' with Type 'Any'
+        And the second response section is to be 'Type of tuition:' with Type 'Any'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
         Then the fourth response section is to be 'SEND requirements:' with text 'enquiry'
         And the last response section is to be 'Other school considerations:' with text 'enquiry'
@@ -48,7 +48,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '80' characters for section 4
         When they type '80' characters for section 5
         When they click 'Continue'
-        Then the error message shows 'Key stages and subjects must be 10000 characters or less'
+        Then the error message shows 'Key stages and subjects must be 10,000 characters or less'
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for tuition type
         Given a user has started the 'Find a tuition partner' journey
@@ -63,7 +63,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '80' characters for section 4
         When they type '80' characters for section 5
         When they click 'Continue'
-        Then the error message shows 'Tuition type must be 10000 characters or less'
+        Then the error message shows 'Type of tuition must be 10,000 characters or less'
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for tuition plan
@@ -79,7 +79,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '80' characters for section 4
         When they type '80' characters for section 5
         When they click 'Continue'
-        Then the error message shows 'Tuition plan must be 10000 characters or less'
+        Then the error message shows 'Tuition plan must be 10,000 characters or less'
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for SEND requirements
@@ -95,7 +95,7 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the warning should be displayed showing they are over by '2100' characters
         When they type '80' characters for section 5
         When they click 'Continue'
-        Then the error message shows 'SEND requirements must be 10000 characters or less'
+        Then the error message shows 'SEND requirements must be 10,000 characters or less'
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for Other school considerations
@@ -111,7 +111,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '10002' characters for section 5
         Then the warning should be displayed showing they are over by '2' characters
         When they click 'Continue'
-        Then the error message shows 'Other school considerations must be 10000 characters or less'
+        Then the error message shows 'Other school considerations must be 10,000 characters or less'
 
     Scenario: Tuition responses show correct warning when there is no input for Key-stage and subjects
         Given a user has started the 'Find a tuition partner' journey
@@ -160,7 +160,7 @@ Feature: Tuition Partner Enquiry Response Journey
             |                         | Key stage 1: English and Maths                                  |
             |                         | Key stage 2: English and Maths                                  |
 
-        And the second response section is to be 'Tuition type:' with Type 'Any'
+        And the second response section is to be 'Type of tuition:' with Type 'Any'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
         Then the fourth response section is to be 'SEND requirements:' with text 'Not specified'
         And the Other considerations section is to be 'Other school considerations:' with text 'Not specified'
