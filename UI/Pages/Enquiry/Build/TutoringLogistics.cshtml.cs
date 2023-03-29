@@ -17,6 +17,13 @@ public class TutoringLogistics : PageModel
 
     public int ContentCountRaw { get; set; } = 0;
     public int ContentCountReplaced { get; set; } = 0;
+    public int ContentCountReplacedWithEmpty { get; set; } = 0;
+    public int ContentCountReplacedUsingStringR { get; set; } = 0;
+    public int ContentCountReplacedUsingStringRWithEmpty { get; set; } = 0;
+    public int ContentCountReplacedUsingStringN { get; set; } = 0;
+    public int ContentCountReplacedUsingStringNWithEmpty { get; set; } = 0;
+    public int ContentCountReplacedUsingStringRN { get; set; } = 0;
+    public int ContentCountReplacedUsingStringRNWithEmpty { get; set; } = 0;
 
     public async Task<IActionResult> OnGetAsync(TutoringLogisticsModel data)
     {
@@ -27,6 +34,14 @@ public class TutoringLogistics : PageModel
 
         ContentCountRaw = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Length;
         ContentCountReplaced = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, " ").Length;
+        ContentCountReplacedWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, "").Length;
+        ContentCountReplacedUsingStringR = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r", " ").Length;
+        ContentCountReplacedUsingStringRWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r", "").Length;
+        ContentCountReplacedUsingStringN = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\n", " ").Length;
+        ContentCountReplacedUsingStringNWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\n", "").Length;
+        ContentCountReplacedUsingStringRN = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r\n", " ").Length;
+        ContentCountReplacedUsingStringRNWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r\n", "").Length;
+
 
         Data.TutoringLogistics = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTutoringLogistics);
 
@@ -43,6 +58,13 @@ public class TutoringLogistics : PageModel
         Data = data;
         ContentCountRaw = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Length;
         ContentCountReplaced = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, " ").Length;
+        ContentCountReplacedWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace(Environment.NewLine, "").Length;
+        ContentCountReplacedUsingStringR = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r", " ").Length;
+        ContentCountReplacedUsingStringRWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r", "").Length;
+        ContentCountReplacedUsingStringN = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\n", " ").Length;
+        ContentCountReplacedUsingStringNWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\n", "").Length;
+        ContentCountReplacedUsingStringRN = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r\n", " ").Length;
+        ContentCountReplacedUsingStringRNWithEmpty = data.TutoringLogistics == null ? -1 : data.TutoringLogistics.Replace("\r\n", "").Length;
 
 
         if (ModelState.IsValid)

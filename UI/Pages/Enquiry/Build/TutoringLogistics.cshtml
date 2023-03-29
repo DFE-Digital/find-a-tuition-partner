@@ -20,6 +20,13 @@
     <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     <input type="hidden" name="handler" value="Submit"/>
     <p>Raw count: @Model.ContentCountRaw</p>
-    <p>Replaced count: @Model.ContentCountReplaced</p>
+    <p>Replaced NewLine with space count: @Model.ContentCountReplaced</p>
+    <p>Replace NewLine with empty count: @Model.ContentCountReplacedWithEmpty</p>
+    <p>Replaced R with space count: @Model.ContentCountReplacedUsingStringR</p>
+    <p>Replace R with empty count: @Model.ContentCountReplacedUsingStringRWithEmpty</p>
+    <p>Replaced N with space count: @Model.ContentCountReplacedUsingStringN</p>
+    <p>Replace N with empty count: @Model.ContentCountReplacedUsingStringNWithEmpty</p>
+    <p>Replaced RN with space count: @Model.ContentCountReplacedUsingStringRN</p>
+    <p>Replace RN with empty count: @Model.ContentCountReplacedUsingStringRNWithEmpty</p>
     <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
 </form>
