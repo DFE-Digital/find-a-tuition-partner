@@ -6,25 +6,19 @@ namespace Application.Tests.Extensions;
 
 public class DateTimeExtensionsTests
 {
-
     [Fact]
-    public void ConvertUtcToUk_LocalDateTimeReturned()
+    public void ToLocalDateTime_ShouldConvertToCorrectTimeZone_Given_UtcDateTime()
     {
         // Arrange
-        var utcTime = new DateTime(2023, 03, 28, 10, 0, 0); // 10:00 AM UTC
-        var expectedUkTime = new DateTime(2023, 03, 28, 11, 0, 0); // 11:00 AM UK local time
-
-        var offset = DateTimeOffset.Now;
-
-        if (offset.Offset == TimeSpan.Zero)
-        {
-            expectedUkTime = utcTime;
-        }
+        var dateTimeUtc = new DateTime(2023, 3, 29, 12, 0, 0, DateTimeKind.Utc);
+        var timeZoneId = "GMT Standard Time";
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        var expectedDateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, timeZoneInfo);
 
         // Act
-        var actualUkTime = utcTime.ToLocalDateTime("GMT Standard Time");
+        var result = dateTimeUtc.ToLocalDateTime(timeZoneId);
 
         // Assert
-        Assert.Equal(expectedUkTime, actualUkTime);
+        Assert.Equal(expectedDateTime, result);
     }
 }
