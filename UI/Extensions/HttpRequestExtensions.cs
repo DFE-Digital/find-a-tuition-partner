@@ -34,7 +34,7 @@ namespace UI.Extensions
             {
                 try
                 {
-                    if(string.Equals(referrerHost, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(referrerHost, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
                     {
                         ntpReferer = GetReferer(request);
                     }
@@ -57,10 +57,11 @@ namespace UI.Extensions
                     var referrerUri = new Uri(referrer);
                     referrerHost = referrerUri.Host;
                 }
-                catch {
+                catch
+                {
                     //Suppress exception
                     referrerHost = "Invalid Uri";
-                } 
+                }
             }
 
             return referrerHost;
