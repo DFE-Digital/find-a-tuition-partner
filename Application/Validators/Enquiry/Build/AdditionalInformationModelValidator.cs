@@ -9,7 +9,7 @@ public class AdditionalInformationModelValidator : AbstractValidator<AdditionalI
     public AdditionalInformationModelValidator()
     {
         RuleFor(request => request.AdditionalInformation)
-            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r", " ").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .Must(x => string.IsNullOrEmpty(x) || (string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }
