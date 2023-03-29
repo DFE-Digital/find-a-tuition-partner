@@ -28,7 +28,7 @@
     display: none;
   }
 
-  .js-enabled .app-results-filter {
+  .js-enabled .app-results-filter-wrapper {
     @include govuk-media-query($until: tablet) {
       display: none;
 
@@ -116,5 +116,40 @@
         margin-left: govuk-spacing(2);
       }
     }
+  }
+}
+
+.app-results-filter.postcode-group {
+  @include govuk-media-query($from: tablet) {
+    margin-top: 20px;
+    background-color: #ffffff;
+  }
+
+  @include govuk-media-query($until: tablet) {
+    border-top: 2px solid #b1b4b6;
+    margin-bottom: 0px;
+  }
+
+  .postcode-search {
+    @include govuk-media-query($until: tablet) {
+      display: none;
+    }
+  }
+}
+
+.error-summary-filter-prompt {
+  @include govuk-media-query($from: tablet) {
+    display: none;
+  }
+}
+
+.enquire-nudge {
+  border-style: solid;
+  border-color: #1d70b8;
+  margin-bottom: 20px;
+  padding: 15px;
+
+  .govuk-button {
+    margin-bottom: 0px;
   }
 }

@@ -18,6 +18,10 @@ When("they click 'Continue'", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
 
+When("they click 'Start now'", () => {
+  cy.get(".enquire-nudge > .govuk-button").click();
+});
+
 When("they click 'Search'", () => {
   cy.get('[data-testid="call-to-action"]').click();
 });
@@ -28,4 +32,20 @@ Then("the 'Back' link is not displayed", () => {
 
 Then("the back link's text is {string}", ($text) => {
   cy.get(".govuk-back-link").should("contain.text", $text);
+});
+
+When("they click 'Continue' through enquiry", () => {
+  cy.get(".app-print-hide > .govuk-button").click();
+});
+
+When("they click back on the browser", () => {
+  cy.go("back");
+});
+
+When("they click send enquiry", () => {
+  cy.get(".govuk-grid-column-full > .govuk-button").click();
+});
+
+When("they click 'Submit'", () => {
+  cy.get("form > .govuk-button").click();
 });

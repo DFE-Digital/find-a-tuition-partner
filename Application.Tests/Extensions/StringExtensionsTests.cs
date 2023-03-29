@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Application.Extensions;
 using FluentAssertions;
 using Xunit;
@@ -166,5 +167,134 @@ public class StringExtensionsTests
     {
         List<string> list = new List<string>(stringArray);
         list.DisplayList().Should().Be(output);
+    }
+
+    [Fact]
+    public void GroupByKeyAndConcatenateValues_ReturnsCorrectOutput()
+    {
+        // Arrange
+        var keyValuePairs = new List<string>() { "Key1: Value1", "Key2: Value2", "Key2: Value3", "Key3: Value4", "Key3: Value5", "Key3: Value6", "Key3: Value7" };
+        var expectedOutput = new List<string>() { "Key1: Value1", "Key2: Value2 and Value3", "Key3: Value4, Value5, Value6 and Value7" };
+
+        // Act
+        var actualOutput = keyValuePairs.GroupByKeyAndConcatenateValues();
+
+        // Assert
+
+        actualOutput.Should().BeEquivalentTo(expectedOutput);
+    }
+
+    [Theory]
+    [InlineData("An error occurred. Status code 400.", 400)]
+    [InlineData("An error occurred. Status code 500.", 500)]
+    public void GetGovNotifyStatusCodeFromExceptionMessage_ReturnsStatusCode_WhenMatchFound(string errormessage, int expectedStatusCode)
+    {
+        // Act
+        var statusCode = errormessage.GetGovNotifyStatusCodeFromExceptionMessage();
+
+        // Assert
+
+        statusCode.Should().Be(expectedStatusCode);
+    }
+
+    [Theory]
+    [MemberData(nameof(EscapeNotifyTestData))]
+    public void EscapeNotifyText(string text, string expectedResult)
+    {
+        var result = text.EscapeNotifyText();
+
+        result.Should().Be(expectedResult);
+    }
+
+    public static IEnumerable<object[]> EscapeNotifyTestData()
+    {
+        yield return new object[]
+        {
+            $"*test line 1{Environment.NewLine}^test line 2{Environment.NewLine}#test line 3{Environment.NewLine}---test line 4{Environment.NewLine}test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}\\#test line 3{Environment.NewLine}\\---test line 4{Environment.NewLine}test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"test line 1{Environment.NewLine}test line 2{Environment.NewLine}test line 3{Environment.NewLine}test line 4{Environment.NewLine}test line 5",
+            $"test line 1{Environment.NewLine}test line 2{Environment.NewLine}test line 3{Environment.NewLine}test line 4{Environment.NewLine}test line 5"
+        };
+
+        yield return new object[]
+        {
+            $"* * * test line 1{Environment.NewLine}^ ^ ^test line 2{Environment.NewLine}# # # test line 3{Environment.NewLine}--- --- --------test line 4{Environment.NewLine}test # line 5",
+            $"\\* * * test line 1{Environment.NewLine}\\^ ^ ^test line 2{Environment.NewLine}\\# # # test line 3{Environment.NewLine}\\--- --- --------test line 4{Environment.NewLine}test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"  *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}     #test line 3{Environment.NewLine}    ---test line 4{Environment.NewLine}   test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}\\#test line 3{Environment.NewLine}\\---test line 4{Environment.NewLine}   test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"      *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}       #test line 3{Environment.NewLine}       ---test line 4{Environment.NewLine}     test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}\\#test line 3{Environment.NewLine}\\---test line 4{Environment.NewLine}     test # line 5"
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(EscapeNotifyTestDataWithInset))]
+    public void EscapeNotifyText_WithInset(string text, string expectedResult)
+    {
+        var result = text.EscapeNotifyText(true);
+
+        result.Should().Be(expectedResult);
+    }
+
+    public static IEnumerable<object[]> EscapeNotifyTestDataWithInset()
+    {
+        yield return new object[]
+        {
+            $"*test line 1{Environment.NewLine}^test line 2{Environment.NewLine}#test line 3{Environment.NewLine}---test line 4{Environment.NewLine}test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}^\\#test line 3{Environment.NewLine}^\\---test line 4{Environment.NewLine}^test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"test line 1{Environment.NewLine}test line 2{Environment.NewLine}test line 3{Environment.NewLine}test line 4{Environment.NewLine}test line 5",
+            $"test line 1{Environment.NewLine}^test line 2{Environment.NewLine}^test line 3{Environment.NewLine}^test line 4{Environment.NewLine}^test line 5"
+        };
+
+        yield return new object[]
+        {
+            $"* * * test line 1{Environment.NewLine}^ ^ ^test line 2{Environment.NewLine}# # # test line 3{Environment.NewLine}--- --- --------test line 4{Environment.NewLine}test # line 5",
+            $"\\* * * test line 1{Environment.NewLine}\\^ ^ ^test line 2{Environment.NewLine}^\\# # # test line 3{Environment.NewLine}^\\--- --- --------test line 4{Environment.NewLine}^test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"  *test line 1{Environment.NewLine}  ^test line 2{Environment.NewLine}  #test line 3{Environment.NewLine}     ---test line 4{Environment.NewLine}  test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}^\\#test line 3{Environment.NewLine}^\\---test line 4{Environment.NewLine}^  test # line 5"
+        };
+
+        yield return new object[]
+        {
+            $"      *test line 1{Environment.NewLine}   ^test line 2{Environment.NewLine}       #test line 3{Environment.NewLine}   ---test line 4{Environment.NewLine}     test # line 5",
+            $"\\*test line 1{Environment.NewLine}\\^test line 2{Environment.NewLine}^\\#test line 3{Environment.NewLine}^\\---test line 4{Environment.NewLine}^     test # line 5"
+        };
+    }
+
+    [Fact]
+    public void EscapeNotifyText_Empty()
+    {
+        var result = string.Empty;
+
+        result.Should().BeEmpty();
+    }
+
+
+    [Fact]
+    public void EscapeNotifyText_Null()
+    {
+        string? result = null;
+
+        result.Should().BeNull();
     }
 }

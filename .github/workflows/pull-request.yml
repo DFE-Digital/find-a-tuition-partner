@@ -5,6 +5,8 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
+concurrency: pr-${{ github.event.number }}
+
 env:
   PR_NUMBER: pr-${{ github.event.number }}
   BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
@@ -16,7 +18,6 @@ jobs:
   build_deploy_test:
     name: Build, Deploy and Run End to End Tests
     runs-on: ubuntu-latest
-    concurrency: pr-${{ github.event.number }}
 
     steps:
     - name: Checkout
@@ -46,7 +47,7 @@ jobs:
 
     - name: Install the CF CLI
       run: |
-        wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        wget -v -O cf.tar.gz "https://s177d01corec7afkt3qxq7ie.blob.core.windows.net/ash-temp-cloudfoundry-cli/cf8-cli_8.6.1_linux_x86-64.tgz"
         sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
 
     - name: Authenticate
@@ -63,12 +64,17 @@ jobs:
       run: |
         cf create-service postgres small-13 find-a-tuition-partner-$PR_NUMBER-postgres-db --wait
 
+    - name: Create Redis backing service
+      run: |
+        cf create-service redis tiny-6.x find-a-tuition-partner-$PR_NUMBER-redis-db --wait
+
     - name: Deploy to PaaS
       run: |
         cf push --strategy rolling --vars-file vars-pr.yml \
           --var environment-postfix=-$PR_NUMBER \
           --var dotnet-environment=$PR_NUMBER \
           --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
+          --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
           --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
           --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
           --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"

@@ -5,7 +5,12 @@ import {
   ErrorSummary,
   Radios,
   SkipLink,
+  CharacterCount,
 } from "govuk-frontend";
+
+import HMRCFrontend from "hmrc-frontend/hmrc/all";
+
+window.HMRCFrontend = HMRCFrontend;
 
 var $buttons = document.querySelectorAll('[data-module="govuk-button"]');
 if ($buttons) {
@@ -47,6 +52,15 @@ if ($skipLink) {
   new SkipLink($skipLink).init();
 }
 
+var $characterCount = document.querySelectorAll(
+  '[data-module="govuk-character-count"]'
+);
+if ($characterCount) {
+  for (var i = 0; i < $characterCount.length; i++) {
+    new CharacterCount($characterCount[i]).init();
+  }
+}
+
 import ResultsFilter from "./javascript/results-filter";
 var resultsFilter = new ResultsFilter();
 resultsFilter.init();
@@ -58,6 +72,8 @@ if ($optionsSelect) {
     new window.GOVUK.Modules.OptionSelect(el).init()
   );
 }
+
+HMRCFrontend.initAll();
 
 import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();

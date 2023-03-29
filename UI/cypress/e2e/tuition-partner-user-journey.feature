@@ -24,6 +24,7 @@ Feature: User can travel forwards and backwards
     And the key stages are edited in the key stages page
     And the subjects are edited in the subjects page after key stage has been edited
     And the user selects tuition type 'in school'
+    And they click 'Continue'
     Then the filter selections are correct in the search results page with the edited selections
 
   Scenario: User can search by postcode SK1 1EB to see Action Tutoring TP with filtered tuition (online only) types then search by new postcode NR1 1BD that excludes Action Tutoring and then find Action Tutoring via find all will show unfiltered tuition types (Online and School)
@@ -33,6 +34,6 @@ Feature: User can travel forwards and backwards
     And they journey back to the search page
     And they update the postcode on the search page to 'NR1 1BD' and go to a selected tuition partner page
     And they will be journey back to the page they started from
-    When they click the 'All quality-assured tuition partners' link
+    When they click the 'Check the full list of quality-assured tuition partners.'link
     And they select the 'Action Tutoring' tuition partner page
     Then they see the tuition types 'In School, Online'

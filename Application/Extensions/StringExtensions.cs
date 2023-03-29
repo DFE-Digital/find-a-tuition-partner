@@ -58,4 +58,61 @@ public static class StringExtensions
 
         return commaSeparated.Remove(lastCommaIndex, 1).Insert(lastCommaIndex, " and");
     }
+
+    public static List<string> GroupByKeyAndConcatenateValues(this IEnumerable<string> keyValuePairs)
+    {
+        var groupedPairs = keyValuePairs.GroupBy(kv =>
+            kv.Substring(0, kv.IndexOf(":", StringComparison.Ordinal)).Trim());
+        return (from @group in groupedPairs
+                let key = @group.Key
+                let values = @group.Select(kv => kv.Substring(kv.IndexOf(":", StringComparison.Ordinal) + 1).Trim())
+                    .ToList()
+                let valuesCount = values.Count
+                let valueString = valuesCount switch
+                {
+                    1 => values[0],
+                    2 => $"{values[0]} and {values[1]}",
+                    _ => $"{string.Join(", ", values.Take(valuesCount - 1))} and {values.Last()}"
+                }
+                select $"{key}: {valueString}").ToList();
+    }
+
+    public static int GetGovNotifyStatusCodeFromExceptionMessage(this string errorMessage)
+    {
+        var regex = new Regex(@"Status code (\d+)");
+        var match = regex.Match(errorMessage);
+
+        if (match.Success)
+        {
+            return int.Parse(match.Groups[1].Value);
+        }
+
+        return -1; // Return an invalid status code if no match is found
+    }
+
+    public static string? EscapeNotifyText(this string? text, bool updateForInsetFormat = false)
+    {
+        //Any notify special characters that are at the start of a new line need to be escaped by prefixing with \
+        //The notify special characters are ^ (inset), * (bullet), # (titkes), ---- (horizontal line)
+        var escapedText = text;
+        if (!string.IsNullOrWhiteSpace(escapedText))
+        {
+            //Match on first character on line, ignore white space and tabs at start of line
+            var pattern = @"^[ \t]*(\*|\^|\---|\#).*$";
+
+            //We can trim here, since Notify trims the content anyway
+            escapedText = Regex.Replace(escapedText, pattern, match => "\\" + match.Value.TrimStart(new char[] { ' ', '\t' }), RegexOptions.Multiline);
+
+            if (updateForInsetFormat)
+            {
+                //In notify if there are multiple lines it breaks the inset layout, so we add the inset ^ at the start of each line to ensure it is maintained in the email
+                escapedText = escapedText.Replace(Environment.NewLine, Environment.NewLine + "^");
+
+                //If they had started with ^ then we need to replace that
+                escapedText = escapedText.Replace(Environment.NewLine + "^\\^", Environment.NewLine + "\\^");
+            }
+        }
+        return escapedText;
+    }
+
 }

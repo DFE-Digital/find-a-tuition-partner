@@ -1,7 +1,11 @@
-﻿using Domain.Constants;
+﻿using Application.Common.Models;
+using Application.Queries;
+using Domain.Constants;
 using Domain.Search;
+using FluentValidation;
 using FluentValidation.TestHelper;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Tests.TestData;
 using UI.Pages;
 using Index = UI.Pages.Index;
@@ -37,7 +41,7 @@ public class SearchForResults : CleanSliceFixture
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = postcode });
 
-        var validationResult = new TestValidationResult<SearchResults.Query>(result.Validation);
+        var validationResult = new TestValidationResult<GetSearchResultsQuery>(result.Validation);
         validationResult.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Enter a real postcode");
     }
@@ -53,7 +57,7 @@ public class SearchForResults : CleanSliceFixture
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = postcode });
 
-        var validationResult = new TestValidationResult<SearchResults.Query>(result.Validation);
+        var validationResult = new TestValidationResult<GetSearchResultsQuery>(result.Validation);
         validationResult.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("This service covers England only");
     }
@@ -73,7 +77,7 @@ public class SearchForResults : CleanSliceFixture
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = postcode });
 
-        var validationResult = new TestValidationResult<SearchResults.Query>(result.Validation);
+        var validationResult = new TestValidationResult<GetSearchResultsQuery>(result.Validation);
         validationResult.ShouldHaveValidationErrorFor(x => x.Postcode)
             .WithErrorMessage("Could not identify Local Authority for the supplied postcode");
     }
@@ -87,11 +91,9 @@ public class SearchForResults : CleanSliceFixture
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = "";
 
-        // Act
-        var result = await Fixture.SendAsync(searchResultsQuery);
-
         // Assert
-        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a postcode");
+        var ex = Assert.ThrowsAsync<ValidationException>(() => Fixture.SendAsync(searchResultsQuery));
+        ex.Result.Errors.First().ErrorMessage.Should().Be("Enter a postcode");
     }
 
     [Fact]
@@ -126,55 +128,6 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Displays_all_subjects_after_validation_failure()
-    {
-        var query = new SearchResults.Query
-        {
-            Subjects = null,
-        };
-
-        var result = await Fixture.SendAsync(query);
-
-        result.AllSubjects.Should().HaveCount(4);
-
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
-            .WhoseValue.Should().BeEquivalentTo(new[]
-            {
-                new { Name = "Maths" },
-                new { Name = "English" },
-                new { Name = "Science" },
-            });
-
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage2)
-            .WhoseValue.Should().BeEquivalentTo(new[]
-            {
-                new { Name = "Maths" },
-                new { Name = "English" },
-                new { Name = "Science" },
-            });
-
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage3)
-            .WhoseValue.Should().BeEquivalentTo(new[]
-            {
-                new { Name = "Maths" },
-                new { Name = "English" },
-                new { Name = "Science" },
-                new { Name = "Humanities" },
-                new { Name = "Modern foreign languages" },
-            });
-
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage4)
-            .WhoseValue.Should().BeEquivalentTo(new[]
-            {
-                new { Name = "Maths" },
-                new { Name = "English" },
-                new { Name = "Science" },
-                new { Name = "Humanities" },
-                new { Name = "Modern foreign languages" },
-            });
-    }
-
-    [Fact]
     public async Task Displays_all_tutor_types_in_database()
     {
         // Arrange
@@ -198,14 +151,14 @@ public class SearchForResults : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Displays_local_authority()
+    public async Task Displays_local_authority_district()
     {
         // Act
         var result = await Fixture.SendAsync(
             Basic.SearchResultsQuery with { Postcode = District.Dacorum.SamplePostcode });
 
         // Assert
-        result?.Results?.LocalAuthorityName.Should().Be("Hertfordshire");
+        result?.Results?.LocalAuthorityDistrictName.Should().Be("Dacorum");
     }
 
     [Fact]
@@ -222,14 +175,6 @@ public class SearchForResults : CleanSliceFixture
 
         // Assert
         result.Results.Should().NotBeNull();
-        result.AllSubjects.Should().ContainKey(KeyStage.KeyStage1)
-            .WhoseValue.Should().BeEquivalentTo(new[]
-            {
-                new { Name = "English", Selected = true },
-                new { Name = "Maths", Selected = false },
-                new { Name = "Science", Selected = false },
-            });
-
         result.Postcode.Should().Be(District.Dacorum.SamplePostcode);
     }
 
@@ -270,11 +215,8 @@ public class SearchForResults : CleanSliceFixture
         searchResultsQuery.Postcode = "AAAA BBCCD"; ;
 
         // Act
-        var result = await Fixture.SendAsync(searchResultsQuery);
-
-        // Assert
-        result!.Results.Should().BeNull();
-        PostCodeEmptyOrInvalidShouldHaveValidationError(result, "Enter a real postcode");
+        var ex = Assert.ThrowsAsync<ValidationException>(() => Fixture.SendAsync(searchResultsQuery));
+        ex.Result.Errors.First().ErrorMessage.Should().Be("Enter a real postcode");
     }
 
     [Theory]
@@ -301,7 +243,7 @@ public class SearchForResults : CleanSliceFixture
         });
     }
 
-    private static void PostCodeEmptyOrInvalidShouldHaveValidationError(SearchResults.ResultsModel result, string errorMessage)
+    private static void PostCodeEmptyOrInvalidShouldHaveValidationError(SearchResultsModel result, string errorMessage)
     {
         result.Validation?.IsValid.Should().Be(false);
 

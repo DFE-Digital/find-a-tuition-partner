@@ -7,6 +7,7 @@ using Infrastructure.Analytics;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using UI.Constants;
 using UI.Filters;
 using UI.Routing;
 using UI.Services;
@@ -18,7 +19,23 @@ if (await Import.RunImport(args)) return;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
+
+builder.Host.AddLogging();
+
+builder.Services.AddDistributedCache(builder.Configuration);
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(DoubleConstants.SessionTimeoutInMinutes);
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = StringConstants.SessionCookieName;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
 builder.Services.AddScoped<ITuitionPartnerCompareListStorageService, CookieBasedTuitionPartnerCompareListStorageService>();
+builder.Services.AddScoped<ISessionService, DistributedSessionService>();
 
 // Rename add and rename cookies for application
 builder.Services.AddAntiforgery(options =>
@@ -41,6 +58,10 @@ builder.Services.Configure<CookieTempDataProviderOptions>(options =>
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();
 builder.Services.AddServices();
+builder.Services.AddNotificationConfig(builder.Configuration)
+    .AddNotificationClientServiceConfiguration(builder.Configuration);
+builder.Services.AddEmailSettingsConfig(builder.Configuration);
+builder.Services.AddFeatureFlagConfig(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();
@@ -95,9 +116,10 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.AddAnalytics();
 
-builder.Host.AddLogging();
-
 var app = builder.Build();
+
+Initialize(app.Services.GetRequiredService<ILoggerFactory>());
+
 
 app.UseMiddleware<ExceptionLoggingMiddleware>();
 
@@ -127,6 +149,10 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
+
+app.EnsureDistributedCacheIsUsed(!app.Environment.IsDevelopment() && !app.Environment.IsTesting());
+
+app.UseSession();
 
 app.UseAuthorization();
 

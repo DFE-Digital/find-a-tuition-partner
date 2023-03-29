@@ -39,6 +39,19 @@ Given(
 );
 
 Given(
+  "a user has arrived on the 'Search results' page for {string} for postcode {string} and tuition type {string}",
+  (keystages, postcode, tuitionType) => {
+    const query = keystages
+      .split(",")
+      .map((s) => KeyStageSubjects("subjects", s.trim()))
+      .join("&");
+    cy.visit(
+      `/search-results?Postcode=${postcode}&${query}&TuitionType=${tuitionType}`
+    );
+  }
+);
+
+Given(
   "a user has arrived on the 'Search results' page without subjects",
   () => {
     Step(
@@ -196,7 +209,7 @@ Then(
   }
 );
 
-When("the user selects tuition type {string}", (tutionType) => {
-  cy.get(`input[id="${kebabCase(tutionType)}"]`).click();
+When("the user selects tuition type {string}", (tuitionType) => {
+  cy.get(`input[id="${kebabCase(tuitionType)}"]`).click();
   cy.wait(500);
 });

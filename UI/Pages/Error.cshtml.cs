@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Net;
+using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace UI.Pages
 {
@@ -7,22 +9,27 @@ namespace UI.Pages
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
+
+        private readonly FeatureFlags _featureFlagsConfig;
+
+        public bool IncludeEnquiryBuilder { get; set; } = true;
         public string? RequestId { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public HttpStatusCode Status { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-        private readonly ILogger<ErrorModel> _logger;
-
-        public ErrorModel(ILogger<ErrorModel> logger)
+        public ErrorModel(IOptions<FeatureFlags> featureFlagsConfig)
         {
-            _logger = logger;
+            _featureFlagsConfig = featureFlagsConfig.Value;
         }
 
         public void OnGet()
         {
+            if (TempData["Status"] is HttpStatusCode status)
+            {
+                Status = status;
+            }
+            IncludeEnquiryBuilder = _featureFlagsConfig.EnquiryBuilder;
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
     }

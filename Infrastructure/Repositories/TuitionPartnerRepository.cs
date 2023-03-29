@@ -1,24 +1,22 @@
-﻿using Application;
-using Application.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
+using Domain;
 using Domain.Search;
+using Infrastructure.Mapping;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace Infrastructure.Repositories;
 
-public class TuitionPartnerRepository : ITuitionPartnerRepository
+public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuitionPartnerRepository
 {
-    private readonly INtpDbContext _dbContext;
-
-    public TuitionPartnerRepository(INtpDbContext dbContext)
+    public TuitionPartnerRepository(NtpDbContext dbContext) : base(dbContext)
     {
-        _dbContext = dbContext;
     }
 
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
-        var queryable = _dbContext.TuitionPartners.Where(x => x.IsActive).AsQueryable();
+        var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();
 
         if (filter.SeoUrls is not null)
         {
@@ -64,12 +62,9 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
         if (request.TuitionPartnerIds == null || request.TuitionPartnerIds.Length > 0)
         {
-            //Mapster has issues mapping Prices, due to circular ref, but ignore it anyway, since done below as needed
-            TypeAdapterConfig<Domain.TuitionPartner, TuitionPartnerResult>
-                .NewConfig()
-                .Ignore(dest => dest.Prices!);
+            TuitionPartnerMapping.Configure();
 
-            var entities = await _dbContext.TuitionPartners.AsNoTracking()
+            var entities = await _context.TuitionPartners.AsNoTracking()
                 .Include(x => x.OrganisationType)
                 .IncludeTuitionForLocalDistrict(request.LocalAuthorityDistrictId)
                 .ThenInclude(x => x.TuitionType)
@@ -110,8 +105,8 @@ public class TuitionPartnerRepository : ITuitionPartnerRepository
 
 public static class LocalAuthorityDistrictCoverageQueryExtension
 {
-    public static IIncludableQueryable<Domain.TuitionPartner, IEnumerable<Domain.LocalAuthorityDistrictCoverage>>
-    IncludeTuitionForLocalDistrict(this IQueryable<Domain.TuitionPartner> tuitionPartners, int? localAuthorityDistrictId)
+    public static IIncludableQueryable<TuitionPartner, IEnumerable<LocalAuthorityDistrictCoverage>>
+    IncludeTuitionForLocalDistrict(this IQueryable<TuitionPartner> tuitionPartners, int? localAuthorityDistrictId)
     {
         return localAuthorityDistrictId == null
             ? tuitionPartners.Include(e => e.LocalAuthorityDistrictCoverage)

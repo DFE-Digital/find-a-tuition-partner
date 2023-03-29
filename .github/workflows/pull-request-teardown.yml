@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [closed]
 
+concurrency: pr-${{ github.event.number }}
+
 env:
   PR_NUMBER: pr-${{ github.event.number }}
   CF_API: "https://api.london.cloud.service.gov.uk"
@@ -14,12 +16,11 @@ jobs:
   teardown_deployment:
     name: Teardown Deployment
     runs-on: ubuntu-latest
-    concurrency: pr-${{ github.event.number }}
 
     steps:
     - name: Install the CF CLI
       run: |
-        wget -q -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        wget -v -O cf.tar.gz "https://s177d01corec7afkt3qxq7ie.blob.core.windows.net/ash-temp-cloudfoundry-cli/cf8-cli_8.6.1_linux_x86-64.tgz"
         sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
 
     - name: Authenticate
@@ -39,3 +40,7 @@ jobs:
     - name: Delete database backing service
       run: |
         cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db -f
+
+    - name: Delete database backing service
+      run: |
+        cf delete-service find-a-tuition-partner-$PR_NUMBER-redis-db -f

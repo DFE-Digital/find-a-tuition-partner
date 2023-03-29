@@ -1,0 +1,24 @@
+﻿@page
+@using Application.Constants
+@model UI.Pages.Enquiry.Build.SENDRequirements
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/tutoring-logistics";
+    ViewData["Title"] = "Do you need tuition partners who can support pupils with SEND?";
+    ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
+}
+
+<form method="post">
+    <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+            Do you need tuition partners who can support pupils with SEND? (optional)
+        </govuk-character-count-label>
+        <govuk-character-count-hint>
+            For example, the number of pupils who may need support with specific social, behavioural or learning challenges
+        </govuk-character-count-hint>
+    </govuk-character-count>
+    <partial name="_PIIWarning" />
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+    <input type="hidden" name="handler" value="Submit"/>
+    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+</form>

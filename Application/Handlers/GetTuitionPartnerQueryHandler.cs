@@ -44,7 +44,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         var tp = tpResult.Result.Data.FirstResult;
 
         var subjects = tp.SubjectsCoverage!.Select(x => x.Subject).Distinct().GroupBy(x => x.KeyStageId)
-            .Select(x => $"{((KeyStage)x.Key).DisplayName()} - {x.DisplayList()}");
+            .Select(x => $"{((KeyStage)x.Key).DisplayName()}: {x.DisplayList()}");
         var types = tp.TuitionTypes!.Select(x => x.Name).Distinct();
         var ratios = tp.Prices!.Select(x => x.GroupSize).Distinct().Select(x => $"{((GroupSize)x).DisplayName()}");
         var prices = GetPricing(tp.Prices!);
@@ -68,7 +68,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
             lads,
             allPrices,
             tp.OrganisationTypeName,
-            tpResult.Result.Data.LocalAuthorityName,
+            tpResult.Result.Data.LocalAuthorityDistrictName,
             request.ShowFullInfo ? tp.TPLastUpdatedData : null,
             request.ShowFullInfo ? tp.ImportProcessLastUpdatedData : null,
             request.ShowFullInfo ? tp.ImportId : null,
@@ -103,7 +103,7 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         if (tpResult is IErrorResult tpError)
             return tpError.Cast<TuitionPartnersResult>();
 
-        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthority);
+        var result = new TuitionPartnersResult(tpResult.Data, location.LocalAuthorityDistrict);
 
         return Result.Success(result);
     }

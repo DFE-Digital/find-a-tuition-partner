@@ -2,7 +2,7 @@ import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import { mapTextToNumberIndexZeroToTenth } from "../utils";
 
 Given("a user has started the 'Find a tuition partner' journey", () => {
-  cy.visit("/");
+  cy.visit(`/`);
 });
 
 Given("a user has arrived on the funding and reporting page", () => {
@@ -44,6 +44,10 @@ Given(
   }
 );
 
+Then("they will be taken to the 'Which key stages' page", () => {
+  cy.visit("/which-key-stages?KeyStages=KeyStage1&KeyStages=KeyStage2");
+});
+
 When(
   "they set the {string} query string parameter value to {string}",
   (key, value) => {
@@ -62,9 +66,12 @@ Then(
   }
 );
 
-Then("they will be taken to the 'Which key stages' page", () => {
-  cy.location("pathname").should("eq", "/which-key-stages");
-});
+Then(
+  "they will be taken to the 'What type of tuition do you need?' page",
+  () => {
+    cy.location("pathname").should("eq", "/which-tuition-types");
+  }
+);
 
 Then("they will be taken to the 'Which subjects' page", () => {
   cy.location("pathname").should("eq", "/which-subjects");
@@ -76,6 +83,72 @@ Then("they will be taken to the 'Search Results' page", () => {
 
 Then("they will be taken to the 'Price comparison list' page", () => {
   cy.location("pathname").should("eq", "/compare-list");
+});
+
+Then("the user will navigate to the guidance page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/guidance");
+});
+
+Then("user is redirected to the enter email address page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
+});
+
+Then("they are redirected to the enquiry question page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/tutoring-logistics");
+});
+
+Then("they are redirected to the SEND requirements page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/send-requirements");
+});
+
+Then("they are redirected to the other requirements page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/additional-information");
+});
+
+Then("they are redirected to the check your answers page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/check-your-answers");
+});
+
+Then("the confirmation page is shown", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
+});
+
+Then("the user has arrived on the tuition response page", () => {
+  cy.location("pathname").then((actualPath) => {
+    console.log("Actual path:", actualPath);
+    expect(actualPath).to.match(/enquiry-response\/.*\/[A-Z]{2}\d{4}/);
+  });
+});
+
+Then(
+  "the user has arrived on the tuition response check your answers page",
+  () => {
+    cy.location("pathname").should("eq", "/enquiry/respond/check-your-answers");
+  }
+);
+
+Then("the user has arrived on the tuition response confirmation page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "/enquiry/respond/response-confirmation"
+  );
+});
+
+Then("the user has arrived on the view all enquiry responses page", () => {
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}/);
+});
+
+Then("the tuition partners response page is shown", () => {
+  cy.location("pathname").should("match", /\/enquiry\/[A-Z]{2}\d{4}\/.*$/);
+});
+
+Then("the user has arrived on the contact tuition partner page", () => {
+  cy.location("pathname").then((actualPath) => {
+    console.log("Actual path:", actualPath);
+    expect(actualPath).to.match(
+      /\/enquiry\/[A-Z]{2}\d{4}\/.*\/contact-details/
+    );
+  });
 });
 
 Then("the page URL ends with {string}", (url) => {

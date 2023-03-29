@@ -22,6 +22,100 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Enquiry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInformation")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LocalAuthorityDistrict")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MagicLinkId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PostCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SENDRequirements")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupportReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TuitionTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TutoringLogistics")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("MagicLinkId");
+
+                    b.HasIndex("SupportReferenceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("TuitionTypeId");
+
+                    b.ToTable("Enquiries");
+                });
+
+            modelBuilder.Entity("Domain.EnquiryResponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInformationText")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("KeyStageAndSubjectsText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SENDRequirementsText")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TuitionTypeText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TutoringLogisticsText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EnquiryResponses");
+                });
+
             modelBuilder.Entity("Domain.EstablishmentStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +273,34 @@ namespace Infrastructure.Migrations
                             Name = "Key stage 4",
                             SeoUrl = "key-stage-4"
                         });
+                });
+
+            modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EnquiryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("KeyStageId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnquiryId");
+
+                    b.HasIndex("KeyStageId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("KeyStageSubjectsEnquiry");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
@@ -3818,6 +3940,23 @@ namespace Infrastructure.Migrations
                     b.ToTable("LocalAuthorityDistrictCoverage");
                 });
 
+            modelBuilder.Entity("Domain.MagicLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MagicLinks");
+                });
+
             modelBuilder.Entity("Domain.OrganisationType", b =>
                 {
                     b.Property<int>("Id")
@@ -4377,6 +4516,42 @@ namespace Infrastructure.Migrations
                     b.ToTable("TuitionPartners", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.TuitionPartnerEnquiry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EnquiryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("EnquiryResponseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MagicLinkId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ResponseCloseDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TuitionPartnerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnquiryId");
+
+                    b.HasIndex("EnquiryResponseId");
+
+                    b.HasIndex("MagicLinkId");
+
+                    b.HasIndex("TuitionPartnerId");
+
+                    b.ToTable("TuitionPartnersEnquiry");
+                });
+
             modelBuilder.Entity("Domain.TuitionPartnerLogo", b =>
                 {
                     b.Property<int>("Id")
@@ -4452,6 +4627,50 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataProtectionKeys");
+                });
+
+            modelBuilder.Entity("Domain.Enquiry", b =>
+                {
+                    b.HasOne("Domain.MagicLink", "MagicLink")
+                        .WithMany()
+                        .HasForeignKey("MagicLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TuitionType", "TuitionType")
+                        .WithMany()
+                        .HasForeignKey("TuitionTypeId");
+
+                    b.Navigation("MagicLink");
+
+                    b.Navigation("TuitionType");
+                });
+
+            modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
+                {
+                    b.HasOne("Domain.Enquiry", "Enquiry")
+                        .WithMany("KeyStageSubjectEnquiry")
+                        .HasForeignKey("EnquiryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.KeyStage", "KeyStage")
+                        .WithMany()
+                        .HasForeignKey("KeyStageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enquiry");
+
+                    b.Navigation("KeyStage");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>
@@ -4630,6 +4849,39 @@ namespace Infrastructure.Migrations
                     b.Navigation("OrganisationType");
                 });
 
+            modelBuilder.Entity("Domain.TuitionPartnerEnquiry", b =>
+                {
+                    b.HasOne("Domain.Enquiry", "Enquiry")
+                        .WithMany("TuitionPartnerEnquiry")
+                        .HasForeignKey("EnquiryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.EnquiryResponse", "EnquiryResponse")
+                        .WithMany()
+                        .HasForeignKey("EnquiryResponseId");
+
+                    b.HasOne("Domain.MagicLink", "MagicLink")
+                        .WithMany()
+                        .HasForeignKey("MagicLinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TuitionPartner", "TuitionPartner")
+                        .WithMany()
+                        .HasForeignKey("TuitionPartnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enquiry");
+
+                    b.Navigation("EnquiryResponse");
+
+                    b.Navigation("MagicLink");
+
+                    b.Navigation("TuitionPartner");
+                });
+
             modelBuilder.Entity("Domain.TuitionPartnerLogo", b =>
                 {
                     b.HasOne("Domain.TuitionPartner", null)
@@ -4637,6 +4889,13 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("Domain.TuitionPartnerLogo", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Enquiry", b =>
+                {
+                    b.Navigation("KeyStageSubjectEnquiry");
+
+                    b.Navigation("TuitionPartnerEnquiry");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>

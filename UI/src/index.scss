@@ -29,10 +29,18 @@ $govuk-page-width: 1180px;
 @import "node_modules/govuk-frontend/govuk/components/table/index";
 @import "node_modules/govuk-frontend/govuk/components/notification-banner/index";
 @import "node_modules/govuk-frontend/govuk/components/inset-text/index";
+@import "node_modules/govuk-frontend/govuk/components/textarea/index";
+@import "node_modules/govuk-frontend/govuk/components/tag/index";
+@import "node_modules/govuk-frontend/govuk/components/panel/index";
+@import "node_modules/govuk-frontend/govuk/components/character-count/index";
+@import "node_modules/govuk-frontend/govuk/components/warning-text/index";
 
 //MoJ components
 @import "node_modules/@ministryofjustice/frontend/moj/components/ticket-panel/ticket-panel";
 @import "node_modules/@ministryofjustice/frontend/moj/components/notification-badge/notification-badge";
+
+//HMRC components
+@import "node_modules/hmrc-frontend/hmrc/components/timeout-dialog/_timeout-dialog";
 
 @import "src/sass/options-card";
 @import "src/sass/option-select";
@@ -45,3 +53,6 @@ $govuk-page-width: 1180px;
 @import "src/sass/compare-list";
 @import "src/sass/tuition-partner-page-compare-list";
 @import "src/sass/compare-list-partner-checkbox-partial-page";
+@import "src/sass/core";
+@import "src/sass/enquiry-build";
+@import "src/sass/enquiry-respond";

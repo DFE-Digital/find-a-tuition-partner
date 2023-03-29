@@ -1,7 +1,7 @@
 ﻿@page
 @model WhichSubjects
 @{
-    ViewData["Title"] = "Which subjects do you need tutoring support for?";
+    ViewData["Title"] = "Which subjects do you need tutoring for?";
     ViewData["BackLinkHref"] = "/which-key-stages?" + Model.Data.ToQueryString();
 }
 
@@ -12,8 +12,8 @@
         </govuk-error-summary>
 
         <form method="get" gfa-prepend-error-summary="false">
-            <h1 class="govuk-heading-l">Which subjects do you need tutoring support for?</h1>
-            <p class="govuk-body">Select all of the subjects that apply</p>
+            <h1 class="govuk-heading-l">Which subjects do you need tutoring for?</h1>
+            <div class="govuk-hint" id="Data_Subjects-hint">Select all of the subjects that apply</div>
 
             @foreach (var item in Model.Data.AllSubjects.Keys)
             {
@@ -34,23 +34,12 @@
             }
 
             <input type="hidden" name="handler" value="Submit"/>
-            <input asp-for="Data.Postcode" type="hidden" />
-            @if (Model.Data.KeyStages != null)
-            {
-                @for(int i = 0; i < Model.Data.KeyStages.Count(); i++)
-                {
-                    <input asp-for="Data.KeyStages![i]" type="hidden" />
-                }
-            }
-            <input asp-for="Data.TuitionType" type="hidden" />
-            <input asp-for="Data.CompareListOrderBy" type="hidden" />
-            <input asp-for="Data.CompareListOrderByDirection" type="hidden" />
-            <input asp-for="Data.CompareListTuitionType" type="hidden" />
-            <input asp-for="Data.CompareListGroupSize" type="hidden" />
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
             </div>
+
+            <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeSubjects", true} }' />
         </form>
     </div>
 </div>

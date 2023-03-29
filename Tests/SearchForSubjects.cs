@@ -1,5 +1,6 @@
-﻿using Domain.Enums;
-using UI.Extensions;
+﻿using Application.Extensions;
+using Application.Queries;
+using Domain.Enums;
 using UI.Pages;
 
 namespace Tests;
@@ -14,7 +15,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Displays_all_subjects_in_key_stage()
     {
-        var result = await Fixture.SendAsync(new WhichSubjects.Query
+        var result = await Fixture.SendAsync(new GetWhichSubjectQuery
         {
             KeyStages = new[] { KeyStage.KeyStage1 }
         });
@@ -38,7 +39,7 @@ public class SearchForSubjects : CleanSliceFixture
             KeyStages = new[] { KeyStage.KeyStage1 }
         };
 
-        var query = new WhichSubjects.Query(command);
+        var query = new GetWhichSubjectQuery(command);
 
         var result = await Fixture.SendAsync(query);
 
@@ -56,7 +57,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Displays_all_subjects_when_no_key_stages_selected()
     {
-        var result = await Fixture.SendAsync(new WhichSubjects.Query());
+        var result = await Fixture.SendAsync(new GetWhichSubjectQuery());
 
         result.Should().ContainKey(KeyStage.KeyStage1)
             .WhoseValue.Should().BeEquivalentTo(new[]
@@ -98,7 +99,7 @@ public class SearchForSubjects : CleanSliceFixture
     [Fact]
     public async Task Preserves_selected_from_querystring()
     {
-        var result = await Fixture.SendAsync(new WhichSubjects.Query
+        var result = await Fixture.SendAsync(new GetWhichSubjectQuery
         {
             KeyStages = new[] { KeyStage.KeyStage1 },
             Subjects = new[] { $"{KeyStage.KeyStage1}-English" },
@@ -129,7 +130,7 @@ public class SearchForSubjects : CleanSliceFixture
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("SearchResults");
+        resultPage.PageName.Should().Be("WhichTuitionTypes");
         resultPage.RouteValues.Should().ContainKey("Subjects")
             .WhoseValue.Should().BeEquivalentTo(new[]
             {
@@ -145,5 +146,16 @@ public class SearchForSubjects : CleanSliceFixture
     {
         var parsed = new[] { keyStageSubject }.ParseKeyStageSubjects();
         parsed.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("KeyStage1-English")]
+    [InlineData("KeyStage1-Maths")]
+    [InlineData("KeyStage2-Science")]
+    [InlineData("KeyStage4-Humanities")]
+    public void Parses_valid_KeyStageSubject_without_error(string keyStageSubject)
+    {
+        var parsed = new[] { keyStageSubject }.ParseKeyStageSubjects();
+        parsed.Should().NotBeEmpty();
     }
 }

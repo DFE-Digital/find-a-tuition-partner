@@ -74,7 +74,7 @@ Feature: Tuition Partner price comparison list
     Then the price comparison list shows as having 2 entries on the results page
     And they choose to view their price comparison list from the results page
     And there are 1 entries on the price comparison list page
-    And the heading caption is 'Tuition partner for East Sussex'
+    And the heading caption is 'Tuition partner for Wealden'
     And 'Career Tree' is entry 1 on the price comparison list page
     And 'Action Tutoring' is entry 1 on the not available list on the price comparison list page
 
@@ -251,7 +251,7 @@ Feature: Tuition Partner price comparison list
     Then the 'Action Tutoring' empty data reason is 'Does not offer group sizes of 1 to 1 or in school tuition in Stockport'
 
   Scenario: The price comparison list refinement tuition type defaults to the search tuition type filter on first load and then maintains own state after being selected until the search tuition type filter is changed
-    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB' and tuition type 'Any'
     And they add 'Action Tutoring' to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
     Then the tuition type select option is 'Any'
@@ -330,3 +330,16 @@ Feature: Tuition Partner price comparison list
     Then the search results are displayed
     When they choose to view their price comparison list from the results page
     Then the VAT select option is 'Show prices excluding VAT'
+
+
+  Scenario: The price comparison list shows the Local Authority District for the request
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    And a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
+    Then the correct Local Authority District is shown for 'Stockport'
+
+  Scenario: The price comparison list displays VAT is not applicable if needed
+   Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'YO11 1BA'
+   And they add 'Randstad Solutions' to their price comparison list on the results page
+   When they choose to view their price comparison list from the results page
+   Then there are 1 entries on the price comparison list page
+   Then the correct Local Authority District is shown for 'Scarborough'

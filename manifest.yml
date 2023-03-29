@@ -3,6 +3,7 @@ applications:
 - name: find-a-tuition-partner((environment-postfix))
   services:
     - find-a-tuition-partner((environment-postfix))-postgres-db
+    - find-a-tuition-partner((environment-postfix))-redis-db
   buildpacks:
     - dotnet_core_buildpack
   instances: ((instances))
@@ -21,3 +22,12 @@ applications:
     DfeAnalytics:CredentialsJsonFile: dfe-analytics-credentials.json
     DfeAnalytics:ProjectId: find-a-tuition-partner
     DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
+    GovUkNotify:ApiKey: ((govuk-notify-api-key))
+    GovUkNotify:TemplateIdEnquirySubmittedConfirmationToEnquirer: ((govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id))
+    GovUkNotify:TemplateIdEnquirySubmittedToTp: ((govuk-notify-enquiry-submitted-to-tp-template-id))
+    GovUkNotify:TemplateIdEnquiryResponseReceivedConfirmationToEnquirer: ((govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id))
+    GovUkNotify:TemplateIdEnquiryResponseSubmittedConfirmationToTp: ((govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id))
+    EmailSettings:OverrideAddress: ((override-email-address))
+    EmailSettings:AmalgamateResponses: ((email-amalgamate-responses))
+    EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
+    FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))

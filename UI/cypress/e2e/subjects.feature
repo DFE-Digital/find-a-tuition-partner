@@ -1,11 +1,11 @@
-Feature: User can choose Key Stage and Subject
+Feature: User can choose Key Stage Subject and type of tuition
   Scenario: key stages page url is '/which-key-stages'
     Given a user has arrived on the 'Which key stages' page
     Then the page URL ends with '/which-key-stages'
 
-  Scenario: key stages page title is 'Which key stages do you need tutoring support for?'
+  Scenario: key stages page title is 'Which key stages do you need tutoring for?'
     Given a user has arrived on the 'Which key stages' page
-    Then the page's title is 'Which key stages do you need tutoring support for?'
+    Then the page's title is 'Which key stages do you need tutoring for?'
 
   Scenario: user clicks service name on key stages page
     Given a user has arrived on the 'Which key stages' page
@@ -16,9 +16,9 @@ Feature: User can choose Key Stage and Subject
     Given a user has arrived on the 'Which subjects' page for 'Key stage 1'
     Then the page URL ends with '/which-subjects'
 
-  Scenario: subjects page title is 'Which subjects do you need tutoring support for?'
+  Scenario: subjects page title is 'Which subjects do you need tutoring for?'
     Given a user has arrived on the 'Which subjects' page for 'Key stage 1'
-    Then the page's title is 'Which subjects do you need tutoring support for?'
+    Then the page's title is 'Which subjects do you need tutoring for?'
 
   Scenario: user clicks service name on which subjects page
     Given a user has arrived on the 'Which subjects' page for 'Key stage 1'
@@ -80,4 +80,3 @@ Feature: User can choose Key Stage and Subject
   Scenario: Subjects are displayed in alphabetical order in 'Which subjects' page
     Given the 'Which subjects' page is displayed
     Then the subjects are displayed in alphabetical order 
- 

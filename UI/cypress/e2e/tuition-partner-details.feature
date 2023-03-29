@@ -72,10 +72,10 @@ Feature: User can view full details of a Tuition Parner
     Then the tuition partner locations covered table is displayed
 
   Scenario Outline: tuition cost table shows available tuition types
-    Given a user has arrived on the 'Tuition Partner' page for '<tution-partner>'
+    Given a user has arrived on the 'Tuition Partner' page for '<tuition-partner>'
     Then the tuition partner pricing table is displayed for '<tuition-types>'
     Examples:
-      | tution-partner     | tuition-types     |
+      | tuition-partner    | tuition-types     |
       | Fledge Tuition Ltd | Online            |
       | FFT Education      | In school         |
       | career-tree        | In school, Online |
@@ -119,11 +119,11 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     Then all tuition partner details are populated correctly
 
-  Scenario: Logos are displayed for tution partners
+  Scenario: Logos are displayed for tuition partners
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is shown
 
-  Scenario: Logos are not displayed for tution partners
+  Scenario: Logos are not displayed for tuition partners
     Given a user is using a 'phone'
     Given a user has arrived on the 'Tuition Partner' page for 'Nudge Education'
     Then the logo is not shown
@@ -150,7 +150,7 @@ Feature: User can view full details of a Tuition Parner
     Then the user unchecks the 'Bright Heart Education' checkbox
     And 'Bright Heart Education' checkbox is unchecked on its detail page
     And the LA label text is 'Tuition partner for Stockport'
-    
+
   Scenario: Adding or removing TP to price comparison list from TP details page should be reflected on the search results page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'sk11eb'
     And total amount of price comparison list TPs is 0

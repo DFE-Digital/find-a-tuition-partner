@@ -21,7 +21,7 @@
 <form method="POST">
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-two-thirds">
-<span show-if="@Model.Data.LocalAuthorityName != null" class="govuk-caption-l" data-testid="la-name"><span id="tp-details-page--tp-localAuthHeader">@localAuthorityHeader</span><strong>@Model.Data.LocalAuthorityName</strong>
+<span show-if="@Model.Data.LocalAuthorityDistrictName != null" class="govuk-caption-l" data-testid="la-name"><span id="tp-details-page--tp-localAuthHeader">@localAuthorityHeader</span><strong>@Model.Data.LocalAuthorityDistrictName</strong>
 </span>
 
 <h1 class="govuk-heading-l">@Model.Data.Name</h1>
@@ -208,7 +208,7 @@
                 Website
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-                <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@Model.Data.Website</a>
+                <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" rel="noreferrer noopener" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@(Model.Data.Website) (opens in new tab)</a>
             </govuk-summary-list-row-value>
         </govuk-summary-list-row>
         @if (!string.IsNullOrWhiteSpace(@Model.Data.PhoneNumber))

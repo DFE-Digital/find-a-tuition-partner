@@ -134,10 +134,10 @@ Then(
   "the subjects covered by a tuition partner are in alphabetical order",
   () => {
     const stages = [
-      "Key stage 1 - English, Maths and Science",
-      "Key stage 2 - English, Maths and Science",
-      "Key stage 3 - English, Humanities, Maths, Modern Foreign Languages and Science",
-      "Key stage 4 - English, Humanities, Maths, Modern Foreign Languages and Science",
+      "Key stage 1: English, Maths and Science",
+      "Key stage 2: English, Maths and Science",
+      "Key stage 3: English, Humanities, Maths, Modern Foreign Languages and Science",
+      "Key stage 4: English, Humanities, Maths, Modern Foreign Languages and Science",
     ];
 
     stages.forEach((element) => {
@@ -157,10 +157,10 @@ Then("the tuition cost information states declares differences", () => {
 });
 
 Then("all tuition partner details are populated correctly", () => {
-  cy.get('[data-testid="results-subjects"] > li:first')
-    .first()
-    .invoke("text")
-    .should("match", new RegExp("^Key stage \\d\\s\\-"));
+  cy.get('[data-testid="results-subjects"] > li:first').should(
+    "contain.text",
+    "Key stage 1: English, Maths and Science"
+  );
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
   cy.get('[data-testid="organisation-type"]').first().should("not.be.empty");

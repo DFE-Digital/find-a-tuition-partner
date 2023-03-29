@@ -4,11 +4,7 @@ import {
   Then,
   Step,
 } from "@badeball/cypress-cucumber-preprocessor";
-import {
-  kebabCase,
-  camelCaseKeyStage,
-  KeyStageSubjects,
-} from "../support/utils";
+import { kebabCase } from "../support/utils";
 
 When("the key stages are edited in the key stages page", () => {
   Step(this, "they select 'Key stage 1, Key stage 2, Key stage 3'");
@@ -45,6 +41,9 @@ Then("user has journeyed forward to a selected tuition partner page", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
+  Step(this, "they will be taken to the 'Type of tuition' page");
+  Step(this, "they select Any");
+  Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "the filter section will be correctly displayed");
   Step(this, "they select the tuition partner 'Tute Education'");
@@ -69,11 +68,17 @@ Then("they will be journey back to the page they started from", () => {
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Back'");
+  Step(
+    this,
+    "they will be taken to the 'What type of tuition do you need?' page"
+  );
+  Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which subjects' page");
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which key stages' page");
   Step(this, "they click 'Back'");
   Step(this, "the page's title is 'Find a tuition partner'");
+  Step(this, "they enter 'SK1 1EB' as the school's postcode");
 });
 
 Then(
@@ -136,6 +141,14 @@ Then("the subjects are correct in the subjects page", () => {
   });
 });
 
+Then("the type of tuition is correct in the type of tuition page", () => {
+  Step(this, "they click 'Continue'");
+  cy.get("#any").should("not.be.checked");
+  cy.get("#online").should("not.be.checked");
+  cy.get("in-school").should("be.checked");
+  Step(this, "they click 'Continue'");
+});
+
 Then("the filter selections are correct in the search results page", () => {
   Step(this, "they click 'Back'");
   Step(this, "stages 'Key stage 1, Key stage 2' are selected");
@@ -175,6 +188,9 @@ Then(
     Step(this, "they are shown the subjects for 'Key stage 2'");
     Step(this, "they select 'Key stage 2 English'");
     Step(this, "they click 'Continue'");
+    Step(this, "they will be taken to the 'Type of tuition' page");
+    Step(this, "they select Any");
+    Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they select the tuition partner '" + tp + "'");
     Step(this, "the page's title is '" + tp + "'");
@@ -200,9 +216,15 @@ Then("they select the {string} tuition partner page", (tp) => {
   Step(this, "the page's title is '" + tp + "'");
 });
 
-When("they click the 'All quality-assured tuition partners' link", () => {
-  cy.get('[data-testid="full-list-link"]')
-    .should("exist")
-    .should("have.text", "All quality-assured tuition partners")
-    .click();
-});
+When(
+  "they click the 'Check the full list of quality-assured tuition partners.'link",
+  () => {
+    cy.get('[data-testid="full-list-link"]')
+      .should("exist")
+      .should(
+        "have.text",
+        "Check the full list of quality-assured tuition partners"
+      )
+      .click();
+  }
+);

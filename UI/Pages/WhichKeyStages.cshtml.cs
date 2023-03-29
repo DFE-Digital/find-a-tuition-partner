@@ -1,29 +1,48 @@
+using Application.Common.Interfaces;
 using Application.Common.Models;
-using Domain.Enums;
+using UI.Pages.Enquiry.Build;
 
 namespace UI.Pages
 {
     public class WhichKeyStages : PageModel
     {
         private readonly IMediator _mediator;
+        private readonly ISessionService _sessionService;
 
-        public WhichKeyStages(IMediator mediator) => _mediator = mediator;
+        public WhichKeyStages(IMediator mediator, ISessionService sessionService)
+        {
+            _mediator = mediator;
+            _sessionService = sessionService;
+        }
 
         public Command Data { get; set; } = new();
 
-        public async Task OnGet(Query query) => Data = await _mediator.Send(query);
+        public async Task<IActionResult> OnGet(Query query)
+        {
+            if (query.From == ReferrerList.CheckYourAnswers)
+            {
+                if (!await _sessionService.SessionDataExistsAsync())
+                    return RedirectToPage("/Session/Timeout");
+            }
+
+            Data = await _mediator.Send(query);
+
+            return Page();
+        }
 
         public async Task<IActionResult> OnGetSubmit(Command data)
         {
-            if (ModelState.IsValid)
+            if (data.From == ReferrerList.CheckYourAnswers &&
+                !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
+
+            Data = await _mediator.Send(new Query(data));
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToPage(nameof(WhichSubjects), new SearchModel(data));
-            }
-            else
-            {
-                Data = await _mediator.Send(new Query(data));
                 return Page();
             }
+
+            return RedirectToPage(nameof(WhichSubjects), new SearchModel(Data));
         }
 
         public record Query : SearchModel, IRequest<Command>

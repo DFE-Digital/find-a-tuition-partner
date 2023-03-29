@@ -1,4 +1,4 @@
-using Domain.Enums;
+using UI.Constants;
 
 namespace UI.HelperFunctions;
 
@@ -28,5 +28,16 @@ public static class HelperFunctions
             ReferrerList.CompareList => "Back to price comparison list",
             _ => defaultPageName
         };
+    }
+
+    public static double SessionTimeoutInSeconds()
+    {
+        return (DoubleConstants.SessionTimeoutInMinutes * 60);
+    }
+
+    public static double SessionCountdownMessageShownBeforeTimeoutInSeconds()
+    {
+        var sessionCountdownMessageShownBeforeTimeoutInSeconds = DoubleConstants.SessionCountdownMessageShownBeforeTimeoutInSeconds;
+        return SessionTimeoutInSeconds() < sessionCountdownMessageShownBeforeTimeoutInSeconds ? SessionTimeoutInSeconds() : sessionCountdownMessageShownBeforeTimeoutInSeconds;
     }
 }

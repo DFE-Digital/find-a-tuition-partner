@@ -17,12 +17,18 @@ Given(
   }
 );
 
-When("they click the 'All quality-assured tuition partners' link", () => {
-  cy.get('[data-testid="full-list-link"]')
-    .should("exist")
-    .should("have.text", "All quality-assured tuition partners")
-    .click();
-});
+When(
+  "they click the 'Check the full list of quality-assured tuition partners' link",
+  () => {
+    cy.get('[data-testid="full-list-link"]')
+      .should("exist")
+      .should(
+        "have.text",
+        "Check the full list of quality-assured tuition partners"
+      )
+      .click();
+  }
+);
 
 When("they click on the {string} tuition partner's name", ($position) => {
   const index = $position.match(/\d+/);

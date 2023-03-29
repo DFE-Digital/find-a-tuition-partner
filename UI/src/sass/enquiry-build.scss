@@ -1,0 +1,13 @@
+﻿.solid-line-top {
+  border-top: 1px solid #b1b4b6;
+}
+
+@include govuk-media-query($from: tablet) {
+  .cya-summary-enquirer .govuk-summary-list__actions {
+    width: 12%;
+  }
+
+  .cya-summary-enquirer .govuk-summary-list__key {
+    width: 25%;
+  }
+}
