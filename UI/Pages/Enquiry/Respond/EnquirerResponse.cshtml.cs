@@ -23,8 +23,7 @@ public class EnquirerResponse : PageModel
 
         if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
         {
-            TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage("/ErrorModel");
+            return NotFound();
         }
 
         if (!string.IsNullOrEmpty(SupportReferenceNumber))
@@ -41,8 +40,7 @@ public class EnquirerResponse : PageModel
 
         if (!isValidMagicLink)
         {
-            TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage("/ErrorModel");
+            return NotFound();
         }
 
         try

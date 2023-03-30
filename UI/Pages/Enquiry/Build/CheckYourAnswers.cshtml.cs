@@ -90,14 +90,13 @@ public class CheckYourAnswers : PageModel
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
         {
-            TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage("/ErrorModel");
+            return NotFound();
         }
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
         {
             TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage("/ErrorModel");
+            return RedirectToPage(nameof(ErrorModel));
         }
 
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
@@ -117,7 +116,7 @@ public class CheckYourAnswers : PageModel
             if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
             {
                 TempData["Status"] = HttpStatusCode.InternalServerError;
-                return RedirectToPage("/ErrorModel");
+                return RedirectToPage(nameof(ErrorModel));
             }
         }
 

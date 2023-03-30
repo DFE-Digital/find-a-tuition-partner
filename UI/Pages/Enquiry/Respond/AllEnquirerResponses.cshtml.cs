@@ -23,8 +23,7 @@ namespace UI.Pages.Enquiry.Respond
 
             if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken))
             {
-                TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage("/ErrorModel");
+                return NotFound();
             }
 
             Data.SupportReferenceNumber = SupportReferenceNumber;
@@ -38,15 +37,13 @@ namespace UI.Pages.Enquiry.Respond
 
                 if (!isValidMagicLink)
                 {
-                    TempData["Status"] = HttpStatusCode.NotFound;
-                    return RedirectToPage("/ErrorModel");
+                    return NotFound();
                 }
 
                 var data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(baseServiceUrl, SupportReferenceNumber));
                 if (data == null)
                 {
-                    TempData["Status"] = HttpStatusCode.NotFound;
-                    return RedirectToPage("/ErrorModel");
+                    return NotFound();
                 }
 
                 Data = data;
