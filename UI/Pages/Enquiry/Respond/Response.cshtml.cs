@@ -22,8 +22,7 @@ namespace UI.Pages.Enquiry.Respond
 
             if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
             {
-                TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage(nameof(ErrorModel));
+                return NotFound();
             }
 
             Data.SupportReferenceNumber = SupportReferenceNumber;
@@ -35,8 +34,7 @@ namespace UI.Pages.Enquiry.Respond
 
             if (!isValidMagicLink)
             {
-                TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage(nameof(ErrorModel));
+                return NotFound();
             }
 
             Data.BaseServiceUrl = Request.GetBaseServiceUrl();
@@ -46,8 +44,7 @@ namespace UI.Pages.Enquiry.Respond
 
             if (enquiryData == null)
             {
-                TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage(nameof(ErrorModel));
+                return NotFound();
             }
 
             Data.EnquiryResponseCloseDateFormatted = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond).ToString("h:mmtt 'on' dddd d MMMM yyyy");
@@ -90,8 +87,7 @@ namespace UI.Pages.Enquiry.Respond
 
                 if (!isValidMagicLink)
                 {
-                    TempData["Status"] = HttpStatusCode.NotFound;
-                    return RedirectToPage(nameof(ErrorModel));
+                    return NotFound();
                 }
 
                 Data.BaseServiceUrl = Request.GetBaseServiceUrl();
