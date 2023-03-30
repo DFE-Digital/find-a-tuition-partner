@@ -90,8 +90,7 @@ public class CheckYourAnswers : PageModel
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
         {
-            TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage(nameof(ErrorModel));
+            return NotFound();
         }
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
