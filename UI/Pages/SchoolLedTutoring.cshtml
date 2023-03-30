@@ -1,7 +1,9 @@
 ﻿@page
+@using Microsoft.AspNetCore.Http.Extensions;
 @{
     ViewData["Title"] = "Employ tutors";
     ViewData["IncludeHomeLink"] = true;
+    var fromReturnUrl = "?FromReturnUrl=" + HttpContext?.Request.GetEncodedPathAndQuery();
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -48,7 +50,7 @@
             </li>
         </ul>
         <p class="govuk-body">
-            For more details and examples <a href="/funding-and-reporting" data-testid="funding-allocation-link" class="govuk-link">read the information on funding.</a>
+            For more details and examples <a class="govuk-link" data-testid="funding-allocation-link" href="@($"/funding-and-reporting{fromReturnUrl}")">read the information on funding.</a>
         </p>
         <h2 class="govuk-heading-l">
             Checks you need to do
@@ -67,6 +69,6 @@
     </div>
     <div class="govuk-grid-column-one-third">
         <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
-        <p class="govuk-body"><a asp-page="/FundingAndReporting" data-testid="funding-reporting-link" class="govuk-link">Funding and reporting</a></p>
+        <p class="govuk-body"><a class="govuk-link" data-testid="funding-reporting-link" href="@($"/funding-and-reporting{fromReturnUrl}")">Funding and reporting</a></p>
     </div>
 </div>
