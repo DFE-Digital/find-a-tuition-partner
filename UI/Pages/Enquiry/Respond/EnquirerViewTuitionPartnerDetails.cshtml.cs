@@ -24,7 +24,7 @@ namespace UI.Pages.Enquiry.Respond
             if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
             {
                 TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage(nameof(ErrorModel));
+                return RedirectToPage("/ErrorModel");
             }
 
             if (!string.IsNullOrEmpty(SupportReferenceNumber))
@@ -42,7 +42,7 @@ namespace UI.Pages.Enquiry.Respond
             if (!isValidMagicLink)
             {
                 TempData["Status"] = HttpStatusCode.NotFound;
-                return RedirectToPage(nameof(ErrorModel));
+                return RedirectToPage("/ErrorModel");
             }
 
             try

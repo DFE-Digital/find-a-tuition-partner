@@ -39,7 +39,7 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         if (!isValidMagicLink)
         {
             TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage(nameof(ErrorModel));
+            return RedirectToPage("/ErrorModel");
         }
 
         ModelState.Clear();
@@ -60,7 +60,7 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         if (!isValidMagicLink)
         {
             TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage(nameof(ErrorModel));
+            return RedirectToPage("/ErrorModel");
         }
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
@@ -75,13 +75,13 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
         {
             TempData["Status"] = HttpStatusCode.NotFound;
-            return RedirectToPage(nameof(ErrorModel));
+            return RedirectToPage("/ErrorModel");
         }
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
         {
             TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage(nameof(ErrorModel));
+            return RedirectToPage("/ErrorModel");
         }
 
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
