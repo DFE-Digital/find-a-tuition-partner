@@ -149,7 +149,7 @@ public class NotificationsClientServiceTests
         {
             VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send, Notify client ref: {recipient.ClientReference}", Times.Exactly(1));
 
-            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent, Notify client ref: {recipient.ClientReference}", Times.Exactly(1));
+            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent, Notify client ref: {recipient.ClientReference}.  Result details: Id: {emailResponse.id}; Ref: {emailResponse.reference}; URI: {emailResponse.uri}; Content: {emailResponse.content}", Times.Exactly(1));
         }
     }
 }

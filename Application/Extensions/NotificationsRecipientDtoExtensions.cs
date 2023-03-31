@@ -10,8 +10,7 @@ public static class NotificationsRecipientDtoExtensions
     {
         notificationsRecipient.Personalisation.AddDefaultEnquiryPersonalisation(enquiryRef, baseUrl, dateTime);
 
-        var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
-        notificationsRecipient.ClientReference = $"{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
-        notificationsRecipient.ClientReferenceIfAmalgamate = $"{enquiryRef}-{emailTemplateType.DisplayName()}";
+        notificationsRecipient.ClientReference = enquiryRef.CreateNotifyClientReference(emailTemplateType, tpName);
+        notificationsRecipient.ClientReferenceIfAmalgamate = enquiryRef.CreateNotifyClientReference(emailTemplateType);
     }
 }

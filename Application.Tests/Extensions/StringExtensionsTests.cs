@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Application.Extensions;
+using Domain.Enums;
 using FluentAssertions;
 using Xunit;
 
@@ -296,5 +297,32 @@ public class StringExtensionsTests
         string? result = null;
 
         result.Should().BeNull();
+    }
+
+    [Fact]
+    public void CreateNotifyClientReference_WithTPName()
+    {
+        // Arrange
+        var enquiryRef = "enquiryRef";
+        var tpName = "TP name";
+
+        // Act
+        var actualOutput = enquiryRef.CreateNotifyClientReference(EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
+
+        // Assert
+        actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");
+    }
+
+    [Fact]
+    public void CreateNotifyClientReference_NoTPName()
+    {
+        // Arrange
+        var enquiryRef = "enquiryRef";
+
+        // Act
+        var actualOutput = enquiryRef.CreateNotifyClientReference(EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
+
+        // Assert
+        actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}");
     }
 }
