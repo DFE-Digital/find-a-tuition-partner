@@ -95,8 +95,8 @@ public class CheckYourAnswers : PageModel
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
         {
-            TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage(nameof(ErrorModel));
+            //This is a temporary fix, until errors are addressed in NTP-1044
+            throw new InvalidDataException("Error on check you answers");
         }
 
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
@@ -115,8 +115,8 @@ public class CheckYourAnswers : PageModel
 
             if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
             {
-                TempData["Status"] = HttpStatusCode.InternalServerError;
-                return RedirectToPage(nameof(ErrorModel));
+                //This is a temporary fix, until errors are addressed in NTP-1044
+                throw new InvalidDataException("Error on check you answers");
             }
         }
 

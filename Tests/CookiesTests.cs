@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -24,7 +23,7 @@ public class CookiesTests : CleanSliceFixture
               .Execute(page =>
               {
                   page.PageContext = GetPageContext();
-                  page.OnGet(true, true);
+                  page.OnGet(true, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.Response.Headers.TryGetValue("Set-Cookie", out var cookieVariables);
@@ -39,7 +38,7 @@ public class CookiesTests : CleanSliceFixture
               {
                   page.PageContext = GetPageContext();
                   page.Request.Cookies = MockRequestCookieCollection(".FindATuitionPartner.Consent", "true");
-                  page.OnGet(null, true);
+                  page.OnGet(null, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
@@ -55,7 +54,7 @@ public class CookiesTests : CleanSliceFixture
               {
                   page.PageContext = GetPageContext();
                   page.Request.Cookies = MockRequestCookieCollection(".FindATuitionPartner.Consent", "false");
-                  page.OnGet(true, true);
+                  page.OnGet(true, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
@@ -72,7 +71,7 @@ public class CookiesTests : CleanSliceFixture
               {
                   page.PageContext = GetPageContext();
                   page.Request.Cookies = MockRequestCookieCollection(".FindATuitionPartner.Consent", "true");
-                  page.OnGet(false, true);
+                  page.OnGet(false, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.Request.Cookies.ContainsKey(".FindATuitionPartner.Consent").Should().BeTrue();
@@ -93,7 +92,7 @@ public class CookiesTests : CleanSliceFixture
                   page.Response.Cookies.Append("_ga", "hasValueToDelete", cookieOptions);
                   page.Response.Cookies.Append("_gid", "hasValueToDelete", cookieOptions);
                   page.Response.Headers.TryGetValue("Set-Cookie", out var cookieVariables);
-                  page.OnGet(false, true);
+                  page.OnGet(false, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.Response.Headers.TryGetValue("Set-Cookie", out var cookieVariables);
@@ -108,7 +107,7 @@ public class CookiesTests : CleanSliceFixture
               .Execute(page =>
               {
                   page.PageContext = GetPageContext();
-                  page.OnGet(false, true);
+                  page.OnGet(false, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.PreferencesSet.Should().BeTrue();
@@ -121,7 +120,7 @@ public class CookiesTests : CleanSliceFixture
               .Execute(page =>
               {
                   page.PageContext = GetPageContext();
-                  page.OnGet(false, false);
+                  page.OnGet(false, false, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.PreferencesSet.Should().BeFalse();
@@ -134,24 +133,10 @@ public class CookiesTests : CleanSliceFixture
               .Execute(page =>
               {
                   page.PageContext = GetPageContext();
-                  page.OnGet(false, null);
+                  page.OnGet(false, null, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
         cookiePage.PreferencesSet.Should().BeFalse();
-    }
-
-    [Fact]
-    public async void Cookies_Preference_Set_Null_Return_Url()
-    {
-        var cookiePage = await Fixture.GetPage<Cookies>()
-              .Execute(page =>
-              {
-                  page.PageContext = GetPageContext();
-                  page.Request.Headers.Add("Referer", "https://localhost:7036/");
-                  page.OnGet(false, null);
-                  return Task.FromResult(page);
-              });
-        cookiePage?.ReturnUrl?.Should().Be("https://localhost:7036/");
     }
 
     [Fact]
@@ -161,12 +146,10 @@ public class CookiesTests : CleanSliceFixture
               .Execute(page =>
               {
                   page.PageContext = GetPageContext();
-                  page.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-                  page.TempData["ReturnUrl"] = "https://localhost:7036/";
-                  page.OnGet(false, true);
+                  page.OnGet(false, true, "/school-led-tutoring");
                   return Task.FromResult(page);
               });
-        cookiePage?.ReturnUrl?.Should().Be("https://localhost:7036/");
+        cookiePage?.ReturnUrl?.Should().Be("/school-led-tutoring");
     }
 
     [Fact]

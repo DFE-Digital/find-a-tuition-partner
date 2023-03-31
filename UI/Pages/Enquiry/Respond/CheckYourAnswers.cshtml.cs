@@ -77,8 +77,8 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
         {
-            TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage(nameof(ErrorModel));
+            //This is a temporary fix, until errors are addressed in NTP-1044
+            throw new InvalidDataException("Error on check you answers");
         }
 
         if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))

@@ -20,6 +20,7 @@
 
   //fromReturnUrl to apply to query string of the support pages, at the bottom of the layout
   var fromReturnUrl = useFromReturnUrlElseHome ? fromReturnUrlInQueryString : HttpContext?.HttpContext?.Request.GetEncodedPathAndQuery();
+  ViewData["CookieBannerFromReturnUrl"] = $"FromReturnUrl={fromReturnUrl}";
   fromReturnUrl = string.IsNullOrWhiteSpace(fromReturnUrl) ? string.Empty : $"?FromReturnUrl={fromReturnUrl}";
 
   if (useFromReturnUrlElseHome)
