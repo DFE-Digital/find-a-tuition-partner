@@ -59,18 +59,18 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         var enquirerEmailForTestingPurposes = request.Data?.Email!;
 
-        var getEnquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(
+        var enquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(
             request.Data!.TuitionPartnersForEnquiry!.Results, enquirerEmailForTestingPurposes);
 
-        var getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient =
+        var enquirySubmittedConfirmationToEnquirerNotificationsRecipient =
             GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
 
         var enquirerMagicLink = new MagicLink()
         {
-            Token = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token!
+            Token = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token!
         };
 
-        var tuitionPartnerEnquiry = getEnquirySubmittedToTpNotificationsRecipients.Select(selectedTuitionPartner =>
+        var tuitionPartnerEnquiry = enquirySubmittedToTpNotificationsRecipients.Select(selectedTuitionPartner =>
             new TuitionPartnerEnquiry()
             {
                 TuitionPartnerId = selectedTuitionPartner.TuitionPartnerId,
@@ -138,25 +138,26 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var enquirerViewAllResponsesPageLink =
             $"{request.Data?.BaseServiceUrl}/enquiry/{enquiry.SupportReferenceNumber}?Token={enquirerMagicLink.Token}";
 
-        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
+        enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
                     request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), enquirerViewAllResponsesPageLink);
 
-        getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation
-            .AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
-                request.Data!.BaseServiceUrl!);
+        enquirySubmittedConfirmationToEnquirerNotificationsRecipient.AddDefaultEnquiryDetails(
+            enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer,
+            enquiry.CreatedAt);
 
-        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
             x.Personalisation = GetEnquirySubmittedToTpPersonalisation(x.TuitionPartnerName!,
                 $"{request.Data!.BaseServiceUrl}/enquiry-response/{x.TuitionPartnerName.ToSeoUrl()}/{enquiry.SupportReferenceNumber}?Token={x.Token}",
                 request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!
                 ));
 
-        getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-            x.Personalisation.AddDefaultEnquiryPersonalisation(enquiry.SupportReferenceNumber, enquiry.CreatedAt,
-                request.Data!.BaseServiceUrl!));
+        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+            x.AddDefaultEnquiryDetails(
+            enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedToTp,
+            enquiry.CreatedAt, x.TuitionPartnerName));
 
         var enquirerEmailSentStatus = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
-            getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient);
+            enquirySubmittedConfirmationToEnquirerNotificationsRecipient);
 
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
             enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue
@@ -169,8 +170,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
             enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatusDeliveredValue)
         {
-            await _notificationsClientService.SendEmailAsync(getEnquirySubmittedToTpNotificationsRecipients,
-                EmailTemplateType.EnquirySubmittedToTp, enquiry.SupportReferenceNumber);
+            await _notificationsClientService.SendEmailAsync(enquirySubmittedToTpNotificationsRecipients,
+                EmailTemplateType.EnquirySubmittedToTp);
         }
 
         if (dataSaved)
@@ -178,8 +179,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
 
             result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
-            result.EnquirerMagicLink = getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-            getEnquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+            result.EnquirerMagicLink = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
+            enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
                 tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
                 {
                     TuitionPartnerSeoUrl = x.TuitionPartnerName.ToSeoUrl()!,
@@ -358,7 +359,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 (var emailSent, HttpStatusCode status) = await _notificationsClientService.SendEmailAsync(
                     getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                    EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, enquiry.SupportReferenceNumber);
+                    EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
 
                 if (emailSent && status == HttpStatusCode.OK)
                 {

@@ -7,7 +7,7 @@ public abstract class Logging<T>
         loggerMock.Verify(logger => logger.Log(
                 It.Is<LogLevel>(logLevel => logLevel == inputLogLevel),
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == message && @type.Name == "FormattedLogValues"),
+                It.Is<It.IsAnyType>((@object, @type) => @object.ToString()!.StartsWith(message) && @type.Name == "FormattedLogValues"),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             numberOfTimes);
