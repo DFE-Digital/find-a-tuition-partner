@@ -6,7 +6,7 @@ public enum EmailTemplateType
 {
     [Description("esce")]
     EnquirySubmittedConfirmationToEnquirer,
-    [Description("estp")]
+    [Description("esnt")]
     EnquirySubmittedToTp,
     [Description("erne")]
     EnquiryResponseReceivedConfirmationToEnquirer,
