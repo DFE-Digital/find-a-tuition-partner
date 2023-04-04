@@ -70,35 +70,20 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         var submittedConfirmationModel = await _mediator.Send(command);
 
-        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
+        await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
+
+        submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
+
+        if (_hostEnvironment.IsProduction())
         {
-            return NotFound();
+            submittedConfirmationModel.EnquirerMagicLink = string.Empty;
         }
 
-        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
-        {
-            TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage(nameof(ErrorModel));
-        }
+        HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
+        HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(submittedConfirmationModel.TuitionPartnerName);
+        HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
 
-        if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
-        {
-            await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
+        return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
 
-            submittedConfirmationModel.LocalAuthorityDistrictName = Data.LocalAuthorityDistrict;
-
-            if (_hostEnvironment.IsProduction())
-            {
-                submittedConfirmationModel.EnquirerMagicLink = string.Empty;
-            }
-
-            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(submittedConfirmationModel.TuitionPartnerName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
-
-            return RedirectToPage(nameof(ResponseConfirmation), submittedConfirmationModel);
-        }
-
-        return Page();
     }
 }

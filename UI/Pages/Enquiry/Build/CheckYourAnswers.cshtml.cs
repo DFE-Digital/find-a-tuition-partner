@@ -1,7 +1,7 @@
-using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Domain.Exceptions;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -41,11 +41,6 @@ public class CheckYourAnswers : PageModel
             }
         }
 
-        //TODO - Test and handle errors:
-        //  No postcode, subjects, TT, email, logistics etc
-        //  Invalid data supplied - postcode in Wales, invalid email etc
-        //  errors when calling _mediator
-
         Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
         Data.HasKeyStageSubjects = Data.KeyStageSubjects.Any();
 
@@ -84,74 +79,51 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
-        var submittedConfirmationModel = await _mediator.Send(command);
+        SubmittedConfirmationModel submittedConfirmationModel = new SubmittedConfirmationModel();
 
-        var enquirerEmailSentStatus = submittedConfirmationModel.EnquirerEmailSentStatus;
-
-        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.NotFound.ToString())
+        try
         {
-            return NotFound();
+            submittedConfirmationModel = await _mediator.Send(command);
+        }
+        catch (EmailSendException)
+        {
+            Data.From = ReferrerList.CheckYourAnswers;
+
+            var errorMessage =
+                $"There was a problem sending the email and you should check the email address and try again";
+
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
+
+            return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
         }
 
-        if (!submittedConfirmationModel.IsValid && submittedConfirmationModel.ErrorStatus == HttpStatusCode.InternalServerError.ToString())
+        await _sessionService.DeleteDataAsync();
+
+        var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
         {
-            TempData["Status"] = HttpStatusCode.InternalServerError;
-            return RedirectToPage(nameof(ErrorModel));
+            SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber,
+            LocalAuthorityDistrictName = Data.LocalAuthorityDistrictName
+        };
+
+        if (!_hostEnvironment.IsProduction())
+        {
+            submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
+
+            submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinksCount;
+
+            var tuitionPartnerMagicLinksToDisplayForTesting = submittedConfirmationModel.TuitionPartnerMagicLinks.Take(10)
+                .OrderBy(x => x.Email).ToList();
+
+            submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = tuitionPartnerMagicLinksToDisplayForTesting;
         }
 
-        if (!string.IsNullOrEmpty(enquirerEmailSentStatus))
-        {
-            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue)
-            {
-                Data.From = ReferrerList.CheckYourAnswers;
+        HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
+        HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
+        HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
+        HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
+        HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
 
-                var errorMessage =
-                    $"There was a problem sending the email and you should check the email address and try again";
-
-                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
-
-                return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
-            }
-
-            if (enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
-            {
-                TempData["Status"] = HttpStatusCode.InternalServerError;
-                return RedirectToPage(nameof(ErrorModel));
-            }
-        }
-
-        if (!string.IsNullOrEmpty(submittedConfirmationModel.SupportReferenceNumber))
-        {
-            await _sessionService.DeleteDataAsync();
-
-            var submittedConfirmationModelRouteData = new SubmittedConfirmationModel(Data)
-            {
-                SupportReferenceNumber = submittedConfirmationModel.SupportReferenceNumber,
-                LocalAuthorityDistrictName = Data.LocalAuthorityDistrictName
-            };
-
-            if (!_hostEnvironment.IsProduction())
-            {
-                submittedConfirmationModelRouteData.EnquirerMagicLink = submittedConfirmationModel.EnquirerMagicLink;
-
-                submittedConfirmationModelRouteData.TuitionPartnerMagicLinksCount = submittedConfirmationModel.TuitionPartnerMagicLinksCount;
-
-                var tuitionPartnerMagicLinksToDisplayForTesting = submittedConfirmationModel.TuitionPartnerMagicLinks.Take(10)
-                    .OrderBy(x => x.Email).ToList();
-
-                submittedConfirmationModelRouteData.TuitionPartnerMagicLinks = tuitionPartnerMagicLinksToDisplayForTesting;
-            }
-
-            HttpContext.AddHasSENDQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.SENDRequirements)).ToString());
-            HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
-            HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
-            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
-
-            return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
-        }
-
-        return Page();
+        return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
     }
 
     private void ParseSessionValue(string key, string value)

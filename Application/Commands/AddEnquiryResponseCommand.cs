@@ -49,11 +49,12 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     {
         var result = new SubmittedConfirmationModel();
 
-        if (string.IsNullOrEmpty(request.Data.Token))
+        if (string.IsNullOrWhiteSpace(request.Data.Token) ||
+            string.IsNullOrWhiteSpace(request.Data.SupportReferenceNumber))
         {
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.NotFound.ToString();
-            return result;
+            var errorMessage = $"The {nameof(AddEnquiryResponseCommand)} is invalid with missing Token ('{request.Data.Token}') and/or Support Ref ('{request.Data.SupportReferenceNumber}')";
+            _logger.LogError(errorMessage);
+            throw new ArgumentException(errorMessage);
         }
 
         var tpEnquiry = await _unitOfWork.TuitionPartnerEnquiryRepository
@@ -63,11 +64,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         if (tpEnquiry == null)
         {
-            _logger.LogError("Unable to find TuitionPartnerEnquiry with the SupportReferenceNumber {supportReferenceNumber} and Token {token}",
-                request.Data.SupportReferenceNumber, request.Data.Token);
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.NotFound.ToString();
-            return result;
+            var errorMessage = $"Unable to find TuitionPartnerEnquiry with Token ('{request.Data.Token}') and Support Ref ('{request.Data.SupportReferenceNumber}')";
+            _logger.LogError(errorMessage);
+            throw new ArgumentException(errorMessage);
         }
 
         request.Data.Email = tpEnquiry.Enquiry.Email;
@@ -97,23 +96,25 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         try
         {
             await _unitOfWork.Complete();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error has occurred while trying to save the enquiry response");
+            throw;
+        }
 
+        try
+        {
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient,
                 EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer);
 
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseSubmittedConfirmationToTpNotificationsRecipient,
-                EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp
-            );
+                EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError("An error has occurred while trying to save the enquiry response. Error: {ex}", ex);
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.InternalServerError.ToString();
-            return result;
-        }
+        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
+
 
         result.SupportReferenceNumber = tpEnquiry.Enquiry.SupportReferenceNumber;
         result.EnquirerMagicLink = request.Data?.Token;
@@ -132,7 +133,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             Email = request.Data?.Email!,
             OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, supportRefNumber, pageLink)
+            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, pageLink)
         };
 
         result.AddDefaultEnquiryDetails(
@@ -143,7 +144,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private static Dictionary<string, dynamic> GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(string tpName,
-        string supportRefNumber, string enquirerViewResponsesPageLinkKey)
+        string enquirerViewResponsesPageLinkKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {

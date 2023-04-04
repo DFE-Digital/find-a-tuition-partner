@@ -1,13 +1,12 @@
-using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
-using Application.Extensions;
 using Domain.Enums;
+using Domain.Exceptions;
 using Infrastructure.Configuration;
+using Infrastructure.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Notify.Exceptions;
 using Notify.Interfaces;
 
 namespace Infrastructure.Services;
@@ -33,71 +32,46 @@ public class NotificationsClientService : INotificationsClientService
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<(bool, HttpStatusCode)> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
+    public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
         bool includeChangedFromEmailAddress = true)
     {
-        if (string.IsNullOrWhiteSpace(notificationsRecipient.Email))
-        {
-            _logger.LogError("No email address was supplied for the recipient: {recipient}.", notificationsRecipient.Email);
-        }
+        var clientReference = notificationsRecipient.ClientReference;
 
         var emailTemplateId = GetEmailTemplateId(emailTemplateType, _notifyConfig);
-
-        if (string.IsNullOrEmpty(emailTemplateId))
-        {
-            _logger.LogError("No templateId was supplied for the {emailType}.", emailTemplateType);
-            return (false, HttpStatusCode.BadRequest);
-        }
 
         AddTestingInformation(notificationsRecipient, includeChangedFromEmailAddress);
 
         try
         {
-            _logger.LogInformation("Preparing to send, Notify client ref: {clientReference}", notificationsRecipient.ClientReference);
+            _logger.LogInformation("Preparing to send, Notify client ref: {clientReference}", clientReference);
 
             var result = await _notificationClient.SendEmailAsync(notificationsRecipient.Email,
-                emailTemplateId, personalisation: notificationsRecipient.Personalisation, notificationsRecipient.ClientReference);
+                emailTemplateId, personalisation: notificationsRecipient.Personalisation, clientReference);
 
             _logger.LogInformation("Email successfully sent, Notify client ref: {clientReference}.  Result details: Id: {id}; Ref: {reference}; URI: {uri}; Content: {content}",
-                notificationsRecipient.ClientReference, result.id, result.reference, result.uri, result.content);
+                clientReference, result.id, result.reference, result.uri, result.content);
 
-            return (true, HttpStatusCode.OK);
-        }
-        catch (NotifyClientException ex)
-        {
-            var statusCode = ex.Message.GetGovNotifyStatusCodeFromExceptionMessage();
-
-            if (statusCode.Is4xxError())
-            {
-                _logger.LogWarning("A 4xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
-
-                return (false, HttpStatusCode.BadRequest);
-            }
-
-            if (statusCode.Is5xxError())
-            {
-                _logger.LogError("A 5xxError has occurred while attempting to SendEmailAsync: {ex}", ex);
-
-                return (false, HttpStatusCode.InternalServerError);
-            }
+            return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error has occurred while attempting to SendEmailAsync: {ex}", ex);
+            if (ex.IsNonCriticalNotifyException())
+            {
+                _logger.LogWarning(ex, "A non critical Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
+                throw new EmailSendException();
+            }
+            else
+            {
+                _logger.LogError(ex, "An unexpected error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
+                throw;
+            }
         }
-
-        return (false, HttpStatusCode.BadRequest);
     }
 
-    public async Task<(bool, HttpStatusCode)> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
         EmailTemplateType emailTemplateType)
     {
         notificationsRecipients = notificationsRecipients.ToList();
-
-        foreach (var recipient in notificationsRecipients.Where(x => string.IsNullOrEmpty(x.Email)))
-        {
-            _logger.LogError("No email address was supplied for the recipient: {recipient}.", recipient);
-        }
 
         try
         {
@@ -106,7 +80,7 @@ public class NotificationsClientService : INotificationsClientService
             //See if we need to amalgamate multiuple emails for testing purposes
             if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
             {
-                (allEmailsSent, HttpStatusCode status) = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
+                allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
             }
             else
             {
@@ -114,22 +88,31 @@ public class NotificationsClientService : INotificationsClientService
                 // which can significantly improve performance when dealing with multiple recipients
                 var sendEmailTasks = notificationsRecipients
                     .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
-                    .Select(recipient => SendEmailAsync(recipient, emailTemplateType))
+                    .Select(async recipient =>
+                    {
+                        try
+                        {
+                            return await SendEmailAsync(recipient, emailTemplateType);
+                        }
+                        catch (EmailSendException)
+                        {
+                            return false;
+                        }
+                    })
                     .ToList();
 
                 var results = await Task.WhenAll(sendEmailTasks);
 
-                allEmailsSent = results.All(result => result.Item1);
+                allEmailsSent = results.All(result => result);
             }
 
-            return (allEmailsSent, HttpStatusCode.OK);
+            return allEmailsSent;
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error has occurred while attempting to SendEmailAsync: {ex}", ex);
+            _logger.LogError("An unexpected error has occurred while attempting to process multiple emails: {ex}", ex);
+            throw;
         }
-
-        return (false, HttpStatusCode.BadRequest);
     }
 
     private void AddTestingInformation(NotificationsRecipientDto notificationsRecipient, bool includeChangedFromEmailAddress = true)
@@ -162,7 +145,7 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    private async Task<(bool, HttpStatusCode)> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
+    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
         EmailTemplateType emailTemplateType)
     {
         var initialRecipient = notificationsRecipients.First();
