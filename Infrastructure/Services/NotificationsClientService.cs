@@ -58,7 +58,7 @@ public class NotificationsClientService : INotificationsClientService
             if (ex.IsNonCriticalNotifyException())
             {
                 _logger.LogWarning(ex, "A non critical Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
-                throw new EmailSendException();
+                throw new EmailSendException(ex.Message, ex);
             }
             else
             {

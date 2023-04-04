@@ -49,7 +49,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var result = new SubmittedConfirmationModel();
 
         var validationResult = ValidateRequest(request);
-        if (!string.IsNullOrWhiteSpace(validationResult))
+        if (validationResult != null)
         {
             validationResult = $"The {nameof(AddEnquiryCommand)} {validationResult}";
             _logger.LogError(validationResult);
@@ -253,7 +253,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return keyStageSubjectEnquiry;
     }
 
-    private static string ValidateRequest(AddEnquiryCommand request)
+    private static string? ValidateRequest(AddEnquiryCommand request)
     {
         if (request.Data == null)
         {
@@ -263,11 +263,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         if (request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0)
         {
             return "Data.TuitionPartnersForEnquiry count is 0";
-        }
-
-        if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
-        {
-            return "Data.Subjects count is 0";
         }
 
         if (string.IsNullOrWhiteSpace(request.Data.Postcode))
@@ -280,7 +275,22 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             return "Data.LocalAuthorityDistrictName is null or empty";
         }
 
-        return string.Empty;
+        if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
+        {
+            return "Data.Subjects count is 0";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.Email))
+        {
+            return "Data.Email is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogistics))
+        {
+            return "Data.TutoringLogistics is null or empty";
+        }
+
+        return null;
     }
 
     private async Task HandleDbUpdateException(DbUpdateException ex, Enquiry enquiry)
@@ -299,13 +309,14 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             {
                 _logger.LogError(
                     ex,
-                    "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Retry attempt {retryAttempt}",
+                    "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Next retry attempt number: {retryAttempt}",
                     enquiry.SupportReferenceNumber, retryAttempt);
 
                 enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
 
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",
                     enquiry.SupportReferenceNumber);
+
                 try
                 {
                     dataSaved = await _unitOfWork.Complete();

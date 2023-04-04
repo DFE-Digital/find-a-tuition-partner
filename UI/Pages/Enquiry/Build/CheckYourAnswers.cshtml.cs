@@ -13,13 +13,16 @@ public class CheckYourAnswers : PageModel
     private readonly ISessionService _sessionService;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly FeatureFlags _featureFlagsConfig;
+    private readonly ILogger<CheckYourAnswers> _logger;
 
-    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment, IOptions<FeatureFlags> featureFlagsConfig)
+    public CheckYourAnswers(IMediator mediator, ISessionService sessionService, IHostEnvironment hostEnvironment,
+        IOptions<FeatureFlags> featureFlagsConfig, ILogger<CheckYourAnswers> logger)
     {
         _mediator = mediator;
         _sessionService = sessionService;
         _hostEnvironment = hostEnvironment;
         _featureFlagsConfig = featureFlagsConfig.Value;
+        _logger = logger;
     }
 
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();
@@ -48,8 +51,15 @@ public class CheckYourAnswers : PageModel
         {
             var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
             Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
-            HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
         }
+
+        if (string.IsNullOrWhiteSpace(Data.LocalAuthorityDistrictName))
+        {
+            _logger.LogInformation("No LAD found on the CYA page for postcode: {postcode}", Data.Postcode);
+            return NotFound();
+        }
+
+        HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
 
         ModelState.Clear();
 

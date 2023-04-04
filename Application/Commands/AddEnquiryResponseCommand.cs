@@ -49,12 +49,12 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     {
         var result = new SubmittedConfirmationModel();
 
-        if (string.IsNullOrWhiteSpace(request.Data.Token) ||
-            string.IsNullOrWhiteSpace(request.Data.SupportReferenceNumber))
+        var validationResult = ValidateRequest(request);
+        if (validationResult != null)
         {
-            var errorMessage = $"The {nameof(AddEnquiryResponseCommand)} is invalid with missing Token ('{request.Data.Token}') and/or Support Ref ('{request.Data.SupportReferenceNumber}')";
-            _logger.LogError(errorMessage);
-            throw new ArgumentException(errorMessage);
+            validationResult = $"The {nameof(AddEnquiryResponseCommand)} {validationResult}";
+            _logger.LogError(validationResult);
+            throw new ArgumentException(validationResult);
         }
 
         var tpEnquiry = await _unitOfWork.TuitionPartnerEnquiryRepository
@@ -121,6 +121,42 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         result.TuitionPartnerName = tpEnquiry.TuitionPartner.Name;
 
         return result;
+    }
+
+
+    private static string? ValidateRequest(AddEnquiryResponseCommand request)
+    {
+        if (request.Data == null)
+        {
+            return "Data is null";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.Token))
+        {
+            return "Data.Token is missing";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.SupportReferenceNumber))
+        {
+            return "Data.SupportReferenceNumber is missing";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.KeyStageAndSubjectsText))
+        {
+            return "Data.KeyStageAndSubjectsText is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TuitionTypeText))
+        {
+            return "Data.TuitionTypeText is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsText))
+        {
+            return "Data.TutoringLogisticsText is null or empty";
+        }
+
+        return null;
     }
 
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
