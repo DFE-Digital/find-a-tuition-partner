@@ -86,8 +86,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         }
 
         HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
-        HttpContext.AddTuitionPartnerNameToAnalytics<CheckYourAnswers>(responseConfirmationModel.TuitionPartnerName);
-        HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(Data.SupportReferenceNumber);
 
         var redirectPageUrl = $"/enquiry-response/{Data.TuitionPartnerSeoUrl}/{Data.SupportReferenceNumber}/confirmation?Token={Data.Token}&LocalAuthorityDistrictName={Data.LocalAuthorityDistrict}{enquirerMagicLinkQueryString}";
         return Redirect(redirectPageUrl);

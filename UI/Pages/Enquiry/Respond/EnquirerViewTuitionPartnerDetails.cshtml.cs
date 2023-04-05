@@ -42,8 +42,6 @@ namespace UI.Pages.Enquiry.Respond
             Data.Token = queryToken;
 
             HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
-            HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerResponse>(Data.TuitionPartnerName);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerResponse>(Data.SupportReferenceNumber);
 
             return Page();
         }

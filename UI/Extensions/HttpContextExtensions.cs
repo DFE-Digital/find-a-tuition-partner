@@ -18,11 +18,6 @@ namespace UI.Extensions
             httpContext.AddToAnalytics<T>("LocalAuthorityDistrictName", localAuthorityDistrictName);
         }
 
-        public static void AddTuitionPartnerNameToAnalytics<T>(this HttpContext httpContext, string? tuitionPartnerName)
-        {
-            httpContext.AddToAnalytics<T>("TuitionPartnerName", tuitionPartnerName);
-        }
-
         public static void AddEnquirySupportReferenceNumberToAnalytics<T>(this HttpContext httpContext, string? enquirySupportReferenceNumber)
         {
             httpContext.AddToAnalytics<T>("EnquirySupportReferenceNumber", enquirySupportReferenceNumber);

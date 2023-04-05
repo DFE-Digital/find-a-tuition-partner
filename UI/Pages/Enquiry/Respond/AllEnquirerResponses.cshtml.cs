@@ -33,7 +33,6 @@ namespace UI.Pages.Enquiry.Respond
             Data.Token = queryToken;
 
             HttpContext.AddLadNameToAnalytics<AllEnquirerResponses>(Data.LocalAuthorityDistrict);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<AllEnquirerResponses>(Data.SupportReferenceNumber);
 
             return Page();
         }
