@@ -12,12 +12,12 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
     {
     }
 
-    public async Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(string supportReferenceNumber, string magicLinkToken)
+    public async Task<EnquirerViewResponseModel?> GetEnquirerViewResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl)
     {
+        if (string.IsNullOrWhiteSpace(supportReferenceNumber) || string.IsNullOrWhiteSpace(tuitionPartnerSeoUrl)) return null;
+
         var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
-            .Include(e => e.MagicLink)
             .Include(e => e.Enquiry)
-            .ThenInclude(e => e.MagicLink)
             .Include(e => e.EnquiryResponse)
             .Include(x => x.TuitionPartner)
             .Include(e => e.Enquiry.KeyStageSubjectEnquiry)
@@ -26,12 +26,9 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             .ThenInclude(s => s.Subject)
             .AsSplitQuery()
             .SingleOrDefaultAsync(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
-                                  && e.MagicLink!.Token == magicLinkToken);
+                                  && e.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl);
 
         if (tuitionPartnerEnquiry == null) return null;
-
-
-        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLink;
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
 
@@ -48,7 +45,6 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             EnquiryTutoringLogistics = enquiry.TutoringLogistics,
             EnquirySENDRequirements = enquiry.SENDRequirements,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,
-            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
             SupportReferenceNumber = enquiry.SupportReferenceNumber
         };
@@ -67,21 +63,19 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         return result;
     }
 
-    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(string supportReferenceNumber,
-        string magicLinkToken)
+    public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl)
     {
+        if (string.IsNullOrWhiteSpace(supportReferenceNumber) || string.IsNullOrWhiteSpace(tuitionPartnerSeoUrl)) return null;
+
         var tuitionPartnerEnquiry = await _context.TuitionPartnersEnquiry.AsNoTracking()
             .Where(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
-                        && e.MagicLink!.Token == magicLinkToken)
+                        && e.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl)
             .Include(e => e.Enquiry)
-            .ThenInclude(e => e.MagicLink)
             .Include(x => x.TuitionPartner)
             .AsSplitQuery()
             .SingleOrDefaultAsync();
 
         if (tuitionPartnerEnquiry == null) return null;
-
-        var enquirerViewAllResponsesMagicLinkToken = tuitionPartnerEnquiry.Enquiry.MagicLink;
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
         var enquiryTP = tuitionPartnerEnquiry.TuitionPartner;
@@ -93,7 +87,6 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerEmailAddress = enquiryTP.Email,
             TuitionPartnerWebsite = enquiryTP.Website,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
-            EnquirerViewAllResponsesToken = enquirerViewAllResponsesMagicLinkToken!.Token,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!
         };
 

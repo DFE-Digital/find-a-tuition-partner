@@ -10,12 +10,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Commands;
 
-public record AddEnquiryResponseCommand : IRequest<SubmittedConfirmationModel>
+public record AddEnquiryResponseCommand : IRequest<ResponseConfirmationModel>
 {
     public EnquiryResponseModel Data { get; set; } = null!;
 }
 
-public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, SubmittedConfirmationModel>
+public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, ResponseConfirmationModel>
 {
     private const string EnquiryLadNameKey = "local_area_district";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
@@ -45,9 +45,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         _logger = logger;
     }
 
-    public async Task<SubmittedConfirmationModel> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
+    public async Task<ResponseConfirmationModel> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
     {
-        var result = new SubmittedConfirmationModel();
+        var result = new ResponseConfirmationModel();
 
         var validationResult = ValidateRequest(request);
         if (validationResult != null)
@@ -59,17 +59,18 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         var tpEnquiry = await _unitOfWork.TuitionPartnerEnquiryRepository
             .SingleOrDefaultAsync(x => x.Enquiry.SupportReferenceNumber == request.Data.SupportReferenceNumber &&
-                                       x.MagicLink!.Token == request.Data.Token, "Enquiry,TuitionPartner,EnquiryResponse",
+                                       x.TuitionPartner.SeoUrl == request.Data.TuitionPartnerSeoUrl, "Enquiry,Enquiry.MagicLink,TuitionPartner,EnquiryResponse",
                 true, cancellationToken);
 
         if (tpEnquiry == null)
         {
-            var errorMessage = $"Unable to find TuitionPartnerEnquiry with Token ('{request.Data.Token}') and Support Ref ('{request.Data.SupportReferenceNumber}')";
+            var errorMessage = $"Unable to find TuitionPartnerEnquiry with Support Ref ('{request.Data.SupportReferenceNumber}') and Tuition Partner SeoUrl ('{request.Data.TuitionPartnerSeoUrl}')";
             _logger.LogError(errorMessage);
             throw new ArgumentException(errorMessage);
         }
 
         request.Data.Email = tpEnquiry.Enquiry.Email;
+        var enquirerToken = tpEnquiry.Enquiry.MagicLink.Token;
 
         tpEnquiry.EnquiryResponse = new EnquiryResponse()
         {
@@ -83,7 +84,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
             GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
-                tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber);
+                tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber, enquirerToken);
 
         var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
             GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
@@ -115,9 +116,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         }
         catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
 
-
         result.SupportReferenceNumber = tpEnquiry.Enquiry.SupportReferenceNumber;
-        result.EnquirerMagicLink = request.Data?.Token;
+        result.EnquirerMagicLink = enquirerToken;
         result.TuitionPartnerName = tpEnquiry.TuitionPartner.Name;
 
         return result;
@@ -131,9 +131,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             return "Data is null";
         }
 
-        if (string.IsNullOrWhiteSpace(request.Data.Token))
+        if (string.IsNullOrWhiteSpace(request.Data.TuitionPartnerSeoUrl))
         {
-            return "Data.Token is missing";
+            return "Data.TuitionPartnerSeoUrl is missing";
         }
 
         if (string.IsNullOrWhiteSpace(request.Data.SupportReferenceNumber))
@@ -160,9 +160,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string supportRefNumber)
+        string tpName, string supportRefNumber, string enquirerToken)
     {
-        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={request.Data?.Token}";
+        var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={enquirerToken}";
 
         var result = new NotificationsRecipientDto()
         {

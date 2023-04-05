@@ -1,4 +1,3 @@
-using System.Net;
 using Application.Common.Models.Enquiry.Respond;
 
 
@@ -21,40 +20,20 @@ namespace UI.Pages.Enquiry.Respond
         {
             var queryToken = Request.Query["Token"].ToString();
 
-            if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken))
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
+
+            if (!isValidMagicLink)
             {
                 return NotFound();
             }
 
-            Data.SupportReferenceNumber = SupportReferenceNumber;
+            Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(SupportReferenceNumber));
 
-            try
-            {
-                var baseServiceUrl = Request.GetBaseServiceUrl();
+            Data.Token = queryToken;
 
-                var isValidMagicLink =
-                    await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
-
-                if (!isValidMagicLink)
-                {
-                    return NotFound();
-                }
-
-                var data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(baseServiceUrl, SupportReferenceNumber));
-                if (data == null)
-                {
-                    return NotFound();
-                }
-
-                Data = data;
-
-                HttpContext.AddLadNameToAnalytics<AllEnquirerResponses>(Data.LocalAuthorityDistrict);
-                HttpContext.AddEnquirySupportReferenceNumberToAnalytics<AllEnquirerResponses>(Data.SupportReferenceNumber);
-            }
-            catch
-            {
-                return Page();
-            }
+            HttpContext.AddLadNameToAnalytics<AllEnquirerResponses>(Data.LocalAuthorityDistrict);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<AllEnquirerResponses>(Data.SupportReferenceNumber);
 
             return Page();
         }

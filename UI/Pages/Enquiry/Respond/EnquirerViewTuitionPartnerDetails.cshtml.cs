@@ -1,4 +1,3 @@
-using System.Net;
 using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond
@@ -21,20 +20,6 @@ namespace UI.Pages.Enquiry.Respond
         {
             var queryToken = Request.Query["Token"].ToString();
 
-            if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
-            {
-                return NotFound();
-            }
-
-            if (!string.IsNullOrEmpty(SupportReferenceNumber))
-            {
-                Data.SupportReferenceNumber = SupportReferenceNumber;
-            }
-            if (!string.IsNullOrEmpty(TuitionPartnerSeoUrl))
-            {
-                Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
-            }
-
             var isValidMagicLink =
                 await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
 
@@ -43,25 +28,22 @@ namespace UI.Pages.Enquiry.Respond
                 return NotFound();
             }
 
-            try
-            {
-                var getEnquirerViewTuitionPartnerDetailsQuery = new
-                    GetEnquirerViewTuitionPartnerDetailsQuery(SupportReferenceNumber, queryToken);
+            var enquirerViewTuitionPartnerDetailsQuery = new GetEnquirerViewTuitionPartnerDetailsQuery(SupportReferenceNumber, TuitionPartnerSeoUrl);
 
-                var data = await _mediator.Send(getEnquirerViewTuitionPartnerDetailsQuery);
+            var data = await _mediator.Send(enquirerViewTuitionPartnerDetailsQuery);
 
-                if (data != null)
-                {
-                    Data = data with { EnquirerViewResponseToken = queryToken };
-                    HttpContext.AddLadNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.LocalAuthorityDistrict);
-                    HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.TuitionPartnerName);
-                    HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerViewTuitionPartnerDetails>(Data.SupportReferenceNumber);
-                }
-            }
-            catch
+            if (data == null)
             {
-                return Page();
+                return NotFound();
             }
+
+            Data = data;
+            Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
+            Data.Token = queryToken;
+
+            HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
+            HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerResponse>(Data.TuitionPartnerName);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerResponse>(Data.SupportReferenceNumber);
 
             return Page();
         }

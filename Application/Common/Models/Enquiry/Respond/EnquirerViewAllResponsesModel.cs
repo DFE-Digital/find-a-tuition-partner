@@ -22,5 +22,7 @@ public class EnquirerViewAllResponsesModel
     public string? AdditionalInformation { get; set; }
     public DateTime EnquiryCreatedDateTime { get; set; }
 
+    public string Token { get; set; } = string.Empty;
+
     public List<EnquirerViewResponseDto> EnquirerViewResponses { get; set; } = null!;
 }

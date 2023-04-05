@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Queries;
 
-public record GetEnquirerViewTuitionPartnerDetailsQuery(string SupportReferenceNumber, string MagicLinkToken) : IRequest<EnquirerViewTuitionPartnerDetailsModel?>;
+public record GetEnquirerViewTuitionPartnerDetailsQuery(string SupportReferenceNumber, string TuitionPartnerSeoUrl) : IRequest<EnquirerViewTuitionPartnerDetailsModel?>;
 
 public class GetEnquirerViewTuitionPartnerDetailsQueryHandler : IRequestHandler<GetEnquirerViewTuitionPartnerDetailsQuery, EnquirerViewTuitionPartnerDetailsModel?>
 {
@@ -21,13 +21,14 @@ public class GetEnquirerViewTuitionPartnerDetailsQueryHandler : IRequestHandler<
     public async Task<EnquirerViewTuitionPartnerDetailsModel?> Handle(GetEnquirerViewTuitionPartnerDetailsQuery request, CancellationToken cancellationToken)
     {
         var result = await _unitOfWork.TuitionPartnerEnquiryRepository
-            .GetEnquirerViewTuitionPartnerDetailsResponse(request.SupportReferenceNumber, request.MagicLinkToken);
+            .GetEnquirerViewTuitionPartnerDetailsResponse(request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
 
         if (result == null)
         {
-            _logger.LogWarning("Enquiry response not found for the given SupportReferenceNumber: {supportReferenceNumber} and MagicLinkToken: {magicLinkToken}",
-                request.SupportReferenceNumber, request.MagicLinkToken);
+            _logger.LogInformation("Enquiry response details not found for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
+                request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
         }
+
         return result;
     }
 }

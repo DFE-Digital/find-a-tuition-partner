@@ -22,12 +22,14 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .ThenInclude(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.EnquiryResponse)
+            .Include(x => x.TuitionPartnerEnquiry)
+            .ThenInclude(x => x.TuitionPartner)
             .SingleOrDefaultAsync();
 
         return enquiry ?? null;
     }
 
-    public async Task<EnquirerViewAllResponsesModel?> GetEnquirerViewAllResponses(string baseServiceUrl, string supportReferenceNumber)
+    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber)
     {
         var enquiry = await _context.Enquiries.AsNoTracking()
             .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
@@ -47,7 +49,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
         if (enquiry == null)
         {
-            return null;
+            throw new ArgumentException($"No enquiry found for enquiry ref {supportReferenceNumber}");
         }
 
         var tuitionPartnerEnquiriesWithResponses = enquiry.TuitionPartnerEnquiry.Where(x =>
@@ -57,8 +59,6 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .KeyStageSubjectEnquiry
             .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
             .GroupByKeyAndConcatenateValues();
-
-
 
         var result = new EnquirerViewAllResponsesModel
         {
@@ -79,9 +79,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             var responseModel = new EnquirerViewResponseDto
             {
                 TuitionPartnerName = er.TuitionPartner.Name,
-                EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!,
-                EnquirerEnquiryResponseLink =
-                    $"{baseServiceUrl}/enquiry/{supportReferenceNumber}/{er.TuitionPartner.Name.ToSeoUrl()}?Token={er.MagicLink!.Token}"
+                EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!
             };
             result.EnquirerViewResponses.Add(responseModel);
         }

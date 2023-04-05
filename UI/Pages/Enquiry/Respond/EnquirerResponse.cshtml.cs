@@ -1,4 +1,3 @@
-using System.Net;
 using Application.Common.Models.Enquiry.Respond;
 
 namespace UI.Pages.Enquiry.Respond;
@@ -21,20 +20,6 @@ public class EnquirerResponse : PageModel
     {
         var queryToken = Request.Query["Token"].ToString();
 
-        if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
-        {
-            return NotFound();
-        }
-
-        if (!string.IsNullOrEmpty(SupportReferenceNumber))
-        {
-            Data.SupportReferenceNumber = SupportReferenceNumber;
-        }
-        if (!string.IsNullOrEmpty(TuitionPartnerSeoUrl))
-        {
-            Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
-        }
-
         var isValidMagicLink =
             await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
 
@@ -43,24 +28,22 @@ public class EnquirerResponse : PageModel
             return NotFound();
         }
 
-        try
-        {
-            var getEnquirerViewResponseQuery = new GetEnquirerViewResponseQuery(SupportReferenceNumber, queryToken);
+        var enquirerViewResponseQuery = new GetEnquirerViewResponseQuery(SupportReferenceNumber, TuitionPartnerSeoUrl);
 
-            var data = await _mediator.Send(getEnquirerViewResponseQuery);
+        var data = await _mediator.Send(enquirerViewResponseQuery);
 
-            if (data != null)
-            {
-                Data = data with { EnquirerViewResponseToken = queryToken };
-                HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
-                HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerResponse>(Data.TuitionPartnerName);
-                HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerResponse>(Data.SupportReferenceNumber);
-            }
-        }
-        catch
+        if (data == null)
         {
-            return Page();
+            return NotFound();
         }
+
+        Data = data;
+        Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
+        Data.Token = queryToken;
+
+        HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
+        HttpContext.AddTuitionPartnerNameToAnalytics<EnquirerResponse>(Data.TuitionPartnerName);
+        HttpContext.AddEnquirySupportReferenceNumberToAnalytics<EnquirerResponse>(Data.SupportReferenceNumber);
 
         return Page();
     }

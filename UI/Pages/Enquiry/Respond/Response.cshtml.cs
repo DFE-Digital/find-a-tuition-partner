@@ -1,4 +1,3 @@
-using System.Net;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
 
@@ -20,7 +19,10 @@ namespace UI.Pages.Enquiry.Respond
         {
             var queryToken = Request.Query["Token"].ToString();
 
-            if (string.IsNullOrEmpty(SupportReferenceNumber) || string.IsNullOrEmpty(queryToken) || string.IsNullOrEmpty(TuitionPartnerSeoUrl))
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber, TuitionPartnerSeoUrl, true));
+
+            if (!isValidMagicLink)
             {
                 return NotFound();
             }
@@ -29,23 +31,7 @@ namespace UI.Pages.Enquiry.Respond
             Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
             Data.Token = queryToken;
 
-            var isValidMagicLink =
-                await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber, true));
-
-            if (!isValidMagicLink)
-            {
-                return NotFound();
-            }
-
-            Data.BaseServiceUrl = Request.GetBaseServiceUrl();
-
-            var enquiryData = await _mediator.Send(new
-                GetEnquirerViewAllResponsesQuery(Data.BaseServiceUrl, SupportReferenceNumber));
-
-            if (enquiryData == null)
-            {
-                return NotFound();
-            }
+            var enquiryData = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(SupportReferenceNumber));
 
             Data.EnquiryResponseCloseDateFormatted = enquiryData.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond).ToString("h:mmtt 'on' dddd d MMMM yyyy");
 
@@ -66,66 +52,48 @@ namespace UI.Pages.Enquiry.Respond
                 Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
                 Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
                 Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
-
-                HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
-                HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
             }
+
+            HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
+            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
+
+            if (!isValidMagicLink)
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid) return Page();
 
-            var queryToken = Request.Query["Token"].ToString();
-
-            try
+            await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
             {
-                var isValidMagicLink =
-                    await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber, true));
-
-                if (!isValidMagicLink)
+                { SessionKeyConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
+                { SessionKeyConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
+                { SessionKeyConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
+                { SessionKeyConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
+                { SessionKeyConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
                 {
-                    return NotFound();
-                }
-
-                Data.BaseServiceUrl = Request.GetBaseServiceUrl();
-
-                Data.Token = queryToken;
-
-                await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
-                {
-                    { SessionKeyConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
-                    { SessionKeyConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
-                    { SessionKeyConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
-                    { SessionKeyConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
-                    { SessionKeyConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
-                    {
-                        SessionKeyConstants.EnquiryResponseAdditionalInformation,
-                        Data.AdditionalInformationText ?? string.Empty
-                    },
-                    { SessionKeyConstants.EnquiryResponseToken, Data.Token! },
-                    { SessionKeyConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
-                    { SessionKeyConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
-                    { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
-                    { SessionKeyConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
-                    { SessionKeyConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
+                    SessionKeyConstants.EnquiryResponseAdditionalInformation,
+                    Data.AdditionalInformationText ?? string.Empty
                 },
-                GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)
-                );
+                { SessionKeyConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
+                { SessionKeyConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
+                { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
+                { SessionKeyConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
+                { SessionKeyConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
+            },
+            GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)
+            );
 
-                return RedirectToPage(nameof(CheckYourAnswers), new CheckYourAnswersModel()
-                {
-                    SupportReferenceNumber = Data.SupportReferenceNumber,
-                    TuitionPartnerSeoUrl = Data.TuitionPartnerSeoUrl
-                });
-            }
-            catch
-            {
-                return Page();
-            }
+            var redirectPageUrl = $"/enquiry-response/{Data.TuitionPartnerSeoUrl}/{Data.SupportReferenceNumber}/check-your-answers?Token={Data.Token}";
+            return Redirect(redirectPageUrl);
         }
-
     }
 }

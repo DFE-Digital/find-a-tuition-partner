@@ -52,10 +52,6 @@ public static class EnquiryResponseModelExtensions
             case var k when k.Equals(SessionKeyConstants.EnquiryResponseAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 data.AdditionalInformationText = value;
                 break;
-
-            case var k when k.Equals(SessionKeyConstants.EnquiryResponseToken, StringComparison.OrdinalIgnoreCase):
-                data.Token = value;
-                break;
         }
     }
 }
