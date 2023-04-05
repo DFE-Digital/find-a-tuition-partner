@@ -21,9 +21,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnGetAsync(CheckYourAnswersModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(TuitionPartnerSeoUrl!, SupportReferenceNumber)))
-            return RedirectToPage("/Session/Timeout");
-
         var queryToken = Request.Query["Token"].ToString();
 
         var isValidMagicLink =
@@ -33,6 +30,9 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         {
             return NotFound();
         }
+
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(TuitionPartnerSeoUrl!, SupportReferenceNumber)))
+            return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
@@ -55,9 +55,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
-            return RedirectToPage("/Session/Timeout");
-
         var isValidMagicLink =
             await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
 
@@ -65,6 +62,9 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         {
             return NotFound();
         }
+
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
+            return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
 
