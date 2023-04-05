@@ -111,7 +111,7 @@ public class DistributedSessionService : ISessionService
         await LoadDataFromDistributedDataStore();
         var sessionKey = GetSessionKey(preKey);
         var sessionExists = GetString(sessionKey) != null;
-        if(!sessionExists)
+        if (!sessionExists)
         {
             _logger.LogInformation("Session expired or empty with key: {preKey}", preKey);
         }
