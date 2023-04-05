@@ -109,7 +109,11 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient,
                 EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer);
+        }
+        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
 
+        try
+        {
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseSubmittedConfirmationToTpNotificationsRecipient,
                 EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp);

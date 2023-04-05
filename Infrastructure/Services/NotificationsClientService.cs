@@ -73,46 +73,31 @@ public class NotificationsClientService : INotificationsClientService
     {
         notificationsRecipients = notificationsRecipients.ToList();
 
-        try
+        var allEmailsSent = true;
+
+        //See if we need to amalgamate multiuple emails for testing purposes
+        if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
         {
-            var allEmailsSent = true;
-
-            //See if we need to amalgamate multiuple emails for testing purposes
-            if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
-            {
-                allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
-            }
-            else
-            {
-                // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
-                // which can significantly improve performance when dealing with multiple recipients
-                var sendEmailTasks = notificationsRecipients
-                    .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
-                    .Select(async recipient =>
-                    {
-                        try
-                        {
-                            return await SendEmailAsync(recipient, emailTemplateType);
-                        }
-                        catch (EmailSendException)
-                        {
-                            return false;
-                        }
-                    })
-                    .ToList();
-
-                var results = await Task.WhenAll(sendEmailTasks);
-
-                allEmailsSent = results.All(result => result);
-            }
-
-            return allEmailsSent;
+            allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError("An unexpected error has occurred while attempting to process multiple emails: {ex}", ex);
-            throw;
+            // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
+            // which can significantly improve performance when dealing with multiple recipients
+            var sendEmailTasks = notificationsRecipients
+                .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
+                .Select(async recipient =>
+                {
+                    return await SendEmailAsync(recipient, emailTemplateType);
+                })
+                .ToList();
+
+            var results = await Task.WhenAll(sendEmailTasks);
+
+            allEmailsSent = results.All(result => result);
         }
+
+        return allEmailsSent;
     }
 
     private void AddTestingInformation(NotificationsRecipientDto notificationsRecipient, bool includeChangedFromEmailAddress = true)
