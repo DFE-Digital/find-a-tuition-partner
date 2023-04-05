@@ -8,10 +8,12 @@ public class DistributedSessionService : ISessionService
 {
     private const string DefaultPreKey = "General";
     private readonly IHttpContextAccessor? _contextAccessor;
+    private readonly ILogger<DistributedSessionService> _logger;
 
-    public DistributedSessionService(IHttpContextAccessor contextAccessor)
+    public DistributedSessionService(IHttpContextAccessor contextAccessor, ILogger<DistributedSessionService> logger)
     {
         _contextAccessor = contextAccessor ?? throw new ArgumentNullException($"{nameof(contextAccessor)}");
+        _logger = logger;
     }
 
     public async Task AddOrUpdateDataAsync(string key, string value, string preKey = DefaultPreKey)
@@ -108,7 +110,12 @@ public class DistributedSessionService : ISessionService
     {
         await LoadDataFromDistributedDataStore();
         var sessionKey = GetSessionKey(preKey);
-        return GetString(sessionKey) != null;
+        var sessionExists = GetString(sessionKey) != null;
+        if(!sessionExists)
+        {
+            _logger.LogInformation("Session expired or empty with key: {preKey}", preKey);
+        }
+        return sessionExists;
     }
 
     public async Task<bool> AnySessionDataExistsAsync()
@@ -120,12 +127,18 @@ public class DistributedSessionService : ISessionService
     public async Task ClearAllAsync()
     {
         await LoadDataFromDistributedDataStore();
+        _logger.LogInformation("Session cleared");
         _contextAccessor!.HttpContext!.Session!.Clear();
     }
 
     private bool IsSessionAvailable()
     {
-        return _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
+        var isSessionAvailable = _contextAccessor!.HttpContext != null && _contextAccessor!.HttpContext.Session.IsAvailable;
+        if (!isSessionAvailable)
+        {
+            _logger.LogError("Session unavailable");
+        }
+        return isSessionAvailable;
     }
 
     private async Task LoadDataFromDistributedDataStore()
