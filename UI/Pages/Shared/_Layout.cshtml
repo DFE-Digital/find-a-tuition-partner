@@ -18,9 +18,12 @@
 
   var useFromReturnUrlElseHome = ViewData["UseFromReturnUrlElseHome"] as bool? == true;
 
+  //URL for cookie banner is current page
+  var currentPathAndQuery = HttpContext?.HttpContext?.Request.GetEncodedPathAndQuery();
+  ViewData["CookieBannerFromReturnUrl"] = $"FromReturnUrl={currentPathAndQuery}";
+
   //fromReturnUrl to apply to query string of the support pages, at the bottom of the layout
-  var fromReturnUrl = useFromReturnUrlElseHome ? fromReturnUrlInQueryString : HttpContext?.HttpContext?.Request.GetEncodedPathAndQuery();
-  ViewData["CookieBannerFromReturnUrl"] = $"FromReturnUrl={fromReturnUrl}";
+  var fromReturnUrl = useFromReturnUrlElseHome ? fromReturnUrlInQueryString : currentPathAndQuery;
   fromReturnUrl = string.IsNullOrWhiteSpace(fromReturnUrl) ? string.Empty : $"?FromReturnUrl={fromReturnUrl}";
 
   if (useFromReturnUrlElseHome)
