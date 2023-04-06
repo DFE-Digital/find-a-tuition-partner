@@ -78,7 +78,7 @@ Feature: User can view full details of a Tuition Parner
       | tuition-partner    | tuition-types     |
       | Fledge Tuition Ltd | Online            |
       | FFT Education      | In school         |
-      | career-tree        | In school, Online |
+      | assess-education   | In school, Online |
 
   Scenario: tuition cost blurb states pricing uniformity
     Given a user has arrived on the 'Tuition Partner' page for 'Fledge Tuition Ltd'
