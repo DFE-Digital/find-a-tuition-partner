@@ -14,12 +14,12 @@
   backLinkText = backLinkText ?? "Back";
 
   //If FromReturnUrl is supplied then this will be used for back link if on support page
-  var fromReturnUrlInQueryString = HttpContext?.HttpContext?.Request.Query["FromReturnUrl"].ToString();
+  var fromReturnUrlInQueryString = HttpContext?.HttpContext?.Request.GetNtpUrlFromQuery("FromReturnUrl");
 
   var useFromReturnUrlElseHome = ViewData["UseFromReturnUrlElseHome"] as bool? == true;
 
   //URL for cookie banner is current page
-  var currentPathAndQuery = HttpContext?.HttpContext?.Request.GetEncodedPathAndQuery();
+  var currentPathAndQuery = HttpContext?.HttpContext?.Request.GetEncodedUrl();
   ViewData["CookieBannerFromReturnUrl"] = $"FromReturnUrl={currentPathAndQuery}";
 
   //fromReturnUrl to apply to query string of the support pages, at the bottom of the layout

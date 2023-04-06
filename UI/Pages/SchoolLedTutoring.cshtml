@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Employ tutors";
     ViewData["IncludeHomeLink"] = true;
-    var fromReturnUrl = "?FromReturnUrl=" + HttpContext?.Request.GetEncodedPathAndQuery();
+  var fromReturnUrl = "?FromReturnUrl=" + HttpContext?.Request.GetEncodedUrl();
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
