@@ -9,15 +9,18 @@ public static class DictionaryExtensions
     private const string EnquiryContactUsKey = "contact_us_link";
 
     public static Dictionary<string, dynamic> AddDefaultEnquiryPersonalisation(this Dictionary<string, dynamic> personalisation,
-        string enquiryRef, DateTime dateTime, string baseUrl)
+        string enquiryRef, string baseUrl, DateTime? dateTime)
     {
-        if (personalisation != null)
+        personalisation ??= new Dictionary<string, dynamic>();
+
+        personalisation.Add(EnquiryRefKeyKey, enquiryRef);
+        personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
+
+        if (dateTime != null)
         {
-            personalisation.Add(EnquiryRefKeyKey, enquiryRef);
-            personalisation.Add(EnquiryDateTimeKey, dateTime.ToLocalDateTime().ToString(StringConstants.DateFormatGDS));
-            personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
+            personalisation.Add(EnquiryDateTimeKey, dateTime.Value.ToLocalDateTime().ToString(StringConstants.DateFormatGDS));
         }
 
-        return personalisation ?? new Dictionary<string, dynamic>();
+        return personalisation;
     }
 }
