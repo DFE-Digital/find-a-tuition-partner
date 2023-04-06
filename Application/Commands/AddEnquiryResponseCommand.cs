@@ -17,9 +17,7 @@ public record AddEnquiryResponseCommand : IRequest<SubmittedConfirmationModel>
 
 public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, SubmittedConfirmationModel>
 {
-    private const string EnquiryReferenceNumberKey = "enquiry_ref_number";
     private const string EnquiryLadNameKey = "local_area_district";
-    private const string EnquiryResponseCreatedDateTime = "date_time";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
     private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
     private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
@@ -32,7 +30,6 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     private const string EnquiryResponseAdditionalInformationKey = "enquiry_response_additional_information";
     private const string EnquiryTuitionPartnerNameKey = "tuition_partner_name";
     private const string EnquirerViewAllResponsesPageLinkKey = "link_to_enquirer_view_all_responses_page";
-    private const string ContactUsLink = "contact_us_link";
 
     private readonly INotificationsClientService _notificationsClientService;
 
@@ -85,11 +82,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             CompletedAt = DateTime.UtcNow
         };
 
-        var contactUsLink = $"{request.Data.BaseServiceUrl}/contact-us";
-
         var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
             GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
-                tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber, contactUsLink);
+                tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber);
 
         var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
             GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
@@ -97,7 +92,6 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
                 tpEnquiry.TuitionPartner.Name,
                 tpEnquiry.TuitionPartner.Email,
                 tpEnquiry.Enquiry.SupportReferenceNumber,
-                contactUsLink,
                 tpEnquiry.EnquiryResponse.CreatedAt);
 
         try
@@ -106,12 +100,11 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer, tpEnquiry.Enquiry.SupportReferenceNumber);
+                EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer);
 
             await _notificationsClientService.SendEmailAsync(
                 enquiryResponseSubmittedConfirmationToTpNotificationsRecipient,
-                EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp,
-                tpEnquiry.Enquiry.SupportReferenceNumber
+                EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp
             );
         }
         catch (Exception ex)
@@ -130,7 +123,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string supportRefNumber, string contactusLink)
+        string tpName, string supportRefNumber)
     {
         var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={request.Data?.Token}";
 
@@ -139,34 +132,36 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             Email = request.Data?.Email!,
             OriginalEmail = request.Data?.Email!,
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, supportRefNumber, pageLink, contactusLink)
+            Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, supportRefNumber, pageLink)
         };
+
+        result.AddDefaultEnquiryDetails(
+            supportRefNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer,
+            null, tpName);
+
         return result;
     }
 
     private static Dictionary<string, dynamic> GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(string tpName,
-        string supportRefNumber, string enquirerViewResponsesPageLinkKey, string contactusLink)
+        string supportRefNumber, string enquirerViewResponsesPageLinkKey)
     {
         var personalisation = new Dictionary<string, dynamic>()
         {
-            { EnquiryReferenceNumberKey, supportRefNumber},
             { EnquiryTuitionPartnerNameKey, tpName },
-            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey },
-            { ContactUsLink, contactusLink }
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewResponsesPageLinkKey }
         };
 
         return personalisation;
     }
 
     private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string tpEmail, string supportRefNumber, string contactusLink, DateTime responseCreateDateTime)
+        string tpName, string tpEmail, string supportRefNumber,
+        DateTime responseCreateDateTime)
     {
         var personalisationInput = new EnquiryResponseToTpPersonalisationInput
         {
             TpName = tpName,
-            SupportRefNumber = supportRefNumber,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            ResponseCreatedOnDateTime = responseCreateDateTime.ToLocalDateTime().ToString(StringConstants.DateFormatGDS),
             EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
@@ -177,8 +172,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             EnquiryResponseSendSupport = request.Data.SENDRequirementsText.EscapeNotifyText(true) ?? StringConstants.NotSpecified,
             EnquiryAdditionalInformation = request.Data.EnquiryAdditionalInformation.EscapeNotifyText() ?? StringConstants.NotSpecified,
             EnquiryResponseAdditionalInformation =
-                request.Data.AdditionalInformationText.EscapeNotifyText(true) ?? StringConstants.NotSpecified,
-            ContactUsLink = contactusLink
+                request.Data.AdditionalInformationText.EscapeNotifyText(true) ?? StringConstants.NotSpecified
+
         };
 
         var result = new NotificationsRecipientDto()
@@ -188,6 +183,11 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             EnquirerEmailForTestingPurposes = request.Data?.Email!,
             Personalisation = GetEnquiryResponseSubmittedConfirmationToTpPersonalisation(personalisationInput)
         };
+
+        result.AddDefaultEnquiryDetails(
+            supportRefNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp,
+            responseCreateDateTime, tpName);
+
         return result;
     }
 
@@ -197,9 +197,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         var personalisation = new Dictionary<string, dynamic>()
         {
             { EnquiryTuitionPartnerNameKey, input.TpName! },
-            { EnquiryReferenceNumberKey, input.SupportRefNumber! },
             { EnquiryLadNameKey, input.LocalAreaDistrict! },
-            { EnquiryResponseCreatedDateTime, input.ResponseCreatedOnDateTime! },
             { EnquiryKeyStageAndSubjects, input.EnquiryKeyStageSubjects! },
             { EnquiryResponseKeyStageAndSubjects, input.EnquiryResponseKeyStageSubjects! },
             { EnquiryTuitionTypeKey, input.EnquiryTuitionType! },
@@ -209,8 +207,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             { EnquirySENDSupportKey, input.EnquirySendSupport! },
             { EnquiryResponseSENDSupportKey, input.EnquiryResponseSendSupport! },
             { EnquiryAdditionalInformationKey, input.EnquiryAdditionalInformation! },
-            { EnquiryResponseAdditionalInformationKey, input.EnquiryResponseAdditionalInformation! },
-            { ContactUsLink, input.ContactUsLink! }
+            { EnquiryResponseAdditionalInformationKey, input.EnquiryResponseAdditionalInformation! }
         };
 
         return personalisation;

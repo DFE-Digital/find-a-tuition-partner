@@ -11,6 +11,7 @@ public class NotificationsRecipientDto
     public int TuitionPartnerId { get; set; }
 
     public string? TuitionPartnerName { get; set; }
+
     public string OriginalEmail { get; set; } = null!;
 
     public string Email { get; set; } = null!;
@@ -22,4 +23,8 @@ public class NotificationsRecipientDto
     public Dictionary<string, dynamic> Personalisation { get; set; } = null!;
 
     public List<string> PersonalisationPropertiesToAmalgamate { get; set; } = null!;
+
+    public string ClientReference { get; set; } = null!;
+
+    public string ClientReferenceIfAmalgamate { get; set; } = null!;
 }

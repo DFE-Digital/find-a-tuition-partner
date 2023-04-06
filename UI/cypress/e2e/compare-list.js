@@ -301,7 +301,7 @@ Given(
     );
     Step(
       this,
-      "they add 'Career Tree' to their price comparison list on the results page"
+      "they add 'Assess Education' to their price comparison list on the results page"
     );
     Step(
       this,
