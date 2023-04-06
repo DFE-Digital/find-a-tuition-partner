@@ -34,7 +34,7 @@ Then("they will see the funding allocation link", () => {
   cy.get('[data-testid="funding-allocation-link"]').should(
     "have.attr",
     "href",
-    "/funding-and-reporting"
+    "/funding-and-reporting?FromReturnUrl=/academic-mentors"
   );
 });
 
@@ -58,7 +58,7 @@ Then("they will see the funding and reporting link", () => {
   cy.get('[data-testid="funding-reporting-link"]').should(
     "have.attr",
     "href",
-    "/funding-and-reporting"
+    "/funding-and-reporting?FromReturnUrl=/academic-mentors"
   );
 });
 

@@ -10,7 +10,7 @@ Feature: User can print relevant pages using a 'Print this page' link
   Scenario: academic mentors page does not have a 'Print this page' link
     Given a user has arrived on the academic mentors page
     Then the 'Print this page' link is not displayed
-    
+
   Scenario: school led tutoring page does not have a 'Print this page' link
     Given a user has arrived on the school led tutoring page
     Then the 'Print this page' link is not displayed

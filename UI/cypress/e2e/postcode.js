@@ -77,7 +77,7 @@ Then("the privacy link opens privacy page", () => {
   cy.get('[data-testid="privacy-link"]').should(
     "have.attr",
     "href",
-    "/privacy"
+    "/privacy?FromReturnUrl=/"
   );
 });
 
@@ -85,7 +85,7 @@ Then("the contact us link opens contact us page", () => {
   cy.get('[data-testid="contact-us-link"]').should(
     "have.attr",
     "href",
-    "/contact-us"
+    "/contact-us?FromReturnUrl=/"
   );
 });
 

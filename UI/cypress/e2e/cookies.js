@@ -116,10 +116,7 @@ Then("a Success Banner is displayed", () => {
 });
 
 Then("the previous page is displayed correctly", () => {
-  cy.location("search").should(
-    "eq",
-    "?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1"
-  );
+  cy.location("search").should("eq", "?Postcode=sk11eb");
 });
 
 Then("the privacy policy is accessible in a new tab", () => {
