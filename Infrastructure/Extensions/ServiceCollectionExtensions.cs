@@ -148,10 +148,11 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
+        var oneDriveSettings = new OneDriveSettings();
+        configuration.GetSection(OneDriveSettings.OneDrive).Bind(oneDriveSettings);
+        oneDriveSettings.Validate();
         services.Configure<OneDriveSettings>(configuration.GetSection(OneDriveSettings.OneDrive));
         services.AddOptions();
-
-        var oneDriveSettings = configuration.GetSection(OneDriveSettings.OneDrive).Get<OneDriveSettings>();
 
         var confidentialClientApplication = ConfidentialClientApplicationBuilder
             .Create(oneDriveSettings.ClientId)
