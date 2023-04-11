@@ -5,6 +5,7 @@ using Application.Common.Interfaces.Repositories;
 using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
+using Infrastructure.ApiClients;
 using Infrastructure.Configuration;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 
 namespace Infrastructure.Extensions;
 
@@ -146,11 +148,29 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<GoogleDrive>(configuration.GetSection(nameof(GoogleDrive)));
+        services.Configure<OneDriveSettings>(configuration.GetSection(OneDriveSettings.OneDrive));
         services.AddOptions();
-        services.AddScoped<GoogleDriveServiceFactory>();
-        services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
-        services.AddScoped<ILogoFileEnumerable, GoogleDriveLogoFileEnumerable>();
+
+        var oneDriveSettings = configuration.GetSection(OneDriveSettings.OneDrive).Get<OneDriveSettings>();
+
+        var confidentialClientApplication = ConfidentialClientApplicationBuilder
+            .Create(oneDriveSettings.ClientId)
+            .WithTenantId(oneDriveSettings.TenantId)
+            .WithClientSecret(oneDriveSettings.ClientSecret)
+            .Build();
+
+        var authResult =
+            confidentialClientApplication.AcquireTokenForClient(new[] { "https://graph.microsoft.com/.default" })
+                .ExecuteAsync().GetAwaiter().GetResult();
+
+        services.AddHttpClient(nameof(OneDriveApiClient), httpClient =>
+        {
+            httpClient.BaseAddress = new Uri("https://graph.microsoft.com/");
+            httpClient.Timeout = TimeSpan.FromSeconds(60);
+        }).AddHttpMessageHandler(() => new AuthorizationHeaderHandler(authResult.AccessToken));
+        services.AddScoped<IOneDriveApiClient, OneDriveApiClient>();
+        services.AddScoped<IDataFileEnumerable, OneDriveDataFileEnumerable>();
+        services.AddScoped<ILogoFileEnumerable, OneDriveLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ISpreadsheetTuitionPartnerFactory, SpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
