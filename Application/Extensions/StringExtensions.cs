@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Application.Constants;
+using Domain.Enums;
 
 namespace Application.Extensions;
 
@@ -115,4 +116,9 @@ public static class StringExtensions
         return escapedText;
     }
 
+    public static string CreateNotifyClientReference(this string enquiryRef, EmailTemplateType emailTemplateType, string? tpName = null)
+    {
+        var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
+        return $"{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
+    }
 }

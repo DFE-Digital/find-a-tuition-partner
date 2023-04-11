@@ -10,7 +10,7 @@ Feature: User can print relevant pages using a 'Print this page' link
   Scenario: academic mentors page does not have a 'Print this page' link
     Given a user has arrived on the academic mentors page
     Then the 'Print this page' link is not displayed
-    
+
   Scenario: school led tutoring page does not have a 'Print this page' link
     Given a user has arrived on the school led tutoring page
     Then the 'Print this page' link is not displayed
@@ -49,11 +49,11 @@ Feature: User can print relevant pages using a 'Print this page' link
     Then the print dialog is opened
 
   Scenario: tuition partner details page has a 'Print this page' link
-    Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
+    Given a user has arrived on the 'Tuition Partner' page for 'Assess Education'
     Then the 'Print this page' link is displayed
 
   Scenario: tuition partner details page 'Print this page' link opens print dialog
-    Given a user has arrived on the 'Tuition Partner' page for 'Career Tree'
+    Given a user has arrived on the 'Tuition Partner' page for 'Assess Education'
     When the 'Print this page' link is clicked
     Then the print dialog is opened
 

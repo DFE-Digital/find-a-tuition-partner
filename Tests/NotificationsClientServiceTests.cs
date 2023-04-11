@@ -19,7 +19,6 @@ public class NotificationsClientServiceTests
     private readonly Mock<ILogger<NotificationsClientService>> _loggerMock;
     private readonly Mock<IAsyncNotificationClient> _notificationClientMock;
     private readonly Mock<IHostEnvironment> _hostEnvironment;
-    private const string demoSupportReferenceNumber = "RW6685";
 
     public NotificationsClientServiceTests()
     {
@@ -58,7 +57,7 @@ public class NotificationsClientServiceTests
                 _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
         _notificationClientMock.Verify(x =>
@@ -88,7 +87,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
         VerifyLogging(_loggerMock, LogLevel.Error, $"No email address was supplied for the recipient: {notificationsRecipients.First()}.",
@@ -104,8 +103,8 @@ public class NotificationsClientServiceTests
         var personalisation = new Dictionary<string, dynamic> { { "key1", "value1" } };
         var notificationsRecipients = new List<NotificationsRecipientDto>
         {
-            new() { Email = "test@example.com", Personalisation = personalisation },
-            new() { Email = "test2@example.com", Personalisation = personalisation }
+            new() { Email = "test@example.com", Personalisation = personalisation, ClientReference = "1example-ref" },
+            new() { Email = "test2@example.com", Personalisation = personalisation, ClientReference = "example-ref-2" }
         };
         var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
 
@@ -138,7 +137,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, mockNotificationClient.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType, demoSupportReferenceNumber);
+        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
 
         // Assert
         mockNotificationClient.Verify(nc =>
@@ -148,15 +147,9 @@ public class NotificationsClientServiceTests
 
         foreach (var recipient in notificationsRecipients)
         {
-            VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send to {recipient.Email}", Times.Exactly(1));
+            VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send, Notify client ref: {recipient.ClientReference}", Times.Exactly(1));
 
-            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent to: {recipient.Email}", Times.Exactly(1));
+            VerifyLogging(_loggerMock, LogLevel.Information, $"Email successfully sent, Notify client ref: {recipient.ClientReference}.  Result details: Id: {emailResponse.id}; Ref: {emailResponse.reference}; URI: {emailResponse.uri}; Content: {emailResponse.content}", Times.Exactly(1));
         }
-
-        VerifyLogging(_loggerMock, LogLevel.Information, $"Result: {emailResponse.id} {emailResponse.reference} {emailResponse.uri}",
-            Times.Exactly(2));
-
-        VerifyLogging(_loggerMock, LogLevel.Information, $"Result: {emailResponse.content}",
-            Times.Exactly(2));
     }
 }
