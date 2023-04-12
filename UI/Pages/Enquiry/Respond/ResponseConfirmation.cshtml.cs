@@ -14,7 +14,6 @@ namespace UI.Pages.Enquiry.Respond
         {
             Data = data;
             Data.SupportReferenceNumber = SupportReferenceNumber;
-            HttpContext.AddLadNameToAnalytics<ResponseConfirmation>(Request.Query["LocalAuthorityDistrictName"].ToString());
         }
     }
 }

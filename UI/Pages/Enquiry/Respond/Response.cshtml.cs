@@ -55,7 +55,6 @@ namespace UI.Pages.Enquiry.Respond
             }
 
             HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
-            HttpContext.AddEnquirySupportReferenceNumberToAnalytics<Response>(Data.SupportReferenceNumber);
 
             return Page();
         }
