@@ -291,7 +291,7 @@ Then("they unselect filter results", () => {
 });
 
 When("they enter an email address causing an error", () => {
-  cy.get("#Data_Email").clear().type("email+1@email.com");
+  cy.get("#Data_Email").clear().type("email+1@invalid");
 });
 
 When(
