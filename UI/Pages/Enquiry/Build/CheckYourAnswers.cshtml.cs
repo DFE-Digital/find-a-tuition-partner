@@ -89,7 +89,7 @@ public class CheckYourAnswers : PageModel
             Data = Data
         };
 
-        SubmittedConfirmationModel submittedConfirmationModel = new SubmittedConfirmationModel();
+        var submittedConfirmationModel = new SubmittedConfirmationModel();
 
         try
         {
