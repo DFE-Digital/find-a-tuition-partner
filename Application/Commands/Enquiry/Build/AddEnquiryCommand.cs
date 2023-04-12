@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TuitionType = Domain.Enums.TuitionType;
 
-namespace Application.Commands;
+namespace Application.Commands.Enquiry.Build;
 
 public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
 {
@@ -80,7 +80,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         var tuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType);
 
-        var enquiry = new Enquiry()
+        var enquiry = new Domain.Enquiry()
         {
             Email = request.Data?.Email!,
             TutoringLogistics = request.Data?.TutoringLogistics!,
@@ -293,7 +293,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return null;
     }
 
-    private async Task HandleDbUpdateException(DbUpdateException ex, Enquiry enquiry)
+    private async Task HandleDbUpdateException(DbUpdateException ex, Domain.Enquiry enquiry)
     {
         var dataSaved = false;
         var retryAttempt = 0;
@@ -337,7 +337,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
     }
 
-    private async Task TrySendEnquirySubmittedConfirmationToEnquirerEmail(Enquiry enquiry,
+    private async Task TrySendEnquirySubmittedConfirmationToEnquirerEmail(Domain.Enquiry enquiry,
         NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient)
     {
         try
@@ -353,7 +353,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
     }
 
-    private async Task CleanUpData(Enquiry enquiry)
+    private async Task CleanUpData(Domain.Enquiry enquiry)
     {
         _unitOfWork.EnquiryRepository.Remove(enquiry);
         var tpMagicLinks = await _unitOfWork.TuitionPartnerEnquiryRepository

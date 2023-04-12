@@ -1,4 +1,4 @@
-namespace Application.Common.Models.Enquiry.Build;
+namespace Application.Common.Models.Enquiry;
 
 public record EnquiryBaseModel : SearchModel
 {

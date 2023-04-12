@@ -1,7 +1,7 @@
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry.Manage;
+using Application.Queries.Enquiry;
 
-
-namespace UI.Pages.Enquiry.Respond
+namespace UI.Pages.Enquiry.Manage
 {
     public class AllEnquirerResponses : PageModel
     {

@@ -1,6 +1,6 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces.Repositories;
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;

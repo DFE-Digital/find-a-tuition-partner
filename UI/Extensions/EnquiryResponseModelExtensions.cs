@@ -1,10 +1,10 @@
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry;
 
 namespace UI.Extensions;
 
 public static class EnquiryResponseModelExtensions
 {
-    public static void EnquiryResponseParseSessionValues(this EnquiryResponseModel data, string key, string value)
+    public static void EnquiryResponseParseSessionValues(this EnquiryResponseBaseModel data, string key, string value)
     {
         switch (key)
         {

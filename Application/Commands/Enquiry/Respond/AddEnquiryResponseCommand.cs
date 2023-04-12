@@ -1,6 +1,6 @@
-using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Respond;
 using Application.Constants;
 using Application.Extensions;
@@ -8,11 +8,11 @@ using Domain;
 using Domain.Enums;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Commands;
+namespace Application.Commands.Enquiry.Respond;
 
 public record AddEnquiryResponseCommand : IRequest<ResponseConfirmationModel>
 {
-    public EnquiryResponseModel Data { get; set; } = null!;
+    public EnquiryResponseBaseModel Data { get; set; } = null!;
 }
 
 public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryResponseCommand, ResponseConfirmationModel>

@@ -1,7 +1,7 @@
 using Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Queries;
+namespace Application.Queries.Enquiry;
 
 public record IsValidMagicLinkTokenQuery(string Token, string SupportReferenceNumber, string? TuitionPartnerSeoUrl = null, bool IsTuitionPartnerResponse = false) : IRequest<bool>;
 
