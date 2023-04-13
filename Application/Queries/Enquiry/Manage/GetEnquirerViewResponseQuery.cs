@@ -1,8 +1,8 @@
 using Application.Common.Interfaces;
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry.Manage;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Queries;
+namespace Application.Queries.Enquiry.Manage;
 
 public record GetEnquirerViewResponseQuery(string SupportReferenceNumber, string TuitionPartnerSeoUrl) : IRequest<EnquirerViewResponseModel?>;
 

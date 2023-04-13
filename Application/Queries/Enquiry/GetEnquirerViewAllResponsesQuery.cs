@@ -1,7 +1,7 @@
 using Application.Common.Interfaces;
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry.Manage;
 
-namespace Application.Queries;
+namespace Application.Queries.Enquiry;
 
 public record GetEnquirerViewAllResponsesQuery(string SupportReferenceNumber) : IRequest<EnquirerViewAllResponsesModel>;
 

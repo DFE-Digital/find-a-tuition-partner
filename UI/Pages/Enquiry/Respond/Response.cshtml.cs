@@ -1,5 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry.Respond;
+using Application.Queries.Enquiry;
+using UI.Models;
 
 namespace UI.Pages.Enquiry.Respond
 {

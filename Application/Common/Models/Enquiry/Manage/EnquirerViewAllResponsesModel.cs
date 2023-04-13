@@ -1,6 +1,6 @@
 using Application.Common.DTO;
 
-namespace Application.Common.Models.Enquiry.Respond;
+namespace Application.Common.Models.Enquiry.Manage;
 
 public class EnquirerViewAllResponsesModel
 {

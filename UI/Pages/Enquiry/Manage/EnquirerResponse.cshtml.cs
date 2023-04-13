@@ -1,6 +1,8 @@
-using Application.Common.Models.Enquiry.Respond;
+using Application.Common.Models.Enquiry.Manage;
+using Application.Queries.Enquiry;
+using Application.Queries.Enquiry.Manage;
 
-namespace UI.Pages.Enquiry.Respond;
+namespace UI.Pages.Enquiry.Manage;
 
 public class EnquirerResponse : PageModel
 {

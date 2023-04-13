@@ -1,5 +1,5 @@
 ﻿@page "/enquiry/{supportReferenceNumber}/{tuitionPartnerSeoUrl}/contact-details"
-@model UI.Pages.Enquiry.Respond.EnquirerViewTuitionPartnerDetails
+@model UI.Pages.Enquiry.Manage.EnquirerViewTuitionPartnerDetails
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
   var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.Token}";
