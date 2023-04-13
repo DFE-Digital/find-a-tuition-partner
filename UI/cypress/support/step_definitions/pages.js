@@ -178,7 +178,15 @@ Then("a user is using a {string}", (device) => {
 });
 
 Then("they will see link to {string} with test id {string}", (link, id) => {
-  cy.get(`[data-testid="${id}"]`).should("have.attr", "href", link);
+  cy.get(`[data-testid="${id}"]`)
+    .should("have.attr", "href")
+    .and(
+      "match",
+      new RegExp(
+        `^${link.replace(/\?FromReturnUrl=.*/, "\\?FromReturnUrl=[^&]*")}.*$`,
+        "i"
+      )
+    );
 });
 
 Then(

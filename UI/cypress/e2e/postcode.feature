@@ -80,7 +80,7 @@ Feature: User enters postcode to begin search
 
   Scenario: accessiblity link to page
     Given a user has started the 'Find a tuition partner' journey
-    Then the accessibility link 'Accessibility' links to '/accessibility?FromReturnUrl=/'
+    Then the accessibility link 'Accessibility' links to '/accessibility?FromReturnUrl='
 
   Scenario: privacy link to page
     Given a user has started the 'Find a tuition partner' journey

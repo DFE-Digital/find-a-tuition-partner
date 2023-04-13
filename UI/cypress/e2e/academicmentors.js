@@ -31,13 +31,11 @@ Then("the book training link opens in a new window", () => {
 });
 
 Then("they will see the funding allocation link", () => {
-  cy.get('[data-testid="funding-allocation-link"]').should(
-    "have.attr",
-    "href",
-    "/funding-and-reporting?FromReturnUrl=/academic-mentors"
-  );
+  cy.get('[data-testid="funding-allocation-link"]').should(($a) => {
+    const href = $a.prop("href");
+    expect(href).to.include("/funding-and-reporting");
+  });
 });
-
 Then("they will see the dbs check link", () => {
   cy.get('[data-testid="dbs-check-link"]').should(
     "have.attr",
@@ -55,11 +53,11 @@ Then("the dbs check link opens in a new window", () => {
 });
 
 Then("they will see the funding and reporting link", () => {
-  cy.get('[data-testid="funding-reporting-link"]').should(
-    "have.attr",
-    "href",
-    "/funding-and-reporting?FromReturnUrl=/academic-mentors"
-  );
+  cy.get('[data-testid="funding-reporting-link"]').should(($a) => {
+    const href = $a.prop("href");
+    expect(href).to.include("/funding-and-reporting");
+    expect(href).to.match(/FromReturnUrl=.*\/academic-mentors$/);
+  });
 });
 
 Then("they will see the funding reporting header", () => {

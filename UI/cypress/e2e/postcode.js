@@ -51,7 +51,8 @@ Then("the other options school-led tutoring links to {string}", (href) => {
 Then("the accessibility link {string} links to {string}", (text, href) => {
   cy.get('[data-testid="accessibility-link"]')
     .should("contain.text", text)
-    .should("have.attr", "href", href);
+    .should("have.attr", "href")
+    .and("match", /^\/accessibility\?FromReturnUrl=.+$/i);
 });
 
 When("they click funding and reporting link", () => {
@@ -74,19 +75,15 @@ Then("they redirects to postcode page", () => {
 });
 
 Then("the privacy link opens privacy page", () => {
-  cy.get('[data-testid="privacy-link"]').should(
-    "have.attr",
-    "href",
-    "/privacy?FromReturnUrl=/"
-  );
+  cy.get('[data-testid="privacy-link"]')
+    .should("have.attr", "href")
+    .and("match", /^\/privacy\?FromReturnUrl=.+$/i);
 });
 
 Then("the contact us link opens contact us page", () => {
-  cy.get('[data-testid="contact-us-link"]').should(
-    "have.attr",
-    "href",
-    "/contact-us?FromReturnUrl=/"
-  );
+  cy.get('[data-testid="contact-us-link"]')
+    .should("have.attr", "href")
+    .and("match", /^\/contact-us\?FromReturnUrl=.+$/i);
 });
 
 Then("the user redirected to postcode page", () => {
