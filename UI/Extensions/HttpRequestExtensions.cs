@@ -46,19 +46,19 @@ namespace UI.Extensions
         {
             var ntpUrl = string.Empty;
 
-            var urlHost = GetHost(urlString);
-
-            if (!string.IsNullOrEmpty(urlHost))
+            try
             {
-                try
+                var uri = GetUri(urlString);
+
+                if (uri != null)
                 {
-                    if (string.Equals(urlHost, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(uri.Host, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
                     {
-                        ntpUrl = urlString;
+                        ntpUrl = $"https://{uri.Authority}{uri.PathAndQuery}";
                     }
                 }
-                catch { } //Suppress exception
             }
+            catch { } //Suppress exception
 
             return ntpUrl;
         }
@@ -71,8 +71,10 @@ namespace UI.Extensions
             {
                 try
                 {
-                    var uri = new Uri(urlString);
-                    host = uri.Host;
+                    var uri = GetUri(urlString);
+
+                    if(uri != null)
+                        host = uri.Host;
                 }
                 catch
                 {
@@ -82,6 +84,18 @@ namespace UI.Extensions
             }
 
             return host;
+        }
+
+        private static Uri? GetUri(string urlString)
+        {
+            Uri? uri = null;
+
+            if (!string.IsNullOrEmpty(urlString))
+            {
+                uri = new Uri(urlString);
+            }
+
+            return uri;
         }
     }
 }
