@@ -73,7 +73,7 @@ namespace UI.Extensions
                 {
                     var uri = GetUri(urlString);
 
-                    if(uri != null)
+                    if (uri != null)
                         host = uri.Host;
                 }
                 catch
