@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Http.Extensions;
+@using System.Web;
 @inject IHostEnvironment HostEnvironment
 @inject IConfiguration Configuration
 @inject IHttpContextAccessor HttpContext
@@ -20,7 +21,7 @@
 
   //fromReturnUrl to apply to query string of the support pages, at the bottom of the layout.
   //If on support page already (useFromReturnUrlElseHome = true) then we don't use current URL,use previous non-support page to return to from query string, to avoid chaining from urls in query string
-  var fromReturnUrl = useFromReturnUrlElseHome ? $"?FromReturnUrl={fromReturnUrlInQueryString}" : $"?{HttpContext?.HttpContext?.Request.GetFromUrlForQueryString()}";
+  var fromReturnUrl = useFromReturnUrlElseHome ? $"?FromReturnUrl={HttpUtility.UrlEncode(fromReturnUrlInQueryString)}" : $"?{HttpContext?.HttpContext?.Request.GetFromUrlForQueryString()}";
 
   if (useFromReturnUrlElseHome)
   {

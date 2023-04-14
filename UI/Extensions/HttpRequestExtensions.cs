@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Http.Extensions;
+using System.Web;
 
 namespace UI.Extensions
 {
@@ -34,7 +35,7 @@ namespace UI.Extensions
         public static string GetFromUrlForQueryString(this HttpRequest request)
         {
             var currentPathAndQuery = request.GetEncodedUrl().Replace("http://", "https://");
-            return $"FromReturnUrl={currentPathAndQuery}";
+            return $"FromReturnUrl={HttpUtility.UrlEncode(currentPathAndQuery)}";
         }
 
         private static string GetReferer(this HttpRequest request)
