@@ -1,11 +1,10 @@
 ﻿@page
-@using Microsoft.AspNetCore.Http.Extensions;
 @model AllTuitionPartners
 @{
   ViewData["Title"] = "All Tuition Partners";
   ViewData["BackLinkHref"] = "/";
   ViewData["IncludePrintPage"] = true;
-  var fromReturnUrl = "?FromReturnUrl=" + HttpContext?.Request.GetEncodedUrl();
+  var fromReturnUrl = "?" + HttpContext?.Request.GetFromUrlForQueryString();
 }
 
 <div class="govuk-grid-row">

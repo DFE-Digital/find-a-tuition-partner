@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Http.Extensions;
+
 namespace UI.Extensions
 {
     public static class HttpRequestExtensions
@@ -27,6 +29,12 @@ namespace UI.Extensions
             var queryString = request.Query[queryStringKey].ToString();
 
             return request.GetNtpUrl(queryString);
+        }
+
+        public static string GetFromUrlForQueryString(this HttpRequest request)
+        {
+            var currentPathAndQuery = request.GetEncodedUrl().Replace("http://", "https://");
+            return $"FromReturnUrl={currentPathAndQuery}";
         }
 
         private static string GetReferer(this HttpRequest request)

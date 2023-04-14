@@ -1,9 +1,8 @@
 ﻿@page
-@using Microsoft.AspNetCore.Http.Extensions;
 @{
     ViewData["Title"] = "Employ mentors";
     ViewData["IncludeHomeLink"] = true;
-  var fromReturnUrl = "?FromReturnUrl=" + HttpContext?.Request.GetEncodedUrl();
+    var fromReturnUrl = "?" + HttpContext?.Request.GetFromUrlForQueryString();
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
