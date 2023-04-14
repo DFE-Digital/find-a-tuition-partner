@@ -6,16 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataImport;
 
-public class OneDriveDataFileEnumerable : IDataFileEnumerable, IEnumerator<DataFile>
+public class AzureBlobStorageDataFileEnumerable : IDataFileEnumerable, IEnumerator<DataFile>
 {
-    private readonly OneDriveFileEnumerable _enum;
+    private readonly AzureBlobStorageFileEnumerable _enum;
 
-    public OneDriveDataFileEnumerable(IOptions<OneDriveSettings> config, IOneDriveApiClient client)
+    public AzureBlobStorageDataFileEnumerable(IOptions<AzureBlobStorageSettings> config, IAzureBlobStorageService service)
     {
-        _enum = new OneDriveFileEnumerable(client, config.Value.TuitionPartnerDataFolderId, new[]
-        {
-            ".xlsx"
-        });
+        _enum = new AzureBlobStorageFileEnumerable(service, config.Value.TuitionPartnerDataFolderName);
     }
 
     public IEnumerator<DataFile> GetEnumerator() => this;

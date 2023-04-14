@@ -6,16 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.DataImport;
 
-public class OneDriveLogoFileEnumerable : ILogoFileEnumerable, IEnumerator<DataFile>
+public class AzureBlobStorageLogoFileEnumerable : ILogoFileEnumerable, IEnumerator<DataFile>
 {
-    private readonly OneDriveFileEnumerable _enum;
+    private readonly AzureBlobStorageFileEnumerable _enum;
 
-    public OneDriveLogoFileEnumerable(IOptions<OneDriveSettings> config, IOneDriveApiClient client)
+    public AzureBlobStorageLogoFileEnumerable(IOptions<AzureBlobStorageSettings> config, IAzureBlobStorageService service)
     {
-        _enum = new OneDriveFileEnumerable(client, config.Value.TuitionPartnerLogosFolderId, new[]
-        {
-            ".png", ".svg"
-        });
+        _enum = new AzureBlobStorageFileEnumerable(service, config.Value.TuitionPartnerLogosFolderName);
     }
 
     public IEnumerator<DataFile> GetEnumerator() => this;

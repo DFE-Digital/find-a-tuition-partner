@@ -5,7 +5,6 @@ using Application.Common.Interfaces.Repositories;
 using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
-using Infrastructure.ApiClients;
 using Infrastructure.Configuration;
 using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
@@ -19,7 +18,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 
 namespace Infrastructure.Extensions;
 
@@ -148,30 +146,15 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
-        var oneDriveSettings = new OneDriveSettings();
-        configuration.GetSection(OneDriveSettings.OneDrive).Bind(oneDriveSettings);
-        oneDriveSettings.Validate();
-        services.Configure<OneDriveSettings>(configuration.GetSection(OneDriveSettings.OneDrive));
+        var azureBlobStorageSettings = new AzureBlobStorageSettings();
+        configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage).Bind(azureBlobStorageSettings);
+        azureBlobStorageSettings.Validate();
+        services.Configure<AzureBlobStorageSettings>(configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage));
         services.AddOptions();
-
-        var confidentialClientApplication = ConfidentialClientApplicationBuilder
-            .Create(oneDriveSettings.ClientId)
-            .WithTenantId(oneDriveSettings.TenantId)
-            .WithClientSecret(oneDriveSettings.ClientSecret)
-            .Build();
-
-        var authResult =
-            confidentialClientApplication.AcquireTokenForClient(new[] { "https://graph.microsoft.com/.default" })
-                .ExecuteAsync().GetAwaiter().GetResult();
-
-        services.AddHttpClient(nameof(OneDriveApiClient), httpClient =>
-        {
-            httpClient.BaseAddress = new Uri("https://graph.microsoft.com/");
-            httpClient.Timeout = TimeSpan.FromSeconds(60);
-        }).AddHttpMessageHandler(() => new AuthorizationHeaderHandler(authResult.AccessToken));
-        services.AddScoped<IOneDriveApiClient, OneDriveApiClient>();
-        services.AddScoped<IDataFileEnumerable, OneDriveDataFileEnumerable>();
-        services.AddScoped<ILogoFileEnumerable, OneDriveLogoFileEnumerable>();
+        services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
+        services.AddScoped<IGetAccessToken, AzureBlobStorageService>();
+        services.AddScoped<IDataFileEnumerable, AzureBlobStorageDataFileEnumerable>();
+        services.AddScoped<ILogoFileEnumerable, AzureBlobStorageLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ISpreadsheetTuitionPartnerFactory, SpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
