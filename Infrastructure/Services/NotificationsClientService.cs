@@ -100,6 +100,34 @@ public class NotificationsClientService : INotificationsClientService
         return allEmailsSent;
     }
 
+
+    public async Task<bool> GetNotificationById(string notificationId)
+    {
+        try
+        {
+            var result = await _notificationClient.GetNotificationByIdAsync(notificationId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error has occurred while attempting to GetNotificationById, notificationId: {notificationId}", notificationId);
+            throw;
+        }
+    }
+    public async Task<bool> GetNotifications()
+    {
+        try
+        {
+            var result = await _notificationClient.GetNotificationsAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error has occurred while attempting to GetNotifications.");
+            throw;
+        }
+    }
+
     private void AddTestingInformation(NotificationsRecipientDto notificationsRecipient, bool includeChangedFromEmailAddress = true)
     {
         //Add in these keys as empty since must exist in code even if nothing to pass in

@@ -9,4 +9,7 @@ public interface INotificationsClientService
         bool includeChangedFromEmailAddress = true);
     Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
         EmailTemplateType emailTemplateType);
+
+    Task<bool> GetNotificationById(string notificationId);
+    Task<bool> GetNotifications();
 }
