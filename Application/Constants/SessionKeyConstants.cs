@@ -26,8 +26,6 @@
 
         public const string EnquiryResponseKeyStageAndSubjectsText = "EnquiryResponseKeyStageAndSubjectsText";
 
-        public const string EnquiryResponseToken = "EnquiryResponseToken";
-
         public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
     }
 }

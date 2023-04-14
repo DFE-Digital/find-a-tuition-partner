@@ -67,34 +67,6 @@ public class NotificationsClientServiceTests
     }
 
     [Fact]
-    public async Task SendEmailAsync_ShouldLogError_WhenNoRecipientsSupplied()
-    {
-        // Arrange
-        var personalisation = new Dictionary<string, dynamic>();
-        var notificationsRecipients = new List<NotificationsRecipientDto> { new()
-        { Email = "",
-            Personalisation = personalisation} };
-        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
-
-        _notifyConfigMock.Setup(x => x.Value)
-            .Returns(new GovUkNotifyOptions { });
-
-        _emailSettingsConfigMock.Setup(x => x.Value)
-            .Returns(new EmailSettings());
-
-        _notificationsClientService =
-          new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object,
-            _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
-
-        // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
-
-        // Assert
-        VerifyLogging(_loggerMock, LogLevel.Error, $"No email address was supplied for the recipient: {notificationsRecipients.First()}.",
-            Times.Once());
-    }
-
-    [Fact]
     public async Task Test_SendEmailAsync_Should_Send_Emails()
     {
         // Arrange

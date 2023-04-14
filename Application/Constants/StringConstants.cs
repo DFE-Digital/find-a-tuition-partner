@@ -30,11 +30,5 @@
         public const string NotSpecified = "Not specified";
 
         public const string IsRequiredLabel = "This field is required";
-
-        public const string EnquirerEmailSentStatus4xxErrorValue = "4xxError";
-
-        public const string EnquirerEmailSentStatus5xxErrorValue = "5xxError";
-
-        public const string EnquirerEmailSentStatusDeliveredValue = "delivered";
     }
 }

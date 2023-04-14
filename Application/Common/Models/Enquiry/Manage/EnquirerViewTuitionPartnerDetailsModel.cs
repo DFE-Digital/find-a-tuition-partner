@@ -1,12 +1,8 @@
-﻿namespace Application.Common.Models.Enquiry.Respond;
+﻿namespace Application.Common.Models.Enquiry.Manage;
 
 public record EnquirerViewTuitionPartnerDetailsModel
 {
     public string SupportReferenceNumber { get; set; } = null!;
-
-    public string EnquirerViewAllResponsesToken { get; set; } = null!;
-
-    public string EnquirerViewResponseToken { get; set; } = null!;
 
     public string TuitionPartnerName { get; set; } = null!;
 
@@ -20,4 +16,5 @@ public record EnquirerViewTuitionPartnerDetailsModel
 
     public string? TuitionPartnerSeoUrl { get; set; }
 
+    public string Token { get; set; } = string.Empty;
 }

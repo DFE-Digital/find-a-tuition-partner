@@ -6,7 +6,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Notify.Exceptions;
+using Notify.Interfaces;
+using Notify.Models.Responses;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Tests.TestData;
 using UI;
 
@@ -75,15 +79,49 @@ public class SliceFixture : IAsyncLifetime
                 });
 
 
-            SessionService = Substitute.For<ISessionService>();
+            SessionService = new Mock<ISessionService>();
 
-            SessionService
-                .SessionDataExistsAsync()
-                .Returns(true);
+            SessionService.Setup(nc =>
+                    nc.SessionDataExistsAsync(It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            SessionService.Setup(nc =>
+                    nc.AddOrUpdateDataAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+
+            SessionService.Setup(nc =>
+                    nc.AddOrUpdateDataAsync(It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()));
+
+            NotificationClient = new Mock<IAsyncNotificationClient>();
+
+            NotificationClient.Setup(nc =>
+                    nc.SendEmailAsync(It.Is<string>(x => !x.Contains("error")), It.IsAny<string>(),
+                        It.IsAny<Dictionary<string, dynamic>>(),
+                        It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new EmailNotificationResponse
+                {
+                    id = "id",
+                    reference = "reference",
+                    uri = "uri",
+                    content = new EmailResponseContent()
+                });
+
+            NotificationClient.Setup(nc =>
+                    nc.SendEmailAsync(It.Is<string>(x => x.Contains("400error")), It.IsAny<string>(),
+                        It.IsAny<Dictionary<string, dynamic>>(),
+                        It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new NotifyClientException("Status code 400. Error: An error worth retry"));
+
+            NotificationClient.Setup(nc =>
+                    nc.SendEmailAsync(It.Is<string>(x => x.Contains("500error")), It.IsAny<string>(),
+                        It.IsAny<Dictionary<string, dynamic>>(),
+                        It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new NotifyClientException("Status code 500. Error: Some serious issue"));
+
         }
 
         public ILocationFilterService LocationFilter { get; }
-        public ISessionService SessionService { get; }
+        public Mock<ISessionService> SessionService { get; }
+        public Mock<IAsyncNotificationClient> NotificationClient { get; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -112,7 +150,9 @@ public class SliceFixture : IAsyncLifetime
                 services.AddSingleton(LocationFilter);
 
                 services.Remove<ISessionService>();
-                services.AddSingleton(SessionService);
+                services.AddSingleton(SessionService.Object);
+
+                services.AddSingleton(NotificationClient.Object);
 
                 services.AddMvc().AddControllersAsServices();
             });

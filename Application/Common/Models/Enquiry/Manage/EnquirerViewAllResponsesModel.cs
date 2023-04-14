@@ -1,6 +1,6 @@
 using Application.Common.DTO;
 
-namespace Application.Common.Models.Enquiry.Respond;
+namespace Application.Common.Models.Enquiry.Manage;
 
 public class EnquirerViewAllResponsesModel
 {
@@ -21,6 +21,8 @@ public class EnquirerViewAllResponsesModel
 
     public string? AdditionalInformation { get; set; }
     public DateTime EnquiryCreatedDateTime { get; set; }
+
+    public string Token { get; set; } = string.Empty;
 
     public List<EnquirerViewResponseDto> EnquirerViewResponses { get; set; } = null!;
 }

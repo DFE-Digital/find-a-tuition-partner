@@ -18,9 +18,4 @@ public static class IntExtensions
     {
         return statusCode >= 400 && statusCode < 500;
     }
-
-    public static bool Is5xxError(this int statusCode)
-    {
-        return statusCode >= 500 && statusCode < 600;
-    }
 }

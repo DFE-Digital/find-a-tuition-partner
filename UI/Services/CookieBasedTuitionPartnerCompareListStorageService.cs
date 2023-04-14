@@ -83,7 +83,7 @@ public class CookieBasedTuitionPartnerCompareListStorageService : ITuitionPartne
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error occurred while trying to delete the cookie {cookieName}. Error: {ex}", ex, CookieName);
+            _logger.LogError(ex, "An error occurred while trying to delete the cookie {cookieName}.", CookieName);
             return false;
         }
         return true;
@@ -156,7 +156,7 @@ public class CookieBasedTuitionPartnerCompareListStorageService : ITuitionPartne
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error occurred while trying to add the cookie {cookieName}. Error: {ex}", ex, CookieName);
+            _logger.LogError(ex, "An error occurred while trying to add the cookie {cookieName}.", CookieName);
             return false;
         }
         return true;

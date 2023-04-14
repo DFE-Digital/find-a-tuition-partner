@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
-namespace UI.Pages.Enquiry.Respond
+namespace UI.Models
 {
     public class ResponsePageModel<T> : PageModel where T : PageModel
     {

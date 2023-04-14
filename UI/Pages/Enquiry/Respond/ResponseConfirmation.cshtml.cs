@@ -4,11 +4,16 @@ namespace UI.Pages.Enquiry.Respond
 {
     public class ResponseConfirmation : PageModel
     {
-        public SubmittedConfirmationModel Data { get; set; } = new();
-        public void OnGet(SubmittedConfirmationModel data)
+        public ResponseConfirmationModel Data { get; set; } = new();
+
+        [FromRoute(Name = "support-reference-number")] public string SupportReferenceNumber { get; set; } = string.Empty;
+
+        [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
+
+        public void OnGet(ResponseConfirmationModel data)
         {
             Data = data;
-            HttpContext.AddLadNameToAnalytics<ResponseConfirmation>(Data.LocalAuthorityDistrictName);
+            Data.SupportReferenceNumber = SupportReferenceNumber;
         }
     }
 }
