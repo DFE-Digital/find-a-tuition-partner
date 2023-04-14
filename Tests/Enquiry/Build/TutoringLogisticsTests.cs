@@ -44,7 +44,7 @@ public class TutoringLogisticsTests
     }
 
     [Fact]
-    public void Has_more_than_to_max_data()
+    public void Has_more_than_max_data()
     {
         var model = new TutoringLogisticsModel { TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1) };
         var result = new TutoringLogisticsModelValidator().TestValidate(model);

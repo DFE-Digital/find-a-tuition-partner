@@ -25,10 +25,6 @@ namespace UI.Pages
 
         public void OnGet()
         {
-            if (TempData["Status"] is HttpStatusCode status)
-            {
-                Status = status;
-            }
             IncludeEnquiryBuilder = _featureFlagsConfig.EnquiryBuilder;
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }

@@ -8,12 +8,6 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
 {
     public CheckYourAnswersModelValidator()
     {
-        //TODO - Postcode needs to be validated, but not shown on check your answers page, so what to do if invalid?
-        RuleFor(m => m.Postcode)
-            .NotEmpty()
-            .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("Enter a postcode");
-
         RuleFor(m => m.HasKeyStageSubjects)
             .NotEqual(false)
             .When(m => m.ConfirmTermsAndConditions)

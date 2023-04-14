@@ -1,3 +1,3 @@
 namespace Application.Common.Models.Enquiry.Respond;
 
-public record CheckYourAnswersModel : EnquiryResponseModel;
+public record CheckYourAnswersModel : EnquiryResponseBaseModel;
