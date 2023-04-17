@@ -88,9 +88,9 @@ jobs:
             --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
             --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
             --var azure-blob-storage-client-secret="${{ secrets.AZURE_BLOB_STORAGE_CLIENT_SECRET }}" \
-            --var azure-blob-storage-client-id="${{ env.AZURE_BLOB_STORAGE_CLIENT_ID }}" \
-            --var azure-blob-storage-tenant-id="${{ env.AZURE_BLOB_STORAGE_TENANT_ID }}" \
-            --var azure-blob-storage-account-name="${{ env.AZURE_BLOB_STORAGE_ACCOUNT_NAME }}" 
+            --var azure-blob-storage-client-id="${{ vars.AZURE_BLOB_STORAGE_CLIENT_ID }}" \
+            --var azure-blob-storage-tenant-id="${{ vars.AZURE_BLOB_STORAGE_TENANT_ID }}" \
+            --var azure-blob-storage-account-name="${{ vars.AZURE_BLOB_STORAGE_ACCOUNT_NAME }}" 
 
       - name: Run database migrations and import data
         if: ${{ inputs.run_database_migrations_and_import_data == true }}
