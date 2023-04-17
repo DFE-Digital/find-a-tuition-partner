@@ -69,9 +69,10 @@ jobs:
           --var dotnet-environment=$PR_NUMBER \
           --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
           --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
-          --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
-          --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
-          --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
+          --var azure-blob-storage-client-secret="${{ secrets.AZURE_BLOB_STORAGE_CLIENT_SECRET }}" \
+          --var azure-blob-storage-client-id="${{ env.AZURE_BLOB_STORAGE_CLIENT_ID }}" \
+          --var azure-blob-storage-tenant-id="${{ env.AZURE_BLOB_STORAGE_TENANT_ID }}" \
+          --var azure-blob-storage-account-name="${{ env.AZURE_BLOB_STORAGE_ACCOUNT_NAME }}" 
 
     - name: Run database migrations and import data
       run: |
