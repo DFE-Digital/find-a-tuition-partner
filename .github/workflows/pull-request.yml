@@ -33,12 +33,6 @@ jobs:
         npm ci
         npm run build
 
-    - name: Add credentials.json
-      run: |
-        tee Infrastructure/credentials.json << EOF
-        ${{ secrets.GOOGLE_DRIVE_SERVICE_ACCOUNT_KEY }}
-        EOF
-
     - name: Add DfE Analytics credentials.json
       run: |
         tee UI/dfe-analytics-credentials.json << EOF
@@ -83,7 +77,6 @@ jobs:
       run: |
         cf run-task find-a-tuition-partner-$PR_NUMBER \
           --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
-          --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" \
           --name find-a-tuition-partner-$PR_NUMBER-data-import
     
     - name: Logout

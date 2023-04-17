@@ -15,3 +15,6 @@ override-email-address:
 email-amalgamate-responses: false
 email-all-sent-to-enquirer: true
 feature-flag-enquiry-builder: true
+azure-blob-storage-container-name: ntp-tp-data
+azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/
+azure-blob-storage-tuition-partner-logos-folder-name: tp-logos/

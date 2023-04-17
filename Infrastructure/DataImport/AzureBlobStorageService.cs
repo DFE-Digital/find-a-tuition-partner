@@ -53,7 +53,7 @@ public class AzureBlobStorageService : IAzureBlobStorageService, IGetAccessToken
         var accessToken = await GetAccessTokenAsync(_config.ClientId, _config.ClientSecret, _config.TenantId,
             resource);
         // Create a BlobServiceClient using the account name, account key, and custom token credential
-        var blobServiceClient = new BlobServiceClient(new Uri($"https://{_config.StorageAccountName}.blob.core.windows.net"),
+        var blobServiceClient = new BlobServiceClient(new Uri($"https://{_config.AccountName}.blob.core.windows.net"),
             new CustomTokenCredential(accessToken));
 
         // Get the user delegation key using the custom token credential
@@ -92,7 +92,7 @@ public class AzureBlobStorageService : IAzureBlobStorageService, IGetAccessToken
 
             // Create a BlobServiceClient with the SAS token
             var blobServiceClient =
-                new BlobServiceClient(new Uri($"https://{_config.StorageAccountName}.blob.core.windows.net?{sasToken}"));
+                new BlobServiceClient(new Uri($"https://{_config.AccountName}.blob.core.windows.net?{sasToken}"));
 
             // Get a reference to the container
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(_config.ContainerName);
@@ -122,7 +122,7 @@ public class AzureBlobStorageService : IAzureBlobStorageService, IGetAccessToken
         {
             // Create a BlobServiceClient with the SAS token
             var blobServiceClient =
-                new BlobServiceClient(new Uri($"https://{_config.StorageAccountName}.blob.core.windows.net?{sasToken}"));
+                new BlobServiceClient(new Uri($"https://{_config.AccountName}.blob.core.windows.net?{sasToken}"));
 
             // Get a reference to the container
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(_config.ContainerName);
