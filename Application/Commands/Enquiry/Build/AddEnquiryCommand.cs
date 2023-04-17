@@ -1,4 +1,3 @@
-using System.Net;
 using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models;
@@ -12,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TuitionType = Domain.Enums.TuitionType;
 
-namespace Application.Commands;
+namespace Application.Commands.Enquiry.Build;
 
 public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
 {
@@ -49,18 +48,16 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     {
         var result = new SubmittedConfirmationModel();
 
-        if (request.Data == null || request.Data.TuitionPartnersForEnquiry == null ||
-            request.Data.TuitionPartnersForEnquiry.Count == 0)
+        var validationResult = ValidateRequest(request);
+        if (validationResult != null)
         {
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.NotFound.ToString();
-            return result;
+            validationResult = $"The {nameof(AddEnquiryCommand)} {validationResult}";
+            _logger.LogError(validationResult);
+            throw new ArgumentException(validationResult);
         }
 
-        var enquirerEmailForTestingPurposes = request.Data?.Email!;
-
         var enquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(
-            request.Data!.TuitionPartnersForEnquiry!.Results, enquirerEmailForTestingPurposes);
+            request.Data!.TuitionPartnersForEnquiry!.Results, request.Data?.Email!);
 
         var enquirySubmittedConfirmationToEnquirerNotificationsRecipient =
             GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
@@ -81,23 +78,9 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
             }).ToList();
 
-        var keyStageSubjects = request.Data.Subjects?.ParseKeyStageSubjects() ?? Array.Empty<KeyStageSubject>();
-        var postCode = request.Data.Postcode;
-        var localAuthorityDistrictName = request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName;
+        var tuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType);
 
-        var validationResult =
-            ValidateFieldValuesAndLogErrorMessage(keyStageSubjects, postCode, localAuthorityDistrictName);
-
-        if (string.IsNullOrEmpty(validationResult))
-        {
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.NotFound.ToString();
-            return result;
-        }
-
-        var tuitionTypeId = GetTuitionTypeId(request.Data.TuitionType);
-
-        var enquiry = new Enquiry()
+        var enquiry = new Domain.Enquiry()
         {
             Email = request.Data?.Email!,
             TutoringLogistics = request.Data?.TutoringLogistics!,
@@ -105,32 +88,27 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             AdditionalInformation = request.Data?.AdditionalInformation ?? null,
             TuitionPartnerEnquiry = tuitionPartnerEnquiry,
             SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
-            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(keyStageSubjects),
-            PostCode = postCode!,
-            LocalAuthorityDistrict = localAuthorityDistrictName!,
+            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
+            PostCode = request.Data!.Postcode!,
+            LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
             TuitionTypeId = tuitionTypeId,
             MagicLink = enquirerMagicLink
         };
-
-        var dataSaved = false;
 
         try
         {
             _unitOfWork.EnquiryRepository.AddAsync(enquiry, cancellationToken);
 
-            dataSaved = await _unitOfWork.Complete();
-
+            await _unitOfWork.Complete();
         }
         catch (DbUpdateException ex)
         {
-            dataSaved = await HandleDbUpdateException(ex, enquiry);
+            await HandleDbUpdateException(ex, enquiry);
         }
         catch (Exception ex)
         {
-            _logger.LogError("An error has occurred while trying to save the enquiry. Error: {ex}", ex);
-            result.IsValid = false;
-            result.ErrorStatus = HttpStatusCode.InternalServerError.ToString();
-            return result;
+            _logger.LogError(ex, "An error has occurred while trying to save the enquiry.");
+            throw;
         }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
@@ -145,6 +123,9 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer,
             enquiry.CreatedAt);
 
+        await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
+            enquirySubmittedConfirmationToEnquirerNotificationsRecipient);
+
         enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
             x.Personalisation = GetEnquirySubmittedToTpPersonalisation(x.TuitionPartnerName!,
                 $"{request.Data!.BaseServiceUrl}/enquiry-response/{x.TuitionPartnerName.ToSeoUrl()}/{enquiry.SupportReferenceNumber}?Token={x.Token}",
@@ -156,42 +137,28 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedToTp,
             enquiry.CreatedAt, x.TuitionPartnerName));
 
-        var enquirerEmailSentStatus = await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
-            enquirySubmittedConfirmationToEnquirerNotificationsRecipient);
-
-        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
-            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus4xxErrorValue
-            || enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatus5xxErrorValue)
-        {
-            result.EnquirerEmailSentStatus = enquirerEmailSentStatus;
-            return result;
-        }
-
-        if (!string.IsNullOrEmpty(enquirerEmailSentStatus) &&
-            enquirerEmailSentStatus == StringConstants.EnquirerEmailSentStatusDeliveredValue)
+        try
         {
             await _notificationsClientService.SendEmailAsync(enquirySubmittedToTpNotificationsRecipients,
-                EmailTemplateType.EnquirySubmittedToTp);
+            EmailTemplateType.EnquirySubmittedToTp);
         }
+        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
 
-        if (dataSaved)
-        {
-            var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
+        var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
 
-            result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
-            result.EnquirerMagicLink = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-            enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-                tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
-                {
-                    TuitionPartnerSeoUrl = x.TuitionPartnerName.ToSeoUrl()!,
-                    Email = x.OriginalEmail,
-                    MagicLinkToken = x.Token!
-                }));
+        result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
+        result.EnquirerMagicLink = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
+        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
+            tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
+            {
+                TuitionPartnerSeoUrl = x.TuitionPartnerName.ToSeoUrl()!,
+                Email = x.OriginalEmail,
+                MagicLinkToken = x.Token!
+            }));
 
-            result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
+        result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
 
-            result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
-        }
+        result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
 
         return result;
     }
@@ -286,109 +253,107 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return keyStageSubjectEnquiry;
     }
 
-    private string ValidateFieldValuesAndLogErrorMessage(KeyStageSubject[] keyStageSubject, string? postCode,
-        string? localAuthorityDistrictName)
+    private static string? ValidateRequest(AddEnquiryCommand request)
     {
-        var result = "Valid";
-
-        if (!keyStageSubject.Any())
+        if (request.Data == null)
         {
-            _logger.LogError("The {request} Input contains no KeyStage and Subjects.", nameof(AddEnquiryCommand));
-            return string.Empty;
+            return "Data is null";
         }
 
-        if (string.IsNullOrEmpty(postCode))
+        if (request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0)
         {
-            _logger.LogError("The {request} Input contains no PostCode.", nameof(AddEnquiryCommand));
-            return string.Empty;
+            return "Data.TuitionPartnersForEnquiry count is 0";
         }
 
-        if (string.IsNullOrEmpty(localAuthorityDistrictName))
+        if (string.IsNullOrWhiteSpace(request.Data.Postcode))
         {
-            _logger.LogError("The {request} Input contains no LocalAuthorityDistrictName.",
-                nameof(AddEnquiryCommand));
-            return string.Empty;
+            return "Data.Postcode is null or empty";
         }
 
-        return result;
+        if (string.IsNullOrWhiteSpace(request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName))
+        {
+            return "Data.LocalAuthorityDistrictName is null or empty";
+        }
+
+        if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
+        {
+            return "Data.Subjects count is 0";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.Email))
+        {
+            return "Data.Email is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogistics))
+        {
+            return "Data.TutoringLogistics is null or empty";
+        }
+
+        return null;
     }
 
-    private async Task<bool> HandleDbUpdateException(DbUpdateException ex, Enquiry enquiry)
+    private async Task HandleDbUpdateException(DbUpdateException ex, Domain.Enquiry enquiry)
     {
         var dataSaved = false;
+        var retryAttempt = 0;
 
         while (!dataSaved)
         {
+            retryAttempt++;
+
             if (ex.InnerException != null &&
                 (ex.InnerException.Message.Contains("duplicate key") ||
                  ex.InnerException.Message.Contains("unique constraint") ||
                  ex.InnerException.Message.Contains("violates unique constraint")))
             {
                 _logger.LogError(
-                    "Violation on unique constraint. Support Reference Number: {referenceNumber} Error: {ex}",
-                    enquiry.SupportReferenceNumber, ex);
+                    ex,
+                    "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Next retry attempt number: {retryAttempt}",
+                    enquiry.SupportReferenceNumber, retryAttempt);
 
                 enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
 
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",
                     enquiry.SupportReferenceNumber);
 
-                dataSaved = await _unitOfWork.Complete();
+                try
+                {
+                    dataSaved = await _unitOfWork.Complete();
+                }
+                catch (DbUpdateException retryEx)
+                {
+                    if (retryAttempt > 10)
+                    {
+                        throw;
+                    }
+                    ex = retryEx;
+                }
             }
             else
             {
-                // Handle unique constraint violation error; otherwise, exit from the while loop.
-                dataSaved = true;
-
-                _logger.LogError("A DbUpdateException error occurred while adding an enquiry. Error: {ex}", ex);
+                throw ex;
             }
         }
-
-        return dataSaved;
     }
 
-    private async Task<string> TrySendEnquirySubmittedConfirmationToEnquirerEmail(Enquiry enquiry,
+    private async Task TrySendEnquirySubmittedConfirmationToEnquirerEmail(Domain.Enquiry enquiry,
         NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient)
     {
-        var result = string.Empty;
         try
         {
-            var enquirerEmailSent = false;
-
-            while (!enquirerEmailSent)
-            {
-                (var emailSent, HttpStatusCode status) = await _notificationsClientService.SendEmailAsync(
-                    getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                    EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
-
-                if (emailSent && status == HttpStatusCode.OK)
-                {
-                    enquirerEmailSent = true;
-                    result = StringConstants.EnquirerEmailSentStatusDeliveredValue;
-                }
-
-                if (!emailSent && status == HttpStatusCode.BadRequest)
-                {
-                    await CleanUpData(enquiry);
-                    return StringConstants.EnquirerEmailSentStatus4xxErrorValue;
-                }
-
-                if (!emailSent && status == HttpStatusCode.InternalServerError)
-                {
-                    await CleanUpData(enquiry);
-                    return StringConstants.EnquirerEmailSentStatus5xxErrorValue;
-                }
-            }
+            await _notificationsClientService.SendEmailAsync(
+                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
+                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            _logger.LogError("An error occurred while sending emails to the Tps and Enquirer. Error: {ex}", ex);
+            await CleanUpData(enquiry);
+            throw;
         }
-
-        return result;
     }
 
-    private async Task CleanUpData(Enquiry enquiry)
+    private async Task CleanUpData(Domain.Enquiry enquiry)
     {
         _unitOfWork.EnquiryRepository.Remove(enquiry);
         var tpMagicLinks = await _unitOfWork.TuitionPartnerEnquiryRepository

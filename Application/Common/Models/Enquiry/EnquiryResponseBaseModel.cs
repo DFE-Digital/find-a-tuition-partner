@@ -1,8 +1,6 @@
-using Application.Common.Models.Enquiry.Build;
+namespace Application.Common.Models.Enquiry;
 
-namespace Application.Common.Models.Enquiry.Respond;
-
-public record EnquiryResponseModel : EnquiryBaseModel
+public record EnquiryResponseBaseModel : EnquiryBaseModel
 {
     public string TuitionPartnerName { get; set; } = string.Empty;
 

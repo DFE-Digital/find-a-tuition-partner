@@ -41,7 +41,7 @@ public class SENDRequirementsTests
     }
 
     [Fact]
-    public void Has_more_than_to_max_data()
+    public void Has_more_than_max_data()
     {
         var model = new SENDRequirementsModel { SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1) };
         var result = new SENDRequirementsModelValidator().TestValidate(model);

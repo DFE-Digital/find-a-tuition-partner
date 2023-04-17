@@ -1,4 +1,5 @@
 using System.Text;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using UI.Services;
@@ -10,13 +11,15 @@ public class DistributedSessionServiceTests
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
     private readonly DistributedSessionService _sessionService;
     private readonly Mock<ISession> _sessionMock;
+    private readonly Mock<ILogger<DistributedSessionService>> _loggerMock;
     private const string DefaultPreKey = "General";
 
     public DistributedSessionServiceTests()
     {
         _sessionMock = new Mock<ISession>();
         _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-        _sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+        _loggerMock = new Mock<ILogger<DistributedSessionService>>();
+        _sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -57,7 +60,7 @@ public class DistributedSessionServiceTests
             .Setup(x => x.HttpContext)
             .Returns(mockHttpContext.Object);
 
-        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object, _loggerMock.Object);
 
         // Act
         await sessionService.AddOrUpdateDataAsync(updatedData);
@@ -115,7 +118,7 @@ public class DistributedSessionServiceTests
             .SetupGet(x => x.HttpContext)
             .Returns(mockHttpContext.Object);
 
-        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object);
+        var sessionService = new DistributedSessionService(_mockHttpContextAccessor.Object, _loggerMock.Object);
 
         // Act
         await sessionService.DeleteDataAsync();

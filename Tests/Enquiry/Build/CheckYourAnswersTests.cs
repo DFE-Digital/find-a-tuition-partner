@@ -1,8 +1,16 @@
 ﻿using Application.Common.Models.Enquiry.Build;
+using Application.Constants;
 using Application.Validators.Enquiry.Build;
+using Domain.Constants;
 using Domain.Enums;
 using FluentValidation.TestHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing;
+using Notify.Exceptions;
 using Tests.TestData;
+using UI.Pages.Enquiry.Build;
 
 namespace Tests.Enquiry.Build;
 
@@ -14,11 +22,18 @@ public class CheckYourAnswersTests
     public CheckYourAnswersTests(SliceFixture fixture)
     {
         _fixture = fixture;
+
+        _ = _fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("a", "Alpha")
+            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .InSchool().Costing(12m).ForGroupSizes(2))));
     }
 
     [Theory]
     [MemberData(nameof(ValidTestData))]
-    public void Has_valid_data(CheckYourAnswersModel model)
+    public void Has_valid_data_no_validation_errors(CheckYourAnswersModel model)
     {
         var result = new CheckYourAnswersModelValidator().TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
@@ -26,11 +41,161 @@ public class CheckYourAnswersTests
 
     [Theory]
     [MemberData(nameof(InValidTestData))]
-    public void Has_invalid_data(CheckYourAnswersModel model)
+    public void Has_invalid_data_has_validation_errors(CheckYourAnswersModel model)
     {
         var result = new CheckYourAnswersModelValidator().TestValidate(model);
         result.ShouldHaveAnyValidationError();
     }
+
+    [Fact]
+    public void Has_more_than_max_data()
+    {
+        var model = new CheckYourAnswersModel
+        {
+            TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            AdditionalInformation = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            ConfirmTermsAndConditions = true
+        };
+
+        var result = new CheckYourAnswersModelValidator().TestValidate(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
+        result.ShouldHaveValidationErrorFor(x => x.SENDRequirements);
+        result.ShouldHaveValidationErrorFor(x => x.AdditionalInformation);
+    }
+
+    [Fact]
+    public async Task With_a_valid_data_post_moves_to_next_page()
+    {
+        // Arrange
+        var model = new CheckYourAnswersModel
+        {
+            Postcode = District.Dacorum.SamplePostcode,
+            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+                },
+            Subjects = new string[] { "KeyStage1-English" },
+            HasKeyStageSubjects = true,
+            TuitionType = TuitionType.Any,
+            Email = "test@test.com",
+            TutoringLogistics = "Test content",
+            ConfirmTermsAndConditions = true
+        };
+
+        //Act
+        var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            page.Data = model;
+            return page.OnPostAsync();
+        });
+
+        //Assert
+        result.Should().NotBeNull();
+        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+        redirect.PageName.Should().Be(nameof(SubmittedConfirmation));
+    }
+
+    [Fact]
+    public async Task With_invalid_data_post_throws_exception()
+    {
+        // Arrange
+        var model = new CheckYourAnswersModel
+        {
+            Postcode = District.Dacorum.SamplePostcode,
+            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+                },
+            Subjects = new string[] { "KeyStage1-English" },
+            HasKeyStageSubjects = true,
+            TuitionType = TuitionType.Any,
+            Email = "test@test.com",
+            //TutoringLogistics = "Test content",
+            ConfirmTermsAndConditions = true
+        };
+
+        //Act
+        Task act() => _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            page.Data = model;
+            return page.OnPostAsync();
+        });
+
+        //Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+        exception.Message.Should().Be("The AddEnquiryCommand Data.TutoringLogistics is null or empty");
+    }
+
+
+    [Fact]
+    public async Task With_invalid_email_post_throws_400_exception()
+    {
+        // Arrange
+        var model = new CheckYourAnswersModel
+        {
+            Postcode = District.Dacorum.SamplePostcode,
+            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+                },
+            Subjects = new string[] { "KeyStage1-English" },
+            HasKeyStageSubjects = true,
+            TuitionType = TuitionType.Any,
+            Email = "400error@test",
+            TutoringLogistics = "Test content",
+            ConfirmTermsAndConditions = true
+        };
+
+        //Act
+        var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            page.Data = model;
+            return page.OnPostAsync();
+        });
+
+        //Assert
+        result.Should().NotBeNull();
+        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+        redirect.PageName.Should().Be(nameof(EnquirerEmail));
+    }
+
+    [Fact]
+    public async Task With_invalid_notification_post_throws_500_exception()
+    {
+        // Arrange
+        var model = new CheckYourAnswersModel
+        {
+            Postcode = District.Dacorum.SamplePostcode,
+            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+                },
+            Subjects = new string[] { "KeyStage1-English" },
+            HasKeyStageSubjects = true,
+            TuitionType = TuitionType.Any,
+            Email = "500error@test",
+            TutoringLogistics = "Test content",
+            ConfirmTermsAndConditions = true
+        };
+
+        //Act
+        Task act() => _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            page.Data = model;
+            return page.OnPostAsync();
+        });
+
+        //Assert
+        var exception = await Assert.ThrowsAsync<NotifyClientException>(act);
+        exception.Message.Should().Be("Status code 500. Error: Some serious issue");
+    }
+
 
     public static IEnumerable<object[]> ValidTestData()
     {
@@ -67,10 +232,7 @@ public class CheckYourAnswersTests
                 ConfirmTermsAndConditions = true
             }
         };
-    }
 
-    public static IEnumerable<object[]> InValidTestData()
-    {
         yield return new object[]
         {
             new CheckYourAnswersModel {
@@ -84,7 +246,29 @@ public class CheckYourAnswersTests
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
+            }
+        };
+    }
+
+    public static IEnumerable<object[]> InValidTestData()
+    {
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
+                Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionType = TuitionType.Any,
+                Email = "test@test.com",
+                TutoringLogistics = "Test content",
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = false
             }
         };
 
@@ -101,7 +285,8 @@ public class CheckYourAnswersTests
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
 
@@ -118,7 +303,8 @@ public class CheckYourAnswersTests
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
 
@@ -135,7 +321,8 @@ public class CheckYourAnswersTests
                 //Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
 
@@ -152,8 +339,17 @@ public class CheckYourAnswersTests
                 Email = "test@test.com",
                 //TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information"
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
+    }
+
+    private static PageContext GetPageContext()
+    {
+        var httpContext = new DefaultHttpContext();
+        var modelState = new ModelStateDictionary();
+        var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(), modelState);
+        return new PageContext(actionContext);
     }
 }

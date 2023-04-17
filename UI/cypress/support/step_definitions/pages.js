@@ -123,14 +123,17 @@ Then("the user has arrived on the tuition response page", () => {
 Then(
   "the user has arrived on the tuition response check your answers page",
   () => {
-    cy.location("pathname").should("eq", "/enquiry/respond/check-your-answers");
+    cy.location("pathname").should(
+      "match",
+      /^\/enquiry-response\/[a-z-]+\/[A-Z0-9]+\/check-your-answers$/
+    );
   }
 );
 
 Then("the user has arrived on the tuition response confirmation page", () => {
   cy.location("pathname").should(
-    "eq",
-    "/enquiry/respond/response-confirmation"
+    "match",
+    /^\/enquiry-response\/[a-z-]+\/[A-Z0-9]+\/confirmation$/
   );
 });
 

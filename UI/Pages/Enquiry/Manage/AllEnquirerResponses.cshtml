@@ -1,5 +1,5 @@
 @page "/enquiry/{supportReferenceNumber}"
-@model UI.Pages.Enquiry.Respond.AllEnquirerResponses
+@model UI.Pages.Enquiry.Manage.AllEnquirerResponses
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
   ViewData["Title"] = "View all responses";
@@ -40,12 +40,12 @@
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
               <ul class="govuk-list govuk-list-bullets-mobile-view">
-              @foreach (var item in Model.Data.KeyStageSubjects)
-              {
-                <li>
-                  @item
-                </li>
-              }
+                @foreach (var item in Model.Data.KeyStageSubjects)
+                {
+                  <li>
+                    @item
+                  </li>
+                }
               </ul>
             </govuk-summary-list-row-value>
           </govuk-summary-list-row>
@@ -107,31 +107,32 @@
 @if (Model.Data.EnquirerViewResponses.Any())
 {
   <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
-  <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
-  <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th class="govuk-table__header" scope="col">Date</th>
-      <th class="govuk-table__header" scope="col">Tuition partner</th>
-      <th class="govuk-table__header app-print-hide" scope="col">Their response</th>
-    </tr>
-  </thead>
-  <tbody class="govuk-table__body">
+    <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header" scope="col">Date</th>
+        <th class="govuk-table__header" scope="col">Tuition partner</th>
+        <th class="govuk-table__header app-print-hide" scope="col">Their response</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
 
-    @foreach (var item in @Model.Data.EnquirerViewResponses!)
+      @foreach (var item in @Model.Data.EnquirerViewResponses!)
       {
-        <tr class="govuk-table__row">
-          <td class="govuk-table__cell">
-            @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
-          </td>
-          <td class="govuk-table__cell">
-            @item.TuitionPartnerName
-          </td>
-          <td class="govuk-table__cell app-print-hide">
-            <a href="@item.EnquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
-              View response<span class="govuk-visually-hidden"> from @item.TuitionPartnerName</span> and contact information
-            </a>
-          </td>
-        </tr>
+        var enquirerEnquiryResponseLink = $"/enquiry/{Model.SupportReferenceNumber}/{item.TuitionPartnerName.ToSeoUrl()}?Token={Model.Data.Token}";
+    <tr class="govuk-table__row">
+      <td class="govuk-table__cell">
+        @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
+      </td>
+      <td class="govuk-table__cell">
+        @item.TuitionPartnerName
+      </td>
+      <td class="govuk-table__cell app-print-hide">
+        <a href="@enquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
+          View response<span class="govuk-visually-hidden"> from @item.TuitionPartnerName</span> and contact information
+        </a>
+      </td>
+    </tr>
       }
     </tbody>
   </table>
