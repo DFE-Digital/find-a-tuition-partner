@@ -77,7 +77,7 @@ jobs:
     - name: Run database migrations and import data
       run: |
         cf run-task find-a-tuition-partner-$PR_NUMBER \
-          --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
+          --command "exec /home/vcap/deps/0/dotnet_publish/UI import" \
           --name find-a-tuition-partner-$PR_NUMBER-data-import
     
     - name: Logout
