@@ -84,7 +84,9 @@ When("Saves Changes", () => {
 });
 
 When("the link to previous page is clicked", () => {
-  cy.get('[data-testid="view-previous-page-link"]').click();
+  cy.get('[data-testid="view-previous-page-link"]')
+    .should("be.visible")
+    .click();
 });
 
 Then("the cookies banner is displayed", () => {
@@ -116,7 +118,10 @@ Then("a Success Banner is displayed", () => {
 });
 
 Then("the previous page is displayed correctly", () => {
-  cy.location("search").should("eq", "?Postcode=sk11eb");
+  cy.location("search").should(
+    "eq",
+    "?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&KeyStages=KeyStage1"
+  );
 });
 
 Then("the privacy policy is accessible in a new tab", () => {

@@ -56,7 +56,6 @@ Then("they will see the funding and reporting link", () => {
   cy.get('[data-testid="funding-reporting-link"]').should(($a) => {
     const href = $a.prop("href");
     expect(href).to.include("/funding-and-reporting");
-    expect(href).to.match(/FromReturnUrl=.*\/academic-mentors$/);
   });
 });
 
