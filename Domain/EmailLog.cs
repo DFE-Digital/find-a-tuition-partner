@@ -14,12 +14,11 @@
         public string ClientReferenceNumber { get; set; } = null!; //TODO - client ref needs to be updated to inc environment so is unique
 
         public int EmailStatusId { get; set; }
-        public int? EmailNotifyLogId { get; set; }
 
         public EmailStatus EmailStatus { get; set; } = null!;
-        public EmailNotifyLog? EmailNotifyLog { get; set; }
+        public EmailNotifyResponseLog? EmailNotifyResponseLog { get; set; }
         public ICollection<EmailPersonalisationLog>? EmailPersonalisationLogs { get; set; }
-        public ICollection<EmailLogArchive>? EmailLogArchives { get; set; }
+        public ICollection<EmailLogHistory>? EmailLogHistories { get; set; }
 
     }
 }

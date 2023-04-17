@@ -16,7 +16,7 @@ public class Enquiry
 
     public int MagicLinkId { get; set; }
 
-    public int EnquirerEnquirySubmittedEmailLogId { get; set; }
+    public int EnquirerEnquirySubmittedEmailLogId { get; set; } //TODO - decide if the emails can be not null - what do for historical enquiries?
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

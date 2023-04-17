@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.EntityConfigurations;
 
-public class EmailLogArchiveConfigurations : IEntityTypeConfiguration<EmailLogArchive>
+public class EmailLogArchiveConfigurations : IEntityTypeConfiguration<EmailLogHistory>
 {
-    public void Configure(EntityTypeBuilder<EmailLogArchive> builder)
+    public void Configure(EntityTypeBuilder<EmailLogHistory> builder)
     {
         //builder.HasIndex(e => e.Email);
 

@@ -1,6 +1,6 @@
 ﻿namespace Domain
 {
-    public class EmailNotifyLog
+    public class EmailNotifyResponseLog
     {
         public int Id { get; set; }
         public string? NotifyId { get; set; } //see https://docs.notifications.service.gov.uk/net.html#send-an-email-response
@@ -16,6 +16,7 @@
         public string? ExceptionCode { get; set; }
         public string? ExceptionMessage { get; set; }
 
+        public int EmailLogId { get; set; }
         public EmailLog EmailLog { get; set; } = null!;
     }
 }

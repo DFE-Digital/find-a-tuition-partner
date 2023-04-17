@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.EntityConfigurations;
 
-public class EmailNotifyLogConfigurations : IEntityTypeConfiguration<EmailNotifyLog>
+public class EmailNotifyLogConfigurations : IEntityTypeConfiguration<EmailNotifyResponseLog>
 {
-    public void Configure(EntityTypeBuilder<EmailNotifyLog> builder)
+    public void Configure(EntityTypeBuilder<EmailNotifyResponseLog> builder)
     {
         builder.HasIndex(e => e.NotifyId).IsUnique();
     }
