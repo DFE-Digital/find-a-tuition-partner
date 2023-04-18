@@ -152,7 +152,6 @@ public static class ServiceCollectionExtensions
         services.Configure<AzureBlobStorageSettings>(configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage));
         services.AddOptions();
         services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
-        services.AddScoped<IGetAccessToken, AzureBlobStorageService>();
         services.AddScoped<IDataFileEnumerable, AzureBlobStorageDataFileEnumerable>();
         services.AddScoped<ILogoFileEnumerable, AzureBlobStorageLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();

@@ -1,17 +1,17 @@
 using Application.Common.Interfaces;
 using Application.Constants;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client;
 using BlobItem = Application.Common.DTO.AzureBlobStorage.BlobItem;
 
 namespace Infrastructure.DataImport;
 
-public class AzureBlobStorageService : IAzureBlobStorageService, IGetAccessToken
+public class AzureBlobStorageService : IAzureBlobStorageService
 {
     private const string resource = "https://storage.azure.com/";
     private readonly ILogger<AzureBlobStorageService> _logger;
@@ -24,37 +24,17 @@ public class AzureBlobStorageService : IAzureBlobStorageService, IGetAccessToken
         _config = config.Value;
     }
 
-    public async Task<string> GetAccessTokenAsync(string clientId, string clientSecret,
-        string tenantId, string resource)
-    {
-        // See: https://github.com/AzureAD/microsoft-authentication-library-for-dotnet
-        var app = ConfidentialClientApplicationBuilder
-            .Create(clientId)
-            .WithTenantId(tenantId)
-            .WithClientSecret(clientSecret)
-            .Build();
-
-        var scopes = new[] { $"{resource}/.default" };
-
-        try
-        {
-            var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
-            return result.AccessToken;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while trying to get the access token.");
-            throw;
-        }
-    }
-
     public async Task<string> GenerateUserDelegationSasTokenAsync()
     {
-        var accessToken = await GetAccessTokenAsync(_config.ClientId, _config.ClientSecret, _config.TenantId,
-            resource);
+        var credential = new ClientSecretCredential(
+            _config.TenantId,
+            _config.ClientId,
+            _config.ClientSecret
+        );
+
         // Create a BlobServiceClient using the account name, account key, and custom token credential
         var blobServiceClient = new BlobServiceClient(new Uri($"https://{_config.AccountName}.blob.core.windows.net"),
-            new CustomTokenCredential(accessToken));
+            credential);
 
         // Get the user delegation key using the custom token credential
         var userDelegationKey = await blobServiceClient

@@ -18,7 +18,6 @@
     <PackageReference Include="CsvHelper" Version="28.0.1" />
     <PackageReference Include="DfE.Analytics.AspNetCore" Version="0.1.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.17.1" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.52.0" />
     <PackageReference Include="Azure.Identity" Version="1.9.0-beta.2" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
     <PackageReference Include="GovukNotify" Version="6.1.0" />
