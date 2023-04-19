@@ -10,6 +10,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(NtpDbContext context)
     {
         _context = context;
+        EmailLogRepository = new EmailLogRepository(_context);
         EnquiryRepository = new EnquiryRepository(_context);
         EnquiryResponseRepository = new EnquiryResponseRepository(_context);
         LocalAuthorityDistrictRepository = new LocalAuthorityDistrictRepository(_context);
@@ -21,6 +22,7 @@ public class UnitOfWork : IUnitOfWork
         TuitionPartnerEnquiryRepository = new TuitionPartnerEnquiryRepository(_context);
         KeyStageSubjectEnquiryRepository = new KeyStageSubjectEnquiryRepository(_context);
     }
+    public IEmailLogRepository EmailLogRepository { get; private set; }
     public IEnquiryRepository EnquiryRepository { get; private set; }
     public IEnquiryResponseRepository EnquiryResponseRepository { get; private set; }
     public ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; private set; }

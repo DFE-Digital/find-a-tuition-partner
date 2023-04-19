@@ -8,6 +8,7 @@ using Domain;
 using Domain.Enums;
 using Domain.Search;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TuitionType = Domain.Enums.TuitionType;
 
@@ -32,16 +33,19 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     private readonly INotificationsClientService _notificationsClientService;
     private readonly IGenerateReferenceNumber _generateReferenceNumber;
     private readonly ILogger<AddEnquiryCommandHandler> _logger;
+    private readonly IHostEnvironment _hostEnvironment;
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IRandomTokenGenerator randomTokenGenerator,
         INotificationsClientService notificationsClientService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger)
+        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger,
+        IHostEnvironment hostEnvironment)
     {
         _unitOfWork = unitOfWork;
         _randomTokenGenerator = randomTokenGenerator;
         _notificationsClientService = notificationsClientService;
         _generateReferenceNumber = generateReferenceNumber;
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<SubmittedConfirmationModel> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
@@ -119,7 +123,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
                     request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), enquirerViewAllResponsesPageLink);
 
+        var clientRefPrefix = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
+
         enquirySubmittedConfirmationToEnquirerNotificationsRecipient.AddDefaultEnquiryDetails(
+            clientRefPrefix,
             enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer,
             enquiry.CreatedAt);
 
@@ -134,6 +141,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
             x.AddDefaultEnquiryDetails(
+            clientRefPrefix,
             enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedToTp,
             enquiry.CreatedAt, x.TuitionPartnerName));
 

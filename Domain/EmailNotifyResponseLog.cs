@@ -3,7 +3,7 @@
     public class EmailNotifyResponseLog
     {
         public int Id { get; set; }
-        public string? NotifyId { get; set; } //see https://docs.notifications.service.gov.uk/net.html#send-an-email-response
+        public string? NotifyId { get; set; }
         public string? Reference { get; set; }
         public string? Uri { get; set; }
         public string? TemplateId { get; set; }

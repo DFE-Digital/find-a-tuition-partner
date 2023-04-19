@@ -4,6 +4,7 @@ namespace Application.Common.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
+    IEmailLogRepository EmailLogRepository { get; }
     IEnquiryRepository EnquiryRepository { get; }
     IEnquiryResponseRepository EnquiryResponseRepository { get; }
     ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; }

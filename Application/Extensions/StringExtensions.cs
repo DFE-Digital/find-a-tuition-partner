@@ -116,9 +116,10 @@ public static class StringExtensions
         return escapedText;
     }
 
-    public static string CreateNotifyClientReference(this string enquiryRef, EmailTemplateType emailTemplateType, string? tpName = null)
+    public static string CreateNotifyClientReference(this string enquiryRef, string clientRefPrefix, EmailTemplateType emailTemplateType, string? tpName = null)
     {
         var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
-        return $"{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
+        clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
+        return $"{clientRefPrefix}{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
     }
 }

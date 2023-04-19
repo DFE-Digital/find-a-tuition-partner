@@ -6,6 +6,7 @@ using Application.Constants;
 using Application.Extensions;
 using Domain;
 using Domain.Enums;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Enquiry.Respond;
@@ -37,12 +38,15 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private readonly ILogger<AddEnquiryResponseCommandHandler> _logger;
 
+    private readonly IHostEnvironment _hostEnvironment;
+
     public AddEnquiryResponseCommandHandler(IUnitOfWork unitOfWork, INotificationsClientService notificationsClientService,
-        ILogger<AddEnquiryResponseCommandHandler> logger)
+        ILogger<AddEnquiryResponseCommandHandler> logger, IHostEnvironment hostEnvironment)
     {
         _unitOfWork = unitOfWork;
         _notificationsClientService = notificationsClientService;
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<ResponseConfirmationModel> Handle(AddEnquiryResponseCommand request, CancellationToken cancellationToken)
@@ -82,13 +86,16 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             CompletedAt = DateTime.UtcNow
         };
 
+        var clientRefPrefix = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
+
         var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
-            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request,
+            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request, clientRefPrefix,
                 tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber, enquirerToken);
 
         var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
             GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
                 request,
+                clientRefPrefix,
                 tpEnquiry.TuitionPartner.Name,
                 tpEnquiry.TuitionPartner.Email,
                 tpEnquiry.Enquiry.SupportReferenceNumber,
@@ -164,7 +171,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string supportRefNumber, string enquirerToken)
+        string clientRefPrefix, string tpName, string supportRefNumber, string enquirerToken)
     {
         var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={enquirerToken}";
 
@@ -177,6 +184,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         };
 
         result.AddDefaultEnquiryDetails(
+            clientRefPrefix,
             supportRefNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer,
             null, tpName);
 
@@ -196,7 +204,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     }
 
     private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
-        string tpName, string tpEmail, string supportRefNumber,
+        string clientRefPrefix, string tpName, string tpEmail, string supportRefNumber,
         DateTime responseCreateDateTime)
     {
         var personalisationInput = new EnquiryResponseToTpPersonalisationInput
@@ -226,6 +234,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         };
 
         result.AddDefaultEnquiryDetails(
+            clientRefPrefix,
             supportRefNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp,
             responseCreateDateTime, tpName);
 
