@@ -8,7 +8,7 @@
                                                        //If null then the email is not sent (e.g. awaiting response from enquirer before sending to TPs)
         public DateTime? LastEmailSendAttemptDate { get; set; } //This will be when NTP 1st sends the email.
                                                                 //It will be updated with any retries if there have been issues.
-        public DateTime FinishProcessingDate { get; set; } = DateTime.UtcNow.AddDays(7); //This is how long we want to try and send emails for
+        public DateTime FinishProcessingDate { get; set; } = DateTime.UtcNow.AddDays(2); //This is how long we want to try and send emails for
         public DateTime? LastStatusChangedDate { get; set; } //If status changes we update this
 
         public string EmailAddress { get; set; } = null!;

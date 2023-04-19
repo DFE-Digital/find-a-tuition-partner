@@ -212,7 +212,7 @@ namespace Infrastructure.Migrations
             migrationBuilder.Sql("UPDATE \"Enquiries\" SET \"EnquirerEnquirySubmittedEmailLogId\" = 1;", true);
 
             migrationBuilder.Sql(
-            @"CREATE OR REPLACE FUNCTION record_email_log_history()
+            @"CREATE OR REPLACE FUNCTION fn_record_email_log_history()
               RETURNS TRIGGER 
               LANGUAGE PLPGSQL
               AS
@@ -233,12 +233,19 @@ namespace Infrastructure.Migrations
             $$", true);
 
             migrationBuilder.Sql(
-            @"CREATE TRIGGER last_name_changes
-              BEFORE UPDATE
+            @"CREATE TRIGGER TR_EmailLog_AfterInsert
+              AFTER INSERT
               ON ""EmailLog""
               FOR EACH ROW
-              EXECUTE PROCEDURE record_email_log_history();", true);
-            //MANUAL CHANGES - START
+              EXECUTE PROCEDURE fn_record_email_log_history();", true);
+
+            migrationBuilder.Sql(
+            @"CREATE TRIGGER TR_EmailLog_AfterUpdate
+              AFTER UPDATE
+              ON ""EmailLog""
+              FOR EACH ROW
+              EXECUTE PROCEDURE fn_record_email_log_history();", true);
+            //MANUAL CHANGES - END
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartnersEnquiry_TuitionPartnerEnquirySubmittedEmailL~",
@@ -363,8 +370,9 @@ namespace Infrastructure.Migrations
         {
 
             //MANUAL CHANGES - START
-            migrationBuilder.Sql("DROP TRIGGER last_name_changes ON \"EmailLog\";", true);
-            migrationBuilder.Sql("DROP FUNCTION record_email_log_history();", true);
+            migrationBuilder.Sql("DROP TRIGGER TR_EmailLog_AfterUpdate ON \"EmailLog\";", true);
+            migrationBuilder.Sql("DROP TRIGGER TR_EmailLog_AfterInsert ON \"EmailLog\";", true);
+            migrationBuilder.Sql("DROP FUNCTION fn_record_email_log_history();", true);
             //MANUAL CHANGES - END
 
             migrationBuilder.DropForeignKey(
