@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Install the CF CLI
         run: |
-          wget -v -O cf.tar.gz "https://s177d01corec7afkt3qxq7ie.blob.core.windows.net/ash-temp-cloudfoundry-cli/cf8-cli_8.6.1_linux_x86-64.tgz"
+          wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
           sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
 
       - name: Authenticate
