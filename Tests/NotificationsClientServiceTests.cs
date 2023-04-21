@@ -34,10 +34,11 @@ public class NotificationsClientServiceTests
     {
         // Arrange
         var personalisation = new Dictionary<string, dynamic>();
-        var notificationsRecipients = new List<NotificationsRecipientDto> { new()
+        var notifyEmails = new List<NotifyEmailDto> { new()
         { Email = "test@example.com",
-            Personalisation = personalisation} };
-        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
+            Personalisation = personalisation,
+            EmailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer} };
+
         var emailTemplateId = "template-id";
 
         _notifyConfigMock.Setup(x => x.Value)
@@ -48,7 +49,7 @@ public class NotificationsClientServiceTests
 
         _notificationClientMock.Setup(x =>
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
-                    notificationsRecipients.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()))
+                    notifyEmails.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(new EmailNotificationResponse
             { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent() });
 
@@ -57,12 +58,12 @@ public class NotificationsClientServiceTests
                 _loggerMock.Object, _notificationClientMock.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
+        await _notificationsClientService.SendEmailAsync(notifyEmails);
 
         // Assert
         _notificationClientMock.Verify(x =>
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
-                    notificationsRecipients.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()),
+                    notifyEmails.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()),
             Times.Exactly(1));
     }
 
@@ -73,12 +74,12 @@ public class NotificationsClientServiceTests
         var mockNotificationClient = new Mock<IAsyncNotificationClient>();
         var mockOptions = new Mock<IOptions<GovUkNotifyOptions>>();
         var personalisation = new Dictionary<string, dynamic> { { "key1", "value1" } };
-        var notificationsRecipients = new List<NotificationsRecipientDto>
-        {
-            new() { Email = "test@example.com", Personalisation = personalisation, ClientReference = "1example-ref" },
-            new() { Email = "test2@example.com", Personalisation = personalisation, ClientReference = "example-ref-2" }
-        };
         var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
+        var notifyEmails = new List<NotifyEmailDto>
+        {
+            new() { Email = "test@example.com", Personalisation = personalisation, ClientReference = "1example-ref", EmailTemplateType = emailTemplateType },
+            new() { Email = "test2@example.com", Personalisation = personalisation, ClientReference = "example-ref-2", EmailTemplateType = emailTemplateType }
+        };
 
         var enquiryTemplateId = "enquiry-template-id";
 
@@ -109,7 +110,7 @@ public class NotificationsClientServiceTests
             _loggerMock.Object, mockNotificationClient.Object, _hostEnvironment.Object);
 
         // Act
-        await _notificationsClientService.SendEmailAsync(notificationsRecipients, emailTemplateType);
+        await _notificationsClientService.SendEmailAsync(notifyEmails);
 
         // Assert
         mockNotificationClient.Verify(nc =>
@@ -117,7 +118,7 @@ public class NotificationsClientServiceTests
                 It.IsAny<string>(), It.IsAny<Dictionary<string, dynamic>>(),
                 It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 
-        foreach (var recipient in notificationsRecipients)
+        foreach (var recipient in notifyEmails)
         {
             VerifyLogging(_loggerMock, LogLevel.Information, $"Preparing to send, Notify client ref: {recipient.ClientReference}", Times.Exactly(1));
 

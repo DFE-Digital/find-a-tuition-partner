@@ -88,12 +88,12 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         var clientRefPrefix = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
 
-        var enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient =
-            GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(request, clientRefPrefix,
+        var enquiryResponseReceivedConfirmationToEnquirerNotifyEmail =
+            GetEnquiryResponseReceivedConfirmationToEnquirerNotifyEmail(request, clientRefPrefix,
                 tpEnquiry.TuitionPartner.Name, tpEnquiry.Enquiry.SupportReferenceNumber, enquirerToken);
 
-        var enquiryResponseSubmittedConfirmationToTpNotificationsRecipient =
-            GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(
+        var enquiryResponseSubmittedConfirmationToTpNotifyEmail =
+            GetEnquiryResponseSubmittedConfirmationToTpNotifyEmail(
                 request,
                 clientRefPrefix,
                 tpEnquiry.TuitionPartner.Name,
@@ -113,17 +113,15 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         try
         {
-            await _notificationsClientService.SendEmailAsync(
-                enquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer);
+            enquiryResponseReceivedConfirmationToEnquirerNotifyEmail.EmailTemplateType = EmailTemplateType.EnquiryResponseReceivedConfirmationToEnquirer;
+            await _notificationsClientService.SendEmailAsync(enquiryResponseReceivedConfirmationToEnquirerNotifyEmail);
         }
         catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
 
         try
         {
-            await _notificationsClientService.SendEmailAsync(
-                enquiryResponseSubmittedConfirmationToTpNotificationsRecipient,
-                EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp);
+            enquiryResponseSubmittedConfirmationToTpNotifyEmail.EmailTemplateType = EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp;
+            await _notificationsClientService.SendEmailAsync(enquiryResponseSubmittedConfirmationToTpNotifyEmail);
         }
         catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
 
@@ -170,16 +168,15 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         return null;
     }
 
-    private NotificationsRecipientDto GetEnquiryResponseReceivedConfirmationToEnquirerNotificationsRecipient(AddEnquiryResponseCommand request,
+    private static NotifyEmailDto GetEnquiryResponseReceivedConfirmationToEnquirerNotifyEmail(AddEnquiryResponseCommand request,
         string clientRefPrefix, string tpName, string supportRefNumber, string enquirerToken)
     {
         var pageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{supportRefNumber}?Token={enquirerToken}";
 
-        var result = new NotificationsRecipientDto()
+        var result = new NotifyEmailDto()
         {
             Email = request.Data?.Email!,
-            OriginalEmail = request.Data?.Email!,
-            EnquirerEmailForTestingPurposes = request.Data?.Email!,
+            EmailAddressUsedForTesting = request.Data?.Email!,
             Personalisation = GetEnquiryResponseReceivedConfirmationToEnquirerPersonalisation(tpName, pageLink)
         };
 
@@ -203,7 +200,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         return personalisation;
     }
 
-    private NotificationsRecipientDto GetEnquiryResponseSubmittedConfirmationToTpNotificationsRecipient(AddEnquiryResponseCommand request,
+    private static NotifyEmailDto GetEnquiryResponseSubmittedConfirmationToTpNotifyEmail(AddEnquiryResponseCommand request,
         string clientRefPrefix, string tpName, string tpEmail, string supportRefNumber,
         DateTime responseCreateDateTime)
     {
@@ -225,11 +222,10 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         };
 
-        var result = new NotificationsRecipientDto()
+        var result = new NotifyEmailDto()
         {
             Email = tpEmail!,
-            OriginalEmail = tpEmail!,
-            EnquirerEmailForTestingPurposes = request.Data?.Email!,
+            EmailAddressUsedForTesting = request.Data?.Email!,
             Personalisation = GetEnquiryResponseSubmittedConfirmationToTpPersonalisation(personalisationInput)
         };
 

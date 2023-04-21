@@ -1,5 +1,6 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Application.Extensions;
 using Domain.Enums;
 using Domain.Exceptions;
 using Infrastructure.Configuration;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
+using EmailStatus = Domain.Enums.EmailStatus;
 
 namespace Infrastructure.Services;
 
@@ -22,8 +24,11 @@ public class NotificationsClientService : INotificationsClientService
     private readonly EmailSettings _emailSettingsConfig;
     private readonly IHostEnvironment _hostEnvironment;
 
-    public NotificationsClientService(IOptions<GovUkNotifyOptions> notifyConfig, IOptions<EmailSettings> emailSettingsConfig, ILogger<NotificationsClientService> logger,
-        IAsyncNotificationClient notificationClient, IHostEnvironment hostEnvironment)
+    public NotificationsClientService(IOptions<GovUkNotifyOptions> notifyConfig,
+        IOptions<EmailSettings> emailSettingsConfig,
+        ILogger<NotificationsClientService> logger,
+        IAsyncNotificationClient notificationClient,
+        IHostEnvironment hostEnvironment)
     {
         _notifyConfig = notifyConfig.Value;
         _emailSettingsConfig = emailSettingsConfig.Value;
@@ -32,21 +37,20 @@ public class NotificationsClientService : INotificationsClientService
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
-        bool includeChangedFromEmailAddress = true)
+    public async Task<bool> SendEmailAsync(NotifyEmailDto notifyEmail, bool includeChangedFromEmailAddress = true)
     {
-        var clientReference = notificationsRecipient.ClientReference;
+        var clientReference = notifyEmail.ClientReference;
 
-        var emailTemplateId = GetEmailTemplateId(emailTemplateType, _notifyConfig);
+        var emailTemplateId = GetEmailTemplateId(notifyEmail.EmailTemplateType, _notifyConfig);
 
-        AddTestingInformation(notificationsRecipient, includeChangedFromEmailAddress);
+        AddTestingInformation(notifyEmail, includeChangedFromEmailAddress);
 
         try
         {
             _logger.LogInformation("Preparing to send, Notify client ref: {clientReference}", clientReference);
 
-            var result = await _notificationClient.SendEmailAsync(notificationsRecipient.Email,
-                emailTemplateId, personalisation: notificationsRecipient.Personalisation, clientReference);
+            var result = await _notificationClient.SendEmailAsync(notifyEmail.Email,
+                emailTemplateId, personalisation: notifyEmail.Personalisation, clientReference);
 
             _logger.LogInformation("Email successfully sent, Notify client ref: {clientReference}.  Result details: Id: {id}; Ref: {reference}; URI: {uri}; Content: {content}",
                 clientReference, result.id, result.reference, result.uri, result.content);
@@ -68,27 +72,26 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    public async Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
-        EmailTemplateType emailTemplateType)
+    public async Task<bool> SendEmailAsync(IEnumerable<NotifyEmailDto> notifyEmails)
     {
-        notificationsRecipients = notificationsRecipients.ToList();
+        notifyEmails = notifyEmails.ToList();
 
         var allEmailsSent = true;
 
         //See if we need to amalgamate multiuple emails for testing purposes
-        if (_emailSettingsConfig.AmalgamateResponses && notificationsRecipients.Count() > 1 && notificationsRecipients.First().PersonalisationPropertiesToAmalgamate.Count > 0)
+        if (_emailSettingsConfig.AmalgamateResponses && notifyEmails.Count() > 1 && notifyEmails.First().PersonalisationPropertiesToAmalgamate.Count > 0)
         {
-            allEmailsSent = await AmalgamateEmailForTesting(notificationsRecipients, emailTemplateType);
+            allEmailsSent = await AmalgamateEmailForTesting(notifyEmails);
         }
         else
         {
             // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
             // which can significantly improve performance when dealing with multiple recipients
-            var sendEmailTasks = notificationsRecipients
+            var sendEmailTasks = notifyEmails
                 .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
                 .Select(async recipient =>
                 {
-                    return await SendEmailAsync(recipient, emailTemplateType);
+                    return await SendEmailAsync(recipient);
                 })
                 .ToList();
 
@@ -100,13 +103,12 @@ public class NotificationsClientService : INotificationsClientService
         return allEmailsSent;
     }
 
-
-    public async Task<bool> GetNotificationById(string notificationId)
+    public async Task<EmailStatus> GetEmailStatus(string notificationId)
     {
         try
         {
             var result = await _notificationClient.GetNotificationByIdAsync(notificationId);
-            return true;
+            return result.status.GetEnumFromDisplayName<EmailStatus>();
         }
         catch (Exception ex)
         {
@@ -114,54 +116,40 @@ public class NotificationsClientService : INotificationsClientService
             throw;
         }
     }
-    public async Task<bool> GetNotifications()
-    {
-        try
-        {
-            var result = await _notificationClient.GetNotificationsAsync();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error has occurred while attempting to GetNotifications.");
-            throw;
-        }
-    }
 
-    private void AddTestingInformation(NotificationsRecipientDto notificationsRecipient, bool includeChangedFromEmailAddress = true)
+    private void AddTestingInformation(NotifyEmailDto notifyEmail, bool includeChangedFromEmailAddress = true)
     {
         //Add in these keys as empty since must exist in code even if nothing to pass in
-        AddDefaultTestPersonalisation(notificationsRecipient.Personalisation);
+        AddDefaultTestPersonalisation(notifyEmail.Personalisation);
 
         var overrideEmail = _emailSettingsConfig.OverrideAddress;
         var overrideExtraInfoText = "overridden to use";
         if (string.IsNullOrWhiteSpace(overrideEmail) && _emailSettingsConfig.AllSentToEnquirer)
         {
-            overrideEmail = notificationsRecipient.EnquirerEmailForTestingPurposes;
-            overrideExtraInfoText = "changed to the enquirer";
+            overrideEmail = notifyEmail.EmailAddressUsedForTesting;
+            overrideExtraInfoText = "changed to";
         }
 
-        if (!string.IsNullOrWhiteSpace(overrideEmail) && !string.Equals(notificationsRecipient.Email, overrideEmail, StringComparison.InvariantCultureIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(overrideEmail) && !string.Equals(notifyEmail.Email, overrideEmail, StringComparison.InvariantCultureIgnoreCase))
         {
-            var extraInfoChangedFrom = includeChangedFromEmailAddress ? $" rather than {notificationsRecipient.Email}" : string.Empty;
+            var extraInfoChangedFrom = includeChangedFromEmailAddress ? $" rather than {notifyEmail.Email}" : string.Empty;
 
-            notificationsRecipient.Email = overrideEmail;
+            notifyEmail.Email = overrideEmail;
 
-            AddPersonalisation(notificationsRecipient.Personalisation, TestExtraInfoKey, $"For testing purposes the email has been {overrideExtraInfoText} {overrideEmail}{extraInfoChangedFrom}.", true);
+            AddPersonalisation(notifyEmail.Personalisation, TestExtraInfoKey, $"For testing purposes the email has been {overrideExtraInfoText} {overrideEmail}{extraInfoChangedFrom}.", true);
         }
 
         if (!_hostEnvironment.IsProduction())
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (!string.IsNullOrWhiteSpace(environmentName))
-                AddPersonalisation(notificationsRecipient.Personalisation, TestWebsiteEnvName, $"**** {environmentName} NTP email ****  ");
+                AddPersonalisation(notifyEmail.Personalisation, TestWebsiteEnvName, $"**** {environmentName} NTP email ****  ");
         }
     }
 
-    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
-        EmailTemplateType emailTemplateType)
+    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotifyEmailDto> notifyEmails)
     {
-        var initialRecipient = notificationsRecipients.First();
+        var initialRecipient = notifyEmails.First();
         var keys = new List<string>(initialRecipient.Personalisation.Keys);
         foreach (string key in keys)
         {
@@ -171,13 +159,13 @@ public class NotificationsClientService : INotificationsClientService
             }
         }
 
-        for (int i = 1; i < notificationsRecipients.Count(); i++)
+        for (int i = 1; i < notifyEmails.Count(); i++)
         {
-            foreach (var personalisation in notificationsRecipients.ElementAt(i).Personalisation)
+            foreach (var personalisation in notifyEmails.ElementAt(i).Personalisation)
             {
                 if (initialRecipient.PersonalisationPropertiesToAmalgamate.Contains(personalisation.Key))
                 {
-                    AddPersonalisation(initialRecipient.Personalisation, personalisation.Key, $"{notificationsRecipients.ElementAt(i).Email} - {personalisation.Value}", true, false);
+                    AddPersonalisation(initialRecipient.Personalisation, personalisation.Key, $"{notifyEmails.ElementAt(i).Email} - {personalisation.Value}", true, false);
                 }
             }
         }
@@ -186,7 +174,7 @@ public class NotificationsClientService : INotificationsClientService
 
         initialRecipient.ClientReference = initialRecipient.ClientReferenceIfAmalgamate;
 
-        return await SendEmailAsync(initialRecipient, emailTemplateType, false);
+        return await SendEmailAsync(initialRecipient, false);
     }
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions notifyConfig)

@@ -56,6 +56,22 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ScheduledProcessingInfo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ScheduleName = table.Column<string>(type: "text", nullable: false),
+                    LastStartedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastFinishedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduledProcessingInfo", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmailLog",
                 columns: table => new
                 {
@@ -67,8 +83,9 @@ namespace Infrastructure.Migrations
                     FinishProcessingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastStatusChangedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     EmailAddress = table.Column<string>(type: "text", nullable: false),
-                    EmailTemplateId = table.Column<string>(type: "text", nullable: false),
+                    EmailTemplateShortName = table.Column<string>(type: "text", nullable: false),
                     ClientReferenceNumber = table.Column<string>(type: "text", nullable: false),
+                    EmailAddressUsedForTesting = table.Column<string>(type: "text", nullable: true),
                     EmailStatusId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -200,11 +217,6 @@ namespace Infrastructure.Migrations
                     { 11, true, "Error when calling the GOV.UK Notify SendEmailAsync()", false, 600, "processing-failure" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "EmailLog",
-                columns: new[] { "Id", "ClientReferenceNumber", "CreatedDate", "EmailAddress", "EmailStatusId", "EmailTemplateId", "FinishProcessingDate", "LastEmailSendAttemptDate", "LastStatusChangedDate", "ProcessFromDate" },
-                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 4, 17, 15, 45, 21, 955, DateTimeKind.Utc).AddTicks(2232), "historical_emails_when_log_implemented", 7, "historical_emails_when_log_implemented", new DateTime(2023, 4, 17, 15, 45, 21, 955, DateTimeKind.Utc).AddTicks(2234), null, null, null });
-
             //MANUAL CHANGES - START
             migrationBuilder.Sql("UPDATE \"TuitionPartnersEnquiry\" SET \"TuitionPartnerEnquirySubmittedEmailLogId\" = 1;", true);
             migrationBuilder.Sql("UPDATE \"EnquiryResponses\" SET \"EnquirerResponseEmailLogId\" = 1;", true);
@@ -212,20 +224,31 @@ namespace Infrastructure.Migrations
             migrationBuilder.Sql("UPDATE \"Enquiries\" SET \"EnquirerEnquirySubmittedEmailLogId\" = 1;", true);
 
             migrationBuilder.Sql(
-            @"CREATE OR REPLACE FUNCTION fn_record_email_log_history()
+            @"CREATE OR REPLACE FUNCTION fn_email_log_history_on_insert()
               RETURNS TRIGGER 
               LANGUAGE PLPGSQL
               AS
             $$
             BEGIN
-	            IF (NEW.ProcessFromDate <> OLD.ProcessFromDate OR
-		            NEW.LastEmailSendAttemptDate <> OLD.LastEmailSendAttemptDate OR
-		            NEW.EmailStatusId <> OLD.EmailStatusId OR
-		            NEW.NotifySuccessId <> OLD.NotifySuccessId OR
-		            NEW.NotifyExceptionCode <> OLD.NotifyExceptionCode OR
-		            NEW.NotifyExceptionMessage <> OLD.NotifyExceptionMessage ) THEN
-		             INSERT INTO EmailLogHistory(EmailLogId, CreatedAt, ProcessFromDate, LastEmailSendAttemptDate, EmailStatusId)
-		             VALUES(NEW.EmailLogId, now(), NEW.ProcessFromDate, NEW.LastEmailSendAttemptDate, NEW.EmailStatusId);
+				INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
+				VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
+
+	            RETURN NEW;
+            END;
+            $$", true);
+
+            migrationBuilder.Sql(
+            @"CREATE OR REPLACE FUNCTION fn_email_log_history_on_update()
+              RETURNS TRIGGER 
+              LANGUAGE PLPGSQL
+              AS
+            $$
+            BEGIN
+	            IF (COALESCE(NEW.""ProcessFromDate"", CURRENT_DATE) <> COALESCE(OLD.""ProcessFromDate"", CURRENT_DATE) OR
+		            COALESCE(NEW.""LastEmailSendAttemptDate"", CURRENT_DATE) <> COALESCE(OLD.""LastEmailSendAttemptDate"", CURRENT_DATE) OR
+		            NEW.""EmailStatusId"" <> OLD.""EmailStatusId"") THEN
+					INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
+					VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
 	            END IF;
 
 	            RETURN NEW;
@@ -237,15 +260,20 @@ namespace Infrastructure.Migrations
               AFTER INSERT
               ON ""EmailLog""
               FOR EACH ROW
-              EXECUTE PROCEDURE fn_record_email_log_history();", true);
+              EXECUTE PROCEDURE fn_email_log_history_on_insert();", true);
 
             migrationBuilder.Sql(
             @"CREATE TRIGGER TR_EmailLog_AfterUpdate
               AFTER UPDATE
               ON ""EmailLog""
               FOR EACH ROW
-              EXECUTE PROCEDURE fn_record_email_log_history();", true);
+              EXECUTE PROCEDURE fn_email_log_history_on_update();", true);
             //MANUAL CHANGES - END
+
+            migrationBuilder.InsertData(
+                table: "EmailLog",
+                columns: new[] { "Id", "ClientReferenceNumber", "CreatedDate", "EmailAddress", "EmailAddressUsedForTesting", "EmailStatusId", "EmailTemplateShortName", "FinishProcessingDate", "LastEmailSendAttemptDate", "LastStatusChangedDate", "ProcessFromDate" },
+                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253), "historical_emails_when_log_implemented", null, 7, "historical_emails_when_log_implemented", new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253), null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartnersEnquiry_TuitionPartnerEnquirySubmittedEmailL~",
@@ -325,12 +353,19 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EmailTriggerActivation_ActivateEmailLogId",
                 table: "EmailTriggerActivation",
-                column: "ActivateEmailLogId");
+                column: "ActivateEmailLogId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmailTriggerActivation_EmailLogId_ActivateEmailLogId",
                 table: "EmailTriggerActivation",
                 columns: new[] { "EmailLogId", "ActivateEmailLogId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduledProcessingInfo_ScheduleName",
+                table: "ScheduledProcessingInfo",
+                column: "ScheduleName",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
@@ -368,11 +403,11 @@ namespace Infrastructure.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
             //MANUAL CHANGES - START
             migrationBuilder.Sql("DROP TRIGGER TR_EmailLog_AfterUpdate ON \"EmailLog\";", true);
             migrationBuilder.Sql("DROP TRIGGER TR_EmailLog_AfterInsert ON \"EmailLog\";", true);
-            migrationBuilder.Sql("DROP FUNCTION fn_record_email_log_history();", true);
+            migrationBuilder.Sql("DROP FUNCTION fn_email_log_history_on_update();", true);
+            migrationBuilder.Sql("DROP FUNCTION fn_email_log_history_on_insert();", true);
             //MANUAL CHANGES - END
 
             migrationBuilder.DropForeignKey(
@@ -402,6 +437,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmailTriggerActivation");
+
+            migrationBuilder.DropTable(
+                name: "ScheduledProcessingInfo");
 
             migrationBuilder.DropTable(
                 name: "EmailLog");

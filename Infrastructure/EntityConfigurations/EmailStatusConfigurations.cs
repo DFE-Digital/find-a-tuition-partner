@@ -91,7 +91,7 @@ public class EmailStatusConfigurations : IEntityTypeConfiguration<Domain.EmailSt
                 Description = "GOV.UK Notify status: the provider could not deliver the message. This can happen when the recipient’s inbox is full or their anti-spam filter rejects your email. Check your content does not look like spam before you try to send the message again.",
                 AllowEmailSending = true,
                 PollForStatusUpdateIfSent = true,
-                RetrySendInSeconds = 60 * 10 //TODO - confirm if 10 mins is about right
+                RetrySendInSeconds = 60 * 10
             },
             new Domain.EmailStatus
             {
@@ -100,7 +100,7 @@ public class EmailStatusConfigurations : IEntityTypeConfiguration<Domain.EmailSt
                 Description = "GOV.UK Notify status: your message was not sent because there was a problem between Notify and the provider. You’ll have to try sending your messages again.",
                 AllowEmailSending = true,
                 PollForStatusUpdateIfSent = true,
-                RetrySendInSeconds = 60 * 1 //TODO - confirm if 1 min is about right
+                RetrySendInSeconds = 60 * 1
             },
             new Domain.EmailStatus
             {
@@ -109,7 +109,7 @@ public class EmailStatusConfigurations : IEntityTypeConfiguration<Domain.EmailSt
                 Description = "Error when calling the GOV.UK Notify SendEmailAsync()",
                 AllowEmailSending = true,
                 PollForStatusUpdateIfSent = false,
-                RetrySendInSeconds = 60 * 10 //TODO - confirm if 10 mins is about right
+                RetrySendInSeconds = 60 * 10
             }
         );
     }

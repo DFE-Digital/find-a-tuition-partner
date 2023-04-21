@@ -12,8 +12,9 @@
         public DateTime? LastStatusChangedDate { get; set; } //If status changes we update this
 
         public string EmailAddress { get; set; } = null!;
-        public string EmailTemplateId { get; set; } = null!;
+        public string EmailTemplateShortName { get; set; } = null!;
         public string ClientReferenceNumber { get; set; } = null!;
+        public string? EmailAddressUsedForTesting { get; set; }
 
         public int EmailStatusId { get; set; }
 
@@ -22,5 +23,7 @@
         public ICollection<EmailPersonalisationLog>? EmailPersonalisationLogs { get; set; }
         public ICollection<EmailLogHistory>? EmailLogHistories { get; set; }
 
+        public EmailTriggerActivation? ThisEmailActivationTriggeredBy { get; set; }
+        public ICollection<EmailTriggerActivation>? EmailsActivatedByThisEmail { get; set; }
     }
 }

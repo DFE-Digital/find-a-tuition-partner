@@ -41,10 +41,13 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("EmailAddressUsedForTesting")
+                        .HasColumnType("text");
+
                     b.Property<int>("EmailStatusId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("EmailTemplateId")
+                    b.Property<string>("EmailTemplateShortName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -80,11 +83,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             ClientReferenceNumber = "historical_emails_when_log_implemented",
-                            CreatedDate = new DateTime(2023, 4, 17, 15, 45, 21, 955, DateTimeKind.Utc).AddTicks(2232),
+                            CreatedDate = new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253),
                             EmailAddress = "historical_emails_when_log_implemented",
                             EmailStatusId = 7,
-                            EmailTemplateId = "historical_emails_when_log_implemented",
-                            FinishProcessingDate = new DateTime(2023, 4, 17, 15, 45, 21, 955, DateTimeKind.Utc).AddTicks(2234)
+                            EmailTemplateShortName = "historical_emails_when_log_implemented",
+                            FinishProcessingDate = new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253)
                         });
                 });
 
@@ -342,7 +345,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActivateEmailLogId");
+                    b.HasIndex("ActivateEmailLogId")
+                        .IsUnique();
 
                     b.HasIndex("EmailLogId", "ActivateEmailLogId")
                         .IsUnique();
@@ -4548,6 +4552,35 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.ScheduledProcessingInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("LastFinishedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastStartedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ScheduleName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleName")
+                        .IsUnique();
+
+                    b.ToTable("ScheduledProcessingInfo");
+                });
+
             modelBuilder.Entity("Domain.School", b =>
                 {
                     b.Property<int>("Id")
@@ -5024,13 +5057,13 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.EmailTriggerActivation", b =>
                 {
                     b.HasOne("Domain.EmailLog", "ActivateEmailLog")
-                        .WithMany()
-                        .HasForeignKey("ActivateEmailLogId")
+                        .WithOne("ThisEmailActivationTriggeredBy")
+                        .HasForeignKey("Domain.EmailTriggerActivation", "ActivateEmailLogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.EmailLog", "EmailLog")
-                        .WithMany()
+                        .WithMany("EmailsActivatedByThisEmail")
                         .HasForeignKey("EmailLogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -5344,6 +5377,10 @@ namespace Infrastructure.Migrations
                     b.Navigation("EmailNotifyResponseLog");
 
                     b.Navigation("EmailPersonalisationLogs");
+
+                    b.Navigation("EmailsActivatedByThisEmail");
+
+                    b.Navigation("ThisEmailActivationTriggeredBy");
                 });
 
             modelBuilder.Entity("Domain.EmailStatus", b =>

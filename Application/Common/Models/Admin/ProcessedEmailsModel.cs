@@ -2,5 +2,8 @@
 
 public record ProcessedEmailsModel
 {
-    public string? ProcessedOutcome { get; set; }
+    public int EmailsCheckStatus { get; set; } = 0;
+    public int EmailsUpdatedStatus { get; set; } = 0;
+    public int EmailsSent { get; set; } = 0;
+    public string Outcome { get; set; } = null!;
 }

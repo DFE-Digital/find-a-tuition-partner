@@ -32,8 +32,7 @@ public static class StringExtensions
     {
         foreach (TEnum enumLoop in Enum.GetValues(typeof(TEnum)))
         {
-            var displayNameLoop = enumLoop.DisplayName();
-            if (displayNameLoop.Equals(displayName, StringComparison.InvariantCultureIgnoreCase))
+            if (enumLoop.DisplayName().Equals(displayName, StringComparison.InvariantCultureIgnoreCase))
             {
                 resultInputType = enumLoop;
                 return true;
@@ -42,6 +41,18 @@ public static class StringExtensions
         resultInputType = default;
         return false;
     }
+
+    public static TEnum GetEnumFromDisplayName<TEnum>(this string displayName)
+        where TEnum : struct, Enum
+    {
+        var enumTryParse = displayName.TryParse(out TEnum returnEnum);
+
+        if (!enumTryParse)
+            throw new ArgumentException($"Invalid enum display name.  Enum {typeof(TEnum)} not got matching display name {displayName}");
+
+        return returnEnum;
+    }
+
     private static string RegexReplace(this string value, string pattern, string replacement)
         => Regex.Replace(
             value, pattern, replacement,

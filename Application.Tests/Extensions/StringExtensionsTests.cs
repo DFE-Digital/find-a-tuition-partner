@@ -307,7 +307,7 @@ public class StringExtensionsTests
         var tpName = "TP name";
 
         // Act
-        var actualOutput = enquiryRef.CreateNotifyClientReference(EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
+        var actualOutput = enquiryRef.CreateNotifyClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
 
         // Assert
         actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");
@@ -320,9 +320,25 @@ public class StringExtensionsTests
         var enquiryRef = "enquiryRef";
 
         // Act
-        var actualOutput = enquiryRef.CreateNotifyClientReference(EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
+        var actualOutput = enquiryRef.CreateNotifyClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
 
         // Assert
         actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}");
+    }
+
+
+    [Fact]
+    public void CreateNotifyClientReference_WithClientPrefix()
+    {
+        // Arrange
+        var enquiryRef = "enquiryRef";
+        var tpName = "TP name";
+        var clientPrefix = "Client Prefix";
+
+        // Act
+        var actualOutput = enquiryRef.CreateNotifyClientReference(clientPrefix, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
+
+        // Assert
+        actualOutput.Should().BeEquivalentTo($"{clientPrefix.ToSeoUrl()}-{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");
     }
 }

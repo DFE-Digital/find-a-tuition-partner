@@ -26,7 +26,7 @@ public class EmailLogConfigurations : IEntityTypeConfiguration<EmailLog>
                 CreatedDate = DateTime.UtcNow,
                 FinishProcessingDate = DateTime.UtcNow,
                 EmailAddress = "historical_emails_when_log_implemented",
-                EmailTemplateId = "historical_emails_when_log_implemented",
+                EmailTemplateShortName = "historical_emails_when_log_implemented",
                 ClientReferenceNumber = "historical_emails_when_log_implemented",
                 EmailStatusId = (int)EmailStatus.NotifyDelivered
             }

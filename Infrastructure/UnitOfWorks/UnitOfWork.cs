@@ -11,24 +11,28 @@ public class UnitOfWork : IUnitOfWork
     {
         _context = context;
         EmailLogRepository = new EmailLogRepository(_context);
+        EmailStatusRepository = new EmailStatusRepository(_context);
         EnquiryRepository = new EnquiryRepository(_context);
         EnquiryResponseRepository = new EnquiryResponseRepository(_context);
         LocalAuthorityDistrictRepository = new LocalAuthorityDistrictRepository(_context);
         SubjectRepository = new SubjectRepository(_context);
         TuitionPartnerRepository = new TuitionPartnerRepository(_context);
         TuitionTypeRepository = new TuitionTypeRepository(_context);
+        ScheduledProcessingInfoRepository = new ScheduledProcessingInfoRepository(_context);
         SchoolRepository = new SchoolRepository(_context);
         MagicLinkRepository = new MagicLinkRepository(_context);
         TuitionPartnerEnquiryRepository = new TuitionPartnerEnquiryRepository(_context);
         KeyStageSubjectEnquiryRepository = new KeyStageSubjectEnquiryRepository(_context);
     }
     public IEmailLogRepository EmailLogRepository { get; private set; }
+    public IEmailStatusRepository EmailStatusRepository { get; private set; }
     public IEnquiryRepository EnquiryRepository { get; private set; }
     public IEnquiryResponseRepository EnquiryResponseRepository { get; private set; }
     public ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; private set; }
     public ISubjectRepository SubjectRepository { get; private set; }
     public ITuitionPartnerRepository TuitionPartnerRepository { get; private set; }
     public ITuitionTypeRepository TuitionTypeRepository { get; private set; }
+    public IScheduledProcessingInfoRepository ScheduledProcessingInfoRepository { get; private set; }
     public ISchoolRepository SchoolRepository { get; private set; }
     public IMagicLinkRepository MagicLinkRepository { get; private set; }
 

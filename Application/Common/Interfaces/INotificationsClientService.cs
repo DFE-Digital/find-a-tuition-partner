@@ -1,15 +1,12 @@
 using Application.Common.DTO;
-using Domain.Enums;
+using EmailStatus = Domain.Enums.EmailStatus;
 
 namespace Application.Common.Interfaces;
 
 public interface INotificationsClientService
 {
-    Task<bool> SendEmailAsync(NotificationsRecipientDto notificationsRecipient, EmailTemplateType emailTemplateType,
-        bool includeChangedFromEmailAddress = true);
-    Task<bool> SendEmailAsync(IEnumerable<NotificationsRecipientDto> notificationsRecipients,
-        EmailTemplateType emailTemplateType);
+    Task<bool> SendEmailAsync(NotifyEmailDto notifyEmail, bool includeChangedFromEmailAddress = true);
+    Task<bool> SendEmailAsync(IEnumerable<NotifyEmailDto> notifyEmails);
 
-    Task<bool> GetNotificationById(string notificationId);
-    Task<bool> GetNotifications();
+    Task<EmailStatus> GetEmailStatus(string notificationId);
 }
