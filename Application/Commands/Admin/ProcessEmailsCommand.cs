@@ -19,10 +19,6 @@ public class ProcessEmailsCommandHandler : IRequestHandler<ProcessEmailsCommand,
 
     public async Task<ProcessedEmailsModel> Handle(ProcessEmailsCommand request, CancellationToken cancellationToken)
     {
-        var result = new ProcessedEmailsModel();
-
-        await _processEmailsService.ProcessAllEmailsAsync();
-
-        return result;
+        return await _processEmailsService.ProcessAllEmailsAsync();
     }
 }

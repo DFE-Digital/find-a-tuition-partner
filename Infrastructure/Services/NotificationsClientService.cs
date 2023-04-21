@@ -52,6 +52,16 @@ public class NotificationsClientService : INotificationsClientService
             var result = await _notificationClient.SendEmailAsync(notifyEmail.Email,
                 emailTemplateId, personalisation: notifyEmail.Personalisation, clientReference);
 
+            notifyEmail.NotifyResponse.NotifyId = result.id;
+            notifyEmail.NotifyResponse.Reference = result.reference;
+            notifyEmail.NotifyResponse.Uri = result.uri;
+            notifyEmail.NotifyResponse.TemplateId = result.template.id;
+            notifyEmail.NotifyResponse.TemplateUri = result.template.uri;
+            notifyEmail.NotifyResponse.TemplateVersion = result.template.version;
+            notifyEmail.NotifyResponse.EmailResponseContentFrom = result.content.fromEmail;
+            notifyEmail.NotifyResponse.EmailResponseContentBody = result.content.body;
+            notifyEmail.NotifyResponse.EmailResponseContentSubject = result.content.subject;
+
             _logger.LogInformation("Email successfully sent, Notify client ref: {clientReference}.  Result details: Id: {id}; Ref: {reference}; URI: {uri}; Content: {content}",
                 clientReference, result.id, result.reference, result.uri, result.content);
 
@@ -59,6 +69,9 @@ public class NotificationsClientService : INotificationsClientService
         }
         catch (Exception ex)
         {
+            notifyEmail.NotifyResponse.ExceptionCode = ex.Message.GetGovNotifyStatusCodeFromExceptionMessage().ToString();
+            notifyEmail.NotifyResponse.ExceptionMessage = ex.ToString();
+
             if (ex.IsNonCriticalNotifyException())
             {
                 _logger.LogWarning(ex, "A non critical Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);

@@ -6,6 +6,8 @@ using Application.Extensions;
 using Domain;
 using Domain.Enums;
 using Infrastructure.Configuration;
+using Infrastructure.Mapping.Configuration;
+using Mapster;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using EmailStatus = Domain.Enums.EmailStatus;
@@ -45,7 +47,7 @@ public class ProcessEmailsService : IProcessEmailsService
             {
                 await PollForStatusUpdatesAsync(processedEmailsModel);
 
-                processedEmailsModel.EmailsSent = await SendEmailsToBeProcessedAsync();
+                processedEmailsModel.EmailsSent = await SendEmailsToBeProcessedAsync(null, false);
 
                 var finishedDate = DateTime.UtcNow;
                 var finishedMessage = $"Completed email process successfully.  Started at {startDate}, finished at {finishedDate}, taking {(finishedDate - startDate).TotalSeconds} seconds.  " +
@@ -98,6 +100,7 @@ public class ProcessEmailsService : IProcessEmailsService
 
         return testingEmail;
     }
+
 
     private async Task<bool> StartProcessing(DateTime date)
     {
@@ -175,8 +178,8 @@ public class ProcessEmailsService : IProcessEmailsService
                                 x.LastEmailSendAttemptDate != null &&
                                 x.LastEmailSendAttemptDate < DateTime.UtcNow &&
                                 x.FinishProcessingDate > DateTime.UtcNow),
-                "EmailStatus,EmailNotifyResponseLog,EmailsActivatedByThisEmail,EmailsActivatedByThisEmail.ActivateEmailLog",
-                true);
+            "EmailStatus,EmailNotifyResponseLog,EmailsActivatedByThisEmail,EmailsActivatedByThisEmail.ActivateEmailLog",
+            true);
 
         if (emailsToPollForStatusUpdate != null && emailsToPollForStatusUpdate.Any())
         {
@@ -247,14 +250,14 @@ public class ProcessEmailsService : IProcessEmailsService
         }
     }
 
-    private async Task<int> SendEmailsToBeProcessedAsync(int[]? emailLogIds = null)
+    private async Task<int> SendEmailsToBeProcessedAsync(int[]? emailLogIds = null, bool throwExceptions = true)
     {
         /*
             Send emails:
                 Send if the status has flag AllowEmailSending = true and ProcessFromDate not null and ProcessFromDate <= now and FinishProcessingDate > now
                     Update the LastEmailSendAttemptDate = now, the status to BeenProcessed and LastStatusChangedDate = now
                     Update the EmailNotifyLog with Notify response details and clear any previous ExceptionCode & ExceptionMessage - if retry then need to ensure that the Archive has previous notify info.
-                If error then log in EmailNotifyLog.ExceptionCode & EmailNotifyLog.ExceptionMessage -> TBC, what if this is a retry and has previous NotiftyId etc?
+                If error then log in EmailNotifyLog.ExceptionCode & EmailNotifyLog.ExceptionMessage
                     Set status to ProcessingFailure and the ProcessFromDate = now.AddSeconds(RetrySendInSeconds)
          */
 
@@ -267,8 +270,9 @@ public class ProcessEmailsService : IProcessEmailsService
                                 x.FinishProcessingDate > DateTime.UtcNow &&
                                 (emailLogIds == null ||
                                 emailLogIds.Count() == 0 ||
-                                emailLogIds.Contains(x.Id))), "EmailStatus,EmailPersonalisationLogs",
-                true);
+                                emailLogIds.Contains(x.Id))),
+            "EmailStatus,EmailPersonalisationLogs",
+            true);
 
         if (emailsToSend.Any())
         {
@@ -282,18 +286,77 @@ public class ProcessEmailsService : IProcessEmailsService
                     x.EmailPersonalisationLogs!.Select(y => new KeyValuePair<string, dynamic>(y.Key, y.Value)).ToDictionary(x => x.Key, x => x.Value)
             }).ToList();
 
-            //TODO - Since sending list to service we need to ensure that if any fail doen't throw error and we still update the ones that were processed
-            await _notificationsClientService.SendEmailAsync(notifyEmails);
+            try
+            {
+                await _notificationsClientService.SendEmailAsync(notifyEmails);
+            }
+            catch
+            {
+                if (throwExceptions)
+                {
+                    await UpdateSentEmailsAsync(emailsToSend, notifyEmails);
+                    throw;
+                }
+            }
 
-            //TODO - update as documented above
-            //TODO - Need to update previous call to populate NotifyEmailDto.NotifyResponse and then use this to update
-
-
-            emailsSent = notifyEmails.Count;
+            emailsSent = await UpdateSentEmailsAsync(emailsToSend, notifyEmails);
         }
 
         return emailsSent;
-        //TODO - Consider what logging to add - and what to keep in NotificationsClientService
     }
 
+    private async Task<int> UpdateSentEmailsAsync(IEnumerable<EmailLog> emailsToUpdate, IEnumerable<NotifyEmailDto> emailResults)
+    {
+        NotifyResponseMappingConfig.Configure();
+
+        var sentEmails = 0;
+        foreach (var emailResult in emailResults)
+        {
+            EmailLog? emailToUpdate = null;
+            try
+            {
+                emailToUpdate = emailsToUpdate.Single(x => x.ClientReferenceNumber == emailResult.ClientReference);
+
+                var notifyResponse = emailToUpdate.EmailNotifyResponseLog == null ? new EmailNotifyResponseLog() : emailToUpdate.EmailNotifyResponseLog;
+
+                //TODO - Check clears data on map if switch from error to success
+                notifyResponse = emailResult.NotifyResponse.Adapt(notifyResponse);
+
+                emailToUpdate.EmailNotifyResponseLog = notifyResponse;
+
+                var oldStatus = emailToUpdate.EmailStatusId;
+
+                if (!string.IsNullOrEmpty(notifyResponse.NotifyId))
+                {
+                    emailToUpdate.EmailStatusId = (int)EmailStatus.BeenProcessed;
+                    sentEmails++;
+                }
+                else
+                {
+                    emailToUpdate.EmailStatusId = (int)EmailStatus.ProcessingFailure;
+                    var retryInSeconds = _unitOfWork.EmailStatusRepository.GetById(emailToUpdate.EmailStatusId).RetrySendInSeconds;
+                    emailToUpdate.ProcessFromDate = DateTime.UtcNow.AddSeconds((double)retryInSeconds!);
+                }
+
+                emailToUpdate.LastEmailSendAttemptDate = DateTime.UtcNow;
+                if (oldStatus != emailToUpdate.EmailStatusId)
+                {
+                    emailToUpdate.LastStatusChangedDate = DateTime.UtcNow;
+                }
+
+                _unitOfWork.EmailLogRepository.Update(emailToUpdate);
+
+                await _unitOfWork.Complete();
+            }
+            catch (Exception ex)
+            {
+                //We don't want to throw the error here, we log and continue processing other emails
+                _logger.LogError(ex, "Unexpected error in UpdateSentEmailsAsync for EmailLog.ClientReferenceNumber: {ClientReferenceNumber}, EmailLog.Id: {EmailLogId}",
+                    emailToUpdate == null ? "NULL" : emailToUpdate.ClientReferenceNumber,
+                    emailToUpdate == null ? "NULL" : emailToUpdate.Id);
+            }
+        }
+
+        return sentEmails;
+    }
 }
