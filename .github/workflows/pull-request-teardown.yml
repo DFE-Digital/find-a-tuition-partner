@@ -33,6 +33,10 @@ jobs:
         cf auth
         cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
+    - name: Un Bind route service to the application route
+      run: |
+        cf unbind-route-service london.cloudapps.digital find-a-tuition-partner-qa-basic-auth --hostname find-a-tuition-partner-pr-${{ github.event.number }}
+        
     - name: Delete application
       run: |
         cf delete find-a-tuition-partner-$PR_NUMBER -f
