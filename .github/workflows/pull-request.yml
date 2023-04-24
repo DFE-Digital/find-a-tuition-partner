@@ -67,6 +67,10 @@ jobs:
     - name: Create Redis backing service
       run: |
         cf create-service redis tiny-6.x find-a-tuition-partner-$PR_NUMBER-redis-db --wait
+        
+    - name: Bind route service to the application route
+      run: |
+        cf bind-route-service london.cloudapps.digital find-a-tuition-partner-qa-basic-auth --hostname find-a-tuition-partner-pr-${{ github.event.number }}
 
     - name: Deploy to PaaS
       run: |
