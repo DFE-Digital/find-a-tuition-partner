@@ -68,10 +68,6 @@ jobs:
       run: |
         cf create-service redis tiny-6.x find-a-tuition-partner-$PR_NUMBER-redis-db --wait
         
-    - name: Bind route service to the application route
-      run: |
-        cf bind-route-service london.cloudapps.digital find-a-tuition-partner-qa-basic-auth --hostname find-a-tuition-partner-pr-${{ github.event.number }}
-
     - name: Deploy to PaaS
       run: |
         cf push --strategy rolling --vars-file vars-pr.yml \
@@ -82,6 +78,10 @@ jobs:
           --var google-drive-shared-drive-id="${{ secrets.GOOGLE_DRIVE_SHARED_DRIVE_ID }}" \
           --var google-drive-tuition-partner-data-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_DATA_FOLDER_ID }}" \
           --var google-drive-tuition-partner-logo-folder-id="${{ secrets.GOOGLE_DRIVE_TUITION_PARTNER_LOGO_FOLDER_ID }}"
+        
+    - name: Bind route service to the application route
+      run: |
+        cf bind-route-service london.cloudapps.digital find-a-tuition-partner-qa-basic-auth --hostname find-a-tuition-partner-pr-${{ github.event.number }}
 
     - name: Run database migrations and import data
       run: |
