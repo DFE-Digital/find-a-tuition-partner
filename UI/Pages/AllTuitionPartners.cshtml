@@ -1,9 +1,10 @@
 ﻿@page
 @model AllTuitionPartners
 @{
-    ViewData["Title"] = "All Tuition Partners";
-    ViewData["BackLinkHref"] = "/";
-    ViewData["IncludePrintPage"] = true;
+  ViewData["Title"] = "All Tuition Partners";
+  ViewData["BackLinkHref"] = "/";
+  ViewData["IncludePrintPage"] = true;
+  var fromReturnUrl = "?" + HttpContext?.Request.GetFromUrlForQueryString();
 }
 
 <div class="govuk-grid-row">
@@ -99,7 +100,7 @@
         <div class="govuk-grid-column-one-third app-print-hide">
             <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
             <p class="govuk-body">
-                <a asp-page="@nameof(FundingAndReporting)" class="govuk-link" data-testid="funding-reporting-link">Funding and reporting</a>
+                <a class="govuk-link" data-testid="funding-reporting-link" href="@($"/funding-and-reporting{fromReturnUrl}")">Funding and reporting</a>
             </p>
         </div>
     </form>

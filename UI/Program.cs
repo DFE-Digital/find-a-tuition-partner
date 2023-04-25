@@ -46,14 +46,6 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
-builder.Services.Configure<CookieTempDataProviderOptions>(options =>
-{
-    options.Cookie.Name = ".FindATuitionPartner.Mvc.CookieTempDataProvider";
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-});
-
 // Add services to the container.
 builder.Services.AddNtpDbContext(builder.Configuration);
 builder.Services.AddLocationFilterService();

@@ -147,7 +147,6 @@ Feature: Check your answers page for tuition partner response
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
         When they click the contact us link
-        And a user has arrived on the contact us page
         When they click back on the browser
         Then the user has arrived on the tuition response check your answers page
 

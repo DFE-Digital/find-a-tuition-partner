@@ -1,4 +1,7 @@
 ﻿
+using System.Web;
+using Microsoft.AspNetCore.Http.Extensions;
+
 namespace UI.Extensions
 {
     public static class HttpRequestExtensions
@@ -12,7 +15,30 @@ namespace UI.Extensions
             return $"{request.Scheme}://{request.Host}{request.PathBase}";
         }
 
-        public static string GetReferer(this HttpRequest request)
+        public static string GetNtpRefererUrl(this HttpRequest request)
+        {
+            return request.GetNtpUrl(GetReferer(request));
+        }
+
+        public static string GetRefererHost(this HttpRequest request)
+        {
+            return GetHost(GetReferer(request));
+        }
+
+        public static string GetNtpUrlFromQuery(this HttpRequest request, string queryStringKey)
+        {
+            var queryString = request.Query[queryStringKey].ToString();
+
+            return request.GetNtpUrl(queryString);
+        }
+
+        public static string GetFromUrlForQueryString(this HttpRequest request)
+        {
+            var currentPathAndQuery = request.GetEncodedUrl().Replace("http://", "https://");
+            return $"FromReturnUrl={HttpUtility.UrlEncode(currentPathAndQuery)}";
+        }
+
+        private static string GetReferer(this HttpRequest request)
         {
             var referrer = string.Empty;
 
@@ -25,46 +51,60 @@ namespace UI.Extensions
             return referrer;
         }
 
-        public static string GetNtpReferer(this HttpRequest request)
+        private static string GetNtpUrl(this HttpRequest request, string urlString)
         {
-            var ntpReferer = string.Empty;
-            var referrerHost = GetRefererHost(request);
+            var ntpUrl = string.Empty;
 
-            if (!string.IsNullOrEmpty(referrerHost))
+            try
             {
-                try
+                var uri = GetUri(urlString);
+
+                if (uri != null)
                 {
-                    if (string.Equals(referrerHost, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(uri.Host, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
                     {
-                        ntpReferer = GetReferer(request);
+                        ntpUrl = $"https://{uri.Authority}{uri.PathAndQuery}";
                     }
                 }
-                catch { } //Suppress exception
             }
+            catch { } //Suppress exception
 
-            return ntpReferer;
+            return ntpUrl;
         }
 
-        public static string GetRefererHost(this HttpRequest request)
+        private static string GetHost(string urlString)
         {
-            var referrerHost = string.Empty;
-            var referrer = GetReferer(request);
+            var host = string.Empty;
 
-            if (!string.IsNullOrEmpty(referrer))
+            if (!string.IsNullOrEmpty(urlString))
             {
                 try
                 {
-                    var referrerUri = new Uri(referrer);
-                    referrerHost = referrerUri.Host;
+                    var uri = GetUri(urlString);
+
+                    if (uri != null)
+                        host = uri.Host;
                 }
                 catch
                 {
                     //Suppress exception
-                    referrerHost = "Invalid Uri";
+                    host = "Invalid Uri";
                 }
             }
 
-            return referrerHost;
+            return host;
+        }
+
+        private static Uri? GetUri(string urlString)
+        {
+            Uri? uri = null;
+
+            if (!string.IsNullOrEmpty(urlString))
+            {
+                uri = new Uri(urlString);
+            }
+
+            return uri;
         }
     }
 }
