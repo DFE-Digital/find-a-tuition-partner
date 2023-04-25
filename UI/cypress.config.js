@@ -60,6 +60,9 @@ module.exports = defineConfig({
     baseUrl: "https://localhost:7036/",
     specPattern: "**/*.feature",
     setupNodeEvents,
+    env: {
+      BASIC_AUTH_CREDENTIALS: process.env.CYPRESS_BASIC_AUTH_CREDENTIALS,
+    },
   },
 });
 
