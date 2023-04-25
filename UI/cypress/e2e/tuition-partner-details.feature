@@ -59,7 +59,7 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
     When they click funding and reporting link
     Then they will see the funding reporting header
-    And  they will click the back link
+    And  they click back on the browser
     Then they redirects to the tuition partners website link with bright-heart-education
 
   Scenario: locations covered table is not displayed as default
