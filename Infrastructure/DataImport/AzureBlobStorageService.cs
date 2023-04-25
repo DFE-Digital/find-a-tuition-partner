@@ -13,7 +13,6 @@ namespace Infrastructure.DataImport;
 
 public class AzureBlobStorageService : IAzureBlobStorageService
 {
-    private const string resource = "https://storage.azure.com/";
     private readonly ILogger<AzureBlobStorageService> _logger;
     private readonly AzureBlobStorageSettings _config;
 
@@ -42,19 +41,13 @@ public class AzureBlobStorageService : IAzureBlobStorageService
                 .AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour));
 
         // Create a BlobSasBuilder object
-        var sasBuilder = new BlobSasBuilder()
+        var expiry = DateTimeOffset.UtcNow.AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour);
+        var sasBuilder = new BlobSasBuilder(BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List, expiry)
         {
             BlobContainerName = _config.ContainerName,
             Resource = "c", // container
-            StartsOn = DateTimeOffset.UtcNow,
-            ExpiresOn = DateTimeOffset.UtcNow.AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour)
+            StartsOn = DateTimeOffset.UtcNow
         };
-
-        // Set the permissions for the SAS token
-        sasBuilder.SetPermissions(
-            BlobContainerSasPermissions.Read |
-            BlobContainerSasPermissions.List
-        );
 
         // Generate the SAS token using the user delegation key
         var sasToken = sasBuilder.ToSasQueryParameters(userDelegationKey.Value, blobServiceClient.AccountName).ToString();
