@@ -19,7 +19,7 @@ public class ExceptionLoggingMiddleware
                 var url = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
 
                 var additionalComment = string.Empty;
-                var ntpReferer = context.Request.GetNtpReferer();
+                var ntpReferer = context.Request.GetNtpRefererUrl();
                 if (!string.IsNullOrWhiteSpace(ntpReferer))
                 {
                     //Internal URL then log it
