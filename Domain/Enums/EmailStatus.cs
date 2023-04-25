@@ -36,5 +36,8 @@ namespace Domain.Enums
 
         [Description("processing-failure")]
         ProcessingFailure = 11,
+
+        [Description("sending-emails-deactivated")]
+        SendingEmailsDeactivated = 12,
     }
 }

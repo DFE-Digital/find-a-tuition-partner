@@ -23,6 +23,11 @@
         public ICollection<EmailPersonalisationLog>? EmailPersonalisationLogs { get; set; }
         public ICollection<EmailLogHistory>? EmailLogHistories { get; set; }
 
+        public Enquiry? EnquirerEnquirySubmitted { get; set; }
+        public ICollection<TuitionPartnerEnquiry>? TuitionPartnerEnquiriesSubmitted { get; set; }
+        public EnquiryResponse? EnquirerResponse { get; set; }
+        public EnquiryResponse? TuitionPartnerResponse { get; set; }
+
         public EmailTriggerActivation? ThisEmailActivationTriggeredBy { get; set; }
         public ICollection<EmailTriggerActivation>? EmailsActivatedByThisEmail { get; set; }
     }

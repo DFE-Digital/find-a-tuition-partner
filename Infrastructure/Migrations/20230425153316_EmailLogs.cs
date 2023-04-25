@@ -214,7 +214,8 @@ namespace Infrastructure.Migrations
                     { 8, false, "GOV.UK Notify status: the provider could not deliver the message because the email address was wrong. You should remove these email addresses from your database.", false, null, "permanent-failure" },
                     { 9, true, "GOV.UK Notify status: the provider could not deliver the message. This can happen when the recipient’s inbox is full or their anti-spam filter rejects your email. Check your content does not look like spam before you try to send the message again.", true, 600, "temporary-failure" },
                     { 10, true, "GOV.UK Notify status: your message was not sent because there was a problem between Notify and the provider. You’ll have to try sending your messages again.", true, 60, "technical-failure" },
-                    { 11, true, "Error when calling the GOV.UK Notify SendEmailAsync()", false, 600, "processing-failure" }
+                    { 11, true, "Error when calling the GOV.UK Notify SendEmailAsync()", false, 600, "processing-failure" },
+                    { 12, false, "The emails were configured not to be sent at the time the email was processed, expected to be used for non-production environments only", false, null, "sending-emails-deactivated" }
                 });
 
             //MANUAL CHANGES - START
@@ -273,7 +274,7 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "EmailLog",
                 columns: new[] { "Id", "ClientReferenceNumber", "CreatedDate", "EmailAddress", "EmailAddressUsedForTesting", "EmailStatusId", "EmailTemplateShortName", "FinishProcessingDate", "LastEmailSendAttemptDate", "LastStatusChangedDate", "ProcessFromDate" },
-                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253), "historical_emails_when_log_implemented", null, 7, "historical_emails_when_log_implemented", new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253), null, null, null });
+                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315), "historical_emails_when_log_implemented", null, 7, "historical_emails_when_log_implemented", new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315), null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartnersEnquiry_TuitionPartnerEnquirySubmittedEmailL~",
@@ -283,17 +284,20 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponses_EnquirerResponseEmailLogId",
                 table: "EnquiryResponses",
-                column: "EnquirerResponseEmailLogId");
+                column: "EnquirerResponseEmailLogId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponses_TuitionPartnerResponseEmailLogId",
                 table: "EnquiryResponses",
-                column: "TuitionPartnerResponseEmailLogId");
+                column: "TuitionPartnerResponseEmailLogId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enquiries_EnquirerEnquirySubmittedEmailLogId",
                 table: "Enquiries",
-                column: "EnquirerEnquirySubmittedEmailLogId");
+                column: "EnquirerEnquirySubmittedEmailLogId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmailLog_ClientReferenceNumber",
@@ -374,7 +378,7 @@ namespace Infrastructure.Migrations
                 column: "EnquirerEnquirySubmittedEmailLogId",
                 principalTable: "EmailLog",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_EnquiryResponses_EmailLog_EnquirerResponseEmailLogId",
@@ -382,7 +386,7 @@ namespace Infrastructure.Migrations
                 column: "EnquirerResponseEmailLogId",
                 principalTable: "EmailLog",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_EnquiryResponses_EmailLog_TuitionPartnerResponseEmailLogId",
@@ -390,7 +394,7 @@ namespace Infrastructure.Migrations
                 column: "TuitionPartnerResponseEmailLogId",
                 principalTable: "EmailLog",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_TuitionPartnersEnquiry_EmailLog_TuitionPartnerEnquirySubmit~",
@@ -398,7 +402,7 @@ namespace Infrastructure.Migrations
                 column: "TuitionPartnerEnquirySubmittedEmailLogId",
                 principalTable: "EmailLog",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

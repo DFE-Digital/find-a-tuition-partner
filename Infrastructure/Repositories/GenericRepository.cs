@@ -107,4 +107,29 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _context.Set<T>().RemoveRange(entities);
     }
+
+    public void RollbackChanges()
+    {
+        var changedEntries = _context.ChangeTracker.Entries()
+            .Where(x => x.State != EntityState.Unchanged).ToList();
+
+        foreach (var entry in changedEntries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Modified:
+                    entry.CurrentValues.SetValues(entry.OriginalValues);
+                    entry.State = EntityState.Unchanged;
+                    break;
+                case EntityState.Added:
+                    entry.State = EntityState.Detached;
+                    break;
+                case EntityState.Deleted:
+                    entry.State = EntityState.Unchanged;
+                    entry.Reload();
+                    break;
+                default: break;
+            }
+        }
+    }
 }

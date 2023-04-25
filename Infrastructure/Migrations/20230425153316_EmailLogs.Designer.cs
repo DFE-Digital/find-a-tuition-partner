@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230421112035_EmailLogs")]
+    [Migration("20230425153316_EmailLogs")]
     partial class EmailLogs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,11 +85,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             ClientReferenceNumber = "historical_emails_when_log_implemented",
-                            CreatedDate = new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253),
+                            CreatedDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315),
                             EmailAddress = "historical_emails_when_log_implemented",
                             EmailStatusId = 7,
                             EmailTemplateShortName = "historical_emails_when_log_implemented",
-                            FinishProcessingDate = new DateTime(2023, 4, 21, 11, 20, 34, 309, DateTimeKind.Utc).AddTicks(4253)
+                            FinishProcessingDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315)
                         });
                 });
 
@@ -328,6 +328,14 @@ namespace Infrastructure.Migrations
                             PollForStatusUpdateIfSent = false,
                             RetrySendInSeconds = 600,
                             Status = "processing-failure"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AllowEmailSending = false,
+                            Description = "The emails were configured not to be sent at the time the email was processed, expected to be used for non-production environments only",
+                            PollForStatusUpdateIfSent = false,
+                            Status = "sending-emails-deactivated"
                         });
                 });
 
@@ -406,7 +414,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
-                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId");
+                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId")
+                        .IsUnique();
 
                     b.HasIndex("MagicLinkId");
 
@@ -458,9 +467,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnquirerResponseEmailLogId");
+                    b.HasIndex("EnquirerResponseEmailLogId")
+                        .IsUnique();
 
-                    b.HasIndex("TuitionPartnerResponseEmailLogId");
+                    b.HasIndex("TuitionPartnerResponseEmailLogId")
+                        .IsUnique();
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -5078,9 +5089,9 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerEnquirySubmittedEmailLog")
-                        .WithMany()
-                        .HasForeignKey("EnquirerEnquirySubmittedEmailLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("EnquirerEnquirySubmitted")
+                        .HasForeignKey("Domain.Enquiry", "EnquirerEnquirySubmittedEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.MagicLink", "MagicLink")
@@ -5103,15 +5114,15 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
-                        .WithMany()
-                        .HasForeignKey("EnquirerResponseEmailLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("EnquirerResponse")
+                        .HasForeignKey("Domain.EnquiryResponse", "EnquirerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
-                        .WithMany()
-                        .HasForeignKey("TuitionPartnerResponseEmailLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("TuitionPartnerResponse")
+                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("EnquirerResponseEmailLog");
@@ -5341,9 +5352,9 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.EmailLog", "TuitionPartnerEnquirySubmittedEmailLog")
-                        .WithMany()
+                        .WithMany("TuitionPartnerEnquiriesSubmitted")
                         .HasForeignKey("TuitionPartnerEnquirySubmittedEmailLogId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.TuitionPartner", "TuitionPartner")
@@ -5382,7 +5393,15 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("EmailsActivatedByThisEmail");
 
+                    b.Navigation("EnquirerEnquirySubmitted");
+
+                    b.Navigation("EnquirerResponse");
+
                     b.Navigation("ThisEmailActivationTriggeredBy");
+
+                    b.Navigation("TuitionPartnerEnquiriesSubmitted");
+
+                    b.Navigation("TuitionPartnerResponse");
                 });
 
             modelBuilder.Entity("Domain.EmailStatus", b =>

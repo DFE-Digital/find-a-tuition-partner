@@ -110,6 +110,15 @@ public class EmailStatusConfigurations : IEntityTypeConfiguration<Domain.EmailSt
                 AllowEmailSending = true,
                 PollForStatusUpdateIfSent = false,
                 RetrySendInSeconds = 60 * 10
+            },
+            new Domain.EmailStatus
+            {
+                Id = (int)EmailStatus.SendingEmailsDeactivated,
+                Status = EmailStatus.SendingEmailsDeactivated.DisplayName(),
+                Description = "The emails were configured not to be sent at the time the email was processed, expected to be used for non-production environments only",
+                AllowEmailSending = false,
+                PollForStatusUpdateIfSent = false,
+                RetrySendInSeconds = null
             }
         );
     }

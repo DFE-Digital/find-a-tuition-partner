@@ -19,7 +19,6 @@ public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
     public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
-//TODO - Config for emails on/off
 public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, SubmittedConfirmationModel>
 {
     private const string EnquiryNumberOfTpsContactedKey = "number_of_tps_contacted";
@@ -39,6 +38,9 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     private readonly DateTime _createdDateTime = DateTime.UtcNow;
     private string? _environmentNameNonProduction;
     private string? _enquiryReferenceNumber;
+    private string? _enquirerToken;
+    private List<TuitionPartnerMagicLinkModel>? _tpMagicLinkModelList;
+    private bool _sendTuitionPartnerEmailsWhenEnquirerDelivered = true;
 
     public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IRandomTokenGenerator randomTokenGenerator,
         IProcessEmailsService processEmailsService,
@@ -65,53 +67,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             throw new ArgumentException(validationResult);
         }
 
+        _sendTuitionPartnerEmailsWhenEnquirerDelivered = _processEmailsService.SendTuitionPartnerEmailsWhenEnquirerDelivered();
         _environmentNameNonProduction = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
         _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+        _enquirerToken = _randomTokenGenerator.GenerateRandomToken();
 
-        var enquirerToken = _randomTokenGenerator.GenerateRandomToken();
-        var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request, enquirerToken);
-        var enquirerMagicLink = new MagicLink()
-        {
-            Token = enquirerToken
-        };
-
-        var tuitionPartnerEnquiries = GetTuitionPartnerEnquiries(request);
-
-        //Populate this to return before merge below
-        var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
-        tuitionPartnerEnquiries.ForEach(x =>
-            tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
-            {
-                TuitionPartnerSeoUrl = request.Data!.TuitionPartnersForEnquiry!.Results.FirstOrDefault(y => y.Id == x.TuitionPartnerId)!.SeoUrl,
-                Email = x.TuitionPartnerEnquirySubmittedEmailLog.EmailAddress,
-                MagicLinkToken = x.MagicLink.Token!
-            }));
-
-        //See if emails are merged, for non-production testing
-        var emailLogs = tuitionPartnerEnquiries.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList();
-        var mergedEmailLog = _processEmailsService.MergeEmailForTesting(emailLogs, new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey });
-        if (mergedEmailLog != null)
-        {
-            tuitionPartnerEnquiries.ForEach(x => x.TuitionPartnerEnquirySubmittedEmailLog = mergedEmailLog);
-        }
-
-        //Populate and save the enquiry
-        var enquiry = new Domain.Enquiry()
-        {
-            Email = request.Data?.Email!,
-            TutoringLogistics = request.Data?.TutoringLogistics!,
-            SENDRequirements = request.Data?.SENDRequirements ?? null,
-            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
-            TuitionPartnerEnquiry = tuitionPartnerEnquiries,
-            SupportReferenceNumber = _enquiryReferenceNumber,
-            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
-            PostCode = request.Data!.Postcode!,
-            LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
-            TuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType),
-            MagicLink = enquirerMagicLink,
-            EnquirerEnquirySubmittedEmailLog = enquirerEnquirySubmittedEmailLog,
-            CreatedAt = _createdDateTime
-        };
+        var enquiry = GetEnquiry(request);
 
         try
         {
@@ -121,7 +82,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
         catch (DbUpdateException ex)
         {
-            await HandleDbUpdateException(ex, enquiry);
+            enquiry = await HandleDbUpdateException(ex, request, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -135,12 +96,85 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         //Result population
         result.SupportReferenceNumber = _enquiryReferenceNumber;
-        result.EnquirerMagicLink = enquirerToken;
+        result.EnquirerMagicLink = _enquirerToken;
 
-        result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
-        result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
+        result.TuitionPartnerMagicLinks = _tpMagicLinkModelList!;
+        result.TuitionPartnerMagicLinksCount = _tpMagicLinkModelList!.Count;
 
         return result;
+    }
+
+    private Domain.Enquiry GetEnquiry(AddEnquiryCommand request)
+    {
+        var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request);
+        var enquirerMagicLink = new MagicLink()
+        {
+            Token = _enquirerToken!
+        };
+
+        var tuitionPartnerEnquiries = GetTuitionPartnerEnquiries(request);
+
+        //Populate this to return before merge below
+        _tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
+        tuitionPartnerEnquiries.ForEach(x =>
+            _tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
+            {
+                TuitionPartnerSeoUrl = request.Data!.TuitionPartnersForEnquiry!.Results.FirstOrDefault(y => y.Id == x.TuitionPartnerId)!.SeoUrl,
+                Email = x.TuitionPartnerEnquirySubmittedEmailLog.EmailAddress,
+                MagicLinkToken = x.MagicLink.Token!
+            }));
+
+        //See if emails are merged, for non-production testing
+        var tpEmailLogs = tuitionPartnerEnquiries.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList();
+        var mergedEmailLog = _processEmailsService.MergeEmailForTesting(
+            tpEmailLogs,
+            new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey });
+        if (mergedEmailLog != null)
+        {
+            mergedEmailLog.ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, EmailTemplateType.EnquirySubmittedToTp);
+            tuitionPartnerEnquiries.ForEach(x => x.TuitionPartnerEnquirySubmittedEmailLog = mergedEmailLog);
+        }
+
+        //Add email dependency
+        SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(
+            enquirerEnquirySubmittedEmailLog,
+            mergedEmailLog == null ? tpEmailLogs : new List<EmailLog>() { mergedEmailLog });
+
+        //Populate and save the enquiry
+        return new Domain.Enquiry()
+        {
+            Email = request.Data?.Email!,
+            TutoringLogistics = request.Data?.TutoringLogistics!,
+            SENDRequirements = request.Data?.SENDRequirements ?? null,
+            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
+            TuitionPartnerEnquiry = tuitionPartnerEnquiries,
+            SupportReferenceNumber = _enquiryReferenceNumber!,
+            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
+            PostCode = request.Data!.Postcode!,
+            LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
+            TuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType),
+            MagicLink = enquirerMagicLink,
+            EnquirerEnquirySubmittedEmailLog = enquirerEnquirySubmittedEmailLog,
+            CreatedAt = _createdDateTime
+        };
+    }
+
+    private void SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(EmailLog enquirerEmailLog, List<EmailLog> tpEmailLogs)
+    {
+        if (_sendTuitionPartnerEmailsWhenEnquirerDelivered &&
+            enquirerEmailLog != null &&
+            tpEmailLogs != null &&
+            tpEmailLogs.Any())
+        {
+            enquirerEmailLog.EmailsActivatedByThisEmail = new List<EmailTriggerActivation>();
+            foreach (var tpEmailLog in tpEmailLogs)
+            {
+                enquirerEmailLog.EmailsActivatedByThisEmail.Add(new EmailTriggerActivation()
+                {
+                    ActivateEmailLog = tpEmailLog,
+                });
+            }
+        }
     }
 
     private static string? ValidateRequest(AddEnquiryCommand request)
@@ -183,11 +217,11 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return null;
     }
 
-    private EmailLog GetEnquirerEnquirySubmittedEmailLog(AddEnquiryCommand request, string enquirerToken)
+    private EmailLog GetEnquirerEnquirySubmittedEmailLog(AddEnquiryCommand request)
     {
         var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
 
-        var enquirerEnquirySubmittedEmailPersonalisationLog = GetEnquirerEnquirySubmittedEmailPersonalisationLog(request, enquirerToken);
+        var enquirerEnquirySubmittedEmailPersonalisationLog = GetEnquirerEnquirySubmittedEmailPersonalisationLog(request);
 
         var emailLog = new EmailLog()
         {
@@ -205,9 +239,9 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return emailLog;
     }
 
-    private List<EmailPersonalisationLog> GetEnquirerEnquirySubmittedEmailPersonalisationLog(AddEnquiryCommand request, string token)
+    private List<EmailPersonalisationLog> GetEnquirerEnquirySubmittedEmailPersonalisationLog(AddEnquiryCommand request)
     {
-        var enquirerViewAllResponsesPageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{_enquiryReferenceNumber}?Token={token}";
+        var enquirerViewAllResponsesPageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{_enquiryReferenceNumber}?Token={_enquirerToken}";
 
         var personalisation = new Dictionary<string, dynamic>()
         {
@@ -257,13 +291,13 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         var emailLog = new EmailLog()
         {
             CreatedDate = _createdDateTime,
-            ProcessFromDate = _createdDateTime, //TODO - this and status will change to be dependent upon the enquirer email being delivered if set in config
+            ProcessFromDate = _sendTuitionPartnerEmailsWhenEnquirerDelivered ? null : _createdDateTime,
             FinishProcessingDate = _createdDateTime.AddDays(IntegerConstants.EmailLogFinishProcessingAfterDays),
             EmailAddress = tuitionPartnerResult.Email,
             EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.Data?.Email!),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
             ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, emailTemplateType, tuitionPartnerResult.Name),
-            EmailStatusId = (int)EmailStatus.ToBeProcessed,
+            EmailStatusId = _sendTuitionPartnerEmailsWhenEnquirerDelivered ? (int)EmailStatus.WaitingToBeTriggered : (int)EmailStatus.ToBeProcessed,
             EmailPersonalisationLogs = tuitionPartnerEnquirySubmittedEmailPersonalisationLog
         };
 
@@ -322,10 +356,13 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return keyStageSubjectEnquiry;
     }
 
-    private async Task HandleDbUpdateException(DbUpdateException ex, Domain.Enquiry enquiry)
+    private async Task<Domain.Enquiry> HandleDbUpdateException(DbUpdateException ex,
+        AddEnquiryCommand request,
+        CancellationToken cancellationToken)
     {
         var dataSaved = false;
         var retryAttempt = 0;
+        var updatedEnquiry = new Domain.Enquiry();
 
         while (!dataSaved)
         {
@@ -339,15 +376,16 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 _logger.LogError(
                     ex,
                     "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Next retry attempt number: {retryAttempt}",
-                    enquiry.SupportReferenceNumber, retryAttempt);
+                    _enquiryReferenceNumber, retryAttempt);
 
-                //TODO - if support ref changes then also need to update the EmailLogs (log & personalisation links etc - find all _enquiryReferenceNumber)
-                //TODO - test this
+                _unitOfWork.EnquiryRepository.RollbackChanges();
+
                 _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
-                enquiry.SupportReferenceNumber = _enquiryReferenceNumber;
-
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",
-                    enquiry.SupportReferenceNumber);
+                    _enquiryReferenceNumber);
+
+                updatedEnquiry = GetEnquiry(request);
+                _unitOfWork.EnquiryRepository.AddAsync(updatedEnquiry, cancellationToken);
 
                 try
                 {
@@ -367,13 +405,13 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 throw ex;
             }
         }
+        return updatedEnquiry;
     }
 
     private async Task ProcessEmailsAsync(Domain.Enquiry enquiry)
     {
         try
         {
-            //TODO - test that still propegates error as before and handles 400 errors as before
             await _processEmailsService.SendEmailAsync(enquiry.EnquirerEnquirySubmittedEmailLog.Id);
         }
         catch (Exception)
@@ -384,22 +422,35 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         try
         {
-            //TODO - this will only be if config is set to send straight away
-            var emailLogIds = enquiry.TuitionPartnerEnquiry.Select(x => x.TuitionPartnerEnquirySubmittedEmailLogId).ToArray();
-            await _processEmailsService.SendEmailsAsync(emailLogIds!);
+            if (!_sendTuitionPartnerEmailsWhenEnquirerDelivered)
+            {
+                var emailLogIds = enquiry.TuitionPartnerEnquiry.Select(x => x.TuitionPartnerEnquirySubmittedEmailLogId).ToArray();
+                await _processEmailsService.SendEmailsAsync(emailLogIds!);
+            }
         }
         catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
     }
 
     private async Task CleanUpData(Domain.Enquiry enquiry)
     {
-        //TODO - test removal also removes EmailLogs - what if amalgamate and 1 EmailLog for multiple TPEnquiries?
-        _unitOfWork.EnquiryRepository.Remove(enquiry);
-        var tpMagicLinks = await _unitOfWork.TuitionPartnerEnquiryRepository
-            .GetAllAsync(x => x.Enquiry.SupportReferenceNumber == enquiry.SupportReferenceNumber, "Enquiry,MagicLink",
-                true);
-        tpMagicLinks.Select(x => x.MagicLink).ToList().ForEach(x => _unitOfWork.MagicLinkRepository.Remove(x));
-        _unitOfWork.MagicLinkRepository.Remove(enquiry.MagicLink);
-        await _unitOfWork.Complete();
+        try
+        {
+            var tpRecords = await _unitOfWork.TuitionPartnerEnquiryRepository
+                .GetAllAsync(x => x.Enquiry.SupportReferenceNumber == enquiry.SupportReferenceNumber, "Enquiry,MagicLink,TuitionPartnerEnquirySubmittedEmailLog",
+                    true);
+            tpRecords.Select(x => x.MagicLink).ToList().ForEach(x => _unitOfWork.MagicLinkRepository.Remove(x));
+            _unitOfWork.MagicLinkRepository.Remove(enquiry.MagicLink);
+
+            tpRecords.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList().ForEach(x => _unitOfWork.EmailLogRepository.Remove(x));
+            _unitOfWork.EmailLogRepository.Remove(enquiry.EnquirerEnquirySubmittedEmailLog);
+
+            _unitOfWork.EnquiryRepository.Remove(enquiry);
+
+            await _unitOfWork.Complete();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error thrown in CleanUpData");
+        }
     }
 }
