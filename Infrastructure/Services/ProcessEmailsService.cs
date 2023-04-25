@@ -17,6 +17,8 @@ namespace Infrastructure.Services;
 public class ProcessEmailsService : IProcessEmailsService
 {
     private const string ScheduleName = "Process Emails";
+    private const string TestExtraInfoKey = "test_extra_info";
+
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<AddEnquiryCommandHandler> _logger;
     private readonly INotificationsClientService _notificationsClientService;
@@ -99,6 +101,47 @@ public class ProcessEmailsService : IProcessEmailsService
         }
 
         return testingEmail;
+    }
+
+    public EmailLog? MergeEmailForTesting(List<EmailLog> emailLogs, List<string> personalisationPropertiesToMerge)
+    {
+        if (_emailSettingsConfig.MergeResponses &&
+            emailLogs.Count > 1 &&
+            emailLogs.First().EmailPersonalisationLogs != null &&
+            personalisationPropertiesToMerge.Count > 0)
+        {
+            var initialEmailLog = emailLogs.First();
+            var initialEmailPersonalisationLogs = initialEmailLog!.EmailPersonalisationLogs!;
+
+            foreach (var personalisationPropertyToMerge in personalisationPropertiesToMerge)
+            {
+                var value = string.Empty;
+
+                var addNewLine = string.Empty;
+
+                foreach (var emailLog in emailLogs)
+                {
+                    var matchedEmailPersonalisationLog = emailLog!.EmailPersonalisationLogs!.Single(x => x.Key.Equals(personalisationPropertyToMerge));
+                    value = $"{value}{addNewLine}{emailLog.EmailAddress} - {matchedEmailPersonalisationLog.Value}";
+                    addNewLine = $"{Environment.NewLine}{Environment.NewLine}";
+                }
+
+                var initialEmailPersonalisationLog = initialEmailPersonalisationLogs.Single(x => x.Key.Equals(personalisationPropertyToMerge));
+                initialEmailPersonalisationLog.Value = value;
+            }
+
+            initialEmailPersonalisationLogs.Add(new EmailPersonalisationLog()
+            {
+                Key = TestExtraInfoKey,
+                Value = "This is a merged email for testing purposes."
+            });
+
+            initialEmailLog.EmailAddress = "merged_email_for_testing@education.gov.uk";
+
+            return initialEmailLog;
+        }
+
+        return null;
     }
 
 
@@ -278,7 +321,8 @@ public class ProcessEmailsService : IProcessEmailsService
         {
             var notifyEmails = emailsToSend.Select(x => new NotifyEmailDto()
             {
-                Email = string.IsNullOrWhiteSpace(x.EmailAddressUsedForTesting) ? x.EmailAddress : x.EmailAddressUsedForTesting,
+                Email = x.EmailAddress,
+                EmailAddressUsedForTesting = x.EmailAddressUsedForTesting,
                 ClientReference = x.ClientReferenceNumber,
                 EmailTemplateType = x.EmailTemplateShortName.GetEnumFromDisplayName<EmailTemplateType>(),
                 Personalisation = x.EmailPersonalisationLogs == null ?

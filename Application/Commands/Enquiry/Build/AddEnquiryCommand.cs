@@ -19,6 +19,7 @@ public record AddEnquiryCommand : IRequest<SubmittedConfirmationModel>
     public EnquiryBuildModel? Data { get; set; } = null!;
 }
 
+//TODO - Config for emails on/off
 public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, SubmittedConfirmationModel>
 {
     private const string EnquiryNumberOfTpsContactedKey = "number_of_tps_contacted";
@@ -69,14 +70,32 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         var enquirerToken = _randomTokenGenerator.GenerateRandomToken();
         var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request, enquirerToken);
-
-        var tuitionPartnerEnquiries = GetTuitionPartnerEnquiries(request);
-
         var enquirerMagicLink = new MagicLink()
         {
             Token = enquirerToken
         };
 
+        var tuitionPartnerEnquiries = GetTuitionPartnerEnquiries(request);
+
+        //Populate this to return before merge below
+        var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
+        tuitionPartnerEnquiries.ForEach(x =>
+            tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
+            {
+                TuitionPartnerSeoUrl = request.Data!.TuitionPartnersForEnquiry!.Results.FirstOrDefault(y => y.Id == x.TuitionPartnerId)!.SeoUrl,
+                Email = x.TuitionPartnerEnquirySubmittedEmailLog.EmailAddress,
+                MagicLinkToken = x.MagicLink.Token!
+            }));
+
+        //See if emails are merged, for non-production testing
+        var emailLogs = tuitionPartnerEnquiries.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList();
+        var mergedEmailLog = _processEmailsService.MergeEmailForTesting(emailLogs, new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey });
+        if (mergedEmailLog != null)
+        {
+            tuitionPartnerEnquiries.ForEach(x => x.TuitionPartnerEnquirySubmittedEmailLog = mergedEmailLog);
+        }
+
+        //Populate and save the enquiry
         var enquiry = new Domain.Enquiry()
         {
             Email = request.Data?.Email!,
@@ -115,18 +134,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         await ProcessEmailsAsync(enquiry);
 
         //Result population
-        var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
-
         result.SupportReferenceNumber = _enquiryReferenceNumber;
         result.EnquirerMagicLink = enquirerToken;
-
-        tuitionPartnerEnquiries.ForEach(x =>
-            tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
-            {
-                TuitionPartnerSeoUrl = request.Data!.TuitionPartnersForEnquiry!.Results.FirstOrDefault(y => y.Id == x.TuitionPartnerId)!.SeoUrl,
-                Email = x.TuitionPartnerEnquirySubmittedEmailLog.EmailAddress,
-                MagicLinkToken = x.MagicLink.Token!
-            }));
 
         result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
         result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
@@ -234,8 +243,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 TuitionPartnerEnquirySubmittedEmailLog = GetTuitionPartnerEnquirySubmittedEmailLog(request, tuitionPartnerResult, token)
             };
         }).ToList();
-
-        //TODO - using same logic as was in NotificationsClientService.AmalgamateEmailForTesting - have as EmailLog extension maybe?
 
         return tuitionPartnerEnquiries;
     }

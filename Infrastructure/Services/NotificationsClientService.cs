@@ -91,27 +91,19 @@ public class NotificationsClientService : INotificationsClientService
 
         var allEmailsSent = true;
 
-        //See if we need to amalgamate multiuple emails for testing purposes
-        if (_emailSettingsConfig.AmalgamateResponses && notifyEmails.Count() > 1 && notifyEmails.First().PersonalisationPropertiesToAmalgamate.Count > 0)
-        {
-            allEmailsSent = await AmalgamateEmailForTesting(notifyEmails);
-        }
-        else
-        {
-            // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
-            // which can significantly improve performance when dealing with multiple recipients
-            var sendEmailTasks = notifyEmails
-                .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
-                .Select(async recipient =>
-                {
-                    return await SendEmailAsync(recipient);
-                })
-                .ToList();
+        // By using Task.WhenAll and the Select LINQ method, we can now process and send emails in parallel,
+        // which can significantly improve performance when dealing with multiple recipients
+        var sendEmailTasks = notifyEmails
+            .Where(recipient => !string.IsNullOrEmpty(recipient.Email))
+            .Select(async recipient =>
+            {
+                return await SendEmailAsync(recipient);
+            })
+            .ToList();
 
-            var results = await Task.WhenAll(sendEmailTasks);
+        var results = await Task.WhenAll(sendEmailTasks);
 
-            allEmailsSent = results.All(result => result);
-        }
+        allEmailsSent = results.All(result => result);
 
         return allEmailsSent;
     }
@@ -135,21 +127,20 @@ public class NotificationsClientService : INotificationsClientService
         //Add in these keys as empty since must exist in code even if nothing to pass in
         AddDefaultTestPersonalisation(notifyEmail.Personalisation);
 
-        var overrideEmail = _emailSettingsConfig.OverrideAddress;
-        var overrideExtraInfoText = "overridden to use";
-        if (string.IsNullOrWhiteSpace(overrideEmail) && _emailSettingsConfig.AllSentToEnquirer)
+        if (!string.IsNullOrEmpty(notifyEmail.EmailAddressUsedForTesting) &&
+            !notifyEmail.Email.Equals(notifyEmail.EmailAddressUsedForTesting, StringComparison.InvariantCultureIgnoreCase))
         {
-            overrideEmail = notifyEmail.EmailAddressUsedForTesting;
-            overrideExtraInfoText = "changed to";
-        }
+            var extraInfoText = "changed to";
+            if (!string.IsNullOrWhiteSpace(_emailSettingsConfig.OverrideAddress))
+            {
+                extraInfoText = "overridden to use";
+            }
 
-        if (!string.IsNullOrWhiteSpace(overrideEmail) && !string.Equals(notifyEmail.Email, overrideEmail, StringComparison.InvariantCultureIgnoreCase))
-        {
             var extraInfoChangedFrom = includeChangedFromEmailAddress ? $" rather than {notifyEmail.Email}" : string.Empty;
 
-            notifyEmail.Email = overrideEmail;
+            AddPersonalisation(notifyEmail.Personalisation, TestExtraInfoKey, $"For testing purposes the email has been {extraInfoText} {notifyEmail.EmailAddressUsedForTesting}{extraInfoChangedFrom}.", true);
 
-            AddPersonalisation(notifyEmail.Personalisation, TestExtraInfoKey, $"For testing purposes the email has been {overrideExtraInfoText} {overrideEmail}{extraInfoChangedFrom}.", true);
+            notifyEmail.Email = notifyEmail.EmailAddressUsedForTesting;
         }
 
         if (!_hostEnvironment.IsProduction())
@@ -158,36 +149,6 @@ public class NotificationsClientService : INotificationsClientService
             if (!string.IsNullOrWhiteSpace(environmentName))
                 AddPersonalisation(notifyEmail.Personalisation, TestWebsiteEnvName, $"**** {environmentName} NTP email ****  ");
         }
-    }
-
-    private async Task<bool> AmalgamateEmailForTesting(IEnumerable<NotifyEmailDto> notifyEmails)
-    {
-        var initialRecipient = notifyEmails.First();
-        var keys = new List<string>(initialRecipient.Personalisation.Keys);
-        foreach (string key in keys)
-        {
-            if (initialRecipient.PersonalisationPropertiesToAmalgamate.Contains(key))
-            {
-                initialRecipient.Personalisation[key] = $"{initialRecipient.Email} - {initialRecipient.Personalisation[key]}";
-            }
-        }
-
-        for (int i = 1; i < notifyEmails.Count(); i++)
-        {
-            foreach (var personalisation in notifyEmails.ElementAt(i).Personalisation)
-            {
-                if (initialRecipient.PersonalisationPropertiesToAmalgamate.Contains(personalisation.Key))
-                {
-                    AddPersonalisation(initialRecipient.Personalisation, personalisation.Key, $"{notifyEmails.ElementAt(i).Email} - {personalisation.Value}", true, false);
-                }
-            }
-        }
-
-        AddPersonalisation(initialRecipient.Personalisation, TestExtraInfoKey, $"This is an amalgamated email for testing purposes.", true);
-
-        initialRecipient.ClientReference = initialRecipient.ClientReferenceIfAmalgamate;
-
-        return await SendEmailAsync(initialRecipient, false);
     }
 
     private static string GetEmailTemplateId(EmailTemplateType emailTemplateType, GovUkNotifyOptions notifyConfig)
@@ -226,22 +187,17 @@ public class NotificationsClientService : INotificationsClientService
         }
     }
 
-    private static void AddPersonalisation(Dictionary<string, dynamic> personalisation, string key, dynamic value,
-        bool addNewLine = false, bool addAsPrefix = true)
+    private static void AddPersonalisation(Dictionary<string, dynamic> personalisation,
+        string key,
+        dynamic value,
+        bool addNewLine = false)
     {
         personalisation ??= new Dictionary<string, dynamic>();
 
         if (personalisation.ContainsKey(key))
         {
             var existingValue = personalisation[key];
-            if (addAsPrefix)
-            {
-                personalisation[key] = addNewLine ? $"{value}{Environment.NewLine}{Environment.NewLine}{existingValue}" : $"{value}  {existingValue}";
-            }
-            else
-            {
-                personalisation[key] = addNewLine ? $"{existingValue}{Environment.NewLine}{Environment.NewLine}{value}" : $"{existingValue}  {value}";
-            }
+            personalisation[key] = addNewLine ? $"{value}{Environment.NewLine}{Environment.NewLine}{existingValue}" : $"{value}  {existingValue}";
         }
         else
         {
