@@ -89,16 +89,24 @@ jobs:
           --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
           --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" \
           --name find-a-tuition-partner-$PR_NUMBER-data-import
+
+    - name: Wait for the data import to complete
+      uses: nick-fields/retry@v2
+      with:
+        timeout_minutes: 10
+        max_attempts: 60
+        retry_wait_seconds: 10
+        command: cf tasks find-a-tuition-partner-pr-${{ github.event.number }} | grep "RUNNING"
     
     - name: Logout
       run: cf logout
 
-    - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
-      uses: cygnetdigital/wait_for_response@v2.0.0
-      with:
-        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
-        timeout: 600000
-        interval: 15000
+#    - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
+#      uses: cygnetdigital/wait_for_response@v2.0.0
+#      with:
+#        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
+#        timeout: 600000
+#        interval: 15000
 
     - name: End to End Testing
       uses: cypress-io/github-action@v5
