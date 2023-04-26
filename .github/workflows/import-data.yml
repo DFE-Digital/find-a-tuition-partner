@@ -59,6 +59,16 @@ jobs:
             --command "exec /home/vcap/deps/0/dotnet_publish/UI import \
             --GoogleDrive:ServiceAccountKeyFilePath /home/vcap/deps/0/dotnet_publish/credentials.json" \
             --name find-a-tuition-partner-${{ inputs.environment }}-data-import
-      
+
+      - name: Wait for the data import to complete
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 60
+          retry_wait_seconds: 10
+          warning_on_retry: false
+          command: |
+            ! cf tasks find-a-tuition-partner-${{ inputs.environment }} | grep "RUNNING"
+
       - name: Logout
         run: cf logout
