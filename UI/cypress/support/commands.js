@@ -31,9 +31,9 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   return originalFn(url, options);
 });
 
-Cypress.Commands.overwrite("request", (originalFn, options) => {
+Cypress.Commands.overwrite("request", (originalFn, url, options) => {
   options = applyBasicAuth(options);
-  return originalFn(options);
+  return originalFn(url, options);
 });
 
 Cypress.Commands.add("checkTotalTps", (expectedTotal) => {
