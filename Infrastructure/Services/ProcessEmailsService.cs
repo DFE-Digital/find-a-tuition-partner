@@ -35,8 +35,6 @@ public class ProcessEmailsService : IProcessEmailsService
         _emailSettingsConfig = emailSettingsConfig.Value;
     }
 
-    //TODO - Consider if all email stuff should be in own project?
-    //TODO - Performance - test this with load
     public async Task<ProcessedEmailsModel> ProcessAllEmailsAsync()
     {
         var processedEmailsModel = new ProcessedEmailsModel();
