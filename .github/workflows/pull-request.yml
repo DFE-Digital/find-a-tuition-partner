@@ -9,8 +9,6 @@ concurrency: pr-${{ github.event.number }}
 
 env:
   PR_NUMBER: pr-${{ github.event.number }}
-  BASE_URL: ${{ secrets.BASIC_AUTH_CREDENTIALS == '' && 'https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital'
-    || format('https://{0}@find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital', secrets.BASIC_AUTH_CREDENTIALS) }}
   CF_API: "https://api.london.cloud.service.gov.uk"
   CF_ORG: "dfe"
   CF_SPACE: ntp-qa
@@ -93,6 +91,15 @@ jobs:
     
     - name: Logout
       run: cf logout
+
+    - name: Set up BASE_URL environment variable
+      run: |
+        if [ -n "${{ secrets.BASIC_AUTH_CREDENTIALS }}" ]; then
+          echo "BASE_URL=https://${{ secrets.BASIC_AUTH_CREDENTIALS }}@find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital" >> $GITHUB_ENV
+        else
+          echo "BASE_URL=https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital" >> $GITHUB_ENV
+        fi
+
 
     - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
       uses: cygnetdigital/wait_for_response@v2.0.0
