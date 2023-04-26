@@ -75,3 +75,20 @@ export const mapTextToNumberIndexZeroToTenth = (t) => {
       return -1;
   }
 };
+
+export const applyBasicAuth = (options) => {
+  const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
+
+  if (basicAuthCredentials) {
+    const [username, password] = basicAuthCredentials.split(":");
+
+    if (username && password) {
+      options = options || {};
+      options.auth = {
+        username: username,
+        password: password,
+      };
+    }
+  }
+  return options;
+};

@@ -24,22 +24,16 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { removeNewLine, getJumpToLocationId } from "./utils";
+import { removeNewLine, getJumpToLocationId, applyBasicAuth } from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
-  const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
-
-  if (basicAuthCredentials) {
-    const [username, password] = basicAuthCredentials.split(":");
-    if (username && password) {
-      options = options || {};
-      options.auth = {
-        username: username,
-        password: password,
-      };
-    }
-  }
+  options = applyBasicAuth(options);
   return originalFn(url, options);
+});
+
+Cypress.Commands.add("requestWithBasicAuth", (options) => {
+  options = applyBasicAuth(options);
+  return cy.request(options);
 });
 
 Cypress.Commands.add("checkTotalTps", (expectedTotal) => {
