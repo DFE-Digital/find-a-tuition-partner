@@ -9,6 +9,7 @@ concurrency: pr-${{ github.event.number }}
 
 env:
   PR_NUMBER: pr-${{ github.event.number }}
+  BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
   CF_API: "https://api.london.cloud.service.gov.uk"
   CF_ORG: "dfe"
   CF_SPACE: ntp-qa
