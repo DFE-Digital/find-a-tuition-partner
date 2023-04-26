@@ -24,19 +24,30 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { removeNewLine } from "./utils";
-
-import { getJumpToLocationId } from "./utils";
+import { removeNewLine, getJumpToLocationId } from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
-  const username = Cypress.env("username");
-  const password = Cypress.env("password");
+  const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
 
-  if (username && password) {
-    options = options || {};
-    options.auth = {
-      username: username,
-      password: password,
+  if (basicAuthCredentials) {
+    const [username, password] = basicAuthCredentials.split(":");
+    const auth = `${username}:${password}`;
+    const authHeader = `Basic ${btoa(auth)}`;
+
+    // Preserve the authentication header across multiple cy.visit() calls
+    Cypress.on("window:before:load", (win) => {
+      win.document.cookie = "auth=" + authHeader;
+    });
+
+    options = {
+      ...options,
+      headers: {
+        ...(options && options.headers),
+        Authorization: authHeader,
+      },
+      onBeforeLoad: (win) => {
+        win.fetch = null;
+      },
     };
   }
 
