@@ -1,7 +1,7 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("a service page has not been found", () => {
-  cy.request({ url: "/page-does-not-exist", failOnStatusCode: false })
+  cy.visit({ url: "/page-does-not-exist", failOnStatusCode: false })
     .its("status")
     .should("equal", 404);
   cy.visit("/page-does-not-exist", { failOnStatusCode: false });

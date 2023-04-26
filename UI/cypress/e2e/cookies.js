@@ -125,7 +125,7 @@ Then("the previous page is displayed correctly", () => {
 Then("the privacy policy is accessible in a new tab", () => {
   cy.get('[data-testid="privacy-policy-link"]').then(function ($a) {
     const href = $a.prop("href");
-    cy.request(href).its("body").should("include", "</html>");
+    cy.visit(href).its("body").should("include", "</html>");
   });
 });
 
