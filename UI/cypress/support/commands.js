@@ -31,26 +31,14 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
 
   if (basicAuthCredentials) {
     const [username, password] = basicAuthCredentials.split(":");
-    const auth = `${username}:${password}`;
-    const authHeader = `Basic ${btoa(auth)}`;
-
-    // Preserve the authentication header across multiple cy.visit() calls
-    Cypress.on("window:before:load", (win) => {
-      win.document.cookie = "auth=" + authHeader;
-    });
-
-    options = {
-      ...options,
-      headers: {
-        ...(options && options.headers),
-        Authorization: authHeader,
-      },
-      onBeforeLoad: (win) => {
-        win.fetch = null;
-      },
-    };
+    if (username && password) {
+      options = options || {};
+      options.auth = {
+        username: username,
+        password: password,
+      };
+    }
   }
-
   return originalFn(url, options);
 });
 
