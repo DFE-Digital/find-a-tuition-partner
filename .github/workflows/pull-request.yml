@@ -96,7 +96,8 @@ jobs:
         timeout_minutes: 10
         max_attempts: 60
         retry_wait_seconds: 10
-        command: ! cf tasks find-a-tuition-partner-pr-${{ github.event.number }} | grep "RUNNING"
+        command: |
+          ! cf tasks find-a-tuition-partner-pr-${{ github.event.number }} | grep "RUNNING"
     
     - name: Logout
       run: cf logout
