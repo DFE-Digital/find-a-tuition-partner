@@ -51,7 +51,7 @@ public class NotificationsClientServiceTests
                 x.SendEmailAsync(It.IsAny<string>(), emailTemplateId,
                     notifyEmails.First().Personalisation, It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(new EmailNotificationResponse
-            { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent() });
+            { id = "id", reference = "reference", uri = "uri", content = new EmailResponseContent(), template = new Notify.Models.Template() });
 
         _notificationsClientService =
             new NotificationsClientService(_notifyConfigMock.Object, _emailSettingsConfigMock.Object,
@@ -92,7 +92,8 @@ public class NotificationsClientServiceTests
             id = Guid.NewGuid().ToString(),
             reference = "reference",
             uri = "uri",
-            content = new EmailResponseContent()
+            content = new EmailResponseContent(),
+            template = new Notify.Models.Template()
         };
 
         mockOptions.Setup(o => o.Value).Returns(govUkNotifyOptions);
