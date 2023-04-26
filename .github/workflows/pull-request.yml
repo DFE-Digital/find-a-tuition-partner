@@ -96,18 +96,12 @@ jobs:
         timeout_minutes: 10
         max_attempts: 60
         retry_wait_seconds: 10
+        warning_on_retry: false
         command: |
           ! cf tasks find-a-tuition-partner-pr-${{ github.event.number }} | grep "RUNNING"
     
     - name: Logout
       run: cf logout
-
-#    - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
-#      uses: cygnetdigital/wait_for_response@v2.0.0
-#      with:
-#        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
-#        timeout: 600000
-#        interval: 15000
 
     - name: End to End Testing
       uses: cypress-io/github-action@v5
