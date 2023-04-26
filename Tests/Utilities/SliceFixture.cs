@@ -36,6 +36,7 @@ public class SliceFixture : IAsyncLifetime
     }
 
     public ILocationFilterService LocationFilter => _factory.LocationFilter;
+    public IGenerateReferenceNumber GenerateReferenceNumber => _factory.GenerateReferenceNumber;
     public ITuitionPartnerService TuitionPartnerService => _factory.Services.GetRequiredService<ITuitionPartnerService>();
     public ILookupDataService LookupDataService => _factory.Services.GetRequiredService<ILookupDataService>();
 
@@ -79,6 +80,16 @@ public class SliceFixture : IAsyncLifetime
                 });
 
 
+            GenerateReferenceNumber = Substitute.For<IGenerateReferenceNumber>();
+
+            GenerateReferenceNumber.GenerateReferenceNumber()
+                .Returns(x =>
+                {
+                    var random = new Random();
+                    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                    return new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
+                });
+
             SessionService = new Mock<ISessionService>();
 
             SessionService.Setup(nc =>
@@ -121,6 +132,7 @@ public class SliceFixture : IAsyncLifetime
         }
 
         public ILocationFilterService LocationFilter { get; }
+        public IGenerateReferenceNumber GenerateReferenceNumber { get; }
         public Mock<ISessionService> SessionService { get; }
         public Mock<IAsyncNotificationClient> NotificationClient { get; }
 
@@ -149,6 +161,9 @@ public class SliceFixture : IAsyncLifetime
 
                 services.Remove<ILocationFilterService>();
                 services.AddSingleton(LocationFilter);
+
+                services.Remove<IGenerateReferenceNumber>();
+                services.AddSingleton(GenerateReferenceNumber);
 
                 services.Remove<ISessionService>();
                 services.AddSingleton(SessionService.Object);
