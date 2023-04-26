@@ -46,7 +46,7 @@ public class AzureBlobStorageService : IAzureBlobStorageService
         {
             BlobContainerName = _config.ContainerName,
             Resource = "c", // container
-            StartsOn = DateTimeOffset.UtcNow
+            StartsOn = DateTimeOffset.UtcNow.AddSeconds(-60) // sets the start time of the SAS token to be 60 seconds earlier, allowing for possible clock skew between the client and server.
         };
 
         // Generate the SAS token using the user delegation key
