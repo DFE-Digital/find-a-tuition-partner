@@ -40,7 +40,6 @@ jobs:
           CYPRESS_username: ${{ inputs.username }}
           CYPRESS_password: ${{ inputs.password }}
           CYPRESS_BASIC_AUTH_CREDENTIALS: ${{ secrets.BASIC_AUTH_CREDENTIALS }}
-          CYPRESS_ENV_VARIABLE_TEST: ${{ inputs.environment }}
 
       - name: Store screenshots on test failure
         uses: actions/upload-artifact@v3

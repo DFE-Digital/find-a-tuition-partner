@@ -27,10 +27,6 @@
 import { removeNewLine, getJumpToLocationId } from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
-  console.log("Testing env variable retrieved from the Pipeline..");
-  console.log(Cypress.env("ENV_VARIABLE_TEST"));
-  console.log("End Testing env variable retrieved from the Pipeline..");
-
   const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
 
   if (basicAuthCredentials) {

@@ -62,7 +62,6 @@ module.exports = defineConfig({
     setupNodeEvents,
     env: {
       BASIC_AUTH_CREDENTIALS: process.env.CYPRESS_BASIC_AUTH_CREDENTIALS,
-      ENV_VARIABLE_TEST: process.env.CYPRESS_ENV_VARIABLE_TEST,
     },
   },
 });
