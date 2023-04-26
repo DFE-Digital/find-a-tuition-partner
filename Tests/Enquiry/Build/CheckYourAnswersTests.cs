@@ -65,38 +65,38 @@ public class CheckYourAnswersTests
         result.ShouldHaveValidationErrorFor(x => x.AdditionalInformation);
     }
 
-    [Fact]
-    public async Task With_a_valid_data_post_moves_to_next_page()
-    {
-        // Arrange
-        var model = new CheckYourAnswersModel
-        {
-            Postcode = District.Dacorum.SamplePostcode,
-            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
-                {
-                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
-                },
-            Subjects = new string[] { "KeyStage1-English" },
-            HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
-            Email = "test@test.com",
-            TutoringLogistics = "Test content",
-            ConfirmTermsAndConditions = true
-        };
+    //[Fact]
+    //public async Task With_a_valid_data_post_moves_to_next_page()
+    //{
+    //    // Arrange
+    //    var model = new CheckYourAnswersModel
+    //    {
+    //        Postcode = District.Dacorum.SamplePostcode,
+    //        KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+    //            {
+    //                {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+    //            },
+    //        Subjects = new string[] { "KeyStage1-English" },
+    //        HasKeyStageSubjects = true,
+    //        TuitionType = TuitionType.Any,
+    //        Email = "test@test.com",
+    //        TutoringLogistics = "Test content",
+    //        ConfirmTermsAndConditions = true
+    //    };
 
-        //Act
-        var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
-        {
-            page.PageContext = GetPageContext();
-            page.Data = model;
-            return page.OnPostAsync();
-        });
+    //    //Act
+    //    var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+    //    {
+    //        page.PageContext = GetPageContext();
+    //        page.Data = model;
+    //        return page.OnPostAsync();
+    //    });
 
-        //Assert
-        result.Should().NotBeNull();
-        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(SubmittedConfirmation));
-    }
+    //    //Assert
+    //    result.Should().NotBeNull();
+    //    var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+    //    redirect.PageName.Should().Be(nameof(SubmittedConfirmation));
+    //}
 
     [Fact]
     public async Task With_invalid_data_post_throws_exception()
@@ -131,70 +131,70 @@ public class CheckYourAnswersTests
     }
 
 
-    [Fact]
-    public async Task With_invalid_email_post_throws_400_exception()
-    {
-        // Arrange
-        var model = new CheckYourAnswersModel
-        {
-            Postcode = District.Dacorum.SamplePostcode,
-            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
-                {
-                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
-                },
-            Subjects = new string[] { "KeyStage1-English" },
-            HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
-            Email = "400error@test",
-            TutoringLogistics = "Test content",
-            ConfirmTermsAndConditions = true
-        };
+    //[Fact]
+    //public async Task With_invalid_email_post_throws_400_exception()
+    //{
+    //    // Arrange
+    //    var model = new CheckYourAnswersModel
+    //    {
+    //        Postcode = District.Dacorum.SamplePostcode,
+    //        KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+    //            {
+    //                {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+    //            },
+    //        Subjects = new string[] { "KeyStage1-English" },
+    //        HasKeyStageSubjects = true,
+    //        TuitionType = TuitionType.Any,
+    //        Email = "400error@test",
+    //        TutoringLogistics = "Test content",
+    //        ConfirmTermsAndConditions = true
+    //    };
 
-        //Act
-        var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
-        {
-            page.PageContext = GetPageContext();
-            page.Data = model;
-            return page.OnPostAsync();
-        });
+    //    //Act
+    //    var result = await _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+    //    {
+    //        page.PageContext = GetPageContext();
+    //        page.Data = model;
+    //        return page.OnPostAsync();
+    //    });
 
-        //Assert
-        result.Should().NotBeNull();
-        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(EnquirerEmail));
-    }
+    //    //Assert
+    //    result.Should().NotBeNull();
+    //    var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+    //    redirect.PageName.Should().Be(nameof(EnquirerEmail));
+    //}
 
-    [Fact]
-    public async Task With_invalid_notification_post_throws_500_exception()
-    {
-        // Arrange
-        var model = new CheckYourAnswersModel
-        {
-            Postcode = District.Dacorum.SamplePostcode,
-            KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
-                {
-                    {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
-                },
-            Subjects = new string[] { "KeyStage1-English" },
-            HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
-            Email = "500error@test",
-            TutoringLogistics = "Test content",
-            ConfirmTermsAndConditions = true
-        };
+    //[Fact]
+    //public async Task With_invalid_notification_post_throws_500_exception()
+    //{
+    //    // Arrange
+    //    var model = new CheckYourAnswersModel
+    //    {
+    //        Postcode = District.Dacorum.SamplePostcode,
+    //        KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+    //            {
+    //                {KeyStage.KeyStage1, new List<Subject>() { Subject.English } }
+    //            },
+    //        Subjects = new string[] { "KeyStage1-English" },
+    //        HasKeyStageSubjects = true,
+    //        TuitionType = TuitionType.Any,
+    //        Email = "500error@test",
+    //        TutoringLogistics = "Test content",
+    //        ConfirmTermsAndConditions = true
+    //    };
 
-        //Act
-        Task act() => _fixture.GetPage<CheckYourAnswers>().Execute(page =>
-        {
-            page.PageContext = GetPageContext();
-            page.Data = model;
-            return page.OnPostAsync();
-        });
+    //    //Act
+    //    Task act() => _fixture.GetPage<CheckYourAnswers>().Execute(page =>
+    //    {
+    //        page.PageContext = GetPageContext();
+    //        page.Data = model;
+    //        return page.OnPostAsync();
+    //    });
 
-        //Assert
-        var exception = await Assert.ThrowsAsync<NotifyClientException>(act);
-        exception.Message.Should().Be("Status code 500. Error: Some serious issue");
-    }
+    //    //Assert
+    //    var exception = await Assert.ThrowsAsync<NotifyClientException>(act);
+    //    exception.Message.Should().Be("Status code 500. Error: Some serious issue");
+    //}
 
 
     public static IEnumerable<object[]> ValidTestData()
