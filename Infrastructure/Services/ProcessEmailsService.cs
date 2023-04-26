@@ -143,7 +143,7 @@ public class ProcessEmailsService : IProcessEmailsService
             initialEmailPersonalisationLogs.Add(new EmailPersonalisationLog()
             {
                 Key = TestExtraInfoKey,
-                Value = "This is a merged email for testing purposes."
+                Value = $"This is a merged email for testing purposes.{Environment.NewLine}{Environment.NewLine}"
             });
 
             initialEmailLog.EmailAddress = "merged_email_for_testing@education.gov.uk";
@@ -393,7 +393,6 @@ public class ProcessEmailsService : IProcessEmailsService
 
                 var notifyResponse = emailToUpdate.EmailNotifyResponseLog == null ? new EmailNotifyResponseLog() : emailToUpdate.EmailNotifyResponseLog;
 
-                //TODO - Check clears data on map if switch from error to success
                 notifyResponse = emailResult.NotifyResponse.Adapt(notifyResponse);
 
                 emailToUpdate.EmailNotifyResponseLog = notifyResponse;

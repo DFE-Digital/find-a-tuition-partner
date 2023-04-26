@@ -9,7 +9,7 @@ public static class DictionaryExtensions
     private const string EnquiryContactUsKey = "contact_us_link";
 
     public static Dictionary<string, dynamic> AddDefaultEnquiryPersonalisation(this Dictionary<string, dynamic> personalisation,
-        string enquiryRef, string baseUrl, DateTime? dateTime)
+        string enquiryRef, string baseUrl, DateTime? dateTime = null)
     {
         personalisation ??= new Dictionary<string, dynamic>();
 

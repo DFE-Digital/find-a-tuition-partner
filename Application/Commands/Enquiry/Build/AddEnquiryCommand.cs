@@ -42,9 +42,11 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
     private List<TuitionPartnerMagicLinkModel>? _tpMagicLinkModelList;
     private bool _sendTuitionPartnerEmailsWhenEnquirerDelivered = true;
 
-    public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IRandomTokenGenerator randomTokenGenerator,
+    public AddEnquiryCommandHandler(IUnitOfWork unitOfWork,
+        IRandomTokenGenerator randomTokenGenerator,
         IProcessEmailsService processEmailsService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger,
+        IGenerateReferenceNumber generateReferenceNumber,
+        ILogger<AddEnquiryCommandHandler> logger,
         IHostEnvironment hostEnvironment)
     {
         _unitOfWork = unitOfWork;
@@ -104,6 +106,46 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return result;
     }
 
+    private static string? ValidateRequest(AddEnquiryCommand request)
+    {
+        if (request.Data == null)
+        {
+            return "Data is null";
+        }
+
+        if (request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0)
+        {
+            return "Data.TuitionPartnersForEnquiry count is 0";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.Postcode))
+        {
+            return "Data.Postcode is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName))
+        {
+            return "Data.LocalAuthorityDistrictName is null or empty";
+        }
+
+        if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
+        {
+            return "Data.Subjects count is 0";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.Email))
+        {
+            return "Data.Email is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogistics))
+        {
+            return "Data.TutoringLogistics is null or empty";
+        }
+
+        return null;
+    }
+
     private Domain.Enquiry GetEnquiry(AddEnquiryCommand request)
     {
         var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request);
@@ -157,64 +199,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             EnquirerEnquirySubmittedEmailLog = enquirerEnquirySubmittedEmailLog,
             CreatedAt = _createdDateTime
         };
-    }
-
-    private void SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(EmailLog enquirerEmailLog, List<EmailLog> tpEmailLogs)
-    {
-        if (_sendTuitionPartnerEmailsWhenEnquirerDelivered &&
-            enquirerEmailLog != null &&
-            tpEmailLogs != null &&
-            tpEmailLogs.Any())
-        {
-            enquirerEmailLog.EmailsActivatedByThisEmail = new List<EmailTriggerActivation>();
-            foreach (var tpEmailLog in tpEmailLogs)
-            {
-                enquirerEmailLog.EmailsActivatedByThisEmail.Add(new EmailTriggerActivation()
-                {
-                    ActivateEmailLog = tpEmailLog,
-                });
-            }
-        }
-    }
-
-    private static string? ValidateRequest(AddEnquiryCommand request)
-    {
-        if (request.Data == null)
-        {
-            return "Data is null";
-        }
-
-        if (request.Data.TuitionPartnersForEnquiry == null || request.Data.TuitionPartnersForEnquiry.Count == 0)
-        {
-            return "Data.TuitionPartnersForEnquiry count is 0";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Data.Postcode))
-        {
-            return "Data.Postcode is null or empty";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Data.TuitionPartnersForEnquiry.LocalAuthorityDistrictName))
-        {
-            return "Data.LocalAuthorityDistrictName is null or empty";
-        }
-
-        if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
-        {
-            return "Data.Subjects count is 0";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Data.Email))
-        {
-            return "Data.Email is null or empty";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogistics))
-        {
-            return "Data.TutoringLogistics is null or empty";
-        }
-
-        return null;
     }
 
     private EmailLog GetEnquirerEnquirySubmittedEmailLog(AddEnquiryCommand request)
@@ -328,6 +312,24 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }).ToList();
     }
 
+    private void SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(EmailLog enquirerEmailLog, List<EmailLog> tpEmailLogs)
+    {
+        if (_sendTuitionPartnerEmailsWhenEnquirerDelivered &&
+            enquirerEmailLog != null &&
+            tpEmailLogs != null &&
+            tpEmailLogs.Any())
+        {
+            enquirerEmailLog.EmailsActivatedByThisEmail = new List<EmailTriggerActivation>();
+            foreach (var tpEmailLog in tpEmailLogs)
+            {
+                enquirerEmailLog.EmailsActivatedByThisEmail.Add(new EmailTriggerActivation()
+                {
+                    ActivateEmailLog = tpEmailLog,
+                });
+            }
+        }
+    }
+
     private static int? GetTuitionTypeId(TuitionType? tuitionType)
     {
         return tuitionType switch
@@ -428,7 +430,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 await _processEmailsService.SendEmailsAsync(emailLogIds!);
             }
         }
-        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
+        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
     }
 
     private async Task CleanUpData(Domain.Enquiry enquiry)

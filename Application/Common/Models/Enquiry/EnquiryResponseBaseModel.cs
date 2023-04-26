@@ -5,7 +5,6 @@ public record EnquiryResponseBaseModel : EnquiryBaseModel
     public string TuitionPartnerName { get; set; } = string.Empty;
 
     public string? TuitionPartnerSeoUrl { get; set; }
-    public string Email { get; set; } = string.Empty;
     public string Token { get; set; } = string.Empty;
 
     public string LocalAuthorityDistrict { get; set; } = null!;

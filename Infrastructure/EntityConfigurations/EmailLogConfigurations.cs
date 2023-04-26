@@ -21,7 +21,7 @@ public class EmailLogConfigurations : IEntityTypeConfiguration<EmailLog>
 
         builder.HasData(
             new EmailLog
-            { //TODO - confirm this is the best way to deal with historical data where we don't have the email details
+            {
                 Id = 1,
                 CreatedDate = DateTime.UtcNow,
                 FinishProcessingDate = DateTime.UtcNow,
