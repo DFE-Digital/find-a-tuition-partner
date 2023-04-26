@@ -9,7 +9,7 @@ concurrency: pr-${{ github.event.number }}
 
 env:
   PR_NUMBER: pr-${{ github.event.number }}
-  BASE_URL: "https://${{ secrets.BASIC_AUTH_CREDENTIALS }}@find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
+  BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
   CF_API: "https://api.london.cloud.service.gov.uk"
   CF_ORG: "dfe"
   CF_SPACE: ntp-qa
@@ -93,12 +93,12 @@ jobs:
     - name: Logout
       run: cf logout
 
-   - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
-     uses: cygnetdigital/wait_for_response@v2.0.0
-     with:
-       url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
-       timeout: 600000
-       interval: 15000
+  #  - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
+  #    uses: cygnetdigital/wait_for_response@v2.0.0
+  #    with:
+  #      url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
+  #      timeout: 600000
+  #      interval: 15000
 
     - name: End to End Testing
       uses: cypress-io/github-action@v5
