@@ -84,7 +84,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
         catch (DbUpdateException ex)
         {
-            enquiry = await HandleDbUpdateException(ex, request, cancellationToken, enquiry);
+            enquiry = await HandleDbUpdateException(ex, request, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -360,7 +360,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
     private async Task<Domain.Enquiry> HandleDbUpdateException(DbUpdateException ex,
         AddEnquiryCommand request,
-        CancellationToken cancellationToken, Domain.Enquiry origEnquiry)
+        CancellationToken cancellationToken)
     {
         var dataSaved = false;
         var retryAttempt = 0;
@@ -397,20 +397,14 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 {
                     if (retryAttempt > 10)
                     {
-                        throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {updatedEnquiry.TuitionPartnerEnquiry.Count}", ex);
+                        throw;
                     }
                     ex = retryEx;
                 }
             }
             else
             {
-                string errMsg = $"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}";
-                foreach (var tpEnquiry in origEnquiry.TuitionPartnerEnquiry)
-                {
-                    errMsg = errMsg + $"TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {tpEnquiry.TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, ";
-                }
-                throw new Exception(errMsg, ex);
-                //                throw ex;
+                throw ex;
             }
         }
         return updatedEnquiry;
