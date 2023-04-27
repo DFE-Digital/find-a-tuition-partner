@@ -405,7 +405,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             else
             {
                 string errMsg = $"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}";
-                foreach(var tpEnquiry in origEnquiry.TuitionPartnerEnquiry)
+                foreach (var tpEnquiry in origEnquiry.TuitionPartnerEnquiry)
                 {
                     errMsg = errMsg + $"TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {tpEnquiry.TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, ";
                 }
