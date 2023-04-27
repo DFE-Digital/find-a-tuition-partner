@@ -84,7 +84,9 @@ When("Saves Changes", () => {
 });
 
 When("the link to previous page is clicked", () => {
-  cy.get('[data-testid="view-previous-page-link"]').click();
+  cy.get('[data-testid="view-previous-page-link"]')
+    .should("be.visible")
+    .click();
 });
 
 Then("the cookies banner is displayed", () => {
