@@ -24,7 +24,7 @@ public class CheckYourAnswersTests
         _fixture = fixture;
 
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
-            .WithName("a", "Alpha")
+            .WithName("e", "Echo")
             .TaughtIn(District.Dacorum, TuitionType.InSchool)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
