@@ -147,11 +147,14 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<GoogleDrive>(configuration.GetSection(nameof(GoogleDrive)));
+        var azureBlobStorageSettings = new AzureBlobStorageSettings();
+        configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage).Bind(azureBlobStorageSettings);
+        azureBlobStorageSettings.Validate();
+        services.Configure<AzureBlobStorageSettings>(configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage));
         services.AddOptions();
-        services.AddScoped<GoogleDriveServiceFactory>();
-        services.AddScoped<IDataFileEnumerable, GoogleDriveDataFileEnumerable>();
-        services.AddScoped<ILogoFileEnumerable, GoogleDriveLogoFileEnumerable>();
+        services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
+        services.AddScoped<IDataFileEnumerable, AzureBlobStorageDataFileEnumerable>();
+        services.AddScoped<ILogoFileEnumerable, AzureBlobStorageLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
         services.AddScoped<ISpreadsheetTuitionPartnerFactory, SpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();

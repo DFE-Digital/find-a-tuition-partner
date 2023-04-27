@@ -58,11 +58,20 @@ You will need to register the database connection string for local development a
 dotnet user-secrets set "ConnectionStrings:FatpDatabase" "Host=localhost;Username=postgres;Password=<LOCAL_DEV_PASSWORD>;Database=fatp" -p UI
 ```
 
-#### Google Cloud Service Account Key file
+#### Azure Blob Storage Configs
 
-The Tuition Partner data is imported from a folder in Google Drive. Configuring your development environment so that the service has access to this drive is covered in the Development Environment Setup -> Google Cloud Service Account Key file section in the developer onboarding document. This document is bookmarked in the dev Slack channel.
+The Tuition Partner data is imported from a container in Azure Blob Storage.
 
-**You must get a key and run the four `dotnet user-secrets set` commands in the onboarding document for the import process to work**
+**You must get a client secret and run the four `dotnet user-secrets set` commands below for the import process to work. To request the client secret, please contact the project lead.**
+
+You can then use the following commands to add the necessary user secrets after obtaining the client secret:
+
+```
+dotnet user-secrets set "AzureBlobStorage:ClientSecret" "<will be shared privately>" -p UI
+dotnet user-secrets set "AzureBlobStorage:AccountName" "s177p01sharedtpdata" -p UI
+dotnet user-secrets set "AzureBlobStorage:ClientId" "fdd09510-77b0-419f-b67c-2b5a25a073f0" -p UI
+dotnet user-secrets set "AzureBlobStorage:TenantId" "9c7d9dd3-840c-4b3f-818e-552865082e16" -p UI
+```
 
 #### Data Import
 

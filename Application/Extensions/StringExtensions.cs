@@ -133,4 +133,11 @@ public static class StringExtensions
         clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
         return $"{clientRefPrefix}{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
     }
+
+    public static string ExtractFileNameFromDirectory(this string path)
+    {
+        var regex = new Regex(@"[^\\/]+$");
+        var match = regex.Match(path);
+        return match.Value;
+    }
 }

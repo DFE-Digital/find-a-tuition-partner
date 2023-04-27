@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Application;
 using Application.DataImport;
+using Application.Extensions;
 using Application.Factories;
 using Application.Mapping;
 using Domain;
@@ -164,7 +165,7 @@ public class DataImporterService : IHostedService
 
         foreach (var dataFile in dataFileEnumerable)
         {
-            var originalFilename = dataFile.Filename;
+            var originalFilename = dataFile.Filename.ExtractFileNameFromDirectory();
 
             //Use Polly to retry up to 5 times per file read (in case of network issues)
             int numberOfRetries = 5;
@@ -390,7 +391,8 @@ public class DataImporterService : IHostedService
 
         var matching = (from p in partners
                         from l in logos
-                        where IsFileLogoForTuitionPartner(p.SeoUrl, l.Filename)
+                        where IsFileLogoForTuitionPartner(p.SeoUrl,
+                            l.Filename.ExtractFileNameFromDirectory())
                         select new
                         {
                             Partner = p,

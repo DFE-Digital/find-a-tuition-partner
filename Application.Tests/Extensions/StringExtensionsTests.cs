@@ -326,6 +326,19 @@ public class StringExtensionsTests
         actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}");
     }
 
+    [Theory]
+    [InlineData("tp-spreadsheets/20230316092358_DfE Tuition Partner.xlsx", "20230316092358_DfE Tuition Partner.xlsx")]
+    [InlineData("tp-logos/Logo_1-2-1-test-ltd.svg", "Logo_1-2-1-test-ltd.svg")]
+    [InlineData(@"tp-documents\20230414094500_Report.docx", "20230414094500_Report.docx")]
+    public void ExtractFileNameFromDirectory_ValidInput_ReturnsCorrectFileName(string inputPath,
+        string expectedFileName)
+    {
+        // Act
+        var actualFileName = inputPath.ExtractFileNameFromDirectory();
+
+        // Assert
+        Assert.Equal(expectedFileName, actualFileName);
+    }
 
     [Fact]
     public void CreateNotifyClientReference_WithClientPrefix()
