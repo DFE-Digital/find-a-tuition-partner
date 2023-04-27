@@ -1,35 +1,34 @@
-﻿using System.Collections;
+using System.Collections;
+using Application.Common.DTO.AzureBlobStorage;
+using Application.Common.Interfaces;
 using Application.DataImport;
-using Infrastructure.Factories;
-using GoogleFile = Google.Apis.Drive.v3.Data.File;
 
 namespace Infrastructure.DataImport;
 
-public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerator<DataFile>
+public sealed class AzureBlobStorageFileEnumerable : IEnumerable<DataFile>, IEnumerator<DataFile>
 {
-    private readonly string _directoryId;
-    private readonly Func<GoogleDriveFileService, GoogleFile, Stream> _downloadFileFn;
-    private readonly GoogleDriveFileService _service;
-    private readonly List<GoogleFile> _files = new();
+    private readonly string _folderName;
+    private readonly string _sasToken;
+    private readonly IAzureBlobStorageService _service;
+    private readonly List<BlobItem> _files = new();
     private readonly List<DataFile> _dataFiles = new();
     private int _index = -1;
     private bool _initialized;
 
-    public GoogleDriveFileEnumerable(
-        GoogleDriveServiceFactory googleDriveServiceFactory,
-        string directoryId,
-        Func<GoogleDriveFileService, GoogleFile, Stream> downloadFile)
+    public AzureBlobStorageFileEnumerable(
+        IAzureBlobStorageService service,
+        string folderName)
     {
-        _service = googleDriveServiceFactory.GetDriveFiles();
-        _directoryId = directoryId;
-        _downloadFileFn = downloadFile;
+        _service = service;
+        _folderName = folderName;
+        _sasToken = _service.GenerateUserDelegationSasTokenAsync().GetAwaiter().GetResult();
     }
 
     public bool MoveNext()
     {
         if (!_initialized)
         {
-            RetrieveFileList();
+            RetrieveFileListAsync().GetAwaiter().GetResult();
             _initialized = true;
         }
 
@@ -42,9 +41,9 @@ public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerat
         return true;
     }
 
-    private void RetrieveFileList()
+    private async Task RetrieveFileListAsync()
     {
-        var files = _service.FindAllFiles($"parents in '{_directoryId}'");
+        var files = await _service.GetBlobsFromFoldersAsync(_folderName);
         _files.AddRange(files);
     }
 
@@ -60,9 +59,7 @@ public sealed class GoogleDriveFileEnumerable : IEnumerable<DataFile>, IEnumerat
         var file = _files[_index];
 
         var dataFile = new DataFile(file.Name, new Lazy<Stream>(() =>
-        {
-            return _downloadFileFn(_service, file);
-        }));
+            _service.DownloadFileAsync(_sasToken, file.Name).GetAwaiter().GetResult()));
 
         return dataFile;
     }
