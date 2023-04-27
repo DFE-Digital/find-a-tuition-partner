@@ -121,4 +121,11 @@ public static class StringExtensions
         var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
         return $"{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
     }
+
+    public static string ExtractFileNameFromDirectory(this string path)
+    {
+        var regex = new Regex(@"[^\\/]+$");
+        var match = regex.Match(path);
+        return match.Value;
+    }
 }

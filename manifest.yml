@@ -15,10 +15,13 @@ applications:
     AppLogging:TcpSinkUri: ((tcp-sink-uri))
     GoogleTagManager:ContainerId: ((google-tag-manager-container-id))
     GoogleAnalytics:MeasurementId: ((google-analytics-measurement-id))
-    GoogleDrive:ServiceAccountKeyFilePath: credentials.json
-    GoogleDrive:SharedDriveId: ((google-drive-shared-drive-id))
-    GoogleDrive:TuitionPartnerDataFolderId: ((google-drive-tuition-partner-data-folder-id))
-    GoogleDrive:TuitionPartnerLogosFolderId: ((google-drive-tuition-partner-logo-folder-id))
+    AzureBlobStorage:ClientSecret: ((azure-blob-storage-client-secret))
+    AzureBlobStorage:ClientId: ((azure-blob-storage-client-id))
+    AzureBlobStorage:TenantId: ((azure-blob-storage-tenant-id))
+    AzureBlobStorage:AccountName: ((azure-blob-storage-account-name))
+    AzureBlobStorage:ContainerName: ((azure-blob-storage-container-name))
+    AzureBlobStorage:TuitionPartnerDataFolderName: ((azure-blob-storage-tuition-partner-data-folder-name))
+    AzureBlobStorage:TuitionPartnerLogosFolderName: ((azure-blob-storage-tuition-partner-logos-folder-name))
     DfeAnalytics:CredentialsJsonFile: dfe-analytics-credentials.json
     DfeAnalytics:ProjectId: find-a-tuition-partner
     DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
