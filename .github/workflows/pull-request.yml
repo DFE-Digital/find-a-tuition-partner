@@ -74,7 +74,7 @@ jobs:
           --var azure-blob-storage-tenant-id="${{ vars.AZURE_BLOB_STORAGE_TENANT_ID }}" \
           --var azure-blob-storage-account-name="${{ vars.AZURE_BLOB_STORAGE_ACCOUNT_NAME }}" 
 
-     - name: Bind route service to the application route
+    - name: Bind route service to the application route
       run: |
         cf bind-route-service london.cloudapps.digital find-a-tuition-partner-qa-basic-auth --hostname find-a-tuition-partner-pr-${{ github.event.number }}
 
