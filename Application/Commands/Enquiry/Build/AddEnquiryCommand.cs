@@ -404,7 +404,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             }
             else
             {
-                throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}", ex);
+                string errMsg = $"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}";
+                foreach(var tpEnquiry in origEnquiry.TuitionPartnerEnquiry)
+                {
+                    errMsg = errMsg + $"TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {tpEnquiry.TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, ";
+                }
+                throw new Exception(errMsg, ex);
                 //                throw ex;
             }
         }
