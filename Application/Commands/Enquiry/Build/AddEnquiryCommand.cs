@@ -405,7 +405,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             else
             {
                 throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}", ex);
-//                throw ex;
+                //                throw ex;
             }
         }
         return updatedEnquiry;
