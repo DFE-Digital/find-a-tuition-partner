@@ -84,7 +84,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
         catch (DbUpdateException ex)
         {
-            enquiry = await HandleDbUpdateException(ex, request, cancellationToken);
+            enquiry = await HandleDbUpdateException(ex, request, cancellationToken, enquiry);
         }
         catch (Exception ex)
         {
@@ -360,7 +360,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
     private async Task<Domain.Enquiry> HandleDbUpdateException(DbUpdateException ex,
         AddEnquiryCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, Domain.Enquiry origEnquiry)
     {
         var dataSaved = false;
         var retryAttempt = 0;
@@ -397,14 +397,15 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 {
                     if (retryAttempt > 10)
                     {
-                        throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {updatedEnquiry.TuitionPartnerEnquiry.Count}", ex);
+                        throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {updatedEnquiry.TuitionPartnerEnquiry.Count}", ex);
                     }
                     ex = retryEx;
                 }
             }
             else
             {
-                throw ex;
+                throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {origEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {origEnquiry.TuitionPartnerEnquiry.Count}", ex);
+//                throw ex;
             }
         }
         return updatedEnquiry;
