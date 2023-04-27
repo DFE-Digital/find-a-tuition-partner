@@ -397,7 +397,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 {
                     if (retryAttempt > 10)
                     {
-                        throw;
+                        throw new Exception($"DbUpdateException.  Support Ref: {_enquiryReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.TuitionPartnerEnquiry.First().TuitionPartnerEnquirySubmittedEmailLog.ClientReferenceNumber}, EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber: {updatedEnquiry.EnquirerEnquirySubmittedEmailLog.ClientReferenceNumber}, TuitionPartnerEnquiry.Count: {updatedEnquiry.TuitionPartnerEnquiry.Count}", ex);
                     }
                     ex = retryEx;
                 }
