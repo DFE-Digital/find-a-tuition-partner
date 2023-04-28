@@ -49,18 +49,18 @@ Feature: Tuition Partner price comparison list
 
   Scenario: User views their price comparison listed TPs on the price comparison list page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
-    And they add 'Action Tutoring' to their price comparison list on the results page
-    And they add 'Assess Education' to their price comparison list on the results page
+    And they add tp name 1 to their price comparison list on the results page
+    And they add tp name 2 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
     Then there are 2 entries on the price comparison list page
     And the heading caption is 'Tuition partners for Stockport'
-    And 'Action Tutoring' is entry 1 on the price comparison list page
-    And 'Assess Education' is entry 2 on the price comparison list page
+    And tp name is entry 1 on the price comparison list page
+    And tp name is entry 2 on the price comparison list page
 
   Scenario: User changes their filters to exclude a price comparison listed TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their price comparison list on the results page
-    And they add 'Assess Education' to their price comparison list on the results page
+    And they add 'EM Tuition' to their price comparison list on the results page
     When they click on the option heading for 'Key stage 4'
     And they select subject 'key-stage-4-humanities'
     Then the price comparison list shows as having 2 entries on the results page
@@ -68,14 +68,14 @@ Feature: Tuition Partner price comparison list
   Scenario: User changes their postcode to exclude a price comparison listed TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add 'Action Tutoring' to their price comparison list on the results page
-    And they add 'Assess Education' to their price comparison list on the results page
+    And they add 'EM Tuition' to their price comparison list on the results page
     When they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     Then the price comparison list shows as having 2 entries on the results page
     And they choose to view their price comparison list from the results page
     And there are 1 entries on the price comparison list page
     And the heading caption is 'Tuition partner for Wealden'
-    And 'Assess Education' is entry 1 on the price comparison list page
+    And 'EM Tuition' is entry 1 on the price comparison list page
     And 'Action Tutoring' is entry 1 on the not available list on the price comparison list page
 
   Scenario: The price comparison list displays the expected data for the search area
@@ -104,25 +104,25 @@ Feature: Tuition Partner price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     And 'Reeson Education' is entry 1 on the price comparison list page
     And 'Action Tutoring' is entry 2 on the price comparison list page
-    And 'Assess Education' is entry 3 on the price comparison list page
+    And 'EM Tuition' is entry 3 on the price comparison list page
     And 'Booster Club' is entry 4 on the price comparison list page
-    And 'Zen Educate' is entry 5 on the price comparison list page
+    And 'Equal Education' is entry 5 on the price comparison list page
     And 'Tutors Green' is entry 6 on the price comparison list page
 
   Scenario: User sorts price comparison list table by Price, uses min price for ascending, max price for descending
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to sort the price comparison list by price
-    And 'Zen Educate' is entry 1 on the price comparison list page
+    And 'EM Tuition' is entry 1 on the price comparison list page
     And 'Reeson Education' is entry 2 on the price comparison list page
     And 'Tutors Green' is entry 3 on the price comparison list page
-    And 'Assess Education' is entry 4 on the price comparison list page
-    And 'Action Tutoring' is entry 5 on the price comparison list page
-    And 'Booster Club' is entry 6 on the price comparison list page
+    And 'Action Tutoring' is entry 4 on the price comparison list page
+    And 'Booster Club' is entry 5 on the price comparison list page
+    And 'Equal Education' is entry 6 on the price comparison list page
     Then they choose to sort the price comparison list by price
-    And 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Tutors Green' is entry 2 on the price comparison list page
-    And 'Zen Educate' is entry 3 on the price comparison list page
-    And 'Assess Education' is entry 4 on the price comparison list page
+    And 'Equal Education' is entry 1 on the price comparison list page
+    And 'Reeson Education' is entry 2 on the price comparison list page
+    And 'Tutors Green' is entry 3 on the price comparison list page
+    And 'EM Tuition' is entry 4 on the price comparison list page
     And 'Booster Club' is entry 5 on the price comparison list page
     And 'Action Tutoring' is entry 6 on the price comparison list page
 
@@ -131,13 +131,13 @@ Feature: Tuition Partner price comparison list
     Then they choose to remove entry 2 on the price comparison list page
     Then there are 5 entries on the price comparison list page
     And 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Assess Education' is entry 2 on the price comparison list page
+    And 'EM Tuition' is entry 2 on the price comparison list page
     Then they click 'Back'
     And the search results are displayed
     Then they choose to view their price comparison list from the results page
     Then there are 5 entries on the price comparison list page
     And 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Assess Education' is entry 2 on the price comparison list page
+    And 'EM Tuition' is entry 2 on the price comparison list page
 
   Scenario: User clears full price comparison list then cancel
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -189,8 +189,8 @@ Feature: Tuition Partner price comparison list
     Then the 'Reeson Education' price is '£10 to £60 including VAT'
     When '1 to 1' group size price comparison list refinement option is selected
     Then 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Assess Education' is entry 2 on the price comparison list page
-    And 'Zen Educate' is entry 3 on the price comparison list page
+    And 'EM Tuition' is entry 2 on the price comparison list page
+    And 'Equal Education' is entry 3 on the price comparison list page
     And 'Tutors Green' is entry 4 on the price comparison list page
     And 'Action Tutoring' is entry 5 on the price comparison list page
     And 'Booster Club' is entry 6 on the price comparison list page
@@ -200,12 +200,12 @@ Feature: Tuition Partner price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then the 'Tutors Green' price is '£10.42 to £55 including VAT'
     When 'In School' tuition type price comparison list refinement option is selected
-    And 'Booster Club' is entry 1 on the price comparison list page
-    And 'Zen Educate' is entry 2 on the price comparison list page
-    And 'Tutors Green' is entry 3 on the price comparison list page
-    And 'Reeson Education' is entry 4 on the price comparison list page
-    And 'Action Tutoring' is entry 5 on the price comparison list page
-    Then 'Assess Education' is entry 6 on the price comparison list page
+    And 'EM Tuition' is entry 1 on the price comparison list page
+    And 'Booster Club' is entry 2 on the price comparison list page
+    And 'Equal Education' is entry 3 on the price comparison list page
+    And 'Tutors Green' is entry 4 on the price comparison list page
+    And 'Reeson Education' is entry 5 on the price comparison list page
+    Then 'Action Tutoring' is entry 6 on the price comparison list page
     And the 'Tutors Green' price is '£11.26 to £55 including VAT'
 
   Scenario: The price comparison list can be refined by group size and tuition type then TP rows and the price are updated
@@ -214,11 +214,11 @@ Feature: Tuition Partner price comparison list
     When '1 to 1' group size price comparison list refinement option is selected
     And 'Online' tuition type price comparison list refinement option is selected
     Then 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Assess Education' is entry 2 on the price comparison list page
-    And 'Tutors Green' is entry 3 on the price comparison list page
-    And 'Action Tutoring' is entry 4 on the price comparison list page
-    And 'Booster Club' is entry 5 on the price comparison list page
-    And 'Zen Educate' is entry 6 on the price comparison list page
+    And 'EM Tuition' is entry 2 on the price comparison list page
+    And 'Equal Education' is entry 3 on the price comparison list page
+    And 'Tutors Green' is entry 4 on the price comparison list page
+    And 'Action Tutoring' is entry 5 on the price comparison list page
+    And 'Booster Club' is entry 6 on the price comparison list page
     And the 'Tutors Green' price is '£50 including VAT'
 
   Scenario: The price comparison list price ordering works with refined data and any inavid TP data still follows the order they were added to price comparison list
@@ -226,19 +226,19 @@ Feature: Tuition Partner price comparison list
     When '1 to 1' group size price comparison list refinement option is selected
     And 'Online' tuition type price comparison list refinement option is selected
     And they choose to sort the price comparison list by price
-    Then 'Assess Education' is entry 1 on the price comparison list page
+    Then 'EM Tuition' is entry 1 on the price comparison list page
     And 'Tutors Green' is entry 2 on the price comparison list page
     And 'Reeson Education' is entry 3 on the price comparison list page
-    And 'Action Tutoring' is entry 4 on the price comparison list page
-    And 'Booster Club' is entry 5 on the price comparison list page
-    And 'Zen Educate' is entry 6 on the price comparison list page
+    And 'Equal Education' is entry 4 on the price comparison list page
+    And 'Action Tutoring' is entry 5 on the price comparison list page
+    And 'Booster Club' is entry 6 on the price comparison list page
     And they choose to sort the price comparison list by price
-    Then 'Reeson Education' is entry 1 on the price comparison list page
-    And 'Tutors Green' is entry 2 on the price comparison list page
-    And 'Assess Education' is entry 3 on the price comparison list page
-    And 'Action Tutoring' is entry 4 on the price comparison list page
-    And 'Booster Club' is entry 5 on the price comparison list page
-    And 'Zen Educate' is entry 6 on the price comparison list page
+    Then 'Equal Education' is entry 1 on the price comparison list page
+    And 'Reeson Education' is entry 2 on the price comparison list page
+    And 'Tutors Green' is entry 3 on the price comparison list page
+    And 'EM Tuition' is entry 4 on the price comparison list page
+    And 'Action Tutoring' is entry 5 on the price comparison list page
+    And 'Booster Club' is entry 6 on the price comparison list page
 
   Scenario: The price comparison list refinement shows the correct message against a TP if no data is returned
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -305,19 +305,19 @@ Feature: Tuition Partner price comparison list
   Scenario: The price comparison list price ordering works with inclusive or exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to sort the price comparison list by price
-    And 'Zen Educate' is entry 1 on the price comparison list page
+    And 'EM Tuition' is entry 1 on the price comparison list page
     And 'Reeson Education' is entry 2 on the price comparison list page
     And 'Tutors Green' is entry 3 on the price comparison list page
-    And 'Assess Education' is entry 4 on the price comparison list page
-    And 'Action Tutoring' is entry 5 on the price comparison list page
-    And 'Booster Club' is entry 6 on the price comparison list page
-    When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
-    Then 'Zen Educate' is entry 1 on the price comparison list page
-    And 'Reeson Education' is entry 2 on the price comparison list page
-    And 'Tutors Green' is entry 3 on the price comparison list page
-    And 'Assess Education' is entry 4 on the price comparison list page
+    And 'Action Tutoring' is entry 4 on the price comparison list page
     And 'Booster Club' is entry 5 on the price comparison list page
-    And 'Action Tutoring' is entry 6 on the price comparison list page
+    And 'Equal Education' is entry 6 on the price comparison list page
+    When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
+    Then 'Reeson Education' is entry 1 on the price comparison list page
+    And 'EM Tuition' is entry 2 on the price comparison list page
+    And 'Tutors Green' is entry 3 on the price comparison list page
+    And 'Booster Club' is entry 4 on the price comparison list page
+    And 'Action Tutoring' is entry 5 on the price comparison list page
+    And 'Equal Education' is entry 6 on the price comparison list page
 
   Scenario: The price comparison list VAT defaults to inclusive on first load and then maintains own state after being selected
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
