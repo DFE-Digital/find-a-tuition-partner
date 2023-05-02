@@ -18,30 +18,33 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
     public const string OrganisationDetailsSheetName = "Organisation Details";
     private const string DeliverySheetName = "Delivery";
     private const string PricingSheetName = "Pricing";
-    private const int MaxRows = 100000;
+    private const int MaxRows = 1000000;
 
     private readonly ILogger<TribalSpreadsheetTuitionPartnerFactory> _logger;
     private readonly IDictionary<string, ImportMap> _organisationDetailsMapping;
+    private readonly ISpreadsheetExtractor _spreadsheetExtractor;
 
     private IList<Region>? _regions;
     private IList<Subject>? _subjects;
     private IList<OrganisationType>? _organisationTypes;
     private IDictionary<string, DateTime>? _tpImportedDates;
-    private ISpreadsheetExtractor? _spreadsheetExtractor;
 
     private List<string> _warnings = new();
     private List<string> _errors = new();
+    private List<string> _allWarnings = new();
+    private List<string> _allErrors = new();
 
-    public TribalSpreadsheetTuitionPartnerFactory(ILogger<TribalSpreadsheetTuitionPartnerFactory> logger)
+    public TribalSpreadsheetTuitionPartnerFactory(ILogger<TribalSpreadsheetTuitionPartnerFactory> logger,
+        ISpreadsheetExtractor spreadsheetExtractor)
     {
         _logger = logger;
+        _spreadsheetExtractor = spreadsheetExtractor;
 
         TuitionPartner tpMapping = new();
         _organisationDetailsMapping = new Dictionary<string, ImportMap>
         {
-            { "Organisation_ID_s", new ImportMap(tpMapping, nameof(tpMapping.ImportId)) },
-            { "Organisation_Ref_ID_s", new ImportMap() },
-            { "Organisation_s", new ImportMap(tpMapping, nameof(tpMapping.Name)) { RecommendedMaxStringLength = 120 } },
+            { "ID", new ImportMap(tpMapping, nameof(tpMapping.ImportId)) },
+            { "Name", new ImportMap(tpMapping, nameof(tpMapping.Name)) { RecommendedMaxStringLength = 120 } },
             { "Organisation_Address1_s", new ImportMap(tpMapping, nameof(tpMapping.Address)) { RecommendedMaxStringLength = 100 } },
             { "Organisation_Address2_s", new ImportMap() { IsStoredInNtp = true, RecommendedMaxStringLength = 100 } },
             { "Organisation_Address3_s", new ImportMap() { IsStoredInNtp = true, RecommendedMaxStringLength = 100 } },
@@ -58,57 +61,42 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         };
     }
 
-    public TuitionPartner GetTuitionPartner(ISpreadsheetExtractor spreadsheetExtractor, string filename,
-        IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes,
-        IDictionary<string, DateTime> tpImportedDates)
+    public List<TuitionPartner> GetTuitionPartners(Stream stream, string filename,
+    IList<Region> regions, IList<Subject> subjects, IList<OrganisationType> organisationTypes,
+    IDictionary<string, DateTime> tpImportedDates)
     {
         _regions = regions;
         _subjects = subjects;
         _organisationTypes = organisationTypes;
         _tpImportedDates = tpImportedDates;
 
-        _warnings = new();
-        _errors = new();
-        TuitionPartner tuitionPartner = new();
+        _spreadsheetExtractor.SetStream(stream);
 
-        _spreadsheetExtractor = spreadsheetExtractor;
+        var tuitionPartners = GetTuitionPartnersIdsAndNames();
 
-        if (!_spreadsheetExtractor.WorksheetExists(OrganisationDetailsSheetName))
+        if (_allErrors.Count == 0)
         {
-            _errors.Add($"Missing '{OrganisationDetailsSheetName}' worksheet");
-        }
-        if (!_spreadsheetExtractor.WorksheetExists(PricingSheetName))
-        {
-            _errors.Add($"Missing '{PricingSheetName}' worksheet");
-        }
-        if (!_spreadsheetExtractor.WorksheetExists(DeliverySheetName))
-        {
-            _errors.Add($"Missing '{DeliverySheetName}' worksheet");
+            foreach (var tuitionPartner in tuitionPartners)
+            {
+                PopulateTuitionPartner(tuitionPartner);
+            }
         }
 
-        if (_errors.Count == 0)
+        if (_allWarnings.Any())
         {
-            tuitionPartner = GetOrganisationDetails();
-
-            PopulateLocalAuthorityDistrictCoverage(tuitionPartner);
-
-            PopulateSubjectCoverageAndPrice(tuitionPartner);
+            _logger.LogWarning("Issue(s) importing Tribal spreadsheet '{filename}': {warnings}", filename, string.Join(Environment.NewLine, _allWarnings));
         }
 
-        if (_warnings.Any())
+        if (_allErrors.Any())
         {
-            _logger.LogWarning("Issues importing Tribal spreadsheet '{filename}': {warnings}", filename, string.Join(Environment.NewLine, _warnings));
+            throw new InvalidOperationException($"Error(s) importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _allErrors)}");
         }
 
-        if (_errors.Any())
-        {
-            throw new InvalidOperationException($"Error importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _errors)}");
-        }
-
-        return tuitionPartner;
+        return tuitionPartners;
     }
 
-    private void ProcessSheet(string sheetName, string tableHeaderColumn, string tableHeader, string dataColumn, Action<ISpreadsheetExtractor?, string, string, int> addRowToDictionary)
+    private void ProcessSheet(string sheetName, string tableHeaderColumn, string tableHeader, string dataColumn, Action<ISpreadsheetExtractor?,
+        string, string, int> addRowToDictionary, string? idToMatch = null, string idToMatchColumn = "A")
     {
         var completedLoop = false;
         var passedHeader = false;
@@ -122,14 +110,35 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             }
             else if (passedHeader)
             {
-                var data = _spreadsheetExtractor!.GetCellValue(sheetName, dataColumn, row);
-                if (!string.IsNullOrWhiteSpace(data))
+                var processRow = true;
+                if (!string.IsNullOrEmpty(idToMatch))
                 {
-                    addRowToDictionary(_spreadsheetExtractor, sheetName, data, row);
+                    processRow = false;
+                    var id = _spreadsheetExtractor!.GetCellValue(sheetName, idToMatchColumn, row);
+                    if (!string.IsNullOrWhiteSpace(id))
+                    {
+                        if (id.Equals(idToMatch, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            processRow = true;
+                        }
+                    }
+                    else
+                    {
+                        completedLoop = true;
+                    }
                 }
-                else
+
+                if (processRow)
                 {
-                    completedLoop = true;
+                    var data = _spreadsheetExtractor!.GetCellValue(sheetName, dataColumn, row);
+                    if (!string.IsNullOrWhiteSpace(data))
+                    {
+                        addRowToDictionary(_spreadsheetExtractor, sheetName, data, row);
+                    }
+                    else
+                    {
+                        completedLoop = true;
+                    }
                 }
             }
             else
@@ -141,14 +150,123 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private TuitionPartner GetOrganisationDetails()
+    private List<TuitionPartner> GetTuitionPartnersIdsAndNames()
     {
-        const string KeyColumn = "A";
-        const string ValueColumn = "C";
-        const string TableHeaderColumn = "A";
-        const string TableHeader = "Title";
+        const string NameColumnOrgDetails = "D";
+        const string NameColumnPricing = "C";
+        const string NameColumnDelivery = "C";
 
-        TuitionPartner tuitionPartner = new();
+        var tuitionPartners = new List<TuitionPartner>();
+
+        if (!_spreadsheetExtractor.WorksheetExists(OrganisationDetailsSheetName))
+        {
+            _allErrors.Add($"Missing '{OrganisationDetailsSheetName}' worksheet");
+        }
+        if (!_spreadsheetExtractor.WorksheetExists(PricingSheetName))
+        {
+            _allErrors.Add($"Missing '{PricingSheetName}' worksheet");
+        }
+        if (!_spreadsheetExtractor.WorksheetExists(DeliverySheetName))
+        {
+            _allErrors.Add($"Missing '{DeliverySheetName}' worksheet");
+        }
+
+        if (_allErrors.Count == 0)
+        {
+            tuitionPartners = ValidateWorksheet(OrganisationDetailsSheetName, NameColumnOrgDetails);
+
+            if (!tuitionPartners.Any())
+            {
+                _allErrors.Add($"No Tuition Partners found in '{OrganisationDetailsSheetName}' worksheet");
+            }
+            else
+            {
+                ValidateWorksheet(PricingSheetName, NameColumnPricing, tuitionPartners);
+                ValidateWorksheet(DeliverySheetName, NameColumnDelivery, tuitionPartners);
+            }
+        }
+
+        return tuitionPartners;
+    }
+
+    private List<TuitionPartner> ValidateWorksheet(string worksheetName, string nameColumn, List<TuitionPartner>? tuitionPartners = null)
+    {
+        const string IdColumn = "A";
+        const string TableHeaderColumn = "A";
+        const string TableHeader = "ID";
+
+        var worksheetTPs = new List<TuitionPartner>();
+        ProcessSheet(worksheetName, TableHeaderColumn, TableHeader, IdColumn,
+            (spreadsheetExtractor, sheetName, data, row) =>
+            {
+                var importId = data;
+                var name = spreadsheetExtractor!.GetCellValue(sheetName, nameColumn, row);
+
+                if (!worksheetTPs.Any(x => x.ImportId.ToLower() == importId.ToLower() &&
+                                        x.Name.ToLower() == name.ToLower()))
+                {
+                    worksheetTPs.Add(new TuitionPartner()
+                    {
+                        ImportId = importId,
+                        Name = name
+                    });
+                }
+            });
+
+        var duplicateIds = worksheetTPs.GroupBy(x => x.ImportId).Where(x => x.Count() > 1).SelectMany(x => x).Select(x => x.ImportId).Distinct();
+        if (duplicateIds.Any())
+        {
+            _allErrors.Add($"Duplicate IDs '{string.Join(", ", duplicateIds)}' in '{worksheetName}' worksheet");
+        }
+
+        var duplicateNames = worksheetTPs.GroupBy(x => x.Name).Where(x => x.Count() > 1).SelectMany(x => x).Select(x => x.Name).Distinct();
+        if (duplicateNames.Any())
+        {
+            _allErrors.Add($"Duplicate Names '{string.Join(", ", duplicateNames)}' in '{worksheetName}' worksheet");
+        }
+
+        if (tuitionPartners != null)
+        {
+            var tuitionPartnerIdsAndNames = tuitionPartners.Select(x => new { x.ImportId, x.Name }).ToList();
+            var namesNotInOrgDetails = worksheetTPs.Where(x => !tuitionPartnerIdsAndNames.Contains(new { x.ImportId, x.Name })).Select(x => x.Name).Distinct();
+            if (namesNotInOrgDetails.Any())
+            {
+                _allErrors.Add($"Tuition partner(s) '{string.Join(", ", namesNotInOrgDetails)}' in '{worksheetName}' worksheet are not in the '{OrganisationDetailsSheetName}' worksheet");
+            }
+        }
+
+        return worksheetTPs;
+    }
+
+    private void PopulateTuitionPartner(TuitionPartner tuitionPartner)
+    {
+        _warnings = new();
+        _errors = new();
+
+        PopulateOrganisationDetails(tuitionPartner);
+
+        PopulateLocalAuthorityDistrictCoverage(tuitionPartner);
+
+        PopulateSubjectCoverageAndPrice(tuitionPartner);
+
+        if (_warnings.Any())
+        {
+            _allWarnings.Add($"Issue(s) importing Tuition Partner ID '{tuitionPartner.ImportId}', Name '{tuitionPartner.Name}': {string.Join(Environment.NewLine, _warnings)}");
+        }
+
+        if (_errors.Any())
+        {
+            _allErrors.Add($"Error(s) importing Tuition Partner ID '{tuitionPartner.ImportId}', Name '{tuitionPartner.Name}': {string.Join(Environment.NewLine, _errors)}");
+        }
+    }
+
+    private void PopulateOrganisationDetails(TuitionPartner tuitionPartner)
+    {
+        const string KeyColumn = "E";
+        const string ValueColumn = "F";
+        const string TableHeaderColumn = "A";
+        const string TableHeader = "ID";
+
         var sheetName = OrganisationDetailsSheetName;
 
         foreach (var organisationDetailMapping in _organisationDetailsMapping)
@@ -157,6 +275,9 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
 
         //Add the data from the spreadsheet in to the _organisationDetailsMapping dictionary value class
+        _organisationDetailsMapping["ID"].SetValue(tuitionPartner.ImportId);
+        _organisationDetailsMapping["Name"].SetValue(tuitionPartner.Name);
+
         ProcessSheet(sheetName, TableHeaderColumn, TableHeader, KeyColumn,
             (spreadsheetExtractor, sheetName, data, row) =>
             {
@@ -177,7 +298,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 {
                     _warnings.Add($"Unexpected '{key}' key exists in '{sheetName}' worksheet");
                 }
-            });
+            }, tuitionPartner.ImportId);
 
         //Use the _organisationDetailsMapping dictionary to push the data in to the TuitionPartner class
         var mappedProperties = _organisationDetailsMapping.Where(x => x.Value.IsStoredInNtp && x.Value.HasConvertedValue);
@@ -261,21 +382,19 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 _errors.Add($"The existing TP has a last updated date of {previousLastUpdated} and the spreadsheet last updated date is {tuitionPartner.TPLastUpdatedData}, which is before");
             }
         }
-
-        return tuitionPartner;
     }
 
     private void PopulateLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner)
     {
-        const string LADCodeColumn = "A";
-        const string LADNameColumn = "B";
-        const string RegionCodeColumn = "C";
-        const string RegionNameColumn = "D";
-        const string InSchoolColumn = "E";
-        const string OnlineColumn = "F";
+        const string LADCodeColumn = "D";
+        const string LADNameColumn = "E";
+        const string RegionCodeColumn = "F";
+        const string RegionNameColumn = "G";
+        const string InSchoolColumn = "H";
+        const string OnlineColumn = "I";
 
         const string TableHeaderColumn = "A";
-        const string TableHeader = "LAD Code";
+        const string TableHeader = "ID";
 
         var sheetName = DeliverySheetName;
         var ladsCovered = new Dictionary<string, (int ladId, string ladName, string regionCode, string regionName, bool inSchool, bool online)>();
@@ -320,7 +439,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 {
                     _errors.Add($"Duplicate '{ladCode}' in '{sheetName}' worksheet");
                 }
-            });
+            }, tuitionPartner.ImportId);
 
         if (ladsCovered.Count == 0)
         {
@@ -398,14 +517,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
     private void PopulateSubjectCoverageAndPrice(TuitionPartner tuitionPartner)
     {
-        const string GroupColumn = "A";
-        const string KeyStageColumn = "B";
-        const string SubjectColumn = "C";
-        const string TuitionTypeColumn = "D";
-        const string RateColumn = "E";
+        const string GroupColumn = "D";
+        const string KeyStageColumn = "E";
+        const string SubjectColumn = "F";
+        const string TuitionTypeColumn = "G";
+        const string RateColumn = "H";
 
         const string TableHeaderColumn = "A";
-        const string TableHeader = "Group";
+        const string TableHeader = "ID";
 
         var sheetName = PricingSheetName;
         var subjectCoverageAndPrices = new Dictionary<(GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionType tuitionType), decimal>();
@@ -474,7 +593,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 {
                     _errors.Add($"Duplicate '{groupString}', '{keyStageString}', '{subjectString}' and '{tuitionTypeString}', in '{sheetName}' worksheet");
                 }
-            });
+            }, tuitionPartner.ImportId);
 
         if (subjectCoverageAndPrices.Count == 0)
         {
