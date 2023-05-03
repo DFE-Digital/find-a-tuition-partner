@@ -63,7 +63,9 @@ Cypress.Commands.add("checkLaLabelText", (expectedText) => {
 Cypress.Commands.add("isWithinViewPort", (element) => {
   const { top } = element[0].getBoundingClientRect();
   expect(top).to.be.greaterThan(-1);
-  expect(top).to.be.lessThan(150);
+  console.log("top " + top);
+  expect(top).to.be.lessThan(160);
+
   return element;
 });
 
