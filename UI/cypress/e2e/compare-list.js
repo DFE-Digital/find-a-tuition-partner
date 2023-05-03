@@ -11,6 +11,18 @@ import {
 } from "../support/utils";
 
 When(
+  "they add tp name {int} to their price comparison list on the results page",
+  (entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get(
+        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+      ).check();
+      cy.wait(500);
+    });
+  }
+);
+
+When(
   "they add {string} to their price comparison list on the results page",
   (tpName) => {
     cy.get(`#compare-list-cb-${kebabCase(tpName)}`).check();
@@ -78,6 +90,20 @@ Then(
       });
   }
 );
+
+Then("tp name is entry {int} on the price comparison list page", (entry) => {
+  cy.fixture("tplist").then(function (tplist) {
+    const tpName = removeExcessWhitespaces(
+      removeNewLine(tplist.tpnames[`${entry}`])
+    );
+    cy.get("tbody th")
+      .eq(entry - 1)
+      .then(($tbodyHeader) => {
+        return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+      })
+      .should("equal", tpName);
+  });
+});
 
 Then(
   "{string} is entry {int} on the price comparison list page",
@@ -301,7 +327,7 @@ Given(
     );
     Step(
       this,
-      "they add 'Assess Education' to their price comparison list on the results page"
+      "they add 'EM Tuition' to their price comparison list on the results page"
     );
     Step(
       this,
@@ -309,7 +335,7 @@ Given(
     );
     Step(
       this,
-      "they add 'Zen Educate' to their price comparison list on the results page"
+      "they add 'Equal Education' to their price comparison list on the results page"
     );
     Step(
       this,
