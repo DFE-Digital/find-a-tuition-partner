@@ -31,9 +31,11 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   return originalFn(url, options);
 });
 
-Cypress.Commands.add("requestWithBasicAuth", (options) => {
-  options = applyBasicAuth(options);
-  return cy.request(options);
+Cypress.Commands.overwrite("request", (originalFn, url, options) => {
+  if (Cypress.config().baseUrl.includes("find-a-tuition-partner")) {
+    options = applyBasicAuth(options);
+  }
+  return originalFn(url, options);
 });
 
 Cypress.Commands.add("checkTotalTps", (expectedTotal) => {

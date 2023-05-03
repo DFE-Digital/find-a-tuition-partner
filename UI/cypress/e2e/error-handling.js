@@ -1,11 +1,9 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("a service page has not been found", () => {
-  const requestOptions = {
-    url: "/page-does-not-exist",
-    failOnStatusCode: false,
-  };
-  cy.requestWithBasicAuth(requestOptions).its("status").should("equal", 404);
+  cy.request({ url: "/page-does-not-exist", failOnStatusCode: false })
+    .its("status")
+    .should("equal", 404);
   cy.visit("/page-does-not-exist", { failOnStatusCode: false });
 });
 
