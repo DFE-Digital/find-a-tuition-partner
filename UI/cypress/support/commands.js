@@ -32,7 +32,10 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
 });
 
 Cypress.Commands.overwrite("request", (originalFn, options) => {
-  if (Cypress.config().baseUrl.includes("find-a-tuition-partner")) {
+  if (
+    Cypress.config().baseUrl.includes("find-a-tuition-partner") &&
+    typeof options !== "string"
+  ) {
     options = applyBasicAuth(options);
   }
   return originalFn(options);
