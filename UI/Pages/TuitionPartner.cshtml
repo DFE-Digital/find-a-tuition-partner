@@ -3,305 +3,392 @@
 @using UI.HelperFunctions
 @model TuitionPartner
 @{
-    ViewData["Title"] = Model.Data!.Name;
-    var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
-    var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
-    var isFromSearchResultOrCompareListPage = Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.CompareList;
+  ViewData["Title"] = Model.Data!.Name;
+  var pageUrl = HelperFunctions.GetPageUrl(Model.SearchModel?.From, "all-tuition-partners");
+  var pageName = HelperFunctions.GetPageName(Model.SearchModel?.From, "Back to tuition partners");
+  var isFromSearchResultOrCompareListPage = Model.SearchModel?.From is ReferrerList.SearchResults or ReferrerList.CompareList;
 
-    var localAuthorityHeader = "Tuition partner for ";
-    if (isFromSearchResultOrCompareListPage && Model.CompareListCheckboxModel.IsCompareListed)
-        localAuthorityHeader = "Price comparison listed tuition partner for ";
+  var localAuthorityHeader = "Tuition partner for ";
+  if (isFromSearchResultOrCompareListPage && Model.CompareListCheckboxModel.IsCompareListed)
+    localAuthorityHeader = "Price comparison listed tuition partner for ";
 
-    
-    ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
-                               $"{HelperFunctions.GetJumpToLocation(Request)}";
-    ViewData["BackLinkText"] = pageName;
-    ViewData["IncludePrintPage"] = true;
+
+  ViewData["BackLinkHref"] = $"/{pageUrl}?{Model.SearchModel.ToQueryString()}" +
+                             $"{HelperFunctions.GetJumpToLocation(Request)}";
+  ViewData["BackLinkText"] = pageName;
+  ViewData["IncludePrintPage"] = true;
 }
 <form method="POST">
-<div class="govuk-grid-row">
-<div class="govuk-grid-column-two-thirds">
-<span show-if="@Model.Data.LocalAuthorityDistrictName != null" class="govuk-caption-l" data-testid="la-name"><span id="tp-details-page--tp-localAuthHeader">@localAuthorityHeader</span><strong>@Model.Data.LocalAuthorityDistrictName</strong>
-</span>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <span show-if="@Model.Data.LocalAuthorityDistrictName != null" class="govuk-caption-l" data-testid="la-name">
+        <span id="tp-details-page--tp-localAuthHeader">@localAuthorityHeader</span><strong>@Model.Data.LocalAuthorityDistrictName</strong>
+      </span>
 
-<h1 class="govuk-heading-l">@Model.Data.Name</h1>
-<p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
-<partial name="_QualityAssuredDetails" />
+      <h1 class="govuk-heading-l">@Model.Data.Name</h1>
+      <p class="govuk-body" data-testid="results-description">@Model.Data.Description</p>
+      <partial name="_QualityAssuredDetails" />
 
-<div>
-    <h2 class="govuk-heading-m">Tuition details</h2>
-    <govuk-summary-list>
-        <govuk-summary-list-row>
+      <div>
+        <h2 class="govuk-heading-m">Tuition details</h2>
+        <govuk-summary-list>
+          <govuk-summary-list-row>
             <govuk-summary-list-row-key>
-                Subjects covered
+              Subjects covered
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-                <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
-                    @foreach (var item in Model.Data.Subjects)
-                    {
-                        <li>@item</li>
-                    }
-                </ul>
+              <ul class="govuk-list govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                @foreach (var item in Model.Data.Subjects)
+                {
+                  <li>@item</li>
+                }
+              </ul>
             </govuk-summary-list-row-value>
-        </govuk-summary-list-row>
-        <govuk-summary-list-row>
+          </govuk-summary-list-row>
+          <govuk-summary-list-row>
             <govuk-summary-list-row-key>
-                Type of tuition
+              Type of tuition
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-                <ul class="govuk-list" data-testid="type-of-tuition">
-                    @foreach (var item in Model.Data.TuitionTypes)
-                    {
-                        <li>@item</li>
-                    }
-                </ul>
+              <ul class="govuk-list" data-testid="type-of-tuition">
+                @foreach (var item in Model.Data.TuitionTypes)
+                {
+                  <li>@item</li>
+                }
+              </ul>
             </govuk-summary-list-row-value>
-        </govuk-summary-list-row>
-        <govuk-summary-list-row>
+          </govuk-summary-list-row>
+          <govuk-summary-list-row>
             <govuk-summary-list-row-key>
-                Organisation type
+              Organisation type
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value data-testid="organisation-type">
-                @Model.Data.OrganisationTypeName
+              @Model.Data.OrganisationTypeName
             </govuk-summary-list-row-value>
-        </govuk-summary-list-row>
-    </govuk-summary-list>
-</div>
+          </govuk-summary-list-row>
+        </govuk-summary-list>
+      </div>
 
-<table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
-    <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
-    <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Region</th>
-        <th scope="col" class="govuk-table__header">LAD code</th>
-        <th scope="col" class="govuk-table__header">LAD name</th>
-        <th scope="col" class="govuk-table__header">In school</th>
-        <th scope="col" class="govuk-table__header">Online</th>
-    </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-    @foreach (var item in Model.Data.LocalAuthorityDistricts)
-    {
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell">@item.Region</td>
-            <td class="govuk-table__cell">@item.Code</td>
-            <td class="govuk-table__cell">@item.Name</td>
-            <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
-            <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
-        </tr>
-    }
-    </tbody>
-</table>
+      <table class="govuk-table" data-testid="locations-covered-table" show-if="@Model.Data.LocalAuthorityDistricts.Any()">
+        <caption class="govuk-table__caption govuk-table__caption--m">Locations covered</caption>
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Region</th>
+            <th scope="col" class="govuk-table__header">LAD code</th>
+            <th scope="col" class="govuk-table__header">LAD name</th>
+            <th scope="col" class="govuk-table__header">In school</th>
+            <th scope="col" class="govuk-table__header">Online</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          @foreach (var item in Model.Data.LocalAuthorityDistricts)
+          {
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell">@item.Region</td>
+              <td class="govuk-table__cell">@item.Code</td>
+              <td class="govuk-table__cell">@item.Name</td>
+              <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
+              <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
+            </tr>
+          }
+        </tbody>
+      </table>
 
-<div>
-    <h2 class="govuk-heading-m">Tuition cost information</h2>
+      <div>
+        <h2 class="govuk-heading-m">Tuition cost information</h2>
 
-    <p class="govuk-body">
-        Each pupil premium eligible student will receive £162. This funding cost has been calculated so you will have 60% of the cost covered for up to £18 per pupil per hour. For help understanding your funding, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-1">funding and reporting</a>.
-    </p>
+        <p class="govuk-body">
+          Each pupil premium eligible student will receive £162. This funding cost has been calculated so you will have 60% of the cost covered for up to £18 per pupil per hour. For help understanding your funding, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-1">funding and reporting</a>.
+        </p>
 
-    <div>
-        <govuk-details data-testid="payment-details">
+        <div>
+          <govuk-details data-testid="payment-details">
             <govuk-details-summary>
-                How much will I pay?
+              How much will I pay?
             </govuk-details-summary>
             <govuk-details-text>
-                <strong>Example:</strong>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>If you spend £15 per pupil per hour, the government will cover 60% of the cost</li>
-                    <li>If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest</li>
-                </ul>
+              <strong>Example:</strong>
+              <ul class="govuk-list govuk-list--bullet">
+                <li>If you spend £15 per pupil per hour, the government will cover 60% of the cost</li>
+                <li>If you spend £25 per pupil per hour, you will receive 60% of £18 and will have to pay the rest</li>
+              </ul>
             </govuk-details-text>
-        </govuk-details>
-    </div>
-</div>
+          </govuk-details>
+        </div>
+      </div>
 
-<h2 class="govuk-heading-m">Tuition prices</h2>
-<p class="govuk-body">
-    Prices shown are per pupil per hour.<br/>
-    <span show-if="!@Model.Data.HasPricingVariation" data-testid="pricing-same-for-subjects">
-        All subjects are the same price but depend on tuition group size.
-    </span>
-    <span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
-        Some prices are different depending on key stage or subject. Please contact @Model.Data.Name for more information.
-    </span>
-    <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br/>Prices shown include VAT.</span>
-    <span show-if="@Model.Data.IsVatCharged==false" data-testid="price-vat-not-applicable"><br/>VAT does not apply to these prices because @Model.Data.Name is VAT exempt.</span>
-</p>
+      <h2 class="govuk-heading-m">Tuition prices</h2>
+      <p class="govuk-body">
+        Prices shown are per pupil per hour.<br />
+        <span show-if="!@Model.Data.HasPricingVariation" data-testid="pricing-same-for-subjects">
+          All subjects are the same price but depend on tuition group size.
+        </span>
+        <span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
+          Some prices are different depending on key stage or subject. Please contact @Model.Data.Name for more information.
+        </span>
+        @if (!Model.Data.IsVatCharged)
+        {
+          <div class="govuk-inset-text">
+            <p class="govuk-body">This tuition partner does not charge VAT.</p>
+            <p class="govuk-body">Tuition partners such as charities or Limited Liability Partnerships (LLP) do not charge VAT.</p>
+          </div>
+        }
+      </p>
 
-<table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
-    <caption class="govuk-visually-hidden">Tuition prices</caption>
-    <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Tuition group size</th>
-        <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
-        <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
-    </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-    @foreach (var item in Model.Data.Prices)
-    {
-        <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">@(((Domain.Enums.GroupSize)item.Key).DisplayName())</th>
-            <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, Model.Data.IsVatCharged)
-            </td>
+      @if (!Model.Data.AllPrices.Any())
+      {
+        <h3 class="govuk-heading-s" show-if="@Model.Data.IsVatCharged">Tuition prices (excluding VAT)</h3>
+        <table class="govuk-table" data-testid="pricing-table">
+          <caption class="govuk-visually-hidden">Tuition prices (excluding VAT)</caption>
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Tuition group size</th>
+              <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+              <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            @foreach (var item in Model.Data.Prices)
+            {
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
+                  @(
+                      ((Domain.Enums.GroupSize)item.Key).DisplayName()
+                      )
+                </th>
+                <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+                  @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, false)
+                </td>
 
-            <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Enums.TuitionType.Online, Model.Data.IsVatCharged)
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+                <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+                  @item.Value.FormatFor(Domain.Enums.TuitionType.Online, false)
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
 
-@foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
-{
-    foreach (var (keyStage, subjects) in keyStages)
-    {
-        <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+        @if (@Model.Data.IsVatCharged)
+        {
+          <h3 class="govuk-heading-s">Tuition prices (including VAT)</h3>
+          <table class="govuk-table" data-testid="pricing-table">
+            <caption class="govuk-visually-hidden">Tuition prices (including VAT)</caption>
+            <thead class="govuk-table__head">
+              <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Tuition group size</th>
+                <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+                <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
+              </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+              @foreach (var item in Model.Data.Prices)
+              {
+                <tr class="govuk-table__row">
+                  <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
+                    @(
+                        ((Domain.Enums.GroupSize)item.Key).DisplayName()
+                        )
+                  </th>
+                  <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+                    @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, true)
+                  </td>
+
+                  <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+                    @item.Value.FormatFor(Domain.Enums.TuitionType.Online, true)
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      }
+
+      @foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
+      {
+        foreach (var (keyStage, subjects) in keyStages)
+        {
+          <h3 class="govuk-heading-s" show-if="@Model.Data.IsVatCharged">Tuition prices (excluding VAT)</h3>
+          <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
             <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
             <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
+              <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Tuition group size</th>
                 @foreach (var (subjectName, _) in subjects)
                 {
-                    <th scope="col" class="govuk-table__header">@subjectName</th>
+                  <th scope="col" class="govuk-table__header">@subjectName</th>
                 }
-            </tr>
+              </tr>
             </thead>
             <tbody class="govuk-table__body">
-            @for (var groupSize = 1; groupSize < 7; groupSize++)
-            {
+              @for (var groupSize = 1; groupSize < 7; groupSize++)
+              {
                 <tr class="govuk-table__row">
+                  <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
+                  @foreach (var (_, prices) in subjects)
+                  {
+                    if (prices.TryGetValue(groupSize, out var price))
+                    {
+                      <td class="govuk-table__cell">@(price.FormatPrice())</td>
+                    }
+                    else
+                    {
+                      <td class="govuk-table__cell"></td>
+                    }
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          @if (@Model.Data.IsVatCharged)
+          {
+            <h3 class="govuk-heading-s">Tuition prices (including VAT)</h3>
+            <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+              <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Tuition group size</th>
+                  @foreach (var (subjectName, _) in subjects)
+                  {
+                    <th scope="col" class="govuk-table__header">@subjectName</th>
+                  }
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                @for (var groupSize = 1; groupSize < 7; groupSize++)
+                {
+                  <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
                     @foreach (var (_, prices) in subjects)
                     {
-                        if (prices.TryGetValue(groupSize, out var price))
-                        {
-                            <td class="govuk-table__cell">@(Model.Data.IsVatCharged ? price.AddVAT().FormatPrice() : price.FormatPrice())</td>
-                        }
-                        else
-                        {
-                            <td class="govuk-table__cell"></td>
-                        }
+                      if (prices.TryGetValue(groupSize, out var price))
+                      {
+                        <td class="govuk-table__cell">@(price.AddVAT().FormatPrice())</td>
+                      }
+                      else
+                      {
+                        <td class="govuk-table__cell"></td>
+                      }
                     }
-                </tr>
-            }
-            </tbody>
-        </table>
-    }
-}
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        }
+      }
 
-<div>
-    <h2 class="govuk-heading-m">Next steps</h2>
-    <p class="govuk-body">
-        Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
-    </p>
-    <p class="govuk-body">
-        For help on understanding your funding amount and how spend it, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-2">funding and reporting</a>.
-    </p>
+      <div>
+        <h2 class="govuk-heading-m">Next steps</h2>
+        <p class="govuk-body">
+          Contact @Model.Data.Name by phone, email or their website to find out their availability to start as your tuition partner.
+        </p>
+        <p class="govuk-body">
+          For help on understanding your funding amount and how spend it, you can see our information on <a href="/funding-and-reporting" class="govuk-link" data-testid="funding-guidance-2">funding and reporting</a>.
+        </p>
 
-    <govuk-summary-list data-testid="contact-details">
-        <govuk-summary-list-row>
+        <govuk-summary-list data-testid="contact-details">
+          <govuk-summary-list-row>
             <govuk-summary-list-row-key>
-                Website
+              Website
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-                <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" rel="noreferrer noopener" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@(Model.Data.Website) (opens in new tab)</a>
+              <a id="app-tuition-partner-website-link" href="@Model.Data.Website" class="govuk-link" rel="noreferrer noopener" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@(Model.Data.Website) (opens in new tab)</a>
             </govuk-summary-list-row-value>
-        </govuk-summary-list-row>
-        @if (!string.IsNullOrWhiteSpace(@Model.Data.PhoneNumber))
-        {
+          </govuk-summary-list-row>
+          @if (!string.IsNullOrWhiteSpace(@Model.Data.PhoneNumber))
+          {
             <govuk-summary-list-row>
-                <govuk-summary-list-row-key>
-                    Phone number
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    <a id="app-tuition-partner-phone-number-link" href="tel:@Model.Data.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@Model.Data.PhoneNumber</a>
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Phone number
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                <a id="app-tuition-partner-phone-number-link" href="tel:@Model.Data.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@Model.Data.PhoneNumber</a>
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-        @if (!string.IsNullOrWhiteSpace(@Model.Data.EmailAddress))
-        {
+          }
+          @if (!string.IsNullOrWhiteSpace(@Model.Data.EmailAddress))
+          {
             <govuk-summary-list-row>
-                <govuk-summary-list-row-key>
-                    Email address
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    <a id="app-tuition-partner-email-link" href="mailto:@(Model.Data.EmailAddress)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@Model.Data.EmailAddress</a>
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Email address
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                <a id="app-tuition-partner-email-link" href="mailto:@(Model.Data.EmailAddress)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@Model.Data.EmailAddress</a>
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-        @if (@Model.Data.Address.Any())
-        {
+          }
+          @if (@Model.Data.Address.Any())
+          {
             <govuk-summary-list-row>
-                <govuk-summary-list-row-key>
-                    Address
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    <ul class="govuk-list govuk-body-s">
-                        @foreach (var addressItem in @Model.Data.Address)
-                        {
-                            <li class="govuk-body">@addressItem</li>
-                        }
-                    </ul>
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Address
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                <ul class="govuk-list govuk-body-s">
+                  @foreach (var addressItem in @Model.Data.Address)
+                  {
+                    <li class="govuk-body">@addressItem</li>
+                  }
+                </ul>
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-        @if (!string.IsNullOrWhiteSpace(Model.Data.ImportId))
-        {
+          }
+          @if (!string.IsNullOrWhiteSpace(Model.Data.ImportId))
+          {
             <govuk-summary-list-row data-testid="tp-meta-data">
-                <govuk-summary-list-row-key>
-                    Import Id
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    @(Model.Data.ImportId)
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Import Id
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                @(Model.Data.ImportId)
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-        @if (Model.Data.TPLastUpdatedData.HasValue)
-        {
+          }
+          @if (Model.Data.TPLastUpdatedData.HasValue)
+          {
             <govuk-summary-list-row>
-                <govuk-summary-list-row-key>
-                    Data last updated by @Model.Data.Name
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    @(Model.Data.TPLastUpdatedData)
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Data last updated by @Model.Data.Name
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                @(Model.Data.TPLastUpdatedData)
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-        @if (Model.Data.ImportProcessLastUpdatedData.HasValue)
-        {
+          }
+          @if (Model.Data.ImportProcessLastUpdatedData.HasValue)
+          {
             <govuk-summary-list-row>
-                <govuk-summary-list-row-key>
-                    Last date imported
-                </govuk-summary-list-row-key>
-                <govuk-summary-list-row-value>
-                    @(Model.Data.ImportProcessLastUpdatedData)
-                </govuk-summary-list-row-value>
+              <govuk-summary-list-row-key>
+                Last date imported
+              </govuk-summary-list-row-key>
+              <govuk-summary-list-row-value>
+                @(Model.Data.ImportProcessLastUpdatedData)
+              </govuk-summary-list-row-value>
             </govuk-summary-list-row>
-        }
-    </govuk-summary-list>
-    @if (isFromSearchResultOrCompareListPage)
-    {
-        <hr class="govuk-section-break govuk-section-break--visible ">
-        <div>
-            <partial name="Shared/_CompareListCheckbox" model="@Model.CompareListCheckboxModel"/>
-        </div>
-        <div class="govuk-grid-column-full add-to-or-remove-from-compare-list-button--apply-visibility govuk-!-padding-left-0">
-            @{ var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null; }
-            <input type="hidden" name="SearchModel" value="@searchModel"/>
+          }
+        </govuk-summary-list>
+        @if (isFromSearchResultOrCompareListPage)
+        {
+          <hr class="govuk-section-break govuk-section-break--visible ">
+          <div>
+            <partial name="Shared/_CompareListCheckbox" model="@Model.CompareListCheckboxModel" />
+          </div>
+          <div class="govuk-grid-column-full add-to-or-remove-from-compare-list-button--apply-visibility govuk-!-padding-left-0">
+            @{
+              var searchModel = Model.SearchModel != null ? JsonSerializer.Serialize(Model.SearchModel) : null;
+            }
+            <input type="hidden" name="SearchModel" value="@searchModel" />
             <govuk-button asp-page-handler="UpdateCompareList" asp-route-seoUrl="@Model.Data.Id" class="govuk-!-margin-bottom-2">
-                            Update price comparison list
+              Update price comparison list
             </govuk-button>
-        </div>
-        <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
-    }
-</div>
-</div>
-<div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
-    <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo"/>
-</div>
-</div>
+          </div>
+          <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+        }
+      </div>
+    </div>
+    <div show-if="@Model.Data.HasLogo" class="govuk-grid-column-one-third tuition-partner-logo">
+      <img src="/tuition-partner-logo/@Model.Data.Id" alt="The company logo for @Model.Data.Name" data-testid="tuition-partner-website-logo" />
+    </div>
+  </div>
 </form>
