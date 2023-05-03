@@ -7,6 +7,15 @@
 }
 
 .feedback-iframe {
+  display: none;
+}
+
+.js-enabled .feedback-iframe {
+  display: inline;
   width: 100%;
-  height: 800px;
+  height: 100vh;
+}
+
+.js-enabled .feedback-no-js {
+  display: none;
 }
