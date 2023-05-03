@@ -135,14 +135,10 @@ public class DataImporterService : IHostedService
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
         CancellationToken cancellationToken)
     {
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>();
+        //This will throw an error if there is not just 1 file
+        var dataFile = dataFileEnumerable.Single();
 
-        if (dataFileEnumerable.Count() != 1)
-        {
-            var errorMsg = $"There should be 1 import file, but {dataFileEnumerable.Count()} files exist.";
-            _logger.LogError(message: errorMsg);
-            throw new InvalidOperationException(errorMsg);
-        }
+        var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions
             .Include(e => e.LocalAuthorityDistricts)
@@ -170,112 +166,109 @@ public class DataImporterService : IHostedService
 
         DataImporterMappingConfig.Configure();
 
-        foreach (var dataFile in dataFileEnumerable)
-        {
-            var originalFilename = dataFile.Filename.ExtractFileNameFromDirectory();
+        var originalFilename = dataFile.Filename.ExtractFileNameFromDirectory();
 
-            //Use Polly to retry up to 5 times per file read (in case of network issues)
-            int numberOfRetries = 5;
-            var retryPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetry(numberOfRetries, retryAttempt =>
-                    //Wait 2, 4, 8, 16 and then 32 seconds
-                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                    (exception, sleepDuration, retryCount, context) =>
-                    {
-                        _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
-                    });
-
-
-            _logger.LogInformation("Attempting to process Tuition Partner from file {OriginalFilename}", originalFilename);
-            List<TuitionPartner> tuitionPartnersToProcess = new();
-            try
-            {
-                tuitionPartnersToProcess = retryPolicy.Execute(() =>
+        //Use Polly to retry up to 5 times per file read (in case of network issues)
+        int numberOfRetries = 5;
+        var retryPolicy = Policy
+            .Handle<Exception>()
+            .WaitAndRetry(numberOfRetries, retryAttempt =>
+                //Wait 2, 4, 8, 16 and then 32 seconds
+                TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                (exception, sleepDuration, retryCount, context) =>
                 {
-                    //Uncomment to test polly
-                    //Random random = new();
-                    //if (random.Next(1, 3) == 1)
-                    //    throw new Exception("Testing Polly");
-
-                    return factory.GetTuitionPartners(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, tpImportedDates);
+                    _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
                 });
-            }
-            catch (Exception ex)
+
+
+        _logger.LogInformation("Attempting to process Tuition Partner from file {OriginalFilename}", originalFilename);
+        List<TuitionPartner> tuitionPartnersToProcess = new();
+        try
+        {
+            tuitionPartnersToProcess = retryPolicy.Execute(() =>
             {
-                _logger.LogError(ex, "Exception thrown when processing Tuition Partners from file {OriginalFilename}", originalFilename);
-                //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
-                throw;
+                //Uncomment to test polly
+                //Random random = new();
+                //if (random.Next(1, 3) == 1)
+                //    throw new Exception("Testing Polly");
+
+                return factory.GetTuitionPartners(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, tpImportedDates);
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception thrown when processing Tuition Partners from file {OriginalFilename}", originalFilename);
+            //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
+            throw;
+        }
+
+        foreach (var tuitionPartnerToProcess in tuitionPartnersToProcess)
+        {
+            var validator = new TuitionPartnerValidator(successfullyProcessed);
+            var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
+            if (!results.IsValid)
+            {
+                var errorMsg = $"Tuition Partner name {tuitionPartnerToProcess.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
+                _logger.LogError(message: errorMsg);
+                //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
+                throw new ValidationException(errorMsg);
             }
 
-            foreach (var tuitionPartnerToProcess in tuitionPartnersToProcess)
+            //Find existing TP in db
+            var matchedTPs = allExistingTPs.Where(x => x.ImportId.ToLower() == tuitionPartnerToProcess.ImportId.ToLower() ||
+                                                        x.SeoUrl == tuitionPartnerToProcess.SeoUrl).ToList();
+
+            //If no match then add
+            if (matchedTPs == null || matchedTPs.Count == 0)
             {
-                var validator = new TuitionPartnerValidator(successfullyProcessed);
-                var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
-                if (!results.IsValid)
+                SetImportingData(tuitionPartnerToProcess);
+
+                dbContext.TuitionPartners.Add(tuitionPartnerToProcess);
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                    tuitionPartnerToProcess.Name, tuitionPartnerToProcess.Id, originalFilename);
+            }
+            else if (matchedTPs.Count == 1)
+            {
+                //If matched then see if needs updating
+
+                var existingTP = matchedTPs.First();
+
+                //Map spreadsheet data to existing entity
+                existingTP = tuitionPartnerToProcess!.Adapt(existingTP);
+
+                ImportTuitionPartnerLocalAuthorityDistrictCoverage(dbContext, existingTP, tuitionPartnerToProcess);
+                ImportTuitionPartnerSubjectCoverage(dbContext, existingTP, tuitionPartnerToProcess);
+                ImportTuitionPartnerPrices(dbContext, existingTP, tuitionPartnerToProcess);
+
+                if (!existingTP.IsActive ||
+                    dbContext.ChangeTracker.Entries().Any(e => e.State == EntityState.Modified ||
+                                                                e.State == EntityState.Added ||
+                                                                e.State == EntityState.Deleted))
                 {
-                    var errorMsg = $"Tuition Partner name {tuitionPartnerToProcess.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
-                    _logger.LogError(message: errorMsg);
-                    //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
-                    throw new ValidationException(errorMsg);
-                }
-
-                //Find existing TP in db
-                var matchedTPs = allExistingTPs.Where(x => x.ImportId.ToLower() == tuitionPartnerToProcess.ImportId.ToLower() ||
-                                                            x.SeoUrl == tuitionPartnerToProcess.SeoUrl).ToList();
-
-                //If no match then add
-                if (matchedTPs == null || matchedTPs.Count == 0)
-                {
-                    SetImportingData(tuitionPartnerToProcess);
-
-                    dbContext.TuitionPartners.Add(tuitionPartnerToProcess);
+                    SetImportingData(existingTP);
 
                     await dbContext.SaveChangesAsync(cancellationToken);
 
-                    _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                        tuitionPartnerToProcess.Name, tuitionPartnerToProcess.Id, originalFilename);
+                    _logger.LogInformation("Updated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                        existingTP.Name, existingTP.Id, originalFilename);
                 }
-                else if (matchedTPs.Count == 1)
+                else
                 {
-                    //If matched then see if needs updating
-
-                    var existingTP = matchedTPs.First();
-
-                    //Map spreadsheet data to existing entity
-                    existingTP = tuitionPartnerToProcess!.Adapt(existingTP);
-
-                    ImportTuitionPartnerLocalAuthorityDistrictCoverage(dbContext, existingTP, tuitionPartnerToProcess);
-                    ImportTuitionPartnerSubjectCoverage(dbContext, existingTP, tuitionPartnerToProcess);
-                    ImportTuitionPartnerPrices(dbContext, existingTP, tuitionPartnerToProcess);
-
-                    if (!existingTP.IsActive ||
-                        dbContext.ChangeTracker.Entries().Any(e => e.State == EntityState.Modified ||
-                                                                    e.State == EntityState.Added ||
-                                                                    e.State == EntityState.Deleted))
-                    {
-                        SetImportingData(existingTP);
-
-                        await dbContext.SaveChangesAsync(cancellationToken);
-
-                        _logger.LogInformation("Updated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                            existingTP.Name, existingTP.Id, originalFilename);
-                    }
-                    else
-                    {
-                        _logger.LogInformation("No changes for Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                            existingTP.Name, existingTP.Id, originalFilename);
-                    }
+                    _logger.LogInformation("No changes for Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
+                        existingTP.Name, existingTP.Id, originalFilename);
                 }
-                else if (matchedTPs.Count > 1)
-                {
-                    var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
-                    _logger.LogError(message: errorMsg);
-                    throw new InvalidOperationException(errorMsg);
-                }
-
-                successfullyProcessed.Add(originalFilename, tuitionPartnerToProcess);
             }
+            else if (matchedTPs.Count > 1)
+            {
+                var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
+                _logger.LogError(message: errorMsg);
+                throw new InvalidOperationException(errorMsg);
+            }
+
+            successfullyProcessed.Add(originalFilename, tuitionPartnerToProcess);
         }
 
         await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
