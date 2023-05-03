@@ -25,11 +25,12 @@
       </div>
     }
     <form method="get">
+      <span class="govuk-caption-l">National Tutoring Programme (NTP)</span>
       <h1 class="govuk-heading-l">Find a tuition partner</h1>
       @if (Model.IncludeEnquiryBuilder)
       {
         <p class="govuk-body">
-          Use this service to:
+          Use this service to help pupils get the tuition they need. You can:
         </p>
         <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
           <li>
@@ -45,7 +46,7 @@
       }
 
       <p class="govuk-body">
-        All tuition partners in the service are quality assured.
+        You can only use your NTP funding with quality-assured tuition partners.
         <partial name="_QualityAssuredDetails" />
       </p>
 
@@ -54,7 +55,7 @@
           <govuk-input-label is-page-heading="true" class="govuk-label--m">What is your school’s postcode?</govuk-input-label>
           <govuk-input-hint></govuk-input-hint>
         </govuk-input>
-        <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+        <govuk-button type="submit" data-testid="call-to-action">Start now</govuk-button>
       </div>
 
       <input type="hidden" name="handler" value="Submit" />
@@ -63,16 +64,16 @@
     </form>
   </div>
   <div class="govuk-grid-column-one-third">
-    <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
+    <h2 class="govuk-heading-m">Related content</h2>
     <p class="govuk-body">
-      Find a tuition partner is part of the national tutoring programme (NTP).
-      You can also get an
-      <a class="govuk-link" asp-page="/AcademicMentors" data-testid="academic-mentors-link">academic mentor</a>
-      or use
-      <a class="govuk-link" asp-page="/SchoolLedTutoring" data-testid="school-led-tutoring-link">school led tutoring</a>.
+      <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023#Funding-and-paying">NTP guidance for schools 2022 to 2023 (opens in new tab)</a>.
     </p>
     <h2 class="govuk-heading-m" data-testid="check-your-tp-quality-assured">Check your tuition partner is quality assured</h2>
     <p class="govuk-body">You can only use your NTP funding with quality-assured tuition partners.</p>
     <p class="govuk-body"><a asp-page="@nameof(AllTuitionPartners)" class="govuk-link" data-testid="full-list-link">Check the full list of quality-assured tuition partners</a>.</p>
+    <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
+    <p class="govuk-body">
+      Find out more about <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/collections/national-tutoring-programme-funding">academic mentors and school-led tutors you employ directly on GOV.UK (opens in new tab)</a>.
+    </p>
   </div>
 </div>
