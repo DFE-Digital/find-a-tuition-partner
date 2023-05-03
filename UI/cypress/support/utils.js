@@ -92,3 +92,29 @@ export const applyBasicAuth = (options) => {
   }
   return options;
 };
+
+export const applyBasicAuthWithRequest = (options) => {
+  const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
+
+  if (basicAuthCredentials) {
+    const [username, password] = basicAuthCredentials.split(":");
+    if (username && password) {
+      if (typeof options === "string") {
+        options = {
+          url: options,
+          auth: {
+            username: username,
+            password: password,
+          },
+        };
+      } else {
+        options = options || {};
+        options.auth = {
+          username: username,
+          password: password,
+        };
+      }
+    }
+  }
+  return options;
+};

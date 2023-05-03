@@ -24,7 +24,12 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { removeNewLine, getJumpToLocationId, applyBasicAuth } from "./utils";
+import {
+  removeNewLine,
+  getJumpToLocationId,
+  applyBasicAuth,
+  applyBasicAuthWithRequest,
+} from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   options = applyBasicAuth(options);
@@ -32,11 +37,8 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
 });
 
 Cypress.Commands.overwrite("request", (originalFn, options) => {
-  if (
-    Cypress.config().baseUrl.includes("find-a-tuition-partner") &&
-    typeof options !== "string"
-  ) {
-    options = applyBasicAuth(options);
+  if (Cypress.config().baseUrl.includes("find-a-tuition-partner")) {
+    options = applyBasicAuthWithRequest(options);
   }
   return originalFn(options);
 });
