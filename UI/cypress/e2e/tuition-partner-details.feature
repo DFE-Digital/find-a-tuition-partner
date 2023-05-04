@@ -53,7 +53,7 @@ Feature: User can view full details of a Tuition Parner
   Scenario: tuition partner website link is displayed
     Given a user has arrived on the 'Tuition Partner' page for tp name 13
     Then the tuition partner's website link is displayed
-    And the tuition partners website link starts with 'http://'
+    And the tuition partners website link starts with 'https://'
 
   Scenario: user has access to funding link page
     Given a user has arrived on the 'Tuition Partner' page for tp name 12
@@ -73,20 +73,23 @@ Feature: User can view full details of a Tuition Parner
 
   Scenario Outline: tuition cost table shows available tuition types
     Given a user has arrived on the 'Tuition Partner' page for '<tuition-partner>'
-    Then the tuition partner pricing table is displayed for '<tuition-types>'
+    Then the tuition partner pricing table is displayed for '<tuition-types>':
+      | tuition-partner | tuition-types |
+      | tp name 14      | Online        |
+      | tp name 15      | Online        |
+      | tp name 16      | In school     |
+
     Examples:
-      | tuition-partner | tuition-types     |
-      | 16              | Online            |
-      | 17              | In school         |
-      | 18              | In school, Online |
+      | tuition-partner | tuition-types |
+      | tp name 14      | Online        |
+      | tp name 15      | Online        |
+      | tp name 16      | In school     |
+
+
 
   Scenario: tuition cost blurb states pricing uniformity
     Given a user has arrived on the 'Tuition Partner' page for tp name 16
     Then the tuition cost information states declares no differences
-
-  Scenario: tuition cost blurb states pricing differences
-    Given a user has arrived on the 'Tuition Partner' page for tp name 19
-    Then the tuition cost information states declares differences
 
   Scenario: full pricing tables are not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for tp name 16

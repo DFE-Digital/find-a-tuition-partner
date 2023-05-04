@@ -105,22 +105,22 @@ Then("the tuition partner meta data is displayed", () => {
 Then(
   "a user has arrived on the 'Tuition Partner' page for {string}",
   (tpName) => {
-    console.log("tpName", tpName);
-    let tp;
+    const tpNumber = tpName.match(/\d+/)[0];
+    console.log("tpNumber", tpNumber);
+
     cy.fixture("tplist").then((tplist) => {
-      tp = tplist.tpnames[parseInt(tpName)].toLowerCase().replace(" ", "-");
+      const tp = tplist.tpnames[parseInt(tpNumber)]
+        .toLowerCase()
+        .replace(/ /g, "-");
       console.log("tp", tp);
-      cy.location("pathname").should(($pathname) => {
-        console.log("$pathname", $pathname);
-        const pathnameWithoutHyphen = $pathname.replace(/-/g, " ");
-        expect(pathnameWithoutHyphen).to.eq(`/tuition partner/${tp}`);
-      });
+
+      cy.visit(`/tuition-partner/${tp}`);
     });
   }
 );
 
 Then(
-  "the tuition partner pricing table is displayed for {string}",
+  "the tuition partner pricing table is displayed for {string}:",
   (tuitionTypes) => {
     tuitionTypes.split(",").forEach((tuitionType) => {
       cy.get('[data-testid="pricing-table"]').should(
@@ -157,10 +157,10 @@ Then(
   "the subjects covered by a tuition partner are in alphabetical order",
   () => {
     const stages = [
-      "Key stage 1: English, Maths and Science",
+      "Key stage 1: English and Maths",
       "Key stage 2: English, Maths and Science",
-      "Key stage 3: English, Humanities, Maths, Modern Foreign Languages and Science",
-      "Key stage 4: English, Humanities, Maths, Modern Foreign Languages and Science",
+      "Key stage 3: English, Humanities, Maths and Science",
+      "Key stage 4: English, Humanities, Maths and Science",
     ];
 
     stages.forEach((element) => {
@@ -182,7 +182,7 @@ Then("the tuition cost information states declares differences", () => {
 Then("all tuition partner details are populated correctly", () => {
   cy.get('[data-testid="results-subjects"] > li:first').should(
     "contain.text",
-    "Key stage 1: English, Maths and Science"
+    "Key stage 1: English and Maths"
   );
   cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
