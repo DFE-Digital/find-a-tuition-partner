@@ -100,13 +100,9 @@ export const applyBasicAuth = (options) => {
 };
 
 export const applyBasicAuthWithRequest = (options) => {
-  const basicAuthCredentials = Cypress.env("BASIC_AUTH_CREDENTIALS");
-
-  if (basicAuthCredentials) {
-    if (typeof options === "string") {
-      return applyBasicAuthHelper({}, options);
-    } else {
-      return applyBasicAuthHelper(options);
-    }
+  if (typeof options === "string") {
+    return applyBasicAuthHelper({}, options);
+  } else {
+    return applyBasicAuthHelper(options);
   }
 };
