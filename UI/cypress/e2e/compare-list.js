@@ -23,6 +23,14 @@ When(
 );
 
 When(
+  "they add {string} to their price comparison list on the results page",
+  (tpName) => {
+    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).check();
+    cy.wait(500);
+  }
+);
+
+When(
   "they remove tp name {int} from their price comparison list on the results page",
   (entry) => {
     cy.fixture("tplist").then(function (tplist) {
@@ -94,6 +102,20 @@ Then(
       });
   }
 );
+
+Then("tp name is entry {int} on the price comparison list page", (entry) => {
+  cy.fixture("tplist").then(function (tplist) {
+    const tpName = removeExcessWhitespaces(
+      removeNewLine(tplist.tpnames[`${entry}`])
+    );
+    cy.get("tbody th")
+      .eq(entry - 1)
+      .then(($tbodyHeader) => {
+        return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+      })
+      .should("equal", tpName);
+  });
+});
 
 Then(
   "tp name {int} is entry {int} on the price comparison list page",
@@ -385,6 +407,8 @@ Given(
     Step(
       this,
       "they add tp name 2 to their price comparison list on the results page"
+=======
+
     );
     Step(
       this,
@@ -393,6 +417,7 @@ Given(
     Step(
       this,
       "they add tp name 7 to their price comparison list on the results page"
+
     );
     Step(
       this,

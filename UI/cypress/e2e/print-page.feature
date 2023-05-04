@@ -54,6 +54,7 @@ Feature: User can print relevant pages using a 'Print this page' link
 
   Scenario: tuition partner details page 'Print this page' link opens print dialog
     Given a user has arrived on the 'Tuition Partner' page for tp name 2
+
     When the 'Print this page' link is clicked
     Then the print dialog is opened
 

@@ -47,7 +47,7 @@ Feature: Tuition Partner price comparison list
     Then the page URL ends with '/search-results'
     And they will see 'Enter a real postcode' as an error message for the 'postcode'
 
-  Scenario: User views their price comparison listed TPs on the price comparison list page
+ Scenario: User views their price comparison listed TPs on the price comparison list page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add tp name 1 to their price comparison list on the results page
     And they add tp name 2 to their price comparison list on the results page
@@ -64,11 +64,11 @@ Feature: Tuition Partner price comparison list
     When they click on the option heading for 'Key stage 4'
     And they select subject 'key-stage-4-humanities'
     Then the price comparison list shows as having 2 entries on the results page
-
   Scenario: User changes their postcode to exclude a price comparison listed TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add tp name 1 to their price comparison list on the results page
     And they add tp name 3 to their price comparison list on the results page
+
     When they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     Then the price comparison list shows as having 2 entries on the results page
@@ -77,6 +77,7 @@ Feature: Tuition Partner price comparison list
     And the heading caption is 'Tuition partner for Wealden'
     And tp name 3 is entry 1 on the price comparison list page
     And tp name 1 is entry 1 on the not available list on the price comparison list page
+
 
   Scenario: The price comparison list displays the expected data for the search area
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'W1W 7RT'
@@ -126,6 +127,7 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
 
+
   Scenario: User removes single item from price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to remove entry 2 on the price comparison list page
@@ -138,6 +140,7 @@ Feature: Tuition Partner price comparison list
     Then there are 5 entries on the price comparison list page
     And tp name 5 is entry 1 on the price comparison list page
     And tp name 2 is entry 2 on the price comparison list page
+
 
   Scenario: User clears full price comparison list then cancel
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -219,6 +222,7 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
     And the tp name 7 price is '£50 including VAT'
+
 
   Scenario: The price comparison list price ordering works with refined data and any inavid TP data still follows the order they were added to price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -317,6 +321,7 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 4 on the price comparison list page
     And tp name 1 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
+
 
   Scenario: The price comparison list VAT defaults to inclusive on first load and then maintains own state after being selected
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'

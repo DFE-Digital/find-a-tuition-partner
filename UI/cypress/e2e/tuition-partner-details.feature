@@ -78,13 +78,12 @@ Feature: User can view full details of a Tuition Parner
       | tp name 14      | Online        |
       | tp name 15      | Online        |
       | tp name 16      | In school     |
-
+      
     Examples:
       | tuition-partner | tuition-types |
       | tp name 14      | Online        |
       | tp name 15      | Online        |
       | tp name 16      | In school     |
-
 
 
   Scenario: tuition cost blurb states pricing uniformity
