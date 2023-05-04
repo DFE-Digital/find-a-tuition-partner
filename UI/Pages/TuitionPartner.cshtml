@@ -153,15 +153,15 @@
               <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
                   @(
-                      ((Domain.Enums.GroupSize)item.Key).DisplayName()
+                      ((GroupSize)item.Key).DisplayName()
                       )
                 </th>
                 <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                  @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, false)
+                  @item.Value.FormatFor(TuitionType.InSchool, false)
                 </td>
 
                 <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                  @item.Value.FormatFor(Domain.Enums.TuitionType.Online, false)
+                  @item.Value.FormatFor(TuitionType.Online, false)
                 </td>
               </tr>
             }
@@ -186,15 +186,15 @@
                 <tr class="govuk-table__row">
                   <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
                     @(
-                        ((Domain.Enums.GroupSize)item.Key).DisplayName()
+                        ((GroupSize)item.Key).DisplayName()
                         )
                   </th>
                   <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                    @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, true)
+                    @item.Value.FormatFor(TuitionType.InSchool, true)
                   </td>
 
                   <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                    @item.Value.FormatFor(Domain.Enums.TuitionType.Online, true)
+                    @item.Value.FormatFor(TuitionType.Online, true)
                   </td>
                 </tr>
               }
@@ -223,7 +223,7 @@
               @for (var groupSize = 1; groupSize < 7; groupSize++)
               {
                 <tr class="govuk-table__row">
-                  <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
+                  <th scope="row" class="govuk-table__header">@(((GroupSize)groupSize).DisplayName())</th>
                   @foreach (var (_, prices) in subjects)
                   {
                     if (prices.TryGetValue(groupSize, out var price))
@@ -258,7 +258,7 @@
                 @for (var groupSize = 1; groupSize < 7; groupSize++)
                 {
                   <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
+                    <th scope="row" class="govuk-table__header">@(((GroupSize)groupSize).DisplayName())</th>
                     @foreach (var (_, prices) in subjects)
                     {
                       if (prices.TryGetValue(groupSize, out var price))
