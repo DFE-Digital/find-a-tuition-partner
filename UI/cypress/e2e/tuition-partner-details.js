@@ -63,12 +63,18 @@ Then("they will click the back link", () => {
 });
 
 Then(
-  "they redirects to the tuition partners website link with bright-heart-education",
-  () => {
-    cy.location("pathname").should(
-      "eq",
-      `/tuition-partner/bright-heart-education`
-    );
+  "they redirects to the tuition partners website link with tp name {int}",
+  (tpName) => {
+    cy.fixture("tplist").then((tplist) => {
+      const tp = tplist.tpnames[tpName].toLowerCase().replace(" ", "-");
+      const tpWithoutHyphen = tp.replace("-", " ");
+      cy.location("pathname").should(($pathname) => {
+        const pathnameWithoutHyphen = $pathname.replace(/-/g, " ");
+        expect(pathnameWithoutHyphen).to.eq(
+          `/tuition partner/${tpWithoutHyphen}`
+        );
+      });
+    });
   }
 );
 
@@ -97,12 +103,29 @@ Then("the tuition partner meta data is displayed", () => {
 });
 
 Then(
+  "a user has arrived on the 'Tuition Partner' page for {string}",
+  (tpName) => {
+    console.log("tpName", tpName);
+    let tp;
+    cy.fixture("tplist").then((tplist) => {
+      tp = tplist.tpnames[parseInt(tpName)].toLowerCase().replace(" ", "-");
+      console.log("tp", tp);
+      cy.location("pathname").should(($pathname) => {
+        console.log("$pathname", $pathname);
+        const pathnameWithoutHyphen = $pathname.replace(/-/g, " ");
+        expect(pathnameWithoutHyphen).to.eq(`/tuition partner/${tp}`);
+      });
+    });
+  }
+);
+
+Then(
   "the tuition partner pricing table is displayed for {string}",
   (tuitionTypes) => {
     tuitionTypes.split(",").forEach((tuitionType) => {
       cy.get('[data-testid="pricing-table"]').should(
         "contain.text",
-        tuitionType
+        tuitionType.trim()
       );
     });
   }
@@ -193,39 +216,73 @@ Then("the LA label text is {string}", (laLabelText) => {
   cy.checkLaLabelText(laLabelText);
 });
 
-Then("the user checks the {string} checkbox on its detail page", (tpName) => {
-  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).check();
+Then(
+  "the user checks the tp name {int} checkbox on its detail page",
+  (tpName) => {
+    cy.fixture("tplist").then((tplist) => {
+      cy.get(
+        `[id="compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+      ).check();
+    });
+  }
+);
+
+Then("the user unchecks the tp name {int} checkbox", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.get(
+      `[id="compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    ).uncheck();
+  });
 });
 
-Then("the user unchecks the {string} checkbox", (tpName) => {
-  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
+Then("tp name {int} checkbox is unchecked on its detail page", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.isCheckboxUnchecked(
+      `[id="compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    );
+  });
 });
 
-Then("{string} checkbox is unchecked on its detail page", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
+Then("tp name {int} checkbox is checked on its detail page", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.isCheckboxchecked(
+      `[id="compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    );
+  });
 });
 
-Then("{string} checkbox is checked on its detail page", (tpName) => {
-  cy.isCheckboxchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
+Then("the 'TuitionPartner' - tp name {int} checkbox is checked", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.isCheckboxchecked(
+      `[id="compare-list-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    );
+  });
 });
 
-Then("the 'TuitionPartner' - {string} checkbox is checked", (tpName) => {
-  cy.isCheckboxchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
-});
-
-Then("the 'TuitionPartner' - {string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
+Then("the 'TuitionPartner' - tp name {int} checkbox is unchecked", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.isCheckboxUnchecked(
+      `[id="compare-list-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    );
+  });
 });
 
 Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
-Then("{string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
+
+Then("tp name {int} checkbox is unchecked", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.isCheckboxUnchecked(
+      `[id="compare-list-cb-${kebabCase(tplist.tpnames[tpName])}"]`
+    );
+  });
 });
 
-Then("{string} name link is clicked", (tpName) => {
-  cy.goToTpDetailPage(tpName);
+Then("tp name {int} name link is clicked", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    cy.goToTpDetailPage(tplist.tpnames[tpName]);
+  });
 });
 
 Then("they click Back to go back to the search results page", () => {

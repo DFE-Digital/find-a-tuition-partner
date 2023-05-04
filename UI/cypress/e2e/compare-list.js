@@ -23,32 +23,36 @@ When(
 );
 
 When(
-  "they add {string} to their price comparison list on the results page",
-  (tpName) => {
-    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).check();
-    cy.wait(500);
-  }
-);
-
-When(
-  "they remove {string} from their price comparison list on the results page",
-  (tpName) => {
-    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).uncheck();
+  "they remove tp name {int} from their price comparison list on the results page",
+  (entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get(
+        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+      ).uncheck();
+    });
     cy.wait(500);
   }
 );
 
 Then(
-  "{string} is marked as added to the price comparison list on the results page",
-  (tpName) => {
-    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).should("be.checked");
+  "tp name {int} is marked as added to the price comparison list on the results page",
+  (entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get(
+        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+      ).should("be.checked");
+    });
   }
 );
 
 Then(
-  "{string} is not marked as added to the price comparison list on the results page",
-  (tpName) => {
-    cy.get(`#compare-list-cb-${kebabCase(tpName)}`).should("not.be.checked");
+  "tp name {int} is not marked as added to the price comparison list on the results page",
+  (entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get(
+        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+      ).should("not.be.checked");
+    });
   }
 );
 
@@ -91,19 +95,23 @@ Then(
   }
 );
 
-Then("tp name is entry {int} on the price comparison list page", (entry) => {
-  cy.fixture("tplist").then(function (tplist) {
-    const tpName = removeExcessWhitespaces(
-      removeNewLine(tplist.tpnames[`${entry}`])
-    );
-    cy.get("tbody th")
-      .eq(entry - 1)
-      .then(($tbodyHeader) => {
-        return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
-      })
-      .should("equal", tpName);
-  });
-});
+Then(
+  "tp name {int} is entry {int} on the price comparison list page",
+  (tpName, entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      const tp = removeExcessWhitespaces(
+        removeNewLine(tplist.tpnames[`${tpName}`])
+      );
+      cy.get("tbody th")
+        .eq(entry - 1)
+        .then(($tbodyHeader) => {
+          console.log(entry);
+          return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
+        })
+        .should("equal", tp);
+    });
+  }
+);
 
 Then(
   "{string} is entry {int} on the price comparison list page",
@@ -124,17 +132,25 @@ Then("there are {int} entries on the price comparison list page", (count) => {
 });
 
 Then(
-  "{string} is entry {int} on the not available list on the price comparison list page",
+  "tp name {int} is entry {int} on the not available list on the price comparison list page",
   (tpName, entry) => {
-    cy.get('[data-testid="unavailable-tps"] li')
-      .eq(entry - 1)
-      .should("contain.text", tpName);
+    cy.fixture("tplist").then(function (tplist) {
+      tpName = removeExcessWhitespaces(
+        removeNewLine(tplist.tpnames[`${tpName}`])
+      );
+      cy.get('[data-testid="unavailable-tps"] li')
+        .eq(entry - 1)
+        .should("contain.text", tpName);
+    });
   }
 );
 
 Then(
-  "entry {int} on the price comparison list is the row {string}, {string}, {string}, {string}",
+  "entry {int} on the price comparison list is the row tp name {int}, {string}, {string}, {string}",
   (entry, name, groupSizes, tuitionType, price) => {
+    cy.fixture("tplist").then(function (tplist) {
+      name = removeExcessWhitespaces(removeNewLine(tplist.tpnames[`${name}`]));
+    });
     cy.get("tbody tr")
       .eq(entry - 1)
       .within(() => {
@@ -153,9 +169,11 @@ Then(
 );
 
 When(
-  "they choose to view the {string} details from the price comparison list",
-  (tpName) => {
-    cy.get("a").contains(tpName).click();
+  "they choose to view the tp name {int} details from the price comparison list",
+  (entry) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get("a").contains(tplist.tpnames[`${entry}`]).click();
+    });
   }
 );
 
@@ -214,28 +232,51 @@ When(
 Then("total amount of price comparison list TPs is {int}", (expectedTotal) => {
   cy.checkTotalTps(expectedTotal);
 });
-Then("{string} checkbox is unchecked", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="compare-list-cb-${kebabCase(tpName)}"]`);
+
+Then("tp name {int} checkbox is unchecked", (entry) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.isCheckboxUnchecked(
+      `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+    );
+  });
 });
-Then("{string} checkbox is unchecked on its detail page", (tpName) => {
-  cy.isCheckboxUnchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
+
+Then("tp name {int} checkbox is unchecked on its detail page", (tpName) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.isCheckboxUnchecked(
+      `#compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[`${tpName}`])}`
+    );
+  });
 });
+
 Then("the LA label text is {string}", (laLabelText) =>
   cy.checkLaLabelText(laLabelText)
 );
-Then("{string} checkbox is checked on its detail page", (tpName) => {
-  cy.isCheckboxchecked(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`);
+Then("tp name {int} checkbox is checked on its detail page", (tpName) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.isCheckboxchecked(
+      `#compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[`${tpName}`])}`
+    );
+  });
 });
 
 Then("there is {int} entry on the price comparison list page", (count) => {
   cy.get("tbody th").should("have.length", count);
 });
 
-Then("{string} name link is clicked", (tpName) => cy.goToTpDetailPage(tpName));
+Then("tp name {int} name link is clicked", (tpName) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.goToTpDetailPage(tplist.tpnames[`${tpName}`]);
+  });
+});
 
-Then("{string} is removed from the price comparison list", (tpName) => {
-  cy.get(`[id="compare-list-tpInfo-cb-${kebabCase(tpName)}"]`).uncheck();
-  cy.wait(200);
+Then("tp name {int} is removed from the price comparison list", (tpName) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.get(
+      `[id="compare-list-tpInfo-cb-${kebabCase(tplist.tpnames[`${tpName}`])}"]`
+    ).uncheck();
+    cy.wait(200);
+  });
 });
 
 Then("they click Back to go back to the price comparison list page", () =>
@@ -297,18 +338,34 @@ Then("the VAT select option is {string}", (optionText) => {
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 
-Then("the {string} price is {string}", (tpName, priceString) => {
-  cy.get(`[data-testid="compare-list-price-${kebabCase(tpName)}"]`).should(
-    "contain.text",
-    removeExcessWhitespaces(removeNewLine(priceString))
-  );
+Then("the tp name {int} price is {string}", (entry, priceString) => {
+  cy.fixture("tplist").then(function (tplist) {
+    cy.get(
+      `[data-testid="compare-list-price-${kebabCase(
+        tplist.tpnames[`${entry}`]
+      )}`
+    ).should(
+      "contain.text",
+      removeExcessWhitespaces(removeNewLine(priceString))
+    );
+  });
 });
 
-Then("the {string} empty data reason is {string}", (tpName, priceString) => {
-  cy.get(
-    `[data-testid="compare-list-empty-data-reason-${kebabCase(tpName)}"]`
-  ).should("contain.text", removeExcessWhitespaces(removeNewLine(priceString)));
-});
+Then(
+  "the tp name {int} empty data reason is {string}",
+  (entry, priceString) => {
+    cy.fixture("tplist").then(function (tplist) {
+      cy.get(
+        `[data-testid="compare-list-empty-data-reason-${kebabCase(
+          tplist.tpnames[`${entry}`]
+        )}`
+      ).should(
+        "contain.text",
+        removeExcessWhitespaces(removeNewLine(priceString))
+      );
+    });
+  }
+);
 
 Given(
   "a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page",
@@ -319,27 +376,27 @@ Given(
     );
     Step(
       this,
-      "they add 'Reeson Education' to their price comparison list on the results page"
+      "they add tp name 5 to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'Action Tutoring' to their price comparison list on the results page"
+      "they add tp name 1 to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'EM Tuition' to their price comparison list on the results page"
+      "they add tp name 2 to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'Booster Club' to their price comparison list on the results page"
+      "they add tp name 6 to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'Equal Education' to their price comparison list on the results page"
+      "they add tp name 7 to their price comparison list on the results page"
     );
     Step(
       this,
-      "they add 'Tutors Green' to their price comparison list on the results page"
+      "they add tp name 8 to their price comparison list on the results page"
     );
     Step(
       this,

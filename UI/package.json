@@ -25,6 +25,7 @@
   "dependencies": {
     "@ministryofjustice/frontend": "^1.4.2",
     "axios": "^1.2.5",
+    "fixtures": "^0.0.2",
     "format": "^0.2.2",
     "govuk-frontend": "^4.1.0",
     "hmrc-frontend": "^5.24.0",

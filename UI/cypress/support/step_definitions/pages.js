@@ -158,8 +158,28 @@ Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
 });
 
+Then("the page URL ends with tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName].toLowerCase().replace(" ", "-");
+    const tpWithoutHyphen = tp.replace("-", " ");
+    cy.location("pathname").should(($pathname) => {
+      const pathnameWithoutHyphen = $pathname.replace(/-/g, " ");
+      expect(pathnameWithoutHyphen).to.eq(
+        `/tuition partner/${tpWithoutHyphen}`
+      );
+    });
+  });
+});
+
 Then("the heading should say {string}", (heading) => {
   cy.get("h1").should("have.text", heading);
+});
+
+Then("the heading should say tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName];
+    cy.get("h1").should("have.text", tp);
+  });
 });
 
 Then("the page's title is {string}", (title) => {

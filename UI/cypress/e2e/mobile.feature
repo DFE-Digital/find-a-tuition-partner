@@ -5,7 +5,7 @@ Feature: Tuition partner details mobile view page tests
     Then the subject list is bullet pointed
 
   Scenario: Subject list is bullet pointed on tuition partner page in mobile phone view
-    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
+    Given a user has arrived on the 'Tuition Partner' page for tp name 12
     And a user is using a 'phone'
     Then the subject list is bullet pointed
 
@@ -15,7 +15,7 @@ Feature: Tuition partner details mobile view page tests
     Then the subject list is not bullet pointed
 
   Scenario: Subject list is not bullet pointed on tuition partner page in tablet and above view
-    Given a user has arrived on the 'Tuition Partner' page for 'Bright Heart Education'
+    Given a user has arrived on the 'Tuition Partner' page for tp name 12
     And a user is using a 'tablet'
     Then the subject list is not bullet pointed
 
