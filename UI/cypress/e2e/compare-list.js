@@ -407,8 +407,6 @@ Given(
     Step(
       this,
       "they add tp name 2 to their price comparison list on the results page"
-=======
-
     );
     Step(
       this,
@@ -417,7 +415,6 @@ Given(
     Step(
       this,
       "they add tp name 7 to their price comparison list on the results page"
-
     );
     Step(
       this,

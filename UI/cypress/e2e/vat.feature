@@ -4,5 +4,5 @@ Feature: Tuition Partner cost information VAT
     Then the prices include VAT content is displayed
 
   Scenario: tuition cost information does not show prices include VAT when tuition partner does not charge it
-    Given a user has arrived on the 'Tuition Partner' page for tp name 20
-    Then the prices with VAT does not apply content is displayed for tp name 20
+    Given a user has arrived on the 'Tuition Partner' page for tp name 19
+    Then the prices with VAT does not apply content is displayed for tp name 19
