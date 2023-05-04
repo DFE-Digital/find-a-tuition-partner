@@ -13,18 +13,16 @@ public class Cookies : PageModel
     public string? ReturnUrl { get; set; }
     public bool PreferencesSet { get; set; }
 
-    public IActionResult OnGet(bool? consent, bool? preferencesSet)
+    public IActionResult OnGet(bool? consent, bool? preferencesSet, string? fromReturnUrl)
     {
         Consent = consent;
         if (preferencesSet.HasValue)
         {
             PreferencesSet = preferencesSet.Value;
-            ReturnUrl = TempData.Peek<string>("ReturnUrl");
         }
-        else
-        {
-            ReturnUrl = Request.Headers["Referer"].ToString();
-        }
+
+        ReturnUrl = fromReturnUrl;
+
         if (Request.Cookies.ContainsKey(ConsentCookieName))
         {
             var value = Request.Cookies[ConsentCookieName];
@@ -43,6 +41,11 @@ public class Cookies : PageModel
             }
         }
 
+        if (string.IsNullOrEmpty(ReturnUrl))
+        {
+            ReturnUrl = "/";
+        }
+
         return Page();
     }
 
@@ -50,10 +53,9 @@ public class Cookies : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
-        if (!string.IsNullOrEmpty(ReturnUrl)) TempData.Set("ReturnUrl", ReturnUrl);
         ApplyCookieConsent(Consent);
 
-        return RedirectToPage(new { preferencesSet = true });
+        return RedirectToPage(new { preferencesSet = true, fromReturnUrl = ReturnUrl });
     }
 
     private void ApplyCookieConsent(bool? consent)

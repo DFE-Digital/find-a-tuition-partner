@@ -43,19 +43,19 @@ Then("the dbs check link opens in a new window", () => {
 });
 
 Then("they will see the funding allocation link", () => {
-  cy.get('[data-testid="funding-allocation-link"]').should(
-    "have.attr",
-    "href",
-    "/funding-and-reporting"
-  );
+  cy.get('[data-testid="funding-allocation-link"]').should(($link) => {
+    const href = $link.attr("href");
+    expect(href).to.include("/funding-and-reporting");
+    expect(href).to.include("school-led-tutoring");
+  });
 });
 
 Then("they will see the funding and reporting link", () => {
-  cy.get('[data-testid="funding-reporting-link"]').should(
-    "have.attr",
-    "href",
-    "/funding-and-reporting"
-  );
+  cy.get('[data-testid="funding-reporting-link"]').should(($link) => {
+    const href = $link.attr("href");
+    expect(href).to.include("/funding-and-reporting");
+    expect(href).to.include("school-led-tutoring");
+  });
 });
 
 When("they click funding and reporting link", () => {

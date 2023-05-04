@@ -17,12 +17,12 @@ Feature: User enters postcode to begin search
     Then check other tutoring options text is displayed
 
   Scenario: Check academic mentors link
-     Given a user has started the 'Find a tuition partner' journey
-     Then the other options academic links to '/academic-mentors'
+    Given a user has started the 'Find a tuition partner' journey
+    Then the other options academic links to '/academic-mentors'
 
   Scenario: Check School led tutoring link
-     Given a user has started the 'Find a tuition partner' journey
-     Then the other options school-led tutoring links to '/school-led-tutoring'
+    Given a user has started the 'Find a tuition partner' journey
+    Then the other options school-led tutoring links to '/school-led-tutoring'
 
   Scenario: no back link on the 'Find a tuition partner' journey start page
     Given a user has started the 'Find a tuition partner' journey
@@ -80,12 +80,12 @@ Feature: User enters postcode to begin search
 
   Scenario: accessiblity link to page
     Given a user has started the 'Find a tuition partner' journey
-    Then the accessibility link 'Accessibility' links to '/accessibility'
+    Then the accessibility link 'Accessibility' links to '/accessibility?FromReturnUrl='
 
   Scenario: privacy link to page
     Given a user has started the 'Find a tuition partner' journey
     Then the privacy link opens privacy page
-    
+
   Scenario: contact us link to page
     Given a user has started the 'Find a tuition partner' journey
     Then the contact us link opens contact us page
