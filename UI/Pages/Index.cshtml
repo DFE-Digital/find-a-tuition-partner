@@ -1,7 +1,7 @@
 ﻿@page
 @model Index
 @{
-  ViewData["Title"] = "Find a tuition partner";
+  ViewData["Title"] = "Find a quality assured tuition partner";
   ViewData["AllowIndexing"] = true;
 }
 
@@ -26,7 +26,7 @@
     }
     <form method="get">
       <span class="govuk-caption-l">National Tutoring Programme (NTP)</span>
-      <h1 class="govuk-heading-l">Find a tuition partner</h1>
+      <h1 class="govuk-heading-l">Find a quality assured tuition partner</h1>
       @if (Model.IncludeEnquiryBuilder)
       {
         <p class="govuk-body">
@@ -66,14 +66,14 @@
   <div class="govuk-grid-column-one-third">
     <h2 class="govuk-heading-m">Related content</h2>
     <p class="govuk-body">
-      <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023#Funding-and-paying">NTP guidance for schools 2022 to 2023 (opens in new tab)</a>.
+      <a class="govuk-link" href="https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023#Funding-and-paying">NTP guidance for schools 2022 to 2023</a>.
     </p>
     <h2 class="govuk-heading-m" data-testid="check-your-tp-quality-assured">Check your tuition partner is quality assured</h2>
     <p class="govuk-body">You can only use your NTP funding with quality-assured tuition partners.</p>
     <p class="govuk-body"><a asp-page="@nameof(AllTuitionPartners)" class="govuk-link" data-testid="full-list-link">Check the full list of quality-assured tuition partners</a>.</p>
     <h2 class="govuk-heading-m" data-testid="other-tutoring-options">Other tutoring options</h2>
     <p class="govuk-body">
-      Find out more about <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/collections/national-tutoring-programme-funding">academic mentors and school-led tutors you employ directly on GOV.UK (opens in new tab)</a>.
+      Find out more about <a class="govuk-link" href="https://www.gov.uk/government/collections/national-tutoring-programme-funding">academic mentors and school-led tutors you employ directly on GOV.UK</a>.
     </p>
   </div>
 </div>
