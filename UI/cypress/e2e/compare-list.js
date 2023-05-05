@@ -15,7 +15,8 @@ When(
   (entry) => {
     cy.fixture("tplist").then(function (tplist) {
       cy.get(
-        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`).check();
+        `#compare-list-cb-${kebabCase(tplist.tpnames[`${entry}`])}`
+      ).check();
       cy.wait(500);
     });
   }
