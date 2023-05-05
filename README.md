@@ -213,3 +213,39 @@ The team currently use the following tools to aid manual security testing
 Follow the [Cloud Foundry command line set up guide](https://docs.cloud.service.gov.uk/get_started.html#set-up-the-cloud-foundry-command-line) to support managing the deployments locally.
 
 The [Manual Environment Setup](docs/runbooks/manual-environment-setup.md) runbook details the commands used.
+
+## Reporting
+
+### Exporting anonymised enquiry data
+
+There is a bash script (so will need MacOS, Linux, or WSL) which will export enquiry and response data to a CSV for analysis.
+
+This uses conduit to connect to the production database in ready only mode from the local machine, and then runs some SQL to export the required data.
+
+In order to use this you need to have the cloudfoundry CLI on your machine, and to have installed conduit:
+
+```
+cf install-plugin conduit
+```
+
+Once this has been installed, to export the data you:
+
+Log in to `cf` if you haven't already
+
+```
+cf login
+```
+
+Once you have logged in, run the export script:
+
+```
+cd scripts
+./export_enquiry_data.sh
+```
+
+The data will be exported into a new directory `scripts/exports/production/<date>/`
+
+By default this will export data from the `production` environment. You can export data from other enqvironments if needed, e.g.
+```
+./export_enquiry_data.sh staging
+```

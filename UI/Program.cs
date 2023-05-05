@@ -171,7 +171,7 @@ var policyCollection = new HeaderPolicyCollection()
                 .Self();
             cspBuilder.AddFrameSrc() // frame-src 'self' https://www.googletagmanager.com
                 .Self()
-                .From("https://www.googletagmanager.com")
+                .From(new List<string>() { "https://www.googletagmanager.com", "https://forms.office.com" })
                 .WithNonce();
             cspBuilder.AddMediaSrc() // media-src 'none'
                 .None();
