@@ -218,7 +218,7 @@ The [Manual Environment Setup](docs/runbooks/manual-environment-setup.md) runboo
 
 ### Exporting anonymised enquiry data
 
-There is a bash script which will export enquiry and response data to a CSV for analysis.
+There is a bash script (so will need MacOS, Linux, or WSL) which will export enquiry and response data to a CSV for analysis.
 
 This uses conduit to connect to the production database in ready only mode from the local machine, and then runs some SQL to export the required data.
 
