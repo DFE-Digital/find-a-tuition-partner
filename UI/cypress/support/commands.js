@@ -24,23 +24,27 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import {
-  removeNewLine,
-  getJumpToLocationId,
-  applyBasicAuth,
-  applyBasicAuthWithRequest,
-} from "./utils";
+import { removeNewLine, getJumpToLocationId, applyBasicAuth } from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   options = applyBasicAuth(options);
   return originalFn(url, options);
 });
 
-Cypress.Commands.overwrite("request", (originalFn, options) => {
-  if (Cypress.config().baseUrl.includes("find-a-tuition-partner")) {
-    options = applyBasicAuthWithRequest(options);
+Cypress.Commands.overwrite("request", (originalFn, ...args) => {
+  if (typeof args[0] == "object") {
+    let options = args[0];
+
+    const url = new URL(options.url, Cypress.config().baseUrl);
+
+    if (url.toString().startsWith(Cypress.config().baseUrl)) {
+      options = applyBasicAuth(options);
+    }
+
+    return originalFn(options);
   }
-  return originalFn(options);
+
+  return originalFn.apply(this, args);
 });
 
 Cypress.Commands.add("checkTotalTps", (expectedTotal) => {
