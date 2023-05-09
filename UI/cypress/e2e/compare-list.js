@@ -127,7 +127,6 @@ Then(
       cy.get("tbody th")
         .eq(entry - 1)
         .then(($tbodyHeader) => {
-          console.log(entry);
           return removeExcessWhitespaces(removeNewLine($tbodyHeader.text()));
         })
         .should("equal", tp);

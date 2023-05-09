@@ -115,7 +115,6 @@ Then("the confirmation page is shown", () => {
 
 Then("the user has arrived on the tuition response page", () => {
   cy.location("pathname").then((actualPath) => {
-    console.log("Actual path:", actualPath);
     expect(actualPath).to.match(/enquiry-response\/.*\/[A-Z]{2}\d{4}/);
   });
 });
@@ -147,7 +146,6 @@ Then("the tuition partners response page is shown", () => {
 
 Then("the user has arrived on the contact tuition partner page", () => {
   cy.location("pathname").then((actualPath) => {
-    console.log("Actual path:", actualPath);
     expect(actualPath).to.match(
       /\/enquiry\/[A-Z]{2}\d{4}\/.*\/contact-details/
     );
