@@ -32,18 +32,14 @@ Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
 });
 
 Cypress.Commands.overwrite("request", (originalFn, ...args) => {
-  if (typeof args[0] == "object") {
+  if (typeof args == "object") {
     let options = args[0];
-
     const url = new URL(options.url, Cypress.config().baseUrl);
-
     if (url.toString().startsWith(Cypress.config().baseUrl)) {
       options = applyBasicAuth(options);
     }
-
     return originalFn(options);
   }
-
   return originalFn.apply(this, args);
 });
 
