@@ -8,26 +8,15 @@
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 <form method="post">
-  <govuk-error-summary>
-    <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
-  </govuk-error-summary>
-  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="@IntegerConstants.EnquiryQuestionsMaxCharacterSize" data-threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold">
-    <div class="govuk-form-group@(Model.ModelState.IsValid ? "" : " govuk-form-group--error")">
-      <h1 class="govuk-label-wrapper">
-        <label asp-for="Data.TutoringLogistics" class="govuk-label govuk-label--l">
-          What type of tuition plan do you need?
-        </label>
-      </h1>
+  <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+      What type of tuition plan do you need?
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      For example, number of pupils, tuition hours per pupil, specific start date, length of tuition, preferred tutoring time of day
       <partial name="_PIIWarning" />
-      <div class="govuk-hint" id="Data_TutoringLogistics-hint">
-        For example, number of pupils, tuition hours per pupil, specific start date, length of tuition, preferred tutoring time of day
-      </div>
-      <span asp-validation-for="Data.TutoringLogistics" class="govuk-error-message"></span>
-      <textarea asp-for="Data.TutoringLogistics" aria-describedby="Data_TutoringLogistics-hint" class="govuk-textarea govuk-js-character-count" rows="12">
-      </textarea>
-    </div>
-    <div class="govuk-hint govuk-character-count__message" id="Data_TutoringLogistics-info">You can enter up to @IntegerConstants.EnquiryQuestionsMaxCharacterSize characters</div>
-  </div>
+    </govuk-character-count-hint>
+  </govuk-character-count>
   <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
   <input type="hidden" name="handler" value="Submit" />
   <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>

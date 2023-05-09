@@ -9,26 +9,15 @@
 }
 
 <form method="post">
-  <govuk-error-summary>
-    <govuk-error-summary-item asp-for="Data.SENDRequirements" />
-  </govuk-error-summary>
-  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="@IntegerConstants.EnquiryQuestionsMaxCharacterSize" data-threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold">
-    <div class="govuk-form-group@(Model.ModelState.IsValid ? "" : " govuk-form-group--error")">
-      <h1 class="govuk-label-wrapper">
-        <label asp-for="Data.SENDRequirements" class="govuk-label govuk-label--l">
-          Do you need tuition partners who can support pupils with SEND? (optional)
-        </label>
-      </h1>
+  <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+      Do you need tuition partners who can support pupils with SEND? (optional)
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      For example, the number of pupils who may need support with specific social, behavioural or learning challenges
       <partial name="_PIIWarning" />
-      <div class="govuk-hint" id="Data_SENDRequirements-hint">
-        For example, the number of pupils who may need support with specific social, behavioural or learning challenges
-      </div>
-      <span asp-validation-for="Data.SENDRequirements" class="govuk-error-message"></span>
-      <textarea asp-for="Data.SENDRequirements" aria-describedby="Data_SENDRequirements-hint" class="govuk-textarea govuk-js-character-count" rows="12">
-      </textarea>
-    </div>
-    <div class="govuk-hint govuk-character-count__message" id="Data_SENDRequirements-info">You can enter up to @IntegerConstants.EnquiryQuestionsMaxCharacterSize characters</div>
-  </div>
+    </govuk-character-count-hint>
+  </govuk-character-count>
   <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
   <input type="hidden" name="handler" value="Submit" />
   <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
