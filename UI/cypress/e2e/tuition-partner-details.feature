@@ -1,8 +1,8 @@
 Feature: User can view full details of a Tuition Parner
 
-  # Scenario: page title is 'Name of Tuition Partner'
-  #   Given a user has arrived on the 'Tuition Partner' page for tp name 11
-  #   Then the page's title is tp name 11
+  Scenario: page title is 'Name of Tuition Partner'
+    Given a user has arrived on the 'Tuition Partner' page for tp name 11
+    Then the page's title is tp name 11
 
   Scenario: user clicks service name
     Given a user has started the 'Find a tuition partner' journey
@@ -78,7 +78,7 @@ Feature: User can view full details of a Tuition Parner
       | tp name 14      | Online        |
       | tp name 15      | Online        |
       | tp name 16      | In school     |
-      
+
     Examples:
       | tuition-partner | tuition-types |
       | tp name 14      | Online        |

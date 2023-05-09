@@ -186,6 +186,13 @@ Then("the page's title is {string}", (title) => {
   cy.title().should("eq", title);
 });
 
+Then("the page's title is tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName];
+    cy.title().should("eq", `${tp}`);
+  });
+});
+
 Then("they will click the contact us link", () => {
   cy.get('[data-testid="contact-us-link"]').click();
 });
