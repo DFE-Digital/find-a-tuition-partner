@@ -106,13 +106,11 @@ Then(
   "a user has arrived on the 'Tuition Partner' page for {string}",
   (tpName) => {
     const tpNumber = tpName.match(/\d+/)[0];
-    console.log("tpNumber", tpNumber);
 
     cy.fixture("tplist").then((tplist) => {
       const tp = tplist.tpnames[parseInt(tpNumber)]
         .toLowerCase()
         .replace(/ /g, "-");
-      console.log("tp", tp);
 
       cy.visit(`/tuition-partner/${tp}`);
     });
