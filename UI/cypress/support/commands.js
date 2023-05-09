@@ -93,8 +93,6 @@ Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
           sensitivity: "base",
         });
       });
-      console.log("sortedNames " + sortedNames);
-      console.log("names " + names);
       const sortedSets = names
         .map((name) => {
           const [start, end] = name.split(" to ");
@@ -117,7 +115,6 @@ Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
         }
       });
       Object.values(countMap).forEach((count) => {
-        console.log(count);
         assert(
           count === 1 || count === 2,
           `Expected count to be 1 or 2, but got ${count}`
