@@ -7,14 +7,16 @@ Then("the prices include VAT content is displayed", () => {
 });
 
 Then(
-  "the prices with VAT does not apply content is displayed for {string}",
+  "the prices with VAT does not apply content is displayed for tp name {int}",
   (name) => {
-    cy.get('[data-testid="price-includes-vat"]').should("not.exist");
-    cy.get('[data-testid="price-vat-not-applicable"]')
-      .should("exist")
-      .and(
-        "contain.text",
-        `VAT does not apply to these prices because ${name} is VAT exempt.`
-      );
+    cy.fixture("tplist").then((tplist) => {
+      cy.get('[data-testid="price-includes-vat"]').should("not.exist");
+      cy.get('[data-testid="price-vat-not-applicable"]')
+        .should("exist")
+        .and(
+          "contain.text",
+          `VAT does not apply to these prices because ${tplist.tpnames[name]} is VAT exempt.`
+        );
+    });
   }
 );
