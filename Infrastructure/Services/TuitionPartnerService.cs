@@ -90,7 +90,7 @@ public class TuitionPartnerService : ITuitionPartnerService
             {
                 tpResult.Prices = prices.ToArray();
 
-                if (tpResult.IsVatCharged && (dataFilter.ShowWithVAT == null || dataFilter.ShowWithVAT.Value))
+                if (tpResult.IsVatCharged && dataFilter.ShowWithVAT.HasValue && dataFilter.ShowWithVAT.Value)
                 {
                     foreach (var price in prices)
                     {
