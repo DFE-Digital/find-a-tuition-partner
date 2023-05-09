@@ -7,7 +7,7 @@ Then("the prices include VAT content is displayed", () => {
 });
 
 Then(
-  "the prices with VAT does not apply content is displayed for {string}",
+  "the prices with VAT does not apply content is displayed for tp name {int}",
   (name) => {
     cy.get('[data-testid="price-includes-vat"]').should("not.exist");
     cy.get(".govuk-inset-text > :nth-child(1)")
