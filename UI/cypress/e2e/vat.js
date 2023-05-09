@@ -1,22 +1,17 @@
 import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then("the prices include VAT content is displayed", () => {
-  cy.get('[data-testid="price-includes-vat"]')
+  cy.get(".govuk-grid-column-two-thirds > :nth-child(10)")
     .should("exist")
-    .and("contain.text", "Prices shown include VAT.");
+    .and("contain.text", "Tuition prices (including VAT)");
 });
 
 Then(
   "the prices with VAT does not apply content is displayed for tp name {int}",
   (name) => {
-    cy.fixture("tplist").then((tplist) => {
-      cy.get('[data-testid="price-includes-vat"]').should("not.exist");
-      cy.get('[data-testid="price-vat-not-applicable"]')
-        .should("exist")
-        .and(
-          "contain.text",
-          `VAT does not apply to these prices because ${tplist.tpnames[name]} is VAT exempt.`
-        );
-    });
+    cy.get('[data-testid="price-includes-vat"]').should("not.exist");
+    cy.get(".govuk-inset-text > :nth-child(1)")
+      .should("exist")
+      .and("contain.text", `This tuition partner does not charge VAT.`);
   }
 );
