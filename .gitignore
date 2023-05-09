@@ -417,3 +417,5 @@ credentials.json
 
 # MacOs
 **/.DS_Store
+
+scripts/exports
