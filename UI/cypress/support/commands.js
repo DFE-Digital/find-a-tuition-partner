@@ -24,7 +24,12 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { removeNewLine, getJumpToLocationId, applyBasicAuth } from "./utils";
+import {
+  removeNewLine,
+  getJumpToLocationId,
+  applyBasicAuth,
+  applyBasicAuthWithRequest,
+} from "./utils";
 
 Cypress.Commands.overwrite("visit", (originalFn, url, options) => {
   options = applyBasicAuth(options);
@@ -36,7 +41,7 @@ Cypress.Commands.overwrite("request", (originalFn, ...args) => {
     let options = args[0];
     const url = new URL(options.url, Cypress.config().baseUrl);
     if (url.toString().startsWith(Cypress.config().baseUrl)) {
-      options = applyBasicAuth(options);
+      options = applyBasicAuthWithRequest(options);
     }
     return originalFn(options);
   }
