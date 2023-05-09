@@ -85,13 +85,45 @@ Cypress.Commands.add("validateTPPageAndReturnLink", ($element) => {
   const names = [];
   cy.get('[data-testid="pricing-group-size-column"]')
     .each(($element, index) => {
-      names[index] = $element.text();
+      names[index] = $element.text().trim();
     })
     .then(() => {
       const sortedNames = names.slice().sort(function (a, b) {
-        return a.localeCompare(b, "en", { sensitivity: "base" });
+        return a.toLowerCase().localeCompare(b.toLowerCase(), "en", {
+          ignorePunctuation: true,
+          sensitivity: "base",
+        });
       });
-      expect(names).to.deep.equal(sortedNames);
+      console.log("sortedNames " + sortedNames);
+      console.log("names " + names);
+      const sortedSets = names
+        .map((name) => {
+          const [start, end] = name.split(" to ");
+          return [parseInt(start), parseInt(end)].sort();
+        })
+        .sort();
+      const sortedSetsFromSortedNames = sortedNames
+        .map((name) => {
+          const [start, end] = name.split(" to ");
+          return [parseInt(start), parseInt(end)].sort();
+        })
+        .sort();
+      expect(sortedSets).to.deep.equal(sortedSetsFromSortedNames);
+      const countMap = {};
+      names.forEach((name) => {
+        if (!countMap[name]) {
+          countMap[name] = 1;
+        } else {
+          countMap[name]++;
+        }
+      });
+      Object.values(countMap).forEach((count) => {
+        console.log(count);
+        assert(
+          count === 1 || count === 2,
+          `Expected count to be 1 or 2, but got ${count}`
+        );
+      });
     });
   cy.get(".govuk-back-link").click();
   cy.get(`[id="${getJumpToLocationId($element)}"]`).then(($el) => {

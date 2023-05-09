@@ -146,7 +146,6 @@ Then("they will see the results summary for {string}", (location) => {
         .trim();
       const sanitizedActualText = actualText.replace(/(?:\n|\s)+/g, " ").trim();
       expect(sanitizedActualText).to.equal(sanitizedExpectedText);
-      console.log(sanitizedActualText);
     });
 });
 
