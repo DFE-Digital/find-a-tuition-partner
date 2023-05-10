@@ -111,40 +111,88 @@
         <span show-if="@Model.Data.HasPricingVariation" data-testid="pricing-differences-for-subjects">
           Some prices are different depending on key stage or subject. Please contact @Model.Data.Name for more information.
         </span>
-        <span show-if="@Model.Data.IsVatCharged" data-testid="price-includes-vat"><br />Prices shown include VAT.</span>
-        <span show-if="@Model.Data.IsVatCharged==false" data-testid="price-vat-not-applicable"><br />VAT does not apply to these prices because @Model.Data.Name is VAT exempt.</span>
+        @if (!Model.Data.IsVatCharged)
+        {
+          <div class="govuk-inset-text">
+            <p class="govuk-body">This tuition partner does not charge VAT.</p>
+            <p class="govuk-body">Tuition partners such as charities or Limited Liability Partnerships (LLP) do not charge VAT.</p>
+          </div>
+        }
       </p>
 
-      <table class="govuk-table" data-testid="pricing-table" show-if="@(!Model.Data.AllPrices.Any())">
-        <caption class="govuk-visually-hidden">Tuition prices</caption>
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Tuition group size</th>
-            <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
-            <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-          @foreach (var item in Model.Data.Prices)
-          {
+      @if (!Model.Data.AllPrices.Any())
+      {
+        <h3 class="govuk-heading-s" show-if="@Model.Data.IsVatCharged">Tuition prices (excluding VAT)</h3>
+        <table class="govuk-table" data-testid="pricing-table">
+          <caption class="govuk-visually-hidden">Tuition prices (excluding VAT)</caption>
+          <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-              <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">@(((Domain.Enums.GroupSize)item.Key).DisplayName())</th>
-              <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Enums.TuitionType.InSchool, Model.Data.IsVatCharged)
-              </td>
-
-              <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                @item.Value.FormatFor(Domain.Enums.TuitionType.Online, Model.Data.IsVatCharged)
-              </td>
+              <th scope="col" class="govuk-table__header">Tuition group size</th>
+              <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+              <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="govuk-table__body">
+            @foreach (var item in Model.Data.Prices)
+            {
+              <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
+                  @(
+                      ((GroupSize)item.Key).DisplayName()
+                      )
+                </th>
+                <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+                  @item.Value.FormatFor(TuitionType.InSchool, false)
+                </td>
+
+                <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+                  @item.Value.FormatFor(TuitionType.Online, false)
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (@Model.Data.IsVatCharged)
+        {
+          <h3 class="govuk-heading-s">Tuition prices (including VAT)</h3>
+          <table class="govuk-table" data-testid="pricing-table">
+            <caption class="govuk-visually-hidden">Tuition prices (including VAT)</caption>
+            <thead class="govuk-table__head">
+              <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Tuition group size</th>
+                <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+                <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
+              </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+              @foreach (var item in Model.Data.Prices)
+              {
+                <tr class="govuk-table__row">
+                  <th scope="row" class="govuk-table__header" data-testid="pricing-group-size-column">
+                    @(
+                        ((GroupSize)item.Key).DisplayName()
+                        )
+                  </th>
+                  <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
+                    @item.Value.FormatFor(TuitionType.InSchool, true)
+                  </td>
+
+                  <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
+                    @item.Value.FormatFor(TuitionType.Online, true)
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      }
 
       @foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
       {
         foreach (var (keyStage, subjects) in keyStages)
         {
+          <h3 class="govuk-heading-s" show-if="@Model.Data.IsVatCharged">Tuition prices (excluding VAT)</h3>
           <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
             <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
             <thead class="govuk-table__head">
@@ -160,12 +208,12 @@
               @for (var groupSize = 1; groupSize < 7; groupSize++)
               {
                 <tr class="govuk-table__row">
-                  <th scope="row" class="govuk-table__header">@(((Domain.Enums.GroupSize)groupSize).DisplayName())</th>
+                  <th scope="row" class="govuk-table__header">@(((GroupSize)groupSize).DisplayName())</th>
                   @foreach (var (_, prices) in subjects)
                   {
                     if (prices.TryGetValue(groupSize, out var price))
                     {
-                      <td class="govuk-table__cell">@(Model.Data.IsVatCharged ? price.AddVAT().FormatPrice() : price.FormatPrice())</td>
+                      <td class="govuk-table__cell">@(price.FormatPrice())</td>
                     }
                     else
                     {
@@ -176,6 +224,42 @@
               }
             </tbody>
           </table>
+
+          @if (@Model.Data.IsVatCharged)
+          {
+            <h3 class="govuk-heading-s">Tuition prices (including VAT)</h3>
+            <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+              <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Tuition group size</th>
+                  @foreach (var (subjectName, _) in subjects)
+                  {
+                    <th scope="col" class="govuk-table__header">@subjectName</th>
+                  }
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                @for (var groupSize = 1; groupSize < 7; groupSize++)
+                {
+                  <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">@(((GroupSize)groupSize).DisplayName())</th>
+                    @foreach (var (_, prices) in subjects)
+                    {
+                      if (prices.TryGetValue(groupSize, out var price))
+                      {
+                        <td class="govuk-table__cell">@(price.AddVAT().FormatPrice())</td>
+                      }
+                      else
+                      {
+                        <td class="govuk-table__cell"></td>
+                      }
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
         }
       }
 
