@@ -63,11 +63,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         var isValidMagicLink =
             await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
 
-        if (!isValidMagicLink)
-        {
-            return NotFound();
-        }
-
         ResponseConfirmationModel? responseConfirmationModel;
 
         var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
@@ -75,8 +70,16 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         var isDuplicateFormPost = await _sessionService.IsDuplicateFormPostAsync(enquiryResponseFormPostTimestampKey);
 
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)) && !isDuplicateFormPost)
-            return RedirectToPage("/Session/Timeout");
+        if (!isDuplicateFormPost)
+        {
+            if (!isValidMagicLink)
+            {
+                return NotFound();
+            }
+
+            if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
+                return RedirectToPage("/Session/Timeout");
+        }
 
         if (!ModelState.IsValid) return Page();
 

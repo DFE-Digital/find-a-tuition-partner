@@ -125,7 +125,8 @@ public class DistributedSessionService : ISessionService
     public async Task<bool> AnySessionDataExistsAsync()
     {
         await LoadDataFromDistributedDataStore();
-        return _contextAccessor!.HttpContext!.Session!.Keys.Where(x => x != FormPostPreKey).Any();
+        var sessionKey = GetSessionKey(FormPostPreKey);
+        return _contextAccessor!.HttpContext!.Session!.Keys.Where(x => x != sessionKey).Any();
     }
 
     public async Task ClearAllAsync()
