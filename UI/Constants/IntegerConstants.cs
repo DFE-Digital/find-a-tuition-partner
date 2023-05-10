@@ -2,6 +2,6 @@
 {
     public static class IntegerConstants
     {
-        public const int SecondsClassifyAsDuplicateSubmission = 5;
+        public const int SecondsClassifyAsDuplicateFormPost = 5;
     }
 }

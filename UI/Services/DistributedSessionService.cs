@@ -144,9 +144,9 @@ public class DistributedSessionService : ISessionService
 
         if (previousSubmissionTimestamp != null)
         {
-            if ((currentTimestamp - previousSubmissionTimestamp.Value).TotalSeconds < IntegerConstants.SecondsClassifyAsDuplicateSubmission)
+            if ((currentTimestamp - previousSubmissionTimestamp.Value).TotalSeconds < IntegerConstants.SecondsClassifyAsDuplicateFormPost)
             {
-                _logger.LogInformation("Multiple enquiry submission");
+                _logger.LogInformation("Multiple form POST (IsDuplicateFormPostAsync)");
                 return true;
             }
         }
@@ -168,17 +168,17 @@ public class DistributedSessionService : ISessionService
     public async Task<T> GetPreviousFormPostResponseAsync<T>(string formPostModelKey = "FormPostModelKey")
     {
         //Use Polly to retry
-        int numberOfRetries = IntegerConstants.SecondsClassifyAsDuplicateSubmission;
+        int numberOfRetries = IntegerConstants.SecondsClassifyAsDuplicateFormPost;
         var retryPolicy = Policy
             .Handle<Exception>()
             .WaitAndRetryAsync(numberOfRetries, retryAttempt =>
                 TimeSpan.FromSeconds(1),
                 (exception, sleepDuration, retryCount, context) =>
                 {
-                    _logger.LogInformation("GetPreviousPostResponse - Not able to get previous form POST response info.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", sleepDuration, retryCount, numberOfRetries);
+                    _logger.LogInformation("Not able to get previous form POST response.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries} (GetPreviousPostResponse)", sleepDuration, retryCount, numberOfRetries);
                 });
 
-        _logger.LogInformation("GetPreviousPostResponse - trying to get previous form POST response info");
+        _logger.LogInformation("Trying to get previous form POST response (GetPreviousPostResponse)");
         try
         {
             return await retryPolicy.ExecuteAsync(async () =>
@@ -187,18 +187,18 @@ public class DistributedSessionService : ISessionService
 
                 if (submittedConfirmationModelFromSession != null)
                 {
-                    _logger.LogInformation("GetPreviousPostResponse - returning previous SubmittedConfirmationModel from session");
+                    _logger.LogInformation("Returning previous form POST response from session (GetPreviousPostResponse)");
                     return submittedConfirmationModelFromSession;
                 }
                 else
                 {
-                    throw new InvalidDataException("Not able to get previous form POST response info");
+                    throw new InvalidDataException("Not able to get previous form POST response (GetPreviousPostResponse)");
                 }
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "GetPreviousPostResponse - Not able to get previous form POST response info");
+            _logger.LogError(ex, "Not able to get previous form POST response (GetPreviousPostResponse)");
             throw;
         }
     }
