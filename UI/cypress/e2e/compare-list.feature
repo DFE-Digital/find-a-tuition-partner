@@ -84,12 +84,12 @@ Feature: Tuition Partner price comparison list
     And they add tp name 4 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
     Then there are 1 entries on the price comparison list page
-    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£8.33 to £50 excluding VAT'
+    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£10 to £60 including VAT'
     And they click 'Back'
     And they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     And they choose to view their price comparison list from the results page
-    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'Online', '£8.33 to £50 excluding VAT'
+    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'Online', '£10 to £60 including VAT'
 
   Scenario: User views TP details from the price comparison list
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
@@ -116,16 +116,16 @@ Feature: Tuition Partner price comparison list
     And tp name 2 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 8 is entry 3 on the price comparison list page
-    And tp name 5 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
+    And tp name 1 is entry 4 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
     Then they choose to sort the price comparison list by price
     And tp name 6 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 2 is entry 3 on the price comparison list page
     And tp name 8 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
-    And tp name 5 is entry 6 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
+    And tp name 1 is entry 6 on the price comparison list page
 
 
   Scenario: User removes single item from price comparison list
@@ -196,11 +196,11 @@ Feature: Tuition Partner price comparison list
     And tp name 8 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
-    And the tp name 8 price is '£34.17 excluding VAT'
+    And the tp name 8 price is '£41 including VAT'
 
   Scenario: The price comparison list can be refined by tuition type then TP rows and the price are updated
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
-    Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
+    Then the tp name 7 price is '£10.42 to £55 including VAT'
     When 'In School' tuition type price comparison list refinement option is selected
     And tp name 5 is entry 1 on the price comparison list page
     And tp name 2 is entry 2 on the price comparison list page
@@ -208,11 +208,11 @@ Feature: Tuition Partner price comparison list
     And tp name 7 is entry 4 on the price comparison list page
     And tp name 1 is entry 5 on the price comparison list page
     Then tp name 8 is entry 6 on the price comparison list page
-    And the tp name 7 price is '£9.38 to £45.83 excluding VAT'
+    And the tp name 7 price is '£11.26 to £55 including VAT'
 
   Scenario: The price comparison list can be refined by group size and tuition type then TP rows and the price are updated
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
-    Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
+    Then the tp name 7 price is '£10.42 to £55 including VAT'
     When '1 to 1' group size price comparison list refinement option is selected
     And 'Online' tuition type price comparison list refinement option is selected
     Then tp name 2 is entry 1 on the price comparison list page
@@ -221,7 +221,7 @@ Feature: Tuition Partner price comparison list
     And tp name 8 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
-    And the tp name 7 price is '£41.67 excluding VAT'
+    And the tp name 7 price is '£50 including VAT'
 
 
   Scenario: The price comparison list price ordering works with refined data and any inavid TP data still follows the order they were added to price comparison list
@@ -299,7 +299,7 @@ Feature: Tuition Partner price comparison list
 
   Scenario: The price comparison list can show VAT inclusive and then toggle to VAT exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
-    Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
+    Then the tp name 7 price is '£10.42 to £55 including VAT'
     Then the tp name 1 price is '£20.12 VAT does not apply'
     When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
@@ -311,15 +311,15 @@ Feature: Tuition Partner price comparison list
     And tp name 2 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 8 is entry 3 on the price comparison list page
-    And tp name 5 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
+    And tp name 1 is entry 4 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
-    When 'Show prices including VAT' VAT price comparison list refinement option is selected
+    When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
     Then tp name 2 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 8 is entry 3 on the price comparison list page
-    And tp name 1 is entry 4 on the price comparison list page
-    And tp name 5 is entry 5 on the price comparison list page
+    And tp name 5 is entry 4 on the price comparison list page
+    And tp name 1 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
 
 
@@ -327,13 +327,13 @@ Feature: Tuition Partner price comparison list
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add tp name 1 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
-    Then the VAT select option is 'Show prices excluding VAT'
-    When 'Show prices including VAT' VAT price comparison list refinement option is selected
     Then the VAT select option is 'Show prices including VAT'
+    When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
+    Then the VAT select option is 'Show prices excluding VAT'
     When they click 'Back'
     Then the search results are displayed
     When they choose to view their price comparison list from the results page
-    Then the VAT select option is 'Show prices including VAT'
+    Then the VAT select option is 'Show prices excluding VAT'
 
 
   Scenario: The price comparison list shows the Local Authority District for the request

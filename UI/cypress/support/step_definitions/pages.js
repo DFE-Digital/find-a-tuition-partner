@@ -5,14 +5,6 @@ Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit(`/`);
 });
 
-Given("a user has arrived on the funding and reporting page", () => {
-  cy.visit(`/funding-and-reporting`);
-});
-
-Given("a user has arrived on the academic mentors page", () => {
-  cy.visit(`/academic-mentors`);
-});
-
 Given("a user has arrived on the school led tutoring page", () => {
   cy.visit(`/school-led-tutoring`);
 });
@@ -111,6 +103,13 @@ Then("they are redirected to the check your answers page", () => {
 
 Then("the confirmation page is shown", () => {
   cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
+});
+
+Then("they will be redirected to the gov.uk guidance page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023#Funding-and-paying"
+  );
 });
 
 Then("the user has arrived on the tuition response page", () => {

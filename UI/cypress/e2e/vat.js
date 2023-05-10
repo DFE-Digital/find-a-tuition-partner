@@ -1,17 +1,19 @@
 import { Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Then("the prices include VAT content is displayed", () => {
-  cy.get(".govuk-grid-column-two-thirds > :nth-child(10)")
+  cy.get('[data-testid="price-includes-vat"]')
     .should("exist")
-    .and("contain.text", "Tuition prices (including VAT)");
+    .and("contain.text", "Prices shown include VAT.");
 });
 
 Then(
   "the prices with VAT does not apply content is displayed for tp name {int}",
   (name) => {
-    cy.get('[data-testid="price-includes-vat"]').should("not.exist");
-    cy.get(".govuk-inset-text > :nth-child(1)")
+    cy.get('[data-testid="price-vat-not-applicable"]')
       .should("exist")
-      .and("contain.text", `This tuition partner does not charge VAT.`);
+      .and(
+        "contain.text",
+        `VAT does not apply to these prices because CoachBright is VAT exempt.`
+      );
   }
 );
