@@ -137,7 +137,7 @@ public class DistributedSessionService : ISessionService
 
     public async Task<bool> IsDuplicateFormPostAsync(string formPostTimestampKey = "FormPostTimestamp")
     {
-        var previousSubmissionTimestamp = await Get<DateTimeOffset?>(formPostTimestampKey, FormPostPreKey);
+        var previousSubmissionTimestamp = await GetAsync<DateTimeOffset?>(formPostTimestampKey, FormPostPreKey);
 
         var currentTimestamp = DateTimeOffset.UtcNow;
 
@@ -153,18 +153,18 @@ public class DistributedSessionService : ISessionService
         return false;
     }
 
-    public async Task StartFormPostProcessing(string formPostTimestampKey = "FormPostTimestamp")
+    public async Task StartFormPostProcessingAsync(string formPostTimestampKey = "FormPostTimestamp")
     {
         var currentTimestamp = DateTimeOffset.UtcNow;
-        await Set(formPostTimestampKey, currentTimestamp, FormPostPreKey);
+        await SetAsync(formPostTimestampKey, currentTimestamp, FormPostPreKey);
     }
 
-    public async Task SetFormPostResponse<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey")
+    public async Task SetFormPostResponseAsync<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey")
     {
-        await Set(formPostModelKey, postResponseModel, FormPostPreKey);
+        await SetAsync(formPostModelKey, postResponseModel, FormPostPreKey);
     }
 
-    public async Task<T> GetPreviousFormPostResponse<T>(string formPostModelKey = "FormPostModelKey")
+    public async Task<T> GetPreviousFormPostResponseAsync<T>(string formPostModelKey = "FormPostModelKey")
     {
         //Use Polly to retry
         int numberOfRetries = IntegerConstants.SecondsClassifyAsDuplicateSubmission;
@@ -182,7 +182,7 @@ public class DistributedSessionService : ISessionService
         {
             return await retryPolicy.ExecuteAsync(async () =>
             {
-                var submittedConfirmationModelFromSession = await Get<T?>(formPostModelKey, FormPostPreKey);
+                var submittedConfirmationModelFromSession = await GetAsync<T?>(formPostModelKey, FormPostPreKey);
 
                 if (submittedConfirmationModelFromSession != null)
                 {
@@ -202,12 +202,12 @@ public class DistributedSessionService : ISessionService
         }
     }
 
-    public async Task Set<T>(string key, T value, string preKey = DefaultPreKey)
+    public async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
     {
         await AddOrUpdateDataAsync(key, JsonConvert.SerializeObject(value), preKey);
     }
 
-    public async Task<T?> Get<T>(string key, string preKey = DefaultPreKey)
+    public async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
     {
         var value = await RetrieveDataByKeyAsync(key, preKey);
         return string.IsNullOrEmpty(value) ? default : JsonConvert.DeserializeObject<T>(value);

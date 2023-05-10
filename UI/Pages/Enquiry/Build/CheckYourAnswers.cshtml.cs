@@ -74,7 +74,7 @@ public class CheckYourAnswers : PageModel
         if (!_featureFlagsConfig.EnquiryBuilder)
             throw new InvalidOperationException("User is trying to submit an enquiry when the feature is disabled");
 
-        var isDuplicateFormPost = !await _sessionService.IsDuplicateFormPostAsync();
+        var isDuplicateFormPost = await _sessionService.IsDuplicateFormPostAsync();
 
         if (!await _sessionService.SessionDataExistsAsync() && !isDuplicateFormPost)
             return RedirectToPage("/Session/Timeout");
@@ -98,7 +98,7 @@ public class CheckYourAnswers : PageModel
                 Data = Data
             };
 
-            await _sessionService.StartFormPostProcessing();
+            await _sessionService.StartFormPostProcessingAsync();
 
             try
             {
@@ -108,11 +108,11 @@ public class CheckYourAnswers : PageModel
             {
                 submittedConfirmationModel.HadEmailSendException = true;
             }
-            await _sessionService.SetFormPostResponse(submittedConfirmationModel, EnquirySubmissionConfirmationModelKey);
+            await _sessionService.SetFormPostResponseAsync(submittedConfirmationModel, EnquirySubmissionConfirmationModelKey);
         }
         else
         {
-            submittedConfirmationModel = await _sessionService.GetPreviousFormPostResponse<SubmittedConfirmationModel>(EnquirySubmissionConfirmationModelKey);
+            submittedConfirmationModel = await _sessionService.GetPreviousFormPostResponseAsync<SubmittedConfirmationModel>(EnquirySubmissionConfirmationModelKey);
         }
 
         if (submittedConfirmationModel.HadEmailSendException)

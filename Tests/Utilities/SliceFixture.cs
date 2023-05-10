@@ -91,6 +91,13 @@ public class SliceFixture : IAsyncLifetime
             SessionService.Setup(nc =>
                     nc.AddOrUpdateDataAsync(It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()));
 
+            SessionService.Setup(nc =>
+                    nc.IsDuplicateFormPostAsync(It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            SessionService.Setup(nc =>
+                    nc.StartFormPostProcessingAsync(It.IsAny<string>()));
+
             NotificationClient = new Mock<IAsyncNotificationClient>();
 
             NotificationClient.Setup(nc =>
