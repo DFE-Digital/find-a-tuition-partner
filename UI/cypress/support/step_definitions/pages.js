@@ -108,7 +108,7 @@ Then("the confirmation page is shown", () => {
 Then("they will be redirected to the gov.uk guidance page", () => {
   cy.location("pathname").should(
     "eq",
-    "https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023#Funding-and-paying"
+    "https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023"
   );
 });
 
