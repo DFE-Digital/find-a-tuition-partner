@@ -86,34 +86,43 @@ Then("they will see the tuition partner {string}", (tp) => {
 });
 
 Given(
-  "a user has arrived on the 'Tuition Partner' page for {string}",
+  "a user has arrived on the 'Tuition Partner' page for tp name {int}",
   (name) => {
-    cy.visit(`/tuition-partner/${kebabCase(name)}`);
+    cy.fixture("tplist").then((tplist) => {
+      cy.visit(`/tuition-partner/${kebabCase(tplist.tpnames[name])}`);
+    });
   }
 );
 
 Given(
-  "a user has arrived on the 'Tuition Partner' page for {string} after searching for {string}",
+  "a user has arrived on the 'Tuition Partner' page for tp name {int} after searching for {string}",
   (name, subjects) => {
-    Step(
-      this,
-      `a user has arrived on the 'Tuition Partner' page for '${name}' after searching for '${subjects}' in postcode 'sk11eb'`
-    );
+    let tpName;
+    cy.fixture("tplist").then((tplist) => {
+      tpName = tplist.tpnames[name];
+      Step(
+        this,
+        `a user has arrived on the 'Tuition Partner' page for tp name '${tpName}' after searching for '${subjects}' in postcode 'sk11eb'`
+      );
+    });
   }
 );
 
 Given(
-  "a user has arrived on the 'Tuition Partner' page for {string} after entering search details for multiple subjects",
+  "a user has arrived on the 'Tuition Partner' page for tp name {int} after entering search details for multiple subjects",
   (name) => {
-    Step(
-      this,
-      `a user has arrived on the 'Tuition Partner' page for '${name}' after searching for 'Key stage 1 English, Key stage 1 Maths' in postcode 'sk11eb'`
-    );
+    cy.fixture("tplist").then((tplist) => {
+      name = tplist.tpnames[name];
+      Step(
+        this,
+        `a user has arrived on the 'Tuition Partner' page for tp name '${name}' after searching for 'Key stage 1 English, Key stage 1 Maths' in postcode 'sk11eb'`
+      );
+    });
   }
 );
 
 Given(
-  "a user has arrived on the 'Tuition Partner' page for {string} after searching for {string} in postcode {string}",
+  "a user has arrived on the 'Tuition Partner' page for tp name {string} after searching for {string} in postcode {string}",
   (name, subjects, postcode) => {
     cy.visit(
       `/search-results?${KeyStageSubjects(
@@ -122,6 +131,21 @@ Given(
       )}&Data.TuitionType=Any&Data.Postcode=${postcode}`
     );
     cy.get(".govuk-link").contains(name).click();
+  }
+);
+
+Given(
+  "a user has arrived on the 'Tuition Partner' page for tp {int} after searching for {string} in postcode {string}",
+  (name, subjects, postcode) => {
+    cy.fixture("tplist").then((tplist) => {
+      cy.visit(
+        `/search-results?${KeyStageSubjects(
+          "Data.Subjects",
+          subjects
+        )}&Data.TuitionType=Any&Data.Postcode=${postcode}`
+      );
+      cy.get(".govuk-link").contains(tplist.tpnames[name]).click();
+    });
   }
 );
 
