@@ -10,6 +10,8 @@ namespace UI.Pages.Enquiry.Build;
 
 public class CheckYourAnswers : PageModel
 {
+    private const string EnquirySubmissionConfirmationModelKey = "EnquirySubmissionConfirmationModel";
+
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
     private readonly IHostEnvironment _hostEnvironment;
@@ -92,11 +94,24 @@ public class CheckYourAnswers : PageModel
 
         var submittedConfirmationModel = new SubmittedConfirmationModel();
 
-        try
+        if (!await _sessionService.IsDuplicateFormPostAsync())
         {
-            submittedConfirmationModel = await _mediator.Send(command);
+            try
+            {
+                submittedConfirmationModel = await _mediator.Send(command);
+            }
+            catch (EmailSendException)
+            {
+                submittedConfirmationModel.HadEmailSendException = true;
+            }
+            await _sessionService.SetFormPostResponse(submittedConfirmationModel, EnquirySubmissionConfirmationModelKey);
         }
-        catch (EmailSendException)
+        else
+        {
+            submittedConfirmationModel = await _sessionService.GetPreviousFormPostResponse<SubmittedConfirmationModel>(EnquirySubmissionConfirmationModelKey);
+        }
+
+        if (submittedConfirmationModel.HadEmailSendException)
         {
             Data.From = ReferrerList.CheckYourAnswers;
 

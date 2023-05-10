@@ -14,6 +14,8 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
 
+    private const string EnquiryResponseConfirmationModelKey = "EnquirySubmissionConfirmationModel";
+    private const string EnquiryResponseFormPostTimestampKey = "EnquiryResponseFormPostTimestampKey";
 
     private readonly IHostEnvironment _hostEnvironment;
 
@@ -78,7 +80,20 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             Data = Data
         };
 
-        var responseConfirmationModel = await _mediator.Send(command);
+        ResponseConfirmationModel? responseConfirmationModel;
+
+        var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
+        var enquiryResponseFormPostTimestampKey = $"{EnquiryResponseFormPostTimestampKey}-{Data.SupportReferenceNumber}";
+
+        if (!await _sessionService.IsDuplicateFormPostAsync(enquiryResponseFormPostTimestampKey))
+        {
+            responseConfirmationModel = await _mediator.Send(command);
+            await _sessionService.SetFormPostResponse(responseConfirmationModel, enquiryResponseConfirmationModelKey);
+        }
+        else
+        {
+            responseConfirmationModel = await _sessionService.GetPreviousFormPostResponse<ResponseConfirmationModel>(enquiryResponseConfirmationModelKey);
+        }
 
         await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 

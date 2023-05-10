@@ -13,4 +13,6 @@ public record SubmittedConfirmationModel : SearchModel
 
     public int TuitionPartnerMagicLinksCount { get; set; }
     public string? LocalAuthorityDistrictName { get; set; }
+
+    public bool HadEmailSendException { get; set; } = false;
 }
