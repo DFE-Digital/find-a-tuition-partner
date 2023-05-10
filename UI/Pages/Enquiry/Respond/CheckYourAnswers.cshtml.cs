@@ -68,26 +68,31 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             return NotFound();
         }
 
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
+        ResponseConfirmationModel? responseConfirmationModel;
+
+        var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
+        var enquiryResponseFormPostTimestampKey = $"{EnquiryResponseFormPostTimestampKey}-{Data.SupportReferenceNumber}";
+
+        var isDuplicateFormPost = !await _sessionService.IsDuplicateFormPostAsync(enquiryResponseFormPostTimestampKey);
+
+        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)) && !isDuplicateFormPost)
             return RedirectToPage("/Session/Timeout");
 
         if (!ModelState.IsValid) return Page();
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-        var command = new AddEnquiryResponseCommand()
+        if (!isDuplicateFormPost)
         {
-            Data = Data
-        };
+            var command = new AddEnquiryResponseCommand()
+            {
+                Data = Data
+            };
 
-        ResponseConfirmationModel? responseConfirmationModel;
+            await _sessionService.StartFormPostProcessing();
 
-        var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
-        var enquiryResponseFormPostTimestampKey = $"{EnquiryResponseFormPostTimestampKey}-{Data.SupportReferenceNumber}";
-
-        if (!await _sessionService.IsDuplicateFormPostAsync(enquiryResponseFormPostTimestampKey))
-        {
             responseConfirmationModel = await _mediator.Send(command);
+
             await _sessionService.SetFormPostResponse(responseConfirmationModel, enquiryResponseConfirmationModelKey);
         }
         else

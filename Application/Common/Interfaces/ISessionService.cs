@@ -12,6 +12,7 @@ public interface ISessionService
     Task<bool> AnySessionDataExistsAsync();
     Task ClearAllAsync();
     Task<bool> IsDuplicateFormPostAsync(string formPostTimestampKey = "FormPostTimestamp");
+    Task StartFormPostProcessing(string formPostTimestampKey = "FormPostTimestamp");
     Task SetFormPostResponse<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey");
     Task<T> GetPreviousFormPostResponse<T>(string formPostModelKey = "FormPostModelKey");
     Task Set<T>(string key, T value, string preKey = DefaultPreKey);

@@ -74,7 +74,9 @@ public class CheckYourAnswers : PageModel
         if (!_featureFlagsConfig.EnquiryBuilder)
             throw new InvalidOperationException("User is trying to submit an enquiry when the feature is disabled");
 
-        if (!await _sessionService.SessionDataExistsAsync())
+        var isDuplicateFormPost = !await _sessionService.IsDuplicateFormPostAsync();
+
+        if (!await _sessionService.SessionDataExistsAsync() && !isDuplicateFormPost)
             return RedirectToPage("/Session/Timeout");
 
         Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
@@ -87,15 +89,17 @@ public class CheckYourAnswers : PageModel
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-        var command = new AddEnquiryCommand()
-        {
-            Data = Data
-        };
-
         var submittedConfirmationModel = new SubmittedConfirmationModel();
 
-        if (!await _sessionService.IsDuplicateFormPostAsync())
+        if (!isDuplicateFormPost)
         {
+            var command = new AddEnquiryCommand()
+            {
+                Data = Data
+            };
+
+            await _sessionService.StartFormPostProcessing();
+
             try
             {
                 submittedConfirmationModel = await _mediator.Send(command);

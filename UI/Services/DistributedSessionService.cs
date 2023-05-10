@@ -141,8 +141,6 @@ public class DistributedSessionService : ISessionService
 
         var currentTimestamp = DateTimeOffset.UtcNow;
 
-        await Set(formPostTimestampKey, currentTimestamp, FormPostPreKey);
-
         if (previousSubmissionTimestamp != null)
         {
             if ((currentTimestamp - previousSubmissionTimestamp.Value).TotalSeconds < IntegerConstants.SecondsClassifyAsDuplicateSubmission)
@@ -153,6 +151,12 @@ public class DistributedSessionService : ISessionService
         }
 
         return false;
+    }
+
+    public async Task StartFormPostProcessing(string formPostTimestampKey = "FormPostTimestamp")
+    {
+        var currentTimestamp = DateTimeOffset.UtcNow;
+        await Set(formPostTimestampKey, currentTimestamp, FormPostPreKey);
     }
 
     public async Task SetFormPostResponse<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey")
