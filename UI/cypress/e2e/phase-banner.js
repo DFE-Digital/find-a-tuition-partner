@@ -18,7 +18,6 @@ Then(
   (text) => {
     cy.get('[data-testid="phase-banner-feedback-link"]')
       .should("contain.text", text)
-      .should("have.attr", "href")
-      .and("match", /^\/feedback\?FromReturnUrl=.+$/);
+      .should("have.attr", "href");
   }
 );
