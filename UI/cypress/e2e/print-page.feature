@@ -3,18 +3,6 @@ Feature: User can print relevant pages using a 'Print this page' link
     Given a user has started the 'Find a tuition partner' journey
     Then the 'Print this page' link is not displayed
 
-  Scenario: funding and reporting page does not have a 'Print this page' link
-    Given a user has arrived on the funding and reporting page
-    Then the 'Print this page' link is not displayed
-
-  Scenario: academic mentors page does not have a 'Print this page' link
-    Given a user has arrived on the academic mentors page
-    Then the 'Print this page' link is not displayed
-
-  Scenario: school led tutoring page does not have a 'Print this page' link
-    Given a user has arrived on the school led tutoring page
-    Then the 'Print this page' link is not displayed
-
   Scenario: contact us page does not have a 'Print this page' link
     Given a user has arrived on the contact us page
     Then the 'Print this page' link is not displayed

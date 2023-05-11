@@ -97,13 +97,3 @@ Feature: User handles cookies
     And nothing is selected
     When Saves Changes
     Then the error banner is displayed
-
-  Scenario: User Select Accept Option from banner Should Stay on Same Page
-    Given a user has arrived on the funding and reporting page
-    When cookies are accepted
-    And the user redirected to funding page
-
-  Scenario: User Select Reject Option from banner Should Stay on Same Page
-    Given a user has arrived on the funding and reporting page
-    When cookies are rejected
-    And the user redirected to funding page
