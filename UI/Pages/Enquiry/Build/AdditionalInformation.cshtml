@@ -3,22 +3,22 @@
 @model UI.Pages.Enquiry.Build.AdditionalInformation
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-    var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/send-requirements";
-    ViewData["Title"] = "Is there anything else that you want tuition partners to consider?";
-    ViewData["BackLinkHref"] = $"{backLink}?{ Model.Data.ToQueryString()}";
+  var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/send-requirements";
+  ViewData["Title"] = "Is there anything else that you want tuition partners to consider?";
+  ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <form method="post">
-    <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-        <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-            Is there anything else that you want tuition partners to consider? (optional)
-        </govuk-character-count-label>
-        <govuk-character-count-hint>
-            For example, your school budget or National Tutoring Programme funding
-        </govuk-character-count-hint>
-    </govuk-character-count>
-    <partial name="_PIIWarning" />
-    <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
-    <input type="hidden" name="handler" value="Submit"/>
-    <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+  <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
+      Is there anything else that you want tuition partners to consider? (optional)
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      For example, your school budget or National Tutoring Programme funding
+      <partial name="_PIIWarning" />
+    </govuk-character-count-hint>
+  </govuk-character-count>
+  <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+  <input type="hidden" name="handler" value="Submit" />
+  <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
 </form>
