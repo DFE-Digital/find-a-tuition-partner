@@ -77,7 +77,7 @@ Then("they will be journey back to the page they started from", () => {
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which key stages' page");
   Step(this, "they click 'Back'");
-  Step(this, "the page's title is 'Find a tuition partner'");
+  Step(this, "the page's title is 'Find a quality assured tuition partner'");
   Step(this, "they enter 'SK1 1EB' as the school's postcode");
 });
 

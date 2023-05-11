@@ -5,14 +5,6 @@ Given("a user has started the 'Find a tuition partner' journey", () => {
   cy.visit(`/`);
 });
 
-Given("a user has arrived on the funding and reporting page", () => {
-  cy.visit(`/funding-and-reporting`);
-});
-
-Given("a user has arrived on the academic mentors page", () => {
-  cy.visit(`/academic-mentors`);
-});
-
 Given("a user has arrived on the school led tutoring page", () => {
   cy.visit(`/school-led-tutoring`);
 });
@@ -113,9 +105,15 @@ Then("the confirmation page is shown", () => {
   cy.location("pathname").should("eq", "/enquiry/build/submitted-confirmation");
 });
 
+Then("they will be redirected to the gov.uk guidance page", () => {
+  cy.location("pathname").should(
+    "eq",
+    "https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023"
+  );
+});
+
 Then("the user has arrived on the tuition response page", () => {
   cy.location("pathname").then((actualPath) => {
-    console.log("Actual path:", actualPath);
     expect(actualPath).to.match(/enquiry-response\/.*\/[A-Z]{2}\d{4}/);
   });
 });
@@ -147,7 +145,6 @@ Then("the tuition partners response page is shown", () => {
 
 Then("the user has arrived on the contact tuition partner page", () => {
   cy.location("pathname").then((actualPath) => {
-    console.log("Actual path:", actualPath);
     expect(actualPath).to.match(
       /\/enquiry\/[A-Z]{2}\d{4}\/.*\/contact-details/
     );
@@ -158,12 +155,39 @@ Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));
 });
 
+Then("the page URL ends with tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName].toLowerCase().replace(" ", "-");
+    const tpWithoutHyphen = tp.replace("-", " ");
+    cy.location("pathname").should(($pathname) => {
+      const pathnameWithoutHyphen = $pathname.replace(/-/g, " ");
+      expect(pathnameWithoutHyphen).to.eq(
+        `/tuition partner/${tpWithoutHyphen}`
+      );
+    });
+  });
+});
+
 Then("the heading should say {string}", (heading) => {
   cy.get("h1").should("have.text", heading);
 });
 
+Then("the heading should say tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName];
+    cy.get("h1").should("have.text", tp);
+  });
+});
+
 Then("the page's title is {string}", (title) => {
   cy.title().should("eq", title);
+});
+
+Then("the page's title is tp name {int}", (tpName) => {
+  cy.fixture("tplist").then((tplist) => {
+    const tp = tplist.tpnames[tpName];
+    cy.title().should("eq", `${tp}`);
+  });
 });
 
 Then("they will click the contact us link", () => {
