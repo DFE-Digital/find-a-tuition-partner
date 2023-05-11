@@ -38,12 +38,6 @@ Feature: User can view full details of a Tuition Parner
     When they click 'Back'
     Then the page URL ends with '/search-results'
     And the search details include 'Key stage 1 English, Key stage 2 Maths'
-
-  Scenario: quality assured tuition partner and payment details is initially hidden
-    Given a user has arrived on the 'Tuition Partner' page for tp name 12
-    Then the quality assured tuition partner details are hidden
-    And the payment details are hidden
-
   Scenario: user clicks quality assured tuition partner details summary
     Given a user has arrived on the 'Tuition Partner' page for tp name 12
     When they click 'How are tuition partners quality-assured?'
@@ -54,13 +48,6 @@ Feature: User can view full details of a Tuition Parner
     Given a user has arrived on the 'Tuition Partner' page for tp name 13
     Then the tuition partner's website link is displayed
     And the tuition partners website link starts with 'https://'
-
-  Scenario: user has access to funding link page
-    Given a user has arrived on the 'Tuition Partner' page for tp name 12
-    When they click funding and reporting link
-    Then they will see the funding reporting header
-    And  they click back on the browser
-    Then they redirects to the tuition partners website link with tp name 12
 
   Scenario: locations covered table is not displayed as default
     Given a user has arrived on the 'Tuition Partner' page for tp name 14

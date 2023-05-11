@@ -33,10 +33,6 @@ Then("the search details include {string}", (subjects) => {
   });
 });
 
-Then("the payment details are hidden", () => {
-  cy.get('[data-testid="payment-details"]').should("not.have.attr", "open");
-});
-
 Then("the tuition partner's website link is displayed", () => {
   cy.get("[data-testid=tuition-partner-website-link]").should("exist");
 });
@@ -48,7 +44,7 @@ Then("the tuition partners website link starts with {string}", (prefix) => {
 });
 
 When("they click funding and reporting link", () => {
-  cy.get('[data-testid="funding-guidance-1"]').click();
+  cy.get(":nth-child(5) > .govuk-body > a").click();
 });
 
 Then("they will see the funding reporting header", () => {

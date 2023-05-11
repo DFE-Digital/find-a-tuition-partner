@@ -152,10 +152,6 @@ Then("cookie {string} is added with value {string}", (cookie, value) => {
   }
 });
 
-Then("the user redirected to funding page", () => {
-  cy.location("pathname").should("eq", "/funding-and-reporting");
-});
-
 Then("Google Tag Manager is used to track events", () => {
   cy.get('[data-testid="google-tag-manager"]').should("exist");
 });

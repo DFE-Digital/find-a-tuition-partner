@@ -8,100 +8,100 @@
 }
 
 <div class="govuk-grid-row">
-    <form method="get">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l" data-testid="full-list-header">All quality-assured tuition partners</h1>
-            <p class="govuk-body">
-                National Tutoring Programme funding must be spent on a quality-assured tuition partner. Check the full list of quality-assured tuition partners to find your tuition partner.
-            </p>
-            <div class="govuk-form-group app-form-group-inline">
-                <div asp-validation-group-for="Data.Name" data-testid="postcode">
-                    <label asp-for="Data.Name" class="govuk-label govuk-label--s">
-                        Search by tuition partner name
-                    </label>
-                    <span asp-validation-for="Data.Name" class="govuk-error-message"></span>
-                    <div class="app-form-group-inline--full-width">
-                        <input asp-for="Data.Name" class="govuk-input" data-testid="name-input-box" type="text">
-                        <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
-                    </div>
-                </div>
-            </div>
-            <div show-if="Model.Results != null && Model.Results.Count > 0">
-                <p class="govuk-body">
-                    <span>
-                        <strong data-testid="result-count">@Model.Results!.Count</strong> @(Model.Results.Count != 1 ? "results" : "result")
-                    </span>
-                </p>
-                @{
-                    foreach (var item in Model.Results!.Results)
-                    {
-                     
-                        var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
+  <form method="get">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l" data-testid="full-list-header">All quality-assured tuition partners</h1>
+      <p class="govuk-body">
+        National Tutoring Programme funding must be spent on a quality-assured tuition partner. Check the full list of quality-assured tuition partners to find your tuition partner.
+      </p>
+      <div class="govuk-form-group app-form-group-inline">
+        <div asp-validation-group-for="Data.Name" data-testid="postcode">
+          <label asp-for="Data.Name" class="govuk-label govuk-label--s">
+            Search by tuition partner name
+          </label>
+          <span asp-validation-for="Data.Name" class="govuk-error-message"></span>
+          <div class="app-form-group-inline--full-width">
+            <input asp-for="Data.Name" class="govuk-input" data-testid="name-input-box" type="text">
+            <govuk-button type="submit" data-testid="call-to-action">Search</govuk-button>
+          </div>
+        </div>
+      </div>
+      <div show-if="Model.Results != null && Model.Results.Count > 0">
+        <p class="govuk-body">
+          <span>
+            <strong data-testid="result-count">@Model.Results!.Count</strong> @(Model.Results.Count != 1 ? "results" : "result")
+          </span>
+        </p>
+        @{
+          foreach (var item in Model.Results!.Results)
+          {
 
-                        <div id="atp-tp-jtl-@item.SeoUrl" class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
-                            <div>
-                                <h2 class="govuk-heading-m">
-                                    <a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" asp-route-name="@Model.Data.Name"
-                                       asp-route-from="@Model.Data.From" asp-route-jumpToLocation="atp-tp-jtl-@item.SeoUrl" class="govuk-link"
-                                       data-testid="tuition-partner-name-link">
-                                        @item.Name
-                                    </a>
-                                </h2>
-                                <govuk-summary-list>
-                                    <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
-                                        <govuk-summary-list-row-key>
-                                            Website
-                                        </govuk-summary-list-row-key>
-                                        <govuk-summary-list-row-value>
-                                            <a href="@item.Website" class="govuk-link" rel="noreferrer noopener" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@(item.Website)<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
-                                        </govuk-summary-list-row-value>
-                                    </govuk-summary-list-row>
-                                    <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
-                                        <govuk-summary-list-row-key>
-                                            Phone number
-                                        </govuk-summary-list-row-key>
-                                        <govuk-summary-list-row-value>
-                                            @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
-                                            {
-                                                <a href="tel:@item.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@item.PhoneNumber</a>
-                                            }
-                                            else
-                                            {
-                                                <span data-testid="tuition-partner-phone-number-link"></span>
-                                            }
-                                        </govuk-summary-list-row-value>
-                                    </govuk-summary-list-row>
-                                    <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
-                                        <govuk-summary-list-row-key>
-                                            Email address
-                                        </govuk-summary-list-row-key>
-                                        <govuk-summary-list-row-value>
-                                            @if (!string.IsNullOrWhiteSpace(item.Email))
-                                            {
-                                                <a href="mailto:@(item.Email)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@item.Email</a>
-                                            }
-                                            else
-                                            {
-                                                <span data-testid="tuition-partner-email-link"></span>
-                                            }
-                                        </govuk-summary-list-row-value>
-                                    </govuk-summary-list-row>
-                                </govuk-summary-list>
-                            </div>
-                            <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name"/>
-                        </div>
-                    }
-                }
+            var logoUrl = item.HasLogo ? $"/tuition-partner-logo/{item.SeoUrl}" : "";
+
+            <div id="atp-tp-jtl-@item.SeoUrl" class="tuition-partner-summary" data-testid="tuition-partner-summary" data-tuitionpartner="@item.SeoUrl">
+              <div>
+                <h2 class="govuk-heading-m">
+                  <a asp-page="TuitionPartner" asp-route-id="@item.SeoUrl" asp-route-name="@Model.Data.Name"
+                 asp-route-from="@Model.Data.From" asp-route-jumpToLocation="atp-tp-jtl-@item.SeoUrl" class="govuk-link"
+                   data-testid="tuition-partner-name-link">
+                    @item.Name
+                  </a>
+                </h2>
+                <govuk-summary-list>
+                  <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                    <govuk-summary-list-row-key>
+                      Website
+                    </govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                      <a href="@item.Website" class="govuk-link" rel="noreferrer noopener" target="_blank" data-module="app-tuition-partner-website-link" data-testid="tuition-partner-website-link">@(item.Website)<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
+                    </govuk-summary-list-row-value>
+                  </govuk-summary-list-row>
+                  <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                    <govuk-summary-list-row-key>
+                      Phone number
+                    </govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                      @if (!string.IsNullOrWhiteSpace(item.PhoneNumber))
+                      {
+                        <a href="tel:@item.PhoneNumber" class="govuk-link" data-module="app-tuition-partner-phone-number-link" data-testid="tuition-partner-phone-number-link">@item.PhoneNumber</a>
+                      }
+                      else
+                      {
+                        <span data-testid="tuition-partner-phone-number-link"></span>
+                      }
+                    </govuk-summary-list-row-value>
+                  </govuk-summary-list-row>
+                  <govuk-summary-list-row class="govuk-summary-list__row--no-border app-print-s">
+                    <govuk-summary-list-row-key>
+                      Email address
+                    </govuk-summary-list-row-key>
+                    <govuk-summary-list-row-value>
+                      @if (!string.IsNullOrWhiteSpace(item.Email))
+                      {
+                        <a href="mailto:@(item.Email)" class="govuk-link" data-module="app-tuition-partner-email-link" data-testid="tuition-partner-email-link">@item.Email</a>
+                      }
+                      else
+                      {
+                        <span data-testid="tuition-partner-email-link"></span>
+                      }
+                    </govuk-summary-list-row-value>
+                  </govuk-summary-list-row>
+                </govuk-summary-list>
+              </div>
+              <img show-if="@item.HasLogo" src="@logoUrl" alt="The company logo for @item.Name" />
             </div>
-            <p class="govuk-body" show-if="Model.Results == null || Model.Results.Count == 0" data-testid="no-search-results-message">
-                there are no search results for '@Model.Data.Name'.
-            </p>
-        </div>
-        <div class="govuk-grid-column-one-third app-print-hide">
-            <h2 class="govuk-heading-m">Find out how much funding you’ll get</h2>
-            <p class="govuk-body">
-                <a class="govuk-link" data-testid="funding-reporting-link" href="@($"/funding-and-reporting{fromReturnUrl}")">Funding and reporting</a>
-            </p>
-        </div>
-    </form>
+          }
+        }
+      </div>
+      <p class="govuk-body" show-if="Model.Results == null || Model.Results.Count == 0" data-testid="no-search-results-message">
+        there are no search results for '@Model.Data.Name'.
+      </p>
+    </div>
+    <div class="govuk-grid-column-one-third app-print-hide">
+      <h2 class="govuk-heading-m">Related content</h2>
+      <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/government/publications/national-tutoring-programme-guidance-for-schools-2022-to-2023/national-tutoring-programme-guidance-for-schools-2022-to-2023">NTP guidance for schools 2022 to 2023</a>.
+      </p>
+    </div>
+  </form>
 </div>
