@@ -268,7 +268,7 @@ public class DataImporterService : IHostedService
                 throw new InvalidOperationException(errorMsg);
             }
 
-            successfullyProcessed.Add(originalFilename, tuitionPartnerToProcess);
+            successfullyProcessed.Add(tuitionPartnerToProcess.SeoUrl, tuitionPartnerToProcess);
         }
 
         await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);

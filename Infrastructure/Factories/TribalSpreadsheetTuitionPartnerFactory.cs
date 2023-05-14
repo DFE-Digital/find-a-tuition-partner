@@ -173,6 +173,10 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         if (_allErrors.Count == 0)
         {
+            _spreadsheetExtractor.LoadDictionaryForSheet(OrganisationDetailsSheetName);
+            _spreadsheetExtractor.LoadDictionaryForSheet(PricingSheetName);
+            _spreadsheetExtractor.LoadDictionaryForSheet(DeliverySheetName);
+
             tuitionPartners = ValidateWorksheet(OrganisationDetailsSheetName, NameColumnOrgDetails);
 
             if (!tuitionPartners.Any())
