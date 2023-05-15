@@ -215,7 +215,7 @@ public class DataImporterService : IHostedService
             }
 
             //Find existing TP in db
-            var matchedTPs = allExistingTPs.Where(x => x.ImportId.ToLower() == tuitionPartnerToProcess.ImportId.ToLower() ||
+            var matchedTPs = allExistingTPs.Where(x => x.ImportId.Equals(tuitionPartnerToProcess.ImportId, StringComparison.InvariantCultureIgnoreCase) ||
                                                         x.SeoUrl == tuitionPartnerToProcess.SeoUrl).ToList();
 
             //If no match then add

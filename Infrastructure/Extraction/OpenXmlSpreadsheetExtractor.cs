@@ -22,7 +22,7 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
         }
     }
 
-    public void LoadDictionaryForSheet(string sheetName)
+    public void PreloadSheet(string sheetName)
     {
         _loadedData ??= new Dictionary<string, Dictionary<string, string>>();
         var data = new Dictionary<string, string>();

@@ -173,9 +173,9 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         if (_allErrors.Count == 0)
         {
-            _spreadsheetExtractor.LoadDictionaryForSheet(OrganisationDetailsSheetName);
-            _spreadsheetExtractor.LoadDictionaryForSheet(PricingSheetName);
-            _spreadsheetExtractor.LoadDictionaryForSheet(DeliverySheetName);
+            _spreadsheetExtractor.PreloadSheet(OrganisationDetailsSheetName);
+            _spreadsheetExtractor.PreloadSheet(PricingSheetName);
+            _spreadsheetExtractor.PreloadSheet(DeliverySheetName);
 
             tuitionPartners = ValidateWorksheet(OrganisationDetailsSheetName, NameColumnOrgDetails);
 
@@ -206,8 +206,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var importId = data;
                 var name = spreadsheetExtractor!.GetCellValue(sheetName, nameColumn, row);
 
-                if (!worksheetTPs.Any(x => x.ImportId.ToLower() == importId.ToLower() &&
-                                        x.Name.ToLower() == name.ToLower()))
+                if (!worksheetTPs.Any(x => x.ImportId.Equals(importId, StringComparison.InvariantCultureIgnoreCase) &&
+                                        x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     worksheetTPs.Add(new TuitionPartner()
                     {
@@ -570,7 +570,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 if (!castError)
                 {
                     //Get subject id
-                    var subject = _subjects!.FirstOrDefault(x => x.Name.ToLower() == subjectEnum.DisplayName().ToLower() && x.KeyStageId == (int)keyStage);
+                    var subject = _subjects!.FirstOrDefault(x => x.Name.Equals(subjectEnum.DisplayName(), StringComparison.InvariantCultureIgnoreCase) && x.KeyStageId == (int)keyStage);
                     if (subject == null)
                     {
                         castError = true;
