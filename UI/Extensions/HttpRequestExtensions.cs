@@ -46,7 +46,10 @@ namespace UI.Extensions
             {
                 referrer = request.Headers["Referer"].ToString();
             }
-            catch { } //Suppress exception
+            catch
+            {
+                //Suppress exception
+            }
 
             return referrer;
         }
@@ -67,7 +70,10 @@ namespace UI.Extensions
                     }
                 }
             }
-            catch { } //Suppress exception
+            catch
+            {
+                //Suppress exception
+            }
 
             return ntpUrl;
         }

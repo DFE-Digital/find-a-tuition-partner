@@ -430,7 +430,10 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 await _processEmailsService.SendEmailsAsync(emailLogIds!);
             }
         }
-        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        catch
+        {
+            //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        }
     }
 
     private async Task CleanUpData(Domain.Enquiry enquiry)

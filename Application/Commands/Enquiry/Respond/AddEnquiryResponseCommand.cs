@@ -255,12 +255,18 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             await _processEmailsService.SendEmailAsync(enquiryResponse.EnquirerResponseEmailLogId);
         }
-        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        catch
+        {
+            //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        }
 
         try
         {
             await _processEmailsService.SendEmailAsync(enquiryResponse.TuitionPartnerResponseEmailLogId);
         }
-        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        catch
+        {
+            //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        }
     }
 }

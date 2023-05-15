@@ -1,5 +1,4 @@
-﻿using Application.Commands.Enquiry.Build;
-using Application.Common.DTO;
+﻿using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models.Admin;
 using Application.Extensions;
@@ -16,17 +15,20 @@ namespace Infrastructure.Services;
 
 public class ProcessEmailsService : IProcessEmailsService
 {
+    private const int ProcessingStillRunningForMinutesThrowError = 30;
+    private const int ProcessingStillRunningForMinutesLogWarning = 5;
+    private const string MergedEmailAddress = "merged_email_for_testing@education.gov.uk";
     private const string ScheduleName = "Process Emails";
     private const string TestExtraInfoKey = "test_extra_info";
 
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<AddEnquiryCommandHandler> _logger;
+    private readonly ILogger<ProcessEmailsService> _logger;
     private readonly INotificationsClientService _notificationsClientService;
     private readonly EmailSettings _emailSettingsConfig;
 
     public ProcessEmailsService(IUnitOfWork unitOfWork,
         INotificationsClientService notificationsClientService,
-        ILogger<AddEnquiryCommandHandler> logger,
+        ILogger<ProcessEmailsService> logger,
         IOptions<EmailSettings> emailSettingsConfig)
     {
         _unitOfWork = unitOfWork;
@@ -50,7 +52,7 @@ public class ProcessEmailsService : IProcessEmailsService
                 {
                     await PollForStatusUpdatesAsync(processedEmailsModel);
 
-                    processedEmailsModel.EmailsSent = await SendEmailsToBeProcessedAsync(null, false);
+                    processedEmailsModel.EmailsSent = await SendPendingEmailsAsync(null, false);
 
                     var finishedDate = DateTime.UtcNow;
                     var finishedMessage = $"Completed email process successfully.  Started at {startDate}, finished at {finishedDate}, taking {(finishedDate - startDate).TotalSeconds} seconds.  " +
@@ -62,7 +64,7 @@ public class ProcessEmailsService : IProcessEmailsService
                 }
                 else
                 {
-                    await SetEmailsToDeactivatedEmailsAsync();
+                    await DeactivateEmailsAsync();
                     processedEmailsModel.Outcome = "Sending of emails is switched off in the config";
                     await FinishProcessing(DateTime.UtcNow, processedEmailsModel.Outcome);
                 }
@@ -78,19 +80,19 @@ public class ProcessEmailsService : IProcessEmailsService
         {
             await FinishProcessing(DateTime.UtcNow, $"Unexpected exception thrown. {ex}");
             throw;
-        };
+        }
 
         return processedEmailsModel;
     }
 
     public async Task<int> SendEmailAsync(int emailLogId)
     {
-        return await SendEmailsToBeProcessedAsync(new int[] { emailLogId });
+        return await SendPendingEmailsAsync(new int[] { emailLogId });
     }
 
     public async Task<int> SendEmailsAsync(int[] emailLogIds)
     {
-        return await SendEmailsToBeProcessedAsync(emailLogIds);
+        return await SendPendingEmailsAsync(emailLogIds);
     }
 
     public string? GetEmailAddressUsedForTesting(string? emailToBeUsedIfTestingEnabled = null)
@@ -144,7 +146,7 @@ public class ProcessEmailsService : IProcessEmailsService
                 Value = $"This is a merged email for testing purposes.{Environment.NewLine}{Environment.NewLine}"
             });
 
-            initialEmailLog.EmailAddress = "merged_email_for_testing@education.gov.uk";
+            initialEmailLog.EmailAddress = MergedEmailAddress;
 
             return initialEmailLog;
         }
@@ -176,15 +178,15 @@ public class ProcessEmailsService : IProcessEmailsService
         {
             if (scheduledProcessingInfo.LastFinishedDate == null)
             {
-                if (scheduledProcessingInfo.LastStartedDate.AddMinutes(30) < DateTime.UtcNow)
+                if (scheduledProcessingInfo.LastStartedDate.AddMinutes(ProcessingStillRunningForMinutesThrowError) < DateTime.UtcNow)
                 {
-                    _logger.LogError("Previous ProcessAllEmailsAsync has been running for more than 30 minutes.  Was last run {LastStartedDate}, starting a fresh!", scheduledProcessingInfo.LastStartedDate);
+                    _logger.LogError("Previous ProcessAllEmailsAsync has been running for more than {ProcessingStillRunningForMinutesThrowError} minutes.  Was last run {LastStartedDate}, starting a fresh!", ProcessingStillRunningForMinutesThrowError, scheduledProcessingInfo.LastStartedDate);
                 }
                 else
                 {
-                    if (scheduledProcessingInfo.LastStartedDate.AddMinutes(5) < DateTime.UtcNow)
+                    if (scheduledProcessingInfo.LastStartedDate.AddMinutes(ProcessingStillRunningForMinutesLogWarning) < DateTime.UtcNow)
                     {
-                        _logger.LogWarning("Previous ProcessAllEmailsAsync has been running for more than 5 minutes.  Was last run {LastStartedDate}.", scheduledProcessingInfo.LastStartedDate);
+                        _logger.LogWarning("Previous ProcessAllEmailsAsync has been running for more than {ProcessingStillRunningForMinutesLogWarning} minutes.  Was last run {LastStartedDate}.", ProcessingStillRunningForMinutesLogWarning, scheduledProcessingInfo.LastStartedDate);
                     }
 
                     return false;
@@ -221,8 +223,8 @@ public class ProcessEmailsService : IProcessEmailsService
 
         /*
             Pre-sending processing:
-                1) Update all currently in status that has flag PollForStatusUpdateIfSent = true and LastEmailSendAttemptDate < now and FinishProcessingDate > now.  
-                Only if status has changed do the following:
+                1) Update all currently with a status that has flag PollForStatusUpdateIfSent = true and LastEmailSendAttemptDate < now and FinishProcessingDate > now.  
+                Only if the status has changed do the following:
                     a) Update status and LastStatusChangedDate = now
                     b) If new status is NotifyDelivered see if any chained emails (in EmailTriggerActivation and status WaitingToBeTriggered).  If so update these ProcessFromDate = now
                     c) If the new status is failure (If RetrySendInSeconds != null) then update the ProcessFromDate = now.AddSeconds(RetrySendInSeconds)
@@ -252,52 +254,17 @@ public class ProcessEmailsService : IProcessEmailsService
                     }
 
                     processedEmailsModel.EmailsCheckStatus++;
-                    var currentStatus = emailLog.EmailStatus.Status.GetEnumFromDisplayName<EmailStatus>();
 
+                    var currentStatus = emailLog.EmailStatus.Status.GetEnumFromDisplayName<EmailStatus>();
                     var newStatus = await _notificationsClientService.GetEmailStatus(emailLog!.EmailNotifyResponseLog!.NotifyId!);
 
                     if (currentStatus != newStatus)
                     {
-                        _logger.LogInformation("Email ref {ClientReferenceNumber} status update from {currentStatus}, to {newStatus}.",
-                            emailLog.ClientReferenceNumber,
-                            currentStatus.DisplayName(),
-                            newStatus.DisplayName());
-
-                        emailLog.EmailStatusId = (int)newStatus;
-                        emailLog.LastStatusChangedDate = pollDateTime;
-
-                        if (newStatus == EmailStatus.NotifyDelivered && emailLog!.EmailsActivatedByThisEmail != null && emailLog!.EmailsActivatedByThisEmail.Any())
-                        {
-                            _logger.LogInformation("Email ref {ClientReferenceNumber} is delivered, triggering activation of {EmailsActivatedByThisEmailCount} emails.",
-                                emailLog.ClientReferenceNumber,
-                                emailLog!.EmailsActivatedByThisEmail.Count);
-
-                            foreach (var emailToActivate in emailLog!.EmailsActivatedByThisEmail)
-                            {
-                                if (emailToActivate.ActivateEmailLog.FinishProcessingDate > pollDateTime &&
-                                    emailToActivate.ActivateEmailLog.EmailStatus.AllowEmailSending)
-                                {
-                                    emailToActivate.ActivateEmailLog.ProcessFromDate = pollDateTime;
-                                }
-                            }
-                        }
-
-                        var newStatusEntity = emailStatuses.Single(x => x.Id == emailLog.EmailStatusId);
-                        if (newStatusEntity!.RetrySendInSeconds != null)
-                        {
-                            var retryInSeconds = newStatusEntity!.RetrySendInSeconds!;
-                            DateTime retryDateTime = pollDateTime.AddSeconds((double)retryInSeconds);
-
-                            _logger.LogInformation("Email ref {ClientReferenceNumber} status {newStatus}, so set to retry in {retryInSeconds} seconds, on {retryDateTime}.",
-                                emailLog.ClientReferenceNumber,
-                                 newStatus.DisplayName(),
-                                retryInSeconds,
-                                retryDateTime);
-
-                            emailLog.ProcessFromDate = retryDateTime;
-                        }
+                        ProcessUpdatedEmailStatus(emailLog, pollDateTime, currentStatus, newStatus, emailStatuses);
 
                         _unitOfWork.EmailLogRepository.Update(emailLog);
+
+                        //Save per record rather than all in one go, so that it will process other emails and not fail for all
                         await _unitOfWork.Complete();
 
                         processedEmailsModel.EmailsUpdatedStatus++;
@@ -312,7 +279,62 @@ public class ProcessEmailsService : IProcessEmailsService
         }
     }
 
-    private async Task<int> SendEmailsToBeProcessedAsync(int[]? emailLogIds = null, bool throwExceptions = true)
+    private void ProcessUpdatedEmailStatus(EmailLog emailLog, DateTime pollDateTime, EmailStatus currentStatus, EmailStatus newStatus, IEnumerable<Domain.EmailStatus> emailStatuses)
+    {
+        _logger.LogInformation("Email ref {ClientReferenceNumber} status update from {currentStatus}, to {newStatus}.",
+            emailLog.ClientReferenceNumber,
+            currentStatus.DisplayName(),
+            newStatus.DisplayName());
+
+        emailLog.EmailStatusId = (int)newStatus;
+        emailLog.LastStatusChangedDate = pollDateTime;
+
+        if (newStatus == EmailStatus.NotifyDelivered)
+        {
+            UpdateEmailsActivatedByThisEmail(emailLog, pollDateTime);
+        }
+
+        SetRetryDateTimeIfRequired(emailLog, pollDateTime, emailStatuses, newStatus);
+    }
+
+    private void UpdateEmailsActivatedByThisEmail(EmailLog emailLog, DateTime pollDateTime)
+    {
+        if (emailLog!.EmailsActivatedByThisEmail != null && emailLog!.EmailsActivatedByThisEmail.Any())
+        {
+            _logger.LogInformation("Email ref {ClientReferenceNumber} is delivered, triggering activation of {EmailsActivatedByThisEmailCount} emails.",
+                emailLog.ClientReferenceNumber,
+                emailLog!.EmailsActivatedByThisEmail.Count);
+
+            foreach (var emailToActivate in emailLog!.EmailsActivatedByThisEmail)
+            {
+                if (emailToActivate.ActivateEmailLog.FinishProcessingDate > pollDateTime &&
+                    emailToActivate.ActivateEmailLog.EmailStatus.AllowEmailSending)
+                {
+                    emailToActivate.ActivateEmailLog.ProcessFromDate = pollDateTime;
+                }
+            }
+        }
+    }
+
+    private void SetRetryDateTimeIfRequired(EmailLog emailLog, DateTime pollDateTime, IEnumerable<Domain.EmailStatus> emailStatuses, EmailStatus newStatus)
+    {
+        var newStatusEntity = emailStatuses.Single(x => x.Id == emailLog.EmailStatusId);
+        if (newStatusEntity!.RetrySendInSeconds != null)
+        {
+            var retryInSeconds = newStatusEntity!.RetrySendInSeconds!;
+            DateTime retryDateTime = pollDateTime.AddSeconds((double)retryInSeconds);
+
+            _logger.LogInformation("Email ref {ClientReferenceNumber} status {newStatus}, so set to retry in {retryInSeconds} seconds, on {retryDateTime}.",
+                emailLog.ClientReferenceNumber,
+                 newStatus.DisplayName(),
+                retryInSeconds,
+                retryDateTime);
+
+            emailLog.ProcessFromDate = retryDateTime;
+        }
+    }
+
+    private async Task<int> SendPendingEmailsAsync(int[]? emailLogIds = null, bool throwExceptions = true)
     {
         /*
             Send emails:
@@ -355,12 +377,16 @@ public class ProcessEmailsService : IProcessEmailsService
                 {
                     await _notificationsClientService.SendEmailAsync(notifyEmails);
                 }
-                catch
+                catch (Exception ex)
                 {
                     if (throwExceptions)
                     {
                         await UpdateSentEmailsAsync(emailsToSend, notifyEmails);
                         throw;
+                    }
+                    else
+                    {
+                        _logger.LogError(ex, "Error sending email in SendPendingEmailsAsync");
                     }
                 }
 
@@ -369,7 +395,7 @@ public class ProcessEmailsService : IProcessEmailsService
         }
         else
         {
-            await SetEmailsToDeactivatedEmailsAsync();
+            await DeactivateEmailsAsync();
         }
 
         return emailsSent;
@@ -389,15 +415,11 @@ public class ProcessEmailsService : IProcessEmailsService
             {
                 emailToUpdate = emailsToUpdate.Single(x => x.ClientReferenceNumber == emailResult.ClientReference);
 
-                var notifyResponse = emailToUpdate.EmailNotifyResponseLog == null ? new EmailNotifyResponseLog() : emailToUpdate.EmailNotifyResponseLog;
-
-                notifyResponse = emailResult.NotifyResponse.Adapt(notifyResponse);
-
-                emailToUpdate.EmailNotifyResponseLog = notifyResponse;
+                UpdateEmailLogWithNotifyResponse(emailToUpdate, emailResult);
 
                 var oldStatus = emailToUpdate.EmailStatusId;
 
-                if (!string.IsNullOrEmpty(notifyResponse.NotifyId))
+                if (!string.IsNullOrEmpty(emailToUpdate!.EmailNotifyResponseLog!.NotifyId))
                 {
                     emailToUpdate.EmailStatusId = (int)EmailStatus.BeenProcessed;
                     sentEmails++;
@@ -417,6 +439,7 @@ public class ProcessEmailsService : IProcessEmailsService
 
                 _unitOfWork.EmailLogRepository.Update(emailToUpdate);
 
+                //Save per email rather than all in one go, so that it will process other emails and not fail for all
                 await _unitOfWork.Complete();
             }
             catch (Exception ex)
@@ -431,7 +454,16 @@ public class ProcessEmailsService : IProcessEmailsService
         return sentEmails;
     }
 
-    private async Task SetEmailsToDeactivatedEmailsAsync()
+    private void UpdateEmailLogWithNotifyResponse(EmailLog emailToUpdate, NotifyEmailDto emailResult)
+    {
+        var notifyResponse = emailToUpdate.EmailNotifyResponseLog == null ? new EmailNotifyResponseLog() : emailToUpdate.EmailNotifyResponseLog;
+
+        notifyResponse = emailResult.NotifyResponse.Adapt(notifyResponse);
+
+        emailToUpdate.EmailNotifyResponseLog = notifyResponse;
+    }
+
+    private async Task DeactivateEmailsAsync()
     {
         var emailsToDeactivate = await _unitOfWork.EmailLogRepository
             .GetAllAsync(x => (x.EmailStatus.AllowEmailSending &&
