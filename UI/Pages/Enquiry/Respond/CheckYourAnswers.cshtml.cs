@@ -60,9 +60,6 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var isValidMagicLink =
-            await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
-
         ResponseConfirmationModel? responseConfirmationModel;
 
         var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
@@ -72,6 +69,9 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
         if (!isDuplicateFormPost)
         {
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
+
             if (!isValidMagicLink)
             {
                 return NotFound();

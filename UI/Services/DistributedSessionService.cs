@@ -9,7 +9,7 @@ namespace UI.Services;
 public class DistributedSessionService : ISessionService
 {
     private const string DefaultPreKey = "General";
-    public const string FormPostPreKey = "FormPostPreKey";
+    private const string FormPostPreKey = "FormPostPreKey";
 
     private readonly IHttpContextAccessor? _contextAccessor;
     private readonly ILogger<DistributedSessionService> _logger;
@@ -126,7 +126,7 @@ public class DistributedSessionService : ISessionService
     {
         await LoadDataFromDistributedDataStore();
         var sessionKey = GetSessionKey(FormPostPreKey);
-        return _contextAccessor!.HttpContext!.Session!.Keys.Where(x => x != sessionKey).Any();
+        return _contextAccessor!.HttpContext!.Session!.Keys.Any(x => x != sessionKey);
     }
 
     public async Task ClearAllAsync()
@@ -168,14 +168,14 @@ public class DistributedSessionService : ISessionService
     public async Task<T> GetPreviousFormPostResponseAsync<T>(string formPostModelKey = "FormPostModelKey")
     {
         //Use Polly to retry 
-        int numberOfRetries = IntegerConstants.SecondsClassifyAsDuplicateFormPost;
+        int numberOfSecondsToRetry = IntegerConstants.SecondsClassifyAsDuplicateFormPost;
         var retryPolicy = Policy
             .Handle<Exception>()
-            .WaitAndRetryAsync(numberOfRetries, retryAttempt =>
+            .WaitAndRetryAsync(numberOfSecondsToRetry, retryAttempt =>
                 TimeSpan.FromSeconds(1),
                 (exception, sleepDuration, retryCount, context) =>
                 {
-                    _logger.LogInformation("Not able to get previous form POST response.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries} (GetPreviousPostResponse)", sleepDuration, retryCount, numberOfRetries);
+                    _logger.LogInformation("Not able to get previous form POST response.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries} (GetPreviousPostResponse)", sleepDuration, retryCount, numberOfSecondsToRetry);
                 });
 
         _logger.LogInformation("Trying to get previous form POST response (GetPreviousPostResponse)");
@@ -203,12 +203,12 @@ public class DistributedSessionService : ISessionService
         }
     }
 
-    public async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
+    private async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
     {
         await AddOrUpdateDataAsync(key, JsonConvert.SerializeObject(value), preKey);
     }
 
-    public async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
+    private async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
     {
         var value = await RetrieveDataByKeyAsync(key, preKey);
         return string.IsNullOrEmpty(value) ? default : JsonConvert.DeserializeObject<T>(value);
