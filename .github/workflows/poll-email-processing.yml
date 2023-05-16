@@ -1,0 +1,14 @@
+name: Poll Email Processing
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '* * * * *'
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call email processing page
+        run: |
+          curl --request GET \
+          --url 'https://find-a-tuition-partner-pr-329.london.cloudapps.digital/admin/process-emails'
