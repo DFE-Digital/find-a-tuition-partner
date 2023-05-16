@@ -27,13 +27,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddDbContext<NtpDbContext>(options =>
         {
-            options.UseNpgsql(
-                configuration.GetNtpConnectionString(),
-                action =>
-                {
-                    action.MigrationsAssembly(typeof(AssemblyReference).Assembly.FullName);
-                    action.EnableRetryOnFailure();
-                });
+            options.UseSqlServer(configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString));
         });
 
         services.AddScoped<INtpDbContext>(provider => provider.GetService<NtpDbContext>()!);
@@ -77,22 +71,6 @@ public static class ServiceCollectionExtensions
         };
 
         return JsonSerializer.Deserialize<VcapServices>(vcapServicesJson, options);
-    }
-    public static string GetNtpConnectionString(this IConfiguration configuration)
-    {
-        var vcapServices = configuration.GetVcapServices();
-
-        if (vcapServices != null)
-        {
-            var postgresCredentials = vcapServices?.Postgres?.FirstOrDefault()?.Credentials;
-
-            if (postgresCredentials?.IsValid() == true)
-            {
-                return $"Host={postgresCredentials.Host};Port={postgresCredentials.Port};Username={postgresCredentials.Username};Password={postgresCredentials.Password};Database={postgresCredentials.Name}";
-            }
-        }
-
-        return configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString);
     }
 
     public static string? GetRedisConnectionString(this IConfiguration configuration)

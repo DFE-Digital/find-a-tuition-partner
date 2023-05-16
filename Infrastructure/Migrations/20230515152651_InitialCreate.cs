@@ -1,23 +1,26 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Migrations
 {
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FriendlyName = table.Column<string>(type: "text", nullable: true),
-                    Xml = table.Column<string>(type: "text", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FriendlyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Xml = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,13 +28,58 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EnquiryResponses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    KeyStageAndSubjectsText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TuitionTypeText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TutoringLogisticsText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SENDRequirementsText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdditionalInformationText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EnquiryResponses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EstablishmentStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstablishmentStatus", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EstablishmentTypeGroup",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstablishmentTypeGroup", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "KeyStage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,13 +87,53 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MagicLinks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MagicLinks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrganisationType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsTypeOfCharity = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganisationType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PhaseOfEducation",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhaseOfEducation", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,37 +141,13 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TuitionPartners",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    LastUpdated = table.Column<DateOnly>(type: "date", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Website = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Experience = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    LegalStatus = table.Column<string>(type: "text", nullable: false),
-                    HasSenProvision = table.Column<bool>(type: "boolean", nullable: false),
-                    AdditionalServiceOfferings = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TuitionPartners", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TuitionTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,11 +158,11 @@ namespace Infrastructure.Migrations
                 name: "Subjects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SeoUrl = table.Column<string>(type: "text", nullable: false),
-                    KeyStageId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    KeyStageId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,14 +176,49 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TuitionPartners",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeoUrl = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TPLastUpdatedData = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganisationTypeId = table.Column<int>(type: "int", nullable: false),
+                    IsVatCharged = table.Column<bool>(type: "bit", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileExtension = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HasLogo = table.Column<bool>(type: "bit", nullable: false,
+                        computedColumnSql: "CAST(CASE WHEN [Logo] IS NULL THEN 0 ELSE 1 END AS bit)", stored: true),
+                    ImportProcessLastUpdatedData = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ImportId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TuitionPartners", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartners_OrganisationType_OrganisationTypeId",
+                        column: x => x.OrganisationTypeId,
+                        principalTable: "OrganisationType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LocalAuthority",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    RegionId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RegionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,16 +232,49 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Enquiries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TutoringLogistics = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SENDRequirements = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdditionalInformation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SupportReferenceNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PostCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LocalAuthorityDistrict = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: true),
+                    MagicLinkId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enquiries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Enquiries_MagicLinks_MagicLinkId",
+                        column: x => x.MagicLinkId,
+                        principalTable: "MagicLinks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Enquiries_TuitionTypes_TuitionTypeId",
+                        column: x => x.TuitionTypeId,
+                        principalTable: "TuitionTypes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Prices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SubjectId = table.Column<int>(type: "integer", nullable: false),
-                    GroupSize = table.Column<int>(type: "integer", nullable: false),
-                    HourlyRate = table.Column<decimal>(type: "numeric", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    GroupSize = table.Column<int>(type: "int", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,11 +303,11 @@ namespace Infrastructure.Migrations
                 name: "SubjectCoverage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    SubjectId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -204,12 +336,12 @@ namespace Infrastructure.Migrations
                 name: "LocalAuthorityDistricts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    RegionId = table.Column<int>(type: "integer", nullable: false),
-                    LocalAuthorityId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RegionId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,6 +357,79 @@ namespace Infrastructure.Migrations
                         column: x => x.RegionId,
                         principalTable: "Regions",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction); // a limitation in SQL Server's handling of cascading deletes.
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KeyStageSubjectsEnquiry",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EnquiryId = table.Column<int>(type: "int", nullable: false),
+                    KeyStageId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KeyStageSubjectsEnquiry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_KeyStageSubjectsEnquiry_Enquiries_EnquiryId",
+                        column: x => x.EnquiryId,
+                        principalTable: "Enquiries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KeyStageSubjectsEnquiry_KeyStage_KeyStageId",
+                        column: x => x.KeyStageId,
+                        principalTable: "KeyStage",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KeyStageSubjectsEnquiry_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction); // a limitation in SQL Server's handling of cascading deletes.
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TuitionPartnersEnquiry",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EnquiryId = table.Column<int>(type: "int", nullable: false),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    MagicLinkId = table.Column<int>(type: "int", nullable: false),
+                    EnquiryResponseId = table.Column<int>(type: "int", nullable: true),
+                    ResponseCloseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TuitionPartnersEnquiry", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnersEnquiry_Enquiries_EnquiryId",
+                        column: x => x.EnquiryId,
+                        principalTable: "Enquiries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnersEnquiry_EnquiryResponses_EnquiryResponseId",
+                        column: x => x.EnquiryResponseId,
+                        principalTable: "EnquiryResponses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnersEnquiry_MagicLinks_MagicLinkId",
+                        column: x => x.MagicLinkId,
+                        principalTable: "MagicLinks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction); // a limitation in SQL Server's handling of cascading deletes.
+                    table.ForeignKey(
+                        name: "FK_TuitionPartnersEnquiry_TuitionPartners_TuitionPartnerId",
+                        column: x => x.TuitionPartnerId,
+                        principalTable: "TuitionPartners",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -232,23 +437,23 @@ namespace Infrastructure.Migrations
                 name: "LocalAuthorityDistrictCoverage",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TuitionPartnerId = table.Column<int>(type: "integer", nullable: false),
-                    TuitionTypeId = table.Column<int>(type: "integer", nullable: false),
-                    LocalAuthorityDistrictId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TuitionPartnerId = table.Column<int>(type: "int", nullable: false),
+                    TuitionTypeId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityDistrictId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LocalAuthorityDistrictCoverage", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocalAuthorityDistrictCoverage_LocalAuthorityDistricts_Loca~",
+                        name: "FK_LocalAuthorityDistrictCoverage_LocalAuthorityDistricts_LocalAuthorityDistrictId",
                         column: x => x.LocalAuthorityDistrictId,
                         principalTable: "LocalAuthorityDistricts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LocalAuthorityDistrictCoverage_TuitionPartners_TuitionPartn~",
+                        name: "FK_LocalAuthorityDistrictCoverage_TuitionPartners_TuitionPartnerId",
                         column: x => x.TuitionPartnerId,
                         principalTable: "TuitionPartners",
                         principalColumn: "Id",
@@ -261,6 +466,84 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Schools",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Urn = table.Column<int>(type: "int", nullable: false),
+                    EstablishmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Postcode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EstablishmentTypeGroupId = table.Column<int>(type: "int", nullable: false),
+                    EstablishmentStatusId = table.Column<int>(type: "int", nullable: false),
+                    PhaseOfEducationId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityId = table.Column<int>(type: "int", nullable: false),
+                    LocalAuthorityDistrictId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schools", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schools_EstablishmentStatus_EstablishmentStatusId",
+                        column: x => x.EstablishmentStatusId,
+                        principalTable: "EstablishmentStatus",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_EstablishmentTypeGroup_EstablishmentTypeGroupId",
+                        column: x => x.EstablishmentTypeGroupId,
+                        principalTable: "EstablishmentTypeGroup",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_LocalAuthorityDistricts_LocalAuthorityDistrictId",
+                        column: x => x.LocalAuthorityDistrictId,
+                        principalTable: "LocalAuthorityDistricts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schools_LocalAuthority_LocalAuthorityId",
+                        column: x => x.LocalAuthorityId,
+                        principalTable: "LocalAuthority",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction); // a limitation in SQL Server's handling of cascading deletes.
+                    table.ForeignKey(
+                        name: "FK_Schools_PhaseOfEducation_PhaseOfEducationId",
+                        column: x => x.PhaseOfEducationId,
+                        principalTable: "PhaseOfEducation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstablishmentStatus",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Open" },
+                    { 2, "Closed" },
+                    { 3, "Open but proposed to close" },
+                    { 4, "Proposed to open" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EstablishmentTypeGroup",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Colleges" },
+                    { 2, "Universities" },
+                    { 3, "Independent schools" },
+                    { 4, "Local authority maintained schools" },
+                    { 5, "Special schools" },
+                    { 6, "Welsh schools" },
+                    { 9, "Other types" },
+                    { 10, "Academies" },
+                    { 11, "Free schools" }
+                });
+
             migrationBuilder.InsertData(
                 table: "KeyStage",
                 columns: new[] { "Id", "Name", "SeoUrl" },
@@ -270,6 +553,35 @@ namespace Infrastructure.Migrations
                     { 2, "Key stage 2", "key-stage-2" },
                     { 3, "Key stage 3", "key-stage-3" },
                     { 4, "Key stage 4", "key-stage-4" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "OrganisationType",
+                columns: new[] { "Id", "IsTypeOfCharity", "Name" },
+                values: new object[,]
+                {
+                    { 1, true, "Charity/charities" },
+                    { 2, false, "Limited company" },
+                    { 3, false, "Limited liability partnership" },
+                    { 4, true, "Private company limited by guarantee" },
+                    { 7, false, "Private company" },
+                    { 8, true, "Non-profit" },
+                    { 9, true, "Community interest company" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PhaseOfEducation",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Nursery" },
+                    { 2, "Primary" },
+                    { 3, "Middle deemed primary" },
+                    { 4, "Secondary" },
+                    { 5, "Middle deemed secondary" },
+                    { 6, "16 Plus" },
+                    { 7, "All-through" },
+                    { 9999, "Not Applicable" }
                 });
 
             migrationBuilder.InsertData(
@@ -461,12 +773,12 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "KeyStageId", "Name", "SeoUrl" },
                 values: new object[,]
                 {
-                    { 1, 1, "Literacy", "key-stage-1-literacy" },
-                    { 2, 1, "Numeracy", "key-stage-1-numeracy" },
+                    { 1, 1, "English", "key-stage-1-english" },
+                    { 2, 1, "Maths", "key-stage-1-maths" },
                     { 3, 1, "Science", "key-stage-1-science" },
-                    { 4, 2, "Literacy", "key-stage-2-literacy" },
-                    { 5, 2, "Numeracy", "key-stage-2-numeracy" },
-                    { 6, 2, "Literacy", "key-stage-2-science" },
+                    { 4, 2, "English", "key-stage-2-english" },
+                    { 5, 2, "Maths", "key-stage-2-maths" },
+                    { 6, 2, "Science", "key-stage-2-science" },
                     { 7, 3, "English", "key-stage-3-english" },
                     { 8, 3, "Humanities", "key-stage-3-humanities" },
                     { 9, 3, "Maths", "key-stage-3-maths" },
@@ -796,6 +1108,37 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Enquiries_Email",
+                table: "Enquiries",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enquiries_MagicLinkId",
+                table: "Enquiries",
+                column: "MagicLinkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enquiries_SupportReferenceNumber",
+                table: "Enquiries",
+                column: "SupportReferenceNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enquiries_TuitionTypeId",
+                table: "Enquiries",
+                column: "TuitionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EstablishmentStatus_Name",
+                table: "EstablishmentStatus",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EstablishmentTypeGroup_Name",
+                table: "EstablishmentTypeGroup",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KeyStage_Name",
                 table: "KeyStage",
                 column: "Name");
@@ -805,6 +1148,21 @@ namespace Infrastructure.Migrations
                 table: "KeyStage",
                 column: "SeoUrl",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KeyStageSubjectsEnquiry_EnquiryId",
+                table: "KeyStageSubjectsEnquiry",
+                column: "EnquiryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KeyStageSubjectsEnquiry_KeyStageId",
+                table: "KeyStageSubjectsEnquiry",
+                column: "KeyStageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KeyStageSubjectsEnquiry_SubjectId",
+                table: "KeyStageSubjectsEnquiry",
+                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LocalAuthority_Code",
@@ -828,14 +1186,19 @@ namespace Infrastructure.Migrations
                 column: "LocalAuthorityDistrictId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId",
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId_LocalAuthorityDistrictId",
                 table: "LocalAuthorityDistrictCoverage",
-                column: "TuitionPartnerId");
+                columns: new[] { "TuitionPartnerId", "LocalAuthorityDistrictId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocalAuthorityDistrictCoverage_TuitionTypeId",
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionPartnerId_TuitionTypeId_LocalAuthorityDistrictId",
                 table: "LocalAuthorityDistrictCoverage",
-                column: "TuitionTypeId");
+                columns: new[] { "TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LocalAuthorityDistrictCoverage_TuitionTypeId_LocalAuthorityDistrictId",
+                table: "LocalAuthorityDistrictCoverage",
+                columns: new[] { "TuitionTypeId", "LocalAuthorityDistrictId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_LocalAuthorityDistricts_Code",
@@ -857,6 +1220,27 @@ namespace Infrastructure.Migrations
                 name: "IX_LocalAuthorityDistricts_RegionId",
                 table: "LocalAuthorityDistricts",
                 column: "RegionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganisationType_IsTypeOfCharity",
+                table: "OrganisationType",
+                column: "IsTypeOfCharity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganisationType_Name",
+                table: "OrganisationType",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhaseOfEducation_Name",
+                table: "PhaseOfEducation",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prices_GroupSize",
+                table: "Prices",
+                column: "GroupSize");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prices_SubjectId",
@@ -885,19 +1269,60 @@ namespace Infrastructure.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Schools_EstablishmentStatusId",
+                table: "Schools",
+                column: "EstablishmentStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_EstablishmentTypeGroupId",
+                table: "Schools",
+                column: "EstablishmentTypeGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_LocalAuthorityDistrictId",
+                table: "Schools",
+                column: "LocalAuthorityDistrictId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_LocalAuthorityId",
+                table: "Schools",
+                column: "LocalAuthorityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_PhaseOfEducationId",
+                table: "Schools",
+                column: "PhaseOfEducationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_Postcode",
+                table: "Schools",
+                column: "Postcode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schools_Urn",
+                table: "Schools",
+                column: "Urn",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SubjectCoverage_SubjectId",
                 table: "SubjectCoverage",
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubjectCoverage_TuitionPartnerId",
+                name: "IX_SubjectCoverage_TuitionPartnerId_SubjectId",
                 table: "SubjectCoverage",
-                column: "TuitionPartnerId");
+                columns: new[] { "TuitionPartnerId", "SubjectId" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubjectCoverage_TuitionTypeId",
+                name: "IX_SubjectCoverage_TuitionPartnerId_TuitionTypeId_SubjectId",
                 table: "SubjectCoverage",
-                column: "TuitionTypeId");
+                columns: new[] { "TuitionPartnerId", "TuitionTypeId", "SubjectId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubjectCoverage_TuitionTypeId_SubjectId",
+                table: "SubjectCoverage",
+                columns: new[] { "TuitionTypeId", "SubjectId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Subjects_KeyStageId",
@@ -916,15 +1341,51 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartners_ImportId",
+                table: "TuitionPartners",
+                column: "ImportId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartners_IsActive",
+                table: "TuitionPartners",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartners_Name",
                 table: "TuitionPartners",
                 column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartners_OrganisationTypeId",
+                table: "TuitionPartners",
+                column: "OrganisationTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartners_SeoUrl",
                 table: "TuitionPartners",
                 column: "SeoUrl",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnersEnquiry_EnquiryId",
+                table: "TuitionPartnersEnquiry",
+                column: "EnquiryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnersEnquiry_EnquiryResponseId",
+                table: "TuitionPartnersEnquiry",
+                column: "EnquiryResponseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnersEnquiry_MagicLinkId",
+                table: "TuitionPartnersEnquiry",
+                column: "MagicLinkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TuitionPartnersEnquiry_TuitionPartnerId",
+                table: "TuitionPartnersEnquiry",
+                column: "TuitionPartnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionTypes_Name",
@@ -938,10 +1399,14 @@ namespace Infrastructure.Migrations
                 unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "DataProtectionKeys");
+
+            migrationBuilder.DropTable(
+                name: "KeyStageSubjectsEnquiry");
 
             migrationBuilder.DropTable(
                 name: "LocalAuthorityDistrictCoverage");
@@ -950,25 +1415,52 @@ namespace Infrastructure.Migrations
                 name: "Prices");
 
             migrationBuilder.DropTable(
+                name: "Schools");
+
+            migrationBuilder.DropTable(
                 name: "SubjectCoverage");
+
+            migrationBuilder.DropTable(
+                name: "TuitionPartnersEnquiry");
+
+            migrationBuilder.DropTable(
+                name: "EstablishmentStatus");
+
+            migrationBuilder.DropTable(
+                name: "EstablishmentTypeGroup");
 
             migrationBuilder.DropTable(
                 name: "LocalAuthorityDistricts");
 
             migrationBuilder.DropTable(
+                name: "PhaseOfEducation");
+
+            migrationBuilder.DropTable(
                 name: "Subjects");
 
             migrationBuilder.DropTable(
-                name: "TuitionPartners");
+                name: "Enquiries");
 
             migrationBuilder.DropTable(
-                name: "TuitionTypes");
+                name: "EnquiryResponses");
+
+            migrationBuilder.DropTable(
+                name: "TuitionPartners");
 
             migrationBuilder.DropTable(
                 name: "LocalAuthority");
 
             migrationBuilder.DropTable(
                 name: "KeyStage");
+
+            migrationBuilder.DropTable(
+                name: "MagicLinks");
+
+            migrationBuilder.DropTable(
+                name: "TuitionTypes");
+
+            migrationBuilder.DropTable(
+                name: "OrganisationType");
 
             migrationBuilder.DropTable(
                 name: "Regions");
