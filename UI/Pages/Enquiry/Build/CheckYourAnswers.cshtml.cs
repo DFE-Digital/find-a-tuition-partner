@@ -83,6 +83,11 @@ public class CheckYourAnswers : PageModel
 
         if (!ModelState.IsValid) return Page();
 
+        if (!isDuplicateFormPost)
+        {
+            await _sessionService.StartFormPostProcessingAsync();
+        }
+
         var searchResultsData = new GetSearchResultsQuery(Data);
         var searchResults = await _mediator.Send(searchResultsData);
         Data = Data with { TuitionPartnersForEnquiry = searchResults.Results };
@@ -97,8 +102,6 @@ public class CheckYourAnswers : PageModel
             {
                 Data = Data
             };
-
-            await _sessionService.StartFormPostProcessingAsync();
 
             try
             {
