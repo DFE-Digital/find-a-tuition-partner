@@ -35,7 +35,7 @@ public class DataImporterService : IHostedService
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
         var dataFileEnumerable = scope.ServiceProvider.GetRequiredService<IDataFileEnumerable>();
         var logoFileEnumerable = scope.ServiceProvider.GetRequiredService<ILogoFileEnumerable>();
-        var factory = scope.ServiceProvider.GetRequiredService<ISpreadsheetTuitionPartnerFactory>();
+        var factory = scope.ServiceProvider.GetRequiredService<ITribalSpreadsheetTuitionPartnerFactory>();
 
         _logger.LogInformation("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
@@ -132,9 +132,12 @@ public class DataImporterService : IHostedService
         await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
     }
 
-    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ISpreadsheetTuitionPartnerFactory factory,
+    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
         CancellationToken cancellationToken)
     {
+        //This will throw an error if there is not just 1 file
+        var dataFile = dataFileEnumerable.Single();
+
         var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions
@@ -163,44 +166,44 @@ public class DataImporterService : IHostedService
 
         DataImporterMappingConfig.Configure();
 
-        foreach (var dataFile in dataFileEnumerable)
-        {
-            var originalFilename = dataFile.Filename.ExtractFileNameFromDirectory();
+        var originalFilename = dataFile.Filename.ExtractFileNameFromDirectory();
 
-            //Use Polly to retry up to 5 times per file read (in case of network issues)
-            int numberOfRetries = 5;
-            var retryPolicy = Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(numberOfRetries, retryAttempt =>
-                    //Wait 2, 4, 8, 16 and then 32 seconds
-                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                    (exception, sleepDuration, retryCount, context) =>
-                    {
-                        _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
-                    });
-
-
-            _logger.LogInformation("Attempting to process Tuition Partner from file {OriginalFilename}", originalFilename);
-            TuitionPartner tuitionPartnerToProcess = new();
-            try
-            {
-                tuitionPartnerToProcess = await retryPolicy.ExecuteAsync(async () =>
+        //Use Polly to retry up to 5 times per file read (in case of network issues)
+        int numberOfRetries = 5;
+        var retryPolicy = Policy
+            .Handle<Exception>()
+            .WaitAndRetry(numberOfRetries, retryAttempt =>
+                //Wait 2, 4, 8, 16 and then 32 seconds
+                TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                (exception, sleepDuration, retryCount, context) =>
                 {
-                    //Uncomment to test polly
-                    //Random random = new();
-                    //if (random.Next(1, 3) == 1)
-                    //    throw new Exception("Testing Polly");
-
-                    return await factory.GetTuitionPartner(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, tpImportedDates, cancellationToken);
+                    _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
                 });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception thrown when processing Tuition Partner from file {OriginalFilename}", originalFilename);
-                //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
-                throw;
-            }
 
+
+        _logger.LogInformation("Attempting to process Tuition Partner from file {OriginalFilename}", originalFilename);
+        List<TuitionPartner> tuitionPartnersToProcess = new();
+        try
+        {
+            tuitionPartnersToProcess = retryPolicy.Execute(() =>
+            {
+                //Uncomment to test polly
+                //Random random = new();
+                //if (random.Next(1, 3) == 1)
+                //    throw new Exception("Testing Polly");
+
+                return factory.GetTuitionPartners(dataFile.Stream.Value, originalFilename, regions, subjects, organisationTypes, tpImportedDates);
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception thrown when processing Tuition Partners from file {OriginalFilename}", originalFilename);
+            //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
+            throw;
+        }
+
+        foreach (var tuitionPartnerToProcess in tuitionPartnersToProcess)
+        {
             var validator = new TuitionPartnerValidator(successfullyProcessed);
             var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
             if (!results.IsValid)
@@ -212,7 +215,7 @@ public class DataImporterService : IHostedService
             }
 
             //Find existing TP in db
-            var matchedTPs = allExistingTPs.Where(x => x.ImportId == tuitionPartnerToProcess.ImportId ||
+            var matchedTPs = allExistingTPs.Where(x => x.ImportId.Equals(tuitionPartnerToProcess.ImportId, StringComparison.InvariantCultureIgnoreCase) ||
                                                         x.SeoUrl == tuitionPartnerToProcess.SeoUrl).ToList();
 
             //If no match then add
@@ -265,7 +268,7 @@ public class DataImporterService : IHostedService
                 throw new InvalidOperationException(errorMsg);
             }
 
-            successfullyProcessed.Add(originalFilename, tuitionPartnerToProcess);
+            successfullyProcessed.Add(tuitionPartnerToProcess.SeoUrl, tuitionPartnerToProcess);
         }
 
         await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
@@ -355,7 +358,7 @@ public class DataImporterService : IHostedService
     {
         var tpsToDeactivate = allExistingTPs
                     .Where(x => x.IsActive &&
-                                !successfullyProcessed.Select(s => s.Value.ImportId).Contains(x.ImportId))
+                                !successfullyProcessed.Select(s => s.Value.ImportId.ToLower()).Contains(x.ImportId.ToLower()))
                     .ToList();
 
         if (tpsToDeactivate != null)

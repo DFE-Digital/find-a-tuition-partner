@@ -155,11 +155,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDataFileEnumerable, AzureBlobStorageDataFileEnumerable>();
         services.AddScoped<ILogoFileEnumerable, AzureBlobStorageLogoFileEnumerable>();
         services.AddScoped<ISpreadsheetExtractor, OpenXmlSpreadsheetExtractor>();
-        services.AddScoped<ISpreadsheetTuitionPartnerFactory, SpreadsheetTuitionPartnerFactory>();
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
         services.AddScoped<ISchoolsFactory, SchoolsFactory>();
         services.AddScoped<ITribalSpreadsheetTuitionPartnerFactory, TribalSpreadsheetTuitionPartnerFactory>();
-        services.AddScoped<IQualityAssuredSpreadsheetTuitionPartnerFactory, QualityAssuredSpreadsheetTuitionPartnerFactory>();
         services.AddHostedService<DataImporterService>();
         return services;
     }
