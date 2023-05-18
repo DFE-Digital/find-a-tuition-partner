@@ -14,11 +14,11 @@ public class ViewAndCaptureEnquiryResponseModelValidator : AbstractValidator<Vie
             .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize)
             .WithMessage($"Key stages and subjects must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
-        RuleFor(request => request.TuitionTypeText)
+        RuleFor(request => request.TuitionSettingText)
             .NotEmpty()
-            .WithMessage("Enter to what extent can you support that type of tuition")
+            .WithMessage("Enter to what extent can you support that tuition setting")
             .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"Type of tuition must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"Tuition setting must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.TutoringLogisticsText)
             .NotEmpty()

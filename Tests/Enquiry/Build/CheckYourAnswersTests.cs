@@ -25,10 +25,10 @@ public class CheckYourAnswersTests
 
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
     }
 
     [Theory]
@@ -78,7 +78,7 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
             Email = "test@test.com",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -111,7 +111,7 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
             Email = "test@test.com",
             //TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -144,7 +144,7 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
             Email = "400error@test",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -177,7 +177,7 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
             Email = "500error@test",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -208,7 +208,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Online,
+                TuitionSetting = TuitionSetting.Online,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 ConfirmTermsAndConditions = true
@@ -224,7 +224,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -242,7 +242,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -263,7 +263,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -281,7 +281,7 @@ public class CheckYourAnswersTests
                 //    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 //},
                 //HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -299,7 +299,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                //TuitionType = TuitionType.Any,
+                //TuitionSetting = TuitionSetting.Any,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -317,7 +317,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 //Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -335,7 +335,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 //TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",

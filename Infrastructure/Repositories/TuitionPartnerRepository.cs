@@ -30,25 +30,25 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
 
         if (filter.LocalAuthorityDistrictId != null)
         {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId && (filter.TuitionTypeId == null || x.TuitionTypeId == filter.TuitionTypeId)));
+            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId && (filter.TuitionSettingId == null || x.TuitionSettingId == filter.TuitionSettingId)));
         }
-        else if (filter.TuitionTypeId != null)
+        else if (filter.TuitionSettingId != null)
         {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == filter.TuitionTypeId));
+            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.TuitionSettingId == filter.TuitionSettingId));
         }
 
         if (filter.SubjectIds != null)
         {
             foreach (var subjectId in filter.SubjectIds)
             {
-                // Must support all selected subjects for the tuition type if selected
+                // Must support all selected subjects for the tuition setting if selected
                 // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising, possibly by denormalising the data
-                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (filter.TuitionTypeId == null || x.TuitionTypeId == filter.TuitionTypeId)));
+                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (filter.TuitionSettingId == null || x.TuitionSettingId == filter.TuitionSettingId)));
             }
         }
-        else if (filter.TuitionTypeId != null)
+        else if (filter.TuitionSettingId != null)
         {
-            queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.TuitionTypeId == filter.TuitionTypeId));
+            queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.TuitionSettingId == filter.TuitionSettingId));
         }
 
         var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
@@ -67,14 +67,14 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             var entities = await _context.TuitionPartners.AsNoTracking()
                 .Include(x => x.OrganisationType)
                 .IncludeTuitionForLocalDistrict(request.LocalAuthorityDistrictId)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.SubjectCoverage)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
                 .Include(x => x.SubjectCoverage)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.Prices)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
@@ -87,13 +87,13 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             {
                 var result = entity.Adapt<TuitionPartnerResult>();
 
-                result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
+                result.TuitionSettings = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionSetting).OrderByDescending(e => e.Id).Distinct().ToArray();
 
-                var tuitionTypesIds = result.TuitionTypes.Select(e => e.Id);
+                var tuitionSettingIds = result.TuitionSettings.Select(e => e.Id);
 
-                result.SubjectsCoverage = entity.SubjectCoverage.Where(e => tuitionTypesIds.Contains(e.TuitionType.Id)).OrderBy(e => e.Id).Distinct().ToArray();
+                result.SubjectsCoverage = entity.SubjectCoverage.Where(e => tuitionSettingIds.Contains(e.TuitionSetting.Id)).OrderBy(e => e.Id).Distinct().ToArray();
 
-                result.Prices = entity.Prices.Where(e => tuitionTypesIds.Contains(e.TuitionType.Id)).OrderBy(e => e.Id).Distinct().ToArray();
+                result.Prices = entity.Prices.Where(e => tuitionSettingIds.Contains(e.TuitionSetting.Id)).OrderBy(e => e.Id).Distinct().ToArray();
 
                 results.Add(result);
             }

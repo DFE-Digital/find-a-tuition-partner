@@ -1,0 +1,38 @@
+﻿@page
+@model WhichTuitionSettings
+@{
+  var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/which-subjects";
+  ViewData["Title"] = "What tuition setting do you need?";
+  ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <govuk-error-summary>
+      <govuk-error-summary-item asp-for="Data.TuitionSetting" />
+    </govuk-error-summary>
+
+    <form method="get" gfa-prepend-error-summary="false">
+      <h1 class="govuk-heading-l">What tuition setting do you need?</h1>
+
+      <govuk-radios asp-for="Data.TuitionSetting">
+        <govuk-radios-fieldset>
+          <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+            Tuition setting
+          </govuk-radios-fieldset-legend>
+          @foreach (var item in Model.Data.AllTuitionSettings)
+          {
+            <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionSetting">@item.DisplayName()</govuk-radios-item>
+          }
+        </govuk-radios-fieldset>
+      </govuk-radios>
+
+      <input type="hidden" name="handler" value="Submit" />
+      <div class="govuk-button-group">
+        <govuk-button type="submit" data-testid="call-to-action">Continue</govuk-button>
+      </div>
+
+      <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) { {"ExcludeTuitionSettings", true} }' />
+    </form>
+  </div>
+</div>

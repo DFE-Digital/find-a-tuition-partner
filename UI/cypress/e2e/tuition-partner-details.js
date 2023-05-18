@@ -23,7 +23,7 @@ Then("TP has provided full contact details", () => {
 Then("the search details are correct", () => {
   cy.location("search").should(
     "eq",
-    "?Postcode=sk11eb&TuitionType=Any&Subjects=KeyStage1-English"
+    "?Postcode=sk11eb&TuitionSetting=NoPreference&Subjects=KeyStage1-English"
   );
 });
 
@@ -115,11 +115,11 @@ Then(
 
 Then(
   "the tuition partner pricing table is displayed for {string}:",
-  (tuitionTypes) => {
-    tuitionTypes.split(",").forEach((tuitionType) => {
+  (tuitionSettings) => {
+    tuitionSettings.split(",").forEach((tuitionSetting) => {
       cy.get('[data-testid="pricing-table"]').should(
         "contain.text",
-        tuitionType.trim()
+        tuitionSetting.trim()
       );
     });
   }
@@ -128,7 +128,7 @@ Then(
 Then("the tuition partner full pricing tables are not displayed", () => {
   for (let i = 1; i < 5; i++) {
     cy.get(
-      `[data-testid="full-pricing-table-in-school-key-stage-${i}"]`
+      `[data-testid="full-pricing-table-face-to-face-key-stage-${i}"]`
     ).should("not.exist");
     cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`).should(
       "not.exist"
@@ -139,7 +139,7 @@ Then("the tuition partner full pricing tables are not displayed", () => {
 Then("the tuition partner full pricing tables are displayed", () => {
   for (let i = 1; i < 5; i++) {
     cy.get(
-      `[data-testid="full-pricing-table-in-school-key-stage-${i}"]`
+      `[data-testid="full-pricing-table-face-to-face-key-stage-${i}"]`
     ).should("exist");
     cy.get(`[data-testid="full-pricing-table-online-key-stage-${i}"]`).should(
       "exist"
@@ -178,7 +178,7 @@ Then("all tuition partner details are populated correctly", () => {
     "contain.text",
     "Key stage 1: English and Maths"
   );
-  cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get('[data-testid="tuition-setting"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
   cy.get('[data-testid="organisation-type"]').first().should("not.be.empty");
 });

@@ -67,7 +67,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,
-            TuitionTypeName = enquiry.TuitionTypeId.GetTuitionTypeName(),
+            TuitionSettingName = enquiry.TuitionSettingId.GetTuitionSettingName(),
             SENDRequirements = enquiry.SENDRequirements,
             AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt.ToLocalDateTime(),

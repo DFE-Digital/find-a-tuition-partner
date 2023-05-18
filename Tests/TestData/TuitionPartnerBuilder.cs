@@ -1,5 +1,5 @@
 ﻿using Domain;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests.TestData;
 
@@ -21,7 +21,7 @@ public record TuitionPartnerBuilder
     public string ImportId { get; private set; } = "import-id";
     public bool IsActive { get; private set; } = true;
 
-    public Dictionary<int, TuitionType[]> Districts { get; private init; } = new();
+    public Dictionary<int, TuitionSetting[]> Districts { get; private init; } = new();
     public SubjectBuilder Subjects { get; private init; } = new SubjectBuilder();
 
     public static implicit operator TuitionPartner(TuitionPartnerBuilder builder) => new()
@@ -35,8 +35,8 @@ public record TuitionPartnerBuilder
         Email = builder.EmailAddress,
         Address = builder.PostalAddress,
         LocalAuthorityDistrictCoverage = builder.DistrictCoverage,
-        SubjectCoverage = builder.Subjects.SubjectCoverage.Select(x => new { x.SubjectId, x.TuitionTypeId }).Distinct().Select(x => new SubjectCoverage() { SubjectId = x.SubjectId, TuitionTypeId = x.TuitionTypeId }).ToList(),
-        Prices = builder.Subjects.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId, x.GroupSize, x.HourlyRate }).Distinct().Select(x => new Price() { TuitionTypeId = x.TuitionTypeId, SubjectId = x.SubjectId, GroupSize = x.GroupSize, HourlyRate = x.HourlyRate }).ToList(),
+        SubjectCoverage = builder.Subjects.SubjectCoverage.Select(x => new { x.SubjectId, x.TuitionSettingId }).Distinct().Select(x => new SubjectCoverage() { SubjectId = x.SubjectId, TuitionSettingId = x.TuitionSettingId }).ToList(),
+        Prices = builder.Subjects.Prices.Select(x => new { x.TuitionSettingId, x.SubjectId, x.GroupSize, x.HourlyRate }).Distinct().Select(x => new Price() { TuitionSettingId = x.TuitionSettingId, SubjectId = x.SubjectId, GroupSize = x.GroupSize, HourlyRate = x.HourlyRate }).ToList(),
         Logo = builder.Logo,
         OrganisationTypeId = builder.OrganisationTypeId,
         TPLastUpdatedData = builder.TPLastUpdatedData,
@@ -49,7 +49,7 @@ public record TuitionPartnerBuilder
     Districts.SelectMany(district => district.Value.Select(tuition => new LocalAuthorityDistrictCoverage
     {
         LocalAuthorityDistrictId = district.Key,
-        TuitionTypeId = (int)tuition,
+        TuitionSettingId = (int)tuition,
     })).ToList();
 
     internal TuitionPartnerBuilder WithId(int id)
@@ -80,12 +80,12 @@ public record TuitionPartnerBuilder
             }
         };
 
-    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionType[] tuition)
+    internal TuitionPartnerBuilder TaughtIn(District district, params TuitionSetting[] tuition)
         => new TuitionPartnerBuilder(this) with
         {
-            Districts = new Dictionary<int, TuitionType[]>(Districts)
+            Districts = new Dictionary<int, TuitionSetting[]>(Districts)
             {
-                [district.Id] = tuition.Any() ? tuition : new[] { TuitionType.InSchool }
+                [district.Id] = tuition.Any() ? tuition : new[] { TuitionSetting.FaceToFace }
             }
         };
 

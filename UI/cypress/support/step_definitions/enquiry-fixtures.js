@@ -34,8 +34,8 @@ Given("An enquiry has been submitted", async () => {
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
+    Step(this, "they will be taken to the 'Tuition setting' page");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now' button");
@@ -96,8 +96,8 @@ Given("An enquiry with no optional info has been submitted", async () => {
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
+    Step(this, "they will be taken to the 'Tuition setting' page");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now' button");

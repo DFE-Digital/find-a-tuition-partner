@@ -20,8 +20,8 @@ When("user has journeyed forward to the check your answers page", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they will be taken to the 'Tuition setting' page");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
@@ -112,8 +112,8 @@ When("user creates another enquiry", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they will be taken to the 'Tuition setting' page");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
@@ -182,8 +182,8 @@ When("user navigates to the first enquiry question", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they will be taken to the 'Tuition setting' page");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
@@ -265,8 +265,8 @@ When("user navigates to check your answers unselecting filter results", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they will be taken to the 'Tuition setting' page");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they unselect filter results");
@@ -310,8 +310,8 @@ When(
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
+    Step(this, "they will be taken to the 'Tuition setting' page");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now'");

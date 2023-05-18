@@ -39,14 +39,14 @@ Given(
 );
 
 Given(
-  "a user has arrived on the 'Search results' page for {string} for postcode {string} and tuition type {string}",
-  (keystages, postcode, tuitionType) => {
+  "a user has arrived on the 'Search results' page for {string} for postcode {string} and tuition setting {string}",
+  (keystages, postcode, tuitionSetting) => {
     const query = keystages
       .split(",")
       .map((s) => KeyStageSubjects("subjects", s.trim()))
       .join("&");
     cy.visit(
-      `/search-results?Postcode=${postcode}&${query}&TuitionType=${tuitionType}`
+      `/search-results?Postcode=${postcode}&${query}&TuitionSetting=${tuitionSetting}`
     );
   }
 );
@@ -128,7 +128,7 @@ Given(
       `/search-results?${KeyStageSubjects(
         "Data.Subjects",
         subjects
-      )}&Data.TuitionType=Any&Data.Postcode=${postcode}`
+      )}&Data.TuitionSetting=NoPreference&Data.Postcode=${postcode}`
     );
     cy.get(".govuk-link").contains(name).click();
   }
@@ -142,7 +142,7 @@ Given(
         `/search-results?${KeyStageSubjects(
           "Data.Subjects",
           subjects
-        )}&Data.TuitionType=Any&Data.Postcode=${postcode}`
+        )}&Data.TuitionSetting=NoPreference&Data.Postcode=${postcode}`
       );
       cy.get(".govuk-link").contains(tplist.tpnames[name]).click();
     });
@@ -153,7 +153,7 @@ When("they select subject {string}", (subject) => {
   cy.get(`input[id="${kebabCase(subject)}"]`).click();
 });
 
-When("they select {string} tuition type", (tuition) => {
+When("they select {string} tuition setting", (tuition) => {
   cy.get(`input[id="${kebabCase(tuition)}"]`).click();
 });
 
@@ -161,22 +161,22 @@ When("they select the tuition partner {string}", (name) => {
   cy.get(".govuk-link").contains(name).click();
 });
 
-Then("they see the tuition types {string}", (tuitionTypes) => {
-  const tuitionArray = tuitionTypes.split(",").map((s) => s.trim());
+Then("they see the tuition settings {string}", (tuitionSettings) => {
+  const tuitionArray = tuitionSettings.split(",").map((s) => s.trim());
 
-  cy.get("[data-testid='type-of-tuition']")
+  cy.get("[data-testid='tuition-setting']")
     .invoke("text")
     .then((text) => {
-      var listedTuitionTypes = text
+      var listedTuitionSettings = text
         .split("\n")
         .map((s) => s.trim())
         .filter((s) => s);
-      expect(listedTuitionTypes).to.deep.equal(tuitionArray);
+      expect(listedTuitionSettings).to.deep.equal(tuitionArray);
     });
 });
 
-Then("they see the cost for tuition type {string}", (tuitionTypes) => {
-  const tuitionArray = tuitionTypes.split(",").map((s) => s.trim());
+Then("they see the cost for tuition setting {string}", (tuitionSettings) => {
+  const tuitionArray = tuitionSettings.split(",").map((s) => s.trim());
 
   tuitionArray.forEach((element) => {
     cy.get("[data-testid='pricing-table'] thead").contains("th", element);
@@ -213,7 +213,7 @@ Then("all tuition partner parameters are populated correctly", () => {
   cy.get('[data-testid="results-subjects"] > li:first')
     .first()
     .should("contain.text", "Key");
-  cy.get('[data-testid="type-of-tuition"]').first().should("not.be.empty");
+  cy.get('[data-testid="tuition-setting"]').first().should("not.be.empty");
   cy.get('[data-testid="results-description"]').first().should("not.be.empty");
 });
 
@@ -233,7 +233,7 @@ Then(
   }
 );
 
-When("the user selects tuition type {string}", (tuitionType) => {
-  cy.get(`input[id="${kebabCase(tuitionType)}"]`).click();
+When("the user selects tuition setting {string}", (tuitionSetting) => {
+  cy.get(`input[id="${kebabCase(tuitionSetting)}"]`).click();
   cy.wait(500);
 });

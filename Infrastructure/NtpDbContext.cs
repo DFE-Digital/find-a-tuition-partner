@@ -19,7 +19,7 @@ public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
     public DbSet<Region> Regions { get; set; } = null!;
     public DbSet<Subject> Subjects { get; set; } = null!;
     public DbSet<TuitionPartner> TuitionPartners { get; set; } = null!;
-    public DbSet<TuitionType> TuitionTypes { get; set; } = null!;
+    public DbSet<TuitionSetting> TuitionSettings { get; set; } = null!;
     public DbSet<SubjectCoverage> SubjectCoverage { get; set; } = null!;
     public DbSet<School> Schools { get; set; } = null!;
     public DbSet<PhaseOfEducation> PhaseOfEducation { get; set; } = null!;

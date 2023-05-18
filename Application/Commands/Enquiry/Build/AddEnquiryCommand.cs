@@ -9,7 +9,7 @@ using Domain.Enums;
 using Domain.Search;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Application.Commands.Enquiry.Build;
 
@@ -78,7 +78,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
             }).ToList();
 
-        var tuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType);
+        var tuitionSettingId = GetTuitionSettingId(request.Data!.TuitionSetting);
 
         var enquiry = new Domain.Enquiry()
         {
@@ -91,7 +91,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
             PostCode = request.Data!.Postcode!,
             LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
-            TuitionTypeId = tuitionTypeId,
+            TuitionSettingId = tuitionSettingId,
             MagicLink = enquirerMagicLink
         };
 
@@ -225,13 +225,13 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return personalisation;
     }
 
-    private static int? GetTuitionTypeId(TuitionType? tuitionType)
+    private static int? GetTuitionSettingId(TuitionSetting? tuitionSetting)
     {
-        return tuitionType switch
+        return tuitionSetting switch
         {
             null => null,
-            TuitionType.InSchool => (int)TuitionType.InSchool,
-            TuitionType.Online => (int)TuitionType.Online,
+            TuitionSetting.FaceToFace => (int)TuitionSetting.FaceToFace,
+            TuitionSetting.Online => (int)TuitionSetting.Online,
             _ => null
         };
     }

@@ -9,7 +9,7 @@ using Infrastructure.Mapping;
 using Microsoft.Extensions.Logging;
 using GroupSize = Domain.Enums.GroupSize;
 using KeyStage = Domain.Enums.KeyStage;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Infrastructure.Factories;
 
@@ -394,14 +394,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string LADNameColumn = "E";
         const string RegionCodeColumn = "F";
         const string RegionNameColumn = "G";
-        const string InSchoolColumn = "H";
+        const string FaceToFaceColumn = "H";
         const string OnlineColumn = "I";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "ID";
 
         var sheetName = DeliverySheetName;
-        var ladsCovered = new Dictionary<string, (int ladId, string ladName, string regionCode, string regionName, bool inSchool, bool online)>();
+        var ladsCovered = new Dictionary<string, (int ladId, string ladName, string regionCode, string regionName, bool faceToFace, bool online)>();
         var regionsAndLADs = _regions!
             .SelectMany(r => r.LocalAuthorityDistricts
                 .Select(l => new { RegionName = r.Name, LocalAuthorityDistrictId = l.Id, LocalAuthorityDistrictCode = l.Code, LocalAuthorityDistrictName = l.Name })
@@ -433,10 +433,10 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     }
                     else
                     {
-                        var inSchool = spreadsheetExtractor!.GetCellValue(sheetName, InSchoolColumn, row).ParseBoolean();
+                        var faceToFace = spreadsheetExtractor!.GetCellValue(sheetName, FaceToFaceColumn, row).ParseBoolean();
                         var online = spreadsheetExtractor!.GetCellValue(sheetName, OnlineColumn, row).ParseBoolean();
 
-                        ladsCovered[ladCode] = (ladId.LocalAuthorityDistrictId, ladName, regionCode, regionName, inSchool, online);
+                        ladsCovered[ladCode] = (ladId.LocalAuthorityDistrictId, ladName, regionCode, regionName, faceToFace, online);
                     }
                 }
                 else
@@ -451,15 +451,15 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
         else
         {
-            foreach ((_, (int ladId, string ladName, string regionCode, string regionName, bool inSchool, bool online)) in ladsCovered)
+            foreach ((_, (int ladId, string ladName, string regionCode, string regionName, bool faceToFace, bool online)) in ladsCovered)
             {
-                if (inSchool)
+                if (faceToFace)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionType.InSchool, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionSetting.FaceToFace, ladId);
                 }
                 if (online)
                 {
-                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionType.Online, ladId);
+                    AddLocalAuthorityDistrictCoverage(tuitionPartner, TuitionSetting.Online, ladId);
                 }
             }
 
@@ -507,12 +507,12 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, TuitionType tuitionType, int ladId)
+    private static void AddLocalAuthorityDistrictCoverage(TuitionPartner tuitionPartner, TuitionSetting tuitionSetting, int ladId)
     {
         var coverage = new LocalAuthorityDistrictCoverage
         {
             TuitionPartner = tuitionPartner,
-            TuitionTypeId = (int)tuitionType,
+            TuitionSettingId = (int)tuitionSetting,
             LocalAuthorityDistrictId = ladId
         };
 
@@ -524,14 +524,14 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string GroupColumn = "D";
         const string KeyStageColumn = "E";
         const string SubjectColumn = "F";
-        const string TuitionTypeColumn = "G";
+        const string TuitionSettingColumn = "G";
         const string RateColumn = "H";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "ID";
 
         var sheetName = PricingSheetName;
-        var subjectCoverageAndPrices = new Dictionary<(GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionType tuitionType), decimal>();
+        var subjectCoverageAndPrices = new Dictionary<(GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionSetting tuitionSetting), decimal>();
 
         bool castError = false;
 
@@ -542,7 +542,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 var groupString = data;
                 var keyStageString = spreadsheetExtractor!.GetCellValue(sheetName, KeyStageColumn, row);
                 var subjectString = spreadsheetExtractor!.GetCellValue(sheetName, SubjectColumn, row);
-                var tuitionTypeString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionTypeColumn, row);
+                var tuitionSettingString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionSettingColumn, row);
 
                 //Cast to required types
                 if (!groupString.TryParse(out GroupSize groupSize))
@@ -560,11 +560,11 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     castError = true;
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
                 }
-                var tuitionTypeStringReplaced = tuitionTypeString.Replace("Both", TuitionType.Any.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-                if (!tuitionTypeStringReplaced.TryParse(out TuitionType tuitionType))
+                var tuitionSettingStringReplaced = tuitionSettingString.Replace("Both", TuitionSetting.NoPreference.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
+                if (!tuitionSettingStringReplaced.TryParse(out TuitionSetting tuitionSetting))
                 {
                     castError = true;
-                    _errors.Add($"Invalid TuitionType conversion.  '{tuitionTypeString}' is on row {row} on '{sheetName}' worksheet");
+                    _errors.Add($"Invalid TuitionSetting conversion.  '{tuitionSettingString}' is on row {row} on '{sheetName}' worksheet");
                 }
                 int subjectId = 0;
                 if (!castError)
@@ -587,7 +587,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     return;
                 }
 
-                var key = (groupSize, keyStage, subjectEnum, subjectId, tuitionType);
+                var key = (groupSize, keyStage, subjectEnum, subjectId, tuitionSetting);
                 if (!subjectCoverageAndPrices.ContainsKey(key))
                 {
                     //We store all prices exclusive of VAT
@@ -595,7 +595,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 }
                 else
                 {
-                    _errors.Add($"Duplicate '{groupString}', '{keyStageString}', '{subjectString}' and '{tuitionTypeString}', in '{sheetName}' worksheet");
+                    _errors.Add($"Duplicate '{groupString}', '{keyStageString}', '{subjectString}' and '{tuitionSettingString}', in '{sheetName}' worksheet");
                 }
             }, tuitionPartner.ImportId);
 
@@ -605,18 +605,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
         else
         {
-            var ladHasInSchool = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionType.InSchool);
-            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == (int)TuitionType.Online);
+            var ladHasFaceToFace = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionSettingId == (int)TuitionSetting.FaceToFace);
+            var ladHasOnline = tuitionPartner.LocalAuthorityDistrictCoverage.Any(x => x.TuitionSettingId == (int)TuitionSetting.Online);
 
-            foreach (((GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionType tuitionType), decimal rate) in subjectCoverageAndPrices)
+            foreach (((GroupSize groupSize, KeyStage keyStage, Domain.Enums.Subject subject, int subjectId, TuitionSetting tuitionSetting), decimal rate) in subjectCoverageAndPrices)
             {
-                if (ladHasInSchool && rate > 0 && (tuitionType == TuitionType.InSchool || tuitionType == TuitionType.Any))
+                if (ladHasFaceToFace && rate > 0 && (tuitionSetting == TuitionSetting.FaceToFace || tuitionSetting == TuitionSetting.NoPreference))
                 {
-                    AddPrice(tuitionPartner, TuitionType.InSchool, subjectId, groupSize, rate);
+                    AddPrice(tuitionPartner, TuitionSetting.FaceToFace, subjectId, groupSize, rate);
                 }
-                if (ladHasOnline && rate > 0 && (tuitionType == TuitionType.Online || tuitionType == TuitionType.Any))
+                if (ladHasOnline && rate > 0 && (tuitionSetting == TuitionSetting.Online || tuitionSetting == TuitionSetting.NoPreference))
                 {
-                    AddPrice(tuitionPartner, TuitionType.Online, subjectId, groupSize, rate);
+                    AddPrice(tuitionPartner, TuitionSetting.Online, subjectId, groupSize, rate);
                 }
             }
 
@@ -627,13 +627,13 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             else
             {
                 //Add subject coverage
-                var subjectCoverages = tuitionPartner.Prices.Select(x => new { x.TuitionTypeId, x.SubjectId }).Distinct();
+                var subjectCoverages = tuitionPartner.Prices.Select(x => new { x.TuitionSettingId, x.SubjectId }).Distinct();
                 foreach (var subjectCoverageLoop in subjectCoverages)
                 {
                     var coverage = new SubjectCoverage
                     {
                         TuitionPartner = tuitionPartner,
-                        TuitionTypeId = subjectCoverageLoop.TuitionTypeId,
+                        TuitionSettingId = subjectCoverageLoop.TuitionSettingId,
                         SubjectId = subjectCoverageLoop.SubjectId
                     };
 
@@ -645,12 +645,12 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                 {
                     _warnings.Add($"Some zero rates on '{sheetName}' worksheet");
                 }
-                //Warn - see if any in school or online when not set for LADs
-                if (!ladHasInSchool && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == TuitionType.InSchool || x.Key.tuitionType == TuitionType.Any)))
+                //Warn - see if any face-to-face or online when not set for LADs
+                if (!ladHasFaceToFace && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionSetting == TuitionSetting.FaceToFace || x.Key.tuitionSetting == TuitionSetting.NoPreference)))
                 {
-                    _warnings.Add($"Some subjects and prices exist for In School on '{sheetName}' worksheet.  But no LADs are In School");
+                    _warnings.Add($"Some subjects and prices exist for Face-to-face on '{sheetName}' worksheet.  But no LADs are Face-to-face");
                 }
-                if (!ladHasOnline && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionType == TuitionType.Online || x.Key.tuitionType == TuitionType.Any)))
+                if (!ladHasOnline && subjectCoverageAndPrices.Any(x => x.Value > 0 && (x.Key.tuitionSetting == TuitionSetting.Online || x.Key.tuitionSetting == TuitionSetting.NoPreference)))
                 {
                     _warnings.Add($"Some subjects and prices exist for Online on '{sheetName}' worksheet.  But no LADs are Online");
                 }
@@ -658,12 +658,12 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         }
     }
 
-    private static void AddPrice(TuitionPartner tuitionPartner, TuitionType tuitionType, int subjectId, GroupSize groupSize, decimal rate)
+    private static void AddPrice(TuitionPartner tuitionPartner, TuitionSetting tuitionSetting, int subjectId, GroupSize groupSize, decimal rate)
     {
         var price = new Price
         {
             TuitionPartner = tuitionPartner,
-            TuitionTypeId = (int)tuitionType,
+            TuitionSettingId = (int)tuitionSetting,
             SubjectId = subjectId,
             GroupSize = (int)groupSize,
             HourlyRate = rate

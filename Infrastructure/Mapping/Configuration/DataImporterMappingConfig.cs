@@ -20,7 +20,7 @@ namespace Infrastructure.Mapping.Configuration
                 .Ignore(dest => dest.Id)
                 .Ignore(dest => dest.TuitionPartnerId)
                 .Ignore(dest => dest.TuitionPartner!)
-                .Ignore(dest => dest.TuitionType!)
+                .Ignore(dest => dest.TuitionSetting!)
                 .Ignore(dest => dest.LocalAuthorityDistrict!);
         }
 
@@ -31,7 +31,7 @@ namespace Infrastructure.Mapping.Configuration
                 .Ignore(dest => dest.Id)
                 .Ignore(dest => dest.TuitionPartnerId)
                 .Ignore(dest => dest.TuitionPartner!)
-                .Ignore(dest => dest.TuitionType!)
+                .Ignore(dest => dest.TuitionSetting!)
                 .Ignore(dest => dest.Subject!);
         }
 
@@ -42,7 +42,7 @@ namespace Infrastructure.Mapping.Configuration
                 .Ignore(dest => dest.Id)
                 .Ignore(dest => dest.TuitionPartnerId)
                 .Ignore(dest => dest.TuitionPartner!)
-                .Ignore(dest => dest.TuitionType!)
+                .Ignore(dest => dest.TuitionSetting!)
                 .Ignore(dest => dest.Subject!);
         }
 

@@ -41,7 +41,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         {
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
             EnquiryKeyStageSubjects = keyStageSubjects,
-            EnquiryTuitionType = enquiry.TuitionTypeId.GetTuitionTypeName(),
+            EnquiryTuitionSetting = enquiry.TuitionSettingId.GetTuitionSettingName(),
             EnquiryTutoringLogistics = enquiry.TutoringLogistics,
             EnquirySENDRequirements = enquiry.SENDRequirements,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,
@@ -54,7 +54,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         if (enquiryResponse != null)
         {
             result.KeyStageAndSubjectsText = enquiryResponse.KeyStageAndSubjectsText;
-            result.TuitionTypeText = enquiryResponse.TuitionTypeText;
+            result.TuitionSettingText = enquiryResponse.TuitionSettingText;
             result.TutoringLogisticsText = enquiryResponse.TutoringLogisticsText;
             result.SENDRequirementsText = enquiryResponse.SENDRequirementsText;
             result.AdditionalInformationText = enquiryResponse.AdditionalInformationText;

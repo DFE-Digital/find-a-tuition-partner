@@ -26,7 +26,7 @@ public class TuitionPartnerService : ITuitionPartnerService
 
     public IEnumerable<TuitionPartnerResult> FilterTuitionPartnersData(IEnumerable<TuitionPartnerResult> results, TuitionPartnersDataFilter dataFilter)
     {
-        //Remove the pricing, tuition type and subject data for all TPs that are not in the data filter supplied
+        //Remove the pricing, tuition setting and subject data for all TPs that are not in the data filter supplied
         foreach (var tpResult in results)
         {
             tpResult.RefinedDataEmptyReason = string.Empty;
@@ -67,20 +67,20 @@ public class TuitionPartnerService : ITuitionPartnerService
                         }
                     }
 
-                    if (dataFilter.TuitionTypeId != null)
+                    if (dataFilter.TuitionSettingId != null)
                     {
-                        var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
+                        var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionSettingId == dataFilter.TuitionSettingId.Value).ToList();
                         if (!refinedOriginalPrices.Any())
                         {
                             tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
-                                $"Does not offer {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in " :
-                                $"{tpResult.RefinedDataEmptyReason} or {((TuitionType)dataFilter.TuitionTypeId).DisplayName().ToLower()} tuition in ";
+                                $"Does not offer {((TuitionSetting)dataFilter.TuitionSettingId).DisplayName().ToLower()} tuition in " :
+                                $"{tpResult.RefinedDataEmptyReason} or {((TuitionSetting)dataFilter.TuitionSettingId).DisplayName().ToLower()} tuition in ";
                             tpResult.RefinedDataEmptyReasonAppendLAName = true;
                         }
 
                         if (prices.Any())
                         {
-                            prices = prices.Where(x => x.TuitionTypeId == dataFilter.TuitionTypeId.Value).ToList();
+                            prices = prices.Where(x => x.TuitionSettingId == dataFilter.TuitionSettingId.Value).ToList();
                         }
                     }
                 }
@@ -98,16 +98,16 @@ public class TuitionPartnerService : ITuitionPartnerService
                     }
                 }
 
-                var tuitionTypes = prices.Select(x => x.TuitionTypeId).Distinct();
+                var tuitionSettings = prices.Select(x => x.TuitionSettingId).Distinct();
                 var subjects = prices.Select(x => x.SubjectId).Distinct();
 
-                tpResult.TuitionTypes = tpResult.TuitionTypes!.Where(x => tuitionTypes.Contains(x.Id)).ToArray();
+                tpResult.TuitionSettings = tpResult.TuitionSettings!.Where(x => tuitionSettings.Contains(x.Id)).ToArray();
                 tpResult.SubjectsCoverage = tpResult.SubjectsCoverage!.Where(x => subjects.Contains(x.SubjectId)).ToArray();
             }
             else
             {
                 tpResult.Prices = null;
-                tpResult.TuitionTypes = null;
+                tpResult.TuitionSettings = null;
                 tpResult.SubjectsCoverage = null;
                 tpResult.RefinedDataEmptyReason ??= "Does not offer tuition for the selected options";
             }

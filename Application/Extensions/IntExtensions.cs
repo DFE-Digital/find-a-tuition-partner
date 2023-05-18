@@ -1,16 +1,16 @@
 namespace Application.Extensions;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 public static class IntExtensions
 {
-    public static string GetTuitionTypeName(this int? tuitionTypeId)
+    public static string GetTuitionSettingName(this int? tuitionSettingId)
     {
-        return tuitionTypeId switch
+        return tuitionSettingId switch
         {
-            null => TuitionType.Any.DisplayName(),
-            (int)TuitionType.Online => TuitionType.Online.DisplayName(),
-            (int)TuitionType.InSchool => TuitionType.InSchool.DisplayName(),
-            _ => TuitionType.Any.DisplayName()
+            null => TuitionSetting.NoPreference.DisplayName(),
+            (int)TuitionSetting.Online => TuitionSetting.Online.DisplayName(),
+            (int)TuitionSetting.FaceToFace => TuitionSetting.FaceToFace.DisplayName(),
+            _ => TuitionSetting.NoPreference.DisplayName()
         };
     }
 

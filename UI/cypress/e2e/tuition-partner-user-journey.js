@@ -41,8 +41,8 @@ Then("user has journeyed forward to a selected tuition partner page", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they will be taken to the 'Tuition setting' page");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "the filter section will be correctly displayed");
@@ -61,7 +61,7 @@ Then("the filter section will be correctly displayed", () => {
     cy.get(`input[id=${kebabCase(element)}]`).check();
   });
   cy.get('[data-testid="postcode-input-box"]').should("have.value", "SK1 1EB");
-  cy.get(`input[id="any"]`).should("be.checked");
+  cy.get(`input[id="no-preference"]`).should("be.checked");
 });
 
 Then("they will be journey back to the page they started from", () => {
@@ -70,7 +70,7 @@ Then("they will be journey back to the page they started from", () => {
   Step(this, "they click 'Back'");
   Step(
     this,
-    "they will be taken to the 'What type of tuition do you need?' page"
+    "they will be taken to the 'What tuition setting do you need?' page"
   );
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which subjects' page");
@@ -141,11 +141,11 @@ Then("the subjects are correct in the subjects page", () => {
   });
 });
 
-Then("the type of tuition is correct in the type of tuition page", () => {
+Then("the tuition setting is correct in the tuition setting page", () => {
   Step(this, "they click 'Continue'");
-  cy.get("#any").should("not.be.checked");
+  cy.get("#no-preference").should("not.be.checked");
   cy.get("#online").should("not.be.checked");
-  cy.get("in-school").should("be.checked");
+  cy.get("face-to-face").should("be.checked");
   Step(this, "they click 'Continue'");
 });
 
@@ -171,7 +171,7 @@ Then(
       "have.value",
       "YO11 1AA"
     );
-    cy.get(`input[id="in-school"]`).should("be.checked");
+    cy.get(`input[id="face-to-face"]`).should("be.checked");
   }
 );
 
@@ -188,8 +188,8 @@ Then(
     Step(this, "they are shown the subjects for 'Key stage 2'");
     Step(this, "they select 'Key stage 2 English'");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
+    Step(this, "they will be taken to the 'Tuition setting' page");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they select the tuition partner '" + tp + "'");

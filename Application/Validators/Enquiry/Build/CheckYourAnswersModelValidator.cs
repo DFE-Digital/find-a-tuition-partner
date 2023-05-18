@@ -13,10 +13,10 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Select at least one key stage and related subject");
 
-        RuleFor(m => m.TuitionType)
+        RuleFor(m => m.TuitionSetting)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("Select a type of tuition option");
+            .WithMessage("Select a tuition setting option");
 
         RuleFor(request => request.Email)
             .NotEmpty()

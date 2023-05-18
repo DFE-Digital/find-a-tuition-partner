@@ -18,7 +18,7 @@ public static class A
     public static TuitionPartnerBuilder TuitionPartner => new TuitionPartnerBuilder()
         .WithSubjects(s => s
             .Subject(Subjects.Id.KeyStage1English, l => l
-                .InSchool()
+                .FaceToFace()
                 .Costing(12m)
                 .ForGroupSizes(2)));
 }

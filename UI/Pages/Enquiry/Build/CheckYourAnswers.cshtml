@@ -8,7 +8,7 @@
 <form method="post">
   <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
-    <govuk-error-summary-item asp-for="Data.TuitionType" />
+    <govuk-error-summary-item asp-for="Data.TuitionSetting" />
     <govuk-error-summary-item asp-for="Data.Email" />
     <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
     <govuk-error-summary-item asp-for="Data.SENDRequirements" />
@@ -52,22 +52,22 @@
         </govuk-summary-list-row>
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
-            <div asp-validation-group-for="Data.TuitionType">
-              Type of tuition
+            <div asp-validation-group-for="Data.TuitionSetting">
+              Tuition setting
             </div>
           </govuk-summary-list-row-key>
           <govuk-summary-list-row-value>
-            @if (@Model.Data!.TuitionType == null)
+            @if (@Model.Data!.TuitionSetting == null)
             {
               <span>@StringConstants.IsRequiredLabel</span>
             }
             else
             {
-              @Model.Data!.TuitionType?.DisplayName()
+              @Model.Data!.TuitionSetting?.DisplayName()
             }
           </govuk-summary-list-row-value>
           <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="/WhichTuitionTypes" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" visually-hidden-text="type of tuition">Change</govuk-summary-list-row-action>
+            <govuk-summary-list-row-action asp-page="/WhichTuitionSettings" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" visually-hidden-text="tuition setting">Change</govuk-summary-list-row-action>
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
         <govuk-summary-list-row>
