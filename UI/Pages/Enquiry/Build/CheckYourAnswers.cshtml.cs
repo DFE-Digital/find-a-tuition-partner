@@ -10,6 +10,8 @@ namespace UI.Pages.Enquiry.Build;
 
 public class CheckYourAnswers : PageModel
 {
+    private const string EnquirySubmissionConfirmationModelKey = "EnquirySubmissionConfirmationModel";
+
     private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
     private readonly IHostEnvironment _hostEnvironment;
@@ -72,12 +74,19 @@ public class CheckYourAnswers : PageModel
         if (!_featureFlagsConfig.EnquiryBuilder)
             throw new InvalidOperationException("User is trying to submit an enquiry when the feature is disabled");
 
-        if (!await _sessionService.SessionDataExistsAsync())
+        var isDuplicateFormPost = await _sessionService.IsDuplicateFormPostAsync();
+
+        if (!await _sessionService.SessionDataExistsAsync() && !isDuplicateFormPost)
             return RedirectToPage("/Session/Timeout");
 
         Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
 
         if (!ModelState.IsValid) return Page();
+
+        if (!isDuplicateFormPost)
+        {
+            await _sessionService.StartFormPostProcessingAsync();
+        }
 
         var searchResultsData = new GetSearchResultsQuery(Data);
         var searchResults = await _mediator.Send(searchResultsData);
@@ -85,18 +94,31 @@ public class CheckYourAnswers : PageModel
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-        var command = new AddEnquiryCommand()
-        {
-            Data = Data
-        };
-
         var submittedConfirmationModel = new SubmittedConfirmationModel();
 
-        try
+        if (!isDuplicateFormPost)
         {
-            submittedConfirmationModel = await _mediator.Send(command);
+            var command = new AddEnquiryCommand()
+            {
+                Data = Data
+            };
+
+            try
+            {
+                submittedConfirmationModel = await _mediator.Send(command);
+            }
+            catch (EmailSendException)
+            {
+                submittedConfirmationModel.HadEmailSendException = true;
+            }
+            await _sessionService.SetFormPostResponseAsync(submittedConfirmationModel, EnquirySubmissionConfirmationModelKey);
         }
-        catch (EmailSendException)
+        else
+        {
+            submittedConfirmationModel = await _sessionService.GetPreviousFormPostResponseAsync<SubmittedConfirmationModel>(EnquirySubmissionConfirmationModelKey);
+        }
+
+        if (submittedConfirmationModel.HadEmailSendException)
         {
             Data.From = ReferrerList.CheckYourAnswers;
 
