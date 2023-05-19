@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230518165801_ChangeTuitionTypeToTuitionSetting")]
-    partial class ChangeTuitionTypeToTuitionSetting
+    [Migration("20230519132615_TuitionTypeToTuitionSetting")]
+    partial class TuitionTypeToTuitionSetting
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,9 +60,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("TuitionSettingId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("TutoringLogistics")
                         .IsRequired()
                         .HasColumnType("text");
@@ -75,8 +72,6 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
-
-                    b.HasIndex("TuitionSettingId");
 
                     b.ToTable("Enquiries");
                 });
@@ -4612,6 +4607,21 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.Property<int>("EnquiriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TuitionSettingsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EnquiriesId", "TuitionSettingsId");
+
+                    b.HasIndex("TuitionSettingsId");
+
+                    b.ToTable("EnquiryTuitionSetting");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
                 {
                     b.Property<int>("Id")
@@ -4639,13 +4649,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
-                        .WithMany()
-                        .HasForeignKey("TuitionSettingId");
-
                     b.Navigation("MagicLink");
-
-                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -4889,6 +4893,21 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.TuitionPartner", null)
                         .WithOne("Logo")
                         .HasForeignKey("Domain.TuitionPartnerLogo", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.HasOne("Domain.Enquiry", null)
+                        .WithMany()
+                        .HasForeignKey("EnquiriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TuitionSetting", null)
+                        .WithMany()
+                        .HasForeignKey("TuitionSettingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

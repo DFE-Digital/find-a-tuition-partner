@@ -2,6 +2,7 @@ using Application.Common.Interfaces.Repositories;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -24,6 +25,8 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             .ThenInclude(ks => ks.KeyStage)
             .Include(e => e.Enquiry.KeyStageSubjectEnquiry)
             .ThenInclude(s => s.Subject)
+            .Include(s => s.Enquiry)
+            .ThenInclude(s => s.TuitionSettings)
             .AsSplitQuery()
             .SingleOrDefaultAsync(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
                                   && e.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl);
@@ -41,7 +44,7 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
         {
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
             EnquiryKeyStageSubjects = keyStageSubjects,
-            EnquiryTuitionSetting = enquiry.TuitionSettingId.GetTuitionSettingName(),
+            EnquiryTuitionSetting = enquiry.TuitionSettings.GetTuitionSettingName(),
             EnquiryTutoringLogistics = enquiry.TutoringLogistics,
             EnquirySENDRequirements = enquiry.SENDRequirements,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,

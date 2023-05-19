@@ -78,8 +78,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
             }).ToList();
 
-        var tuitionSettingId = GetTuitionSettingId(request.Data!.TuitionSetting);
-
         var enquiry = new Domain.Enquiry()
         {
             Email = request.Data?.Email!,
@@ -91,7 +89,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
             PostCode = request.Data!.Postcode!,
             LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
-            TuitionSettingId = tuitionSettingId,
+            TuitionSettings = await GetTuitionSettings(request.Data!.TuitionSetting),
             MagicLink = enquirerMagicLink
         };
 
@@ -225,17 +223,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return personalisation;
     }
 
-    private static int? GetTuitionSettingId(TuitionSetting? tuitionSetting)
-    {
-        return tuitionSetting switch
-        {
-            null => null,
-            TuitionSetting.FaceToFace => (int)TuitionSetting.FaceToFace,
-            TuitionSetting.Online => (int)TuitionSetting.Online,
-            _ => null
-        };
-    }
-
     private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
         IEnumerable<KeyStageSubject> keyStageSubjects)
     {
@@ -251,6 +238,19 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
 
         return keyStageSubjectEnquiry;
+    }
+
+    private async Task<List<Domain.TuitionSetting>?> GetTuitionSettings(TuitionSetting? tuitionSetting)
+    {
+        if (tuitionSetting == null || tuitionSetting == TuitionSetting.NoPreference)
+            return null;
+
+        var tuitionSettingIds = tuitionSetting == TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+            new List<int>() { (int)tuitionSetting };
+
+        var settings = await _unitOfWork.TuitionSettingRepository.GetAllAsync(x => tuitionSettingIds.Contains(x.Id));
+
+        return settings.ToList();
     }
 
     private static string? ValidateRequest(AddEnquiryCommand request)

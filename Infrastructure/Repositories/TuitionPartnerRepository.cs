@@ -5,6 +5,7 @@ using Infrastructure.Mapping;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Infrastructure.Repositories;
 
@@ -17,8 +18,11 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();
+        var tuitionSettingIds = filter == null || filter.TuitionSettingId == null || filter.TuitionSettingId == (int)TuitionSetting.NoPreference ? new List<int>() :
+            filter.TuitionSettingId == (int)TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+            new List<int>() { (int)filter.TuitionSettingId };
 
-        if (filter.SeoUrls is not null)
+        if (filter!.SeoUrls is not null)
         {
             queryable = queryable.Where(e => filter.SeoUrls.Contains(e.SeoUrl));
         }
@@ -28,13 +32,28 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             queryable = queryable.Where(e => e.Name.ToLower().Contains(filter.Name.ToLower()));
         }
 
-        if (filter.LocalAuthorityDistrictId != null)
+        if (filter.LocalAuthorityDistrictId != null || tuitionSettingIds.Any())
         {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId && (filter.TuitionSettingId == null || x.TuitionSettingId == filter.TuitionSettingId)));
-        }
-        else if (filter.TuitionSettingId != null)
-        {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.TuitionSettingId == filter.TuitionSettingId));
+            if (tuitionSettingIds.Count <= 1)
+            {
+                queryable = queryable
+                    .Where(e => e.LocalAuthorityDistrictCoverage
+                        .Any(x =>
+                            (filter.LocalAuthorityDistrictId == null || x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId) &&
+                            (!tuitionSettingIds.Any() || tuitionSettingIds[0] == x.TuitionSettingId)
+                        )
+                    );
+            }
+            else
+            {
+                queryable = queryable
+                    .Where(e => e.LocalAuthorityDistrictCoverage
+                        .GroupBy(x => x.LocalAuthorityDistrictId)
+                        .Any(x => (filter.LocalAuthorityDistrictId == null || x.Key == filter.LocalAuthorityDistrictId) &&
+                            x.Count() == tuitionSettingIds.Count
+                        )
+                    );
+            }
         }
 
         if (filter.SubjectIds != null)
@@ -43,17 +62,39 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             {
                 // Must support all selected subjects for the tuition setting if selected
                 // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising, possibly by denormalising the data
-                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (filter.TuitionSettingId == null || x.TuitionSettingId == filter.TuitionSettingId)));
+                queryable = AddSubjectCoverageToQuery(queryable, subjectId, tuitionSettingIds);
             }
         }
-        else if (filter.TuitionSettingId != null)
+        else if (tuitionSettingIds.Any())
         {
-            queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.TuitionSettingId == filter.TuitionSettingId));
+            queryable = AddSubjectCoverageToQuery(queryable, null, tuitionSettingIds);
         }
 
         var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
 
         return ids;
+    }
+
+    private static IQueryable<TuitionPartner> AddSubjectCoverageToQuery(IQueryable<TuitionPartner> queryable, int? subjectId, List<int> tuitionSettingIds)
+    {
+        if (tuitionSettingIds.Count <= 1)
+        {
+            queryable = queryable
+                .Where(e => e.SubjectCoverage
+                    .Any(x => (subjectId == null || x.SubjectId == subjectId) &&
+                        (!tuitionSettingIds.Any() || tuitionSettingIds[0] == x.TuitionSettingId)
+                    )
+                );
+        }
+        else
+        {
+            queryable = queryable
+                .Where(e => e.SubjectCoverage.GroupBy(x => x.SubjectId)
+                    .Any(x => (subjectId == null || x.Key == subjectId) &&
+                        x.Count() == tuitionSettingIds.Count)
+                );
+        }
+        return queryable;
     }
 
     public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersAsync(TuitionPartnerRequest request, CancellationToken cancellationToken)

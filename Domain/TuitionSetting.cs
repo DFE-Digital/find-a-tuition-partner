@@ -6,6 +6,8 @@ public class TuitionSetting
     public string SeoUrl { get; set; } = null!;
     public string Name { get; set; } = null!;
 
+    public ICollection<Enquiry>? Enquiries { get; set; } = null!;
+
     protected bool Equals(TuitionSetting other)
     {
         return Id == other.Id;

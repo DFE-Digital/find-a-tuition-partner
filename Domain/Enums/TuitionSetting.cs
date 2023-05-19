@@ -12,5 +12,8 @@ namespace Domain.Enums
 
         [Description("Face-to-face")]
         FaceToFace = 2,
+
+        [Description("Both face to face and online")]
+        Both = 99,
     }
 }
