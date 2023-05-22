@@ -1,4 +1,6 @@
-﻿using Tests.TestData;
+﻿using Domain.Constants;
+using Domain.Enums;
+using Tests.TestData;
 using UI.Pages;
 
 namespace Tests;
@@ -54,8 +56,19 @@ public class ShowAllTuitionPartners : CleanSliceFixture
     public async Task Search_by_name()
     {
         // Arrange
-        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Alpha"));
-        await Fixture.AddTuitionPartner(A.TuitionPartner.WithName("Beta"));
+        await Fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("a", "Alpha")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
+
+        await Fixture.AddTuitionPartner(A.TuitionPartner
+            .WithName("b", "Beta")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         // Act
         var page = await Fixture.GetPage<AllTuitionPartners>(page =>

@@ -58,7 +58,11 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(9)
-            .WithName("this-tuition-partner", "This Tuition Partner"));
+            .WithName("this-tuition-partner", "This Tuition Partner")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         var result = await Fixture.GetPage<TuitionPartner>()
             .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel(id)));
@@ -366,7 +370,11 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .WithAddress("1 High Street\r\nBeautiful City\rThe County\nPostcode"));
+            .WithAddress("1 High Street\r\nBeautiful City\rThe County\nPostcode")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery("a-tuition-partner"));
 
