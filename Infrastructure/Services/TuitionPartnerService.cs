@@ -41,7 +41,6 @@ public class TuitionPartnerService : ITuitionPartnerService
                         prices = prices.Where(x => dataFilter.SubjectIds.Contains(x.SubjectId)).ToList();
                     }
 
-                    var setRefinedDataEmpty = !prices.Any();
                     //If any subject ids are not included then remove all and add empty reason
                     if (dataFilter.SubjectIds.Any(x => !prices.Select(p => p.SubjectId).Contains(x)))
                     {
@@ -69,18 +68,31 @@ public class TuitionPartnerService : ITuitionPartnerService
 
                     if (dataFilter.TuitionSettingId != null)
                     {
-                        var refinedOriginalPrices = pricesOriginal.Where(x => x.TuitionSettingId == dataFilter.TuitionSettingId.Value).ToList();
-                        if (!refinedOriginalPrices.Any())
+                        var tuitionSetting = (TuitionSetting)dataFilter.TuitionSettingId;
+
+                        var tuitionSettingIdsForFilter = tuitionSetting == TuitionSetting.NoPreference ? new List<int>() :
+                            tuitionSetting == TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+                            new List<int>() { dataFilter.TuitionSettingId.Value };
+
+                        if (tuitionSettingIdsForFilter.Any(x => !pricesOriginal.Select(p => p.TuitionSettingId).Contains(x)))
                         {
                             tpResult.RefinedDataEmptyReason = string.IsNullOrEmpty(tpResult.RefinedDataEmptyReason) ?
-                                $"Does not offer {((TuitionSetting)dataFilter.TuitionSettingId).DisplayName().ToLower()} tuition in " :
-                                $"{tpResult.RefinedDataEmptyReason} or {((TuitionSetting)dataFilter.TuitionSettingId).DisplayName().ToLower()} tuition in ";
+                                $"Does not offer {tuitionSetting.DisplayName().ToLower()} tuition in " :
+                                $"{tpResult.RefinedDataEmptyReason} or {tuitionSetting.DisplayName().ToLower()} tuition in ";
                             tpResult.RefinedDataEmptyReasonAppendLAName = true;
+                            prices = new List<Domain.Price>();
                         }
 
+                        //Filter prices so only include the tuition settings
                         if (prices.Any())
                         {
-                            prices = prices.Where(x => x.TuitionSettingId == dataFilter.TuitionSettingId.Value).ToList();
+                            prices = prices.Where(x => tuitionSettingIdsForFilter.Contains(x.TuitionSettingId)).ToList();
+
+                            //If any tuition setting ids are not included then remove all
+                            if (prices.Any() && tuitionSettingIdsForFilter.Any(x => !prices.Select(p => p.TuitionSettingId).Contains(x)))
+                            {
+                                prices = new List<Domain.Price>();
+                            }
                         }
                     }
                 }

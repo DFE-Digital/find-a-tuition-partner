@@ -13,12 +13,10 @@
     </govuk-error-summary>
 
     <form method="get" gfa-prepend-error-summary="false">
-      <h1 class="govuk-heading-l">What tuition setting do you need?</h1>
-
       <govuk-radios asp-for="Data.TuitionSetting">
         <govuk-radios-fieldset>
-          <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
-            Tuition setting
+          <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+            What tuition setting do you need?
           </govuk-radios-fieldset-legend>
           @foreach (var item in Model.Data.AllTuitionSettings)
           {
