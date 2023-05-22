@@ -48,53 +48,61 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             {
                 queryable = queryable
                     .Where(e => e.LocalAuthorityDistrictCoverage
+                        .Where(x => (filter.LocalAuthorityDistrictId == null || x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId) &&
+                            tuitionSettingIds.Contains(x.TuitionSettingId))
                         .GroupBy(x => x.LocalAuthorityDistrictId)
-                        .Any(x => (filter.LocalAuthorityDistrictId == null || x.Key == filter.LocalAuthorityDistrictId) &&
-                            x.Count() == tuitionSettingIds.Count
-                        )
+                        .Any(x => x.Count() == tuitionSettingIds.Count)
                     );
             }
+        }
+        else
+        {
+            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any());
         }
 
         if (filter.SubjectIds != null)
         {
-            foreach (var subjectId in filter.SubjectIds)
+            if (!tuitionSettingIds.Any())
             {
-                // Must support all selected subjects for the tuition setting if selected
-                // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising, possibly by denormalising the data
-                queryable = AddSubjectCoverageToQuery(queryable, subjectId, tuitionSettingIds);
+                queryable = queryable
+                    .Where(e => e.SubjectCoverage
+                        .Where(x => filter.SubjectIds.Contains(x.SubjectId))
+                        .Select(x => new { x.TuitionPartnerId, x.SubjectId })
+                        .Distinct()
+                        .GroupBy(x => x.TuitionPartnerId)
+                        .Any(x => x.Count() == filter.SubjectIds.Count())
+                    );
+            }
+            else
+            {
+                var expectedCount = (!tuitionSettingIds.Any() ? 1 : tuitionSettingIds.Count) * filter.SubjectIds.Count();
+
+                queryable = queryable
+                    .Where(e => e.SubjectCoverage
+                        .Where(x => filter.SubjectIds.Contains(x.SubjectId) &&
+                            tuitionSettingIds.Contains(x.TuitionSettingId))
+                        .GroupBy(x => x.TuitionPartnerId)
+                        .Any(x => x.Count() == expectedCount)
+                    );
             }
         }
         else if (tuitionSettingIds.Any())
         {
-            queryable = AddSubjectCoverageToQuery(queryable, null, tuitionSettingIds);
+            queryable = queryable
+                .Where(e => e.SubjectCoverage
+                    .Where(x => tuitionSettingIds.Contains(x.TuitionSettingId))
+                    .GroupBy(x => x.SubjectId)
+                    .Any(x => x.Count() == tuitionSettingIds.Count)
+                );
+        }
+        else
+        {
+            queryable = queryable.Where(e => e.SubjectCoverage.Any());
         }
 
         var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
 
         return ids;
-    }
-
-    private static IQueryable<TuitionPartner> AddSubjectCoverageToQuery(IQueryable<TuitionPartner> queryable, int? subjectId, List<int> tuitionSettingIds)
-    {
-        if (tuitionSettingIds.Count <= 1)
-        {
-            queryable = queryable
-                .Where(e => e.SubjectCoverage
-                    .Any(x => (subjectId == null || x.SubjectId == subjectId) &&
-                        (!tuitionSettingIds.Any() || tuitionSettingIds[0] == x.TuitionSettingId)
-                    )
-                );
-        }
-        else
-        {
-            queryable = queryable
-                .Where(e => e.SubjectCoverage.GroupBy(x => x.SubjectId)
-                    .Any(x => (subjectId == null || x.Key == subjectId) &&
-                        x.Count() == tuitionSettingIds.Count)
-                );
-        }
-        return queryable;
     }
 
     public async Task<IEnumerable<TuitionPartnerResult>> GetTuitionPartnersAsync(TuitionPartnerRequest request, CancellationToken cancellationToken)

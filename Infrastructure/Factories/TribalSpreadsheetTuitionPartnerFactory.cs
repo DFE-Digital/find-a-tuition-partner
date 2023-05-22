@@ -561,6 +561,8 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
                 }
                 var tuitionSettingStringReplaced = tuitionSettingString.Replace("Both", TuitionSetting.NoPreference.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
+                tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace("In School", TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
+                tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace(TuitionSetting.FaceToFace.DisplayName().Replace("-", " "), TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
                 if (!tuitionSettingStringReplaced.TryParse(out TuitionSetting tuitionSetting))
                 {
                     castError = true;
