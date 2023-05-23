@@ -60,7 +60,7 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any());
         }
 
-        if (filter.SubjectIds != null)
+        if (filter.SubjectIds != null && filter.SubjectIds.Any())
         {
             if (!tuitionSettingIds.Any())
             {
