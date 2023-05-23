@@ -14,6 +14,8 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
 
+    private const string EnquiryResponseConfirmationModelKey = "EnquirySubmissionConfirmationModel";
+    private const string EnquiryResponseFormPostTimestampKey = "EnquiryResponseFormPostTimestampKey";
 
     private readonly IHostEnvironment _hostEnvironment;
 
@@ -58,27 +60,48 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var isValidMagicLink =
-            await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
+        ResponseConfirmationModel? responseConfirmationModel;
 
-        if (!isValidMagicLink)
+        var enquiryResponseConfirmationModelKey = $"{EnquiryResponseConfirmationModelKey}-{Data.SupportReferenceNumber}";
+        var enquiryResponseFormPostTimestampKey = $"{EnquiryResponseFormPostTimestampKey}-{Data.SupportReferenceNumber}";
+
+        var isDuplicateFormPost = await _sessionService.IsDuplicateFormPostAsync(enquiryResponseFormPostTimestampKey);
+
+        if (!isDuplicateFormPost)
         {
-            return NotFound();
-        }
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, Data.SupportReferenceNumber, Data.TuitionPartnerSeoUrl, true));
 
-        if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
-            return RedirectToPage("/Session/Timeout");
+            if (!isValidMagicLink)
+            {
+                return NotFound();
+            }
+
+            if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
+                return RedirectToPage("/Session/Timeout");
+        }
 
         if (!ModelState.IsValid) return Page();
 
         Data.BaseServiceUrl = Request.GetBaseServiceUrl();
 
-        var command = new AddEnquiryResponseCommand()
+        if (!isDuplicateFormPost)
         {
-            Data = Data
-        };
+            var command = new AddEnquiryResponseCommand()
+            {
+                Data = Data
+            };
 
-        var responseConfirmationModel = await _mediator.Send(command);
+            await _sessionService.StartFormPostProcessingAsync(enquiryResponseFormPostTimestampKey);
+
+            responseConfirmationModel = await _mediator.Send(command);
+
+            await _sessionService.SetFormPostResponseAsync(responseConfirmationModel, enquiryResponseConfirmationModelKey);
+        }
+        else
+        {
+            responseConfirmationModel = await _sessionService.GetPreviousFormPostResponseAsync<ResponseConfirmationModel>(enquiryResponseConfirmationModelKey);
+        }
 
         await _sessionService.DeleteDataAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber));
 
