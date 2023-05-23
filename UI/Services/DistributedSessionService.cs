@@ -1,12 +1,16 @@
 using System.Text;
 using Application.Common.Interfaces;
 using Newtonsoft.Json;
+using Polly;
+using IntegerConstants = UI.Constants.IntegerConstants;
 
 namespace UI.Services;
 
 public class DistributedSessionService : ISessionService
 {
     private const string DefaultPreKey = "General";
+    private const string FormPostPreKey = "FormPostPreKey";
+
     private readonly IHttpContextAccessor? _contextAccessor;
     private readonly ILogger<DistributedSessionService> _logger;
 
@@ -121,7 +125,8 @@ public class DistributedSessionService : ISessionService
     public async Task<bool> AnySessionDataExistsAsync()
     {
         await LoadDataFromDistributedDataStore();
-        return _contextAccessor!.HttpContext!.Session!.Keys.Any();
+        var sessionKey = GetSessionKey(FormPostPreKey);
+        return _contextAccessor!.HttpContext!.Session!.Keys.Any(x => x != sessionKey);
     }
 
     public async Task ClearAllAsync()
@@ -129,6 +134,84 @@ public class DistributedSessionService : ISessionService
         await LoadDataFromDistributedDataStore();
         _logger.LogInformation("Session cleared");
         _contextAccessor!.HttpContext!.Session!.Clear();
+    }
+
+    public async Task<bool> IsDuplicateFormPostAsync(string formPostTimestampKey = "FormPostTimestamp")
+    {
+        var previousSubmissionTimestamp = await GetAsync<DateTimeOffset?>(formPostTimestampKey, FormPostPreKey);
+
+        var currentTimestamp = DateTimeOffset.UtcNow;
+
+        if (previousSubmissionTimestamp != null)
+        {
+            if ((currentTimestamp - previousSubmissionTimestamp.Value).TotalSeconds < IntegerConstants.SecondsClassifyAsDuplicateFormPost)
+            {
+                _logger.LogInformation("Multiple form POST (IsDuplicateFormPostAsync)");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public async Task StartFormPostProcessingAsync(string formPostTimestampKey = "FormPostTimestamp")
+    {
+        var currentTimestamp = DateTimeOffset.UtcNow;
+        await SetAsync(formPostTimestampKey, currentTimestamp, FormPostPreKey);
+    }
+
+    public async Task SetFormPostResponseAsync<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey")
+    {
+        await SetAsync(formPostModelKey, postResponseModel, FormPostPreKey);
+    }
+
+    public async Task<T> GetPreviousFormPostResponseAsync<T>(string formPostModelKey = "FormPostModelKey")
+    {
+        //Use Polly to retry 
+        int numberOfSecondsToRetry = IntegerConstants.SecondsClassifyAsDuplicateFormPost;
+        var retryPolicy = Policy
+            .Handle<Exception>()
+            .WaitAndRetryAsync(numberOfSecondsToRetry, retryAttempt =>
+                TimeSpan.FromSeconds(1),
+                (exception, sleepDuration, retryCount, context) =>
+                {
+                    _logger.LogInformation("Not able to get previous form POST response.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries} (GetPreviousPostResponse)", sleepDuration, retryCount, numberOfSecondsToRetry);
+                });
+
+        _logger.LogInformation("Trying to get previous form POST response (GetPreviousPostResponse)");
+        try
+        {
+            return await retryPolicy.ExecuteAsync(async () =>
+            {
+                var submittedConfirmationModelFromSession = await GetAsync<T?>(formPostModelKey, FormPostPreKey);
+
+                if (submittedConfirmationModelFromSession != null)
+                {
+                    _logger.LogInformation("Returning previous form POST response from session (GetPreviousPostResponse)");
+                    return submittedConfirmationModelFromSession;
+                }
+                else
+                {
+                    throw new InvalidDataException("Not able to get previous form POST response (GetPreviousPostResponse)");
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Not able to get previous form POST response (GetPreviousPostResponse)");
+            throw;
+        }
+    }
+
+    private async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
+    {
+        await AddOrUpdateDataAsync(key, JsonConvert.SerializeObject(value), preKey);
+    }
+
+    private async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
+    {
+        var value = await RetrieveDataByKeyAsync(key, preKey);
+        return string.IsNullOrEmpty(value) ? default : JsonConvert.DeserializeObject<T>(value);
     }
 
     private bool IsSessionAvailable()

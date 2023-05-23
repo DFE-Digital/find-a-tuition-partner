@@ -7,6 +7,7 @@ namespace Infrastructure.Extraction;
 public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
 {
     private SpreadsheetDocument? _document;
+    private Dictionary<string, Dictionary<string, string>>? _loadedData;
 
     public void SetStream(Stream stream)
     {
@@ -21,23 +22,40 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
         }
     }
 
+    public void PreloadSheet(string sheetName)
+    {
+        _loadedData ??= new Dictionary<string, Dictionary<string, string>>();
+        var data = new Dictionary<string, string>();
+
+        var descendants = GetWorksheet(sheetName).Descendants<Cell>();
+
+        foreach (var cell in descendants)
+        {
+            var value = GetCellValue(cell);
+            var cellRef = cell.CellReference;
+            if (cellRef != null && cellRef.HasValue && cellRef.Value != null)
+            {
+                data.Add(cellRef.Value, value);
+            }
+        }
+
+        _loadedData.Add(sheetName, data);
+
+    }
+
     public string GetCellValue(string sheetName, string column, int row)
     {
         var cellReference = GetCellReference(column, row);
-        var descendants = GetWorksheet(sheetName).Descendants<Cell>();
-        var cell = descendants.FirstOrDefault(c => c.CellReference == cellReference);
 
-        if (cell == null) return string.Empty;
-
-        if (cell.CellFormula != null && cell.CellValue != null) return cell.CellValue.InnerText;
-
-        var value = cell.InnerText;
-        if (cell.DataType?.Value == CellValues.SharedString && int.TryParse(value, out var stringTableIndex))
+        if (_loadedData != null && _loadedData.ContainsKey(sheetName))
         {
-            return GetSharedStringTable().ElementAt(stringTableIndex).InnerText.Trim();
+            var data = _loadedData[sheetName];
+            return data == null || !data.ContainsKey(cellReference) ? string.Empty : data[cellReference];
         }
 
-        return value.Trim();
+        var descendants = GetWorksheet(sheetName).Descendants<Cell>();
+        var cell = descendants.FirstOrDefault(c => c.CellReference == cellReference);
+        return GetCellValue(cell);
     }
 
     public string[] GetColumnValues(string sheetName, string column, int startRow, int endRow)
@@ -111,6 +129,21 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
     private static string GetCellReference(string column, int row)
     {
         return $"{column.ToUpper()}{row}";
+    }
+
+    private string GetCellValue(Cell? cell)
+    {
+        if (cell == null) return string.Empty;
+
+        if (cell.CellFormula != null && cell.CellValue != null) return cell.CellValue.InnerText;
+
+        var value = cell.InnerText;
+        if (cell.DataType?.Value == CellValues.SharedString && int.TryParse(value, out var stringTableIndex))
+        {
+            return GetSharedStringTable().ElementAt(stringTableIndex).InnerText.Trim();
+        }
+
+        return value.Trim();
     }
 
     public void Dispose()
