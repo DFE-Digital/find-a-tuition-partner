@@ -32,7 +32,8 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
             .TaughtIn(District.NorthEastLincolnshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage1English, s => s
-                    .FaceToFace().Costing(13m).ForGroupSizes(3))
+                    .FaceToFace().Costing(13m).ForGroupSizes(3)
+                    .Online().Costing(13m).ForGroupSizes(3))
                 .Subject(Subjects.Id.KeyStage1English, s => s
                     .FaceToFace().Costing(11m).ForGroupSizes(4))
                 .Subject(Subjects.Id.KeyStage2Maths, s => s
@@ -206,7 +207,8 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         var filter = new TuitionPartnersFilter()
         {
-            LocalAuthorityDistrictId = District.NorthTyneside.Id
+            LocalAuthorityDistrictId = District.NorthTyneside.Id,
+            SubjectIds = new List<int>()
         };
         var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
 
@@ -307,6 +309,45 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         results.Should().NotBeEmpty();
         results?.Length.Should().Be(1);
     }
+
+    [Fact]
+    public async void GetTuitionPartnersFiltered_lad_plus_both_tuition_settings_plus_subject_no_match()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var filter = new TuitionPartnersFilter()
+        {
+            LocalAuthorityDistrictId = District.EastRidingOfYorkshire.Id,
+            TuitionSettingId = (int)TuitionSetting.Both,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage1English }
+        };
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
+
+        results.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async void GetTuitionPartnersFiltered_lad_plus_both_tuition_settings_plus_subject_single_match()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var filter = new TuitionPartnersFilter()
+        {
+            LocalAuthorityDistrictId = District.NorthEastLincolnshire.Id,
+            TuitionSettingId = (int)TuitionSetting.Both,
+            SubjectIds = new List<int>() { Subjects.Id.KeyStage1English }
+        };
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersFilteredAsync(filter, cancellationToken);
+
+        results.Should().NotBeEmpty();
+        results?.Length.Should().Be(1);
+    }
     #endregion
 
     #region GetTuitionPartnersAsync
@@ -344,12 +385,13 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
 
         var alpha = results.First(x => x.Name == "Alpha");
         alpha.SubjectsCoverage.Should().NotBeEmpty();
-        alpha.SubjectsCoverage!.Length.Should().Be(2);
+        alpha.SubjectsCoverage!.Length.Should().Be(3);
         alpha.Prices.Should().NotBeEmpty();
-        alpha.Prices!.Length.Should().Be(5);
+        alpha.Prices!.Length.Should().Be(6);
         var prices = alpha.Prices.Select(x => new { x.GroupSize, x.HourlyRate }).ToList();
         prices.Should().BeEquivalentTo(new[]
         {
+            new { GroupSize = 3, HourlyRate = 13m },
             new { GroupSize = 3, HourlyRate = 13m },
             new { GroupSize = 4, HourlyRate = 11m },
             new { GroupSize = 1, HourlyRate = 20m },
@@ -552,7 +594,7 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
     }
 
     [Fact]
-    public async void FilterTuitionPartnersData_by_tuition_setting()
+    public async void FilterTuitionPartnersData_by_single_tuition_setting()
     {
         SetUpGetTuitionPartnersFilteredData();
 
@@ -580,6 +622,43 @@ public class TuitionPartnerServiceTests : CleanSliceFixture
         delta!.TuitionSettings[0].Id.Should().Be((int)TuitionSetting.FaceToFace);
         delta!.SubjectsCoverage!.Length.Should().Be(1);
         delta!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+    }
+
+    [Fact]
+    public async void FilterTuitionPartnersData_by_both_tuition_settings()
+    {
+        SetUpGetTuitionPartnersFilteredData();
+
+        CancellationTokenSource cts = new();
+        CancellationToken cancellationToken = cts.Token;
+
+        var request = new TuitionPartnerRequest();
+        var results = await Fixture.TuitionPartnerService.GetTuitionPartnersAsync(request, cancellationToken);
+        results.Count().Should().Be(4);
+
+        var dataFilter = new TuitionPartnersDataFilter()
+        {
+            GroupSize = null,
+            TuitionSettingId = (int)TuitionSetting.Both,
+            SubjectIds = null
+        };
+
+        var refinedResults = Fixture.TuitionPartnerService.FilterTuitionPartnersData(results, dataFilter);
+
+        refinedResults.Should().NotBeEmpty();
+        var alpha = refinedResults.First(x => x.Name == "Alpha");
+        alpha!.Prices!.Length.Should().Be(6);
+        alpha!.Prices[0].HourlyRate.Should().Be(13m);
+        alpha!.TuitionSettings!.Length.Should().Be(2);
+        alpha!.TuitionSettings[0].Id.Should().Be((int)TuitionSetting.FaceToFace);
+        alpha!.SubjectsCoverage!.Length.Should().Be(3);
+        alpha!.SubjectsCoverage[0].SubjectId.Should().Be(Subjects.Id.KeyStage1English);
+
+        var bravo = refinedResults.First(x => x.Name == "Bravo");
+        bravo.Prices.Should().BeNull();
+        bravo.TuitionSettings.Should().BeNull();
+        bravo.SubjectsCoverage.Should().BeNull();
+        bravo.Name.Should().NotBeEmpty();
     }
 
     [Fact]

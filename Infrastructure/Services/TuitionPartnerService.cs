@@ -114,7 +114,7 @@ public class TuitionPartnerService : ITuitionPartnerService
                 var subjects = prices.Select(x => x.SubjectId).Distinct();
 
                 tpResult.TuitionSettings = tpResult.TuitionSettings!.Where(x => tuitionSettings.Contains(x.Id)).ToArray();
-                tpResult.SubjectsCoverage = tpResult.SubjectsCoverage!.Where(x => subjects.Contains(x.SubjectId)).ToArray();
+                tpResult.SubjectsCoverage = tpResult.SubjectsCoverage!.Where(x => subjects.Contains(x.SubjectId) && tuitionSettings.Contains(x.TuitionSettingId)).ToArray();
             }
             else
             {
