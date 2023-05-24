@@ -4,10 +4,13 @@ using Application.DataImport;
 using Application.Extensions;
 using Application.Factories;
 using Application.Mapping;
+using DocumentFormat.OpenXml.InkML;
 using Domain;
 using Domain.Validators;
 using Infrastructure.Mapping.Configuration;
+using Infrastructure.Migrations;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -63,8 +66,6 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
-
                 await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
@@ -87,14 +88,27 @@ public class DataImporterService : IHostedService
 
         var imported = 0;
         var failedValidation = 0;
+        var importedSchoolUrns = new List<int>();
+
         foreach (SchoolDatum schoolDatum in result.Result.Where(s => s.IsValidForService()))
         {
+            var isNewSchool = false;
             var establishmentName = schoolDatum.Name;
 
             School school;
             try
             {
-                school = giasFactory.GetSchool(schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
+                var schoolEntity = dbContext.Schools.FirstOrDefault(x => x.Urn == schoolDatum.Urn);
+                if (schoolEntity != null)
+                {
+                    school = schoolEntity;
+                }
+                else
+                {
+                    school = new School();
+                    isNewSchool = true;
+                }
+                school = giasFactory.GetSchool(school, schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
             }
             catch (Exception ex)
             {
@@ -106,14 +120,20 @@ public class DataImporterService : IHostedService
             var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
-                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
-                        school.EstablishmentName, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{Urn}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                        school.EstablishmentName, school.Urn, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
                 failedValidation++;
                 continue;
             }
 
-            dbContext.Schools.Add(school);
+            if (isNewSchool)
+            {
+                dbContext.Schools.Add(school);
+                _logger.LogInformation($"ADDED new establishment, name: {{TuitionPartnerName}}, URN: {{Urn}}",
+                    school.EstablishmentName, school.Urn);
+            }
 
+            importedSchoolUrns.Add(school.Urn);
             imported++;
             if ((imported % 100) == 0)
             {
@@ -121,23 +141,33 @@ public class DataImporterService : IHostedService
             }
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        DeactivateSchools(dbContext, importedSchoolUrns);
 
+        await dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
     }
 
-    private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
+    private void DeactivateSchools(NtpDbContext dbContext, List<int> importedSchoolUrns)
     {
-        _logger.LogInformation("Deleting all existing General Information About Schools data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
+        var schoolsToDeactivate = dbContext.Schools.Where(x => !importedSchoolUrns.Contains(x.Urn) && x.IsActive).ToList();
+        if (schoolsToDeactivate != null && schoolsToDeactivate.Any())
+        {
+            foreach (var schoolToDeactivate in schoolsToDeactivate)
+            {
+                schoolToDeactivate.IsActive = false;
+
+                _logger.LogInformation($"DEACTIVATED establishment, name: {{TuitionPartnerName}}, URN: {{Urn}}",
+                    schoolToDeactivate.EstablishmentName, schoolToDeactivate.Urn);
+            }
+            _logger.LogInformation("Deactivated {Count} schools from GIAS dataset", schoolsToDeactivate.Count);
+        }
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
-        CancellationToken cancellationToken)
+    CancellationToken cancellationToken)
     {
         //This will throw an error if there is not just 1 file
         var dataFile = dataFileEnumerable.Single();
-
         var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions

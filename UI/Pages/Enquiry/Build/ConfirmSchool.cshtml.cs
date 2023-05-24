@@ -4,47 +4,33 @@ using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
 
-public class EnquirerEmail : PageModel
+public class ConfirmSchool : PageModel
 {
     private readonly ISessionService _sessionService;
+    private readonly IMediator _mediator;
 
-    public EnquirerEmail(ISessionService sessionService)
+    public ConfirmSchool(ISessionService sessionService, IMediator mediator)
     {
         _sessionService = sessionService;
+        _mediator = mediator;
     }
-    [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
+    [BindProperty] public ConfirmSchoolModel Data { get; set; } = new();
 
-    [ViewData] public string? ErrorMessage { get; set; }
-
-    public async Task<IActionResult> OnGetAsync(EnquirerEmailModel data)
+    public async Task<IActionResult> OnGetAsync(ConfirmSchoolModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync())
-            return RedirectToPage("/Session/Timeout");
-
         Data = data;
-
-        ErrorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
 
         Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
 
-        if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            ModelState.AddModelError("ErrorMessage", ErrorMessage);
-            return Page();
-        }
-
-        ModelState.Clear();
-
         return Page();
     }
-    public async Task<IActionResult> OnPostAsync(EnquirerEmailModel data)
+    public async Task<IActionResult> OnPostAsync(ConfirmSchoolModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync())
-            return RedirectToPage("/Session/Timeout");
-
         Data = data;
         if (ModelState.IsValid)
         {
+            //TODO - Ensure that run same postcode valdation (e.g. is English postcode) as index page
+
             await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmail, data.Email!);
 
             var errorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);

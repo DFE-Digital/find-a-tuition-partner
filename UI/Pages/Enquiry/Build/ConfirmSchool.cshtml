@@ -1,0 +1,26 @@
+﻿@page
+@model ConfirmSchool
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+  var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/guidance";//TODO - update these
+  ViewData["Title"] = "Confirm your school postcode";
+  ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form method="post">
+      <h1 class="govuk-heading-l">Confirm your school postcode</h1>
+      <div asp-validation-group-for="Data.SchoolPostcode">
+        <govuk-input asp-for="Data.SchoolPostcode" input-class="govuk-input govuk-!-width-three-quarters" autocomplete="postal-code" spellcheck="false">
+          <govuk-input-label>Enter your school postcode</govuk-input-label>
+        </govuk-input>
+      </div>
+      <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+      <input type="hidden" name="handler" value="Submit" />
+      <div class="govuk-button-group">
+        <govuk-button prevent-double-click="true" type="submit">Continue</govuk-button>
+      </div>
+    </form>
+  </div>
+</div>

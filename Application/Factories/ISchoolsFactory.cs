@@ -5,5 +5,5 @@ namespace Application.Factories;
 
 public interface ISchoolsFactory
 {
-    School GetSchool(SchoolDatum stream, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds);
+    School GetSchool(School school, SchoolDatum stream, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds);
 }

@@ -32,7 +32,7 @@ public class LoggingLocationFilterService : ILocationFilterService
                 break;
 
             case ErrorResult e:
-                _logger.LogWarning("Could not find postcode {Postcode} in {Elapsed}ms - {Reason}",
+                _logger.LogInformation("Could not find postcode {Postcode} in {Elapsed}ms - {Reason}",
                     postcode, stopwatch.ElapsedMilliseconds, e.GetType().Name);
                 break;
         }
