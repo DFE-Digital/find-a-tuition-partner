@@ -64,6 +64,7 @@ public class CheckYourAnswers : PageModel
                 if (school != null)
                 {
                     Data.SchoolDetails = $"{school.EstablishmentName}, {Data.Postcode}";
+                    Data.SchoolUrn = school.Urn;
                     postcodeAndSchoolValid = true;
                 }
             }
@@ -74,6 +75,7 @@ public class CheckYourAnswers : PageModel
             Data.LocalAuthorityDistrictName = null;
             Data.SchoolId = null;
             Data.SchoolDetails = null;
+            Data.SchoolUrn = null;
             Data.Postcode = null;
         }
 
@@ -169,6 +171,7 @@ public class CheckYourAnswers : PageModel
         HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
         HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
         HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
+        HttpContext.AddSchoolUrnToAnalytics<CheckYourAnswers>(Data.SchoolUrn!.Value);
         HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
 
         return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);

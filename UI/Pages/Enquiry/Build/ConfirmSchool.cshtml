@@ -6,9 +6,8 @@
   var hintText = "We need to check which school you work for, and that you’re enquiring about tuition services on their behalf. This information won’t be shared with tuition partners.";
   var backLink = Model.FromSchoolPostcode ? "/enquiry/build/school-postcode" : "/enquiry/build/guidance";
   var backQueryString = Model.FromSchoolPostcode ? Model.Data.ToQueryString(new Dictionary<string, string>() { { "SchoolPostcode", Model.Data.SchoolPostcode! } }) : Model.Data.ToQueryString();
-  backLink = $"{backLink}?{backQueryString}";
   ViewData["Title"] = title;
-  ViewData["BackLinkHref"] = backLink;
+  ViewData["BackLinkHref"] = $"{backLink}?{backQueryString}";
 }
 
 <div class="govuk-grid-row">
@@ -67,7 +66,7 @@
       </div>
       @if(!Model.Data.HasSingleSchool)
       {
-        <a class="govuk-link govuk-body" href="@backLink">I need to choose another school</a>
+        <a class="govuk-link govuk-body" href="/enquiry/build/school-postcode?@backQueryString">I need to choose another school</a>
       }
     </form>
   </div>

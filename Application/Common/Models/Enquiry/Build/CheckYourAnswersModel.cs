@@ -8,5 +8,6 @@ public record CheckYourAnswersModel : EnquiryBuildModel
     public bool HasKeyStageSubjects { get; set; }
     public string? LocalAuthorityDistrictName { get; set; }
     public string? SchoolDetails { get; set; }
+    public int? SchoolUrn { get; set; }
     public bool ConfirmTermsAndConditions { get; set; }
 }
