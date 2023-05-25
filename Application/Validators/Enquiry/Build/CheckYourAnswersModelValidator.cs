@@ -6,7 +6,7 @@ namespace Application.Validators.Enquiry.Build;
 
 public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswersModel>
 {
-    public CheckYourAnswersModelValidator()//TODO - add in school validation
+    public CheckYourAnswersModelValidator()
     {
         RuleFor(m => m.HasKeyStageSubjects)
             .NotEqual(false)
@@ -17,14 +17,6 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Select a type of tuition option");
-
-        RuleFor(request => request.Email)
-            .NotEmpty()
-            .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("Enter an email address")
-            .Matches(StringConstants.EmailRegExp)
-            .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("You must enter an email address in the correct format");
 
         RuleFor(request => request.TutoringLogistics)
             .NotEmpty()
@@ -43,6 +35,19 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(request => request.Postcode)
+            .NotEmpty()
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("Enter your school details");
+
+        RuleFor(request => request.Email)
+            .NotEmpty()
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("Enter an email address")
+            .Matches(StringConstants.EmailRegExp)
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("You must enter an email address in the correct format");
 
         RuleFor(m => m.ConfirmTermsAndConditions)
             .NotEqual(false)

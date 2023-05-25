@@ -15,7 +15,7 @@ using UI.Pages.Enquiry.Build;
 namespace Tests.Enquiry.Build;
 
 [Collection(nameof(SliceFixture))]
-public class CheckYourAnswersTests //TODO - Update with subject
+public class CheckYourAnswersTests
 {
     private readonly SliceFixture _fixture;
 
@@ -29,6 +29,8 @@ public class CheckYourAnswersTests //TODO - Update with subject
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
                     .InSchool().Costing(12m).ForGroupSizes(2))));
+
+        _ = _fixture.AddSchool(A.School);
     }
 
     [Theory]
@@ -79,6 +81,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
             TuitionType = TuitionType.Any,
+            SchoolId = 1,
             Email = "test@test.com",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -112,6 +115,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
             TuitionType = TuitionType.Any,
+            SchoolId = 1,
             Email = "test@test.com",
             //TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -145,6 +149,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
             TuitionType = TuitionType.Any,
+            SchoolId = 1,
             Email = "400error@test",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -178,6 +183,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
             TuitionType = TuitionType.Any,
+            SchoolId = 1,
             Email = "500error@test",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
@@ -209,6 +215,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Online,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 ConfirmTermsAndConditions = true
@@ -225,24 +232,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
-                Email = "test@test.com",
-                TutoringLogistics = "Test content",
-                SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information",
-                ConfirmTermsAndConditions = true
-            }
-        };
-
-        yield return new object[]
-        {
-            new CheckYourAnswersModel {
-                //Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
-                {
-                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
-                },
-                HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -264,11 +254,31 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = false
+            }
+        };
+
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
+                //Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionType = TuitionType.Any,
+                //SchoolId = 1,
+                Email = "test@test.com",
+                TutoringLogistics = "Test content",
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
             }
         };
 
@@ -282,6 +292,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 //},
                 //HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -300,6 +311,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 //TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -318,6 +330,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 //Email = "test@test.com",
                 TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",
@@ -336,6 +349,7 @@ public class CheckYourAnswersTests //TODO - Update with subject
                 },
                 HasKeyStageSubjects = true,
                 TuitionType = TuitionType.Any,
+                SchoolId = 1,
                 Email = "test@test.com",
                 //TutoringLogistics = "Test content",
                 SENDRequirements = "some SEND reqs",

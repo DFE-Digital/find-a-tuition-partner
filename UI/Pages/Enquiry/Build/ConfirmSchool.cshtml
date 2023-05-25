@@ -24,7 +24,7 @@
         <govuk-radios asp-for="Data.ConfirmedIsSchool">
           <govuk-radios-fieldset>
             <govuk-radios-fieldset-legend>
-              Is this your school?
+              <h2 class="govuk-heading-m">Is this your school?</h2>
             </govuk-radios-fieldset-legend>
             <govuk-radios-item value="@true">
               Yes, this is my school
@@ -49,7 +49,9 @@
             {
               <govuk-radios-item value="@school.Id">
                 <h2 class="govuk-heading-m">@school.Urn, @school.EstablishmentName, @school.Postcode</h2>
-                <partial name="_SchoolDetails" model="@school" />
+                <govuk-radios-item-conditional>
+                  <partial name="_SchoolDetails" model="@school" />
+                </govuk-radios-item-conditional>
               </govuk-radios-item>
             }
           </govuk-radios-fieldset>

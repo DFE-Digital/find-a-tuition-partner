@@ -359,6 +359,13 @@ public class SliceFixture : IAsyncLifetime
             db.TuitionPartners.Add(partner);
             return db.SaveChangesAsync();
         });
+
+    internal async Task AddSchool(Domain.School school)
+        => await ExecuteDbContextAsync(db =>
+        {
+            db.Schools.Add(school);
+            return db.SaveChangesAsync();
+        });
 }
 
 public class ScopedPageExecutor<T> where T : class

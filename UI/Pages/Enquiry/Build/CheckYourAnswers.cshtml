@@ -3,16 +3,17 @@
 @{
   ViewData["Title"] = "Check your answers";
   ViewData["BackLinkHref"] = $"/enquiry/build/additional-information?{((Model.Data with { From = null }).ToQueryString())}";
-  ViewData["IncludePrintPage"] = true;//TODO -Can now add in postcode for validation?  Add in school too.
+  ViewData["IncludePrintPage"] = true;
 }
 <form method="post">
   <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
     <govuk-error-summary-item asp-for="Data.TuitionType" />
-    <govuk-error-summary-item asp-for="Data.Email" />
     <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
     <govuk-error-summary-item asp-for="Data.SENDRequirements" />
     <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
+    <govuk-error-summary-item asp-for="Data.Postcode" />
+    <govuk-error-summary-item asp-for="Data.Email" />
   </govuk-error-summary>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -107,6 +108,19 @@
       <govuk-summary-list class="govuk-!-margin-bottom-9 cya-summary-enquirer">
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.Postcode">
+              Your school details
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value>
+            @Model.Data.SchoolDetails
+          </govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="SchoolPostcode" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Postcode" visually-hidden-text="school details">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
             <div asp-validation-group-for="Data.Email">
               Email address
             </div>
@@ -130,10 +144,12 @@
       </button>
       <input asp-for="Data.LocalAuthorityDistrictName" type="hidden" />
       <input asp-for="Data.HasKeyStageSubjects" type="hidden" />
-      <input asp-for="Data.Email" type="hidden" />
       <input asp-for="Data.TutoringLogistics" type="hidden" />
       <input asp-for="Data.SENDRequirements" type="hidden" />
       <input asp-for="Data.AdditionalInformation" type="hidden" />
+      <input asp-for="Data.SchoolId" type="hidden" />
+      <input asp-for="Data.SchoolDetails" type="hidden" />
+      <input asp-for="Data.Email" type="hidden" />
       <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     </div>
   </div>
