@@ -24,7 +24,7 @@ public class ConfirmSchool : PageModel
 
         var isValid = await SetData(data);
 
-        if(!isValid)
+        if (!isValid)
             return RedirectToPage(nameof(SchoolPostcode), data);
 
         var schoolId = await _sessionService.GetAsync<int?>(SessionKeyConstants.EnquirySchoolId);
@@ -39,11 +39,8 @@ public class ConfirmSchool : PageModel
     }
     public async Task<IActionResult> OnPostAsync(ConfirmSchoolModel data)
     {
-        //TODO - what if not selected any radio?
-        //If select no then redirect
+        Data = data;
 
-        Data = data;        
-        
         await SetData(data);
 
         if (ModelState.IsValid)
@@ -76,7 +73,6 @@ public class ConfirmSchool : PageModel
 
             return RedirectToPage(nameof(EnquirerEmail), new SearchModel(data));
         }
-
 
         return Page();
     }

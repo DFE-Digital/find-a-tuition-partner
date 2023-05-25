@@ -49,12 +49,12 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
         var schools = await _unitOfWork.SchoolRepository.GetAllAsync(e => e.Postcode == parameters.Postcode && e.IsActive, "PhaseOfEducation");
-        if(schools != null && schools.Any())
+        if (schools != null && schools.Any())
         {
             parameters.Schools = schools.ToList();
             parameters.Urn = schools.First().Urn;
         }
-        
+
         return parameters;
     }
 }

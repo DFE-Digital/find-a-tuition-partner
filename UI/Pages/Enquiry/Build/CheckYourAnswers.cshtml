@@ -21,9 +21,7 @@
         <span>Check your answers</span>
       </h1>
 
-      <p class="govuk-body">
-        Your email will not be shared with tuition partners
-      </p>
+      <h2 class="govuk-heading-m">Enquiry details</h2>
       <govuk-summary-list class="govuk-!-margin-bottom-9 cya-summary-enquirer">
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
@@ -72,19 +70,6 @@
         </govuk-summary-list-row>
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
-            <div asp-validation-group-for="Data.Email">
-              Email address
-            </div>
-          </govuk-summary-list-row-key>
-          <govuk-summary-list-row-value>
-            @Model.Data.Email
-          </govuk-summary-list-row-value>
-          <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="EnquirerEmail" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Email" visually-hidden-text="email address">Change</govuk-summary-list-row-action>
-          </govuk-summary-list-row-actions>
-        </govuk-summary-list-row>
-        <govuk-summary-list-row>
-          <govuk-summary-list-row-key>
             <div asp-validation-group-for="Data.TutoringLogistics">
               Tuition plan
             </div>
@@ -117,6 +102,24 @@
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
       </govuk-summary-list>
+
+      <h2 class="govuk-heading-m">Information not shared with tuition partners</h2>
+      <govuk-summary-list class="govuk-!-margin-bottom-9 cya-summary-enquirer">
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.Email">
+              Email address
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value>
+            @Model.Data.Email
+          </govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="EnquirerEmail" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Email" visually-hidden-text="email address">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+      </govuk-summary-list>
+
       <govuk-checkboxes asp-for="Data.ConfirmTermsAndConditions">
         <govuk-checkboxes-item id="Data_ConfirmTermsAndConditions" value="True" checked="@Model.Data.ConfirmTermsAndConditions">
           I confirm that I have not included any information that would allow anyone to identify pupils, such as names or specific characteristics.

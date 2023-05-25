@@ -13,7 +13,7 @@ public class ConfirmSchoolModelValidation : AbstractValidator<ConfirmSchoolModel
             .WithMessage("Select to confirm if this is your school or not");
 
         RuleFor(request => request.SchoolId)
-            .NotEmpty()
+            .NotNull()
             .When(m => !m.HasSingleSchool)
             .WithMessage("Select to confirm which school you work for");
     }
