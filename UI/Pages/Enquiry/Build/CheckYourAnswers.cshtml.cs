@@ -163,6 +163,10 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
+            case var k when k.Equals(SessionKeyConstants.EnquirySchoolId, StringComparison.OrdinalIgnoreCase):
+                Data.SchoolId = string.IsNullOrEmpty(value) ? null : int.Parse(value);
+                break;
+
             case var k when k.Equals(SessionKeyConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
                 Data.Email = value;
                 break;

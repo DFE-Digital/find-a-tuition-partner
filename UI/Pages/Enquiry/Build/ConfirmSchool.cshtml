@@ -2,21 +2,83 @@
 @model ConfirmSchool
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
+  //TODO - check addding fieldset legend is OK
+  var title = Model.Data.HasSingleSchool ? "Confirm this the school you need tuition for" : "Confirm which school you need tuition for";
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/guidance";//TODO - update these
-  ViewData["Title"] = "Confirm your school postcode";
+  ViewData["Title"] = title;
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form method="post">
-      <h1 class="govuk-heading-l">Confirm your school postcode</h1>
-      <div asp-validation-group-for="Data.SchoolPostcode">
-        <govuk-input asp-for="Data.SchoolPostcode" input-class="govuk-input govuk-!-width-three-quarters" autocomplete="postal-code" spellcheck="false">
-          <govuk-input-label>Enter your school postcode</govuk-input-label>
-        </govuk-input>
-      </div>
+      <h1 class="govuk-heading-l">@title</h1>
+      <p class="govuk-body" show-if="!Model.FromSchoolPostcode">We need to check which school you work for, and that you’re enquiring about tuition services on their behalf. This information won’t be shared with tuition partners.</p>
+
+      @foreach (var school in Model.Data.Schools)
+      {
+        <govuk-summary-list>
+          <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+              Name and Address
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+              @school.EstablishmentName<br>
+              @school.Address, @school.Postcode
+            </govuk-summary-list-row-value>
+          </govuk-summary-list-row>
+          <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+              Local authority
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+              @school.LocalAuthority.Name
+            </govuk-summary-list-row-value>
+          </govuk-summary-list-row>
+          <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+              Phase of education
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+              @school.PhaseOfEducation.Name
+            </govuk-summary-list-row-value>
+          </govuk-summary-list-row>
+          <govuk-summary-list-row>
+            <govuk-summary-list-row-key>
+              IDs
+            </govuk-summary-list-row-key>
+            <govuk-summary-list-row-value>
+              URN: @school.Urn<br>
+              DfE number: @(school.LocalAuthorityId)/@(school.EstablishmentNumber)
+              @if (school.Ukprn.HasValue)
+              {
+                <text><br>UKPRN: @school.Ukprn!.Value</text>
+              }
+            </govuk-summary-list-row-value>
+          </govuk-summary-list-row>
+        </govuk-summary-list>
+      }
+
+      @if (Model.Data.HasSingleSchool)
+      {
+        <govuk-radios asp-for="Data.ConfirmedIsSchool">
+          <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend>
+              Is this your school?
+            </govuk-radios-fieldset-legend>
+            <govuk-radios-item value="@true" data-testid="cookie-consent-accept">
+              Yes, this is my school
+            </govuk-radios-item>
+            <govuk-radios-item value="@false" data-testid="cookie-consent-deny">
+              No, I need to choose another school
+            </govuk-radios-item>
+          </govuk-radios-fieldset>
+        </govuk-radios>
+      }
+
       <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+      <input asp-for="Data.HasSingleSchool" type="hidden" />
+      <input asp-for="Data.SchoolPostcode" type="hidden" />
       <input type="hidden" name="handler" value="Submit" />
       <div class="govuk-button-group">
         <govuk-button prevent-double-click="true" type="submit">Continue</govuk-button>

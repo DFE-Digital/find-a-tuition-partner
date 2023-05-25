@@ -4,6 +4,8 @@
     {
         public const string LocalAuthorityDistrict = "LocalAuthorityDistrict";
 
+        public const string EnquirySchoolId = "EnquirySchoolId";
+
         public const string EnquirerEmail = "EnquirerEmail";
 
         public const string EnquiryTuitionType = "EnquiryTuitionType";

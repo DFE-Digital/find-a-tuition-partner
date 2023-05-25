@@ -48,8 +48,13 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
         parameters.LocalAuthorityDistrictId = lad.Id;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;
-        var school = await _unitOfWork.SchoolRepository.FirstOrDefaultAsync(e => e.Postcode == parameters.Postcode);
-        parameters.Urn = school?.Urn;
+        var schools = await _unitOfWork.SchoolRepository.GetAllAsync(e => e.Postcode == parameters.Postcode && e.IsActive, "PhaseOfEducation");
+        if(schools != null && schools.Any())
+        {
+            parameters.Schools = schools.ToList();
+            parameters.Urn = schools.First().Urn;
+        }
+        
         return parameters;
     }
 }

@@ -4,13 +4,10 @@ using Application.DataImport;
 using Application.Extensions;
 using Application.Factories;
 using Application.Mapping;
-using DocumentFormat.OpenXml.InkML;
 using Domain;
 using Domain.Validators;
 using Infrastructure.Mapping.Configuration;
-using Infrastructure.Migrations;
 using Mapster;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -95,19 +92,15 @@ public class DataImporterService : IHostedService
             var isNewSchool = false;
             var establishmentName = schoolDatum.Name;
 
-            School school;
+            var school = dbContext.Schools.FirstOrDefault(x => x.Urn == schoolDatum.Urn);
+            if (school == null)
+            {
+                school = new School();
+                isNewSchool = true;
+            }
+
             try
             {
-                var schoolEntity = dbContext.Schools.FirstOrDefault(x => x.Urn == schoolDatum.Urn);
-                if (schoolEntity != null)
-                {
-                    school = schoolEntity;
-                }
-                else
-                {
-                    school = new School();
-                    isNewSchool = true;
-                }
                 school = giasFactory.GetSchool(school, schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
             }
             catch (Exception ex)

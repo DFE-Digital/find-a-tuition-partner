@@ -3,7 +3,7 @@
 @{
   ViewData["Title"] = "Check your answers";
   ViewData["BackLinkHref"] = $"/enquiry/build/additional-information?{((Model.Data with { From = null }).ToQueryString())}";
-  ViewData["IncludePrintPage"] = true;
+  ViewData["IncludePrintPage"] = true;//TODO -Can now add in postcode for validation?  Add in school too.
 }
 <form method="post">
   <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">

@@ -6,7 +6,7 @@ namespace Application.Validators.Enquiry.Build;
 
 public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswersModel>
 {
-    public CheckYourAnswersModelValidator()
+    public CheckYourAnswersModelValidator()//TODO - add in school validation
     {
         RuleFor(m => m.HasKeyStageSubjects)
             .NotEqual(false)

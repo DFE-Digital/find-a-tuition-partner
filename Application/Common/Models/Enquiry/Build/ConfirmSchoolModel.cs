@@ -1,6 +1,10 @@
-﻿namespace Application.Common.Models.Enquiry.Build;
+﻿using Domain;
+
+namespace Application.Common.Models.Enquiry.Build;
 
 public record ConfirmSchoolModel : SchoolPostcodeModel
 {
-    public int? SelectedSchoolId { get; set; }
+    public List<School> Schools { get; set; } = new List<School>();
+    public bool HasSingleSchool { get; set; } = false;
+    public bool? ConfirmedIsSchool { get; set; } = null;
 }
