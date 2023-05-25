@@ -82,6 +82,7 @@ public class CheckYourAnswersTests
             HasKeyStageSubjects = true,
             TuitionType = TuitionType.Any,
             SchoolId = 1,
+            SchoolUrn = 123,
             Email = "test@test.com",
             TutoringLogistics = "Test content",
             ConfirmTermsAndConditions = true
