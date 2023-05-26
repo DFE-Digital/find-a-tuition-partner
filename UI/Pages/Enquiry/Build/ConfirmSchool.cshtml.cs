@@ -22,7 +22,7 @@ public class ConfirmSchool : PageModel
     {
         Data = data;
 
-        var isValid = await SetData(data);
+        var isValid = await ValidateAndSetData(data);
 
         if (!isValid)
             return RedirectToPage(nameof(SchoolPostcode), data);
@@ -35,16 +35,18 @@ public class ConfirmSchool : PageModel
 
         Data.SchoolId = schoolId;
 
+        ModelState.Clear();
+
         return Page();
     }
     public async Task<IActionResult> OnPostAsync(ConfirmSchoolModel data)
     {
         Data = data;
 
-        await SetData(data);
-
         if (ModelState.IsValid)
         {
+            await ValidateAndSetData(data);
+
             if (data.HasSingleSchool)
             {
                 if (data.ConfirmedIsSchool!.Value)
@@ -77,7 +79,7 @@ public class ConfirmSchool : PageModel
         return Page();
     }
 
-    private async Task<bool> SetData(ConfirmSchoolModel data)
+    private async Task<bool> ValidateAndSetData(ConfirmSchoolModel data)
     {
         var postcode = data.Postcode;
 

@@ -6,7 +6,7 @@ namespace Application.Extensions;
 
 public static class LocationFilterParametersExtensions
 {
-    public static IResult<LocationFilterParameters> TryValidate(this LocationFilterParameters? parameters, bool testIsSchoolPostcode = false)
+    public static IResult<LocationFilterParameters> TryValidate(this LocationFilterParameters? parameters, bool validateIsASchoolPostcode = false)
     {
         if (parameters == null)
         {
@@ -23,7 +23,7 @@ public static class LocationFilterParametersExtensions
             return new LocationNotMappedResult();
         }
 
-        if (testIsSchoolPostcode && !parameters.Urn.HasValue)
+        if (validateIsASchoolPostcode && !parameters.Urn.HasValue)
         {
             return new LocationNotASchool();
         }
