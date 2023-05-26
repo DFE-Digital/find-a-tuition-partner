@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Application.Validators.Enquiry.Build;
 
-public class ConfirmSchoolModelValidation : AbstractValidator<ConfirmSchoolModel>
+public class ConfirmSchoolModelValidator : AbstractValidator<ConfirmSchoolModel>
 {
-    public ConfirmSchoolModelValidation()
+    public ConfirmSchoolModelValidator()
     {
         RuleFor(request => request.ConfirmedIsSchool)
             .NotNull()
