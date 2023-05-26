@@ -6,12 +6,10 @@ namespace UI.Pages.Enquiry.Build;
 
 public class SchoolPostcode : PageModel
 {
-    private readonly ISessionService _sessionService;
     private readonly IMediator _mediator;
 
-    public SchoolPostcode(ISessionService sessionService, IMediator mediator)
+    public SchoolPostcode(IMediator mediator)
     {
-        _sessionService = sessionService;
         _mediator = mediator;
     }
     [BindProperty] public SchoolPostcodeModel Data { get; set; } = new();
@@ -28,6 +26,8 @@ public class SchoolPostcode : PageModel
                 Data.SchoolPostcode = Data.Postcode;
             }
         }
+
+        ModelState.Clear();
 
         return Page();
     }
