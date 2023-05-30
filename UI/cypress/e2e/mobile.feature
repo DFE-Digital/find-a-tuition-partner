@@ -27,7 +27,7 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Search results page heading is 'Search results' in mobile phone view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'phone'
-    Then the search results page heading is 'Your options now'
+    Then the search results page heading is 'Your options for choosing a tuition partner'
 
   Scenario: Search results filter heading is 'Filter results' in tablet and above view
     Given a user has arrived on the 'Search results' page
