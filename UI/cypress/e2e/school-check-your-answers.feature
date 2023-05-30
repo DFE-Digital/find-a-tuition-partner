@@ -13,11 +13,11 @@ Feature: The Check Your Answers page for the Enquiry Builder
             | Section Name            | Expected Content                                |
             | Key stages and subjects | Displays Key Stages and subjects table          |
             | Type of Tuition         | Any                                             |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
             | Tuition Plan            | enquiry                                         |
             | SEND Support            | enquiry                                         |
             | Other Considerations    | enquiry                                         |
-
+            | Your school details     | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address           | simulate-delivered@notifications.service.gov.uk |
 
     Scenario: Change selections for Key Stages and Subjects
         Given a user has started the 'Find a tuition partner' journey
@@ -60,7 +60,7 @@ Feature: The Check Your Answers page for the Enquiry Builder
     Scenario: Change selections for email address
         Given a user has started the 'Find a tuition partner' journey
         And user has journeyed forward to the check your answers page
-        When the user clicks the change button '3'
+        When the user clicks the change button for email address
         Then the user is taken back to the email address page
         And they enter another email address
         And they click 'Continue'
@@ -77,17 +77,17 @@ Feature: The Check Your Answers page for the Enquiry Builder
     Scenario: Change selections for tuition questions
         Given a user has started the 'Find a tuition partner' journey
         And user has journeyed forward to the check your answers page
-        When the user clicks the change button '4'
+        When the user clicks the change button '3'
         Then they are redirected to the enquiry question page
         When they type '5' characters for question 1
         And they click 'Continue'
         Then they are redirected to the check your answers page
-        When the user clicks the change button '5'
+        When the user clicks the change button '4'
         Then they are redirected to the SEND requirements page
         When they type '5' characters for question 2
         And they click 'Continue'
         Then they are redirected to the check your answers page
-        When the user clicks the change button '6'
+        When the user clicks the change button '5'
         Then they are redirected to the other requirements page
         When they type '0' characters for question 3
         And they click 'Continue'

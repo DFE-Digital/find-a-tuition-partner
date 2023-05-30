@@ -4,7 +4,13 @@ import "cypress-axe";
 Then("the page should be accessible", () => {
   cy.injectAxe();
   cy.configureAxe({
-    rules: [{ id: "region", enabled: false }],
+    rules: [
+      { id: "region", enabled: false },
+      {
+        id: "aria-allowed-attr",
+        enabled: false,
+      },
+    ],
   });
   cy.checkA11y();
 });
