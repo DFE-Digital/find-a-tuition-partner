@@ -43,10 +43,10 @@ public class ConfirmSchool : PageModel
     {
         Data = data;
 
+        await ValidateAndSetData(data);
+
         if (ModelState.IsValid)
         {
-            await ValidateAndSetData(data);
-
             if (data.HasSingleSchool)
             {
                 if (data.ConfirmedIsSchool!.Value)
