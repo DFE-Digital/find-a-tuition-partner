@@ -339,4 +339,51 @@ public class StringExtensionsTests
         // Assert
         Assert.Equal(expectedFileName, actualFileName);
     }
+
+    [Theory]
+    [InlineData("ne29 7px", "NE29 7PX")]
+    [InlineData("ne297px", "NE29 7PX")]
+    [InlineData("ne29      7px", "NE29 7PX")]
+    [InlineData("     ne297px", "NE29 7PX")]
+    [InlineData("ne297px    ", "NE29 7PX")]
+    [InlineData(".. @ /? ne29 ...*&^ ... .. 7px ..£$%..", "NE29 7PX")]
+    [InlineData("NE29%207PX", "NE29 7PX")]
+    [InlineData("ne2 7px", "NE2 7PX")]
+    [InlineData("ne27px", "NE2 7PX")]
+    public void ToSanitisedPostcode_Valid(string unsanitisedPostcode, string expectedPostcode)
+    {
+        // Act
+        var sanitisedPostcode = unsanitisedPostcode.ToSanitisedPostcode();
+
+        // Assert
+        sanitisedPostcode.Should().Be(expectedPostcode);
+    }
+
+    [Theory]
+    [InlineData("ne29C7px")]
+    [InlineData("ne7px")]
+    [InlineData("ne  29  7  px")]
+    [InlineData(" ")]
+    [InlineData("")]
+    public void ToSanitisedPostcode_InValid(string unsanitisedPostcode)
+    {
+        // Act
+        var sanitisedPostcode = unsanitisedPostcode.ToSanitisedPostcode();
+
+        // Assert
+        sanitisedPostcode.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ToSanitisedPostcode_Null()
+    {
+        // Arrange
+        string? unsanitisedPostcode = null;
+
+        // Act
+        var sanitisedPostcode = unsanitisedPostcode.ToSanitisedPostcode();
+
+        // Assert
+        sanitisedPostcode.Should().BeNull();
+    }
 }

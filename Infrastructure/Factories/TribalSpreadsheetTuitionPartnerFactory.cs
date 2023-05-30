@@ -327,7 +327,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         tuitionPartner.Website = tuitionPartner.Website.ParseUrl();
 
         //Populate Address from multiple cells
-        var postcode = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_PostCode_s").Value.SourceValue;
+        var postcode = _organisationDetailsMapping.SingleOrDefault(x => x.Key == "Organisation_PostCode_s").Value.SourceValue.ToSanitisedPostcode();
         var addressLines = new string?[]
         {
         tuitionPartner.Address,
@@ -351,7 +351,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         {
             _warnings.Add($"The email supplied is invalid in the '{sheetName}' worksheet");
         }
-        if (!string.IsNullOrWhiteSpace(postcode) && !Regex.Match(postcode, StringConstants.PostcodeRegExp).Success)
+        if (string.IsNullOrWhiteSpace(postcode))
         {
             _warnings.Add($"The postcode supplied is invalid in the '{sheetName}' worksheet");
         }
