@@ -2,7 +2,7 @@
 @model WhichTuitionSettings
 @{
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/which-subjects";
-  ViewData["Title"] = "What tuition setting do you need?";
+  ViewData["Title"] = "What tuition setting do you prefer?";
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
@@ -16,7 +16,7 @@
       <govuk-radios asp-for="Data.TuitionSetting">
         <govuk-radios-fieldset>
           <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
-            What tuition setting do you need?
+            What tuition setting do you prefer?
           </govuk-radios-fieldset-legend>
           @foreach (var item in Model.Data.AllTuitionSettings)
           {

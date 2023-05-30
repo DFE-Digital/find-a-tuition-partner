@@ -9,7 +9,7 @@ namespace Infrastructure.Extensions
         {
             if (tuitionSettings != null && tuitionSettings.Any())
             {
-                if (tuitionSettings.Count() == 1)
+                if (tuitionSettings.Count == 1)
                 {
                     var id = tuitionSettings.First().Id;
                     return ((TuitionSetting)id).DisplayName();
