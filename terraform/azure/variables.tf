@@ -329,3 +329,40 @@ variable "emailSettings_amalgamateResponses" {
 variable "fatp_azure_key_vault_name" {
   type        = string
 }
+
+variable "postgresql_resource_group" {
+  type = string
+}
+
+variable "postgresql_server_admin_username" {
+  type = string
+}
+
+variable "postgresql_server_admin_password" {
+  type = string
+}
+
+variable "postgresql_sku_name" {
+  type    = string
+  default = "B_Standard_B1ms"
+}
+
+variable "postgresql_storage_mb" {
+  type    = number
+  default = 32768
+}
+
+variable "postgresql_backup_retention_days" {
+  type    = number
+  default = 35
+}
+
+variable "postgresql_ssl_enforcement_enabled" {
+  type    = bool
+  default = true
+}
+
+variable "postgresql_database_version" {
+  type    = string
+  default = 14
+}
