@@ -8,9 +8,9 @@ Feature: Search By Tuition setting Page
     Then the correct options will display
 
 
-  Scenario: subjects page title is 'What tuition setting do you need?'
+  Scenario: subjects page title is 'What tuition setting do you prefer?'
     Given the 'Tuition setting' page is displayed
-    Then the page's title is 'What tuition setting do you need?'
+    Then the page's title is 'What tuition setting do you prefer?'
 
   Scenario: Back click returns to subjects for key stages input page
     Given the 'Tuition setting' page is displayed
@@ -26,7 +26,7 @@ Feature: Search By Tuition setting Page
 
   Scenario: search by tuition setting page url is '/which-tuition-settings'
     Given the 'Tuition setting' page is displayed
-    Then they will be taken to the 'What tuition setting do you need?' page
+    Then they will be taken to the 'What tuition setting do you prefer?' page
 
 
   Scenario: the user is only able to select on of the three options for tuition setting

@@ -70,7 +70,7 @@ Then("they will be journey back to the page they started from", () => {
   Step(this, "they click 'Back'");
   Step(
     this,
-    "they will be taken to the 'What tuition setting do you need?' page"
+    "they will be taken to the 'What tuition setting do you prefer?' page"
   );
   Step(this, "they click 'Back'");
   Step(this, "they will be taken to the 'Which subjects' page");

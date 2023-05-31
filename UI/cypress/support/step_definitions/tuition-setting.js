@@ -14,13 +14,21 @@ Then("they select subjects for the key stages", () => {
 });
 
 Then("they will be taken to the tuition setting page", () => {
-  cy.get("h1").should("contain.text", "What tuition setting do you need?");
+  cy.get("h1")
+    .invoke("text")
+    .then((text) => {
+      const trimmedText = text.trim();
+      expect(trimmedText).to.equal("What tuition setting do you prefer?");
+    });
 });
 
 Then("the correct options will display", () => {
-  cy.get(".govuk-radios > :nth-child(1)").contains("No preference");
+  cy.get(".govuk-radios > :nth-child(1)").contains("Face-to-face");
   cy.get(".govuk-radios > :nth-child(2)").contains("Online");
-  cy.get(".govuk-radios > :nth-child(3)").contains("Face-to-face");
+  cy.get(".govuk-radios > :nth-child(3)").contains(
+    "Both face to face and online"
+  );
+  cy.get(".govuk-radios > :nth-child(4)").contains("No preference");
   cy.get("#no-preference").should("be.enabled");
   cy.get("#online").should("be.enabled");
   cy.get("#face-to-face").should("be.enabled");
@@ -57,7 +65,7 @@ Then("the filter results show the expected selection", () => {
 
 Then("they will be taken to the 'Tuition setting' page", () => {
   cy.visit(
-    "/which-tuition-settings?Postcode=SK1%201EB&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage2-English&Subjects=KeyStage2-Maths&TuitionSetting=Any&KeyStages=KeyStage1&KeyStages=KeyStage2"
+    "/which-tuition-settings?Postcode=SK1%201EB&TuitionSetting=NoPreference&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage2-English&Subjects=KeyStage2-Maths&TuitionSetting=Any&KeyStages=KeyStage1&KeyStages=KeyStage2"
   );
 });
 
