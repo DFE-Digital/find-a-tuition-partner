@@ -135,19 +135,26 @@ public static class StringExtensions
         if (string.IsNullOrEmpty(postcode))
             return postcode;
 
-        var regex = new Regex(StringConstants.UnSanitisedPostcodeRegExp);
-        var match = regex.Match(postcode);
+        var updatedPostcode = ToSanitisedPostcodeInner(postcode!);
 
-        if (!match.Success)
+        if (string.IsNullOrEmpty(updatedPostcode))
         {
-            postcode = HttpUtility.UrlDecode(postcode);
-            var matchDecoded = regex.Match(postcode);
-
-            if (!matchDecoded.Success)
-                return string.Empty;
+            updatedPostcode = ToSanitisedPostcodeInner(HttpUtility.UrlDecode(postcode!));
         }
 
+        return updatedPostcode;
+    }
+
+    private static string ToSanitisedPostcodeInner(this string postcode)
+    {
         var updatedPostcode = Regex.Replace(postcode, "[^A-Za-z0-9]", "").ToUpper();
+
+        var regex = new Regex(StringConstants.PostcodeRegExp);
+        var match = regex.Match(updatedPostcode);
+
+        if (!match.Success)
+            return string.Empty;
+
         return $"{updatedPostcode.Substring(0, updatedPostcode.Length - 3)} {updatedPostcode.Substring(updatedPostcode.Length - 3, 3)}";
     }
 }
