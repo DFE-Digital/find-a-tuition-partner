@@ -330,10 +330,6 @@ variable "fatp_azure_key_vault_name" {
   type        = string
 }
 
-variable "postgresql_resource_group" {
-  type = string
-}
-
 variable "postgresql_server_admin_username" {
   type = string
 }

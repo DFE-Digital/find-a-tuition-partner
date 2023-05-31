@@ -1,6 +1,6 @@
 resource "azurerm_postgresql_flexible_server" "default" {
   name                   = "${local.service_name}-psqlflexibleserver"
-  resource_group_name    = local.postgresql_resource_group
+  resource_group_name    = module.fatp_azure_web_app_services_hosting.azurerm_resource_group_default.name
   location               = local.azure_location
   version                = local.postgresql_database_version
   administrator_login    = local.postgresql_server_admin_username
@@ -12,6 +12,8 @@ resource "azurerm_postgresql_flexible_server" "default" {
 
   backup_retention_days = var.postgresql_backup_retention_days
   tags                  = local.tags
+
+  depends_on = [module.fatp_azure_web_app_services_hosting]
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "default" {
