@@ -1,36 +1,36 @@
 ---
 applications:
-  - name: find-a-tuition-partner((environment-postfix))
-    services:
-      - find-a-tuition-partner((environment-postfix))-postgres-db
-      - find-a-tuition-partner((environment-postfix))-redis-db
-    buildpacks:
-      - dotnet_core_buildpack
-    instances: ((instances))
-    memory: ((memory))
-    env:
-      ASPNETCORE_ENVIRONMENT: ((dotnet-environment))
-      AppLogging:DefaultLogEventLevel: ((default-log-event-level))
-      AppLogging:OverrideLogEventLevel: ((override-log-event-level))
-      AppLogging:TcpSinkUri: ((tcp-sink-uri))
-      GoogleTagManager:ContainerId: ((google-tag-manager-container-id))
-      GoogleAnalytics:MeasurementId: ((google-analytics-measurement-id))
-      AzureBlobStorage:ClientSecret: ((azure-blob-storage-client-secret))
-      AzureBlobStorage:ClientId: ((azure-blob-storage-client-id))
-      AzureBlobStorage:TenantId: ((azure-blob-storage-tenant-id))
-      AzureBlobStorage:AccountName: ((azure-blob-storage-account-name))
-      AzureBlobStorage:ContainerName: ((azure-blob-storage-container-name))
-      AzureBlobStorage:TuitionPartnerDataFolderName: ((azure-blob-storage-tuition-partner-data-folder-name))
-      AzureBlobStorage:TuitionPartnerLogosFolderName: ((azure-blob-storage-tuition-partner-logos-folder-name))
-      DfeAnalytics:CredentialsJsonFile: dfe-analytics-credentials.json
-      DfeAnalytics:ProjectId: find-a-tuition-partner
-      DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
-      GovUkNotify:ApiKey: ((govuk-notify-api-key))
-      GovUkNotify:TemplateIdEnquirySubmittedConfirmationToEnquirer: ((govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id))
-      GovUkNotify:TemplateIdEnquirySubmittedToTp: ((govuk-notify-enquiry-submitted-to-tp-template-id))
-      GovUkNotify:TemplateIdEnquiryResponseReceivedConfirmationToEnquirer: ((govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id))
-      GovUkNotify:TemplateIdEnquiryResponseSubmittedConfirmationToTp: ((govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id))
-      EmailSettings:OverrideAddress: ((override-email-address))
-      EmailSettings:AmalgamateResponses: ((email-amalgamate-responses))
-      EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
-      FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))
+- name: find-a-tuition-partner((environment-postfix))
+  services:
+    - find-a-tuition-partner((environment-postfix))-postgres-db
+    - find-a-tuition-partner((environment-postfix))-redis-db
+  buildpacks:
+    - dotnet_core_buildpack
+  instances: ((instances))
+  memory: ((memory))
+  env:
+    ASPNETCORE_ENVIRONMENT: ((dotnet-environment))
+    AppLogging:DefaultLogEventLevel: ((default-log-event-level))
+    AppLogging:OverrideLogEventLevel: ((override-log-event-level))
+    AppLogging:TcpSinkUri: ((tcp-sink-uri))
+    GoogleTagManager:ContainerId: ((google-tag-manager-container-id))
+    GoogleAnalytics:MeasurementId: ((google-analytics-measurement-id))
+    AzureBlobStorage:ClientSecret: ((azure-blob-storage-client-secret))
+    AzureBlobStorage:ClientId: ((azure-blob-storage-client-id))
+    AzureBlobStorage:TenantId: ((azure-blob-storage-tenant-id))
+    AzureBlobStorage:AccountName: ((azure-blob-storage-account-name))
+    AzureBlobStorage:ContainerName: ((azure-blob-storage-container-name))
+    AzureBlobStorage:TuitionPartnerDataFolderName: ((azure-blob-storage-tuition-partner-data-folder-name))
+    AzureBlobStorage:TuitionPartnerLogosFolderName: ((azure-blob-storage-tuition-partner-logos-folder-name))
+    DfeAnalytics:CredentialsJsonFile: dfe-analytics-credentials.json
+    DfeAnalytics:ProjectId: find-a-tuition-partner
+    DfeAnalytics:DatasetId: ((dfe-analytics-dataset))
+    GovUkNotify:ApiKey: ((govuk-notify-api-key))
+    GovUkNotify:TemplateIdEnquirySubmittedConfirmationToEnquirer: ((govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id))
+    GovUkNotify:TemplateIdEnquirySubmittedToTp: ((govuk-notify-enquiry-submitted-to-tp-template-id))
+    GovUkNotify:TemplateIdEnquiryResponseReceivedConfirmationToEnquirer: ((govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id))
+    GovUkNotify:TemplateIdEnquiryResponseSubmittedConfirmationToTp: ((govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id))
+    EmailSettings:OverrideAddress: ((override-email-address))
+    EmailSettings:AmalgamateResponses: ((email-amalgamate-responses))
+    EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
+    FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))

@@ -1,7 +1,7 @@
-environment-postfix:
+environment-postfix: 
 instances: 1
 memory: 256M
-dotnet-environment:
+dotnet-environment: 
 default-log-event-level: Debug
 override-log-event-level: Information
 google-tag-manager-container-id: GTM-P3QSX72
@@ -11,7 +11,7 @@ govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id: b1e29214-df
 govuk-notify-enquiry-submitted-to-tp-template-id: b24ffca7-6119-4dbf-8ae2-dceb2c300ca4
 govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id: f64db52d-08ce-4f2a-9b37-a374db1ad77a
 govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: 0aad4d76-baad-456b-a58d-8221812e514c
-override-email-address:
+override-email-address: 
 email-amalgamate-responses: true
 email-all-sent-to-enquirer: true
 feature-flag-enquiry-builder: true

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment for the End to End tests"
+        description: 'Target environment for the End to End tests'
         required: true
         default: qa
         type: choice
@@ -14,12 +14,12 @@ on:
           - staging
           - production
       username:
-        description: "Username"
-        required: false
+        description: 'Username'
+        required: false 
         type: string
       password:
-        description: "Password"
-        required: false
+        description: 'Password'
+        required: false 
         type: string
 
 jobs:
