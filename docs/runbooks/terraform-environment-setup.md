@@ -1,4 +1,3 @@
-
 # Terraform Environment Setup
 
 ## Description

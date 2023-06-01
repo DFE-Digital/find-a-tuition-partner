@@ -38,7 +38,7 @@ cf delete find-a-tuition-partner-<ENVIRONMENT> -r
 
 ### Database
 
-Remove the backing database service. 
+Remove the backing database service.
 
 ```
 cf delete-service find-a-tuition-partner-<ENVIRONMENT>-postgres-db
