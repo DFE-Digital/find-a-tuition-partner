@@ -20,7 +20,7 @@ variable "service_name" {
 }
 
 variable "service_offering" {
-  type        = string
+  type = string
 }
 
 variable "azure_location" {
@@ -297,37 +297,37 @@ variable "cdn_frontdoor_origin_fqdn_override" {
 }
 
 variable "blobStorage_clientId" {
-  type        = string
+  type    = string
   default = "fdd09510-77b0-419f-b67c-2b5a25a073f0"
 }
 
 variable "blobStorage_containerName" {
-  type        = string
+  type    = string
   default = "ntp-tp-data"
 }
 
 variable "blobStorage_accountName" {
-  type        = string
+  type    = string
   default = "s177p01sharedtpdata"
 }
 
 variable "blobStorage_tenantId" {
-  type        = string
+  type    = string
   default = "9c7d9dd3-840c-4b3f-818e-552865082e16"
 }
 
 variable "emailSettings_allSentToEnquirer" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "emailSettings_amalgamateResponses" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 
 variable "fatp_azure_key_vault_name" {
-  type        = string
+  type = string
 }
 
 variable "postgresql_server_admin_username" {
@@ -361,4 +361,36 @@ variable "postgresql_ssl_enforcement_enabled" {
 variable "postgresql_database_version" {
   type    = string
   default = 14
+}
+
+variable "redis_cache_capacity" {
+  type    = number
+  default = 0 // 250 MB for Basic SKU
+}
+
+variable "redis_cache_family" {
+  type    = string
+  default = "C"
+}
+
+variable "redis_cache_sku" {
+  type    = string
+  default = "Basic"
+}
+
+variable "redis_cache_version" {
+  type    = number
+  default = 6
+}
+
+variable "redis_cache_patch_schedule_day" {
+  description = "Redis Cache patch schedule day"
+  type        = string
+  default     = "Sunday"
+}
+
+variable "redis_cache_patch_schedule_hour" {
+  description = "Redis Cache patch schedule hour"
+  type        = number
+  default     = 23
 }

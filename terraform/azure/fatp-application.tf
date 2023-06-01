@@ -1,18 +1,14 @@
 module "fatp_azure_web_app_services_hosting" {
   source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.1"
 
-  environment    = var.environment
-  project_name   = var.project_name
-  service_name   = var.service_name
-  azure_location = var.azure_location
+  environment    = local.environment
+  project_name   = local.project_name
+  service_name   = local.service_name
+  azure_location = local.azure_location
 
-  tags = {
-    "Environment" = var.environment,
-    "Product" = var.service_offering,
-    "Service Offering" = var.service_offering
-  }
+  tags = local.tags
 
-  launch_in_vnet                = var.launch_in_vnet
+  launch_in_vnet                = local.launch_in_vnet
   existing_virtual_network      = var.existing_virtual_network
   existing_resource_group       = var.existing_resource_group
   virtual_network_address_space = var.virtual_network_address_space
