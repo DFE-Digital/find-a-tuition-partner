@@ -1,16 +1,22 @@
+using Application.Commands.Enquiry.Build;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
+using Domain.Exceptions;
 
 namespace UI.Pages.Enquiry.Build;
 
 public class EmailVerification : PageModel
 {
+    private readonly IMediator _mediator;
     private readonly ISessionService _sessionService;
     private readonly IHostEnvironment _hostEnvironment;
 
-    public EmailVerification(ISessionService sessionService, IHostEnvironment hostEnvironment)
+    public EmailVerification(IMediator mediator,
+        ISessionService sessionService,
+        IHostEnvironment hostEnvironment)
     {
+        _mediator = mediator;
         _sessionService = sessionService;
         _hostEnvironment = hostEnvironment;
     }
@@ -18,14 +24,18 @@ public class EmailVerification : PageModel
 
     public async Task<IActionResult> OnGetAsync(EmailVerificationModel data)
     {
-        if (!await _sessionService.SessionDataExistsAsync())
+        var emailToBeVerified = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
+
+        if (string.IsNullOrWhiteSpace(emailToBeVerified))
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
 
+        Data.Email = emailToBeVerified;
+
         if (!_hostEnvironment.IsProduction())
         {
-            data.PasscodeForTesting = await _sessionService.GetAsync<int?>(SessionKeyConstants.EmailValidationPasscode);
+            data.PasscodeForTesting = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailVerificationPasscode);
         }
 
         ModelState.Clear();
@@ -34,25 +44,25 @@ public class EmailVerification : PageModel
     }
     public async Task<IActionResult> OnPostAsync(EmailVerificationModel data)
     {
-        var passcode = await _sessionService.GetAsync<int?>(SessionKeyConstants.EmailValidationPasscode);
-        var emailToBeValidated = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeValidated);
+        var passcode = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailVerificationPasscode);
+        var emailToBeVerified = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
 
-        if (passcode == null || string.IsNullOrWhiteSpace(emailToBeValidated))
+        if (string.IsNullOrWhiteSpace(passcode) || string.IsNullOrWhiteSpace(emailToBeVerified))
             return RedirectToPage("/Session/Timeout");
 
         Data = data;
         if (ModelState.IsValid)
         {
-            if(passcode != data.Passcode)
+            if (!passcode.Equals(data.Passcode))
             {
                 ModelState.AddModelError("Data.Passcode", "Enter a correct passcode");
                 return Page();
             }
 
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmail, emailToBeValidated);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmail, emailToBeVerified);
 
-            await _sessionService.SetAsync<int?>(SessionKeyConstants.EmailValidationPasscode, null);
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeValidated, string.Empty);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, string.Empty);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeVerified, string.Empty);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {
@@ -63,5 +73,46 @@ public class EmailVerification : PageModel
         }
 
         return Page();
+    }
+
+    public async Task<IActionResult> OnGetNewPasscode(EmailVerificationModel data)
+    {
+        var emailToBeVerified = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
+
+        if (string.IsNullOrWhiteSpace(emailToBeVerified))
+            return RedirectToPage("/Session/Timeout");
+
+        var sendEmailVerificationCommand = new SendEmailVerificationCommand()
+        {
+            Email = emailToBeVerified,
+            PasscodeLength = Constants.IntegerConstants.EmailVerificationPasscodeLength,
+            SessionTimeoutMinutes = Constants.DoubleConstants.SessionTimeoutInMinutes,
+            BaseServiceUrl = Request.GetBaseServiceUrl()
+        };
+
+        int? passcode;
+
+        try
+        {
+            passcode = await _mediator.Send(sendEmailVerificationCommand);
+        }
+        catch (EmailSendException)
+        {
+            var errorMessage =
+                $"There was a problem sending the email and you should check the email address and try again";
+
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
+
+            return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
+        }
+
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, passcode.Value.ToString());
+
+        data.NewPasscodeSentAt = DateTime.UtcNow.ToLocalDateTime().ToString("h:mmtt");
+        data.Passcode = null;
+        data.PasscodeForTesting = null;
+        data.Email = null;
+
+        return RedirectToPage(data);
     }
 }

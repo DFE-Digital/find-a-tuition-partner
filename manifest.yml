@@ -34,5 +34,5 @@ applications:
     EmailSettings:OverrideAddress: ((override-email-address))
     EmailSettings:AmalgamateResponses: ((email-amalgamate-responses))
     EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
-    FeatureFlags:ValidateEmail: ((feature-flag-validate-email))
+    FeatureFlags:VerifyEmail: ((feature-flag-verify-email))
     FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))

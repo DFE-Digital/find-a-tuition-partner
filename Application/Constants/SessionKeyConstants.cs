@@ -30,8 +30,8 @@
 
         public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
 
-        public const string EmailValidationPasscode = "EmailValidationPasscode";
+        public const string EmailVerificationPasscode = "EmailVerificationPasscode";
 
-        public const string EmailToBeValidated = "EmailToBeValidated";
+        public const string EmailToBeVerified = "EmailToBeVerified";
     }
 }

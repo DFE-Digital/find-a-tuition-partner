@@ -15,7 +15,7 @@ govuk-notify-email-verification-template-id: badaacff-87b8-4046-b953-a85a0a9e2a8
 override-email-address: 
 email-amalgamate-responses: true
 email-all-sent-to-enquirer: true
-feature-flag-validate-email: true
+feature-flag-verify-email: true
 feature-flag-enquiry-builder: true
 azure-blob-storage-container-name: ntp-tp-data
 azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/

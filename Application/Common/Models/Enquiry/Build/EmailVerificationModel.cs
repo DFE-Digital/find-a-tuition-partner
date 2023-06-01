@@ -2,6 +2,8 @@
 
 public record EmailVerificationModel : EnquiryBuildModel
 {
-    public int? Passcode { get; set; }
-    public int? PasscodeForTesting { get; set; }
+    public string? Passcode { get; set; }
+    public string? PasscodeForTesting { get; set; }
+
+    public string? NewPasscodeSentAt { get; set; }
 }

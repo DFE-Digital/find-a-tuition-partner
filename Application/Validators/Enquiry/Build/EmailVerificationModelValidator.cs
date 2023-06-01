@@ -1,5 +1,4 @@
 ﻿using Application.Common.Models.Enquiry.Build;
-using Application.Constants;
 using FluentValidation;
 
 namespace Application.Validators.Enquiry.Build;
@@ -9,7 +8,7 @@ public class EmailVerificationModelValidator : AbstractValidator<EmailVerificati
     public EmailVerificationModelValidator()
     {
         RuleFor(request => request.Passcode)
-            .NotEmpty()
-            .WithMessage("Enter your passcode"); //TODO - relace default message if non-int is passed in
+            .NotEmpty().WithMessage("Enter your passcode")
+            .Matches("\\d+").WithMessage("The passcode must be a number");
     }
 }

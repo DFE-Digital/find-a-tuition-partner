@@ -4,6 +4,7 @@ using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
 using Domain.Exceptions;
 using Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace UI.Pages.Enquiry.Build;
 
@@ -13,13 +14,13 @@ public class EnquirerEmail : PageModel
     private readonly ISessionService _sessionService;
     private readonly FeatureFlags _featureFlagsConfig;
 
-    public EnquirerEmail(IMediator mediator, 
+    public EnquirerEmail(IMediator mediator,
         ISessionService sessionService,
-        FeatureFlags featureFlagsConfig)
+        IOptions<FeatureFlags> featureFlagsConfig)
     {
         _mediator = mediator;
         _sessionService = sessionService;
-        _featureFlagsConfig = featureFlagsConfig;
+        _featureFlagsConfig = featureFlagsConfig.Value;
     }
     [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
 
@@ -34,9 +35,9 @@ public class EnquirerEmail : PageModel
 
         ErrorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
 
-        Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeValidated);
+        Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
 
-        if(string.IsNullOrEmpty(Data.Email))
+        if (string.IsNullOrEmpty(Data.Email))
             Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
 
         if (!string.IsNullOrEmpty(ErrorMessage))
@@ -64,12 +65,12 @@ public class EnquirerEmail : PageModel
                 await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, string.Empty);
             }
 
-            var previouslyValidatedEmail = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
+            var previouslyVerifiedEmail = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
 
-            if (!_featureFlagsConfig.ValidateEmail ||
-                previouslyValidatedEmail != null && previouslyValidatedEmail.Equals(data.Email!, StringComparison.OrdinalIgnoreCase))
+            if (!_featureFlagsConfig.VerifyEmail ||
+                previouslyVerifiedEmail != null && previouslyVerifiedEmail.Equals(data.Email!, StringComparison.OrdinalIgnoreCase))
             {
-                if(!_featureFlagsConfig.ValidateEmail)
+                if (!_featureFlagsConfig.VerifyEmail)
                 {
                     await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmail, data.Email!);
                 }
@@ -103,8 +104,8 @@ public class EnquirerEmail : PageModel
                     return Page();
                 }
 
-                await _sessionService.SetAsync(SessionKeyConstants.EmailValidationPasscode, passcode);
-                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeValidated, data.Email!);
+                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, passcode.Value.ToString());
+                await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeVerified, data.Email!);
 
                 return RedirectToPage(nameof(EmailVerification), new SearchModel(data));
             }
