@@ -16,28 +16,28 @@ There are four permenant environments, all of which are publicly available.
 
 ### QA
 
-* [https://find-a-tuition-partner-qa.london.cloudapps.digital](https://find-a-tuition-partner-qa.london.cloudapps.digital)
-* A commit to the main branch automatically triggers a deployment to the QA environment using the [Continuous Deployment to QA Environment](../.github/workflows/continuous-deployment-to-qa.yml) GitHub action
-* Used for manual QA and regression tests
+- [https://find-a-tuition-partner-qa.london.cloudapps.digital](https://find-a-tuition-partner-qa.london.cloudapps.digital)
+- A commit to the main branch automatically triggers a deployment to the QA environment using the [Continuous Deployment to QA Environment](../.github/workflows/continuous-deployment-to-qa.yml) GitHub action
+- Used for manual QA and regression tests
 
 ### User Research
 
-* [https://find-a-tuition-partner-research.london.cloudapps.digital](https://find-a-tuition-partner-research.london.cloudapps.digital)
-* Reserved exclusively for User Research
-* Deployments to this environment should only be done with the approval of the User Research team
+- [https://find-a-tuition-partner-research.london.cloudapps.digital](https://find-a-tuition-partner-research.london.cloudapps.digital)
+- Reserved exclusively for User Research
+- Deployments to this environment should only be done with the approval of the User Research team
 
 ### Staging
 
-* [https://find-a-tuition-partner-staging.london.cloudapps.digital](https://find-a-tuition-partner-staging.london.cloudapps.digital)
-* Performance testing is run against this environment
-* Used for external sign off e.g. UAT, ITHC, accessibility testing
-* Environment used by Tuition Partners to sign off their data
-* Final go no go for release to production should be performed on this environment
+- [https://find-a-tuition-partner-staging.london.cloudapps.digital](https://find-a-tuition-partner-staging.london.cloudapps.digital)
+- Performance testing is run against this environment
+- Used for external sign off e.g. UAT, ITHC, accessibility testing
+- Environment used by Tuition Partners to sign off their data
+- Final go no go for release to production should be performed on this environment
 
 ### Production
 
-* [https://www.find-tuition-partner.service.gov.uk](https://www.find-tuition-partner.service.gov.uk)
-* Also available on [https://find-a-tuition-partner-production.london.cloudapps.digital](https://find-a-tuition-partner-production.london.cloudapps.digital)
+- [https://www.find-tuition-partner.service.gov.uk](https://www.find-tuition-partner.service.gov.uk)
+- Also available on [https://find-a-tuition-partner-production.london.cloudapps.digital](https://find-a-tuition-partner-production.london.cloudapps.digital)
 
 ## Pull Request Deployments
 
@@ -51,20 +51,20 @@ The PR environment will be torn down when the PR is closed (merged) using the [P
 
 ## Guide
 
-1) Complete the development work required for the ticket
-2) Raise a PR using the [pull request template](../.github/pull_request_template.md) (defines definition of done)
-3) Move the ticket to the review column
-4) Get your PR reviewed by a member of the dev team but **do not merge the PR until the functionality is reviewed and signed off by the wider team**
-5) Share the link to the PR deployment created following step 2 with a member of the following disciplines where appropriate:
-    1) Product Manager or Owner
-    2) Business Analyst
-    3) Service Design
-    4) Content
-6) Iterate until approval is given that the ticket has been implemented correctly. This can be expressed by the reviewers moving the ticket to done
-7) Merge your PR into `main`
-8) Wait for the triggered [Continuous Deployment to QA Environment](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/continuous-deployment-to-qa.yml) workflow run to complete and go green
-9) Run the [Deploy to GOV.UK PaaS](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/deploy-to-gpaas.yml) workflow using the `main` branch, targetting `staging` and the optional `Run database migrations and import data` checkbox (if your PR includes database migrations or updated TP data) to deploy your code to the staging environment
-10) Run through the search journey manually on the [staging environment](https://find-a-tuition-partner-staging.london.cloudapps.digital) to confirm to your satisfaction that the deployment has been successful
-11) Run the [Deploy to GOV.UK PaaS](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/deploy-to-gpaas.yml) workflow using the `main` branch, targetting `production` and the optional `Run database migrations and import data` checkbox (if your PR includes database migrations or updated TP data) to deploy your code to the production environment
-12) Run through the search journey manually on the [production environment](https://www.find-tuition-partner.service.gov.uk) to confirm to your satisfaction that the deployment has been successful
-13) Add "Deployed to Production" as a comment in the ticket
+1. Complete the development work required for the ticket
+2. Raise a PR using the [pull request template](../.github/pull_request_template.md) (defines definition of done)
+3. Move the ticket to the review column
+4. Get your PR reviewed by a member of the dev team but **do not merge the PR until the functionality is reviewed and signed off by the wider team**
+5. Share the link to the PR deployment created following step 2 with a member of the following disciplines where appropriate:
+   1. Product Manager or Owner
+   2. Business Analyst
+   3. Service Design
+   4. Content
+6. Iterate until approval is given that the ticket has been implemented correctly. This can be expressed by the reviewers moving the ticket to done
+7. Merge your PR into `main`
+8. Wait for the triggered [Continuous Deployment to QA Environment](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/continuous-deployment-to-qa.yml) workflow run to complete and go green
+9. Run the [Deploy to GOV.UK PaaS](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/deploy-to-gpaas.yml) workflow using the `main` branch, targetting `staging` and the optional `Run database migrations and import data` checkbox (if your PR includes database migrations or updated TP data) to deploy your code to the staging environment
+10. Run through the search journey manually on the [staging environment](https://find-a-tuition-partner-staging.london.cloudapps.digital) to confirm to your satisfaction that the deployment has been successful
+11. Run the [Deploy to GOV.UK PaaS](https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/deploy-to-gpaas.yml) workflow using the `main` branch, targetting `production` and the optional `Run database migrations and import data` checkbox (if your PR includes database migrations or updated TP data) to deploy your code to the production environment
+12. Run through the search journey manually on the [production environment](https://www.find-tuition-partner.service.gov.uk) to confirm to your satisfaction that the deployment has been successful
+13. Add "Deployed to Production" as a comment in the ticket
