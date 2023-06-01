@@ -10,12 +10,12 @@ The code in this repository is for the find a tuition partner service. This serv
 
 ## Further documentation
 
-- [Architectural Decision Records (ADR)](docs/decisions)
-- [Runbooks](docs/runbooks)
-- [C4 Diagrams](docs/uml)
-- [Release Process](docs/release-process.md)
-- [Errors and Bugs](docs/errors-and-bugs.md)
-- [Disaster Recovery](docs/runbooks/disaster-recovery.md)
+* [Architectural Decision Records (ADR)](docs/decisions)
+* [Runbooks](docs/runbooks)
+* [C4 Diagrams](docs/uml)
+* [Release Process](docs/release-process.md)
+* [Errors and Bugs](docs/errors-and-bugs.md)
+* [Disaster Recovery](docs/runbooks/disaster-recovery.md)
 
 ## Architecture
 
@@ -31,9 +31,9 @@ The code in this repository is for the find a tuition partner service. This serv
 
 ### Tooling requirements
 
-- .NET 6
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [NodeJS LTS](https://nodejs.org/en/download/)
+* .NET 6
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* [NodeJS LTS](https://nodejs.org/en/download/)
 
 You also require the [Entity Framework Core Tools for the .NET Command-Line Interface](https://www.nuget.org/packages/dotnet-ef/) to manage database migrations. Install or update these using the following commands:
 
@@ -95,10 +95,10 @@ dotnet ef database update -p Infrastructure -s UI
 
 From a command prompt, change to the `UI` directory and run `npm install` to install the dependencies. Then run one of the following commands:
 
-- `npm run build` to bundle the assets using webpack 5 in production mode
-- `npm run build:dev` to bundle the assets using webpack 5 in development mode
-- `npm run watch` to bundle the assets using webpack 5 in development mode and apply changes immediately when developing
-- `npm run format` to apply prettier formatting to the web asset source files (js and sass) along with the cypress step definitions
+* `npm run build` to bundle the assets using webpack 5 in production mode
+* `npm run build:dev` to bundle the assets using webpack 5 in development mode
+* `npm run watch` to bundle the assets using webpack 5 in development mode and apply changes immediately when developing
+* `npm run format` to apply prettier formatting to the web asset source files (js and sass) along with the cypress step definitions
 
 ### Running the application
 
@@ -174,9 +174,9 @@ The full suite of end to end tests is run automatically for every opened PR bran
 
 From a command prompt, change to the `UI` directory and run `npm install` to install the dependencies. Then run one of the following commands:
 
-- `npx cypress run` to run all Cypress end to end tests in a headless browser
-- `npx cypress open` to open the Cypress test runner for fully manual configuration of the test runner
-- `npx cypress open --config baseUrl=https://my-url/ --env username=<USERNAME>,password=<PASSWORD>` to open the Cypress test runner specifying a different base url and basic HTTP authentication credentials
+* `npx cypress run` to run all Cypress end to end tests in a headless browser
+* `npx cypress open` to open the Cypress test runner for fully manual configuration of the test runner
+* `npx cypress open --config baseUrl=https://my-url/ --env username=<USERNAME>,password=<PASSWORD>` to open the Cypress test runner specifying a different base url and basic HTTP authentication credentials
 
 ### Docker Compose
 
@@ -199,14 +199,14 @@ Axe has been integrated with the Cypress end to end tests using [cypress-axe](ht
 
 Please note: This automated accessibility testing is not sufficient to replace manual testing by the team and a full external accessibility audit. The dev team should also use the following tools locally to confirm there are no accessibility violations prior to QA
 
-- [axe DevTools](https://www.deque.com/axe/devtools/)
-- [WAVE](https://wave.webaim.org/)
+* [axe DevTools](https://www.deque.com/axe/devtools/)
+* [WAVE](https://wave.webaim.org/)
 
 ### Security Testing
 
 The team currently use the following tools to aid manual security testing
 
-- [OWASP Zed Attack Proxy](https://www.zaproxy.org/)
+* [OWASP Zed Attack Proxy](https://www.zaproxy.org/)
 
 ## GOV.UK PaaS
 
@@ -246,7 +246,6 @@ cd scripts
 The data will be exported into a new directory `scripts/exports/production/<date>/`
 
 By default this will export data from the `production` environment. You can export data from other enqvironments if needed, e.g.
-
 ```
 ./export_enquiry_data.sh staging
 ```

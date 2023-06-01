@@ -12,10 +12,10 @@ The service downloads and stores the full GIAS dataset in its database nightly. 
 
 ## Results
 
-| Date       | Searches | Run Time | Searches Per Second | Average Response Time | Specifications   |
-| ---------- | -------- | -------- | ------------------- | --------------------- | ---------------- |
-| 18-07-2022 | 20188    | 5m 26s   | 61                  | 258ms                 | 1x256MB small-13 |
-| 19-10-2022 | 20031    | 8m 48s   | 37                  | 421ms                 | 1x256MB small-13 |
+Date       | Searches | Run Time | Searches Per Second | Average Response Time | Specifications   |
+---------- | -------- |----------|---------------------|-----------------------|------------------|
+18-07-2022 | 20188    | 5m 26s   | 61                  | 258ms                 | 1x256MB small-13 |
+19-10-2022 | 20031    | 8m 48s   | 37                  | 421ms                 | 1x256MB small-13 |
 
 ## Runbook
 
@@ -37,9 +37,9 @@ The `GiasPostcodeSearch` console application is the performance testing applicat
 
 The application will accept three arguments
 
-- `--url=<FIND_A_TUITION_PARTNER_URL>` (required) - the service url to test against
-- `--username=<BASIC_HTTP_AUTH_USERNAME>` (optional) - the basic HTTP authorization username configured for the service url argument
-- `--password=<BASIC_HTTP_AUTH_PASSWORD>` (optional) - the basic HTTP authorization password configured for the service url argument
+* `--url=<FIND_A_TUITION_PARTNER_URL>` (required) - the service url to test against
+* `--username=<BASIC_HTTP_AUTH_USERNAME>` (optional) - the basic HTTP authorization username configured for the service url argument
+* `--password=<BASIC_HTTP_AUTH_PASSWORD>` (optional) - the basic HTTP authorization password configured for the service url argument
 
 Use the following command to run the application against the chosen environment
 
