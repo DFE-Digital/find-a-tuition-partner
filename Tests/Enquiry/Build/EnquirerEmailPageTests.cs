@@ -1,6 +1,10 @@
 ﻿using Application.Common.Models.Enquiry.Build;
 using Application.Validators.Enquiry.Build;
 using FluentValidation.TestHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing;
 using UI.Pages.Enquiry.Build;
 using EnquirerEmail = UI.Pages.Enquiry.Build.EnquirerEmail;
 
@@ -72,11 +76,12 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
+            page.PageContext = GetPageContext();
             return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(TutoringLogistics));
+        redirect.PageName.Should().Be(nameof(EmailVerification));
     }
 
     [Theory]
@@ -87,10 +92,19 @@ public class EnquirerEmailPageTests
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
+            page.PageContext = GetPageContext();
             return page.OnPostAsync(model);
         });
 
         var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
-        redirect.PageName.Should().Be(nameof(CheckYourAnswers));
+        redirect.PageName.Should().Be(nameof(EmailVerification));
+    }
+
+    private static PageContext GetPageContext()
+    {
+        var httpContext = new DefaultHttpContext();
+        var modelState = new ModelStateDictionary();
+        var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(), modelState);
+        return new PageContext(actionContext);
     }
 }
