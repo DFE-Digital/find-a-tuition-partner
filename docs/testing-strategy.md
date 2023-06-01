@@ -10,7 +10,7 @@ Developers are expected to run all tests, linting and code quality checks agains
 
 - `dotnet test` (unit tests)
 - Cypress end to end testing
-  - Leverage containerised environment used by PR bulds (docker compose)
+    - Leverage containerised environment used by PR bulds (docker compose)
 - WAVE for additional accessibility checks
 - OWASP Zed Attack Proxy
 - `dotnet format` (apply basic coding style rules)

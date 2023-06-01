@@ -8,10 +8,10 @@ This document details the ways by which errors and bugs can be surfaced to the t
 
 We use four priority levels from most to least impactful:
 
-- P1 - Widespread user impact preventing completion of at least one user journey. Usually connected to an outage
-- P2 - User visible issue affecting at least one user journey. Either does not prevent journey or can be worked around
-- P3 - Minor user visible issue that does not directly affect a user journey such as a formatting issue
-- P4 - Issue not visible to the user for example an exception in the logs
+* P1 - Widespread user impact preventing completion of at least one user journey. Usually connected to an outage
+* P2 - User visible issue affecting at least one user journey. Either does not prevent journey or can be worked around
+* P3 - Minor user visible issue that does not directly affect a user journey such as a formatting issue
+* P4 - Issue not visible to the user for example an exception in the logs
 
 ## Triage Process
 
@@ -29,8 +29,8 @@ A user contacting the service desk will result in the creation of a Zendesk tick
 
 Warning and above log entries generate alerts from [logit.io](https://dashboard.logit.io/a/11f9b93e-af04-480b-a838-4d3a19e93e39/s/5a330412-9270-4c5b-ba07-0035bf55fe95/elastalert/viewrules). These alerts are posted to the following Slack channels:
 
-- #ntp-find-a-tuition-partner-alerts (via exception*alerts.yaml) - alerts from the \_Production* environment. **Should be investigated and triaged immediately**
-- #ntp-dev-team (via exception_alerts_non_production.yaml) - alerts from the non production environment
+* #ntp-find-a-tuition-partner-alerts (via exception_alerts.yaml) - alerts from the *Production* environment. **Should be investigated and triaged immediately**
+* #ntp-dev-team (via exception_alerts_non_production.yaml) - alerts from the non production environment
 
 ### Via Testing
 
@@ -38,10 +38,10 @@ Each ticket is signed off by the wider team by testing the functionality. Issues
 
 ## Prioritisation and Resolution Times
 
-- P1 - Should be actioned immediately and fixed within 24 hours where possible
-- P2 - Should be added to the current sprint and resolved within 7 days
-- P3 - Add to backlog and include in next sprint
-- P4 - Add to backlog and resolve when capacity is available.
+* P1 - Should be actioned immediately and fixed within 24 hours where possible
+* P2 - Should be added to the current sprint and resolved within 7 days
+* P3 - Add to backlog and include in next sprint
+* P4 - Add to backlog and resolve when capacity is available.
 
 ## Notifications
 

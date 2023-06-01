@@ -18,29 +18,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install the CF CLI
-        run: |
-          wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
-          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
+    - name: Install the CF CLI
+      run: |
+        wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
+        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
 
-      - name: Authenticate
-        env:
-          CF_USERNAME: ${{ secrets.CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        run: |
-          echo "Logging into $CF_ORG/$CF_SPACE..."
-          cf api "${CF_API}"
-          cf auth
-          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+    - name: Authenticate
+      env:
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+      run: |
+        echo "Logging into $CF_ORG/$CF_SPACE..."
+        cf api "${CF_API}"
+        cf auth
+        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
-      - name: Delete application
-        run: |
-          cf delete find-a-tuition-partner-$PR_NUMBER -f
+    - name: Delete application
+      run: |
+        cf delete find-a-tuition-partner-$PR_NUMBER -f
 
-      - name: Delete database backing service
-        run: |
-          cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db -f
+    - name: Delete database backing service
+      run: |
+        cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db -f
 
-      - name: Delete database backing service
-        run: |
-          cf delete-service find-a-tuition-partner-$PR_NUMBER-redis-db -f
+    - name: Delete database backing service
+      run: |
+        cf delete-service find-a-tuition-partner-$PR_NUMBER-redis-db -f

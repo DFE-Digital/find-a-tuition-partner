@@ -87,31 +87,3 @@ Feature: User enters postcode to begin search
     Then they will click the contact us link
     When they click 'Back'
     Then the user redirected to postcode page
-
-# Scenario: user enters a valid postcode with non-alphanumeric characters
-#   Given a user has started the 'Find a tuition partner' journey
-#   When they enter 'n£w1 0. 1n'x' as the school's postcode
-#   And they click 'Continue'
-#   Then the postcode will go through in-place validations
-#   And the postcode will be displayed as 'NW10 1NX' on other screens
-
-# Scenario: user enters a valid postcode with different non-alphanumeric characters
-#   Given a user has started the 'Find a tuition partner' journey
-#   When they enter 'W1W. 7RT' as the school's postcode
-#   And they click 'Continue'
-#   Then the postcode will go through in-place validations
-#   And the postcode will be displayed as 'W1W 7RT' on other screens
-
-# Scenario: user enters a valid postcode with different non-alphanumeric characters and spaces
-#   Given a user has started the 'Find a tuition partner' journey
-#   When they enter 'W1W-7RT' as the school's postcode
-#   And they click 'Continue'
-#   Then the postcode will go through in-place validations
-#   And the postcode will be displayed as 'W1W 7RT' on other screens
-
-# Scenario: user enters a valid postcode with different non-alphanumeric characters and no spaces
-#   Given a user has started the 'Find a tuition partner' journey
-#   When they enter 'W1W7RT.' as the school's postcode
-#   And they click 'Continue'
-#   Then the postcode will go through in-place validations
-#   And the postcode will be displayed as 'W1W 7RT' on other screens

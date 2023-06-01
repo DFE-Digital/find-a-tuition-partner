@@ -10,37 +10,37 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Bundle web assets
-        working-directory: ./UI
-        run: |
-          npm ci
-          npm run build
+    - name: Use Node.js 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Bundle web assets
+      working-directory: ./UI
+      run: |
+        npm ci
+        npm run build
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: "6.0.x"
-      - name: Restore
-        run: dotnet restore FindATuitionPartner.sln
-      - name: Format
-        run: dotnet format --verify-no-changes --no-restore
-      - name: Format UI
-        working-directory: ./UI
-        run: npx prettier --check .
-      - name: Build
-        run: dotnet build FindATuitionPartner.sln --no-restore
-      - name: Test
-        run: dotnet test FindATuitionPartner.sln --no-build --logger trx --results-directory TestResults
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        with:
-          path: TestResults
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '6.0.x'
+    - name: Restore
+      run: dotnet restore FindATuitionPartner.sln
+    - name: Format
+      run: dotnet format --verify-no-changes --no-restore
+    - name: Format UI
+      working-directory: ./UI
+      run: npx prettier --check .
+    - name: Build
+      run: dotnet build FindATuitionPartner.sln --no-restore
+    - name: Test
+      run: dotnet test FindATuitionPartner.sln --no-build --logger trx --results-directory TestResults
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        path: TestResults
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
