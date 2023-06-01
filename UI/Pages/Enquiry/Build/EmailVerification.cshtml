@@ -1,0 +1,46 @@
+﻿@page
+@model EmailVerification
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+  ViewData["Title"] = "Check your email";
+  ViewData["BackLinkHref"] = $"/enquiry/build/enquirer-email?{ Model.Data.ToQueryString()}";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form method="post">
+      <h1 class="govuk-heading-l">Check your email</h1>
+      <p class="govuk-body">We sent a @UI.Constants.IntegerConstants.EmailVerificationPasscodeLength-digit passcode to example@email.com. It will expire in @UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes.</p>
+      <div asp-validation-group-for="Data.Passcode">
+        <govuk-input asp-for="Data.Passcode" input-class="govuk-input--width-10" spellcheck="false">
+          <govuk-input-label>Enter passcode</govuk-input-label>
+        </govuk-input>
+      </div>
+      <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+      <input type="hidden" name="handler" value="Submit" />
+      <div class="govuk-button-group">
+        <govuk-button prevent-double-click="true" type="submit" data-testid="call-to-action">Continue</govuk-button>
+      </div>
+      <govuk-details>
+        <govuk-details-summary>
+          I have not received my passcode
+        </govuk-details-summary>
+        <govuk-details-text>
+          <p class="govuk-body">If your passcode hasn’t arrived after 10 minutes, check your spam or re-enter your email address and try again.</p>
+          <p class="govuk-body">If your passcode has expired, you can request a new one.</p>@*TODO - request new passcode link*@
+        </govuk-details-text>
+      </govuk-details>
+      @if(Model.Data.PasscodeForTesting.HasValue)
+      {
+        <h2 class="govuk-heading-m">Test code</h2>
+        <p class="govuk-body">
+          NOTE: the following code is only displayed in the non-production websites for testing purposes...
+        </p>
+        <p class="govuk-body">
+          Code: @Model.Data.PasscodeForTesting
+        </p>
+        <input asp-for="Data.PasscodeForTesting" type="hidden" />
+      }
+    </form>
+  </div>
+</div>
