@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Target environment'
+        description: "Target environment"
         required: true
         default: qa
         type: choice
@@ -58,6 +58,6 @@ jobs:
           cf run-task find-a-tuition-partner-${{ inputs.environment }} \
             --command "exec /home/vcap/deps/0/dotnet_publish/UI import" \
             --name find-a-tuition-partner-${{ inputs.environment }}-data-import
-      
+
       - name: Logout
         run: cf logout

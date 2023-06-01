@@ -3,6 +3,7 @@ status: accepted
 date: 2022-09-23
 deciders: NTP developers
 ---
+
 # Rely on End to End Testing for the Google Drive Integration Work
 
 ## Context and Problem Statement
@@ -15,10 +16,10 @@ Chosen option: "Do not unit test the Google Drive import code", because it is in
 
 ### Positive Consequences
 
-* Reduced maintenance overhead in the event Google makes API changes
-* Remove test update barriers to refactoring codebase
-* Any move away from spreadsheet imports towards an admin portal would remove the need for this import code and related tests
+- Reduced maintenance overhead in the event Google makes API changes
+- Remove test update barriers to refactoring codebase
+- Any move away from spreadsheet imports towards an admin portal would remove the need for this import code and related tests
 
 ### Negative Consequences
 
-* Reduces code coverage
+- Reduces code coverage
