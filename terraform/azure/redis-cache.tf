@@ -23,4 +23,6 @@ resource "azurerm_redis_cache" "default" {
   }
 
   tags = local.tags
+
+  depends_on = [module.fatp_azure_web_app_services_hosting]
 }

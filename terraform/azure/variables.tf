@@ -326,10 +326,6 @@ variable "emailSettings_amalgamateResponses" {
   default = true
 }
 
-variable "fatp_azure_key_vault_name" {
-  type = string
-}
-
 variable "postgresql_server_admin_username" {
   type = string
 }
@@ -393,4 +389,9 @@ variable "redis_cache_patch_schedule_hour" {
   description = "Redis Cache patch schedule hour"
   type        = number
   default     = 23
+}
+
+variable "key_vault_access_users" {
+  description = "List of users that require access to the Key Vault. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform"
+  type        = list(string)
 }

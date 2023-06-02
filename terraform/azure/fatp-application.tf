@@ -1,5 +1,5 @@
 module "fatp_azure_web_app_services_hosting" {
-  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.1"
+  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.3"
 
   environment    = local.environment
   project_name   = local.project_name
@@ -26,7 +26,7 @@ module "fatp_azure_web_app_services_hosting" {
     "BlobStorage_TenantId"              = var.blobStorage_tenantId,
     "EmailSettings_AllSentToEnquirer"   = var.emailSettings_allSentToEnquirer,
     "EmailSettings_AmalgamateResponses" = var.emailSettings_amalgamateResponses,
-    "FatpAzureKeyVaultName"             = var.fatp_azure_key_vault_name
+    "FatpAzureKeyVaultName"             = "${local.service_name}-key-vault"
   }
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min

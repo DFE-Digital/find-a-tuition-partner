@@ -1,0 +1,15 @@
+environment = "dev"
+project_name = "ntp"
+service_name = "find-a-tp"
+azure_location = "uksouth"
+service_offering = "National Tutoring Programme"
+enable_monitoring = false
+enable_cdn_frontdoor = false
+cdn_frontdoor_host_add_response_headers = []
+cdn_frontdoor_remove_response_headers = []
+postgresql_server_admin_username = "<username>"
+postgresql_server_admin_password = "<password>"
+enable_service_logs = false
+key_vault_access_users = [
+  "my_email.address.suffix#EXT#@platformidentity.onmicrosoft.com",
+]
