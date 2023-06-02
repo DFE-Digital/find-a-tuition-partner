@@ -6,24 +6,25 @@ namespace Functions
 {
     public class PollEmailProcessing
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PollEmailProcessing> _logger;
+        private readonly HttpClient _httpClient;
 
-        public PollEmailProcessing(ILoggerFactory loggerFactory)
+        public PollEmailProcessing(ILoggerFactory loggerFactory, IHttpClientFactory httpClientFactory)
         {
             _logger = loggerFactory.CreateLogger<PollEmailProcessing>();
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         [Function("PollEmailProcessing")]
         public async Task RunAysnc([TimerTrigger("* * * * *")] MyInfo myTimer)
         {
             var url = Environment.GetEnvironmentVariable("PollEmailProcessingUrl", EnvironmentVariableTarget.Process);
-            url ??= "https://find-a-tuition-partner-qa.london.cloudapps.digital/admin/process-emails";
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("PollEmailProcessingUrl");
 
             _logger.LogInformation($"Find a Tuition Partner PollEmailProcessing function executed at: {DateTime.UtcNow}.  Polling {url}");
 
-            var httpClient = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
-
-            var httpResponseMessage = await httpClient.GetAsync(url);
+            var httpResponseMessage = await _httpClient.GetAsync(url);
 
             var content = await httpResponseMessage.Content.ReadAsStringAsync();
 
