@@ -37,6 +37,9 @@ public class CheckYourAnswers : PageModel
 
         Data = data;
 
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, string.Empty);
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeVerified, string.Empty);
+
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues != null)

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Application.Common.Models.Enquiry.Build;
+﻿using Application.Common.Models.Enquiry.Build;
 using Application.Validators.Enquiry.Build;
 using FluentValidation.TestHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing;
 using UI.Pages.Enquiry.Build;
 using EmailVerification = UI.Pages.Enquiry.Build.EmailVerification;
 
@@ -21,7 +22,7 @@ public class EmailVerificationPageTests
         _validator = new EmailVerificationModelValidator();
     }
 
-    private EmailVerificationModel CreateModel(string passcode)
+    private static EmailVerificationModel CreateModel(string passcode)
     {
         return new EmailVerificationModel { Passcode = passcode };
     }
@@ -43,7 +44,7 @@ public class EmailVerificationPageTests
     [InlineData("122rr7")]
     public void With_an_invalid_passcode(string passcode)
     {
-        var model = new EmailVerificationModel { Passcode = passcode };
+        var model = CreateModel(passcode);
         var result = _validator!.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Passcode)
             .WithErrorMessage("The passcode must be a number");
@@ -54,8 +55,47 @@ public class EmailVerificationPageTests
     [InlineData("999999")]
     public void With_a_valid_passcode(string passcode)
     {
-        var model = new EmailVerificationModel { Passcode = passcode };
+        var model = CreateModel(passcode);
         var result = _validator!.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public async Task With_a_valid_passcode_moves_to_next_page()
+    {
+        var model = CreateModel("999999");
+
+        var result = await _fixture.GetPage<EmailVerification>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            return page.OnPostAsync(model);
+        });
+
+        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+        redirect.PageName.Should().Be(nameof(TutoringLogistics));
+    }
+
+    [Fact]
+    public async Task With_a_valid_passcode_moves_to_cya_page()
+    {
+        var model = CreateModel("999999");
+        model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
+
+        var result = await _fixture.GetPage<EmailVerification>().Execute(page =>
+        {
+            page.PageContext = GetPageContext();
+            return page.OnPostAsync(model);
+        });
+
+        var redirect = result.Should().BeOfType<RedirectToPageResult>().Which;
+        redirect.PageName.Should().Be(nameof(CheckYourAnswers));
+    }
+
+    private static PageContext GetPageContext()
+    {
+        var httpContext = new DefaultHttpContext();
+        var modelState = new ModelStateDictionary();
+        var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(), modelState);
+        return new PageContext(actionContext);
     }
 }

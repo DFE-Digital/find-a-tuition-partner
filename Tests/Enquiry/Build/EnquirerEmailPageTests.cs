@@ -14,8 +14,19 @@ namespace Tests.Enquiry.Build;
 public class EnquirerEmailPageTests
 {
     private readonly SliceFixture _fixture;
+    private readonly EnquirerEmailModelValidator _validator;
 
-    public EnquirerEmailPageTests(SliceFixture fixture) => _fixture = fixture;
+    public EnquirerEmailPageTests(SliceFixture fixture)
+    {
+        _fixture = fixture;
+        _validator = new EnquirerEmailModelValidator();
+    }
+
+    private static EnquirerEmailModel CreateModel(string data)
+    {
+        return new EnquirerEmailModel { Email = data };
+    }
+
 
     [Theory]
     [InlineData("")]
@@ -23,8 +34,8 @@ public class EnquirerEmailPageTests
     [InlineData(null)]
     public void With_no_email(string email)
     {
-        var model = new EnquirerEmailModel { Email = email };
-        var result = new EnquirerEmailModelValidator().TestValidate(model);
+        var model = CreateModel(email);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email)
             .WithErrorMessage("Enter an email address");
     }
@@ -41,8 +52,8 @@ public class EnquirerEmailPageTests
     [InlineData("email@example.com (Joe Smith)")]
     public void With_an_invalid_email(string email)
     {
-        var model = new EnquirerEmailModel { Email = email };
-        var result = new EnquirerEmailModelValidator().TestValidate(model);
+        var model = CreateModel(email);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email)
             .WithErrorMessage("You must enter an email address in the correct format.  Emails are usually in a format, like, username@example.com");
     }
@@ -63,8 +74,8 @@ public class EnquirerEmailPageTests
     [InlineData("firstname'lastname@example_com")]
     public void With_a_valid_email(string email)
     {
-        var model = new EnquirerEmailModel { Email = email };
-        var result = new EnquirerEmailModelValidator().TestValidate(model);
+        var model = CreateModel(email);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -72,7 +83,7 @@ public class EnquirerEmailPageTests
     [InlineData("email@example.com")]
     public async Task With_a_valid_email_moves_to_next_page(string email)
     {
-        var model = new EnquirerEmailModel { Email = email };
+        var model = CreateModel(email);
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {
@@ -88,7 +99,8 @@ public class EnquirerEmailPageTests
     [InlineData("email@example.com")]
     public async Task With_a_valid_email_moves_to_cya_page(string email)
     {
-        var model = new EnquirerEmailModel { Email = email, From = Domain.Enums.ReferrerList.CheckYourAnswers };
+        var model = CreateModel(email);
+        model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
 
         var result = await _fixture.GetPage<EnquirerEmail>().Execute(page =>
         {

@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Constants;
 using Domain.Search;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -97,6 +98,12 @@ public class SliceFixture : IAsyncLifetime
 
             SessionService.Setup(nc =>
                     nc.AddOrUpdateDataAsync(It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()));
+
+            SessionService.Setup(nc => nc.RetrieveDataByKeyAsync(SessionKeyConstants.EmailVerificationPasscode, It.IsAny<string>()))
+                .ReturnsAsync("999999");
+
+            SessionService.Setup(nc => nc.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified, It.IsAny<string>()))
+                .ReturnsAsync("email@example.com");
 
             NotificationClient = new Mock<IAsyncNotificationClient>();
 

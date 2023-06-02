@@ -38,7 +38,7 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
 
         await _notificationsClientService.SendEmailAsync(emailVerificationNotificationsRecipient, EmailTemplateType.EmailVerification);
 
-        _logger.LogInformation("Email verification passcode: {passcode} for Email: {email}", passcode, request.Email);
+        _logger.LogInformation("Email verification passcode sent: {passcode}", passcode);
 
         return passcode;
     }
