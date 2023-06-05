@@ -5,7 +5,7 @@ var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(builder =>
     {
-        builder.AddHttpClient("PollEmailProcessing");
+        builder.AddHttpClient();
     })
     .Build();
 
