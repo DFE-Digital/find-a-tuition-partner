@@ -24,7 +24,7 @@
         @if (Model.Data.KeyStageSubjectsFilteredLabels.Any())
         {
           <h2 class="govuk-heading-m" data-testid="compare-list-key-stage-subjects-header">You've searched for:</h2>
-          <ul class="govuk-list govuk-list-bullets-mobile-view">
+          <ul class="govuk-list govuk-list--bullet">
             @foreach (var item in Model.Data.KeyStageSubjectsFilteredLabels)
             {
               <li data-testid="compare-list-key-stage-subjects-label">@item</li>

@@ -4,19 +4,26 @@
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/tutoring-logistics";
-  ViewData["Title"] = "Do you need tuition partners who can support pupils with SEND?";
+  ViewData["Title"] = "SEND and additional requirements";
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <form method="post">
+  <span class="govuk-caption-l">Create your tuition enquiry</span>
+  <h1 class="govuk-heading-l">SEND and additional requirements</h1>
+  <p class="govuk-body">Tuition partners may be able to provide specialist tuition for specific needs, for example:</p>
+  <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+    <li>pupils with SEND needs</li>
+    <li>sustained absence from school</li>
+    <li>school refusers</li>
+    <li>English as a second language</li>
+    <li>any social, behavioural or learning challenges</li>
+  </ul>
+  <partial name="_PIIWarning" />
   <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-      Do you need tuition partners who can support pupils with SEND? (optional)
+    <govuk-character-count-label class="govuk-label--m">
+      Describe your pupils' SEND or additional needs that require specialist tuition support (optional)
     </govuk-character-count-label>
-    <govuk-character-count-hint>
-      For example, the number of pupils who may need support with specific social, behavioural or learning challenges
-      <partial name="_PIIWarning" />
-    </govuk-character-count-hint>
   </govuk-character-count>
   <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
   <input type="hidden" name="handler" value="Submit" />

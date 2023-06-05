@@ -8,10 +8,28 @@ public class TutoringLogisticsModelValidator : AbstractValidator<TutoringLogisti
 {
     public TutoringLogisticsModelValidator()
     {
-        RuleFor(request => request.TutoringLogistics)
+        RuleFor(request => request.TutoringLogisticsDetailsModel.NumberOfPupils)
             .NotEmpty()
-            .WithMessage("Enter the type of tuition plan that you need")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage("Enter the number of pupils that need tuition")
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .WithMessage($"The number of pupils that need tuition must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(request => request.TutoringLogisticsDetailsModel.StartDate)
+            .NotEmpty()
+            .WithMessage("Enter when you want tuition to start")
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .WithMessage($"When you want tuition to start must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(request => request.TutoringLogisticsDetailsModel.TuitionDuration)
+            .NotEmpty()
+            .WithMessage("Enter how long you need tuition for")
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .WithMessage($"How long you need tuition for must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(request => request.TutoringLogisticsDetailsModel.TimeOfDay)
+            .NotEmpty()
+            .WithMessage("Enter what time of day you need tuition")
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .WithMessage($"What time of day you need tuition must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
     }
 }

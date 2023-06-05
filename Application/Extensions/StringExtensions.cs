@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Web;
+using Application.Common.Models.Enquiry;
 using Application.Constants;
 using Domain.Enums;
+using Newtonsoft.Json;
 
 namespace Application.Extensions;
 
@@ -95,7 +97,7 @@ public static class StringExtensions
     public static string? EscapeNotifyText(this string? text, bool updateForInsetFormat = false)
     {
         //Any notify special characters that are at the start of a new line need to be escaped by prefixing with \
-        //The notify special characters are ^ (inset), * (bullet), # (titkes), ---- (horizontal line)
+        //The notify special characters are ^ (inset), * (bullet), # (titles), ---- (horizontal line)
         var escapedText = text;
         if (!string.IsNullOrWhiteSpace(escapedText))
         {
@@ -128,6 +130,22 @@ public static class StringExtensions
         var regex = new Regex(@"[^\\/]+$");
         var match = regex.Match(path);
         return match.Value;
+    }
+
+    //TODO - use or remove this
+    public static TutoringLogisticsDetailsModel? FromJson(this string? tutoringLogisticsDetailsModelJson)
+    {
+        if (string.IsNullOrEmpty(tutoringLogisticsDetailsModelJson))
+            return null;
+
+        try
+        {
+            return JsonConvert.DeserializeObject<TutoringLogisticsDetailsModel>(tutoringLogisticsDetailsModelJson);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public static string? ToSanitisedPostcode(this string? postcode)

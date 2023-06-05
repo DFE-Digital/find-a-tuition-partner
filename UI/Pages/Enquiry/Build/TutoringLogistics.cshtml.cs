@@ -22,7 +22,10 @@ public class TutoringLogistics : PageModel
 
         Data = data;
 
-        Data.TutoringLogistics = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTutoringLogistics);
+        Data.TutoringLogisticsDetailsModel.NumberOfPupils = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryNumberOfPupils);
+        Data.TutoringLogisticsDetailsModel.StartDate = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryStartDate);
+        Data.TutoringLogisticsDetailsModel.TuitionDuration = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTuitionDuration);
+        Data.TutoringLogisticsDetailsModel.TimeOfDay = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquiryTimeOfDay);
 
         ModelState.Clear();
 
@@ -37,7 +40,10 @@ public class TutoringLogistics : PageModel
         Data = data;
         if (ModelState.IsValid)
         {
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryTutoringLogistics, data.TutoringLogistics!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryNumberOfPupils, data.TutoringLogisticsDetailsModel.NumberOfPupils!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryStartDate, data.TutoringLogisticsDetailsModel.StartDate!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryTuitionDuration, data.TutoringLogisticsDetailsModel.TuitionDuration!);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquiryTimeOfDay, data.TutoringLogisticsDetailsModel.TimeOfDay!);
 
             if (data.From == ReferrerList.CheckYourAnswers)
             {

@@ -4,19 +4,24 @@
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/send-requirements";
-  ViewData["Title"] = "Is there anything else that you want tuition partners to consider?";
+  ViewData["Title"] = "Other tuition requirements";
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 
 <form method="post">
+  <span class="govuk-caption-l">Create your tuition enquiry</span>
+  <h1 class="govuk-heading-l">Other tuition requirements</h1>
+  <p class="govuk-body">You should list other requirements you want tuition partners o consider. Here are some examples:</p>
+  <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+    <li>discuss your budget or price range</li>
+    <li>describe particular tuition needs within subjects such as phonics, reading or writing within English</li>
+    <li>let tuition partners know if your school is in a potentially hard to reach area for face-to-face tuition</li>
+  </ul>
+  <partial name="_PIIWarning" />
   <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
-    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-      Is there anything else that you want tuition partners to consider? (optional)
+    <govuk-character-count-label class="govuk-label--m">
+      Is there anything else you want tuition partners to consider? (optional)
     </govuk-character-count-label>
-    <govuk-character-count-hint>
-      If you are a school in a rural area and you’d like face-to-face tuition, we recommend to specify details about your location.
-      <partial name="_PIIWarning" />
-    </govuk-character-count-hint>
   </govuk-character-count>
   <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
   <input type="hidden" name="handler" value="Submit" />
