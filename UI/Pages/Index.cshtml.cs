@@ -41,6 +41,8 @@ public partial class Index : PageModel
     {
         if (!ModelState.IsValid) return Page();
 
+        data.Postcode = data.Postcode.ToSanitisedPostcode();
+
         var validation = await _mediator.Send(data);
 
         if (validation.IsSuccess)
@@ -64,7 +66,7 @@ public partial class Index : PageModel
                 .WithMessage("Enter a postcode");
 
             RuleFor(m => m.Postcode)
-                .Matches(StringConstants.PostcodeRegExp)
+                .Must(m => !string.IsNullOrEmpty(m.ToSanitisedPostcode()))
                 .WithMessage("Enter a real postcode");
         }
     }
