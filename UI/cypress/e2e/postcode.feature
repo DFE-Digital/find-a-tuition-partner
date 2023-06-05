@@ -87,3 +87,34 @@ Feature: User enters postcode to begin search
     Then they will click the contact us link
     When they click 'Back'
     Then the user redirected to postcode page
+
+  Scenario: allow postcode input to be more lenient with punctuation and non-alphanumeric characters
+    Given a user has started the 'Find a tuition partner' journey
+    When they enter 'n£w1 0. 1n"x' as the school's postcode
+    And they click 'Continue'
+    Then the postcode is accepted and validated as 'NW10 1NX'
+
+  Scenario: user enters a postcode with URL-encoded characters
+    Given a user has started the 'Find a tuition partner' journey
+    When they enter 'NE29%207PX' as the school's postcode
+    And they click 'Continue'
+    Then they will be taken to the 'Which key stages' page
+
+  Scenario: user enters a postcode with multiple non-alphanumeric characters
+    Given a user has started the 'Find a tuition partner' journey
+    When they enter 'ne  29  7  px' as the school's postcode
+    And they click 'Continue'
+    Then the postcode is accepted and validated as 'NE29 7PX'
+
+  Scenario: user enters a valid postcode with special characters
+    Given a user has started the 'Find a tuition partner' journey
+    When they enter 'n£e 1. 1a"d' as the school's postcode
+    And they click 'Continue'
+    Then the postcode is accepted and validated as 'NE1 1AD'
+
+  Scenario: user enters a valid postcode with spaces between characters
+    Given a user has started the 'Find a tuition partner' journey
+    When they enter 'N E 1 1 A D' as the school's postcode
+    And they click 'Continue'
+    Then the postcode is accepted and validated as 'NE1 1AD'
+

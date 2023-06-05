@@ -133,9 +133,8 @@ public class CompareList : PageModel
                 .WithMessage("Enter a postcode");
 
             RuleFor(m => m.Postcode)
-                .Matches(StringConstants.PostcodeRegExp)
-                .WithMessage("Enter a real postcode")
-                .When(m => !string.IsNullOrEmpty(m.Postcode));
+                .Must(m => !string.IsNullOrEmpty(m.ToSanitisedPostcode()))
+                .WithMessage("Enter a real postcode");
         }
     }
 

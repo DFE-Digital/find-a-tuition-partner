@@ -17,23 +17,31 @@ public class LoggingLocationFilterService : ILocationFilterService
 
     public async Task<LocationFilterParameters?> GetLocationFilterParametersAsync(string postcode)
     {
-        _logger.LogInformation("Searching for postcode {Postcode}", postcode);
+        var sanitisedPostcode = postcode.ToSanitisedPostcode();
+        if (string.IsNullOrEmpty(sanitisedPostcode))
+        {
+            string errorMessage = $"Invalid postcode supplied in GetLocationFilterParametersAsync: {postcode}";
+            _logger.LogError(errorMessage);
+            throw new ArgumentException(errorMessage);
+        }
+
+        _logger.LogInformation("Searching for postcode {Postcode}", sanitisedPostcode);
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        var result = await _inner.GetLocationFilterParametersAsync(postcode);
+        var result = await _inner.GetLocationFilterParametersAsync(sanitisedPostcode);
         stopwatch.Stop();
 
         switch (result.TryValidate())
         {
             case SuccessResult:
                 _logger.LogInformation("Searching for postcode {Postcode} found {MappedPostcode} mapped to {LocalAuthorityDistrictCode} {URN} results in {Elapsed}ms",
-                    postcode, result?.Postcode, result?.Urn, result?.LocalAuthorityDistrictCode, stopwatch.ElapsedMilliseconds);
+                    sanitisedPostcode, result?.Postcode, result?.Urn, result?.LocalAuthorityDistrictCode, stopwatch.ElapsedMilliseconds);
                 break;
 
             case ErrorResult e:
                 _logger.LogWarning("Could not find postcode {Postcode} in {Elapsed}ms - {Reason}",
-                    postcode, stopwatch.ElapsedMilliseconds, e.GetType().Name);
+                    sanitisedPostcode, stopwatch.ElapsedMilliseconds, e.GetType().Name);
                 break;
         }
         return result;

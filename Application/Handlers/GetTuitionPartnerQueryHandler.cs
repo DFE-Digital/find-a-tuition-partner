@@ -288,9 +288,9 @@ public class GetTuitionPartnerQueryHandler : IRequestHandler<GetTuitionPartnerQu
         public Validator()
         {
             RuleFor(m => m.SearchModel!.Postcode)
-                .Matches(StringConstants.PostcodeRegExp)
+                .Must(m => !string.IsNullOrEmpty(m.ToSanitisedPostcode()))
                 .WithMessage("Enter a real postcode")
-                .When(m => m.SearchModel != null && !string.IsNullOrEmpty(m.SearchModel?.Postcode));
+                .When(m => m.SearchModel != null);
         }
     }
 }
