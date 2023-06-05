@@ -89,3 +89,8 @@ Then("the contact us link opens contact us page", () => {
 Then("the user redirected to postcode page", () => {
   cy.location("pathname").should("eq", "/");
 });
+
+Then("the postcode is accepted and validated as {string}", (postcode) => {
+  Step(this, "they click 'Back'");
+  cy.get("#Data_Postcode").should("have.value", postcode);
+});

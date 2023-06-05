@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using System.Web;
 using Application.Constants;
 using Domain.Enums;
 
@@ -127,5 +128,33 @@ public static class StringExtensions
         var regex = new Regex(@"[^\\/]+$");
         var match = regex.Match(path);
         return match.Value;
+    }
+
+    public static string? ToSanitisedPostcode(this string? postcode)
+    {
+        if (string.IsNullOrEmpty(postcode))
+            return postcode;
+
+        var updatedPostcode = ToSanitisedPostcodeInner(postcode!);
+
+        if (string.IsNullOrEmpty(updatedPostcode))
+        {
+            updatedPostcode = ToSanitisedPostcodeInner(HttpUtility.UrlDecode(postcode!));
+        }
+
+        return updatedPostcode;
+    }
+
+    private static string ToSanitisedPostcodeInner(this string postcode)
+    {
+        var updatedPostcode = Regex.Replace(postcode, "[^A-Za-z0-9]", "").ToUpper();
+
+        var regex = new Regex(StringConstants.PostcodeRegExp);
+        var match = regex.Match(updatedPostcode);
+
+        if (!match.Success)
+            return string.Empty;
+
+        return $"{updatedPostcode.Substring(0, updatedPostcode.Length - 3)} {updatedPostcode.Substring(updatedPostcode.Length - 3, 3)}";
     }
 }
