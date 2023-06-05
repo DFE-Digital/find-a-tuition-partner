@@ -61,9 +61,13 @@ public class SearchResults : PageModel
         MapErrors(await new SearchResultValidator().ValidateAsync(data));
         if (!ModelState.IsValid) return Page();
 
+        data.Postcode = data.Postcode.ToSanitisedPostcode();
+
         var searchResultData = await _mediator.Send(data);
         MapErrors(searchResultData.Validation);
         if (!ModelState.IsValid) return Page();
+
+        Data.Postcode = data.Postcode.ToSanitisedPostcode();
 
         Data.Results = searchResultData.Results;
 
