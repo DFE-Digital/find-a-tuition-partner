@@ -100,7 +100,8 @@
           View your tuition requirement
         </govuk-details-summary>
         <govuk-details-text>
-          <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
+          @*TODO - need to have partial without p tag for old data?*@
+          <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
         </govuk-details-text>
       </govuk-details>
       <p class="govuk-body govuk-!-margin-bottom-0">

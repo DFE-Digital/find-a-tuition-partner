@@ -51,7 +51,8 @@ namespace UI.Pages.Enquiry.Respond
                 Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
                 Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
                 Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
-                Data.EnquiryTutoringLogistics = enquiryData.TutoringLogistics;
+                Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics = enquiryData.TutoringLogisticsDisplayModel.TutoringLogistics;
+                Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel = enquiryData.TutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel;
                 Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
                 Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
             }
@@ -71,7 +72,11 @@ namespace UI.Pages.Enquiry.Respond
                 return NotFound();
             }
 
-            if (!ModelState.IsValid) return Page();
+            if (!ModelState.IsValid)
+            {
+                Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel = Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics.ToTutoringLogisticsDetailsModel();
+                return Page();
+            }
 
             await _sessionService.AddOrUpdateDataAsync(new Dictionary<string, string>()
             {
@@ -86,7 +91,7 @@ namespace UI.Pages.Enquiry.Respond
                 },
                 { SessionKeyConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
                 { SessionKeyConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
-                { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogistics! },
+                { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics! },
                 { SessionKeyConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
                 { SessionKeyConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }
             },

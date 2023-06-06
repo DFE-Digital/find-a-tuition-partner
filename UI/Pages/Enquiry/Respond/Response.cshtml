@@ -104,9 +104,7 @@
           Tuition plan:
         </h2>
 
-        <p class="govuk-body">
-          <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
-        </p>
+        <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
 
         <div asp-validation-group-for="Data.TutoringLogisticsText">
           <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
@@ -181,7 +179,7 @@
     }
   }
   <input asp-for="Data.EnquiryTuitionType" type="hidden" />
-  <input asp-for="Data.EnquiryTutoringLogistics" type="hidden" />
+  <input asp-for="Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics" type="hidden" />
   <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
   <input asp-for="Data.EnquiryAdditionalInformation" type="hidden" />
   <input asp-for="Data.EnquiryResponseCloseDateFormatted" type="hidden" />

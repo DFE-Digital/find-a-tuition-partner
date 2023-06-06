@@ -30,5 +30,7 @@
         public const string NotSpecified = "Not specified";
 
         public const string IsRequiredLabel = "This field is required";
+
+        public const string NotifyBulletFormat = "* ";
     }
 }

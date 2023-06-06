@@ -1,0 +1,16 @@
+﻿@model Application.Common.Models.Enquiry.TutoringLogisticsDisplayModel
+@if(Model.TutoringLogisticsDetailsModel == null)
+{
+  <p class="govuk-body">
+    <span class="display-pre-wrap">@Model.TutoringLogistics</span>
+  </p>
+}
+else
+{
+  <ul class="govuk-list govuk-list--bullet">
+    <li>Number of pupils: <span class="display-pre-wrap">@Model.TutoringLogisticsDetailsModel.NumberOfPupils</span></li>
+    <li>Start date: <span class="display-pre-wrap">@Model.TutoringLogisticsDetailsModel.StartDate</span></li>
+    <li>Tuition duration: <span class="display-pre-wrap">@Model.TutoringLogisticsDetailsModel.TuitionDuration</span></li>
+    <li>Time of day: <span class="display-pre-wrap">@Model.TutoringLogisticsDetailsModel.TimeOfDay</span></li>
+  </ul>
+}

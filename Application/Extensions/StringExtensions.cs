@@ -132,8 +132,7 @@ public static class StringExtensions
         return match.Value;
     }
 
-    //TODO - use or remove this
-    public static TutoringLogisticsDetailsModel? FromJson(this string? tutoringLogisticsDetailsModelJson)
+    public static TutoringLogisticsDetailsModel? ToTutoringLogisticsDetailsModel(this string tutoringLogisticsDetailsModelJson)
     {
         if (string.IsNullOrEmpty(tutoringLogisticsDetailsModelJson))
             return null;
@@ -142,7 +141,7 @@ public static class StringExtensions
         {
             return JsonConvert.DeserializeObject<TutoringLogisticsDetailsModel>(tutoringLogisticsDetailsModelJson);
         }
-        catch (Exception)
+        catch
         {
             return null;
         }

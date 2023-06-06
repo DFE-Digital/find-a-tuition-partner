@@ -62,7 +62,8 @@
               Tuition plan
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-              <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
+              @*TODO - need to have partial without p tag for old data?*@
+              <partial name="_TutoringLogistics" model="@Model.Data.TutoringLogisticsDisplayModel" />
             </govuk-summary-list-row-value>
           </govuk-summary-list-row>
           @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))

@@ -13,7 +13,8 @@ public static class EnquiryResponseModelExtensions
                 break;
 
             case var k when k.Equals(SessionKeyConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
-                data.EnquiryTutoringLogistics = value;
+                data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics = value;
+                data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel = value.ToTutoringLogisticsDetailsModel();
                 break;
 
             case var k when k.Equals(SessionKeyConstants.EnquiryResponseTutoringLogistics, StringComparison.OrdinalIgnoreCase):

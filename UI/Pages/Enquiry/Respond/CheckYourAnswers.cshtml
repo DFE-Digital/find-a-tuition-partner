@@ -63,7 +63,7 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Tuition plan:
-          <p class="govuk-body"><span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span></p>
+          <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
         </dt>
         <dd class="govuk-summary-list__value">
           <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
@@ -124,7 +124,7 @@
       <input asp-for="Data.SENDRequirementsText" type="hidden" />
       <input asp-for="Data.AdditionalInformationText" type="hidden" />
       <input asp-for="Data.EnquiryTuitionType" type="hidden" />
-      <input asp-for="Data.EnquiryTutoringLogistics" type="hidden" />
+      <input asp-for="Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics" type="hidden" />
       <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
       @if (Model.Data.EnquiryKeyStageSubjects.Any())
       {

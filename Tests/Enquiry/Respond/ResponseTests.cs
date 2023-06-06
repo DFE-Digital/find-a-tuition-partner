@@ -191,7 +191,7 @@ public class ResponseTests
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
             EnquiryTuitionType = "EnquiryTuitionType",
-            EnquiryTutoringLogistics = "EnquiryTutoringLogistics",
+            //EnquiryTutoringLogistics = "EnquiryTutoringLogistics",//TODO - update unit tests
             TuitionPartnerSeoUrl = "d",
             SupportReferenceNumber = "RF15",
             Token = "TPToken"

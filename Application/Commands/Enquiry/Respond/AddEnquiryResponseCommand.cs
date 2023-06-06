@@ -199,15 +199,29 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         string tpName, string tpEmail, string supportRefNumber,
         DateTime responseCreateDateTime)
     {
+        string enquiryTutoringLogistics;
+        if (request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel != null)
+        {
+            var detailsModel = request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel;
+            enquiryTutoringLogistics = $"{StringConstants.NotifyBulletedListFormat}Number of pupils: {detailsModel!.NumberOfPupils.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Start date: {detailsModel!.StartDate.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Tuition duration: {detailsModel!.TuitionDuration.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Time of day: {detailsModel!.TimeOfDay.EscapeNotifyText()}";
+        }
+        else
+        {
+            enquiryTutoringLogistics = request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics.EscapeNotifyText()!;
+        }
+
         var personalisationInput = new EnquiryResponseToTpPersonalisationInput
         {
             TpName = tpName,
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
-            EnquiryKeyStageSubjects = string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!),
+            EnquiryKeyStageSubjects = $"{StringConstants.NotifyBulletedListFormat}{string.Join(Environment.NewLine + StringConstants.NotifyBulletedListFormat, request.Data.EnquiryKeyStageSubjects!)}",
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
             EnquiryTuitionType = request.Data.EnquiryTuitionType,
             EnquiryResponseTuitionType = request.Data.TuitionTypeText.EscapeNotifyText(true),
-            EnquiryTuitionPlan = request.Data.EnquiryTutoringLogistics.EscapeNotifyText(),
+            EnquiryTuitionPlan = enquiryTutoringLogistics,
             EnquiryResponseTuitionPlan = request.Data.TutoringLogisticsText.EscapeNotifyText(true),
             EnquirySendSupport = request.Data.EnquirySENDRequirements.EscapeNotifyText() ?? StringConstants.NotSpecified,
             EnquiryResponseSendSupport = request.Data.SENDRequirementsText.EscapeNotifyText(true) ?? StringConstants.NotSpecified,
