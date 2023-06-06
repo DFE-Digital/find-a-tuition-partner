@@ -71,3 +71,9 @@ When("they click the contact us link", () => {
 Then("the page has title {string}", (Title) => {
   cy.get(".govuk-panel__title").should("contain.text", Title);
 });
+
+When("the user clicks the change button {int}", (int) => {
+  cy.get(
+    `:nth-child(${int}) > .govuk-summary-list__actions > .govuk-link`
+  ).click();
+});

@@ -18,6 +18,9 @@ public class EnquirerEmail : PageModel
 
     public async Task<IActionResult> OnGetAsync(EnquirerEmailModel data)
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         Data = data;
 
         ErrorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
@@ -36,6 +39,9 @@ public class EnquirerEmail : PageModel
     }
     public async Task<IActionResult> OnPostAsync(EnquirerEmailModel data)
     {
+        if (!await _sessionService.SessionDataExistsAsync())
+            return RedirectToPage("/Session/Timeout");
+
         Data = data;
         if (ModelState.IsValid)
         {
