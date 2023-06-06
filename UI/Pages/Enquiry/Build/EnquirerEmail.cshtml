@@ -5,17 +5,10 @@
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/confirm-school";
   ViewData["Title"] = "We need to verify your school email address";
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
-
-  var errorMessage = !string.IsNullOrEmpty(Model.ErrorMessage);
 }
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-
-    <govuk-error-summary show-if="errorMessage">
-      <govuk-error-summary-item asp-for="ErrorMessage" />
-    </govuk-error-summary>
-
     <form method="post">
       <h1 class="govuk-heading-l">We need to verify your school email address</h1>
       <p class="govuk-body">We&#8217;ll also use this email to notify you if you get a response from a tuition partner.</p>

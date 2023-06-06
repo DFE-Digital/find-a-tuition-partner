@@ -35,7 +35,8 @@
         </govuk-details-summary>
         <govuk-details-text>
           <p class="govuk-body">If your passcode hasn’t arrived after 10 minutes, check your spam or re-enter your email address and try again.</p>
-          <p class="govuk-body">If your passcode has expired, you can <a class="govuk-link" asp-page-handler="NewPasscode" asp-all-route-data="@Model.Data.ToRouteData()">request a new one</a>.</p>
+          <p class="govuk-body">If your passcode has expired, you can request a new one.</p>
+          <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="submit" asp-page-handler="newpasscode" asp-all-route-data="@Model.Data.ToRouteData()">Request a new passcode</button>
         </govuk-details-text>
       </govuk-details>
       @if (!string.IsNullOrEmpty(Model.Data.PasscodeForTesting))

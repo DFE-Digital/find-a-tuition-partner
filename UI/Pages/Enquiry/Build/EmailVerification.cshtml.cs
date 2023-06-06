@@ -75,7 +75,7 @@ public class EmailVerification : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetNewPasscode(EmailVerificationModel data)
+    public async Task<IActionResult> OnPostNewPasscodeAsync(EmailVerificationModel data)
     {
         var emailToBeVerified = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
 
@@ -98,10 +98,7 @@ public class EmailVerification : PageModel
         }
         catch (EmailSendException)
         {
-            var errorMessage =
-                $"There was a problem sending the email and you should check the email address and try again";
-
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, Constants.StringConstants.EmailErrorMessage);
 
             return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
         }

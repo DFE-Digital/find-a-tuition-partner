@@ -24,8 +24,6 @@ public class EnquirerEmail : PageModel
     }
     [BindProperty] public EnquirerEmailModel Data { get; set; } = new();
 
-    [ViewData] public string? ErrorMessage { get; set; }
-
     public async Task<IActionResult> OnGetAsync(EnquirerEmailModel data)
     {
         if (!await _sessionService.SessionDataExistsAsync())
@@ -33,16 +31,16 @@ public class EnquirerEmail : PageModel
 
         Data = data;
 
-        ErrorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
-
         Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified);
 
         if (string.IsNullOrEmpty(Data.Email))
             Data.Email = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmail);
 
-        if (!string.IsNullOrEmpty(ErrorMessage))
+        string errorMessage = await _sessionService.RetrieveDataByKeyAsync(SessionKeyConstants.EnquirerEmailErrorMessage);
+
+        if (!string.IsNullOrEmpty(errorMessage))
         {
-            ModelState.AddModelError("ErrorMessage", ErrorMessage);
+            ModelState.AddModelError("Data.Email", errorMessage);
             return Page();
         }
 
@@ -100,7 +98,7 @@ public class EnquirerEmail : PageModel
                 }
                 catch (EmailSendException)
                 {
-                    ModelState.AddModelError("ErrorMessage", "There was a problem sending the email and you should check the email address and try again");
+                    ModelState.AddModelError("Data.Email", Constants.StringConstants.EmailErrorMessage);
                     return Page();
                 }
 
