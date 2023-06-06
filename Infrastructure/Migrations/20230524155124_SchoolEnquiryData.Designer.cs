@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    partial class NtpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230524155124_SchoolEnquiryData")]
+    partial class SchoolEnquiryData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,6 +63,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("TuitionTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TutoringLogistics")
                         .IsRequired()
                         .HasColumnType("text");
@@ -75,6 +80,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
+
+                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Enquiries");
                 });
@@ -103,7 +110,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SENDRequirementsText")
                         .HasColumnType("text");
 
-                    b.Property<string>("TuitionSettingText")
+                    b.Property<string>("TuitionTypeText")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -3924,7 +3931,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionSettingId")
+                    b.Property<int>("TuitionTypeId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -3933,9 +3940,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionSettingId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionTypeId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId");
 
                     b.ToTable("LocalAuthorityDistrictCoverage");
                 });
@@ -4107,7 +4114,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionSettingId")
+                    b.Property<int>("TuitionTypeId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4118,7 +4125,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId");
 
-                    b.HasIndex("TuitionSettingId");
+                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Prices");
                 });
@@ -4431,7 +4438,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionSettingId")
+                    b.Property<int>("TuitionTypeId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4440,9 +4447,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "SubjectId");
 
-                    b.HasIndex("TuitionSettingId", "SubjectId");
+                    b.HasIndex("TuitionTypeId", "SubjectId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "SubjectId");
+                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "SubjectId");
 
                     b.ToTable("SubjectCoverage");
                 });
@@ -4579,7 +4586,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("TuitionPartners", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.TuitionSetting", b =>
+            modelBuilder.Entity("Domain.TuitionType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -4602,7 +4609,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionSettings");
+                    b.ToTable("TuitionTypes");
 
                     b.HasData(
                         new
@@ -4614,24 +4621,9 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Face-to-face",
-                            SeoUrl = "face-to-face"
+                            Name = "In School",
+                            SeoUrl = "in-school"
                         });
-                });
-
-            modelBuilder.Entity("EnquiryTuitionSetting", b =>
-                {
-                    b.Property<int>("EnquiriesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TuitionSettingsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("EnquiriesId", "TuitionSettingsId");
-
-                    b.HasIndex("TuitionSettingsId");
-
-                    b.ToTable("EnquiryTuitionSetting");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -4665,9 +4657,15 @@ namespace Infrastructure.Migrations
                         .WithMany("Enquiries")
                         .HasForeignKey("SchoolId");
 
+                    b.HasOne("Domain.TuitionType", "TuitionType")
+                        .WithMany()
+                        .HasForeignKey("TuitionTypeId");
+
                     b.Navigation("MagicLink");
 
                     b.Navigation("School");
+
+                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -4741,9 +4739,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
+                    b.HasOne("Domain.TuitionType", "TuitionType")
                         .WithMany()
-                        .HasForeignKey("TuitionSettingId")
+                        .HasForeignKey("TuitionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4751,7 +4749,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionSetting");
+                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -4768,9 +4766,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
+                    b.HasOne("Domain.TuitionType", "TuitionType")
                         .WithMany()
-                        .HasForeignKey("TuitionSettingId")
+                        .HasForeignKey("TuitionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4778,7 +4776,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionSetting");
+                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.School", b =>
@@ -4849,9 +4847,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
+                    b.HasOne("Domain.TuitionType", "TuitionType")
                         .WithMany()
-                        .HasForeignKey("TuitionSettingId")
+                        .HasForeignKey("TuitionTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4859,7 +4857,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionSetting");
+                    b.Navigation("TuitionType");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
@@ -4911,21 +4909,6 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.TuitionPartner", null)
                         .WithOne("Logo")
                         .HasForeignKey("Domain.TuitionPartnerLogo", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EnquiryTuitionSetting", b =>
-                {
-                    b.HasOne("Domain.Enquiry", null)
-                        .WithMany()
-                        .HasForeignKey("EnquiriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.TuitionSetting", null)
-                        .WithMany()
-                        .HasForeignKey("TuitionSettingsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

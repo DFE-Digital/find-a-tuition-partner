@@ -80,6 +80,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         var enquiry = new Domain.Enquiry()
         {
+            SchoolId = request.Data?.SchoolId!,
             Email = request.Data?.Email!,
             TutoringLogistics = request.Data?.TutoringLogistics!,
             SENDRequirements = request.Data?.SENDRequirements ?? null,
@@ -278,6 +279,11 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         if (request.Data.Subjects == null || !request.Data.Subjects!.Any() || !request.Data.Subjects!.ParseKeyStageSubjects().Any())
         {
             return "Data.Subjects count is 0";
+        }
+
+        if (!request.Data.SchoolId.HasValue)
+        {
+            return "Data.SchoolId is null";
         }
 
         if (string.IsNullOrWhiteSpace(request.Data.Email))

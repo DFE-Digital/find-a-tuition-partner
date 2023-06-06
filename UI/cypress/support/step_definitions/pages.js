@@ -81,6 +81,10 @@ Then("the user will navigate to the guidance page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/guidance");
 });
 
+Then("they will be taken to the postcode confirmation page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/school-postcode");
+});
+
 Then("user is redirected to the enter email address page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
 });

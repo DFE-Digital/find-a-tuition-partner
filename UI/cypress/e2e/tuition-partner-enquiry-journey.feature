@@ -4,7 +4,7 @@ Feature: Tuition Partner Enquiry Response Journey
         Given a user has started the 'Find a tuition partner' journey
         Then a tuition partner clicks the magic link to respond to a schools enquiry
         When the user has arrived on the tuition response page
-        Then the page heading should show School Enquiry from 'Stockport' area
+        Then the page heading should show School Enquiry from 'Oxford' area
         Then the page should display the correct date format for the response deadline
         And the responses should have heading 'Respond to this enquiry'
 

@@ -18,14 +18,6 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Select a tuition setting option");
 
-        RuleFor(request => request.Email)
-            .NotEmpty()
-            .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("Enter an email address")
-            .Matches(StringConstants.EmailRegExp)
-            .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage("You must enter an email address in the correct format");
-
         RuleFor(request => request.TutoringLogistics)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
@@ -43,6 +35,19 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+
+        RuleFor(request => request.Postcode)
+            .NotEmpty()
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("Enter your school details");
+
+        RuleFor(request => request.Email)
+            .NotEmpty()
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("Enter an email address")
+            .Matches(StringConstants.EmailRegExp)
+            .When(m => m.ConfirmTermsAndConditions)
+            .WithMessage("You must enter an email address in the correct format");
 
         RuleFor(m => m.ConfirmTermsAndConditions)
             .NotEqual(false)

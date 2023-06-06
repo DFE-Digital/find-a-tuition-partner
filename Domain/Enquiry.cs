@@ -12,9 +12,13 @@ public class Enquiry
 
     public string LocalAuthorityDistrict { get; set; } = null!;
 
+    public int? SchoolId { get; set; }
+
     public int MagicLinkId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public School School { get; set; } = null!;
 
     public ICollection<TuitionSetting>? TuitionSettings { get; set; } = null!;
 
