@@ -53,6 +53,8 @@ public class SliceFixture : IAsyncLifetime
                 District.Ryedale
             };
 
+            var school = A.School;
+
             foreach (var locationToAdd in locationsToAdd)
             {
                 LocationFilter
@@ -63,7 +65,12 @@ public class SliceFixture : IAsyncLifetime
                         LocalAuthorityDistrictCode = locationToAdd.Code,
                         LocalAuthorityDistrictId = locationToAdd.Id,
                         LocalAuthorityDistrict = locationToAdd.Name,
-                        LocalAuthority = locationToAdd.LocalAuthorityName
+                        LocalAuthority = locationToAdd.LocalAuthorityName,
+                        Schools = new List<Domain.School>()
+                        {
+                            school
+                        },
+                        Urn = school.Urn
                     });
             }
 
@@ -423,6 +430,13 @@ public class SliceFixture : IAsyncLifetime
         => await ExecuteDbContextAsync(db =>
         {
             db.TuitionPartners.Add(partner);
+            return db.SaveChangesAsync();
+        });
+
+    internal async Task AddSchool(Domain.School school)
+        => await ExecuteDbContextAsync(db =>
+        {
+            db.Schools.Add(school);
             return db.SaveChangesAsync();
         });
 }

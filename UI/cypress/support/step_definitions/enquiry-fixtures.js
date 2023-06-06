@@ -21,25 +21,23 @@ const getFirstValidLink = async (links) => {
 
 Given("An enquiry has been submitted", async () => {
   if (!enquiry) {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they enter 'OX4 2AU' as the school's postcode");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
     Step(this, "they will see all the keys stages as options");
     Step(this, "they select 'Key stage 1, Key stage 2'");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
     Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
     Step(
       this,
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
     Step(this, "they select Any");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now' button");
     Step(this, "they click 'Continue' button");
+    Step(this, "they will be taken to the single school selection page");
+    Step(this, "the user clicks yes and continue");
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");
@@ -83,25 +81,23 @@ Given("a school clicks the magic link to view their enquiry", () => {
 
 Given("An enquiry with no optional info has been submitted", async () => {
   if (!enquiryNoInfo) {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they enter 'OX4 2AU' as the school's postcode");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
     Step(this, "they will see all the keys stages as options");
     Step(this, "they select 'Key stage 1, Key stage 2'");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
     Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
     Step(
       this,
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
     Step(this, "they select Any");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now' button");
     Step(this, "they click 'Continue' button");
+    Step(this, "they will be taken to the single school selection page");
+    Step(this, "the user clicks yes and continue");
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");

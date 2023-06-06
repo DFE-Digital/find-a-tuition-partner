@@ -6,7 +6,7 @@ namespace Application.Extensions;
 
 public static class LocationFilterParametersExtensions
 {
-    public static IResult<LocationFilterParameters> TryValidate(this LocationFilterParameters? parameters)
+    public static IResult<LocationFilterParameters> TryValidate(this LocationFilterParameters? parameters, bool validateIsASchoolPostcode = false)
     {
         if (parameters == null)
         {
@@ -21,6 +21,11 @@ public static class LocationFilterParametersExtensions
         if (string.IsNullOrWhiteSpace(parameters.LocalAuthorityDistrictCode))
         {
             return new LocationNotMappedResult();
+        }
+
+        if (validateIsASchoolPostcode && !parameters.Urn.HasValue)
+        {
+            return new LocationNotASchool();
         }
 
         return Result.Success(parameters);
@@ -44,6 +49,13 @@ public class LocationNotAvailableResult : ErrorResult<LocationFilterParameters, 
 public class LocationNotFoundResult : ErrorResult<LocationFilterParameters, string>
 {
     public LocationNotFoundResult() : base("Enter a real postcode")
+    {
+    }
+}
+
+public class LocationNotASchool : ErrorResult<LocationFilterParameters, string>
+{
+    public LocationNotASchool() : base("Enter a real school postcode")
     {
     }
 }

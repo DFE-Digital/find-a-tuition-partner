@@ -38,6 +38,11 @@ namespace UI.Extensions
             httpContext.AddToAnalytics<T>("TuitionPartnerNameCsv", tuitionPartnerNameCsv);
         }
 
+        public static void AddSchoolUrnToAnalytics<T>(this HttpContext httpContext, int urn)
+        {
+            httpContext.AddToAnalytics<T>("SchoolUrn", urn.ToString());
+        }
+
         private static void AddToAnalytics<T>(this HttpContext httpContext, string? key, string? value)
         {
             if (httpContext != null && !string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))

@@ -16,6 +16,7 @@ public class SchoolDatumTests
         data.EstablishmentType = establishmentType;
         data.EstablishmentStatus = (int)EstablishmentsStatus.Open;
         data.EstablishmentTypeGroup = (int)EstablishmentTypeGroups.IndependentSchools;
+        data.EstablishmentNumber = 111;
         data.IsValidForService().Should().BeFalse();
     }
 
@@ -30,6 +31,7 @@ public class SchoolDatumTests
                 data.EstablishmentType = 0;
                 data.EstablishmentStatus = (int)EstablishmentsStatus.Open;
                 data.EstablishmentTypeGroup = establishmentTypeGroup;
+                data.EstablishmentNumber = 111;
                 data.IsValidForService().Should().BeTrue();
             }
         }
@@ -42,6 +44,7 @@ public class SchoolDatumTests
         data.EstablishmentType = 0;
         data.EstablishmentStatus = (int)EstablishmentsStatus.Open;
         data.EstablishmentTypeGroup = (int)EstablishmentTypeGroups.WelshSchools;
+        data.EstablishmentNumber = 111;
         data.IsValidForService().Should().BeFalse();
     }
 
@@ -54,6 +57,20 @@ public class SchoolDatumTests
         data.EstablishmentType = 0;
         data.EstablishmentStatus = status;
         data.EstablishmentTypeGroup = (int)EstablishmentTypeGroups.IndependentSchools;
+        data.EstablishmentNumber = 111;
+        data.IsValidForService().Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData((int)EstablishmentsStatus.Open)]
+    [InlineData((int)EstablishmentsStatus.OpenButProposedToClose)]
+    public void Invalid_missing_establishment_number(int status)
+    {
+        SchoolDatum data = new();
+        data.EstablishmentType = 0;
+        data.EstablishmentStatus = status;
+        data.EstablishmentTypeGroup = (int)EstablishmentTypeGroups.IndependentSchools;
+        //data.EstablishmentNumber = 111;
         data.IsValidForService().Should().BeFalse();
     }
 
@@ -66,6 +83,7 @@ public class SchoolDatumTests
         data.EstablishmentType = 0;
         data.EstablishmentStatus = status;
         data.EstablishmentTypeGroup = (int)EstablishmentTypeGroups.IndependentSchools;
+        data.EstablishmentNumber = 111;
         data.IsValidForService().Should().BeTrue();
     }
 }

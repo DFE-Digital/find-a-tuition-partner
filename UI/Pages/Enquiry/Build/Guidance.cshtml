@@ -2,6 +2,7 @@
 @model UI.Pages.Enquiry.Build.Guidance
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
+  var continueLink = (Model.HasValidSchoolPostcode ? "/enquiry/build/confirm-school?" : "/enquiry/build/school-postcode?") + @Model.Data.ToQueryString();
   ViewData["Title"] = "Send an enquiry to tuition partners";
   ViewData["BackLinkHref"] = $"/search-results?{Model.Data.ToQueryString()}";
   ViewData["IncludePrintPage"] = true;
@@ -48,6 +49,6 @@
         </ul>
       </govuk-details-text>
     </govuk-details>
-    <a class="govuk-button app-print-hide" data-module="govuk-button" draggable="false" href="/enquiry/build/enquirer-email?@Model.Data.ToQueryString()" role="button">Continue</a>
+    <a class="govuk-button app-print-hide" data-module="govuk-button" draggable="false" href="@continueLink" role="button">Continue</a>
   </div>
 </div>

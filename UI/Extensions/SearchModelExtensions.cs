@@ -11,14 +11,20 @@ namespace UI.Extensions
             return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
         }
 
+        public static string ToQueryString(this SearchModel? model, Dictionary<string, string> itemsToInclude)
+        {
+            var routes = model?.ToRouteData(itemsToInclude, true) ?? new();
+            return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
+        }
+
         public static Dictionary<string, string> ToRouteData(this SearchModel model)
         {
             return model.ToRouteData(false);
         }
 
-        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude)
+        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude, bool flattenCollection = false)
         {
-            var dictionary = model.ToRouteData();
+            var dictionary = model.ToRouteData(flattenCollection);
 
             foreach (var itemToInclude in itemsToInclude)
             {

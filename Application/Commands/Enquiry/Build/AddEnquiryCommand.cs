@@ -133,6 +133,11 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             return "Data.Subjects count is 0";
         }
 
+        if (!request.Data.SchoolId.HasValue)
+        {
+            return "Data.SchoolId is null";
+        }
+
         if (string.IsNullOrWhiteSpace(request.Data.Email))
         {
             return "Data.Email is null or empty";
@@ -185,6 +190,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         //Populate and save the enquiry
         return new Domain.Enquiry()
         {
+            SchoolId = request.Data?.SchoolId!,
             Email = request.Data?.Email!,
             TutoringLogistics = request.Data?.TutoringLogistics!,
             SENDRequirements = request.Data?.SENDRequirements ?? null,

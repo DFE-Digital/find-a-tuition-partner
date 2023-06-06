@@ -15,4 +15,6 @@ public interface ISessionService
     Task StartFormPostProcessingAsync(string formPostTimestampKey = "FormPostTimestamp");
     Task SetFormPostResponseAsync<T>(T postResponseModel, string formPostModelKey = "FormPostModelKey");
     Task<T> GetPreviousFormPostResponseAsync<T>(string formPostModelKey = "FormPostModelKey");
+    Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey);
+    Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey);
 }
