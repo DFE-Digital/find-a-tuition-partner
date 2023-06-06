@@ -12,7 +12,7 @@ Feature: The Check Your Answers page for the Enquiry Builder
         Then the Check Your Answers page displays the following:
             | Section Name            | Expected Content                                |
             | Key stages and subjects | Displays Key Stages and subjects table          |
-            | Type of Tuition         | No preference                                   |
+            | Tuition setting         | No preference                                   |
             | Tuition Plan            | enquiry                                         |
             | SEND Support            | enquiry                                         |
             | Other Considerations    | enquiry                                         |
