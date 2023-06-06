@@ -165,7 +165,10 @@ public class CheckYourAnswersTests
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
             EnquiryTuitionType = "EnquiryTuitionType",
-            //EnquiryTutoringLogistics = "EnquiryTutoringLogistics",//TODO - update unit tests
+            EnquiryTutoringLogisticsDisplayModel = new Application.Common.Models.Enquiry.TutoringLogisticsDisplayModel()
+            {
+                TutoringLogistics = "EnquiryTutoringLogistics"
+            },
             TuitionPartnerSeoUrl = "b",
             SupportReferenceNumber = "RF13",
             Token = "TPToken"
@@ -246,7 +249,10 @@ public class CheckYourAnswersTests
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
             EnquiryTuitionType = "EnquiryTuitionType",
-            //EnquiryTutoringLogistics = "EnquiryTutoringLogistics",//TODO - update unit tests
+            EnquiryTutoringLogisticsDisplayModel = new Application.Common.Models.Enquiry.TutoringLogisticsDisplayModel()
+            {
+                TutoringLogistics = "EnquiryTutoringLogistics"
+            },
             TuitionPartnerSeoUrl = "c",
             SupportReferenceNumber = "RF14",
             Token = "TPToken"

@@ -8,7 +8,7 @@
 
         public const string EnquiryTuitionType = "EnquiryTuitionType";
 
-        public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";//TODO - confirm keeping this
+        public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";
 
         public const string EnquiryNumberOfPupils = "EnquiryNumberOfPupils";
 
