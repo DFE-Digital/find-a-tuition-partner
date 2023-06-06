@@ -31,6 +31,6 @@
 
         public const string IsRequiredLabel = "This field is required";
 
-        public const string NotifyBulletFormat = "* ";
+        public const string NotifyBulletedListFormat = "* ";
     }
 }
