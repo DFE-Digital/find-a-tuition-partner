@@ -61,12 +61,12 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
         RuleFor(request => request.SENDRequirements)
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"SEND and additional requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.AdditionalInformation)
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"Other tuition requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(m => m.ConfirmTermsAndConditions)
             .NotEqual(false)

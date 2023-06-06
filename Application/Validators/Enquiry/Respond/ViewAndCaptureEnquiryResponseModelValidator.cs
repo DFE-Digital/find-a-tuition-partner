@@ -29,15 +29,15 @@ public class ViewAndCaptureEnquiryResponseModelValidator : AbstractValidator<Vie
         RuleFor(request => request.SENDRequirementsText)
             .NotEmpty()
             .When(m => !string.IsNullOrWhiteSpace(m.EnquirySENDRequirements))
-            .WithMessage("Enter can you support the SEND requirements")
+            .WithMessage("Enter can you support the SEND and additional requirements")
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
-            .WithMessage($"SEND requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"SEND and additional requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.AdditionalInformationText)
             .NotEmpty()
             .When(m => !string.IsNullOrWhiteSpace(m.EnquiryAdditionalInformation))
-            .WithMessage("Enter can you support the other school considerations")
+            .WithMessage("Enter can you support the other tuition requirements")
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
-            .WithMessage($"Other school considerations must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"Other tuition requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }
