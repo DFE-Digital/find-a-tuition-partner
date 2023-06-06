@@ -26,7 +26,7 @@ Then("the correct options will display", () => {
   cy.get(".govuk-radios > :nth-child(1)").contains("Face-to-face");
   cy.get(".govuk-radios > :nth-child(2)").contains("Online");
   cy.get(".govuk-radios > :nth-child(3)").contains(
-    "Both face to face and online"
+    "Both face-to-face and online"
   );
   cy.get(".govuk-radios > :nth-child(4)").contains("No preference");
   cy.get("#no-preference").should("be.enabled");
