@@ -47,7 +47,7 @@ Feature: Check your answers page for tuition partner response
             | SEND requirements:                                                                    | 80               |
             | Other school considerations:                                                          | 80               |
 
-    Scenario: Change selections for Tuition type on TP response
+    Scenario: Change selections for Tuition setting on TP response
         Given a user has started the 'Find a tuition partner' journey
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page

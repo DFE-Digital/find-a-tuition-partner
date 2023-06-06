@@ -1,25 +1,25 @@
 ﻿@model Application.Common.Models.SearchModel
 
 @{
-    //This is the name of the cshtml property that the binding is against
-    var htmlFieldPrefix = "Data";
-    if (ViewData["HtmlFieldPrefix"] != null)
-    {
-        htmlFieldPrefix = ViewData["HtmlFieldPrefix"] as string;
-    }
-    ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix;
+  //This is the name of the cshtml property that the binding is against
+  var htmlFieldPrefix = "Data";
+  if (ViewData["HtmlFieldPrefix"] != null)
+  {
+    htmlFieldPrefix = ViewData["HtmlFieldPrefix"] as string;
+  }
+  ViewData.TemplateInfo.HtmlFieldPrefix = htmlFieldPrefix;
 
-    var excludeFrom = Convert.ToBoolean(ViewData["ExcludeFrom"]);
-    var excludeName = Convert.ToBoolean(ViewData["ExcludeName"]);
-    var excludePostcode = Convert.ToBoolean(ViewData["ExcludePostcode"]);
-    var excludeTuitionTypes = Convert.ToBoolean(ViewData["ExcludeTuitionTypes"]);
-    var excludeKeyStages = Convert.ToBoolean(ViewData["ExcludeKeyStages"]);
-    var excludeSubjects = Convert.ToBoolean(ViewData["ExcludeSubjects"]);
-    var excludeCompareListOrderBy = Convert.ToBoolean(ViewData["ExcludeCompareListOrderBy"]);
-    var excludeCompareListOrderByDirection = Convert.ToBoolean(ViewData["ExcludeCompareListOrderByDirection"]);
-    var excludeCompareListTuitionType = Convert.ToBoolean(ViewData["ExcludeCompareListTuitionType"]);
-    var excludeCompareListGroupSize = Convert.ToBoolean(ViewData["ExcludeCompareListGroupSize"]);
-    var excludeCompareListShowWithVAT = Convert.ToBoolean(ViewData["ExcludeCompareListShowWithVAT"]);
+  var excludeFrom = Convert.ToBoolean(ViewData["ExcludeFrom"]);
+  var excludeName = Convert.ToBoolean(ViewData["ExcludeName"]);
+  var excludePostcode = Convert.ToBoolean(ViewData["ExcludePostcode"]);
+  var excludeTuitionSettings = Convert.ToBoolean(ViewData["ExcludeTuitionSettings"]);
+  var excludeKeyStages = Convert.ToBoolean(ViewData["ExcludeKeyStages"]);
+  var excludeSubjects = Convert.ToBoolean(ViewData["ExcludeSubjects"]);
+  var excludeCompareListOrderBy = Convert.ToBoolean(ViewData["ExcludeCompareListOrderBy"]);
+  var excludeCompareListOrderByDirection = Convert.ToBoolean(ViewData["ExcludeCompareListOrderByDirection"]);
+  var excludeCompareListTuitionSetting = Convert.ToBoolean(ViewData["ExcludeCompareListTuitionSetting"]);
+  var excludeCompareListGroupSize = Convert.ToBoolean(ViewData["ExcludeCompareListGroupSize"]);
+  var excludeCompareListShowWithVAT = Convert.ToBoolean(ViewData["ExcludeCompareListShowWithVAT"]);
 }
 
 @*This partial should include all properties maintained in the query string - see UI.Extensions.SearchModelExtensions.ToRouteData*@
@@ -27,23 +27,23 @@
 <input show-if="!excludeFrom && Model.From != null" asp-for="@Model.From" type="hidden" />
 <input show-if="!excludeName && !string.IsNullOrWhiteSpace(Model.Name)" asp-for="@Model.Name" type="hidden" />
 <input show-if="!excludePostcode && !string.IsNullOrWhiteSpace(Model.Postcode)" asp-for="@Model.Postcode" type="hidden" />
-<input show-if="!excludeTuitionTypes && Model.TuitionType != null" asp-for="@Model.TuitionType" type="hidden" />
+<input show-if="!excludeTuitionSettings && Model.TuitionSetting != null" asp-for="@Model.TuitionSetting" type="hidden" />
 @if (!excludeKeyStages && Model.KeyStages != null)
 {
-    @for (int i = 0; i < Model.KeyStages.Count(); i++)
-    {
-        <input asp-for="@Model.KeyStages![i]" type="hidden" />
-    }
+  @for (int i = 0; i < Model.KeyStages.Count(); i++)
+  {
+    <input asp-for="@Model.KeyStages![i]" type="hidden" />
+  }
 }
 @if (!excludeSubjects && Model.Subjects != null)
 {
-    @for (int i = 0; i < Model.Subjects.Count(); i++)
-    {
-        <input asp-for="@Model.Subjects![i]" type="hidden" />
-    }
+  @for (int i = 0; i < Model.Subjects.Count(); i++)
+  {
+    <input asp-for="@Model.Subjects![i]" type="hidden" />
+  }
 }
 <input show-if="!excludeCompareListOrderBy && Model.CompareListOrderBy != null" asp-for="@Model.CompareListOrderBy" type="hidden" />
 <input show-if="!excludeCompareListOrderByDirection && Model.CompareListOrderByDirection != null" asp-for="@Model.CompareListOrderByDirection" type="hidden" />
-<input show-if="!excludeCompareListTuitionType && Model.CompareListTuitionType != null" asp-for="@Model.CompareListTuitionType" type="hidden" />
+<input show-if="!excludeCompareListTuitionSetting && Model.CompareListTuitionSetting != null" asp-for="@Model.CompareListTuitionSetting" type="hidden" />
 <input show-if="!excludeCompareListGroupSize && Model.CompareListGroupSize != null" asp-for="@Model.CompareListGroupSize" type="hidden" />
 <input show-if="!excludeCompareListShowWithVAT && Model.CompareListShowWithVAT != null" asp-for="@Model.CompareListShowWithVAT" type="hidden" />

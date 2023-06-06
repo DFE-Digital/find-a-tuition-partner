@@ -7,7 +7,7 @@ import {
 
 Then("Tuition partner has journeyed to the check your answers page", () => {
   cy.get("#Data_KeyStageAndSubjectsText").clear().invoke("val", "80");
-  cy.get("#Data_TuitionTypeText").clear().invoke("val", "80");
+  cy.get("#Data_TuitionSettingText").clear().invoke("val", "80");
   cy.get("#Data_TutoringLogisticsText").clear().invoke("val", "80");
   cy.get("#Data_SENDRequirementsText").clear().invoke("val", "80");
   cy.get("#Data_AdditionalInformationText").clear().invoke("val", "80");

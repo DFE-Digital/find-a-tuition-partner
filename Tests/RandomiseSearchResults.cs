@@ -37,7 +37,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
     }
 
     [Fact]
-    public void TuitionType_randomness()
+    public void TuitionSetting_randomness()
     {
         var seed = TuitionPartnerOrdering.RandomSeedGeneration(tuitionFilterId: 5);
         seed.Should().Be(5);
@@ -87,7 +87,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
         var results = _fixture.TuitionPartnerService.OrderTuitionPartners(tuitionPartners, new TuitionPartnerOrdering
         {
             OrderBy = TuitionPartnerOrderBy.Random,
-            RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration(localAuthorityDistrictCode, postcode, filter.SubjectIds, filter.TuitionTypeId)
+            RandomSeed = TuitionPartnerOrdering.RandomSeedGeneration(localAuthorityDistrictCode, postcode, filter.SubjectIds, filter.TuitionSettingId)
         });
 
         results.Should().NotBeEmpty();
@@ -159,7 +159,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
             {
                 LocalAuthorityDistrictId = 191, //191 = E06000057
                 SubjectIds = new[] { 4, 3, 2, 1 },
-                TuitionTypeId = 1,
+                TuitionSettingId = 1,
             },
             new []{ "Bravo", "Delta", "Alpha", "Charlie", },
             "E06000057"
@@ -171,7 +171,7 @@ public class RandomiseSearchResults : IClassFixture<RandomiseSearchResultsFixtur
             {
                 LocalAuthorityDistrictId = 191, //191 = E06000057
                 SubjectIds = new[] { 4, 3, 2, 1 },
-                TuitionTypeId = 2,
+                TuitionSettingId = 2,
             },
             new []{ "Alpha", "Charlie", "Bravo", "Delta", },
             "E06000057"
@@ -216,18 +216,18 @@ public class RandomiseSearchResultsFixture : IAsyncLifetime
 
             List<LocalAuthorityDistrictCoverage> CreateAreaCoverage() =>
             (from ladc in db.LocalAuthorityDistricts
-             from tt in db.TuitionTypes
+             from tt in db.TuitionSettings
              select new LocalAuthorityDistrictCoverage
              {
                  LocalAuthorityDistrictId = ladc.Id,
-                 TuitionTypeId = tt.Id,
+                 TuitionSettingId = tt.Id,
              })
              .ToList();
 
             List<SubjectCoverage> CreateSubjectCoverage() =>
-                (from tt in db.TuitionTypes
+                (from tt in db.TuitionSettings
                  from s in db.Subjects
-                 select new SubjectCoverage { TuitionTypeId = tt.Id, SubjectId = s.Id }
+                 select new SubjectCoverage { TuitionSettingId = tt.Id, SubjectId = s.Id }
                  ).ToList();
         });
     }

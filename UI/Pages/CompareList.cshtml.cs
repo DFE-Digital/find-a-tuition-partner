@@ -16,9 +16,9 @@ public class CompareList : PageModel
     public async Task<IActionResult> OnGet(Query data)
     {
         data.From = ReferrerList.CompareList;
-        if (data.CompareListTuitionType == null && data.TuitionType != null)
+        if (data.CompareListTuitionSetting == null && data.TuitionSetting != null)
         {
-            data.CompareListTuitionType = data.TuitionType.Value;
+            data.CompareListTuitionSetting = data.TuitionSetting.Value;
         }
 
         data.KeyStages = data.KeyStages.UpdateFromSubjects(data.Subjects);
@@ -119,7 +119,7 @@ public class CompareList : PageModel
         }
 
         public IEnumerable<GroupSize> AllGroupSizes { get; set; } = new List<GroupSize>();
-        public IEnumerable<Domain.Enums.TuitionType> AllTuitionTypes { get; set; } = new List<Domain.Enums.TuitionType>();
+        public IEnumerable<Domain.Enums.TuitionSetting> AllTuitionSettings { get; set; } = new List<Domain.Enums.TuitionSetting>();
         public IEnumerable<string> KeyStageSubjectsFilteredLabels { get; set; } = new List<string>();
 
     }
@@ -160,7 +160,7 @@ public class CompareList : PageModel
         {
             var queryResponse = new ResultsModel(request) with
             {
-                AllTuitionTypes = EnumExtensions.GetAllEnums<Domain.Enums.TuitionType>(),
+                AllTuitionSettings = EnumExtensions.GetAllEnums<Domain.Enums.TuitionSetting>(),
                 AllGroupSizes = EnumExtensions.GetAllEnums<GroupSize>()
             };
 
@@ -269,7 +269,7 @@ public class CompareList : PageModel
                         new TuitionPartnersDataFilter()
                         {
                             GroupSize = (request.CompareListGroupSize == null || request.CompareListGroupSize == GroupSize.Any) ? null : (int)request.CompareListGroupSize,
-                            TuitionTypeId = (request.CompareListTuitionType == null || request.CompareListTuitionType == Domain.Enums.TuitionType.Any) ? null : (int)request.CompareListTuitionType,
+                            TuitionSettingId = (request.CompareListTuitionSetting == null || request.CompareListTuitionSetting == Domain.Enums.TuitionSetting.NoPreference) ? null : (int)request.CompareListTuitionSetting,
                             SubjectIds = request.SubjectIds,
                             ShowWithVAT = request.CompareListShowWithVAT
                         },

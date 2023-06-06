@@ -59,9 +59,9 @@ Then(
 );
 
 Then(
-  "they will be taken to the 'What type of tuition do you need?' page",
+  "they will be taken to the 'What tuition setting do you prefer?' page",
   () => {
-    cy.location("pathname").should("eq", "/which-tuition-types");
+    cy.location("pathname").should("eq", "/which-tuition-settings");
   }
 );
 

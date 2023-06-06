@@ -16,7 +16,7 @@ public class TuitionPartnerPageTests
     private TuitionPartner GetTuitionPartner() => new(_logger.Object, _mediator.Object);
 
     private string GetSearchModel =>
-        @"{""From"":0,""Name"":null,""Postcode"":""DE1 1RY"",""Subjects"":[""KeyStage1-English""],""TuitionType"":0,""KeyStages"":[1]}";
+        @"{""From"":0,""Name"":null,""Postcode"":""DE1 1RY"",""Subjects"":[""KeyStage1-English""],""TuitionSetting"":0,""KeyStages"":[1]}";
 
     private void VerifyRemoveTuitionPartnerMediatorCall(int numberOfTimes) => _mediator.Verify(m =>
         m.Send(It.IsAny<RemoveCompareListedTuitionPartnerCommand>(), default), Times.Exactly(numberOfTimes));
