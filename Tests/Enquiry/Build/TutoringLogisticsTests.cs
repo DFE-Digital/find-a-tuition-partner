@@ -22,7 +22,7 @@ public class TutoringLogisticsTests
     [InlineData(null)]
     public void With_no_input(string data)
     {
-        var model = new TutoringLogisticsModel 
+        var model = new TutoringLogisticsModel
         {
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
