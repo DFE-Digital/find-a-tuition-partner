@@ -28,7 +28,7 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Key stage and subjects:
-          <ul class="govuk-list govuk-list--bullet">
+          <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
             @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
             {
               <li>
@@ -63,7 +63,7 @@
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Tuition plan:
-          <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
+          <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
         </dt>
         <dd class="govuk-summary-list__value">
           <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>

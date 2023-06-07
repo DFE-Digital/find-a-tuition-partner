@@ -291,11 +291,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             return "Data.Email is null or empty";
         }
 
-        if (request.Data.TutoringLogisticsDetailsModel == null)
-        {
-            return "Data.TutoringLogisticsDetailsModel is null";
-        }
-
         if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsDetailsModel.NumberOfPupils))
         {
             return "Data.TutoringLogisticsDetailsModel.NumberOfPupils is null or empty";

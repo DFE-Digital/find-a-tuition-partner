@@ -55,7 +55,7 @@
       <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Your requirement:</strong>
       </p>
-      <ul class="govuk-list govuk-list--bullet">
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
         @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
         {
           <li>
@@ -99,7 +99,7 @@
       <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Your requirement:</strong>
       </p>
-      <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
+      <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
 
       <p class="govuk-body govuk-!-margin-bottom-0">
         <strong>Response from @Model.Data.TuitionPartnerName:</strong>

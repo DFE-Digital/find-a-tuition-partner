@@ -63,7 +63,7 @@
           <span>Key stage and subjects:</span>
         </h2>
 
-        <ul class="govuk-list govuk-list--bullet">
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
           @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
           {
             <li>
@@ -108,7 +108,7 @@
           Tuition plan:
         </h2>
 
-        <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" />
+        <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
 
         <div asp-validation-group-for="Data.TutoringLogisticsText">
           <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
