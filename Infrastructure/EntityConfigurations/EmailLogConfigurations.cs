@@ -15,7 +15,7 @@ public class EmailLogConfigurations : IEntityTypeConfiguration<EmailLog>
 
         builder.HasIndex(e => e.FinishProcessingDate);
 
-        builder.HasIndex(e => e.ClientReferenceNumber).IsUnique();
+        builder.HasIndex(e => e.ClientReferenceNumber);
 
         builder.HasOne(e => e.EmailStatus).WithMany(e => e.EmailLogs).OnDelete(DeleteBehavior.Restrict);
 

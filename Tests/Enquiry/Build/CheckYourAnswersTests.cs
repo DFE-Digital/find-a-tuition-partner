@@ -18,10 +18,12 @@ namespace Tests.Enquiry.Build;
 public class CheckYourAnswersTests
 {
     private readonly SliceFixture _fixture;
+    private readonly CheckYourAnswersModelValidator _validator;
 
     public CheckYourAnswersTests(SliceFixture fixture)
     {
         _fixture = fixture;
+        _validator = new CheckYourAnswersModelValidator();
 
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("e", "Echo")
@@ -37,7 +39,7 @@ public class CheckYourAnswersTests
     [MemberData(nameof(ValidTestData))]
     public void Has_valid_data_no_validation_errors(CheckYourAnswersModel model)
     {
-        var result = new CheckYourAnswersModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -45,7 +47,7 @@ public class CheckYourAnswersTests
     [MemberData(nameof(InValidTestData))]
     public void Has_invalid_data_has_validation_errors(CheckYourAnswersModel model)
     {
-        var result = new CheckYourAnswersModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveAnyValidationError();
     }
 
@@ -60,7 +62,7 @@ public class CheckYourAnswersTests
             ConfirmTermsAndConditions = true
         };
 
-        var result = new CheckYourAnswersModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirements);

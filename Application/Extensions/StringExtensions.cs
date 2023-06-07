@@ -128,11 +128,17 @@ public static class StringExtensions
         return escapedText;
     }
 
-    public static string CreateNotifyClientReference(this string enquiryRef, string clientRefPrefix, EmailTemplateType emailTemplateType, string? tpName = null)
+    public static string CreateNotifyEnquiryClientReference(this string enquiryRef, string clientRefPrefix, EmailTemplateType emailTemplateType, string? tpName = null)
     {
         var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
         clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
         return $"{clientRefPrefix}{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
+    }
+
+    public static string CreateNotifyEmailClientReference(this string emailTemplateTypeDisplayName, string clientRefPrefix)
+    {
+        clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
+        return $"{clientRefPrefix}{emailTemplateTypeDisplayName}";
     }
 
     public static string ExtractFileNameFromDirectory(this string path)

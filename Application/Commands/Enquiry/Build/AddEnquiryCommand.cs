@@ -178,7 +178,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey });
         if (mergedEmailLog != null)
         {
-            mergedEmailLog.ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, EmailTemplateType.EnquirySubmittedToTp);
+            mergedEmailLog.ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, EmailTemplateType.EnquirySubmittedToTp);
             tuitionPartnerEnquiries.ForEach(x => x.TuitionPartnerEnquirySubmittedEmailLog = mergedEmailLog);
         }
 
@@ -221,7 +221,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             EmailAddress = request.Data?.Email!,
             EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.Data?.Email!),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
-            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, emailTemplateType),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType),
             EmailStatusId = (int)EmailStatus.ToBeProcessed,
             EmailPersonalisationLogs = enquirerEnquirySubmittedEmailPersonalisationLog
         };
@@ -286,7 +286,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             EmailAddress = tuitionPartnerResult.Email,
             EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.Data?.Email!),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
-            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, emailTemplateType, tuitionPartnerResult.Name),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType, tuitionPartnerResult.Name),
             EmailStatusId = _sendTuitionPartnerEmailsWhenEnquirerDelivered ? (int)EmailStatus.WaitingToBeTriggered : (int)EmailStatus.ToBeProcessed,
             EmailPersonalisationLogs = tuitionPartnerEnquirySubmittedEmailPersonalisationLog
         };

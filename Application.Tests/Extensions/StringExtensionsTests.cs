@@ -300,27 +300,27 @@ public class StringExtensionsTests
     }
 
     [Fact]
-    public void CreateNotifyClientReference_WithTPName()
+    public void CreateNotifyEnquiryClientReference_WithTPName()
     {
         // Arrange
         var enquiryRef = "enquiryRef";
         var tpName = "TP name";
 
         // Act
-        var actualOutput = enquiryRef.CreateNotifyClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
+        var actualOutput = enquiryRef.CreateNotifyEnquiryClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
 
         // Assert
         actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");
     }
 
     [Fact]
-    public void CreateNotifyClientReference_NoTPName()
+    public void CreateNotifyEnquiryClientReference_NoTPName()
     {
         // Arrange
         var enquiryRef = "enquiryRef";
 
         // Act
-        var actualOutput = enquiryRef.CreateNotifyClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
+        var actualOutput = enquiryRef.CreateNotifyEnquiryClientReference(string.Empty, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
 
         // Assert
         actualOutput.Should().BeEquivalentTo($"{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}");
@@ -400,7 +400,7 @@ public class StringExtensionsTests
         var clientPrefix = "Client Prefix";
 
         // Act
-        var actualOutput = enquiryRef.CreateNotifyClientReference(clientPrefix, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
+        var actualOutput = enquiryRef.CreateNotifyEnquiryClientReference(clientPrefix, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer, tpName);
 
         // Assert
         actualOutput.Should().BeEquivalentTo($"{clientPrefix.ToSeoUrl()}-{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");

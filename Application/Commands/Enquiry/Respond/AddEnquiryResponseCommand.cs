@@ -173,7 +173,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             EmailAddress = _enquirerEmail!,
             EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(_enquirerEmail!),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
-            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, emailTemplateType, _tpName!),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType, _tpName!),
             EmailStatusId = (int)EmailStatus.ToBeProcessed,
             EmailPersonalisationLogs = enquirerResponseEmailPersonalisationLog
         };
@@ -214,7 +214,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             EmailAddress = _tpEmail!,
             EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(_enquirerEmail!),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
-            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyClientReference(_environmentNameNonProduction!, emailTemplateType, _tpName!),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType, _tpName!),
             EmailStatusId = (int)EmailStatus.ToBeProcessed,
             EmailPersonalisationLogs = tuitionPartnerResponseEmailPersonalisationLog
         };

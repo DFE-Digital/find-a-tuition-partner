@@ -8,7 +8,7 @@ public class EnquiryResponseConfigurations : IEntityTypeConfiguration<EnquiryRes
 {
     public void Configure(EntityTypeBuilder<EnquiryResponse> builder)
     {
-        builder.HasOne(e => e.EnquirerResponseEmailLog).WithOne(e => e.EnquirerResponse).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(e => e.TuitionPartnerResponseEmailLog).WithOne(e => e.TuitionPartnerResponse).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(e => e.EnquirerResponseEmailLog).WithMany(e => e.EnquirerResponses).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(e => e.TuitionPartnerResponseEmailLog).WithMany(e => e.TuitionPartnerResponses).OnDelete(DeleteBehavior.Restrict);
     }
 }
