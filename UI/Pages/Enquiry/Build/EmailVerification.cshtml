@@ -11,11 +11,16 @@
     <form method="post">
       @if (!string.IsNullOrWhiteSpace(Model.Data.NewPasscodeSentAt))
       {
-        <govuk-notification-banner type="Success">
-          <p class="govuk-notification-banner__heading">
-            We sent you a new passcode at @Model.Data.NewPasscodeSentAt
-          </p>
-        </govuk-notification-banner>
+        <div aria-labelledby="govuk-notification-success-banner-title" class="govuk-notification-banner--success govuk-notification-banner" data-module="govuk-notification-banner" role="alert">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-success-banner-title">Success</h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <p class="govuk-notification-banner__heading">
+              We sent you a new passcode at @Model.Data.NewPasscodeSentAt
+            </p>
+          </div>
+        </div>
       }
       <h1 class="govuk-heading-l">Check your email</h1>
       <p class="govuk-body">We sent a @UI.Constants.IntegerConstants.EmailVerificationPasscodeLength-digit passcode to @Model.Data.Email. It will expire in @UI.Constants.DoubleConstants.SessionTimeoutInMinutes minutes.</p>
@@ -36,7 +41,7 @@
         <govuk-details-text>
           <p class="govuk-body">If your passcode hasn’t arrived after 10 minutes, check your spam or re-enter your email address and try again.</p>
           <p class="govuk-body">If your passcode has expired, you can request a new one.</p>
-          <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="submit" asp-page-handler="newpasscode" asp-all-route-data="@Model.Data.ToRouteData()">Request a new passcode</button>
+          <button class="govuk-button govuk-button--secondary" data-module="govuk-button" data-prevent-double-click="true" type="submit" asp-page-handler="newpasscode" asp-all-route-data="@Model.Data.ToRouteData()">Request a new passcode</button>
         </govuk-details-text>
       </govuk-details>
       @if (!string.IsNullOrEmpty(Model.Data.PasscodeForTesting))
