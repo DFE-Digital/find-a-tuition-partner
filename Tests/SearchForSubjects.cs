@@ -130,7 +130,7 @@ public class SearchForSubjects : CleanSliceFixture
         });
 
         var resultPage = result.Should().BeAssignableTo<RedirectToPageResult>().Which;
-        resultPage.PageName.Should().Be("WhichTuitionTypes");
+        resultPage.PageName.Should().Be("WhichTuitionSettings");
         resultPage.RouteValues.Should().ContainKey("Subjects")
             .WhoseValue.Should().BeEquivalentTo(new[]
             {

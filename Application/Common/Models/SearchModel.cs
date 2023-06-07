@@ -1,6 +1,6 @@
 ﻿using Domain.Enums;
 using KeyStage = Domain.Enums.KeyStage;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Application.Common.Models
 {
@@ -17,11 +17,11 @@ namespace Application.Common.Models
             Name = model.Name;
             Postcode = model.Postcode;
             Subjects = model.Subjects;
-            TuitionType = model.TuitionType;
+            TuitionSetting = model.TuitionSetting;
             KeyStages = model.KeyStages;
             CompareListOrderBy = model.CompareListOrderBy;
             CompareListOrderByDirection = model.CompareListOrderByDirection;
-            CompareListTuitionType = model.CompareListTuitionType;
+            CompareListTuitionSetting = model.CompareListTuitionSetting;
             CompareListGroupSize = model.CompareListGroupSize;
             CompareListShowWithVAT = model.CompareListShowWithVAT;
         }
@@ -34,7 +34,7 @@ namespace Application.Common.Models
 
         public string[]? Subjects { get; set; }
 
-        public TuitionType? TuitionType { get; set; }
+        public TuitionSetting? TuitionSetting { get; set; }
 
         public KeyStage[]? KeyStages { get; set; }
 
@@ -42,7 +42,7 @@ namespace Application.Common.Models
 
         public OrderByDirection? CompareListOrderByDirection { get; set; }
 
-        public TuitionType? CompareListTuitionType { get; set; }
+        public TuitionSetting? CompareListTuitionSetting { get; set; }
 
         public GroupSize? CompareListGroupSize { get; set; }
 

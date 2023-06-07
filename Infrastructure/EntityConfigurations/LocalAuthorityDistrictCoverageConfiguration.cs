@@ -8,8 +8,8 @@ public class LocalAuthorityDistrictCoverageConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<LocalAuthorityDistrictCoverage> builder)
     {
-        builder.HasIndex(e => new { e.TuitionPartnerId, e.TuitionTypeId, e.LocalAuthorityDistrictId });
+        builder.HasIndex(e => new { e.TuitionPartnerId, e.TuitionSettingId, e.LocalAuthorityDistrictId });
         builder.HasIndex(e => new { e.TuitionPartnerId, e.LocalAuthorityDistrictId });
-        builder.HasIndex(e => new { e.TuitionTypeId, e.LocalAuthorityDistrictId });
+        builder.HasIndex(e => new { e.TuitionSettingId, e.LocalAuthorityDistrictId });
     }
 }

@@ -10,7 +10,7 @@ public class TuitionPartnerResult
     public string PhoneNumber { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public SubjectCoverage[]? SubjectsCoverage { get; set; }
-    public TuitionType[]? TuitionTypes { get; set; }
+    public TuitionSetting[]? TuitionSettings { get; set; }
     public Price[]? Prices { get; set; }
     public bool HasLogo { get; set; }
     public string Address { get; set; } = string.Empty;

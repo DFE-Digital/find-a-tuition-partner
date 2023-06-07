@@ -21,7 +21,7 @@ Given(
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they select Any");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now' button");

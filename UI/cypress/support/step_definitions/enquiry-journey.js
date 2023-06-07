@@ -16,7 +16,7 @@ When("user has journeyed forward to the check your answers page", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
@@ -106,7 +106,7 @@ When("user creates another enquiry", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
@@ -175,7 +175,7 @@ When("user navigates to the first enquiry question", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
@@ -256,7 +256,7 @@ When("user navigates to check your answers unselecting filter results", () => {
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
   Step(this, "they unselect filter results");
   Step(this, "they click 'Start now' button");
@@ -299,7 +299,7 @@ When(
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they select Any");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they click 'Start now'");
     Step(this, "they click 'Continue' button");

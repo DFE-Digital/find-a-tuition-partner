@@ -299,7 +299,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                                                                 e.LocalAuthorityDistrictId == x.LocalAuthorityDistrictId));
         foreach (var laDistrictCoverageToDelete in laDistrictCoveragesToDelete)
         {
@@ -308,7 +308,7 @@ public class DataImporterService : IHostedService
 
         foreach (var laDistrictCoverage in tuitionPartnerToProcess.LocalAuthorityDistrictCoverage)
         {
-            var existingLaDistrictCoverage = existingTP.LocalAuthorityDistrictCoverage.FirstOrDefault(x => x.TuitionTypeId == laDistrictCoverage.TuitionTypeId &&
+            var existingLaDistrictCoverage = existingTP.LocalAuthorityDistrictCoverage.FirstOrDefault(x => x.TuitionSettingId == laDistrictCoverage.TuitionSettingId &&
                                                                                                         x.LocalAuthorityDistrictId == laDistrictCoverage.LocalAuthorityDistrictId);
 
             if (existingLaDistrictCoverage == null)
@@ -325,7 +325,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerSubjectCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var subjectCoveragesToDelete = existingTP.SubjectCoverage.Where(x => !tuitionPartnerToProcess.SubjectCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var subjectCoveragesToDelete = existingTP.SubjectCoverage.Where(x => !tuitionPartnerToProcess.SubjectCoverage.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                                             e.SubjectId == x.SubjectId));
         foreach (var subjectCoverageToDelete in subjectCoveragesToDelete)
         {
@@ -334,7 +334,7 @@ public class DataImporterService : IHostedService
 
         foreach (var subjectCoverage in tuitionPartnerToProcess.SubjectCoverage)
         {
-            var existingSubjectCoverage = existingTP.SubjectCoverage.FirstOrDefault(x => x.TuitionTypeId == subjectCoverage.TuitionTypeId &&
+            var existingSubjectCoverage = existingTP.SubjectCoverage.FirstOrDefault(x => x.TuitionSettingId == subjectCoverage.TuitionSettingId &&
                                                                                 x.SubjectId == subjectCoverage.SubjectId);
 
             if (existingSubjectCoverage == null)
@@ -351,7 +351,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerPrices(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var pricesToDelete = existingTP.Prices.Where(x => !tuitionPartnerToProcess.Prices.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var pricesToDelete = existingTP.Prices.Where(x => !tuitionPartnerToProcess.Prices.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                 e.SubjectId == x.SubjectId &&
                                                                                                 e.GroupSize == x.GroupSize));
         foreach (var priceToDelete in pricesToDelete)
@@ -361,7 +361,7 @@ public class DataImporterService : IHostedService
 
         foreach (var price in tuitionPartnerToProcess.Prices)
         {
-            var existingPrice = existingTP.Prices.FirstOrDefault(x => x.TuitionTypeId == price.TuitionTypeId &&
+            var existingPrice = existingTP.Prices.FirstOrDefault(x => x.TuitionSettingId == price.TuitionSettingId &&
                                                                     x.SubjectId == price.SubjectId &&
                                                                     x.GroupSize == price.GroupSize);
 

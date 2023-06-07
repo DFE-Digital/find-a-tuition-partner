@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
 using Tests.TestData;
 using UI.Pages.Enquiry.Respond;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests.Enquiry.Respond;
 
@@ -46,7 +46,7 @@ public class CheckYourAnswersTests
         var model = new CheckYourAnswersModel
         {
             KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TuitionTypeText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
             TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
@@ -57,7 +57,7 @@ public class CheckYourAnswersTests
         var result = new CheckYourAnswersModelValidator().TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.KeyStageAndSubjectsText);
-        result.ShouldHaveValidationErrorFor(x => x.TuitionTypeText);
+        result.ShouldHaveValidationErrorFor(x => x.TuitionSettingText);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsText);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirementsText);
         result.ShouldHaveValidationErrorFor(x => x.AdditionalInformationText);
@@ -70,7 +70,7 @@ public class CheckYourAnswersTests
         var model = new CheckYourAnswersModel
         {
             KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-            TuitionTypeText = "TuitionTypeText",
+            TuitionSettingText = "TuitionSettingText",
             TutoringLogisticsText = "TutoringLogisticsText",
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = "SENDRequirementsText",
@@ -113,10 +113,10 @@ public class CheckYourAnswersTests
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(13)
             .WithName("b", "Beta")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
 
         _ = _fixture.InsertAsync(
@@ -156,7 +156,7 @@ public class CheckYourAnswersTests
         var model = new CheckYourAnswersModel
         {
             KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-            TuitionTypeText = "TuitionTypeText",
+            TuitionSettingText = "TuitionSettingText",
             TutoringLogisticsText = "TutoringLogisticsText",
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = "SENDRequirementsText",
@@ -164,7 +164,7 @@ public class CheckYourAnswersTests
             AdditionalInformationText = "AdditionalInformationText",
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
-            EnquiryTuitionType = "EnquiryTuitionType",
+            EnquiryTuitionSetting = "EnquiryTuitionSetting",
             EnquiryTutoringLogistics = "EnquiryTutoringLogistics",
             TuitionPartnerSeoUrl = "b",
             SupportReferenceNumber = "RF13",
@@ -194,10 +194,10 @@ public class CheckYourAnswersTests
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(14)
             .WithName("c", "Charlie")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
 
         _ = _fixture.InsertAsync(
@@ -237,7 +237,7 @@ public class CheckYourAnswersTests
         var model = new CheckYourAnswersModel
         {
             //KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-            TuitionTypeText = "TuitionTypeText",
+            TuitionSettingText = "TuitionSettingText",
             TutoringLogisticsText = "TutoringLogisticsText",
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = "SENDRequirementsText",
@@ -245,7 +245,7 @@ public class CheckYourAnswersTests
             AdditionalInformationText = "AdditionalInformationText",
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
-            EnquiryTuitionType = "EnquiryTuitionType",
+            EnquiryTuitionSetting = "EnquiryTuitionSetting",
             EnquiryTutoringLogistics = "EnquiryTutoringLogistics",
             TuitionPartnerSeoUrl = "c",
             SupportReferenceNumber = "RF14",
@@ -271,7 +271,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -284,7 +284,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 //EnquirySENDRequirements = "EnquirySENDRequirements",
                 //SENDRequirementsText = "SENDRequirementsText",
@@ -297,7 +297,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -314,7 +314,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 //KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -327,7 +327,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                //TuitionTypeText = "TuitionTypeText",
+                //TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -340,7 +340,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 //TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -353,7 +353,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 //SENDRequirementsText = "SENDRequirementsText",
@@ -366,7 +366,7 @@ public class CheckYourAnswersTests
         {
             new CheckYourAnswersModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",

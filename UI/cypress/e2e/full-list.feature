@@ -87,7 +87,7 @@ Scenario: Logos are not displayed for tuition partners
     Given a user has arrived on the all quality-assured tuition partners page
     Then logos are not shown for tuition partners
 
-  Scenario: From the full list we can visit each TP details page and see the Type of Tuition details and the pricing in the correct order then is returned to the location of the selected TP on the list
+  Scenario: From the full list we can visit each TP details page and see the tuition setting details and the pricing in the correct order then is returned to the location of the selected TP on the list
     Given a user has started the 'Find a tuition partner' journey
     When they click the 'Check the full list of quality-assured tuition partners' link
-    Then they can visit each TP details page and see the Type of Tuition details and the pricing in the correct order
+    Then they can visit each TP details page and see the tuition setting details and the pricing in the correct order
