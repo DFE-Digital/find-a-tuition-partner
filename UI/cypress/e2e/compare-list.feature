@@ -84,7 +84,7 @@ Feature: Tuition Partner price comparison list
     And they add tp name 4 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
     Then there are 1 entries on the price comparison list page
-    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'In School, Online', '£8.33 to £50 excluding VAT'
+    And entry 1 on the price comparison list is the row tp name 4, '1 to 1, 2, 3, 4, 5, 6', 'Face-to-face, Online', '£8.33 to £50 excluding VAT'
     And they click 'Back'
     And they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
@@ -198,10 +198,10 @@ Feature: Tuition Partner price comparison list
     And tp name 1 is entry 6 on the price comparison list page
     And the tp name 8 price is '£34.17 excluding VAT'
 
-  Scenario: The price comparison list can be refined by tuition type then TP rows and the price are updated
+  Scenario: The price comparison list can be refined by tuition setting then TP rows and the price are updated
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
-    When 'In School' tuition type price comparison list refinement option is selected
+    When 'Face-to-face' tuition setting price comparison list refinement option is selected
     And tp name 5 is entry 1 on the price comparison list page
     And tp name 2 is entry 2 on the price comparison list page
     And tp name 6 is entry 3 on the price comparison list page
@@ -210,11 +210,11 @@ Feature: Tuition Partner price comparison list
     Then tp name 8 is entry 6 on the price comparison list page
     And the tp name 7 price is '£9.38 to £45.83 excluding VAT'
 
-  Scenario: The price comparison list can be refined by group size and tuition type then TP rows and the price are updated
+  Scenario: The price comparison list can be refined by group size and tuition setting then TP rows and the price are updated
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
     When '1 to 1' group size price comparison list refinement option is selected
-    And 'Online' tuition type price comparison list refinement option is selected
+    And 'Online' tuition setting price comparison list refinement option is selected
     Then tp name 2 is entry 1 on the price comparison list page
     And tp name 6 is entry 2 on the price comparison list page
     And tp name 7 is entry 3 on the price comparison list page
@@ -227,7 +227,7 @@ Feature: Tuition Partner price comparison list
   Scenario: The price comparison list price ordering works with refined data and any inavid TP data still follows the order they were added to price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     When '1 to 1' group size price comparison list refinement option is selected
-    And 'Online' tuition type price comparison list refinement option is selected
+    And 'Online' tuition setting price comparison list refinement option is selected
     And they choose to sort the price comparison list by price
     Then tp name 8 is entry 1 on the price comparison list page
     And tp name 2 is entry 2 on the price comparison list page
@@ -248,34 +248,34 @@ Feature: Tuition Partner price comparison list
     When '1 to 1' group size price comparison list refinement option is selected
     Then the tp name 1 empty data reason is 'Does not offer group sizes of 1 to 1'
     When 'Any' group size price comparison list refinement option is selected
-    And 'In School' tuition type price comparison list refinement option is selected
-    Then the tp name 1 empty data reason is 'Does not offer in school tuition in Stockport'
+    And 'Face-to-face' tuition setting price comparison list refinement option is selected
+    Then the tp name 1 empty data reason is 'Does not offer face-to-face tuition in Stockport'
     When '1 to 1' group size price comparison list refinement option is selected
-    Then the tp name 1 empty data reason is 'Does not offer group sizes of 1 to 1 or in school tuition in Stockport'
+    Then the tp name 1 empty data reason is 'Does not offer group sizes of 1 to 1 or face-to-face tuition in Stockport'
 
-  Scenario: The price comparison list refinement tuition type defaults to the search tuition type filter on first load and then maintains own state after being selected until the search tuition type filter is changed
-    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB' and tuition type 'Any'
+  Scenario: The price comparison list refinement tuition setting defaults to the search tuition setting filter on first load and then maintains own state after being selected until the search tuition setting filter is changed
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB' and tuition setting 'Any'
     And they add tp name 1 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
-    Then the tuition type select option is 'Any'
+    Then the tuition setting select option is 'No preference'
     And the group size select option is 'Any'
     When they click 'Back'
     Then the search results are displayed
-    When the user selects tuition type 'in school'
+    When the user selects tuition setting 'face-to-face'
     And they choose to view their price comparison list from the results page
-    Then the tuition type select option is 'In School'
+    Then the tuition setting select option is 'Face-to-face'
     And the group size select option is 'Any'
-    When 'Online' tuition type price comparison list refinement option is selected
-    Then the tuition type select option is 'Online'
+    When 'Online' tuition setting price comparison list refinement option is selected
+    Then the tuition setting select option is 'Online'
     When they click 'Back'
     Then the search results are displayed
     When they choose to view their price comparison list from the results page
-    Then the tuition type select option is 'Online'
+    Then the tuition setting select option is 'Online'
     When they click 'Back'
     Then the search results are displayed
-    When the user selects tuition type 'any'
+    When the user selects tuition setting 'no preference'
     When they choose to view their price comparison list from the results page
-    Then the tuition type select option is 'Any'
+    Then the tuition setting select option is 'No preference'
 
   Scenario: The price comparison list page shows the previously searched by subjects
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English, Key stage 2 Maths, Key stage 3 Maths' for postcode 'SK1 1EB'

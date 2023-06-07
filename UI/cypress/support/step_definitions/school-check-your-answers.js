@@ -23,7 +23,7 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
           "Key stage 2: English and Maths"
         );
         break;
-      case "Type of Tuition":
+      case "Tuition setting":
         cy.checkTextContent(
           ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
           row["Expected Content"]
@@ -128,7 +128,7 @@ Then(
             "Key stage 3: Science"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
@@ -165,13 +165,13 @@ Then(
   }
 );
 
-Then("the user is taken back to the type of tuition page", () => {
-  cy.location("pathname").should("eq", "/which-tuition-types");
-  cy.get("#any").should("be.checked");
+Then("the user is taken back to the tuition setting page", () => {
+  cy.location("pathname").should("eq", "/which-tuition-settings");
+  cy.get("#no-preference").should("be.checked");
 });
 
 Then(
-  "the Check Your Answers page displays the following with the type of tuition update:",
+  "the Check Your Answers page displays the following with the tuition setting update:",
   (dataTable) => {
     dataTable.hashes().forEach((row) => {
       switch (row["Section Name"]) {
@@ -189,7 +189,7 @@ Then(
             "Key stage 2: English and Maths"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
@@ -253,7 +253,7 @@ Then(
             "Key stage 2: English and Maths"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]

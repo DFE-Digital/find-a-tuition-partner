@@ -34,7 +34,7 @@
 
         var dataQueryString = Model.Data.ToQueryString();
 
-        <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeCompareListTuitionType", true}, {"ExcludeCompareListGroupSize", true}, {"ExcludeCompareListShowWithVAT", true} }' />
+        <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeCompareListTuitionSetting", true}, {"ExcludeCompareListGroupSize", true}, {"ExcludeCompareListShowWithVAT", true} }' />
 
         <div data-module="compare-list-refinement">
           <h2 class="govuk-heading-m refine-pricing-heading">Refine pricing</h2>
@@ -51,11 +51,11 @@
             </div>
 
             <div class="govuk-grid-column-compare-list">
-              <govuk-select asp-for="Data.CompareListTuitionType" data-testid="compare-list-tuition-type-refine">
-                <govuk-select-label>Type of tuition</govuk-select-label>
-                @foreach (var item in Model.Data.AllTuitionTypes)
+              <govuk-select asp-for="Data.CompareListTuitionSetting" data-testid="compare-list-tuition-setting-refine">
+                <govuk-select-label>Tuition setting</govuk-select-label>
+                @foreach (var item in Model.Data.AllTuitionSettings)
                 {
-                  <govuk-select-item value="@item" selected="@item == @Model.Data.CompareListTuitionType">@item.DisplayName()</govuk-select-item>
+                  <govuk-select-item value="@item" selected="@item == @Model.Data.CompareListTuitionSetting">@item.DisplayName()</govuk-select-item>
                 }
               </govuk-select>
             </div>
@@ -83,7 +83,7 @@
               <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Name</th>
                 <th scope="col" class="govuk-table__header">Group sizes</th>
-                <th scope="col" class="govuk-table__header">Type of tuition</th>
+                <th scope="col" class="govuk-table__header">Tuition setting</th>
                 <th scope="col" class="govuk-table__header" aria-sort="@(Model.Data.GetAriaSort(Domain.Enums.TuitionPartnerOrderBy.Price))">
                   <a class="table-column-sort" data-testid="compare-list-price-sort" asp-page="CompareList" asp-all-route-data="@(Model.Data.GetSortRouteData(Domain.Enums.TuitionPartnerOrderBy.Price))">Price per pupil, per hour</a>
                 </th>
@@ -117,7 +117,7 @@
                     <td class="govuk-table__cell">
                       1 to @string.Join(", ", item.Prices!.Select(e => e.GroupSize).Distinct().OrderBy(x => x))
                     </td>
-                    <td class="govuk-table__cell">@string.Join(", ", item.TuitionTypes!.Select(e => e.Name))</td>
+                    <td class="govuk-table__cell">@string.Join(", ", item.TuitionSettings!.Select(e => e.Name))</td>
                     <td class="govuk-table__cell" data-testid="compare-list-price-@item.SeoUrl">@prices</td>
                   }
                   <td class="govuk-table__cell app-print-hide">

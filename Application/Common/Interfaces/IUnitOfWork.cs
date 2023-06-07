@@ -11,7 +11,7 @@ public interface IUnitOfWork : IDisposable
     ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; }
     ISubjectRepository SubjectRepository { get; }
     ITuitionPartnerRepository TuitionPartnerRepository { get; }
-    ITuitionTypeRepository TuitionTypeRepository { get; }
+    ITuitionSettingRepository TuitionSettingRepository { get; }
     IScheduledProcessingInfoRepository ScheduledProcessingInfoRepository { get; }
     ISchoolRepository SchoolRepository { get; }
     IMagicLinkRepository MagicLinkRepository { get; }

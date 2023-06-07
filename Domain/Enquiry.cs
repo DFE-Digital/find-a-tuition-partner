@@ -14,8 +14,6 @@ public class Enquiry
 
     public int? SchoolId { get; set; }
 
-    public int? TuitionTypeId { get; set; }
-
     public int MagicLinkId { get; set; }
 
     public int EnquirerEnquirySubmittedEmailLogId { get; set; }
@@ -26,7 +24,7 @@ public class Enquiry
 
     public School School { get; set; } = null!;
 
-    public TuitionType TuitionType { get; set; } = null!;
+    public ICollection<TuitionSetting>? TuitionSettings { get; set; } = null!;
 
     public MagicLink MagicLink { get; set; } = null!;
 

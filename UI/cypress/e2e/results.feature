@@ -13,11 +13,11 @@ Feature: User is shown search results
     When they click the 'Find a tuition partner' service name link
     Then they will be taken to the 'Find a tuition partner' journey start page
 
-  Scenario: Back click returns to type of tuition page
+  Scenario: Back click returns to tuition setting page
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'
     When they click 'Back'
-    Then they will be taken to the 'Type of tuition' page
-    Then they will see the tuition type 'Any' is selected
+    Then they will be taken to the 'Tuition setting' page
+    Then they will see the tuition setting 'No preference' is selected
 
 
   Scenario: Back to the start
@@ -79,9 +79,9 @@ Feature: User is shown search results
     Then display all correct tuition partners in any location
     And they will see all the subjects for 'Key stage 1, Key stage 2, Key stage 3, Key stage 4'
 
-  Scenario: results default to Any tuition type filter
+  Scenario: results default to No preference tuition setting filter
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
-    Then they will see the tuition type 'Any' is selected
+    Then they will see the tuition setting 'No preference' is selected
 
   Scenario: All key stages are shown
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
@@ -123,7 +123,7 @@ Feature: User is shown search results
     Given a user has arrived on the 'Search results' page
     When the ‘clear filters’ button has been selected
     Then no subject should be shown as selected
-    And they will see the tuition type 'Any' is selected
+    And they will see the tuition setting 'No preference' is selected
 
   Scenario: All subject filters are collapsed when clear all filters is clicked
     Given a user has arrived on the 'Search results' page
@@ -174,10 +174,10 @@ Feature: User is shown search results
     When they click on the option heading for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
     Then they will see an expanded subject filter for 'Key stage 1,Key stage 2,Key stage 3,Key stage 4'
 
-  Scenario: User is able to select a tuition type filter
+  Scenario: User is able to select a tuition setting filter
     Given a user has arrived on the 'Search results' page without subjects or postcode
-    When the user selects tuition type 'in school'
-    Then they will see the tuition type 'in school' is selected
+    When the user selects tuition setting 'face-to-face'
+    Then they will see the tuition setting 'face-to-face' is selected
 
   Scenario: Search result matches the displayed count with subjects selected
     Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'SK1 1EB'

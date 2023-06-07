@@ -32,7 +32,7 @@ Then("The correct enquiry information is shown as follows:", (dataTable) => {
           "Key stage 2: English and Maths"
         );
         break;
-      case "Tuition type":
+      case "Tuition setting":
         cy.get(":nth-child(2) > .govuk-summary-list__value").should(
           "contain.text",
           row["Your Requirements"]
@@ -156,7 +156,7 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
-      case "Tuition type:":
+      case "Tuition setting:":
         cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(9)")
           .should("contain.text", yourResponse)
           .should("be.visible");

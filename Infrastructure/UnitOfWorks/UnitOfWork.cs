@@ -17,7 +17,7 @@ public class UnitOfWork : IUnitOfWork
         LocalAuthorityDistrictRepository = new LocalAuthorityDistrictRepository(_context);
         SubjectRepository = new SubjectRepository(_context);
         TuitionPartnerRepository = new TuitionPartnerRepository(_context);
-        TuitionTypeRepository = new TuitionTypeRepository(_context);
+        TuitionSettingRepository = new TuitionSettingRepository(_context);
         ScheduledProcessingInfoRepository = new ScheduledProcessingInfoRepository(_context);
         SchoolRepository = new SchoolRepository(_context);
         MagicLinkRepository = new MagicLinkRepository(_context);
@@ -31,7 +31,7 @@ public class UnitOfWork : IUnitOfWork
     public ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; private set; }
     public ISubjectRepository SubjectRepository { get; private set; }
     public ITuitionPartnerRepository TuitionPartnerRepository { get; private set; }
-    public ITuitionTypeRepository TuitionTypeRepository { get; private set; }
+    public ITuitionSettingRepository TuitionSettingRepository { get; private set; }
     public IScheduledProcessingInfoRepository ScheduledProcessingInfoRepository { get; private set; }
     public ISchoolRepository SchoolRepository { get; private set; }
     public IMagicLinkRepository MagicLinkRepository { get; private set; }

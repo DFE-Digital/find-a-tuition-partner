@@ -10,7 +10,7 @@ public interface INtpDbContext
     DbSet<Region> Regions { get; set; }
     DbSet<Subject> Subjects { get; set; }
     DbSet<TuitionPartner> TuitionPartners { get; set; }
-    DbSet<TuitionType> TuitionTypes { get; set; }
+    DbSet<TuitionSetting> TuitionSettings { get; set; }
     DbSet<School> Schools { get; set; }
     Task<int> SaveChangesAsync();
 }

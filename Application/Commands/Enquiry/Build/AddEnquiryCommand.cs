@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using EmailStatus = Domain.Enums.EmailStatus;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Application.Commands.Enquiry.Build;
 
@@ -74,7 +74,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
         _enquirerToken = _randomTokenGenerator.GenerateRandomToken();
 
-        var enquiry = GetEnquiry(request);
+        var enquiry = await GetEnquiry(request);
 
         try
         {
@@ -151,7 +151,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return null;
     }
 
-    private Domain.Enquiry GetEnquiry(AddEnquiryCommand request)
+    private async Task<Domain.Enquiry> GetEnquiry(AddEnquiryCommand request)
     {
         var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request);
         var enquirerMagicLink = new MagicLink()
@@ -200,7 +200,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
             PostCode = request.Data!.Postcode!,
             LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
-            TuitionTypeId = GetTuitionTypeId(request.Data!.TuitionType),
+            TuitionSettings = await GetTuitionSettings(request.Data!.TuitionSetting),
             MagicLink = enquirerMagicLink,
             EnquirerEnquirySubmittedEmailLog = enquirerEnquirySubmittedEmailLog,
             CreatedAt = _createdDateTime
@@ -336,15 +336,17 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
     }
 
-    private static int? GetTuitionTypeId(TuitionType? tuitionType)
+    private async Task<List<Domain.TuitionSetting>?> GetTuitionSettings(TuitionSetting? tuitionSetting)
     {
-        return tuitionType switch
-        {
-            null => null,
-            TuitionType.InSchool => (int)TuitionType.InSchool,
-            TuitionType.Online => (int)TuitionType.Online,
-            _ => null
-        };
+        if (tuitionSetting == null || tuitionSetting == TuitionSetting.NoPreference)
+            return null;
+
+        var tuitionSettingIds = tuitionSetting == TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+            new List<int>() { (int)tuitionSetting };
+
+        var settings = await _unitOfWork.TuitionSettingRepository.GetAllAsync(x => tuitionSettingIds.Contains(x.Id));
+
+        return settings.ToList();
     }
 
     private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
@@ -392,7 +394,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",
                     _enquiryReferenceNumber);
 
-                updatedEnquiry = GetEnquiry(request);
+                updatedEnquiry = await GetEnquiry(request);
                 _unitOfWork.EnquiryRepository.AddAsync(updatedEnquiry, cancellationToken);
 
                 try
