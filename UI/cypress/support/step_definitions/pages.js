@@ -89,6 +89,10 @@ Then("user is redirected to the enter email address page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
 });
 
+Then("the email address verification page is displayed", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/email-verification");
+});
+
 Then("they are redirected to the enquiry question page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/tutoring-logistics");
 });
