@@ -47,11 +47,11 @@
           </govuk-summary-list-row>
           <govuk-summary-list-row>
             <govuk-summary-list-row-key>
-              Type of tuition
+              Tuition setting
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-              <ul class="govuk-list" data-testid="type-of-tuition">
-                @foreach (var item in Model.Data.TuitionTypes)
+              <ul class="govuk-list" data-testid="tuition-setting">
+                @foreach (var item in Model.Data.TuitionSettings)
                 {
                   <li>@item</li>
                 }
@@ -76,7 +76,7 @@
             <th scope="col" class="govuk-table__header">Region</th>
             <th scope="col" class="govuk-table__header">LAD code</th>
             <th scope="col" class="govuk-table__header">LAD name</th>
-            <th scope="col" class="govuk-table__header">In school</th>
+            <th scope="col" class="govuk-table__header">Face-to-face</th>
             <th scope="col" class="govuk-table__header">Online</th>
           </tr>
         </thead>
@@ -87,7 +87,7 @@
               <td class="govuk-table__cell">@item.Region</td>
               <td class="govuk-table__cell">@item.Code</td>
               <td class="govuk-table__cell">@item.Name</td>
-              <td class="govuk-table__cell">@(item.InSchool ? "Yes" : "")</td>
+              <td class="govuk-table__cell">@(item.FaceToFace ? "Yes" : "")</td>
               <td class="govuk-table__cell">@(item.Online ? "Yes" : "")</td>
             </tr>
           }
@@ -132,7 +132,7 @@
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="col" class="govuk-table__header">Tuition group size</th>
-              <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+              <th show-if="@Model.Data.Prices.ContainsFaceToFacePrice()" scope="col" class="govuk-table__header">Face-to-face</th>
               <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
             </tr>
           </thead>
@@ -145,12 +145,12 @@
                       ((GroupSize)item.Key).DisplayName()
                       )
                 </th>
-                <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                  @item.Value.FormatFor(TuitionType.InSchool, false)
+                <td show-if="@Model.Data.Prices.ContainsFaceToFacePrice()" class="govuk-table__cell">
+                  @item.Value.FormatFor(TuitionSetting.FaceToFace, false)
                 </td>
 
                 <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                  @item.Value.FormatFor(TuitionType.Online, false)
+                  @item.Value.FormatFor(TuitionSetting.Online, false)
                 </td>
               </tr>
             }
@@ -165,7 +165,7 @@
             <thead class="govuk-table__head">
               <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Tuition group size</th>
-                <th show-if="@Model.Data.Prices.ContainsInSchoolPrice()" scope="col" class="govuk-table__header">In school</th>
+                <th show-if="@Model.Data.Prices.ContainsFaceToFacePrice()" scope="col" class="govuk-table__header">Face-to-face</th>
                 <th show-if="@Model.Data.Prices.ContainsOnlinePrice()" scope="col" class="govuk-table__header">Online</th>
               </tr>
             </thead>
@@ -178,12 +178,12 @@
                         ((GroupSize)item.Key).DisplayName()
                         )
                   </th>
-                  <td show-if="@Model.Data.Prices.ContainsInSchoolPrice()" class="govuk-table__cell">
-                    @item.Value.FormatFor(TuitionType.InSchool, true)
+                  <td show-if="@Model.Data.Prices.ContainsFaceToFacePrice()" class="govuk-table__cell">
+                    @item.Value.FormatFor(TuitionSetting.FaceToFace, true)
                   </td>
 
                   <td show-if="@Model.Data.Prices.ContainsOnlinePrice()" class="govuk-table__cell">
-                    @item.Value.FormatFor(TuitionType.Online, true)
+                    @item.Value.FormatFor(TuitionSetting.Online, true)
                   </td>
                 </tr>
               }
@@ -192,13 +192,13 @@
         }
       }
 
-      @foreach (var (tuitionType, keyStages) in Model.Data.AllPrices)
+      @foreach (var (tuitionSetting, keyStages) in Model.Data.AllPrices)
       {
         foreach (var (keyStage, subjects) in keyStages)
         {
           <h3 class="govuk-heading-s" show-if="@Model.Data.IsVatCharged">Tuition prices (excluding VAT)</h3>
-          <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
-            <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
+          <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionSetting.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+            <caption class="govuk-table__caption govuk-table__caption--m">@tuitionSetting.DisplayName() - @keyStage.DisplayName()</caption>
             <thead class="govuk-table__head">
               <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Tuition group size</th>
@@ -232,8 +232,8 @@
           @if (@Model.Data.IsVatCharged)
           {
             <h3 class="govuk-heading-s">Tuition prices (including VAT)</h3>
-            <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionType.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
-              <caption class="govuk-table__caption govuk-table__caption--m">@tuitionType.DisplayName() - @keyStage.DisplayName()</caption>
+            <table class="govuk-table" data-testid="full-pricing-table-@($"{tuitionSetting.DisplayName()} {keyStage.DisplayName()}".ToSeoUrl())">
+              <caption class="govuk-table__caption govuk-table__caption--m">@tuitionSetting.DisplayName() - @keyStage.DisplayName()</caption>
               <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                   <th scope="col" class="govuk-table__header">Tuition group size</th>

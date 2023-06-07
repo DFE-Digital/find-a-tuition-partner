@@ -87,23 +87,25 @@ Feature: Tuition partner details mobile view page tests
     Then subject 'KeyStage1-Maths' is selected on the filter
     And the search filters are not displayed
 
-  Scenario: Type of tuition page mobile structure
+  Scenario: Tuition setting page mobile structure
     Given a user begins journey from a mobile
     Then the postcode is edited in the start page
     And a user has arrived on the 'Which subjects' page for 'Key stage 3, Key stage 4'
     Then they select subjects for the key stages
     When they click 'Continue'
-    And they will be taken to the type of tuition page
+    And they will be taken to the tuition setting page
     Then the correct options will display
-    When user clicks the button with text 'In School'
+    When user clicks the button with text 'Face-to-face'
     And they click 'Continue'
     Then they will be taken to the 'Search Results' page
     And the filter results show the expected selection
 
   Scenario: Make an enquiry journey
-    Given a user has arrived on the 'Search results' page for 'Key stage 1 English'
+    Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'OX4 2AU'
     When they click 'Start now'
     And they click 'Continue' on enquiry
+    And they will be taken to the single school selection page
+    When the user clicks yes and continue
     Then they enter a valid email address
     When they click 'Continue'
     Then they are redirected to the enquiry question page
@@ -172,7 +174,7 @@ Feature: Tuition partner details mobile view page tests
     Then the Check Your Answers page displays the following:
       | Section Name            | Expected Content                                |
       | Key stages and subjects | Displays Key Stages and subjects table          |
-      | Type of Tuition         | Any                                             |
+      | Tuition setting         | No preference                                   |
       | Email Address           | simulate-delivered@notifications.service.gov.uk |
       | Tuition Plan            | enquiry                                         |
       | SEND Support            | enquiry                                         |
@@ -194,24 +196,24 @@ Feature: Tuition partner details mobile view page tests
     Then the Check Your Answers page displays the following with the key stage and subjects updates:
       | Section Name            | Expected Content                                |
       | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Type of Tuition         | Any                                             |
+      | Tuition setting         | No preference                                   |
       | Email Address           | simulate-delivered@notifications.service.gov.uk |
       | Tuition Plan            | enquiry                                         |
       | SEND Support            | enquiry                                         |
       | Other Considerations    | enquiry                                         |
 
-  Scenario: Change selections for Type of Tuition
+  Scenario: Change selections for tuition setting
     Given a user has started the 'Find a tuition partner' journey
     And user has journeyed forward to the check your answers page
     When the user clicks the change button '2'
-    Then the user is taken back to the type of tuition page
+    Then the user is taken back to the tuition setting page
     And they select 'Online'
     And they click 'Continue'
     Then they are redirected to the check your answers page
-    Then the Check Your Answers page displays the following with the type of tuition update:
+    Then the Check Your Answers page displays the following with the tuition setting update:
       | Section Name            | Expected Content                                |
       | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Type of Tuition         | Online                                          |
+      | Tuition setting         | Online                                          |
       | Email Address           | simulate-delivered@notifications.service.gov.uk |
       | Tuition Plan            | enquiry                                         |
       | SEND Support            | enquiry                                         |
@@ -220,7 +222,7 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Change selections for email address
     Given a user has started the 'Find a tuition partner' journey
     And user has journeyed forward to the check your answers page
-    When the user clicks the change button '3'
+    When the user clicks the change button for email address
     Then the user is taken back to the email address page
     And they enter another email address
     And they click 'Continue'
@@ -228,7 +230,7 @@ Feature: Tuition partner details mobile view page tests
     Then the Check Your Answers page displays the following with the email address update:
       | Section Name            | Expected Content                      |
       | Key stages and subjects | Displays Key Stage and Subjects table |
-      | Type of Tuition         | Any                                   |
+      | Tuition setting         | No preference                         |
       | Email Address           | new@new.com                           |
       | Tuition Plan            | enquiry                               |
       | SEND Support            | enquiry                               |
@@ -237,17 +239,17 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Change selections for tuition questions
     Given a user has started the 'Find a tuition partner' journey
     And user has journeyed forward to the check your answers page
-    When the user clicks the change button '4'
+    When the user clicks the change button '3'
     Then they are redirected to the enquiry question page
     When they type '5' characters for question 1
     And they click 'Continue'
     Then they are redirected to the check your answers page
-    When the user clicks the change button '5'
+    When the user clicks the change button '4'
     Then they are redirected to the SEND requirements page
     When they type '5' characters for question 2
     And they click 'Continue'
     Then they are redirected to the check your answers page
-    When the user clicks the change button '6'
+    When the user clicks the change button '5'
     Then they are redirected to the other requirements page
     When they type '0' characters for question 3
     And they click 'Continue'
@@ -255,7 +257,7 @@ Feature: Tuition partner details mobile view page tests
     Then the Check Your Answers page displays the following with the email address update:
       | Section Name            | Expected Content                                |
       | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Type of Tuition         | Any                                             |
+      | Tuition setting         | No preference                                   |
       | Email Address           | simulate-delivered@notifications.service.gov.uk |
       | Tuition Plan            | aaaaa                                           |
       | SEND Support            | aaaaa                                           |

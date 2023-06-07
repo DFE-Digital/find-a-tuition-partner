@@ -13,7 +13,7 @@
 
     <govuk-error-summary>
       <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText" />
-      <govuk-error-summary-item asp-for="Data.TuitionTypeText" />
+      <govuk-error-summary-item asp-for="Data.TuitionSettingText" />
       <govuk-error-summary-item asp-for="Data.TutoringLogisticsText" />
       <govuk-error-summary-item asp-for="Data.SENDRequirementsText" />
       <govuk-error-summary-item asp-for="Data.AdditionalInformationText" />
@@ -48,15 +48,15 @@
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Type of tuition:
-          <p class="govuk-body">@Model.Data.EnquiryTuitionType</p>
+          Tuition setting:
+          <p class="govuk-body">@Model.Data.EnquiryTuitionSetting</p>
         </dt>
         <dd class="govuk-summary-list__value">
-          <span class="display-pre-wrap">@Model.Data.TuitionTypeText</span>
+          <span class="display-pre-wrap">@Model.Data.TuitionSettingText</span>
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href=@backUrl#Data_TuitionTypeText>
-            Change<span class="govuk-visually-hidden"> type of tuition </span>
+          <a class="govuk-link" href=@backUrl#Data_TuitionSettingText>
+            Change<span class="govuk-visually-hidden"> tuition setting </span>
           </a>
         </dd>
       </div>
@@ -119,11 +119,11 @@
         Submit
       </button>
       <input asp-for="Data.KeyStageAndSubjectsText" type="hidden" />
-      <input asp-for="Data.TuitionTypeText" type="hidden" />
+      <input asp-for="Data.TuitionSettingText" type="hidden" />
       <input asp-for="Data.TutoringLogisticsText" type="hidden" />
       <input asp-for="Data.SENDRequirementsText" type="hidden" />
       <input asp-for="Data.AdditionalInformationText" type="hidden" />
-      <input asp-for="Data.EnquiryTuitionType" type="hidden" />
+      <input asp-for="Data.EnquiryTuitionSetting" type="hidden" />
       <input asp-for="Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics" type="hidden" />
       <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
       @if (Model.Data.EnquiryKeyStageSubjects.Any())

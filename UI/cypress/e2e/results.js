@@ -97,9 +97,12 @@ Then("they will see an expanded subject filter for {string}", (keystage) => {
   });
 });
 
-Then("they will see the tuition type {string} is selected", (tuitionType) => {
-  cy.get(`input[id="${kebabCase(tuitionType)}"]`).should("be.checked");
-});
+Then(
+  "they will see the tuition setting {string} is selected",
+  (tuitionSetting) => {
+    cy.get(`input[id="${kebabCase(tuitionSetting)}"]`).should("be.checked");
+  }
+);
 
 Then("the subjects in the filter displayed in alphabetical order", () => {
   const stages = ["Key stage 1", "Key stage 2", "Key stage 3", "Key stage 4"];

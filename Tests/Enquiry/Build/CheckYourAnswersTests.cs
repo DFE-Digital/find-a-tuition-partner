@@ -25,10 +25,12 @@ public class CheckYourAnswersTests
 
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
+
+        _ = _fixture.AddSchool(A.School);
     }
 
     [Theory]
@@ -87,7 +89,9 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
+            SchoolId = 1,
+            SchoolUrn = 123,
             Email = "test@test.com",
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
@@ -126,7 +130,8 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
+            SchoolId = 1,
             Email = "test@test.com",
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
@@ -165,7 +170,8 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
+            SchoolId = 1,
             Email = "400error@test",
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
@@ -204,7 +210,8 @@ public class CheckYourAnswersTests
                 },
             Subjects = new string[] { "KeyStage1-English" },
             HasKeyStageSubjects = true,
-            TuitionType = TuitionType.Any,
+            TuitionSetting = TuitionSetting.NoPreference,
+            SchoolId = 1,
             Email = "500error@test",
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
@@ -241,7 +248,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Online,
+                TuitionSetting = TuitionSetting.Online,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -263,31 +271,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
-                Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-                {
-                    NumberOfPupils = "Test content",
-                    StartDate = "Test content",
-                    TuitionDuration = "Test content",
-                    TimeOfDay = "Test content"
-                },
-                SENDRequirements = "some SEND reqs",
-                AdditionalInformation = "some Additional Information",
-                ConfirmTermsAndConditions = true
-            }
-        };
-
-        yield return new object[]
-        {
-            new CheckYourAnswersModel {
-                //Postcode = District.EastRidingOfYorkshire.SamplePostcode,
-                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
-                {
-                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
-                },
-                HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -314,7 +299,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -332,13 +318,39 @@ public class CheckYourAnswersTests
         yield return new object[]
         {
             new CheckYourAnswersModel {
+                //Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionSetting = TuitionSetting.NoPreference,
+                //SchoolId = 1,
+                Email = "test@test.com",
+                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
+            }
+        };
+
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
                 Postcode = District.EastRidingOfYorkshire.SamplePostcode,
                 //KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
                 //{
                 //    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 //},
                 //HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -362,7 +374,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                //TuitionType = TuitionType.Any,
+                //TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -386,7 +399,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 //Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -410,7 +424,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -434,7 +448,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -458,7 +472,7 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {
@@ -482,7 +496,8 @@ public class CheckYourAnswersTests
                     {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
                 },
                 HasKeyStageSubjects = true,
-                TuitionType = TuitionType.Any,
+                TuitionSetting = TuitionSetting.NoPreference,
+                SchoolId = 1,
                 Email = "test@test.com",
                 TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
                 {

@@ -1,29 +1,29 @@
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using UI.Pages.Enquiry.Build;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace UI.Pages;
 
-public class WhichTuitionTypes : PageModel
+public class WhichTuitionSettings : PageModel
 {
     private readonly ISessionService _sessionService;
 
-    public WhichTuitionTypes(ISessionService sessionService)
+    public WhichTuitionSettings(ISessionService sessionService)
     {
         _sessionService = sessionService;
     }
 
     public Command Data { get; set; } = new();
 
-    public async Task<IActionResult> OnGet(GetWhichTuitionTypeQuery query)
+    public async Task<IActionResult> OnGet(GetWhichTuitionSettingQuery query)
     {
         if (query.From == ReferrerList.CheckYourAnswers &&
             !await _sessionService.SessionDataExistsAsync()) return RedirectToPage("/Session/Timeout");
 
         Data = new Command(query)
         {
-            AllTuitionTypes = EnumExtensions.GetAllEnums<TuitionType>(),
+            AllTuitionSettings = EnumExtensions.GetAllEnums<TuitionSetting>(),
         };
 
         return Page();
@@ -45,7 +45,7 @@ public class WhichTuitionTypes : PageModel
         {
             Data = data with
             {
-                AllTuitionTypes = EnumExtensions.GetAllEnums<TuitionType>(),
+                AllTuitionSettings = EnumExtensions.GetAllEnums<TuitionSetting>(),
             };
             return Page();
         }
@@ -58,16 +58,16 @@ public class WhichTuitionTypes : PageModel
         public Command() { }
         public Command(SearchModel query) : base(query) { }
 
-        public List<TuitionType> AllTuitionTypes { get; set; } = new();
+        public List<TuitionSetting> AllTuitionSettings { get; set; } = new();
     }
 
     public class Validator : AbstractValidator<Command>
     {
         public Validator()
         {
-            RuleFor(m => m.TuitionType)
+            RuleFor(m => m.TuitionSetting)
                 .NotEmpty()
-                .WithMessage("Select a type of tuition");
+                .WithMessage("Select a tuition setting");
         }
     }
 }

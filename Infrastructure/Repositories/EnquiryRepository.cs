@@ -4,6 +4,7 @@ using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
+using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -45,6 +46,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .ThenInclude(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.TuitionPartner)
+            .Include(x => x.TuitionSettings)
             .AsSplitQuery()
             .SingleOrDefaultAsync();
 
@@ -72,7 +74,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,
-            TuitionTypeName = enquiry.TuitionTypeId.GetTuitionTypeName(),
+            TuitionSettingName = enquiry.TuitionSettings.GetTuitionSettingName(),
             SENDRequirements = enquiry.SENDRequirements,
             AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt.ToLocalDateTime(),

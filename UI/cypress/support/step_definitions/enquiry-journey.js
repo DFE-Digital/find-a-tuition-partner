@@ -7,25 +7,21 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 
 When("user has journeyed forward to the check your answers page", () => {
-  Step(this, "they enter 'SK1 1EB' as the school's postcode");
+  Step(this, "they enter 'OX4 2AU' as the school's postcode");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which key stages' page");
-  Step(this, "they will see all the keys stages as options");
   Step(this, "they select 'Key stage 1, Key stage 2'");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which subjects' page");
-  Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
   Step(
     this,
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
+  Step(this, "they will be taken to the single school selection page");
+  Step(this, "the user clicks yes and continue");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
@@ -99,25 +95,24 @@ Then("the session timeout page is shown", () => {
 
 When("user creates another enquiry", () => {
   cy.visit("/");
-  Step(this, "they enter 'SK1 1EB' as the school's postcode");
+  Step(this, "they enter 'OX4 2AU' as the school's postcode");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which key stages' page");
   Step(this, "they will see all the keys stages as options");
   Step(this, "they select 'Key stage 1, Key stage 2'");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which subjects' page");
   Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
   Step(
     this,
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
+  Step(this, "they will be taken to the single school selection page");
+  Step(this, "the user clicks yes and continue");
+  Step(this, "they click 'Continue'");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
@@ -169,25 +164,23 @@ Then(
 
 When("user navigates to the first enquiry question", () => {
   cy.visit("/");
-  Step(this, "they enter 'SK1 1EB' as the school's postcode");
+  Step(this, "they enter 'OX4 2AU' as the school's postcode");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which key stages' page");
   Step(this, "they will see all the keys stages as options");
   Step(this, "they select 'Key stage 1, Key stage 2'");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which subjects' page");
   Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
   Step(
     this,
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
+  Step(this, "they will be taken to the single school selection page");
+  Step(this, "the user clicks yes and continue");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
 });
@@ -208,11 +201,11 @@ When("they type {string} characters for question 3", (numOfChars) => {
 });
 
 Then("the text by the second and third questions is {string}", (text) => {
-  cy.get(":nth-child(5) > .govuk-summary-list__value").should(
+  cy.get(":nth-child(4) > .govuk-summary-list__value").should(
     "contain.text",
     "Not specified"
   );
-  cy.get(":nth-child(6) > .govuk-summary-list__value").should(
+  cy.get(":nth-child(5) > .govuk-summary-list__value").should(
     "contain.text",
     "Not specified"
   );
@@ -252,26 +245,24 @@ Then("they select terms and conditions", () => {
 
 When("user navigates to check your answers unselecting filter results", () => {
   cy.visit("/");
-  Step(this, "they enter 'SK1 1EB' as the school's postcode");
+  Step(this, "they enter 'OX4 2AU' as the school's postcode");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which key stages' page");
   Step(this, "they will see all the keys stages as options");
   Step(this, "they select 'Key stage 1, Key stage 2'");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Which subjects' page");
   Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
   Step(
     this,
     "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
   );
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Type of tuition' page");
-  Step(this, "they select Any");
+  Step(this, "they select No preference");
   Step(this, "they click 'Continue'");
-  Step(this, "they will be taken to the 'Search Results' page");
   Step(this, "they unselect filter results");
   Step(this, "they click 'Start now' button");
   Step(this, "they click 'Continue' button");
+  Step(this, "they will be taken to the single school selection page");
+  Step(this, "the user clicks yes and continue");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
@@ -297,25 +288,23 @@ When("they enter an email address causing an error", () => {
 When(
   "user has journeyed forward to the check your answers page for an invalid email address",
   () => {
-    Step(this, "they enter 'SK1 1EB' as the school's postcode");
+    Step(this, "they enter 'OX4 2AU' as the school's postcode");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which key stages' page");
     Step(this, "they will see all the keys stages as options");
     Step(this, "they select 'Key stage 1, Key stage 2'");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Which subjects' page");
     Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
     Step(
       this,
       "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
     );
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Type of tuition' page");
-    Step(this, "they select Any");
+    Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
-    Step(this, "they will be taken to the 'Search Results' page");
     Step(this, "they click 'Start now'");
     Step(this, "they click 'Continue' button");
+    Step(this, "they will be taken to the single school selection page");
+    Step(this, "the user clicks yes and continue");
     Step(this, "they enter an email address causing an error");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");

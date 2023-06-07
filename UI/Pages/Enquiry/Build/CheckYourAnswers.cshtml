@@ -8,14 +8,15 @@
 <form method="post">
   <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
-    <govuk-error-summary-item asp-for="Data.TuitionType" />
-    <govuk-error-summary-item asp-for="Data.Email" />
+    <govuk-error-summary-item asp-for="Data.TuitionSetting" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.StartDate" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" />
     <govuk-error-summary-item asp-for="Data.SENDRequirements" />
     <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
+    <govuk-error-summary-item asp-for="Data.Postcode" />
+    <govuk-error-summary-item asp-for="Data.Email" />
   </govuk-error-summary>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -24,9 +25,7 @@
         <span>Check your answers</span>
       </h1>
 
-      <p class="govuk-body">
-        Your email will not be shared with tuition partners
-      </p>
+      <h2 class="govuk-heading-m">Enquiry details</h2>
       <govuk-summary-list class="govuk-!-margin-bottom-9 cya-summary-enquirer">
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
@@ -55,35 +54,22 @@
         </govuk-summary-list-row>
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
-            <div asp-validation-group-for="Data.TuitionType">
-              Type of tuition
+            <div asp-validation-group-for="Data.TuitionSetting">
+              Tuition setting
             </div>
           </govuk-summary-list-row-key>
           <govuk-summary-list-row-value>
-            @if (@Model.Data!.TuitionType == null)
+            @if (@Model.Data!.TuitionSetting == null)
             {
               <span>@StringConstants.IsRequiredLabel</span>
             }
             else
             {
-              @Model.Data!.TuitionType?.DisplayName()
+              @Model.Data!.TuitionSetting?.DisplayName()
             }
           </govuk-summary-list-row-value>
           <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="/WhichTuitionTypes" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" visually-hidden-text="type of tuition">Change</govuk-summary-list-row-action>
-          </govuk-summary-list-row-actions>
-        </govuk-summary-list-row>
-        <govuk-summary-list-row>
-          <govuk-summary-list-row-key>
-            <div asp-validation-group-for="Data.Email">
-              Email address
-            </div>
-          </govuk-summary-list-row-key>
-          <govuk-summary-list-row-value>
-            @Model.Data.Email
-          </govuk-summary-list-row-value>
-          <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="EnquirerEmail" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Email" visually-hidden-text="email address">Change</govuk-summary-list-row-action>
+            <govuk-summary-list-row-action asp-page="/WhichTuitionSettings" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" visually-hidden-text="tuition setting">Change</govuk-summary-list-row-action>
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
         <govuk-summary-list-row>
@@ -153,6 +139,37 @@
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
       </govuk-summary-list>
+
+      <h2 class="govuk-heading-m">Information not shared with tuition partners</h2>
+      <govuk-summary-list class="govuk-!-margin-bottom-9 cya-summary-enquirer">
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.Postcode">
+              Your school details
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value>
+            @Model.Data.SchoolDetails
+          </govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="SchoolPostcode" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Postcode" visually-hidden-text="school details">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.Email">
+              Email address
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value>
+            @Model.Data.Email
+          </govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="EnquirerEmail" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_Email" visually-hidden-text="email address">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+      </govuk-summary-list>
+
       <govuk-checkboxes asp-for="Data.ConfirmTermsAndConditions">
         <govuk-checkboxes-item id="Data_ConfirmTermsAndConditions" value="True" checked="@Model.Data.ConfirmTermsAndConditions">
           I confirm that I have not included any information that would allow anyone to identify pupils, such as names or specific characteristics.
@@ -163,13 +180,16 @@
       </button>
       <input asp-for="Data.LocalAuthorityDistrictName" type="hidden" />
       <input asp-for="Data.HasKeyStageSubjects" type="hidden" />
-      <input asp-for="Data.Email" type="hidden" />
       <input asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" type="hidden" />
       <input asp-for="Data.TutoringLogisticsDetailsModel.StartDate" type="hidden" />
       <input asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" type="hidden" />
       <input asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" type="hidden" />
       <input asp-for="Data.SENDRequirements" type="hidden" />
       <input asp-for="Data.AdditionalInformation" type="hidden" />
+      <input asp-for="Data.SchoolId" type="hidden" />
+      <input asp-for="Data.SchoolDetails" type="hidden" />
+      <input asp-for="Data.SchoolUrn" type="hidden" />
+      <input asp-for="Data.Email" type="hidden" />
       <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
     </div>
   </div>

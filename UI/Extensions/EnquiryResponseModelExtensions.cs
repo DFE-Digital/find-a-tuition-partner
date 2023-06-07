@@ -30,12 +30,12 @@ public static class EnquiryResponseModelExtensions
                 data.KeyStageAndSubjectsText = value;
                 break;
 
-            case var k when k.Equals(SessionKeyConstants.EnquiryTuitionType, StringComparison.OrdinalIgnoreCase):
-                data.EnquiryTuitionType = value;
+            case var k when k.Equals(SessionKeyConstants.EnquiryTuitionSetting, StringComparison.OrdinalIgnoreCase):
+                data.EnquiryTuitionSetting = value;
                 break;
 
-            case var k when k.Equals(SessionKeyConstants.EnquiryResponseTuitionTypeText, StringComparison.OrdinalIgnoreCase):
-                data.TuitionTypeText = value;
+            case var k when k.Equals(SessionKeyConstants.EnquiryResponseTuitionSettingText, StringComparison.OrdinalIgnoreCase):
+                data.TuitionSettingText = value;
                 break;
 
             case var k when k.Equals(SessionKeyConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):

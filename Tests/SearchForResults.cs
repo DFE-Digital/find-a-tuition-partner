@@ -10,7 +10,7 @@ using Tests.TestData;
 using UI.Pages;
 using Index = UI.Pages.Index;
 using KeyStage = Domain.Enums.KeyStage;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests;
 
@@ -114,7 +114,7 @@ public class SearchForResults : CleanSliceFixture
                     $"{KeyStage.KeyStage1}-English", $"{KeyStage.KeyStage1}-Humanities",
                 };
 
-                page.Data.TuitionType = TuitionType.Online;
+                page.Data.TuitionSetting = TuitionSetting.Online;
 
                 await page.OnGetClearAllFilters(postcode);
 
@@ -124,7 +124,7 @@ public class SearchForResults : CleanSliceFixture
         result.Data.Postcode.Should().Be(postcode);
         result.Data.KeyStages.Should().BeNull();
         result.Data.Subjects.Should().BeNull();
-        result.Data.TuitionType.Should().Be(TuitionType.Any);
+        result.Data.TuitionSetting.Should().Be(TuitionSetting.NoPreference);
     }
 
     [Fact]
@@ -133,10 +133,10 @@ public class SearchForResults : CleanSliceFixture
         // Arrange
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a", "Alpha")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         // Act
         var result = await Fixture.SendAsync(
@@ -187,7 +187,7 @@ public class SearchForResults : CleanSliceFixture
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
             await Fixture.AddTuitionPartner(A.TuitionPartner
                 .WithName($"tp-name-{tuitionPartnersAdded}")
-                .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+                .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
@@ -209,7 +209,7 @@ public class SearchForResults : CleanSliceFixture
         for (int tuitionPartnersAdded = 1; tuitionPartnersAdded <= numberOfTuitionPartners; tuitionPartnersAdded++)
             await Fixture.AddTuitionPartner(A.TuitionPartner
                 .WithName($"tp-name-{tuitionPartnersAdded}")
-                .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+                .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online));
 
         var searchResultsQuery = Basic.SearchResultsQuery;
         searchResultsQuery.Postcode = "AAAA BBCCD"; ;
@@ -229,8 +229,8 @@ public class SearchForResults : CleanSliceFixture
         searchResultsQuery.Postcode = District.EastRidingOfYorkshire.SamplePostcode;
 
         var partner = logo == null
-            ? A.TuitionPartner.TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
-            : A.TuitionPartner.WithLogo(logo).TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online);
+            ? A.TuitionPartner.TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
+            : A.TuitionPartner.WithLogo(logo).TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online);
         await Fixture.AddTuitionPartner(partner);
 
         // Act

@@ -1,0 +1,42 @@
+﻿@model Domain.School
+
+<govuk-summary-list>
+  <govuk-summary-list-row>
+    <govuk-summary-list-row-key>
+      Name and Address
+    </govuk-summary-list-row-key>
+    <govuk-summary-list-row-value>
+      @Model.EstablishmentName<br>
+      @Model.Address, @Model.Postcode
+    </govuk-summary-list-row-value>
+  </govuk-summary-list-row>
+  <govuk-summary-list-row>
+    <govuk-summary-list-row-key>
+      Local authority
+    </govuk-summary-list-row-key>
+    <govuk-summary-list-row-value>
+      @Model.LocalAuthority.Name
+    </govuk-summary-list-row-value>
+  </govuk-summary-list-row>
+  <govuk-summary-list-row>
+    <govuk-summary-list-row-key>
+      Phase of education
+    </govuk-summary-list-row-key>
+    <govuk-summary-list-row-value>
+      @Model.PhaseOfEducation.Name
+    </govuk-summary-list-row-value>
+  </govuk-summary-list-row>
+  <govuk-summary-list-row>
+    <govuk-summary-list-row-key>
+      IDs
+    </govuk-summary-list-row-key>
+    <govuk-summary-list-row-value>
+      URN: @Model.Urn<br>
+      DfE number: @(Model.LocalAuthorityId)/@(Model.EstablishmentNumber)
+      @if (Model.Ukprn.HasValue)
+      {
+        <text><br>UKPRN: @Model.Ukprn!.Value</text>
+      }
+    </govuk-summary-list-row-value>
+  </govuk-summary-list-row>
+</govuk-summary-list>

@@ -7,7 +7,7 @@ namespace Infrastructure.Factories
 {
     internal class SchoolsFactory : ISchoolsFactory
     {
-        public School GetSchool(SchoolDatum schoolDatum, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds)
+        public School GetSchool(School school, SchoolDatum schoolDatum, IDictionary<string, int> localAuthorityDistrictsIds, IDictionary<int, string> localAuthorityIds)
         {
             if (!localAuthorityDistrictsIds.TryGetValue(schoolDatum.LocalAuthorityDistrictCode.Trim(), out int localAuthorityDistrictCode))
             {
@@ -24,19 +24,20 @@ namespace Infrastructure.Factories
                 schoolDatum.PhaseOfEducation = (int)PhasesOfEducation.NotApplicable;
             }
 
-            School generalInformationAboutSchools = new()
-            {
-                EstablishmentName = schoolDatum.Name,
-                Urn = schoolDatum.Urn,
-                Address = CreateAddress(schoolDatum),
-                Postcode = schoolDatum.Postcode,
-                PhaseOfEducationId = schoolDatum.PhaseOfEducation,
-                EstablishmentTypeGroupId = schoolDatum.EstablishmentTypeGroup,
-                EstablishmentStatusId = schoolDatum.EstablishmentStatus,
-                LocalAuthorityId = schoolDatum.LocalAuthorityCode,
-                LocalAuthorityDistrictId = localAuthorityDistrictCode
-            };
-            return generalInformationAboutSchools;
+            school.EstablishmentName = schoolDatum.Name;
+            school.Urn = schoolDatum.Urn;
+            school.Address = CreateAddress(schoolDatum);
+            school.Postcode = schoolDatum.Postcode;
+            school.PhaseOfEducationId = schoolDatum.PhaseOfEducation;
+            school.EstablishmentTypeGroupId = schoolDatum.EstablishmentTypeGroup;
+            school.EstablishmentStatusId = schoolDatum.EstablishmentStatus;
+            school.LocalAuthorityId = schoolDatum.LocalAuthorityCode;
+            school.LocalAuthorityDistrictId = localAuthorityDistrictCode;
+            school.EstablishmentNumber = schoolDatum.EstablishmentNumber!.Value;
+            school.Ukprn = schoolDatum.Ukprn;
+            school.IsActive = true;
+
+            return school;
         }
 
         private static string CreateAddress(SchoolDatum schoolDatum)
@@ -67,7 +68,7 @@ namespace Infrastructure.Factories
                 addresses.Add(schoolDatum.County);
             }
 
-            return String.Join(",", addresses.ToArray());
+            return string.Join(", ", addresses.ToArray());
         }
     }
 }

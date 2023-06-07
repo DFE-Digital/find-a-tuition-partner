@@ -137,7 +137,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<ILocalAuthorityDistrictRepository, LocalAuthorityDistrictRepository>();
         services.AddScoped<ISubjectRepository, SubjectRepository>();
-        services.AddScoped<ITuitionTypeRepository, TuitionTypeRepository>();
+        services.AddScoped<ITuitionSettingRepository, TuitionSettingRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
         services.AddScoped<IEnquiryRepository, EnquiryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -7,7 +7,7 @@ using Domain.Enums;
 using Domain.Search;
 using FluentValidation.Results;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Application.Queries;
 
@@ -20,7 +20,7 @@ public record GetSearchResultsQuery : SearchModel, IRequest<SearchResultsModel>
     public GetSearchResultsQuery(SearchModel query) : base(query)
     {
     }
-    public TuitionType? PreviousTuitionType { get; set; } = null;
+    public TuitionSetting? PreviousTuitionSetting { get; set; } = null;
 };
 
 public class GetSearchResultsQueryHandler : IRequestHandler<GetSearchResultsQuery, SearchResultsModel>
@@ -110,14 +110,14 @@ public class GetSearchResultsQueryHandler : IRequestHandler<GetSearchResultsQuer
                                 .Where(e => keyStageSubjects.Select(x => $"{x.KeyStage}-{x.Subject}".ToSeoUrl()).Contains(e.SeoUrl))
                                 .Select(x => x.Id);
 
-        var tuitionFilterId = request.TuitionType > 0 ? (int?)request.TuitionType : null;
+        var tuitionFilterId = request.TuitionSetting > 0 ? (int?)request.TuitionSetting : null;
 
         var tuitionPartnersIds = await _tuitionPartnerService.GetTuitionPartnersFilteredAsync(
             new TuitionPartnersFilter
             {
                 LocalAuthorityDistrictId = parameters.LocalAuthorityDistrictId,
                 SubjectIds = subjectFilterIds,
-                TuitionTypeId = tuitionFilterId
+                TuitionSettingId = tuitionFilterId
             }, cancellationToken);
 
         var tuitionPartners = await _tuitionPartnerService.GetTuitionPartnersAsync(new TuitionPartnerRequest

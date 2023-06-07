@@ -9,6 +9,7 @@ public record EnquiryBuildModel : EnquiryBaseModel
         TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel();
     }
 
+    public int? SchoolId { get; set; }
     public string? Email { get; set; }
     public TutoringLogisticsDetailsModel TutoringLogisticsDetailsModel { get; set; }
     public string? SENDRequirements { get; set; }

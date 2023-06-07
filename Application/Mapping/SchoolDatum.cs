@@ -18,6 +18,8 @@ public class SchoolDatum
     public int PhaseOfEducation { get; set; }
     public int LocalAuthorityCode { get; set; }
     public string LocalAuthorityDistrictCode { get; set; } = string.Empty;
+    public int? EstablishmentNumber { get; set; } = null;
+    public int? Ukprn { get; set; } = null;
 
     public bool IsValidForService()
     {
@@ -28,6 +30,9 @@ public class SchoolDatum
             return false;
 
         if (EstablishmentType == EstablishmentTypes.Id.BritishSchoolsOverseas || EstablishmentType == EstablishmentTypes.Id.ServiceChildrensEducation)
+            return false;
+
+        if (!EstablishmentNumber.HasValue)
             return false;
 
         return true;

@@ -33,7 +33,7 @@ public class WhichSubjects : PageModel
 
     public async Task<IActionResult> OnGetSubmit(Command data)
     {
-        var redirectPage = nameof(WhichTuitionTypes);
+        var redirectPage = nameof(WhichTuitionSettings);
 
         if (data.From == ReferrerList.CheckYourAnswers)
         {

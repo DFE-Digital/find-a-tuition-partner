@@ -9,7 +9,7 @@
 <form method="post" gfa-prepend-error-summary="false">
   <govuk-error-summary show-if="!Model.ModelState.IsValid">
     <govuk-error-summary-item asp-for="Data.KeyStageAndSubjectsText" />
-    <govuk-error-summary-item asp-for="Data.TuitionTypeText" />
+    <govuk-error-summary-item asp-for="Data.TuitionSettingText" />
     <govuk-error-summary-item asp-for="Data.TutoringLogisticsText" />
     <govuk-error-summary-item asp-for="Data.SENDRequirementsText" />
     <govuk-error-summary-item asp-for="Data.AdditionalInformationText" />
@@ -86,13 +86,13 @@
         <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-          Type of tuition:
+          Tuition setting:
         </h2>
 
-        <p class="govuk-body">@Model.Data.EnquiryTuitionType</p>
+        <p class="govuk-body">@Model.Data.EnquiryTuitionSetting</p>
 
-        <div asp-validation-group-for="Data.TuitionTypeText">
-          <govuk-character-count asp-for="Data.TuitionTypeText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+        <div asp-validation-group-for="Data.TuitionSettingText">
+          <govuk-character-count asp-for="Data.TuitionSettingText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
               How can you support that tuition setting?
             </govuk-character-count-label>
@@ -182,7 +182,7 @@
       <input asp-for="@Model.Data.EnquiryKeyStageSubjects![i]" type="hidden" />
     }
   }
-  <input asp-for="Data.EnquiryTuitionType" type="hidden" />
+  <input asp-for="Data.EnquiryTuitionSetting" type="hidden" />
   <input asp-for="Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics" type="hidden" />
   <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
   <input asp-for="Data.EnquiryAdditionalInformation" type="hidden" />

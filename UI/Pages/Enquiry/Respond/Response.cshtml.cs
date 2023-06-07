@@ -50,7 +50,7 @@ namespace UI.Pages.Enquiry.Respond
             {
                 Data.LocalAuthorityDistrict = enquiryData.LocalAuthorityDistrict!;
                 Data.EnquiryKeyStageSubjects = enquiryData.KeyStageSubjects;
-                Data.EnquiryTuitionType = enquiryData.TuitionTypeName;
+                Data.EnquiryTuitionSetting = enquiryData.TuitionSettingName;
                 Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics = enquiryData.TutoringLogisticsDisplayModel.TutoringLogistics;
                 Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel = enquiryData.TutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel;
                 Data.EnquirySENDRequirements = enquiryData.SENDRequirements;
@@ -83,14 +83,14 @@ namespace UI.Pages.Enquiry.Respond
                 { SessionKeyConstants.LocalAuthorityDistrict, Data.LocalAuthorityDistrict! },
                 { SessionKeyConstants.EnquiryResponseTutoringLogistics, Data.TutoringLogisticsText! },
                 { SessionKeyConstants.EnquiryResponseKeyStageAndSubjectsText, Data.KeyStageAndSubjectsText! },
-                { SessionKeyConstants.EnquiryResponseTuitionTypeText, Data.TuitionTypeText! },
+                { SessionKeyConstants.EnquiryResponseTuitionSettingText, Data.TuitionSettingText! },
                 { SessionKeyConstants.EnquiryResponseSENDRequirements, Data.SENDRequirementsText ?? string.Empty },
                 {
                     SessionKeyConstants.EnquiryResponseAdditionalInformation,
                     Data.AdditionalInformationText ?? string.Empty
                 },
                 { SessionKeyConstants.EnquiryKeyStageSubjects, string.Join(Environment.NewLine, Data.EnquiryKeyStageSubjects!) },
-                { SessionKeyConstants.EnquiryTuitionType, Data.EnquiryTuitionType! },
+                { SessionKeyConstants.EnquiryTuitionSetting, Data.EnquiryTuitionSetting! },
                 { SessionKeyConstants.EnquiryTutoringLogistics, Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics! },
                 { SessionKeyConstants.EnquirySENDRequirements, Data.EnquirySENDRequirements ?? string.Empty },
                 { SessionKeyConstants.EnquiryAdditionalInformation, Data.EnquiryAdditionalInformation ?? string.Empty }

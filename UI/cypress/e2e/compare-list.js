@@ -168,7 +168,7 @@ Then(
 
 Then(
   "entry {int} on the price comparison list is the row tp name {int}, {string}, {string}, {string}",
-  (entry, name, groupSizes, tuitionType, price) => {
+  (entry, name, groupSizes, tuitionSetting, price) => {
     cy.fixture("tplist").then(function (tplist) {
       name = removeExcessWhitespaces(removeNewLine(tplist.tpnames[`${name}`]));
     });
@@ -181,7 +181,7 @@ Then(
           .should((el) => expect(el.text().trim()).to.equal(groupSizes));
         cy.get("td")
           .eq(1)
-          .should((el) => expect(el.text().trim()).to.equal(tuitionType));
+          .should((el) => expect(el.text().trim()).to.equal(tuitionSetting));
         cy.get("td")
           .eq(2)
           .should((el) => expect(el.text().trim()).to.equal(price));
@@ -322,9 +322,9 @@ Then(
 );
 
 Then(
-  "{string} tuition type price comparison list refinement option is selected",
+  "{string} tuition setting price comparison list refinement option is selected",
   (optionText) => {
-    cy.get("[data-testid='compare-list-tuition-type-refine'] select").select(
+    cy.get("[data-testid='compare-list-tuition-setting-refine'] select").select(
       `${optionText}`
     );
     cy.wait(1000);
@@ -347,9 +347,9 @@ Then("the group size select option is {string}", (optionText) => {
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 
-Then("the tuition type select option is {string}", (optionText) => {
+Then("the tuition setting select option is {string}", (optionText) => {
   cy.get(
-    "[data-testid='compare-list-tuition-type-refine'] select option:selected"
+    "[data-testid='compare-list-tuition-setting-refine'] select option:selected"
   ).should("contain.text", removeExcessWhitespaces(removeNewLine(optionText)));
 });
 

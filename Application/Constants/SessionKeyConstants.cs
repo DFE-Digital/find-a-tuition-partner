@@ -4,9 +4,11 @@
     {
         public const string LocalAuthorityDistrict = "LocalAuthorityDistrict";
 
+        public const string EnquirySchoolId = "EnquirySchoolId";
+
         public const string EnquirerEmail = "EnquirerEmail";
 
-        public const string EnquiryTuitionType = "EnquiryTuitionType";
+        public const string EnquiryTuitionSetting = "EnquiryTuitionSetting";
 
         public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";
 
@@ -30,7 +32,7 @@
 
         public const string EnquiryResponseAdditionalInformation = "EnquiryResponseAdditionalInformation";
 
-        public const string EnquiryResponseTuitionTypeText = "EnquiryResponseTuitionTypeText";
+        public const string EnquiryResponseTuitionSettingText = "EnquiryResponseTuitionSettingText";
 
         public const string EnquiryResponseKeyStageAndSubjectsText = "EnquiryResponseKeyStageAndSubjectsText";
 

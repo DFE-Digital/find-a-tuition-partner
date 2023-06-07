@@ -11,7 +11,7 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
     switch (row["Section Name"]) {
       case "Key stages and subjects":
         cy.checkTextContent(
-          ":nth-child(1) > .govuk-summary-list__key",
+          ":nth-child(4) > :nth-child(1) > .govuk-summary-list__key > div",
           "Key stages and subjects"
         );
         cy.checkTextContent(
@@ -23,33 +23,39 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
           "Key stage 2: English and Maths"
         );
         break;
-      case "Type of Tuition":
+      case "Tuition setting":
         cy.checkTextContent(
-          ":nth-child(2) > .govuk-summary-list__value",
-          row["Expected Content"]
-        );
-        break;
-      case "Email Address":
-        cy.checkTextContent(
-          ":nth-child(3) > .govuk-summary-list__value",
+          ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
       case "Tuition Plan":
         cy.checkTextContent(
-          ":nth-child(4) > .govuk-summary-list__value",
+          ":nth-child(3) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
       case "SEND Support":
         cy.checkTextContent(
-          ":nth-child(5) > .govuk-summary-list__value",
+          ":nth-child(4) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
       case "Other Considerations":
         cy.checkTextContent(
-          ":nth-child(6) > .govuk-summary-list__value",
+          ":nth-child(5) > .govuk-summary-list__value",
+          row["Expected Content"]
+        );
+        break;
+      case "Your school details":
+        cy.checkTextContent(
+          ":nth-child(6) > :nth-child(1) > .govuk-summary-list__value",
+          row["Expected Content"]
+        );
+        break;
+      case "Email Address":
+        cy.checkTextContent(
+          ":nth-child(6) > :nth-child(2) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
@@ -62,7 +68,13 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
 When("the user clicks the change button {string}", (x) => {
   const num = x;
   cy.get(
-    `:nth-child(${x}) > .govuk-summary-list__actions > .govuk-link`
+    `:nth-child(4) > :nth-child(${x}) > .govuk-summary-list__actions > .govuk-link`
+  ).click();
+});
+
+When("the user clicks the change button for email address", () => {
+  cy.get(
+    ":nth-child(6) > :nth-child(2) > .govuk-summary-list__actions > .govuk-link"
   ).click();
 });
 
@@ -100,7 +112,7 @@ Then(
       switch (row["Section Name"]) {
         case "Key stages and subjects":
           cy.checkTextContent(
-            ":nth-child(1) > .govuk-summary-list__key",
+            ":nth-child(4) > :nth-child(1) > .govuk-summary-list__key > div",
             "Key stages and subjects"
           );
           cy.checkTextContent(
@@ -116,33 +128,33 @@ Then(
             "Key stage 3: Science"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
-            ":nth-child(2) > .govuk-summary-list__value",
-            row["Expected Content"]
-          );
-          break;
-        case "Email Address":
-          cy.checkTextContent(
-            ":nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Tuition Plan":
           cy.checkTextContent(
-            ":nth-child(4) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "SEND Support":
           cy.checkTextContent(
-            ":nth-child(5) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(4) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Other Considerations":
           cy.checkTextContent(
-            ":nth-child(6) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Email Address":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -153,19 +165,19 @@ Then(
   }
 );
 
-Then("the user is taken back to the type of tuition page", () => {
-  cy.location("pathname").should("eq", "/which-tuition-types");
-  cy.get("#any").should("be.checked");
+Then("the user is taken back to the tuition setting page", () => {
+  cy.location("pathname").should("eq", "/which-tuition-settings");
+  cy.get("#no-preference").should("be.checked");
 });
 
 Then(
-  "the Check Your Answers page displays the following with the type of tuition update:",
+  "the Check Your Answers page displays the following with the tuition setting update:",
   (dataTable) => {
     dataTable.hashes().forEach((row) => {
       switch (row["Section Name"]) {
         case "Key stages and subjects":
           cy.checkTextContent(
-            ":nth-child(1) > .govuk-summary-list__key",
+            ":nth-child(4) > :nth-child(1) > .govuk-summary-list__key",
             "Key stages and subjects"
           );
           cy.checkTextContent(
@@ -177,33 +189,33 @@ Then(
             "Key stage 2: English and Maths"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
-            ":nth-child(2) > .govuk-summary-list__value",
-            row["Expected Content"]
-          );
-          break;
-        case "Email Address":
-          cy.checkTextContent(
-            ":nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Tuition Plan":
           cy.checkTextContent(
-            ":nth-child(4) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "SEND Support":
           cy.checkTextContent(
-            ":nth-child(5) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(4) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Other Considerations":
           cy.checkTextContent(
-            ":nth-child(6) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Email Address":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -229,7 +241,7 @@ Then(
       switch (row["Section Name"]) {
         case "Key stages and subjects":
           cy.checkTextContent(
-            ":nth-child(1) > .govuk-summary-list__key",
+            ":nth-child(4) > :nth-child(1) > .govuk-summary-list__key",
             "Key stages and subjects"
           );
           cy.checkTextContent(
@@ -241,33 +253,33 @@ Then(
             "Key stage 2: English and Maths"
           );
           break;
-        case "Type of Tuition":
+        case "Tuition setting":
           cy.checkTextContent(
-            ":nth-child(2) > .govuk-summary-list__value",
-            row["Expected Content"]
-          );
-          break;
-        case "Email Address":
-          cy.checkTextContent(
-            ":nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Tuition Plan":
           cy.checkTextContent(
-            ":nth-child(4) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "SEND Support":
           cy.checkTextContent(
-            ":nth-child(5) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(4) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
         case "Other Considerations":
           cy.checkTextContent(
-            ":nth-child(6) > .govuk-summary-list__value",
+            ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Email Address":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(2) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;

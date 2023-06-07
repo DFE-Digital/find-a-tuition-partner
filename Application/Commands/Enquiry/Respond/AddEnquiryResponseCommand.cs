@@ -20,8 +20,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
     private const string EnquiryLadNameKey = "local_area_district";
     private const string EnquiryKeyStageAndSubjects = "enquiry_keystage_subjects";
     private const string EnquiryResponseKeyStageAndSubjects = "enquiry_response_keystage_subjects";
-    private const string EnquiryTuitionTypeKey = "enquiry_tuition_type";
-    private const string EnquiryResponseTuitionTypeKey = "enquiry_response_tuition_type";
+    private const string EnquiryTuitionSettingKey = "enquiry_tuition_setting";
+    private const string EnquiryResponseTuitionSettingKey = "enquiry_response_tuition_setting";
     private const string EnquiryTuitionPlanKey = "enquiry_tuition_plan";
     private const string EnquiryResponseTuitionPlanKey = "enquiry_response_tuition_plan";
     private const string EnquirySENDSupportKey = "enquiry_send_support";
@@ -76,7 +76,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
         {
             TutoringLogisticsText = request.Data!.TutoringLogisticsText!,
             KeyStageAndSubjectsText = request.Data!.KeyStageAndSubjectsText!,
-            TuitionTypeText = request.Data.TuitionTypeText!,
+            TuitionSettingText = request.Data.TuitionSettingText!,
             SENDRequirementsText = request.Data.SENDRequirementsText ?? null,
             AdditionalInformationText = request.Data.AdditionalInformationText ?? null,
             CompletedAt = DateTime.UtcNow
@@ -150,9 +150,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             return "Data.KeyStageAndSubjectsText is null or empty";
         }
 
-        if (string.IsNullOrWhiteSpace(request.Data.TuitionTypeText))
+        if (string.IsNullOrWhiteSpace(request.Data.TuitionSettingText))
         {
-            return "Data.TuitionTypeText is null or empty";
+            return "Data.TuitionSettingText is null or empty";
         }
 
         if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsText))
@@ -219,8 +219,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             LocalAreaDistrict = request.Data.LocalAuthorityDistrict,
             EnquiryKeyStageSubjects = $"{StringConstants.NotifyBulletedListFormat}{string.Join(Environment.NewLine + StringConstants.NotifyBulletedListFormat, request.Data.EnquiryKeyStageSubjects!)}",
             EnquiryResponseKeyStageSubjects = request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true),
-            EnquiryTuitionType = request.Data.EnquiryTuitionType,
-            EnquiryResponseTuitionType = request.Data.TuitionTypeText.EscapeNotifyText(true),
+            EnquiryTuitionSetting = request.Data.EnquiryTuitionSetting,
+            EnquiryResponseTuitionSetting = request.Data.TuitionSettingText.EscapeNotifyText(true),
             EnquiryTuitionPlan = enquiryTutoringLogistics,
             EnquiryResponseTuitionPlan = request.Data.TutoringLogisticsText.EscapeNotifyText(true),
             EnquirySendSupport = request.Data.EnquirySENDRequirements.EscapeNotifyText() ?? StringConstants.NotSpecified,
@@ -255,8 +255,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             { EnquiryLadNameKey, input.LocalAreaDistrict! },
             { EnquiryKeyStageAndSubjects, input.EnquiryKeyStageSubjects! },
             { EnquiryResponseKeyStageAndSubjects, input.EnquiryResponseKeyStageSubjects! },
-            { EnquiryTuitionTypeKey, input.EnquiryTuitionType! },
-            { EnquiryResponseTuitionTypeKey, input.EnquiryResponseTuitionType! },
+            { EnquiryTuitionSettingKey, input.EnquiryTuitionSetting! },
+            { EnquiryResponseTuitionSettingKey, input.EnquiryResponseTuitionSetting! },
             { EnquiryTuitionPlanKey, input.EnquiryTuitionPlan! },
             { EnquiryResponseTuitionPlanKey, input.EnquiryResponseTuitionPlan! },
             { EnquirySENDSupportKey, input.EnquirySendSupport! },

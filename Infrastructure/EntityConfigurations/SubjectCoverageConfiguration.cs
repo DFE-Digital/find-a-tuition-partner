@@ -8,8 +8,8 @@ public class SubjectCoverageConfiguration : IEntityTypeConfiguration<SubjectCove
 {
     public void Configure(EntityTypeBuilder<SubjectCoverage> builder)
     {
-        builder.HasIndex(e => new { e.TuitionPartnerId, e.TuitionTypeId, e.SubjectId });
+        builder.HasIndex(e => new { e.TuitionPartnerId, e.TuitionSettingId, e.SubjectId });
         builder.HasIndex(e => new { e.TuitionPartnerId, e.SubjectId });
-        builder.HasIndex(e => new { e.TuitionTypeId, e.SubjectId });
+        builder.HasIndex(e => new { e.TuitionSettingId, e.SubjectId });
     }
 }

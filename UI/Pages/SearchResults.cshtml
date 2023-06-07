@@ -12,7 +12,7 @@
 @model SearchResults
 @{
   ViewData["Title"] = "Your options for choosing a tuition partner";
-  ViewData["BackLinkHref"] = $"/which-tuition-types?{Model.Data.ToQueryString()}";
+  ViewData["BackLinkHref"] = $"/which-tuition-settings?{Model.Data.ToQueryString()}";
   ViewData["IncludePrintPage"] = true;
 
   var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityDistrictName != null);
@@ -46,7 +46,7 @@
       <govuk-error-summary-item show-if="!Model.ModelState.IsValid" class="error-summary-filter-prompt">Use the filters section below to update the following details:</govuk-error-summary-item>
       <govuk-error-summary-item asp-for="Data.Postcode" />
       <govuk-error-summary-item asp-for="Data.Subjects" />
-      <govuk-error-summary-item asp-for="Data.TuitionType" />
+      <govuk-error-summary-item asp-for="Data.TuitionSetting" />
     </govuk-error-summary>
 
     <span show-if="@validResults" class="govuk-caption-l"><strong data-testid="result-count">@count</strong> tuition @partnersPlural for <strong>@Model.Data!.Results!.LocalAuthorityDistrictName</strong></span>
@@ -119,14 +119,14 @@
             <partial name="_OptionsSelect" model="@(new OptionsSelectModel(item.ToString().ToSeoUrl(), item.DisplayName(), Model.Data.AllSubjects[item].Select(x => ($"{item}-{x.Name}".ToSeoUrl(), $"{item}-{x.Name}", x.Name, x.Selected)).OrderBy(x => x.Name))) " />
           }
 
-          <govuk-radios asp-for="Data.TuitionType" class="govuk-radios--small govuk-!-margin-bottom-3">
+          <govuk-radios asp-for="Data.TuitionSetting" class="govuk-radios--small govuk-!-margin-bottom-3">
             <govuk-radios-fieldset>
               <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
-                Type of tuition
+                Tuition setting
               </govuk-radios-fieldset-legend>
-              @foreach (var item in Model.Data.AllTuitionTypes)
+              @foreach (var item in Model.Data.AllTuitionSettings)
               {
-                <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionType">@item.DisplayName()</govuk-radios-item>
+                <govuk-radios-item id="@item.ToString().ToSeoUrl()" value="@item" checked="@item == @Model.Data.TuitionSetting">@item.DisplayName()</govuk-radios-item>
               }
             </govuk-radios-fieldset>
           </govuk-radios>
@@ -226,10 +226,10 @@
                 </govuk-summary-list-row>
                 <govuk-summary-list-row class="govuk-body-s">
                   <govuk-summary-list-row-key>
-                    Type of tuition
+                    Tuition setting
                   </govuk-summary-list-row-key>
-                  <govuk-summary-list-row-value data-testid="type-of-tuition">
-                    @string.Join(", ", item.TuitionTypes!.Select(e => e.Name))
+                  <govuk-summary-list-row-value data-testid="tuition-setting">
+                    @string.Join(", ", item.TuitionSettings!.Select(e => e.Name))
                   </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row class="govuk-body-s">
@@ -273,8 +273,8 @@
       }
     </div>
 
-    <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true}, {"ExcludeSubjects", true}, {"ExcludeTuitionTypes", true}, {"ExcludePostcode", true} }' />
+    <partial name="_SearchModelHiddenInputs" model="@Model.Data" view-data='@new ViewDataDictionary(ViewData) {{"ExcludeKeyStages", true}, {"ExcludeSubjects", true}, {"ExcludeTuitionSettings", true}, {"ExcludePostcode", true} }' />
 
-    <input asp-for="Data.PreviousTuitionType" type="hidden" />
+    <input asp-for="Data.PreviousTuitionSetting" type="hidden" />
   </form>
 </div>

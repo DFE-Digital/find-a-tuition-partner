@@ -17,9 +17,9 @@ public record EnquiryResponseBaseModel : EnquiryBaseModel
     public List<string> EnquiryKeyStageSubjects { get; set; } = null!;
     public string? KeyStageAndSubjectsText { get; set; } = string.Empty;
 
-    public string? TuitionTypeText { get; set; } = string.Empty;
+    public string? TuitionSettingText { get; set; } = string.Empty;
 
-    public string EnquiryTuitionType { get; set; } = string.Empty;
+    public string EnquiryTuitionSetting { get; set; } = string.Empty;
 
     public string? TutoringLogisticsText { get; set; } = string.Empty;
     public TutoringLogisticsDisplayModel EnquiryTutoringLogisticsDisplayModel { get; set; }
