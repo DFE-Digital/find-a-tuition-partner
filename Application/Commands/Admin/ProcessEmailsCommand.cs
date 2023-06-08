@@ -3,10 +3,7 @@ using Application.Common.Models.Admin;
 
 namespace Application.Commands.Admin;
 
-public record ProcessEmailsCommand : IRequest<ProcessedEmailsModel>
-{
-    public string? NotificationId { get; set; } = null!;
-}
+public record ProcessEmailsCommand : IRequest<ProcessedEmailsModel>;
 
 public class ProcessEmailsCommandHandler : IRequestHandler<ProcessEmailsCommand, ProcessedEmailsModel>
 {

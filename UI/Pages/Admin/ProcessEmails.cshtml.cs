@@ -16,12 +16,7 @@ namespace UI.Pages.Admin
 
         public async Task OnGetAsync()
         {
-            var request = new ProcessEmailsCommand()
-            {
-                //Errored email = "763404e0-47ed-4b72-93a7-843d31597206"
-                //OK Email = "708fec24-0a92-4089-8e6c-9b10f68a8526"
-                NotificationId = "763404e0-47ed-4b72-93a7-843d31597206"
-            };
+            var request = new ProcessEmailsCommand();
             Data = await _mediator.Send(request);
         }
     }
