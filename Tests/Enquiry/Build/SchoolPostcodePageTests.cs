@@ -11,8 +11,18 @@ namespace Tests.Enquiry.Build;
 public class SchoolPostcodePageTests
 {
     private readonly SliceFixture _fixture;
+    private readonly SchoolPostcodeModelValidator _validator;
 
-    public SchoolPostcodePageTests(SliceFixture fixture) => _fixture = fixture;
+    public SchoolPostcodePageTests(SliceFixture fixture)
+    {
+        _fixture = fixture;
+        _validator = new SchoolPostcodeModelValidator();
+    }
+
+    private static SchoolPostcodeModel CreateModel(string data)
+    {
+        return new SchoolPostcodeModel { SchoolPostcode = data };
+    }
 
     [Theory]
     [InlineData("")]
@@ -20,8 +30,8 @@ public class SchoolPostcodePageTests
     [InlineData(null)]
     public void With_no_postcode(string postcode)
     {
-        var model = new SchoolPostcodeModel { SchoolPostcode = postcode };
-        var result = new SchoolPostcodeModelValidator().TestValidate(model);
+        var model = CreateModel(postcode);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SchoolPostcode)
             .WithErrorMessage("Enter a postcode");
     }
@@ -30,8 +40,8 @@ public class SchoolPostcodePageTests
     [InlineData("not a postcode")]
     public void With_an_invalid_postcode(string postcode)
     {
-        var model = new SchoolPostcodeModel { SchoolPostcode = postcode };
-        var result = new SchoolPostcodeModelValidator().TestValidate(model);
+        var model = CreateModel(postcode);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SchoolPostcode)
             .WithErrorMessage("Enter a real postcode");
     }
@@ -41,15 +51,15 @@ public class SchoolPostcodePageTests
     [InlineData("DD1 4NP")]
     public void With_a_valid_postcode(string postcode)
     {
-        var model = new SchoolPostcodeModel { SchoolPostcode = postcode };
-        var result = new SchoolPostcodeModelValidator().TestValidate(model);
+        var model = CreateModel(postcode);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public async Task With_a_valid_postcode_moves_to_next_page()
     {
-        var model = new SchoolPostcodeModel { SchoolPostcode = District.EastRidingOfYorkshire.SamplePostcode };
+        var model = CreateModel(District.EastRidingOfYorkshire.SamplePostcode);
 
         var result = await _fixture.GetPage<SchoolPostcode>().Execute(page =>
         {

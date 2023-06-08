@@ -24,6 +24,8 @@ When("user has journeyed forward to the check your answers page", () => {
   Step(this, "the user clicks yes and continue");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
+  Step(this, "they enter the valid passcode");
+  Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for SEND requirements");
@@ -115,6 +117,8 @@ When("user creates another enquiry", () => {
   Step(this, "they click 'Continue'");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
+  Step(this, "they enter the valid passcode");
+  Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for SEND requirements");
@@ -163,6 +167,31 @@ Then(
 );
 
 When("user navigates to the first enquiry question", () => {
+  cy.visit("/");
+  Step(this, "they enter 'OX4 2AU' as the school's postcode");
+  Step(this, "they click 'Continue'");
+  Step(this, "they will see all the keys stages as options");
+  Step(this, "they select 'Key stage 1, Key stage 2'");
+  Step(this, "they click 'Continue'");
+  Step(this, "they are shown the subjects for 'Key stage 1, Key stage 2'");
+  Step(
+    this,
+    "they select 'Key stage 1 English, Key stage 1 Maths, Key stage 2 English, Key stage 2 Maths'"
+  );
+  Step(this, "they click 'Continue'");
+  Step(this, "they select No preference");
+  Step(this, "they click 'Continue'");
+  Step(this, "they click 'Start now' button");
+  Step(this, "they click 'Continue' button");
+  Step(this, "they will be taken to the single school selection page");
+  Step(this, "the user clicks yes and continue");
+  Step(this, "they enter a valid email address");
+  Step(this, "they click 'Continue'");
+  Step(this, "they enter the valid passcode");
+  Step(this, "they click 'Continue'");
+});
+
+When("user navigates to the first enquiry question again", () => {
   cy.visit("/");
   Step(this, "they enter 'OX4 2AU' as the school's postcode");
   Step(this, "they click 'Continue'");
@@ -265,6 +294,8 @@ When("user navigates to check your answers unselecting filter results", () => {
   Step(this, "the user clicks yes and continue");
   Step(this, "they enter a valid email address");
   Step(this, "they click 'Continue'");
+  Step(this, "they enter the valid passcode on mobile");
+  Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for tuition plan");
   Step(this, "they click 'Continue'");
   Step(this, "they enter an answer for SEND requirements");
@@ -306,6 +337,8 @@ When(
     Step(this, "they will be taken to the single school selection page");
     Step(this, "the user clicks yes and continue");
     Step(this, "they enter an email address causing an error");
+    Step(this, "they click 'Continue'");
+    Step(this, "they enter the valid passcode");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");
     Step(this, "they click 'Continue'");

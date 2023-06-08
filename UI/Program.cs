@@ -28,7 +28,7 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(DoubleConstants.SessionTimeoutInMinutes);
     options.Cookie.IsEssential = true;
-    options.Cookie.Name = StringConstants.SessionCookieName;
+    options.Cookie.Name = Application.Constants.StringConstants.SessionCookieName;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Strict;

@@ -29,5 +29,9 @@
         public const string EnquiryResponseKeyStageAndSubjectsText = "EnquiryResponseKeyStageAndSubjectsText";
 
         public const string EnquirerEmailErrorMessage = "EnquirerEmailErrorMessage";
+
+        public const string EmailVerificationPasscode = "EmailVerificationPasscode";
+
+        public const string EmailToBeVerified = "EmailToBeVerified";
     }
 }
