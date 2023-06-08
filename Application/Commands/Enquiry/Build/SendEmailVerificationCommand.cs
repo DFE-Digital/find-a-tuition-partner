@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.DTO;
+using Application.Common.Interfaces;
 using Application.Constants;
 using Application.Extensions;
 using Domain;
@@ -126,10 +127,10 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
     private static List<EmailPersonalisationLog> GetVerificationEmailPersonalisationLog(SendEmailVerificationCommand request, int passcode)
     {
         var personalisation = new Dictionary<string, dynamic>()
-        {
-            { EmailPasscodeKey, passcode },
-            { SessionTimeoutMinutesKey, request.SessionTimeoutMinutes.ToString() }
-        };
+            {
+                { EmailPasscodeKey, passcode },
+                { SessionTimeoutMinutesKey, request.SessionTimeoutMinutes.ToString() }
+            };
 
         personalisation.AddDefaultEmailPersonalisation(request.BaseServiceUrl!);
 
