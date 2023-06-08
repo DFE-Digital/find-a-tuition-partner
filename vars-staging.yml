@@ -15,7 +15,6 @@ govuk-notify-email-verification-template-id: badaacff-87b8-4046-b953-a85a0a9e2a8
 email-override-email-address: 
 email-merge-responses: false
 email-all-sent-to-enquirer: true
-feature-flag-verify-email: true
 feature-flag-enquiry-builder: true
 feature-flag-send-emails-from-ntp: true
 feature-flag-verify-email: true
