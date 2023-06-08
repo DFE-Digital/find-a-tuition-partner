@@ -25,16 +25,19 @@ public class ProcessEmailsService : IProcessEmailsService
     private readonly ILogger<ProcessEmailsService> _logger;
     private readonly INotificationsClientService _notificationsClientService;
     private readonly EmailSettings _emailSettingsConfig;
+    private readonly FeatureFlags _featureFlagsConfig;
 
     public ProcessEmailsService(IUnitOfWork unitOfWork,
         INotificationsClientService notificationsClientService,
         ILogger<ProcessEmailsService> logger,
-        IOptions<EmailSettings> emailSettingsConfig)
+        IOptions<EmailSettings> emailSettingsConfig,
+        IOptions<FeatureFlags> featureFlagsConfig)
     {
         _unitOfWork = unitOfWork;
         _notificationsClientService = notificationsClientService;
         _logger = logger;
         _emailSettingsConfig = emailSettingsConfig.Value;
+        _featureFlagsConfig = featureFlagsConfig.Value;
     }
 
     public async Task<ProcessedEmailsModel> ProcessAllEmailsAsync()
@@ -48,7 +51,7 @@ public class ProcessEmailsService : IProcessEmailsService
             var startedOK = await StartProcessing(startDate);
             if (startedOK)
             {
-                if (_emailSettingsConfig.SendEmailsFromNtp)
+                if (_featureFlagsConfig.SendEmailsFromNtp)
                 {
                     await PollForStatusUpdatesAsync(processedEmailsModel);
 
@@ -156,7 +159,7 @@ public class ProcessEmailsService : IProcessEmailsService
 
     public bool SendTuitionPartnerEmailsWhenEnquirerDelivered()
     {
-        return _emailSettingsConfig.SendTuitionPartnerEmailsWhenEnquirerDelivered;
+        return _featureFlagsConfig.SendTuitionPartnerEmailsWhenEnquirerDelivered;
     }
 
     private async Task<bool> StartProcessing(DateTime date)
@@ -347,7 +350,7 @@ public class ProcessEmailsService : IProcessEmailsService
 
         var emailsSent = 0;
 
-        if (_emailSettingsConfig.SendEmailsFromNtp)
+        if (_featureFlagsConfig.SendEmailsFromNtp)
         {
             var emailsToSend = await _unitOfWork.EmailLogRepository
                 .GetAllAsync(x => (x.EmailStatus.AllowEmailSending &&

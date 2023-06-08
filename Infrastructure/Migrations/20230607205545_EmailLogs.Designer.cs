@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230425153316_EmailLogs")]
+    [Migration("20230607205545_EmailLogs")]
     partial class EmailLogs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,8 +67,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientReferenceNumber")
-                        .IsUnique();
+                    b.HasIndex("ClientReferenceNumber");
 
                     b.HasIndex("EmailStatusId");
 
@@ -85,11 +84,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             ClientReferenceNumber = "historical_emails_when_log_implemented",
-                            CreatedDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315),
+                            CreatedDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2661),
                             EmailAddress = "historical_emails_when_log_implemented",
                             EmailStatusId = 7,
                             EmailTemplateShortName = "historical_emails_when_log_implemented",
-                            FinishProcessingDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315)
+                            FinishProcessingDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2662)
                         });
                 });
 
@@ -399,12 +398,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SENDRequirements")
                         .HasColumnType("text");
 
+                    b.Property<int?>("SchoolId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SupportReferenceNumber")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("TuitionTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("TutoringLogistics")
                         .IsRequired()
@@ -414,15 +413,14 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
-                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId");
 
                     b.HasIndex("MagicLinkId");
 
+                    b.HasIndex("SchoolId");
+
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
-
-                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Enquiries");
                 });
@@ -457,7 +455,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerResponseEmailLogId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TuitionTypeText")
+                    b.Property<string>("TuitionSettingText")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -467,11 +465,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnquirerResponseEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("EnquirerResponseEmailLogId");
 
-                    b.HasIndex("TuitionPartnerResponseEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("TuitionPartnerResponseEmailLogId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -4284,7 +4280,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4293,9 +4289,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionTypeId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionSettingId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "LocalAuthorityDistrictId");
 
                     b.ToTable("LocalAuthorityDistrictCoverage");
                 });
@@ -4467,7 +4463,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4478,7 +4474,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId");
 
-                    b.HasIndex("TuitionTypeId");
+                    b.HasIndex("TuitionSettingId");
 
                     b.ToTable("Prices");
                 });
@@ -4610,11 +4606,17 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("EstablishmentNumber")
+                        .HasColumnType("integer");
+
                     b.Property<int>("EstablishmentStatusId")
                         .HasColumnType("integer");
 
                     b.Property<int>("EstablishmentTypeGroupId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("LocalAuthorityDistrictId")
                         .HasColumnType("integer");
@@ -4628,6 +4630,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Postcode")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("Ukprn")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Urn")
                         .HasColumnType("integer");
@@ -4811,7 +4816,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4820,9 +4825,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "SubjectId");
 
-                    b.HasIndex("TuitionTypeId", "SubjectId");
+                    b.HasIndex("TuitionSettingId", "SubjectId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "SubjectId");
+                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "SubjectId");
 
                     b.ToTable("SubjectCoverage");
                 });
@@ -4964,7 +4969,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("TuitionPartners", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.TuitionType", b =>
+            modelBuilder.Entity("Domain.TuitionSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -4987,7 +4992,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionTypes");
+                    b.ToTable("TuitionSettings");
 
                     b.HasData(
                         new
@@ -4999,9 +5004,24 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "In School",
-                            SeoUrl = "in-school"
+                            Name = "Face-to-face",
+                            SeoUrl = "face-to-face"
                         });
+                });
+
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.Property<int>("EnquiriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TuitionSettingsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EnquiriesId", "TuitionSettingsId");
+
+                    b.HasIndex("TuitionSettingsId");
+
+                    b.ToTable("EnquiryTuitionSetting");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -5089,8 +5109,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerEnquirySubmittedEmailLog")
-                        .WithOne("EnquirerEnquirySubmitted")
-                        .HasForeignKey("Domain.Enquiry", "EnquirerEnquirySubmittedEmailLogId")
+                        .WithMany("EnquirerEnquiriesSubmitted")
+                        .HasForeignKey("EnquirerEnquirySubmittedEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5100,28 +5120,28 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId");
+                    b.HasOne("Domain.School", "School")
+                        .WithMany("Enquiries")
+                        .HasForeignKey("SchoolId");
 
                     b.Navigation("EnquirerEnquirySubmittedEmailLog");
 
                     b.Navigation("MagicLink");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("School");
                 });
 
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
-                        .WithOne("EnquirerResponse")
-                        .HasForeignKey("Domain.EnquiryResponse", "EnquirerResponseEmailLogId")
+                        .WithMany("EnquirerResponses")
+                        .HasForeignKey("EnquirerResponseEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
-                        .WithOne("TuitionPartnerResponse")
-                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseEmailLogId")
+                        .WithMany("TuitionPartnerResponses")
+                        .HasForeignKey("TuitionPartnerResponseEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5201,9 +5221,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -5211,7 +5231,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -5228,9 +5248,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -5238,7 +5258,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.School", b =>
@@ -5309,9 +5329,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -5319,7 +5339,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
@@ -5383,6 +5403,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.HasOne("Domain.Enquiry", null)
+                        .WithMany()
+                        .HasForeignKey("EnquiriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TuitionSetting", null)
+                        .WithMany()
+                        .HasForeignKey("TuitionSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.EmailLog", b =>
                 {
                     b.Navigation("EmailLogHistories");
@@ -5393,15 +5428,15 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("EmailsActivatedByThisEmail");
 
-                    b.Navigation("EnquirerEnquirySubmitted");
+                    b.Navigation("EnquirerEnquiriesSubmitted");
 
-                    b.Navigation("EnquirerResponse");
+                    b.Navigation("EnquirerResponses");
 
                     b.Navigation("ThisEmailActivationTriggeredBy");
 
                     b.Navigation("TuitionPartnerEnquiriesSubmitted");
 
-                    b.Navigation("TuitionPartnerResponse");
+                    b.Navigation("TuitionPartnerResponses");
                 });
 
             modelBuilder.Entity("Domain.EmailStatus", b =>
@@ -5426,6 +5461,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("LocalAuthorities");
 
                     b.Navigation("LocalAuthorityDistricts");
+                });
+
+            modelBuilder.Entity("Domain.School", b =>
+                {
+                    b.Navigation("Enquiries");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>

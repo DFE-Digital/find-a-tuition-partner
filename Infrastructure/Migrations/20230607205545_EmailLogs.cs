@@ -226,55 +226,55 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.Sql(
             @"CREATE OR REPLACE FUNCTION fn_email_log_history_on_insert()
-              RETURNS TRIGGER 
-              LANGUAGE PLPGSQL
-              AS
-            $$
-            BEGIN
-				INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
-				VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
+                      RETURNS TRIGGER 
+                      LANGUAGE PLPGSQL
+                      AS
+                    $$
+                    BEGIN
+            INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
+            VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
 
-	            RETURN NEW;
-            END;
-            $$", true);
+                     RETURN NEW;
+                    END;
+                    $$", true);
 
             migrationBuilder.Sql(
             @"CREATE OR REPLACE FUNCTION fn_email_log_history_on_update()
-              RETURNS TRIGGER 
-              LANGUAGE PLPGSQL
-              AS
-            $$
-            BEGIN
-	            IF (COALESCE(NEW.""ProcessFromDate"", CURRENT_DATE) <> COALESCE(OLD.""ProcessFromDate"", CURRENT_DATE) OR
-		            COALESCE(NEW.""LastEmailSendAttemptDate"", CURRENT_DATE) <> COALESCE(OLD.""LastEmailSendAttemptDate"", CURRENT_DATE) OR
-		            NEW.""EmailStatusId"" <> OLD.""EmailStatusId"") THEN
-					INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
-					VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
-	            END IF;
+                      RETURNS TRIGGER 
+                      LANGUAGE PLPGSQL
+                      AS
+                    $$
+                    BEGIN
+                     IF (COALESCE(NEW.""ProcessFromDate"", CURRENT_DATE) <> COALESCE(OLD.""ProcessFromDate"", CURRENT_DATE) OR
+                      COALESCE(NEW.""LastEmailSendAttemptDate"", CURRENT_DATE) <> COALESCE(OLD.""LastEmailSendAttemptDate"", CURRENT_DATE) OR
+                      NEW.""EmailStatusId"" <> OLD.""EmailStatusId"") THEN
+            	INSERT INTO ""EmailLogHistory""(""EmailLogId"", ""CreatedAt"", ""ProcessFromDate"", ""LastEmailSendAttemptDate"", ""EmailStatusId"")
+            	VALUES(NEW.""Id"", current_timestamp, NEW.""ProcessFromDate"", NEW.""LastEmailSendAttemptDate"", NEW.""EmailStatusId"");
+                     END IF;
 
-	            RETURN NEW;
-            END;
-            $$", true);
+                     RETURN NEW;
+                    END;
+                    $$", true);
 
             migrationBuilder.Sql(
             @"CREATE TRIGGER TR_EmailLog_AfterInsert
-              AFTER INSERT
-              ON ""EmailLog""
-              FOR EACH ROW
-              EXECUTE PROCEDURE fn_email_log_history_on_insert();", true);
+                      AFTER INSERT
+                      ON ""EmailLog""
+                      FOR EACH ROW
+                      EXECUTE PROCEDURE fn_email_log_history_on_insert();", true);
 
             migrationBuilder.Sql(
             @"CREATE TRIGGER TR_EmailLog_AfterUpdate
-              AFTER UPDATE
-              ON ""EmailLog""
-              FOR EACH ROW
-              EXECUTE PROCEDURE fn_email_log_history_on_update();", true);
+                      AFTER UPDATE
+                      ON ""EmailLog""
+                      FOR EACH ROW
+                      EXECUTE PROCEDURE fn_email_log_history_on_update();", true);
             //MANUAL CHANGES - END
 
             migrationBuilder.InsertData(
                 table: "EmailLog",
                 columns: new[] { "Id", "ClientReferenceNumber", "CreatedDate", "EmailAddress", "EmailAddressUsedForTesting", "EmailStatusId", "EmailTemplateShortName", "FinishProcessingDate", "LastEmailSendAttemptDate", "LastStatusChangedDate", "ProcessFromDate" },
-                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315), "historical_emails_when_log_implemented", null, 7, "historical_emails_when_log_implemented", new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315), null, null, null });
+                values: new object[] { 1, "historical_emails_when_log_implemented", new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2661), "historical_emails_when_log_implemented", null, 7, "historical_emails_when_log_implemented", new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2662), null, null, null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_TuitionPartnersEnquiry_TuitionPartnerEnquirySubmittedEmailL~",
@@ -284,26 +284,22 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponses_EnquirerResponseEmailLogId",
                 table: "EnquiryResponses",
-                column: "EnquirerResponseEmailLogId",
-                unique: true);
+                column: "EnquirerResponseEmailLogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponses_TuitionPartnerResponseEmailLogId",
                 table: "EnquiryResponses",
-                column: "TuitionPartnerResponseEmailLogId",
-                unique: true);
+                column: "TuitionPartnerResponseEmailLogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enquiries_EnquirerEnquirySubmittedEmailLogId",
                 table: "Enquiries",
-                column: "EnquirerEnquirySubmittedEmailLogId",
-                unique: true);
+                column: "EnquirerEnquirySubmittedEmailLogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmailLog_ClientReferenceNumber",
                 table: "EmailLog",
-                column: "ClientReferenceNumber",
-                unique: true);
+                column: "ClientReferenceNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmailLog_EmailStatusId",

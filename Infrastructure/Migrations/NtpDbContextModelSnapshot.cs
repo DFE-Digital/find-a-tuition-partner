@@ -65,8 +65,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientReferenceNumber")
-                        .IsUnique();
+                    b.HasIndex("ClientReferenceNumber");
 
                     b.HasIndex("EmailStatusId");
 
@@ -83,11 +82,11 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             ClientReferenceNumber = "historical_emails_when_log_implemented",
-                            CreatedDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315),
+                            CreatedDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2661),
                             EmailAddress = "historical_emails_when_log_implemented",
                             EmailStatusId = 7,
                             EmailTemplateShortName = "historical_emails_when_log_implemented",
-                            FinishProcessingDate = new DateTime(2023, 4, 25, 15, 33, 15, 108, DateTimeKind.Utc).AddTicks(8315)
+                            FinishProcessingDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2662)
                         });
                 });
 
@@ -412,8 +411,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
-                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId");
 
                     b.HasIndex("MagicLinkId");
 
@@ -465,11 +463,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EnquirerResponseEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("EnquirerResponseEmailLogId");
 
-                    b.HasIndex("TuitionPartnerResponseEmailLogId")
-                        .IsUnique();
+                    b.HasIndex("TuitionPartnerResponseEmailLogId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -5111,8 +5107,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerEnquirySubmittedEmailLog")
-                        .WithOne("EnquirerEnquirySubmitted")
-                        .HasForeignKey("Domain.Enquiry", "EnquirerEnquirySubmittedEmailLogId")
+                        .WithMany("EnquirerEnquiriesSubmitted")
+                        .HasForeignKey("EnquirerEnquirySubmittedEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5126,7 +5122,6 @@ namespace Infrastructure.Migrations
                         .WithMany("Enquiries")
                         .HasForeignKey("SchoolId");
 
-
                     b.Navigation("EnquirerEnquirySubmittedEmailLog");
 
                     b.Navigation("MagicLink");
@@ -5137,14 +5132,14 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
                 {
                     b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
-                        .WithOne("EnquirerResponse")
-                        .HasForeignKey("Domain.EnquiryResponse", "EnquirerResponseEmailLogId")
+                        .WithMany("EnquirerResponses")
+                        .HasForeignKey("EnquirerResponseEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
-                        .WithOne("TuitionPartnerResponse")
-                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseEmailLogId")
+                        .WithMany("TuitionPartnerResponses")
+                        .HasForeignKey("TuitionPartnerResponseEmailLogId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5431,15 +5426,15 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("EmailsActivatedByThisEmail");
 
-                    b.Navigation("EnquirerEnquirySubmitted");
+                    b.Navigation("EnquirerEnquiriesSubmitted");
 
-                    b.Navigation("EnquirerResponse");
+                    b.Navigation("EnquirerResponses");
 
                     b.Navigation("ThisEmailActivationTriggeredBy");
 
                     b.Navigation("TuitionPartnerEnquiriesSubmitted");
 
-                    b.Navigation("TuitionPartnerResponse");
+                    b.Navigation("TuitionPartnerResponses");
                 });
 
             modelBuilder.Entity("Domain.EmailStatus", b =>
