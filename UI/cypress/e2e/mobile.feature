@@ -108,6 +108,10 @@ Feature: Tuition partner details mobile view page tests
     When the user clicks yes and continue
     Then they enter a valid email address
     When they click 'Continue'
+    Then the email address verification page is displayed
+    And their is an input field for the verification code
+    When they enter a valid passcode
+    And they click 'Continue'
     Then they are redirected to the enquiry question page
 
   Scenario: Tuition partner details are not displayed when no postcode entered
@@ -228,13 +232,13 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the email address update:
-      | Section Name            | Expected Content                      |
-      | Key stages and subjects | Displays Key Stage and Subjects table |
-      | Tuition setting         | No preference                         |
-      | Email Address           | new@new.com                           |
-      | Tuition Plan            | enquiry                               |
-      | SEND Support            | enquiry                               |
-      | Other Considerations    | enquiry                               |
+      | Section Name            | Expected Content                                |
+      | Key stages and subjects | Displays Key Stage and Subjects table           |
+      | Tuition setting         | No preference                                   |
+      | Email Address           | simulate-delivered@notifications.service.gov.uk |
+      | Tuition Plan            | enquiry                                         |
+      | SEND Support            | enquiry                                         |
+      | Other Considerations    | enquiry                                         |
 
   Scenario: Change selections for tuition questions
     Given a user has started the 'Find a tuition partner' journey

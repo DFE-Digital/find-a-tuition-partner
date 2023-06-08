@@ -37,6 +37,9 @@ public class CheckYourAnswers : PageModel
 
         Data = data;
 
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, string.Empty);
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeVerified, string.Empty);
+
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues != null)
@@ -139,10 +142,7 @@ public class CheckYourAnswers : PageModel
         {
             Data.From = ReferrerList.CheckYourAnswers;
 
-            var errorMessage =
-                $"There was a problem sending the email and you should check the email address and try again";
-
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, Constants.StringConstants.EmailErrorMessage);
 
             return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
         }

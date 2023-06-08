@@ -10,10 +10,27 @@ namespace Tests.Enquiry.Build;
 public class TutoringLogisticsTests
 {
     private readonly SliceFixture _fixture;
+    private readonly TutoringLogisticsModelValidator _validator;
 
     public TutoringLogisticsTests(SliceFixture fixture)
     {
         _fixture = fixture;
+        _validator = new TutoringLogisticsModelValidator();
+    }
+
+    private static TutoringLogisticsModel CreateModel(string numberOfPupils, string startDate,
+        string tuitionDuration, string timeOfDay)
+    {
+        return new TutoringLogisticsModel()
+        {
+            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = numberOfPupils,
+                StartDate = startDate,
+                TuitionDuration = tuitionDuration,
+                TimeOfDay = timeOfDay
+            },
+        };
     }
 
     [Theory]
@@ -22,17 +39,8 @@ public class TutoringLogisticsTests
     [InlineData(null)]
     public void With_no_input(string data)
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = data,
-                StartDate = data,
-                TuitionDuration = data,
-                TimeOfDay = data
-            },
-        };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(data, data, data, data);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TuitionDuration);
@@ -42,51 +50,33 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-                StartDate = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-                TuitionDuration = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-                TimeOfDay = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1)
-            },
-        };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-                StartDate = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-                TuitionDuration = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-                TimeOfDay = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
-            },
-        };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                StartDate = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                TuitionDuration = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                TimeOfDay = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1)
-            },
-        };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
+            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1));
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TuitionDuration);
@@ -96,16 +86,7 @@ public class TutoringLogisticsTests
     [Fact]
     public async Task With_a_valid_data_moves_to_next_page()
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = "Test 123",
-                StartDate = "Test 123",
-                TuitionDuration = "Test 123",
-                TimeOfDay = "Test 123"
-            },
-        };
+        var model = CreateModel("Test 123", "Test 123", "Test 123", "Test 123");
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {
@@ -119,17 +100,8 @@ public class TutoringLogisticsTests
     [Fact]
     public async Task With_a_valid_data_moves_to_cya_page()
     {
-        var model = new TutoringLogisticsModel
-        {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
-            {
-                NumberOfPupils = "Test 123",
-                StartDate = "Test 123",
-                TuitionDuration = "Test 123",
-                TimeOfDay = "Test 123"
-            },
-            From = Domain.Enums.ReferrerList.CheckYourAnswers
-        };
+        var model = CreateModel("Test 123", "Test 123", "Test 123", "Test 123");
+        model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {

@@ -7,7 +7,7 @@ Feature: Email address page of the enquiry builder
         And they will be taken to the single school selection page
         When the user clicks yes and continue
         Then user is redirected to the enter email address page
-        And the page's title is 'What is your email address?'
+        And the page's title is 'We need to verify your school email address'
 
     Scenario: Going back returns to the guidance page
         Given a user has arrived on the 'Search results' page for 'Key stage 1 English' for postcode 'OX4 2AU'
@@ -36,7 +36,7 @@ Feature: Email address page of the enquiry builder
         When the user clicks yes and continue
         Then they enter a valid email address
         When they click 'Continue'
-        Then they are redirected to the enquiry question page
+        Then the email address verification page is displayed
         When they click 'Back'
         Then user is redirected to the enter email address page
 
@@ -58,7 +58,7 @@ Feature: Email address page of the enquiry builder
         When the user clicks yes and continue
         Then they enter a valid email address
         When they click 'Continue'
-        Then they are redirected to the enquiry question page
+        Then the email address verification page is displayed
         When they click 'Back'
         Then user is redirected to the enter email address page
         Then the email address is visible in input field
@@ -71,8 +71,3 @@ Feature: Email address page of the enquiry builder
         When the user clicks yes and continue
         When they click the 'Find a tuition partner' service name link
         Then they will be taken to the 'Find a tuition partner' journey start page
-
-    Scenario: invalid email error redirect works as expected
-        Given a user has started the 'Find a tuition partner' journey
-        When user has journeyed forward to the check your answers page for an invalid email address
-        Then the error message shows 'There was a problem sending the email and you should check the email address and try again'

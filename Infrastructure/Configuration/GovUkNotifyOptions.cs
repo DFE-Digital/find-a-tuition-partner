@@ -14,4 +14,6 @@ public class GovUkNotifyOptions
 
     public string TemplateIdEnquiryResponseSubmittedConfirmationToTp { get; set; } = "011fabe9-72b3-4575-a343-fe008ad4df90";
 
+    public string TemplateIdEmailVerification { get; set; } = "badaacff-87b8-4046-b953-a85a0a9e2a8b";
+
 }

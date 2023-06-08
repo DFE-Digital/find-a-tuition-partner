@@ -10,14 +10,19 @@ namespace Tests.Enquiry.Build;
 public class ConfirmSchoolPageTests
 {
     private readonly SliceFixture _fixture;
+    private readonly ConfirmSchoolModelValidator _validator;
 
-    public ConfirmSchoolPageTests(SliceFixture fixture) => _fixture = fixture;
+    public ConfirmSchoolPageTests(SliceFixture fixture)
+    {
+        _fixture = fixture;
+        _validator = new ConfirmSchoolModelValidator();
+    }
 
     [Fact]
     public void With_single_true_school_valid()
     {
         var model = new ConfirmSchoolModel { HasSingleSchool = true, ConfirmedIsSchool = true };
-        var result = new ConfirmSchoolModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -25,7 +30,7 @@ public class ConfirmSchoolPageTests
     public void With_single_false_school_valid()
     {
         var model = new ConfirmSchoolModel { HasSingleSchool = true, ConfirmedIsSchool = false };
-        var result = new ConfirmSchoolModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -33,7 +38,7 @@ public class ConfirmSchoolPageTests
     public void With_single_school_invalid()
     {
         var model = new ConfirmSchoolModel { HasSingleSchool = true, ConfirmedIsSchool = null };
-        var result = new ConfirmSchoolModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.ConfirmedIsSchool)
             .WithErrorMessage("Select to confirm if this is your school or not");
     }
@@ -42,7 +47,7 @@ public class ConfirmSchoolPageTests
     public void With_multiple_school_valid()
     {
         var model = new ConfirmSchoolModel { HasSingleSchool = false, SchoolId = 1 };
-        var result = new ConfirmSchoolModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
@@ -50,7 +55,7 @@ public class ConfirmSchoolPageTests
     public void With_multiple_school_invalid()
     {
         var model = new ConfirmSchoolModel { HasSingleSchool = false, SchoolId = null };
-        var result = new ConfirmSchoolModelValidator().TestValidate(model);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SchoolId)
             .WithErrorMessage("Select to confirm which school you work for");
     }
