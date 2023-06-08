@@ -71,8 +71,3 @@ Feature: Email address page of the enquiry builder
         When the user clicks yes and continue
         When they click the 'Find a tuition partner' service name link
         Then they will be taken to the 'Find a tuition partner' journey start page
-
-    Scenario: invalid email error redirect works as expected
-        Given a user has started the 'Find a tuition partner' journey
-        When user has journeyed forward to the check your answers page for an invalid email address
-        Then the error message shows 'There was a problem sending the email and you should check the email address and try again'

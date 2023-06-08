@@ -291,7 +291,9 @@ Then(
 );
 
 When("they enter another email address", () => {
-  cy.get("#Data_Email").clear().type("new@new.com");
+  cy.get("#Data_Email")
+    .clear()
+    .type("simulate-delivered@notifications.service.gov.uk");
 });
 
 Then("the user clears the current sessions data", () => {
