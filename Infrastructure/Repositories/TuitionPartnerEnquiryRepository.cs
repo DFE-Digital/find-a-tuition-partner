@@ -4,6 +4,7 @@ using Application.Extensions;
 using Domain;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Infrastructure.Repositories;
 
@@ -31,16 +32,19 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             .SingleOrDefaultAsync(e => e.Enquiry.SupportReferenceNumber == supportReferenceNumber
                                   && e.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl);
 
-        if (tuitionPartnerEnquiry == null) return null;
+        if (tuitionPartnerEnquiry == null ||
+            tuitionPartnerEnquiry.Enquiry == null ||
+            tuitionPartnerEnquiry.EnquiryResponse == null) return null;
 
         var enquiry = tuitionPartnerEnquiry.Enquiry;
+        var enquiryResponse = tuitionPartnerEnquiry.EnquiryResponse;
 
         var keyStageSubjects = enquiry
             .KeyStageSubjectEnquiry
             .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
             .GroupByKeyAndConcatenateValues();
 
-        var result = new EnquirerViewResponseModel
+        return new EnquirerViewResponseModel
         {
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
             EnquiryKeyStageSubjects = keyStageSubjects,
@@ -49,21 +53,14 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             EnquirySENDRequirements = enquiry.SENDRequirements,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
-            SupportReferenceNumber = enquiry.SupportReferenceNumber
+            SupportReferenceNumber = enquiry.SupportReferenceNumber,
+            KeyStageAndSubjectsText = enquiryResponse.KeyStageAndSubjectsText,
+            TuitionSettingText = enquiryResponse.TuitionSettingText,
+            TutoringLogisticsText = enquiryResponse.TutoringLogisticsText,
+            SENDRequirementsText = enquiryResponse.SENDRequirementsText,
+            AdditionalInformationText = enquiryResponse.AdditionalInformationText,
+            EnquiryResponseStatus = (EnquiryResponseStatus)enquiryResponse.EnquiryResponseStatusId
         };
-
-        var enquiryResponse = tuitionPartnerEnquiry.EnquiryResponse;
-
-        if (enquiryResponse != null)
-        {
-            result.KeyStageAndSubjectsText = enquiryResponse.KeyStageAndSubjectsText;
-            result.TuitionSettingText = enquiryResponse.TuitionSettingText;
-            result.TutoringLogisticsText = enquiryResponse.TutoringLogisticsText;
-            result.SENDRequirementsText = enquiryResponse.SENDRequirementsText;
-            result.AdditionalInformationText = enquiryResponse.AdditionalInformationText;
-        }
-
-        return result;
     }
 
     public async Task<EnquirerViewTuitionPartnerDetailsModel?> GetEnquirerViewTuitionPartnerDetailsResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl)

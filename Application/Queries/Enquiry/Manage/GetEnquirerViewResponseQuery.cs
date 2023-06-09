@@ -28,6 +28,12 @@ public class GetEnquirerViewResponseQueryHandler : IRequestHandler<GetEnquirerVi
             _logger.LogInformation("Enquiry response not found for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
                 request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
         }
+        else if (result.EnquiryResponseStatus == Domain.Enums.EnquiryResponseStatus.Rejected)
+        {
+            _logger.LogInformation("Enquiry response previously rejected for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
+                request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+            result = null;
+        }
 
         return result;
     }

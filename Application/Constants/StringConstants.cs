@@ -14,7 +14,8 @@
         public const string UrlUnsafeCharacters = "[^a-zA-Z0-9_{}()\\-~/]";
         public const string MultipleUnderscores = @"[-]{2,}";
 
-        public const string DateFormatGDS = @"dddd d MMMM yyyy h:mmtt";
+        public const string DateFormatGDS = @"dddd d MMMM yyyy";
+        public const string DateTimeFormatGDS = @"dddd d MMMM yyyy h:mmtt";
 
         public const string English = "English";
 

@@ -4,7 +4,7 @@ using Application.Queries.Enquiry.Manage;
 
 namespace UI.Pages.Enquiry.Manage
 {
-    public class EnquirerViewTuitionPartnerDetails : PageModel
+    public class ConfirmNotInterested : PageModel
     {
         private readonly IMediator _mediator;
         [BindProperty] public EnquirerViewTuitionPartnerDetailsModel Data { get; set; } = new();
@@ -13,7 +13,7 @@ namespace UI.Pages.Enquiry.Manage
 
         [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
 
-        public EnquirerViewTuitionPartnerDetails(IMediator mediator)
+        public ConfirmNotInterested(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -46,6 +46,22 @@ namespace UI.Pages.Enquiry.Manage
             HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            var isValidMagicLink =
+                await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, SupportReferenceNumber, TuitionPartnerSeoUrl));
+
+            if (!isValidMagicLink)
+            {
+                return NotFound();
+            }
+
+            //TODO - Update status to rejected, queue email and move to not interested feedback page
+
+            var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}?Token={Data.Token}";
+            return Redirect(redirectPageUrl);
         }
     }
 }

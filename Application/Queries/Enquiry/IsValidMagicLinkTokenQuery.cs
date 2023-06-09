@@ -1,5 +1,6 @@
 using Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
+using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Application.Queries.Enquiry;
 
@@ -79,6 +80,31 @@ public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLin
             {
                 _logger.LogInformation("Enquiry found but enquirer token not matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Supplied token: {Token}", request.SupportReferenceNumber, request.Token);
                 return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.TuitionPartnerSeoUrl))
+            {
+                var tpEnquiry = enquiry.TuitionPartnerEnquiry
+                    .SingleOrDefault(x => x.TuitionPartner.SeoUrl == request.TuitionPartnerSeoUrl);
+
+                if (tpEnquiry == null)
+                {
+                    _logger.LogInformation("Enquiry found for enquirer but TP Name not matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+                    return false;
+                }
+
+                if (tpEnquiry.EnquiryResponse == null)
+                {
+                    _logger.LogInformation("Enquiry found for enquirer but EnquiryResponse not matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+                    return false;
+                }
+
+                if (tpEnquiry.EnquiryResponse.EnquiryResponseStatusId == (int)EnquiryResponseStatus.Rejected)
+                {
+                    _logger.LogInformation("Previously rejected enquiry matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+                    return false;
+                }
+
             }
         }
 

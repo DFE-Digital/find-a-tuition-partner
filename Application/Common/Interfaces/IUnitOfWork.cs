@@ -8,6 +8,7 @@ public interface IUnitOfWork : IDisposable
     IEmailStatusRepository EmailStatusRepository { get; }
     IEnquiryRepository EnquiryRepository { get; }
     IEnquiryResponseRepository EnquiryResponseRepository { get; }
+    IEnquiryResponseStatusRepository EnquiryResponseStatusRepository { get; }
     ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; }
     ISubjectRepository SubjectRepository { get; }
     ITuitionPartnerRepository TuitionPartnerRepository { get; }

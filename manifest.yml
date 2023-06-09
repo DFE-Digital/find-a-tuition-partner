@@ -31,6 +31,7 @@ applications:
     GovUkNotify:TemplateIdEnquiryResponseReceivedConfirmationToEnquirer: ((govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id))
     GovUkNotify:TemplateIdEnquiryResponseSubmittedConfirmationToTp: ((govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id))
     GovUkNotify:TemplateIdEmailVerification: ((govuk-notify-email-verification-template-id))
+    GovUkNotify:TemplateIdEnquiryOutcomeToTp: ((govuk-notify-enquiry-outcome-to-tp-template-id))
     EmailSettings:OverrideAddress: ((email-override-email-address))
     EmailSettings:MergeResponses: ((email-merge-responses))
     EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))

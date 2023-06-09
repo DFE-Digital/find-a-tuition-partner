@@ -1,0 +1,35 @@
+﻿@page "/enquiry/{supportReferenceNumber}/{tuitionPartnerSeoUrl}/confirm-not-interested"
+@model UI.Pages.Enquiry.Manage.ConfirmNotInterested
+@{
+  var baseServiceUrl = Request.GetBaseServiceUrl();
+  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.Token}";
+  ViewData["Title"] = "Remove this tuition partner from your list of responses confirmation";
+  ViewData["BackLinkHref"] = backLink;
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form method="post">
+      <h1 class="govuk-heading-l">You’re about to remove this tuition partner from your list of responses</h1>
+
+      <h2 class="govuk-heading-m">@Model.Data.TuitionPartnerName</h2>
+
+      <p class="govuk-body">This will help you manage your responses.</p>
+      <p class="govuk-body">Removing a tuition partner cannot be undone.</p>
+      <br>
+      <p class="govuk-body">What will happen next:</p>
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-4">
+        <li>we will not reveal your school’s identity but we’ll send them an automated email, telling them that they did not meet your requirements for this specific enquiry (Reference number: @Model.Data.SupportReferenceNumber)</li>
+        <li>you can provide feedback to them on the next page (this is optional)</li>
+      </ul>
+
+      <div class="govuk-button-group">
+        <govuk-button prevent-double-click="true" type="submit" class="govuk-button--warning">Proceed and remove this tuition partner</govuk-button>
+        <a class="govuk-link" href="@backLink">Cancel</a>
+        <input asp-for="Data.SupportReferenceNumber" type="hidden" />
+        <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
+        <input asp-for="Data.Token" type="hidden" />
+      </div>
+    </form>
+  </div>
+</div>

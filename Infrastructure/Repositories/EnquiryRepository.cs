@@ -5,6 +5,7 @@ using Application.Extensions;
 using Domain;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Infrastructure.Repositories;
 
@@ -16,7 +17,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
     public async Task<Enquiry?> GetEnquiryBySupportReferenceNumber(string supportReferenceNumber)
     {
-        var enquiry = await _context.Enquiries.AsNoTracking()
+        var enquiry = await _context.Enquiries
             .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
             .Include(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
@@ -81,14 +82,20 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             var responseModel = new EnquirerViewResponseDto
             {
                 TuitionPartnerName = er.TuitionPartner.Name,
-                EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!
+                EnquiryResponseDate = er.EnquiryResponse!.CreatedAt!,
+                EnquiryResponseStatus = (EnquiryResponseStatus)er.EnquiryResponse!.EnquiryResponseStatusId
             };
             result.EnquirerViewResponses.Add(responseModel);
         }
 
+        result.NumberOfEnquirerRejectedResponses = result.EnquirerViewResponses.Count(x => x.EnquiryResponseStatus == EnquiryResponseStatus.Rejected);
+
         var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses
+            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.Rejected)
             .OrderByDescending(x => x.EnquiryResponseDate).ToList();
+
         result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
+
         return result;
     }
 }

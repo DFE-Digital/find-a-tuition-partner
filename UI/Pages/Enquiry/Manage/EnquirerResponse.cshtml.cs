@@ -1,3 +1,4 @@
+using Application.Commands.Enquiry.Manage;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Queries.Enquiry;
 using Application.Queries.Enquiry.Manage;
@@ -23,7 +24,7 @@ public class EnquirerResponse : PageModel
         var queryToken = Request.Query["Token"].ToString();
 
         var isValidMagicLink =
-            await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber));
+            await _mediator.Send(new IsValidMagicLinkTokenQuery(queryToken, SupportReferenceNumber, TuitionPartnerSeoUrl));
 
         if (!isValidMagicLink)
         {
@@ -39,12 +40,52 @@ public class EnquirerResponse : PageModel
             return NotFound();
         }
 
+        //TODO - Test validation if return to rejected page and no caching on using back button
+
+        if (data.EnquiryResponseStatus == EnquiryResponseStatus.Unread ||
+            data.EnquiryResponseStatus == EnquiryResponseStatus.Unread)
+        {
+            data.EnquiryResponseStatus = EnquiryResponseStatus.Undecided;
+            await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
+        }
+
         Data = data;
         Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
         Data.Token = queryToken;
 
         HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
-
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        var isValidMagicLink =
+            await _mediator.Send(new IsValidMagicLinkTokenQuery(Data.Token, SupportReferenceNumber, TuitionPartnerSeoUrl));
+
+        if (!isValidMagicLink)
+        {
+            return NotFound();
+        }
+
+        await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Interested));
+
+        var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}/{Data.TuitionPartnerSeoUrl}/contact-details?Token={Data.Token}";
+        return Redirect(redirectPageUrl);
+    }
+
+    public async Task<IActionResult> OnGetIsUndecided(EnquirerViewResponseModel data)
+    {
+        var isValidMagicLink =
+            await _mediator.Send(new IsValidMagicLinkTokenQuery(data.Token, SupportReferenceNumber, TuitionPartnerSeoUrl));
+
+        if (!isValidMagicLink)
+        {
+            return NotFound();
+        }
+
+        await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
+
+        var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}";
+        return Redirect(redirectPageUrl);
     }
 }

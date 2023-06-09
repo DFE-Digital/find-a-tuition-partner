@@ -14,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
         EmailStatusRepository = new EmailStatusRepository(_context);
         EnquiryRepository = new EnquiryRepository(_context);
         EnquiryResponseRepository = new EnquiryResponseRepository(_context);
+        EnquiryResponseStatusRepository = new EnquiryResponseStatusRepository(_context);
         LocalAuthorityDistrictRepository = new LocalAuthorityDistrictRepository(_context);
         SubjectRepository = new SubjectRepository(_context);
         TuitionPartnerRepository = new TuitionPartnerRepository(_context);
@@ -28,6 +29,7 @@ public class UnitOfWork : IUnitOfWork
     public IEmailStatusRepository EmailStatusRepository { get; private set; }
     public IEnquiryRepository EnquiryRepository { get; private set; }
     public IEnquiryResponseRepository EnquiryResponseRepository { get; private set; }
+    public IEnquiryResponseStatusRepository EnquiryResponseStatusRepository { get; private set; }
     public ILocalAuthorityDistrictRepository LocalAuthorityDistrictRepository { get; private set; }
     public ISubjectRepository SubjectRepository { get; private set; }
     public ITuitionPartnerRepository TuitionPartnerRepository { get; private set; }

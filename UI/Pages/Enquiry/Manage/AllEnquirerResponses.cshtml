@@ -26,7 +26,8 @@
     <h2 class="govuk-heading-s">
       Your tuition enquiry summary
     </h2>
-    <p class="govuk-body">Created on @Model.Data.EnquiryCreatedDateTime.ToString(StringConstants.DateFormatGDS)</p>
+    <p class="govuk-body">Created on @Model.Data.EnquiryCreatedDateTime.ToString(StringConstants.DateTimeFormatGDS)</p>
+    <p class="govuk-body">All tuition partners must respond by @Model.Data.EnquiryCreatedDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond).ToString(StringConstants.DateFormatGDS)</p>
 
     <govuk-details open="false">
       <govuk-details-summary>
@@ -98,12 +99,12 @@
   All tuition partner responses
 </h2>
 
-<div class="govuk-inset-text">
-  <strong>@numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners</strong> have responded at the moment.<br>
-  We have asked tuition partners to respond within 7 days of creating this enquiry.<br>
-  You should <strong>contact up to 3 tuition partners</strong> to discuss your budget and tuition needs.
-</div>
+<p class="govuk-body">After viewing a response you can contact the tuition partner and record your interest in working with them.</p>
+<br>
+<p class="govuk-body">@numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners have responded at the moment.</p>
+<p class="govuk-body">You have rejected @Model.Data.NumberOfEnquirerRejectedResponses tuition partner’s</p>
 
+@*TODO - Add sorting*@
 @if (Model.Data.EnquirerViewResponses.Any())
 {
   <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
@@ -112,7 +113,7 @@
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col">Date</th>
         <th class="govuk-table__header" scope="col">Tuition partner</th>
-        <th class="govuk-table__header app-print-hide" scope="col">Their response</th>
+        <th class="govuk-table__header app-print-hide" scope="col">Your interest</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -120,19 +121,19 @@
       @foreach (var item in @Model.Data.EnquirerViewResponses!)
       {
         var enquirerEnquiryResponseLink = $"/enquiry/{Model.SupportReferenceNumber}/{item.TuitionPartnerName.ToSeoUrl()}?Token={Model.Data.Token}";
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">
-        @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
-      </td>
-      <td class="govuk-table__cell">
-        @item.TuitionPartnerName
-      </td>
-      <td class="govuk-table__cell app-print-hide">
-        <a href="@enquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
-          View response<span class="govuk-visually-hidden"> from @item.TuitionPartnerName</span> and contact information
-        </a>
-      </td>
-    </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")
+          </td>
+          <td class="govuk-table__cell">
+            <a href="@enquirerEnquiryResponseLink" class="govuk-link" data-testid="view-enquiry-response-link">
+              @item.TuitionPartnerName
+            </a>
+          </td>
+          <td class="govuk-table__cell">
+            <span class="enquiry-status-box enquiry-status-@item.EnquiryResponseStatus.DisplayName().ToSeoUrl()">@item.EnquiryResponseStatus.DisplayName()</span>
+          </td>
+        </tr>
       }
     </tbody>
   </table>
