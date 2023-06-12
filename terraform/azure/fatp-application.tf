@@ -18,7 +18,7 @@ module "fatp_azure_web_app_services_hosting" {
   service_stack         = var.service_stack
   service_stack_version = var.service_stack_version
   service_worker_count  = var.service_worker_count
-  service_app_settings  = {
+  service_app_settings = {
     "ASPNETCORE_ENVIRONMENT"            = var.aspnetcore_environment,
     "BlobStorage_AccountName"           = var.blobStorage_accountName,
     "BlobStorage_ClientId"              = var.blobStorage_clientId,
