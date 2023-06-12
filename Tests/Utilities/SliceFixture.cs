@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Constants;
 using Domain.Search;
 using Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -53,6 +54,8 @@ public class SliceFixture : IAsyncLifetime
                 District.Ryedale
             };
 
+            var school = A.School;
+
             foreach (var locationToAdd in locationsToAdd)
             {
                 LocationFilter
@@ -63,7 +66,12 @@ public class SliceFixture : IAsyncLifetime
                         LocalAuthorityDistrictCode = locationToAdd.Code,
                         LocalAuthorityDistrictId = locationToAdd.Id,
                         LocalAuthorityDistrict = locationToAdd.Name,
-                        LocalAuthority = locationToAdd.LocalAuthorityName
+                        LocalAuthority = locationToAdd.LocalAuthorityName,
+                        Schools = new List<Domain.School>()
+                        {
+                            school
+                        },
+                        Urn = school.Urn
                     });
             }
 
@@ -90,6 +98,12 @@ public class SliceFixture : IAsyncLifetime
 
             SessionService.Setup(nc =>
                     nc.AddOrUpdateDataAsync(It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()));
+
+            SessionService.Setup(nc => nc.RetrieveDataByKeyAsync(SessionKeyConstants.EmailVerificationPasscode, It.IsAny<string>()))
+                .ReturnsAsync("999999");
+
+            SessionService.Setup(nc => nc.RetrieveDataByKeyAsync(SessionKeyConstants.EmailToBeVerified, It.IsAny<string>()))
+                .ReturnsAsync("email@example.com");
 
             NotificationClient = new Mock<IAsyncNotificationClient>();
 
@@ -357,6 +371,13 @@ public class SliceFixture : IAsyncLifetime
         => await ExecuteDbContextAsync(db =>
         {
             db.TuitionPartners.Add(partner);
+            return db.SaveChangesAsync();
+        });
+
+    internal async Task AddSchool(Domain.School school)
+        => await ExecuteDbContextAsync(db =>
+        {
+            db.Schools.Add(school);
             return db.SaveChangesAsync();
         });
 }

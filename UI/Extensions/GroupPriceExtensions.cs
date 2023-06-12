@@ -1,22 +1,22 @@
 ﻿using Application.Common.Structs;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace UI.Extensions
 {
     public static class GroupPriceExtensions
     {
-        public static bool ContainsInSchoolPrice(this Dictionary<int, GroupPrice> prices)
+        public static bool ContainsFaceToFacePrice(this Dictionary<int, GroupPrice> prices)
             => prices.Any(x => x.Value.SchoolMin.HasValue || x.Value.SchoolMax.HasValue);
 
         public static bool ContainsOnlinePrice(this Dictionary<int, GroupPrice> prices)
             => prices.Any(x => x.Value.OnlineMin.HasValue || x.Value.OnlineMax.HasValue);
 
-        public static string FormatFor(this GroupPrice price, TuitionType tuitionType, bool addVAT)
+        public static string FormatFor(this GroupPrice price, TuitionSetting tuitionSetting, bool addVAT)
         {
-            return tuitionType switch
+            return tuitionSetting switch
             {
-                TuitionType.InSchool => FormatPrices(price.SchoolMin, price.SchoolMax, addVAT),
-                TuitionType.Online => FormatPrices(price.OnlineMin, price.OnlineMax, addVAT),
+                TuitionSetting.FaceToFace => FormatPrices(price.SchoolMin, price.SchoolMax, addVAT),
+                TuitionSetting.Online => FormatPrices(price.OnlineMin, price.OnlineMax, addVAT),
                 _ => "",
             };
 

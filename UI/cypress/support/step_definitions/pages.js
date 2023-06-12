@@ -59,9 +59,9 @@ Then(
 );
 
 Then(
-  "they will be taken to the 'What type of tuition do you need?' page",
+  "they will be taken to the 'What tuition setting do you prefer?' page",
   () => {
-    cy.location("pathname").should("eq", "/which-tuition-types");
+    cy.location("pathname").should("eq", "/which-tuition-settings");
   }
 );
 
@@ -81,8 +81,16 @@ Then("the user will navigate to the guidance page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/guidance");
 });
 
+Then("they will be taken to the postcode confirmation page", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/school-postcode");
+});
+
 Then("user is redirected to the enter email address page", () => {
   cy.location("pathname").should("eq", "/enquiry/build/enquirer-email");
+});
+
+Then("the email address verification page is displayed", () => {
+  cy.location("pathname").should("eq", "/enquiry/build/email-verification");
 });
 
 Then("they are redirected to the enquiry question page", () => {

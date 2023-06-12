@@ -40,6 +40,8 @@ namespace Infrastructure.DataImport
                 Map(m => m.PhaseOfEducation).Name("PhaseOfEducation (code)");
                 Map(m => m.LocalAuthorityCode).Name("LA (code)");
                 Map(m => m.LocalAuthorityDistrictCode).Name("DistrictAdministrative (code)");
+                Map(m => m.EstablishmentNumber).Name("EstablishmentNumber");
+                Map(m => m.Ukprn).Name("UKPRN");
             }
         }
     }

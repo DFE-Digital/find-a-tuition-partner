@@ -178,8 +178,12 @@ public class NotificationsClientService : INotificationsClientService
                 : string.Empty,
             EmailTemplateType.EnquiryResponseSubmittedConfirmationToTp =>
                 !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryResponseSubmittedConfirmationToTp)
-                    ? notifyConfig.TemplateIdEnquiryResponseSubmittedConfirmationToTp
-                    : string.Empty,
+                ? notifyConfig.TemplateIdEnquiryResponseSubmittedConfirmationToTp
+                : string.Empty,
+            EmailTemplateType.EmailVerification =>
+                !string.IsNullOrEmpty(notifyConfig.TemplateIdEmailVerification)
+                ? notifyConfig.TemplateIdEmailVerification
+                : string.Empty,
             _ => string.Empty
         };
     }

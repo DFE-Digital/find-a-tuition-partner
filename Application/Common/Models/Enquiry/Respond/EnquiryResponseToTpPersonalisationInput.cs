@@ -11,8 +11,8 @@ public record EnquiryResponseToTpPersonalisationInput
     public string? LocalAreaDistrict { get; init; }
     public string? EnquiryKeyStageSubjects { get; init; }
     public string? EnquiryResponseKeyStageSubjects { get; init; }
-    public string? EnquiryTuitionType { get; init; }
-    public string? EnquiryResponseTuitionType { get; init; }
+    public string? EnquiryTuitionSetting { get; init; }
+    public string? EnquiryResponseTuitionSetting { get; init; }
     public string? EnquiryTuitionPlan { get; init; }
     public string? EnquiryResponseTuitionPlan { get; init; }
     public string? EnquirySendSupport { get; init; }

@@ -63,8 +63,6 @@ public class DataImporterService : IHostedService
             {
                 await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                await RemoveGeneralInformationAboutSchools(dbContext, cancellationToken);
-
                 await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
@@ -87,14 +85,23 @@ public class DataImporterService : IHostedService
 
         var imported = 0;
         var failedValidation = 0;
+        var importedSchoolUrns = new List<int>();
+
         foreach (SchoolDatum schoolDatum in result.Result.Where(s => s.IsValidForService()))
         {
+            var isNewSchool = false;
             var establishmentName = schoolDatum.Name;
 
-            School school;
+            var school = dbContext.Schools.FirstOrDefault(x => x.Urn == schoolDatum.Urn);
+            if (school == null)
+            {
+                school = new School();
+                isNewSchool = true;
+            }
+
             try
             {
-                school = giasFactory.GetSchool(schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
+                school = giasFactory.GetSchool(school, schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
             }
             catch (Exception ex)
             {
@@ -106,14 +113,20 @@ public class DataImporterService : IHostedService
             var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
-                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
-                        school.EstablishmentName, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
+                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{Urn}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                        school.EstablishmentName, school.Urn, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
                 failedValidation++;
                 continue;
             }
 
-            dbContext.Schools.Add(school);
+            if (isNewSchool)
+            {
+                dbContext.Schools.Add(school);
+                _logger.LogInformation($"ADDED new establishment, name: {{TuitionPartnerName}}, URN: {{Urn}}",
+                    school.EstablishmentName, school.Urn);
+            }
 
+            importedSchoolUrns.Add(school.Urn);
             imported++;
             if ((imported % 100) == 0)
             {
@@ -121,23 +134,33 @@ public class DataImporterService : IHostedService
             }
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        DeactivateSchools(dbContext, importedSchoolUrns);
 
+        await dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
     }
 
-    private async Task RemoveGeneralInformationAboutSchools(NtpDbContext dbContext, CancellationToken cancellationToken)
+    private void DeactivateSchools(NtpDbContext dbContext, List<int> importedSchoolUrns)
     {
-        _logger.LogInformation("Deleting all existing General Information About Schools data");
-        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM \"Schools\"", cancellationToken: cancellationToken);
+        var schoolsToDeactivate = dbContext.Schools.Where(x => !importedSchoolUrns.Contains(x.Urn) && x.IsActive).ToList();
+        if (schoolsToDeactivate != null && schoolsToDeactivate.Any())
+        {
+            foreach (var schoolToDeactivate in schoolsToDeactivate)
+            {
+                schoolToDeactivate.IsActive = false;
+
+                _logger.LogInformation($"DEACTIVATED establishment, name: {{TuitionPartnerName}}, URN: {{Urn}}",
+                    schoolToDeactivate.EstablishmentName, schoolToDeactivate.Urn);
+            }
+            _logger.LogInformation("Deactivated {Count} schools from GIAS dataset", schoolsToDeactivate.Count);
+        }
     }
 
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
-        CancellationToken cancellationToken)
+    CancellationToken cancellationToken)
     {
         //This will throw an error if there is not just 1 file
         var dataFile = dataFileEnumerable.Single();
-
         var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions
@@ -276,7 +299,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var laDistrictCoveragesToDelete = existingTP.LocalAuthorityDistrictCoverage.Where(x => !tuitionPartnerToProcess.LocalAuthorityDistrictCoverage.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                                                                 e.LocalAuthorityDistrictId == x.LocalAuthorityDistrictId));
         foreach (var laDistrictCoverageToDelete in laDistrictCoveragesToDelete)
         {
@@ -285,7 +308,7 @@ public class DataImporterService : IHostedService
 
         foreach (var laDistrictCoverage in tuitionPartnerToProcess.LocalAuthorityDistrictCoverage)
         {
-            var existingLaDistrictCoverage = existingTP.LocalAuthorityDistrictCoverage.FirstOrDefault(x => x.TuitionTypeId == laDistrictCoverage.TuitionTypeId &&
+            var existingLaDistrictCoverage = existingTP.LocalAuthorityDistrictCoverage.FirstOrDefault(x => x.TuitionSettingId == laDistrictCoverage.TuitionSettingId &&
                                                                                                         x.LocalAuthorityDistrictId == laDistrictCoverage.LocalAuthorityDistrictId);
 
             if (existingLaDistrictCoverage == null)
@@ -302,7 +325,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerSubjectCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var subjectCoveragesToDelete = existingTP.SubjectCoverage.Where(x => !tuitionPartnerToProcess.SubjectCoverage.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var subjectCoveragesToDelete = existingTP.SubjectCoverage.Where(x => !tuitionPartnerToProcess.SubjectCoverage.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                                             e.SubjectId == x.SubjectId));
         foreach (var subjectCoverageToDelete in subjectCoveragesToDelete)
         {
@@ -311,7 +334,7 @@ public class DataImporterService : IHostedService
 
         foreach (var subjectCoverage in tuitionPartnerToProcess.SubjectCoverage)
         {
-            var existingSubjectCoverage = existingTP.SubjectCoverage.FirstOrDefault(x => x.TuitionTypeId == subjectCoverage.TuitionTypeId &&
+            var existingSubjectCoverage = existingTP.SubjectCoverage.FirstOrDefault(x => x.TuitionSettingId == subjectCoverage.TuitionSettingId &&
                                                                                 x.SubjectId == subjectCoverage.SubjectId);
 
             if (existingSubjectCoverage == null)
@@ -328,7 +351,7 @@ public class DataImporterService : IHostedService
 
     private static void ImportTuitionPartnerPrices(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
     {
-        var pricesToDelete = existingTP.Prices.Where(x => !tuitionPartnerToProcess.Prices.Any(e => e.TuitionTypeId == x.TuitionTypeId &&
+        var pricesToDelete = existingTP.Prices.Where(x => !tuitionPartnerToProcess.Prices.Any(e => e.TuitionSettingId == x.TuitionSettingId &&
                                                                                                 e.SubjectId == x.SubjectId &&
                                                                                                 e.GroupSize == x.GroupSize));
         foreach (var priceToDelete in pricesToDelete)
@@ -338,7 +361,7 @@ public class DataImporterService : IHostedService
 
         foreach (var price in tuitionPartnerToProcess.Prices)
         {
-            var existingPrice = existingTP.Prices.FirstOrDefault(x => x.TuitionTypeId == price.TuitionTypeId &&
+            var existingPrice = existingTP.Prices.FirstOrDefault(x => x.TuitionSettingId == price.TuitionSettingId &&
                                                                     x.SubjectId == price.SubjectId &&
                                                                     x.GroupSize == price.GroupSize);
 

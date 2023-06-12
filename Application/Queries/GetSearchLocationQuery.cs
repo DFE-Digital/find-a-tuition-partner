@@ -24,7 +24,7 @@ public class GetSearchLocationQueryHandler : IRequestHandler<GetSearchLocationQu
 
         if (result == null)
         {
-            _logger.LogWarning("Location response not found for the given postcode: {postcode}",
+            _logger.LogInformation("Location response not found for the given postcode: {postcode}",
                 request.Postcode);
         }
         return result;

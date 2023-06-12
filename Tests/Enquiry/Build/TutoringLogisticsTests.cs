@@ -10,10 +10,17 @@ namespace Tests.Enquiry.Build;
 public class TutoringLogisticsTests
 {
     private readonly SliceFixture _fixture;
+    private readonly TutoringLogisticsModelValidator _validator;
 
     public TutoringLogisticsTests(SliceFixture fixture)
     {
         _fixture = fixture;
+        _validator = new TutoringLogisticsModelValidator();
+    }
+
+    private static TutoringLogisticsModel CreateModel(string data)
+    {
+        return new TutoringLogisticsModel { TutoringLogistics = data };
     }
 
     [Theory]
@@ -22,39 +29,39 @@ public class TutoringLogisticsTests
     [InlineData(null)]
     public void With_no_input(string data)
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = data };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(data);
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
     }
 
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1) };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize) };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1) };
-        var result = new TutoringLogisticsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1));
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
     }
 
     [Fact]
     public async Task With_a_valid_data_moves_to_next_page()
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = "Test 123" };
+        var model = CreateModel("Test 123");
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {
@@ -68,7 +75,8 @@ public class TutoringLogisticsTests
     [Fact]
     public async Task With_a_valid_data_moves_to_cya_page()
     {
-        var model = new TutoringLogisticsModel { TutoringLogistics = "Test 123", From = Domain.Enums.ReferrerList.CheckYourAnswers };
+        var model = CreateModel("Test 123");
+        model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {

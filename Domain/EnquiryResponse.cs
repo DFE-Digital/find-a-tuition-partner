@@ -6,7 +6,7 @@ public class EnquiryResponse
 
     public string KeyStageAndSubjectsText { get; set; } = null!;
 
-    public string TuitionTypeText { get; set; } = null!;
+    public string TuitionSettingText { get; set; } = null!;
 
     public string TutoringLogisticsText { get; set; } = null!;
 

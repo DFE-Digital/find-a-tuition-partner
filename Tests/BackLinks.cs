@@ -1,7 +1,7 @@
 ﻿using Application.Common.Models;
 using Domain.Enums;
 using UI.Extensions;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests;
 
@@ -65,8 +65,8 @@ public class BackLinks
     [Fact]
     public void Construct_querystring_from_tutor_type()
     {
-        var model = new SearchModel { TuitionType = TuitionType.Online };
+        var model = new SearchModel { TuitionSetting = TuitionSetting.Online };
         var result = model.ToQueryString();
-        result.Should().Be("TuitionType=Online");
+        result.Should().Be("TuitionSetting=Online");
     }
 }

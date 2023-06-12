@@ -49,3 +49,7 @@ When("they click send enquiry", () => {
 When("they click 'Submit'", () => {
   cy.get("form > .govuk-button").click();
 });
+
+When("they click continue the on guidance page", () => {
+  cy.get(".govuk-grid-column-two-thirds > .govuk-button").click();
+});

@@ -7,7 +7,7 @@ using Tests.TestData;
 using UI.Models;
 using KeyStage = Domain.Enums.KeyStage;
 using TuitionPartner = UI.Pages.TuitionPartner;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests;
 
@@ -58,7 +58,11 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(9)
-            .WithName("this-tuition-partner", "This Tuition Partner"));
+            .WithName("this-tuition-partner", "This Tuition Partner")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         var result = await Fixture.GetPage<TuitionPartner>()
             .Execute(page => page.OnGetAsync(new GetTuitionPartnerQueryModel(id)));
@@ -84,14 +88,14 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             .WithWebsite("https://a-tuition-partner.testdata/ntp")
             .WithPhoneNumber("0123456789")
             .WithEmailAddress("ntp@a-tuition-partner.testdata")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
-            .TaughtIn(District.NorthEastLincolnshire, TuitionType.InSchool, TuitionType.Online)
-            .TaughtIn(District.Ryedale, TuitionType.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace)
+            .TaughtIn(District.NorthEastLincolnshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
+            .TaughtIn(District.Ryedale, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
         );
 
@@ -112,24 +116,24 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Shows_all_tuition_types_no_district_specified()
+    public async Task Shows_all_tuition_settings_no_district_specified()
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery("a-tuition-partner"));
 
-        result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
+        result!.TuitionSettings.Should().BeEquivalentTo("Online", "Face-to-face");
     }
 
     [Fact]
-    public async Task Shows_all_tuition_types_when_provided_in_district()
+    public async Task Shows_all_tuition_settings_when_provided_in_district()
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
@@ -141,15 +145,15 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 }
             });
 
-        result!.TuitionTypes.Should().BeEquivalentTo("Online", "In School");
+        result!.TuitionSettings.Should().BeEquivalentTo("Online", "Face-to-face");
     }
 
     [Fact]
-    public async Task Shows_only_tuition_types_provided_in_district()
+    public async Task Shows_only_tuition_settings_provided_in_district()
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.Ryedale, TuitionType.Online));
+            .TaughtIn(District.Ryedale, TuitionSetting.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery(
@@ -161,20 +165,20 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
                 }
             });
 
-        result!.TuitionTypes.Should().BeEquivalentTo("Online");
+        result!.TuitionSettings.Should().BeEquivalentTo("Online");
     }
 
     [Fact]
-    public async Task Shows_all_tuition_types_prices_when_provided_in_district()
+    public async Task Shows_all_tuition_settings_prices_when_provided_in_district()
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.NorthEastLincolnshire, TuitionType.InSchool, TuitionType.Online)
+            .TaughtIn(District.NorthEastLincolnshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3))));
 
         var result = await Fixture.SendAsync(
@@ -195,15 +199,15 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     }
 
     [Fact]
-    public async Task Shows_only_tuition_type_prices_provided_in_district()
+    public async Task Shows_only_tuition_setting_prices_provided_in_district()
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.NorthEastLincolnshire, TuitionType.InSchool)
-            .TaughtIn(District.Ryedale, TuitionType.Online)
+            .TaughtIn(District.NorthEastLincolnshire, TuitionSetting.FaceToFace)
+            .TaughtIn(District.Ryedale, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(33.44m).ForGroupSizes(2)
+                    .FaceToFace().Costing(33.44m).ForGroupSizes(2)
                     .Online().Costing(56.78m).ForGroupSizes(3))));
 
         var result = await Fixture.SendAsync(
@@ -227,15 +231,15 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
-            .TaughtIn(District.Ryedale, TuitionType.Online));
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace)
+            .TaughtIn(District.Ryedale, TuitionSetting.Online));
 
         var result = await Fixture.SendAsync(
             new GetTuitionPartnerQuery("a-tuition-partner", ShowLocationsCovered: true));
 
         result.Should().NotBeNull();
         var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
-        coverage.InSchool.Should().BeTrue();
+        coverage.FaceToFace.Should().BeTrue();
         coverage.Online.Should().BeFalse();
     }
 
@@ -244,12 +248,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
         );
 
@@ -257,19 +261,19 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             new GetTuitionPartnerQuery("a-tuition-partner", ShowFullPricing: true));
 
         result.Should().NotBeNull();
-        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
+        result!.AllPrices[TuitionSetting.FaceToFace][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
                 {2, 12.34m},
                 {3, 12.34m}
             });
-        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
+        result!.AllPrices[TuitionSetting.FaceToFace][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
                 {2, 56.78m},
                 {3, 56.78m}
             });
-        result!.AllPrices[TuitionType.Online][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
+        result!.AllPrices[TuitionSetting.Online][KeyStage.KeyStage3]["Maths"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
                 {3, 56.78m}
@@ -281,12 +285,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
         );
 
@@ -294,7 +298,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             new GetTuitionPartnerQuery("a-tuition-partner", ShowFullInfo: true));
 
         result.Should().NotBeNull();
-        result!.AllPrices[TuitionType.InSchool][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
+        result!.AllPrices[TuitionSetting.FaceToFace][KeyStage.KeyStage3]["English"].Should().BeEquivalentTo(
             new Dictionary<int, decimal>
             {
                 {2, 12.34m},
@@ -302,7 +306,7 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
             });
 
         var coverage = result!.LocalAuthorityDistricts.Single(x => x.Name == "East Riding of Yorkshire");
-        coverage.InSchool.Should().BeTrue();
+        coverage.FaceToFace.Should().BeTrue();
         coverage.Online.Should().BeTrue();
 
         result.ImportId.Should().NotBeNull();
@@ -313,12 +317,12 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool, TuitionType.Online)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace, TuitionSetting.Online)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)
                     .Online().Costing(56.78m).ForGroupSizes(3)))
         );
 
@@ -338,21 +342,21 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(56.78m).ForGroupSizes(2, 3)))
+                    .FaceToFace().Costing(56.78m).ForGroupSizes(2, 3)))
         );
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("bravo-learning")
-            .TaughtIn(District.EastRidingOfYorkshire, TuitionType.InSchool)
+            .TaughtIn(District.EastRidingOfYorkshire, TuitionSetting.FaceToFace)
             .WithSubjects(c => c
                 .Subject(Subjects.Id.KeyStage3English, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3))
                 .Subject(Subjects.Id.KeyStage3Maths, s => s
-                    .InSchool().Costing(12.34m).ForGroupSizes(2, 3)))
+                    .FaceToFace().Costing(12.34m).ForGroupSizes(2, 3)))
         );
 
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery(tuitionPartner));
@@ -366,7 +370,11 @@ public class TuitionPartnerDetailsPage : CleanSliceFixture
     {
         await Fixture.AddTuitionPartner(A.TuitionPartner
             .WithName("a-tuition-partner")
-            .WithAddress("1 High Street\r\nBeautiful City\rThe County\nPostcode"));
+            .WithAddress("1 High Street\r\nBeautiful City\rThe County\nPostcode")
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
+            .WithSubjects(s => s
+                .Subject(Subjects.Id.KeyStage1English, l => l
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
         var result = await Fixture.SendAsync(new GetTuitionPartnerQuery("a-tuition-partner"));
 

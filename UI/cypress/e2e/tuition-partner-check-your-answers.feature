@@ -34,7 +34,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '1'
+        When the user clicks the change button 1
         Then the user has arrived on the tuition response page
         When they type '5' characters for section 1
         And they click 'Continue'
@@ -47,12 +47,12 @@ Feature: Check your answers page for tuition partner response
             | SEND requirements:                                                                    | 80               |
             | Other school considerations:                                                          | 80               |
 
-    Scenario: Change selections for Tuition type on TP response
+    Scenario: Change selections for Tuition setting on TP response
         Given a user has started the 'Find a tuition partner' journey
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '2'
+        When the user clicks the change button 2
         Then the user has arrived on the tuition response page
         When they type '2' characters for section 2
         And they click 'Continue'
@@ -71,7 +71,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '3'
+        When the user clicks the change button 3
         Then the user has arrived on the tuition response page
         When they type '6' characters for section 3
         And they click 'Continue'
@@ -90,7 +90,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '4'
+        When the user clicks the change button 4
         Then the user has arrived on the tuition response page
         When they type '4' characters for section 4
         And they click 'Continue'
@@ -110,7 +110,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '5'
+        When the user clicks the change button 5
         Then the user has arrived on the tuition response page
         When they type '1' characters for section 5
         And they click 'Continue'
@@ -129,7 +129,7 @@ Feature: Check your answers page for tuition partner response
         When a tuition partner clicks the magic link to respond to a schools enquiry
         Then Tuition partner has journeyed to the check your answers page
         And  the user has arrived on the tuition response check your answers page
-        When the user clicks the change button '1'
+        When the user clicks the change button 1
         Then the user has arrived on the tuition response page
         When they click back on the browser
         Then the user has arrived on the tuition response check your answers page

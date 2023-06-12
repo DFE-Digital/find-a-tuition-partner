@@ -148,7 +148,7 @@ Then("they type {string} characters for section 1", (numOfChars) => {
 
 Then("they type {string} characters for section 2", (numOfChars) => {
   const totalText = "a".repeat(numOfChars);
-  cy.get("#Data_TuitionTypeText").clear().invoke("val", totalText);
+  cy.get("#Data_TuitionSettingText").clear().invoke("val", totalText);
 });
 
 Then("they type {string} characters for section 3", (numOfChars) => {

@@ -10,8 +10,18 @@ namespace Tests.Enquiry.Build;
 public class SENDRequirementsTests
 {
     private readonly SliceFixture _fixture;
+    private readonly SENDRequirementsModelValidator _validator;
 
-    public SENDRequirementsTests(SliceFixture fixture) => _fixture = fixture;
+    public SENDRequirementsTests(SliceFixture fixture)
+    {
+        _fixture = fixture;
+        _validator = new SENDRequirementsModelValidator();
+    }
+
+    private static SENDRequirementsModel CreateModel(string data)
+    {
+        return new SENDRequirementsModel { SENDRequirements = data };
+    }
 
     [Theory]
     [InlineData("")]
@@ -19,39 +29,39 @@ public class SENDRequirementsTests
     [InlineData(null)]
     public void With_no_input(string data)
     {
-        var model = new SENDRequirementsModel { SENDRequirements = data };
-        var result = new SENDRequirementsModelValidator().TestValidate(model);
+        var model = CreateModel(data);
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = new SENDRequirementsModel { SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1) };
-        var result = new SENDRequirementsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = new SENDRequirementsModel { SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize) };
-        var result = new SENDRequirementsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize));
+        var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = new SENDRequirementsModel { SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1) };
-        var result = new SENDRequirementsModelValidator().TestValidate(model);
+        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1));
+        var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirements);
     }
 
     [Fact]
     public async Task With_a_valid_data_moves_to_next_page()
     {
-        var model = new SENDRequirementsModel { SENDRequirements = "Test 123" };
+        var model = CreateModel("Test 123");
 
         var result = await _fixture.GetPage<SENDRequirements>().Execute(page =>
         {
@@ -65,7 +75,8 @@ public class SENDRequirementsTests
     [Fact]
     public async Task With_a_valid_data_moves_to_cya_page()
     {
-        var model = new SENDRequirementsModel { SENDRequirements = "Test 123", From = Domain.Enums.ReferrerList.CheckYourAnswers };
+        var model = CreateModel("Test 123");
+        model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
 
         var result = await _fixture.GetPage<SENDRequirements>().Execute(page =>
         {

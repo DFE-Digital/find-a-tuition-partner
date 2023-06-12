@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using Domain.Attributes;
 
 namespace Application.Extensions;
 
@@ -19,7 +20,31 @@ public static class EnumExtensions
     public static List<TEnum> GetAllEnums<TEnum>()
         where TEnum : struct, Enum
     {
-        return Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+        Dictionary<string, int> orderTable = new();
+
+        var enumValues = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList();
+
+        var members = typeof(TEnum).GetMembers();
+
+        foreach (MemberInfo member in members)
+        {
+            var attributes = member.GetCustomAttributes(typeof(OrderAttribute), false);
+
+            foreach (object attribute in attributes)
+            {
+                if (attribute is OrderAttribute orderAttribute)
+                {
+                    orderTable.Add(member.Name, orderAttribute.Order);
+                }
+            }
+        }
+
+        if (orderTable.Count == enumValues.Count)
+        {
+            enumValues = enumValues.OrderBy(n => orderTable[n.ToString("G")]).ToList();
+        }
+
+        return enumValues;
     }
 
     private static DescriptionAttribute? GetDisplayAttribute(Enum enumValue)

@@ -37,6 +37,9 @@ public class CheckYourAnswers : PageModel
 
         Data = data;
 
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailVerificationPasscode, string.Empty);
+        await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EmailToBeVerified, string.Empty);
+
         var sessionValues = await _sessionService.RetrieveDataAsync();
 
         if (sessionValues != null)
@@ -50,16 +53,33 @@ public class CheckYourAnswers : PageModel
         Data.KeyStageSubjects = GetKeyStageSubject(Data.Subjects);
         Data.HasKeyStageSubjects = Data.KeyStageSubjects.Any();
 
-        if (!string.IsNullOrWhiteSpace(Data.Postcode))
+        var postcodeAndSchoolValid = false;
+        if (!string.IsNullOrWhiteSpace(Data.Postcode) && Data.SchoolId.HasValue)
         {
             var locationResult = await _mediator.Send(new GetSearchLocationQuery(Data.Postcode));
-            Data.LocalAuthorityDistrictName = locationResult == null ? string.Empty : locationResult.LocalAuthorityDistrict;
+
+            if (locationResult.TryValidate(true).IsSuccess)
+            {
+                Data.LocalAuthorityDistrictName = locationResult!.LocalAuthorityDistrict;
+
+                var school = locationResult!.Schools!.FirstOrDefault(x => x.Id == Data.SchoolId.Value);
+
+                if (school != null)
+                {
+                    Data.SchoolDetails = $"{school.EstablishmentName}, {Data.Postcode}";
+                    Data.SchoolUrn = school.Urn;
+                    postcodeAndSchoolValid = true;
+                }
+            }
         }
 
-        if (string.IsNullOrWhiteSpace(Data.LocalAuthorityDistrictName))
+        if (!postcodeAndSchoolValid)
         {
-            _logger.LogInformation("No LAD found on the CYA page for postcode: {postcode}", Data.Postcode);
-            return NotFound();
+            Data.LocalAuthorityDistrictName = null;
+            Data.SchoolId = null;
+            Data.SchoolDetails = null;
+            Data.SchoolUrn = null;
+            Data.Postcode = null;
         }
 
         HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
@@ -122,10 +142,7 @@ public class CheckYourAnswers : PageModel
         {
             Data.From = ReferrerList.CheckYourAnswers;
 
-            var errorMessage =
-                $"There was a problem sending the email and you should check the email address and try again";
-
-            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, errorMessage);
+            await _sessionService.AddOrUpdateDataAsync(SessionKeyConstants.EnquirerEmailErrorMessage, Constants.StringConstants.EmailErrorMessage);
 
             return RedirectToPage(nameof(EnquirerEmail), new SearchModel(Data));
         }
@@ -154,6 +171,7 @@ public class CheckYourAnswers : PageModel
         HttpContext.AddHasAdditionalInformationQuestionToAnalytics<CheckYourAnswers>((!string.IsNullOrWhiteSpace(Data.AdditionalInformation)).ToString());
         HttpContext.AddTuitionPartnerNameCsvAnalytics<CheckYourAnswers>(string.Join(",", Data.TuitionPartnersForEnquiry!.Results.Select(x => x.Name)));
         HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrictName);
+        HttpContext.AddSchoolUrnToAnalytics<CheckYourAnswers>(Data.SchoolUrn!.Value);
         HttpContext.AddEnquirySupportReferenceNumberToAnalytics<CheckYourAnswers>(submittedConfirmationModel.SupportReferenceNumber);
 
         return RedirectToPage(nameof(SubmittedConfirmation), submittedConfirmationModelRouteData);
@@ -163,10 +181,6 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
-            case var k when k.Equals(SessionKeyConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
-                Data.Email = value;
-                break;
-
             case var k when k.Equals(SessionKeyConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
                 Data.TutoringLogistics = value;
                 break;
@@ -177,6 +191,14 @@ public class CheckYourAnswers : PageModel
 
             case var k when k.Equals(SessionKeyConstants.EnquiryAdditionalInformation, StringComparison.OrdinalIgnoreCase):
                 Data.AdditionalInformation = value;
+                break;
+
+            case var k when k.Equals(SessionKeyConstants.EnquirySchoolId, StringComparison.OrdinalIgnoreCase):
+                Data.SchoolId = string.IsNullOrEmpty(value) ? null : int.Parse(value);
+                break;
+
+            case var k when k.Equals(SessionKeyConstants.EnquirerEmail, StringComparison.OrdinalIgnoreCase):
+                Data.Email = value;
                 break;
         }
     }
