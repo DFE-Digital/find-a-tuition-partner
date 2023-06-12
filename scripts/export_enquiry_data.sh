@@ -16,9 +16,11 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
             "TutoringLogistics",
             "SENDRequirements",
             "AdditionalInformation",
-            "TuitionTypes"."Name" AS "TuitionType",
+            "TuitionSettings"."Name" AS "TuitionSetting",
             "CreatedAt"
-            FROM "Enquiries" LEFT JOIN "TuitionTypes" ON "Enquiries"."TuitionTypeId" = "TuitionTypes"."Id"
+            FROM "Enquiries" 
+            LEFT JOIN "EnquiryTuitionSetting" ON "Enquiries"."Id" = "EnquiryTuitionSetting"."EnquiriesId"
+            LEFT JOIN "TuitionSettings" ON "TuitionSettings"."Id" = "EnquiryTuitionSetting"."TuitionSettingsId"
             ORDER BY "CreatedAt" ASC 
         )
         TO '\'$EXPORT_DIR'/enquiries.csv'\''
@@ -28,7 +30,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
         SELECT "Enquiries"."SupportReferenceNumber" AS "Reference",
             "TuitionPartners"."Name" AS "TuitionPartner",
             "EnquiryResponses"."KeyStageAndSubjectsText" AS "KeyStageAndSubjects",
-            "EnquiryResponses"."TuitionTypeText" AS "TuitionType",
+            "EnquiryResponses"."TuitionSettingText" AS "TuitionSetting",
             "EnquiryResponses"."TutoringLogisticsText" AS "TutoringLogistics",
             "EnquiryResponses"."SENDRequirementsText" AS "SENDRequirements",
             "EnquiryResponses"."AdditionalInformationText" AS "AdditionalInformation",
