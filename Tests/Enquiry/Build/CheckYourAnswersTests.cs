@@ -58,10 +58,10 @@ public class CheckYourAnswersTests
         {
             TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
             {
-                NumberOfPupils = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                StartDate = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                TuitionDuration = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-                TimeOfDay = new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1)
+                NumberOfPupils = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                StartDate = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                TuitionDuration = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                TimeOfDay = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1)
             },
             SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
             AdditionalInformation = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),

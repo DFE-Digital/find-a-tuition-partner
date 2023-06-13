@@ -50,10 +50,10 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize - 1));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -61,10 +61,10 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -72,10 +72,10 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1),
-            new string('*', IntegerConstants.EnquiryShortQuestionsMaxCharacterSize + 1));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1));
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);

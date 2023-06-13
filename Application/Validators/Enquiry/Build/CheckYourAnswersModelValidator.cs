@@ -22,33 +22,33 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Enter the number of pupils that need tuition")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.SmallTextAreaMaxCharacterSize)
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"The number of pupils that need tuition must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"The number of pupils that need tuition must be {IntegerConstants.SmallTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.TutoringLogisticsDetailsModel.StartDate)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Enter when you want tuition to start")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.SmallTextAreaMaxCharacterSize)
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"When you want tuition to start must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"When you want tuition to start must be {IntegerConstants.SmallTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.TutoringLogisticsDetailsModel.TuitionDuration)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Enter how long you need tuition for")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.SmallTextAreaMaxCharacterSize)
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"How long you need tuition for must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"How long you need tuition for must be {IntegerConstants.SmallTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.TutoringLogisticsDetailsModel.TimeOfDay)
             .NotEmpty()
             .When(m => m.ConfirmTermsAndConditions)
             .WithMessage("Enter what time of day you need tuition")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryShortQuestionsMaxCharacterSize)
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.SmallTextAreaMaxCharacterSize)
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"What time of day you need tuition must be {IntegerConstants.EnquiryShortQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"What time of day you need tuition must be {IntegerConstants.SmallTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.SENDRequirements)
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))

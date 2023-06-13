@@ -14,7 +14,7 @@
     You will be asked about SEND and additional requirements on the next page
   </div>
   <partial name="_PIIWarning" />
-  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" threshold="@IntegerConstants.EnquiryShortQuestionsMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.EnquiryShortQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       How many pupils need tuition?
     </govuk-character-count-label>
@@ -22,7 +22,7 @@
       Specify the number of pupils for each key stage and subject
     </govuk-character-count-hint>
   </govuk-character-count>
-  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.StartDate" threshold="@IntegerConstants.EnquiryShortQuestionsMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.EnquiryShortQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.StartDate" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       When do you want tuition to start?
     </govuk-character-count-label>
@@ -30,7 +30,7 @@
       You can ask for a specific date, within term time or during holidays
     </govuk-character-count-hint>
   </govuk-character-count>
-  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" threshold="@IntegerConstants.EnquiryShortQuestionsMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.EnquiryShortQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       How long do you need tuition for?
     </govuk-character-count-label>
@@ -38,7 +38,7 @@
       Explain how many tuition hours per week per pupil is needed
     </govuk-character-count-hint>
   </govuk-character-count>
-  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" threshold="@IntegerConstants.EnquiryShortQuestionsMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.EnquiryShortQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       What time of day do you need tuition?
     </govuk-character-count-label>
