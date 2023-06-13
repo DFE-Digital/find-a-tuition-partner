@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Notify.Exceptions;
 using Tests.TestData;
 using UI.Pages.Enquiry.Build;
+using TutoringLogisticsDetailsModel = Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel;
 
 namespace Tests.Enquiry.Build;
 
@@ -56,7 +57,7 @@ public class CheckYourAnswersTests
     {
         var model = new CheckYourAnswersModel
         {
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
             {
                 NumberOfPupils = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
                 StartDate = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
@@ -95,7 +96,7 @@ public class CheckYourAnswersTests
             SchoolId = 1,
             SchoolUrn = 123,
             Email = "test@test.com",
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
             {
                 NumberOfPupils = "Test content",
                 StartDate = "Test content",
@@ -135,7 +136,7 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "test@test.com",
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
             {
                 NumberOfPupils = "Test content",
                 StartDate = "Test content",
@@ -175,7 +176,7 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "400error@test",
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
             {
                 NumberOfPupils = "Test content",
                 StartDate = "Test content",
@@ -215,7 +216,7 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "500error@test",
-            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
             {
                 NumberOfPupils = "Test content",
                 StartDate = "Test content",
@@ -253,7 +254,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.Online,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -276,7 +277,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -304,7 +305,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -329,7 +330,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 //SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -354,7 +355,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -379,7 +380,7 @@ public class CheckYourAnswersTests
                 //TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -404,7 +405,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 //Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -428,7 +429,7 @@ public class CheckYourAnswersTests
                 HasKeyStageSubjects = true,
                 TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     //NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -452,7 +453,7 @@ public class CheckYourAnswersTests
                 HasKeyStageSubjects = true,
                 TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     //StartDate = "Test content",
@@ -476,7 +477,7 @@ public class CheckYourAnswersTests
                 HasKeyStageSubjects = true,
                 TuitionSetting = TuitionSetting.NoPreference,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
@@ -501,7 +502,7 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
                 {
                     NumberOfPupils = "Test content",
                     StartDate = "Test content",
