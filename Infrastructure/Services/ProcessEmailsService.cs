@@ -282,7 +282,7 @@ public class ProcessEmailsService : IProcessEmailsService
                 catch (Exception ex)
                 {
                     //We don't want to throw the error here, we log and continue processing other emails
-                    _logger.LogError(ex, "Unexpected error in emailsToPollForStatusUpdate for EmailLog.ClientReferenceNumber: {ClientReferenceNumber}, EmailLog.Id: {EmailLogId}", emailLog.ClientReferenceNumber, emailLog.Id);
+                    _logger.LogError(ex, "Unexpected error in emailsToPollForStatusUpdate for EmailLog.ClientReferenceNumber: {ClientReferenceNumber}, EmailLog.Id: {EmailLogId}", emailLog!.ClientReferenceNumber, emailLog!.Id);
                 }
             }
         }
