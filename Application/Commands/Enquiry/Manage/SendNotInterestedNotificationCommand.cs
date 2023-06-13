@@ -36,7 +36,6 @@ public class SendNotInterestedNotificationCommandHandler : IRequestHandler<SendN
     public SendNotInterestedNotificationCommandHandler(
         IUnitOfWork unitOfWork,
         IProcessEmailsService processEmailsService,
-        INotificationsClientService notificationsClientService,
         ILogger<SendNotInterestedNotificationCommandHandler> logger,
         IHostEnvironment hostEnvironment)
     {
@@ -63,6 +62,11 @@ public class SendNotInterestedNotificationCommandHandler : IRequestHandler<SendN
 
             _logger.LogInformation("Not interested email setup to be sent.  Email id: {emailId}, SupportReferenceNumber: {supportReferenceNumber}, TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl} delayed by {minsDelaySendingOutcomeEmailToTP} mins",
                 enquiryResponse.TuitionPartnerResponseNotInterestedEmailLogId, request.SupportReferenceNumber, request.TuitionPartnerSeoUrl, _minsDelaySendingOutcomeEmailToTP);
+
+            if (_minsDelaySendingOutcomeEmailToTP <= 0)
+            {
+                await _processEmailsService.SendEmailAsync(enquiryResponse.TuitionPartnerResponseNotInterestedEmailLogId!.Value);
+            }
         }
         else
         {
