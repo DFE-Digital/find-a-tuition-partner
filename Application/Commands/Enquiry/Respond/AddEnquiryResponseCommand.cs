@@ -157,7 +157,8 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             CompletedAt = _createdDateTime,
             EnquirerResponseEmailLog = GetEnquirerResponseEmailLog(request),
             TuitionPartnerResponseEmailLog = GetTuitionPartnerResponseEmailLog(request),
-            EnquiryResponseStatusId = (int)EnquiryResponseStatus.Unread
+            EnquiryResponseStatusId = (int)EnquiryResponseStatus.Unread,
+            EnquiryResponseStatusLastUpdated = _createdDateTime
         };
     }
 

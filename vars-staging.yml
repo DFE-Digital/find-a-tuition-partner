@@ -16,7 +16,7 @@ govuk-notify-enquiry-outcome-to-tp-template-id: 4cc549a0-0295-4a9f-a9ab-91a1ddc5
 email-override-email-address: 
 email-merge-responses: false
 email-all-sent-to-enquirer: true
-email-mins-delay-sending-outcome-email-to-tp: 3
+email-mins-delay-sending-outcome-email-to-tp: 1440
 feature-flag-enquiry-builder: true
 feature-flag-send-emails-from-ntp: true
 feature-flag-verify-email: true

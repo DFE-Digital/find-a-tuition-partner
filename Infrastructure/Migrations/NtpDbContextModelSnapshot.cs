@@ -449,6 +449,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("EnquiryResponseStatusId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("EnquiryResponseStatusLastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("KeyStageAndSubjectsText")
                         .IsRequired()
                         .HasColumnType("text");

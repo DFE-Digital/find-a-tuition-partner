@@ -28,6 +28,8 @@ public class EnquiryResponse
 
     public int EnquiryResponseStatusId { get; set; }
 
+    public DateTime EnquiryResponseStatusLastUpdated { get; set; } = DateTime.UtcNow;
+
     public EmailLog EnquirerResponseEmailLog { get; set; } = null!;
 
     public EmailLog TuitionPartnerResponseEmailLog { get; set; } = null!;

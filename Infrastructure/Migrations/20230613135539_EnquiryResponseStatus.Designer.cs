@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230612172101_EnquiryResponseStatus")]
+    [Migration("20230613135539_EnquiryResponseStatus")]
     partial class EnquiryResponseStatus
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -450,6 +450,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("EnquiryResponseStatusId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("EnquiryResponseStatusLastUpdated")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("KeyStageAndSubjectsText")
                         .IsRequired()

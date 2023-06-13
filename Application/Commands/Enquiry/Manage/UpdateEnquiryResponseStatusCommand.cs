@@ -22,15 +22,19 @@ public class UpdateEnquiryResponseStatusCommandHandler : IRequestHandler<UpdateE
     {
         var tpEnquiryResponse = await _unitOfWork.EnquiryRepository.GetEnquiryResponse(request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
 
-        if (tpEnquiryResponse.EnquiryResponseStatusId == (int)EnquiryResponseStatus.NotInterested)
-            throw new ArgumentException($"EnquiryResponse already Not Interested in UpdateEnquiryResponseStatusCommandHandler for SupportReferenceNumber {request.SupportReferenceNumber} and TP {request.TuitionPartnerSeoUrl}");
+        if (tpEnquiryResponse.EnquiryResponseStatusId != (int)request.EnquiryResponseStatus)
+        {
+            if (tpEnquiryResponse.EnquiryResponseStatusId == (int)EnquiryResponseStatus.NotInterested)
+                throw new ArgumentException($"EnquiryResponse already Not Interested in UpdateEnquiryResponseStatusCommandHandler for SupportReferenceNumber {request.SupportReferenceNumber} and TP {request.TuitionPartnerSeoUrl}");
 
-        tpEnquiryResponse.EnquiryResponseStatusId = (int)request.EnquiryResponseStatus;
+            tpEnquiryResponse.EnquiryResponseStatusId = (int)request.EnquiryResponseStatus;
+            tpEnquiryResponse.EnquiryResponseStatusLastUpdated = DateTime.UtcNow;
 
-        await _unitOfWork.Complete();
+            await _unitOfWork.Complete();
 
-        _logger.LogInformation("Updated status of enquiry to {newStatus}, support ref {supportRef}, TP {tp}", request.EnquiryResponseStatus.DisplayName(),
-            request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+            _logger.LogInformation("Updated status of enquiry to {newStatus}, support ref {supportRef}, TP {tp}", request.EnquiryResponseStatus.DisplayName(),
+                request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+        }
 
         return true;
     }
