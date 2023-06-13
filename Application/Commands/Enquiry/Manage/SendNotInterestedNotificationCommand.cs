@@ -15,7 +15,8 @@ public record SendNotInterestedNotificationCommand(
     string TuitionPartnerEmailAddress,
     string TuitionPartnerName,
     string LocalAuthorityDistrict,
-    string BaseServiceUrl) : IRequest<bool>
+    string BaseServiceUrl,
+    string? EnquirerEmailAddress) : IRequest<bool>
 { }
 
 public class SendNotInterestedNotificationCommandHandler : IRequestHandler<SendNotInterestedNotificationCommand, bool>
@@ -98,7 +99,7 @@ public class SendNotInterestedNotificationCommandHandler : IRequestHandler<SendN
             ProcessFromDate = processDateTime,
             FinishProcessingDate = processDateTime.AddDays(IntegerConstants.EmailLogFinishProcessingAfterDays),
             EmailAddress = request.TuitionPartnerEmailAddress,
-            EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(),
+            EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.EnquirerEmailAddress),
             EmailTemplateShortName = emailTemplateType.DisplayName(),
             ClientReferenceNumber = request.SupportReferenceNumber.CreateNotifyEnquiryClientReference(
                 _environmentNameNonProduction!, emailTemplateType, request.TuitionPartnerName),

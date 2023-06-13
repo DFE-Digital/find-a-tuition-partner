@@ -9,6 +9,8 @@ namespace UI.Pages.Enquiry.Manage
     public class ConfirmNotInterested : PageModel
     {
         private readonly IMediator _mediator;
+        private readonly IHostEnvironment _hostEnvironment;
+
         [BindProperty] public EnquirerViewTuitionPartnerDetailsModel Data { get; set; } = new();
         [BindProperty] public EnquirerResponseResultsModel EnquirerResponseResultsModel { get; set; } = new();
 
@@ -16,9 +18,10 @@ namespace UI.Pages.Enquiry.Manage
 
         [FromRoute(Name = "tuition-partner-seo-url")] public string TuitionPartnerSeoUrl { get; set; } = string.Empty;
 
-        public ConfirmNotInterested(IMediator mediator)
+        public ConfirmNotInterested(IMediator mediator, IHostEnvironment hostEnvironment)
         {
             _mediator = mediator;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<IActionResult> OnGetAsync(EnquirerResponseResultsModel enquirerResponseResultsModel)
@@ -46,6 +49,11 @@ namespace UI.Pages.Enquiry.Manage
             Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
             Data.Token = queryToken;
 
+            if (_hostEnvironment.IsProduction())
+            {
+                Data.EnquirerEmailAddress = null;
+            }
+
             EnquirerResponseResultsModel = enquirerResponseResultsModel;
 
             return Page();
@@ -69,7 +77,8 @@ namespace UI.Pages.Enquiry.Manage
                                     Data.TuitionPartnerEmailAddress,
                                     Data.TuitionPartnerName,
                                     Data.LocalAuthorityDistrict,
-                                    Request.GetBaseServiceUrl()));
+                                    Request.GetBaseServiceUrl(),
+                                    Data.EnquirerEmailAddress));
 
             var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}/{TuitionPartnerSeoUrl}/not-interested-feedback?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}";
             return Redirect(redirectPageUrl);

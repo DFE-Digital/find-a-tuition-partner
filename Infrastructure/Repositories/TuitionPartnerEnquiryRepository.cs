@@ -87,7 +87,8 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerEmailAddress = enquiryTP.Email,
             TuitionPartnerWebsite = enquiryTP.Website,
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
-            LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!
+            LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
+            EnquirerEmailAddress = enquiry.Email
         };
 
         return result;
