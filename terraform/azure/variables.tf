@@ -1,6 +1,7 @@
 variable "environment" {
   description = "Environment name. Will be used along with `project_name` as a prefix for all resources."
   type        = string
+  default     = "dev"
 }
 
 variable "aspnetcore_environment" {
@@ -17,15 +18,18 @@ variable "project_name" {
 variable "service_name" {
   description = "Service name. Will be used along with `environment` as a prefix for all resources."
   type        = string
+  default     = "find-a-tp"
 }
 
 variable "service_offering" {
-  type = string
+  type    = string
+  default = "National Tutoring Programme"
 }
 
 variable "azure_location" {
   description = "Azure location in which to launch resources."
   type        = string
+  default     = "West Europe"
 }
 
 variable "tags" {
@@ -125,7 +129,7 @@ variable "service_health_check_eviction_time_in_min" {
 variable "enable_service_logs" {
   description = "Enable service logs, stored in blob storage"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "service_log_level" {
@@ -160,8 +164,7 @@ variable "enable_monitoring" {
 
 variable "monitor_email_receivers" {
   description = "A list of email addresses that should be notified by monitoring alerts"
-  type        = list(string)
-  default     = []
+  type        = string
 }
 
 variable "monitor_enable_slack_webhook" {
@@ -389,9 +392,4 @@ variable "redis_cache_patch_schedule_hour" {
   description = "Redis Cache patch schedule hour"
   type        = number
   default     = 23
-}
-
-variable "key_vault_access_users" {
-  description = "List of users that require access to the Key Vault. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform"
-  type        = list(string)
 }

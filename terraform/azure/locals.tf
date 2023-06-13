@@ -17,7 +17,6 @@ locals {
   redis_cache_version                = var.redis_cache_version
   redis_cache_patch_schedule_day     = var.redis_cache_patch_schedule_day
   redis_cache_patch_schedule_hour    = var.redis_cache_patch_schedule_hour
-  key_vault_access_users             = var.key_vault_access_users
 
   tags = {
     "Environment"      = var.environment,

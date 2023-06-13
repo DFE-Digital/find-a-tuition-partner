@@ -1,40 +1,31 @@
-name: 'Provision FATP into Azure via Terraform'
+name: 'Provision FaTP into Azure via Terraform on Pull Request'
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment for the deployment'
-        required: true
-        default: dev
-        type: choice
-        options:
-          - dev
-          - research
-          - staging
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+concurrency: pr-${{ github.event.number }}
+
 
 env:
   TF_VERSION: '~>1.4.5'
+  TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
-  TF_VAR_project_name: ${{ secrets.PROJECT_NAME }}
   TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
   TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
   TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
   TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
   TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+  TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
 
 jobs:
   terraform-plan:
-    name: 'Provision FATP into Azure via Terraform plan'
+    name: 'Provision FaTP into Azure via Terraform plan'
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: 'development'
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
@@ -61,15 +52,12 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
           terraform_wrapper: false
 
-      - name: Install jq
-        run: sudo apt-get install -y jq
-
       - name: 'Set TF State Key'
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "TF_STATE_KEY=pr-${{ github.event.pull_request.number }}-terraform.tfstate" >> $GITHUB_ENV
           else
-            echo "TF_STATE_KEY=${{ inputs.environment }}-terraform.tfstate" >> $GITHUB_ENV
+            echo "TF_STATE_KEY=dev-terraform.tfstate" >> $GITHUB_ENV
           fi
 
       - name: 'Terraform Init'
@@ -88,11 +76,6 @@ jobs:
       # Will fail the build if not
       - name: Terraform Format
         run: terraform fmt -check
-
-
-      - name: 'Decode GitHub Secret'
-        run: |
-          echo "TF_VAR_key_vault_access_users=$(echo '${{ secrets.KEY_VAULT_ACCESS_USERS }}' | jq -c .)" >> $GITHUB_ENV
       
       # Generates an execution plan for Terraform
       # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
@@ -104,10 +87,10 @@ jobs:
           export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
           export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
           export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
-          terraform plan -var="postgresql_server_admin_username=${TF_VAR_postgresql_server_admin_username}" \
+          terraform plan -var-file="vars-pr.tfvars" -var="postgresql_server_admin_username=${TF_VAR_postgresql_server_admin_username}" \
                             -var="postgresql_server_admin_password=${TF_VAR_postgresql_server_admin_password}" \
-                            -var="key_vault_access_users=${{ env.TF_VAR_key_vault_access_users }}" \
-                            -var="project_name=${TF_VAR_project_name}" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
+                            -var="environment=${TF_VAR_ENVIRONMENT}" \
+                            -var="monitor_email_receivers=${TF_VAR_monitor_email_receivers}"  -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
           
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
           
@@ -168,9 +151,8 @@ jobs:
   
   terraform-apply:
     name: 'Terraform Apply'
-    #if: github.ref == 'refs/heads/main' && needs.terraform-plan.outputs.tfplanExitCode == 2
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: 'development'
     needs: [terraform-plan]
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -218,12 +200,3 @@ jobs:
           export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
           export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform apply -auto-approve tfplan.out
-      
-      # Logout from azure
-      - name: Log out from Azure
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az logout
-            az cache purge

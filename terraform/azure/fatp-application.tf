@@ -1,5 +1,5 @@
 module "fatp_azure_web_app_services_hosting" {
-  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.4"
+  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.5"
 
   environment    = local.environment
   project_name   = local.project_name
@@ -31,15 +31,15 @@ module "fatp_azure_web_app_services_hosting" {
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min
   enable_service_logs                       = var.enable_service_logs
-  service_log_storage_sas_start             = var.service_log_storage_sas_start
-  service_log_storage_sas_expiry            = var.service_log_storage_sas_expiry
+  service_log_storage_sas_start             = var.service_log_storage_sas_start == "" ? timestamp() : var.service_log_storage_sas_start
+  service_log_storage_sas_expiry            = var.service_log_storage_sas_expiry == "" ? timeadd(timestamp(), "8760h") : var.service_log_storage_sas_expiry
   service_log_level                         = var.service_log_level
   service_log_retention                     = var.service_log_retention
 
   # Monitoring is disabled by default. If enabled, the following metrics will be monitored:
   # CPU usage, Memory usage, Latency, HTTP regional availability
   enable_monitoring              = var.enable_monitoring
-  monitor_email_receivers        = var.monitor_email_receivers
+  monitor_email_receivers        = split(",", var.monitor_email_receivers)
   monitor_endpoint_healthcheck   = var.monitor_endpoint_healthcheck
   monitor_enable_slack_webhook   = var.monitor_enable_slack_webhook
   monitor_slack_webhook_receiver = var.monitor_slack_webhook_receiver
