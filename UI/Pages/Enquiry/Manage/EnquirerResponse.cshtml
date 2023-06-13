@@ -2,8 +2,8 @@
 @model UI.Pages.Enquiry.Manage.EnquirerResponse
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
-  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={Model.Data.Token}";
-  var notInterestedLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}/confirm-not-interested?Token={Model.Data.Token}";
+  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}";
+  var notInterestedLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}/confirm-not-interested?Token={Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}";
 
   ViewData["Title"] = "View a response";
   ViewData["BackLinkText"] = "Back to view all your responses";
@@ -183,12 +183,17 @@
           <a class="govuk-button govuk-button--secondary" data-module="govuk-button" draggable="false" href="@notInterestedLink" role="button">No, I’m not interested</a>
         </div>
         <p class="govuk-body">
-          <a class="govuk-link" asp-page-handler="IsUndecided" asp-all-route-data="@Model.Data.ToRouteData(new Dictionary<string, string>() {{"Token", Model.Data.Token}})">I’m undecided</a>
+          <a class="govuk-link" asp-page-handler="IsUndecided" asp-all-route-data="@Model.Data.ToRouteData(
+            new Dictionary<string, string>() {{"Token", Model.Data.Token}, 
+                              {"EnquirerResponseResultsModel.EnquiryResponseResultsOrderBy", Model.EnquirerResponseResultsModel.EnquiryResponseResultsOrderBy.ToString()}, 
+                              {"EnquirerResponseResultsModel.EnquiryResponseResultsDirection", Model.EnquirerResponseResultsModel.EnquiryResponseResultsDirection.ToString()}})">I’m undecided</a>
         </p>
 
         <input asp-for="Data.SupportReferenceNumber" type="hidden" />
         <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
         <input asp-for="Data.Token" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsOrderBy" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsDirection" type="hidden" />
       </form>
     </div>
   </div>

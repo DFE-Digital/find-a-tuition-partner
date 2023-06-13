@@ -104,23 +104,29 @@
 <p class="govuk-body">@numberOfTpEnquiryResponseReceived out of @Model.Data.NumberOfTpEnquiryWasSent tuition partners have responded at the moment.</p>
 <p class="govuk-body">You have rejected @Model.Data.NumberOfEnquirerNotInterestedResponses tuition partner’s</p>
 
-@*TODO - Add sorting*@
 @if (Model.Data.EnquirerViewResponses.Any())
 {
+  var sortLink = $"/enquiry/{Model.SupportReferenceNumber}?Token={Model.Data.Token}&";
   <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
     <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col">Date</th>
-        <th class="govuk-table__header" scope="col">Tuition partner</th>
-        <th class="govuk-table__header app-print-hide" scope="col">Your interest</th>
+        <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Date.GetAriaSort(Model.Data))">
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Date.GetSortQueryString(Model.Data)">Date</a>
+        </th>
+        <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Name.GetAriaSort(Model.Data))">
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Name.GetSortQueryString(Model.Data)">Tuition partner</a>
+        </th>
+        <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Status.GetAriaSort(Model.Data))">
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Status.GetSortQueryString(Model.Data)">Your interest</a>
+        </th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
 
       @foreach (var item in @Model.Data.EnquirerViewResponses!)
       {
-        var enquirerEnquiryResponseLink = $"/enquiry/{Model.SupportReferenceNumber}/{item.TuitionPartnerName.ToSeoUrl()}?Token={Model.Data.Token}";
+        var enquirerEnquiryResponseLink = $"/enquiry/{Model.SupportReferenceNumber}/{item.TuitionPartnerName.ToSeoUrl()}?Token={Model.Data.Token}&{Model.Data.ToQueryString()}";
         <tr class="govuk-table__row">
           <td class="govuk-table__cell">
             @item.EnquiryResponseDate?.ToString("dd/MM/yyyy")

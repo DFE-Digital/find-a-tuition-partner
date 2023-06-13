@@ -9,6 +9,7 @@ public class EnquirerResponse : PageModel
 {
     private readonly IMediator _mediator;
     [BindProperty] public EnquirerViewResponseModel Data { get; set; } = new();
+    [BindProperty] public EnquirerResponseResultsModel EnquirerResponseResultsModel { get; set; } = new();
 
     [FromRoute(Name = "support-reference-number")] public string SupportReferenceNumber { get; set; } = string.Empty;
 
@@ -19,7 +20,7 @@ public class EnquirerResponse : PageModel
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> OnGet()
+    public async Task<IActionResult> OnGet(EnquirerResponseResultsModel enquirerResponseResultsModel)
     {
         var queryToken = Request.Query["Token"].ToString();
 
@@ -40,8 +41,6 @@ public class EnquirerResponse : PageModel
             return NotFound();
         }
 
-        //TODO - Test validation if return to rejected page and no caching on using back button
-
         if (data.EnquiryResponseStatus == EnquiryResponseStatus.Unread ||
             data.EnquiryResponseStatus == EnquiryResponseStatus.NotSet)
         {
@@ -54,6 +53,9 @@ public class EnquirerResponse : PageModel
         Data.Token = queryToken;
 
         HttpContext.AddLadNameToAnalytics<EnquirerResponse>(Data.LocalAuthorityDistrict);
+
+        EnquirerResponseResultsModel = enquirerResponseResultsModel;
+
         return Page();
     }
 
@@ -69,11 +71,11 @@ public class EnquirerResponse : PageModel
 
         await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Interested));
 
-        var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}/{Data.TuitionPartnerSeoUrl}/contact-details?Token={Data.Token}";
+        var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}/{Data.TuitionPartnerSeoUrl}/contact-details?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}";
         return Redirect(redirectPageUrl);
     }
 
-    public async Task<IActionResult> OnGetIsUndecided(EnquirerViewResponseModel data)
+    public async Task<IActionResult> OnGetIsUndecided(EnquirerViewResponseModel data, EnquirerResponseResultsModel enquirerResponseResultsModel)
     {
         var isValidMagicLink =
             await _mediator.Send(new IsValidMagicLinkTokenQuery(data.Token, SupportReferenceNumber, TuitionPartnerSeoUrl));
@@ -85,7 +87,7 @@ public class EnquirerResponse : PageModel
 
         await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
 
-        var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}";
+        var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}&{enquirerResponseResultsModel.ToQueryString()}";
         return Redirect(redirectPageUrl);
     }
 }

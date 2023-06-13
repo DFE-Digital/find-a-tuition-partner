@@ -8,4 +8,6 @@ public record EnquirerViewResponseDto
     public DateTime? EnquiryResponseDate { get; set; }
 
     public EnquiryResponseStatus EnquiryResponseStatus { get; set; }
+
+    public int EnquiryResponseStatusOrderBy { get; set; }
 }

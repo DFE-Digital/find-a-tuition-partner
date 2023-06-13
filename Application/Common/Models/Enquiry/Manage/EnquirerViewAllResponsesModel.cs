@@ -2,7 +2,7 @@ using Application.Common.DTO;
 
 namespace Application.Common.Models.Enquiry.Manage;
 
-public class EnquirerViewAllResponsesModel
+public record EnquirerViewAllResponsesModel : EnquirerResponseResultsModel
 {
     public string LocalAuthorityDistrict { get; set; } = null!;
 

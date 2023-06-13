@@ -10,6 +10,7 @@ namespace UI.Pages.Enquiry.Manage
     {
         private readonly IMediator _mediator;
         [BindProperty] public EnquirerViewTuitionPartnerDetailsModel Data { get; set; } = new();
+        [BindProperty] public EnquirerResponseResultsModel EnquirerResponseResultsModel { get; set; } = new();
 
         [FromRoute(Name = "support-reference-number")] public string SupportReferenceNumber { get; set; } = string.Empty;
 
@@ -20,7 +21,7 @@ namespace UI.Pages.Enquiry.Manage
             _mediator = mediator;
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(EnquirerResponseResultsModel enquirerResponseResultsModel)
         {
             var queryToken = Request.Query["Token"].ToString();
 
@@ -45,6 +46,8 @@ namespace UI.Pages.Enquiry.Manage
             Data.TuitionPartnerSeoUrl = TuitionPartnerSeoUrl;
             Data.Token = queryToken;
 
+            EnquirerResponseResultsModel = enquirerResponseResultsModel;
+
             return Page();
         }
 
@@ -68,7 +71,7 @@ namespace UI.Pages.Enquiry.Manage
                                     Data.LocalAuthorityDistrict,
                                     Request.GetBaseServiceUrl()));
 
-            var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}/{TuitionPartnerSeoUrl}/not-interested-feedback?Token={Data.Token}";
+            var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}/{TuitionPartnerSeoUrl}/not-interested-feedback?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}";
             return Redirect(redirectPageUrl);
         }
     }

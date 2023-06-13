@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Manage.ConfirmNotInterested
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
-  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.Token}";
+  var backLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}/{Model.TuitionPartnerSeoUrl}?Token={@Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}";
   ViewData["Title"] = "Remove this tuition partner from your list of responses confirmation";
   ViewData["BackLinkHref"] = backLink;
 }
@@ -32,6 +32,8 @@
         <input asp-for="Data.TuitionPartnerEmailAddress" type="hidden" />
         <input asp-for="Data.TuitionPartnerName" type="hidden" />
         <input asp-for="Data.LocalAuthorityDistrict" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsOrderBy" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsDirection" type="hidden" />
       </div>
     </form>
   </div>

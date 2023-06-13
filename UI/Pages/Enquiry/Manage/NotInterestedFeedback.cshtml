@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Manage.NotInterestedFeedback
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
-  var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}";
+  var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}";
   ViewData["Title"] = Model.Data.TuitionPartnerName + " has been removed from your list of responses";
 }
 
@@ -27,6 +27,8 @@
         <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
         <input asp-for="Data.Token" type="hidden" />
         <input asp-for="Data.TuitionPartnerName" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsOrderBy" type="hidden" />
+        <input asp-for="EnquirerResponseResultsModel.EnquiryResponseResultsDirection" type="hidden" />
       </div>
     </form>
   </div>

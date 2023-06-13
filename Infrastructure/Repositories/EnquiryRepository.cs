@@ -3,6 +3,7 @@ using Application.Common.Interfaces.Repositories;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
+using Domain.Enums;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
@@ -31,7 +32,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         return enquiry ?? null;
     }
 
-    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber)
+    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber, EnquirerResponseResultsModel enquirerResponseResultsModel)
     {
         var enquiry = await _context.Enquiries.AsNoTracking()
             .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
@@ -42,6 +43,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .ThenInclude(s => s.Subject)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.EnquiryResponse)
+            .ThenInclude(x => x!.EnquiryResponseStatus)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
@@ -74,7 +76,9 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             SENDRequirements = enquiry.SENDRequirements,
             AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt.ToLocalDateTime(),
-            EnquirerViewResponses = new List<EnquirerViewResponseDto>()
+            EnquirerViewResponses = new List<EnquirerViewResponseDto>(),
+            EnquiryResponseResultsOrderBy = enquirerResponseResultsModel.EnquiryResponseResultsOrderBy,
+            EnquiryResponseResultsDirection = enquirerResponseResultsModel.EnquiryResponseResultsDirection
         };
 
         foreach (var er in tuitionPartnerEnquiriesWithResponses)
@@ -83,18 +87,18 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             {
                 TuitionPartnerName = er.TuitionPartner.Name,
                 EnquiryResponseDate = er.EnquiryResponse!.CreatedAt!,
-                EnquiryResponseStatus = (EnquiryResponseStatus)er.EnquiryResponse!.EnquiryResponseStatusId
+                EnquiryResponseStatus = (EnquiryResponseStatus)er.EnquiryResponse!.EnquiryResponseStatusId,
+                EnquiryResponseStatusOrderBy = er.EnquiryResponse!.EnquiryResponseStatus.OrderBy
             };
             result.EnquirerViewResponses.Add(responseModel);
         }
 
         result.NumberOfEnquirerNotInterestedResponses = result.EnquirerViewResponses.Count(x => x.EnquiryResponseStatus == EnquiryResponseStatus.NotInterested);
 
-        var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses
-            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.NotInterested)
-            .OrderByDescending(x => x.EnquiryResponseDate).ToList();
+        result.EnquirerViewResponses = result.EnquirerViewResponses
+            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.NotInterested).ToList();
 
-        result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
+        result.EnquirerViewResponses = OrderEnquirerResponseResults(result.EnquirerViewResponses, enquirerResponseResultsModel);
 
         return result;
     }
@@ -118,5 +122,31 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             throw new ArgumentException($"No EnquiryResponse found for SupportReferenceNumber {supportReferenceNumber} and TP {tuitionPartnerSeoUrl}");
 
         return tpEnquiryResponse!;
+    }
+
+    private static List<EnquirerViewResponseDto> OrderEnquirerResponseResults(List<EnquirerViewResponseDto> results,
+        EnquirerResponseResultsModel enquirerResponseResultsModel)
+    {
+        if (!results.Any())
+            return results;
+
+        return enquirerResponseResultsModel.EnquiryResponseResultsOrderBy switch
+        {
+            EnquiryResponseResultsOrderBy.Date => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results.OrderByDescending(e => e.EnquiryResponseDate).ToList()
+                                : results.OrderBy(e => e.EnquiryResponseDate).ToList(),
+
+            EnquiryResponseResultsOrderBy.Name => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results.OrderByDescending(e => e.TuitionPartnerName).ToList()
+                                : results.OrderBy(e => e.TuitionPartnerName).ToList(),
+
+            _ => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results
+                                    .OrderByDescending(e => e.EnquiryResponseStatusOrderBy)
+                                    .ThenBy(e => e.EnquiryResponseDate).ToList()
+                                : results
+                                    .OrderBy(e => e.EnquiryResponseStatusOrderBy)
+                                    .ThenBy(e => e.EnquiryResponseDate).ToList(),
+        };
     }
 }
