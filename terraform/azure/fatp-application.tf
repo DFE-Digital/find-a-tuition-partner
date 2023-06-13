@@ -26,7 +26,7 @@ module "fatp_azure_web_app_services_hosting" {
     "BlobStorage_TenantId"              = var.blobStorage_tenantId,
     "EmailSettings_AllSentToEnquirer"   = var.emailSettings_allSentToEnquirer,
     "EmailSettings_AmalgamateResponses" = var.emailSettings_amalgamateResponses,
-    "FatpAzureKeyVaultName"             = "${local.service_name}-key-vault"
+    "FatpAzureKeyVaultName"             = "${local.service_name}-${local.environment}-kv"
   }
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min

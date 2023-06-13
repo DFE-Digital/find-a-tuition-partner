@@ -1,6 +1,6 @@
 resource "azurerm_key_vault" "default" {
   depends_on                  = [module.fatp_azure_web_app_services_hosting]
-  name                        = "${local.service_name}-${local.environment}-key-vault"
+  name                        = "${local.service_name}-${local.environment}-kv"
   location                    = local.azure_location
   resource_group_name         = module.fatp_azure_web_app_services_hosting.azurerm_resource_group_default.name
   sku_name                    = "standard"
