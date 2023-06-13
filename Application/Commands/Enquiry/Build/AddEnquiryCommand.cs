@@ -388,7 +388,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                     "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Next retry attempt number: {retryAttempt}",
                     _enquiryReferenceNumber, retryAttempt);
 
-                _unitOfWork.EnquiryRepository.RollbackChanges();
+                _unitOfWork.RollbackChanges();
 
                 _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",

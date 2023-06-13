@@ -81,6 +81,7 @@ public class ProcessEmailsService : IProcessEmailsService
         }
         catch (Exception ex)
         {
+            _unitOfWork.RollbackChanges();
             await FinishProcessing(DateTime.UtcNow, $"Unexpected exception thrown. {ex}");
             throw;
         }
@@ -360,7 +361,7 @@ public class ProcessEmailsService : IProcessEmailsService
                                     (emailLogIds == null ||
                                     emailLogIds.Count() == 0 ||
                                     emailLogIds.Contains(x.Id))),
-                "EmailStatus,EmailPersonalisationLogs",
+                "EmailStatus,EmailPersonalisationLogs,EmailNotifyResponseLog",
                 true);
 
             if (emailsToSend.Any())

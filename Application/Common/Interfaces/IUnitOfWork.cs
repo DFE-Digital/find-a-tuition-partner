@@ -18,4 +18,5 @@ public interface IUnitOfWork : IDisposable
     ITuitionPartnerEnquiryRepository TuitionPartnerEnquiryRepository { get; }
     IKeyStageSubjectEnquiryRepository KeyStageSubjectEnquiryRepository { get; }
     Task<bool> Complete();
+    void RollbackChanges();
 }
