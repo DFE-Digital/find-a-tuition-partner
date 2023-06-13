@@ -8,7 +8,7 @@
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 <form method="post">
-  <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
       What type of tuition plan do you need?
     </govuk-character-count-label>

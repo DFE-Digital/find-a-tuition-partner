@@ -9,7 +9,7 @@
 }
 
 <form method="post">
-  <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
       Is there anything else that you want tuition partners to consider? (optional)
     </govuk-character-count-label>

@@ -28,9 +28,9 @@ public class GetEnquirerViewResponseQueryHandler : IRequestHandler<GetEnquirerVi
             _logger.LogInformation("Enquiry response not found for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
                 request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
         }
-        else if (result.EnquiryResponseStatus == Domain.Enums.EnquiryResponseStatus.Rejected)
+        else if (result.EnquiryResponseStatus == Domain.Enums.EnquiryResponseStatus.NotInterested)
         {
-            _logger.LogInformation("Enquiry response previously rejected for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
+            _logger.LogInformation("Enquiry response previously not interested for the given SupportReferenceNumber: {supportReferenceNumber} and TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl}",
                 request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
             result = null;
         }

@@ -4,19 +4,19 @@ namespace Domain.Enums
 {
     public enum EnquiryResponseStatus
     {
-        [Description("Interested")]
+        [Description("INTERESTED")]
         Interested = 1,
 
-        [Description("Undecided")]
+        [Description("UNDECIDED")]
         Undecided = 2,
 
-        [Description("Unread")]
+        [Description("UNREAD")]
         Unread = 3,
 
-        [Description("Not Set")]
+        [Description("NOT SET")]
         NotSet = 4,
 
-        [Description("Rejected")]
-        Rejected = 5
+        [Description("NOT INTERESTED")]
+        NotInterested = 5
     }
 }

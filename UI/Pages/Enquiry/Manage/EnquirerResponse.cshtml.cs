@@ -43,10 +43,10 @@ public class EnquirerResponse : PageModel
         //TODO - Test validation if return to rejected page and no caching on using back button
 
         if (data.EnquiryResponseStatus == EnquiryResponseStatus.Unread ||
-            data.EnquiryResponseStatus == EnquiryResponseStatus.Unread)
+            data.EnquiryResponseStatus == EnquiryResponseStatus.NotSet)
         {
             data.EnquiryResponseStatus = EnquiryResponseStatus.Undecided;
-            await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
+            await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
         }
 
         Data = data;
@@ -67,7 +67,7 @@ public class EnquirerResponse : PageModel
             return NotFound();
         }
 
-        await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Interested));
+        await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Interested));
 
         var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}/{Data.TuitionPartnerSeoUrl}/contact-details?Token={Data.Token}";
         return Redirect(redirectPageUrl);
@@ -83,7 +83,7 @@ public class EnquirerResponse : PageModel
             return NotFound();
         }
 
-        await _mediator.Send(new UpdateEnquiryStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
+        await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
 
         var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}";
         return Redirect(redirectPageUrl);

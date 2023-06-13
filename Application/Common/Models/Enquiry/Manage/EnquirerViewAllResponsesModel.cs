@@ -22,7 +22,7 @@ public class EnquirerViewAllResponsesModel
     public string? AdditionalInformation { get; set; }
     public DateTime EnquiryCreatedDateTime { get; set; }
 
-    public int NumberOfEnquirerRejectedResponses { get; set; }
+    public int NumberOfEnquirerNotInterestedResponses { get; set; }
 
     public string Token { get; set; } = string.Empty;
 

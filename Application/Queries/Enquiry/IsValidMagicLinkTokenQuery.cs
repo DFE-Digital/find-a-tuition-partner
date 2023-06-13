@@ -4,7 +4,22 @@ using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Application.Queries.Enquiry;
 
-public record IsValidMagicLinkTokenQuery(string Token, string SupportReferenceNumber, string? TuitionPartnerSeoUrl = null, bool IsTuitionPartnerResponse = false) : IRequest<bool>;
+public record IsValidMagicLinkTokenQuery : IRequest<bool>
+{
+    public IsValidMagicLinkTokenQuery(string token, string supportReferenceNumber, string? tuitionPartnerSeoUrl = null, bool isTuitionPartnerResponse = false)
+    {
+        Token = token;
+        SupportReferenceNumber = supportReferenceNumber;
+        TuitionPartnerSeoUrl = tuitionPartnerSeoUrl;
+        IsTuitionPartnerResponse = isTuitionPartnerResponse;
+    }
+
+    public string Token { get; set; }
+    public string SupportReferenceNumber { get; set; }
+    public string? TuitionPartnerSeoUrl { get; set; }
+    public bool IsTuitionPartnerResponse { get; set; } = false;
+    public bool ValidateEnquiryResponseStatus { get; set; } = true;
+}
 
 public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLinkTokenQuery, bool>
 {
@@ -99,9 +114,9 @@ public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLin
                     return false;
                 }
 
-                if (tpEnquiry.EnquiryResponse.EnquiryResponseStatusId == (int)EnquiryResponseStatus.Rejected)
+                if (request.ValidateEnquiryResponseStatus && tpEnquiry.EnquiryResponse.EnquiryResponseStatusId == (int)EnquiryResponseStatus.NotInterested)
                 {
-                    _logger.LogInformation("Previously rejected enquiry matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
+                    _logger.LogInformation("Previously not interested enquiry matched for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl);
                     return false;
                 }
 

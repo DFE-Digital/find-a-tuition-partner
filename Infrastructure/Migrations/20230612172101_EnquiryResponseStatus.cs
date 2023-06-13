@@ -10,7 +10,7 @@ namespace Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "EnquirerRejectedReason",
+                name: "EnquirerNotInterestedReason",
                 table: "EnquiryResponses",
                 type: "text",
                 nullable: true);
@@ -21,6 +21,12 @@ namespace Infrastructure.Migrations
                 type: "integer",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "TuitionPartnerResponseNotInterestedEmailLogId",
+                table: "EnquiryResponses",
+                type: "integer",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "EnquiryResponseStatus",
@@ -42,11 +48,11 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "Description", "OrderBy", "Status" },
                 values: new object[,]
                 {
-                    { 1, "The enquirer has indicated that they are interested in the tuition partner response", 1, "Interested" },
-                    { 2, "The enquirer has opened the tuition partner response, but has not confirmed if they are interested or not", 2, "Undecided" },
-                    { 3, "The enquirer has not yet viewed the tuition partner response", 3, "Unread" },
-                    { 4, "Status that is used for enquries that are historical and we don't have the latest status for", 4, "Not Set" },
-                    { 5, "The enquirer has indicated that they are not interested in the tuition partner response", 5, "Rejected" }
+                    { 1, "The enquirer has indicated that they are interested in the tuition partner response", 1, "INTERESTED" },
+                    { 2, "The enquirer has opened the tuition partner response, but has not confirmed if they are interested or not", 2, "UNDECIDED" },
+                    { 3, "The enquirer has not yet viewed the tuition partner response", 3, "UNREAD" },
+                    { 4, "Status that is used for enquries that are historical and we don't have the latest status for", 4, "NOT SET" },
+                    { 5, "The enquirer has indicated that they are not interested in the tuition partner response", 5, "NOT INTERESTED" }
                 });
 
             //MANUAL CHANGES - START
@@ -59,10 +65,23 @@ namespace Infrastructure.Migrations
                 column: "EnquiryResponseStatusId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EnquiryResponses_TuitionPartnerResponseNotInterestedEmailLo~",
+                table: "EnquiryResponses",
+                column: "TuitionPartnerResponseNotInterestedEmailLogId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponseStatus_Status",
                 table: "EnquiryResponseStatus",
                 column: "Status",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EnquiryResponses_EmailLog_TuitionPartnerResponseNotInterest~",
+                table: "EnquiryResponses",
+                column: "TuitionPartnerResponseNotInterestedEmailLogId",
+                principalTable: "EmailLog",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_EnquiryResponses_EnquiryResponseStatus_EnquiryResponseStatu~",
@@ -76,6 +95,10 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_EnquiryResponses_EmailLog_TuitionPartnerResponseNotInterest~",
+                table: "EnquiryResponses");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_EnquiryResponses_EnquiryResponseStatus_EnquiryResponseStatu~",
                 table: "EnquiryResponses");
 
@@ -86,12 +109,20 @@ namespace Infrastructure.Migrations
                 name: "IX_EnquiryResponses_EnquiryResponseStatusId",
                 table: "EnquiryResponses");
 
+            migrationBuilder.DropIndex(
+                name: "IX_EnquiryResponses_TuitionPartnerResponseNotInterestedEmailLo~",
+                table: "EnquiryResponses");
+
             migrationBuilder.DropColumn(
-                name: "EnquirerRejectedReason",
+                name: "EnquirerNotInterestedReason",
                 table: "EnquiryResponses");
 
             migrationBuilder.DropColumn(
                 name: "EnquiryResponseStatusId",
+                table: "EnquiryResponses");
+
+            migrationBuilder.DropColumn(
+                name: "TuitionPartnerResponseNotInterestedEmailLogId",
                 table: "EnquiryResponses");
         }
     }

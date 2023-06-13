@@ -18,17 +18,21 @@ public class EnquiryResponse
 
     public DateTime? CompletedAt { get; set; }
 
-    public string? EnquirerRejectedReason { get; set; }
+    public string? EnquirerNotInterestedReason { get; set; }
 
     public int EnquirerResponseEmailLogId { get; set; }
 
     public int TuitionPartnerResponseEmailLogId { get; set; }
+
+    public int? TuitionPartnerResponseNotInterestedEmailLogId { get; set; }
 
     public int EnquiryResponseStatusId { get; set; }
 
     public EmailLog EnquirerResponseEmailLog { get; set; } = null!;
 
     public EmailLog TuitionPartnerResponseEmailLog { get; set; } = null!;
+
+    public EmailLog? TuitionPartnerResponseNotInterestedEmailLog { get; set; } = null!;
 
     public EnquiryResponseStatus EnquiryResponseStatus { get; set; } = null!;
 }

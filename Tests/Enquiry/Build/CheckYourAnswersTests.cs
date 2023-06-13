@@ -56,9 +56,9 @@ public class CheckYourAnswersTests
     {
         var model = new CheckYourAnswersModel
         {
-            TutoringLogistics = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            AdditionalInformation = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            TutoringLogistics = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            SENDRequirements = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            AdditionalInformation = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             ConfirmTermsAndConditions = true
         };
 

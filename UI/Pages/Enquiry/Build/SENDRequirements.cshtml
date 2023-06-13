@@ -9,7 +9,7 @@
 }
 
 <form method="post">
-  <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
       Do you need tuition partners who can support pupils with SEND? (optional)
     </govuk-character-count-label>

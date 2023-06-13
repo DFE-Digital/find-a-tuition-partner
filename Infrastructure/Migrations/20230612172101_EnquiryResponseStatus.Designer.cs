@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230609133007_EnquiryResponseStatus")]
+    [Migration("20230612172101_EnquiryResponseStatus")]
     partial class EnquiryResponseStatus
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -442,7 +442,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EnquirerRejectedReason")
+                    b.Property<string>("EnquirerNotInterestedReason")
                         .HasColumnType("text");
 
                     b.Property<int>("EnquirerResponseEmailLogId")
@@ -461,6 +461,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerResponseEmailLogId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("TuitionPartnerResponseNotInterestedEmailLogId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TuitionSettingText")
                         .IsRequired()
                         .HasColumnType("text");
@@ -476,6 +479,9 @@ namespace Infrastructure.Migrations
                     b.HasIndex("EnquiryResponseStatusId");
 
                     b.HasIndex("TuitionPartnerResponseEmailLogId");
+
+                    b.HasIndex("TuitionPartnerResponseNotInterestedEmailLogId")
+                        .IsUnique();
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -512,35 +518,35 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             Description = "The enquirer has indicated that they are interested in the tuition partner response",
                             OrderBy = 1,
-                            Status = "Interested"
+                            Status = "INTERESTED"
                         },
                         new
                         {
                             Id = 2,
                             Description = "The enquirer has opened the tuition partner response, but has not confirmed if they are interested or not",
                             OrderBy = 2,
-                            Status = "Undecided"
+                            Status = "UNDECIDED"
                         },
                         new
                         {
                             Id = 3,
                             Description = "The enquirer has not yet viewed the tuition partner response",
                             OrderBy = 3,
-                            Status = "Unread"
+                            Status = "UNREAD"
                         },
                         new
                         {
                             Id = 4,
                             Description = "Status that is used for enquries that are historical and we don't have the latest status for",
                             OrderBy = 4,
-                            Status = "Not Set"
+                            Status = "NOT SET"
                         },
                         new
                         {
                             Id = 5,
                             Description = "The enquirer has indicated that they are not interested in the tuition partner response",
                             OrderBy = 5,
-                            Status = "Rejected"
+                            Status = "NOT INTERESTED"
                         });
                 });
 
@@ -5223,11 +5229,17 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerResponseNotInterestedEmailLog")
+                        .WithOne("TuitionPartnerResponseNotInterested")
+                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseNotInterestedEmailLogId");
+
                     b.Navigation("EnquirerResponseEmailLog");
 
                     b.Navigation("EnquiryResponseStatus");
 
                     b.Navigation("TuitionPartnerResponseEmailLog");
+
+                    b.Navigation("TuitionPartnerResponseNotInterestedEmailLog");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -5515,6 +5527,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("ThisEmailActivationTriggeredBy");
 
                     b.Navigation("TuitionPartnerEnquiriesSubmitted");
+
+                    b.Navigation("TuitionPartnerResponseNotInterested");
 
                     b.Navigation("TuitionPartnerResponses");
                 });

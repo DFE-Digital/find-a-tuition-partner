@@ -11,7 +11,7 @@ public class TutoringLogisticsModelValidator : AbstractValidator<TutoringLogisti
         RuleFor(request => request.TutoringLogistics)
             .NotEmpty()
             .WithMessage("Enter the type of tuition plan that you need")
-            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize)
-            .WithMessage($"The type of tuition plan must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .Must(x => !string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.LargeTextAreaMaxCharacterSize)
+            .WithMessage($"The type of tuition plan must be {IntegerConstants.LargeTextAreaMaxCharacterSize:N0} characters or less");
     }
 }

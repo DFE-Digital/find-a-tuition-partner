@@ -1,0 +1,33 @@
+﻿@page "/enquiry/{supportReferenceNumber}/{tuitionPartnerSeoUrl}/not-interested-feedback"
+@model UI.Pages.Enquiry.Manage.NotInterestedFeedback
+@{
+  var baseServiceUrl = Request.GetBaseServiceUrl();
+  var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}";
+  ViewData["Title"] = Model.Data.TuitionPartnerName + " has been removed from your list of responses";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form method="post">
+      <h1 class="govuk-heading-l">@Model.Data.TuitionPartnerName has been removed from your list of responses</h1>
+
+      <govuk-character-count asp-for="Data.NotInterestedFeedback" threshold="@IntegerConstants.MediumTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.MediumTextAreaMaxCharacterSize">
+        <govuk-character-count-label class="govuk-label--m">
+          Provide anonymous feedback to the response from @Model.Data.TuitionPartnerName (optional)
+        </govuk-character-count-label>
+        <govuk-character-count-hint>
+          Your feedback helps to improve this service
+        </govuk-character-count-hint>
+      </govuk-character-count>
+
+      <div class="govuk-button-group">
+        <govuk-button prevent-double-click="true" type="submit">Submit feedback</govuk-button>
+        <a class="govuk-link" href="@skipLink">Skip and return to your enquiry</a>
+        <input asp-for="Data.SupportReferenceNumber" type="hidden" />
+        <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
+        <input asp-for="Data.Token" type="hidden" />
+        <input asp-for="Data.TuitionPartnerName" type="hidden" />
+      </div>
+    </form>
+  </div>
+</div>

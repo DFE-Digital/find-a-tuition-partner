@@ -88,14 +88,35 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             result.EnquirerViewResponses.Add(responseModel);
         }
 
-        result.NumberOfEnquirerRejectedResponses = result.EnquirerViewResponses.Count(x => x.EnquiryResponseStatus == EnquiryResponseStatus.Rejected);
+        result.NumberOfEnquirerNotInterestedResponses = result.EnquirerViewResponses.Count(x => x.EnquiryResponseStatus == EnquiryResponseStatus.NotInterested);
 
         var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses
-            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.Rejected)
+            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.NotInterested)
             .OrderByDescending(x => x.EnquiryResponseDate).ToList();
 
         result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
 
         return result;
+    }
+
+    public async Task<EnquiryResponse> GetEnquiryResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl)
+    {
+        if (string.IsNullOrWhiteSpace(supportReferenceNumber))
+            throw new ArgumentException("SupportReferenceNumber is null");
+
+        if (string.IsNullOrWhiteSpace(tuitionPartnerSeoUrl))
+            throw new ArgumentException("TuitionPartnerSeoUrl is null");
+
+        var enquiry = await GetEnquiryBySupportReferenceNumber(supportReferenceNumber) ??
+            throw new ArgumentException($"No enquiry found for SupportReferenceNumber {supportReferenceNumber}");
+
+        var tpEnquiry = enquiry.TuitionPartnerEnquiry
+            .SingleOrDefault(x => x.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl) ??
+            throw new ArgumentException($"No TuitionPartnerEnquiry found for SupportReferenceNumber {supportReferenceNumber} and TP {tuitionPartnerSeoUrl}");
+
+        var tpEnquiryResponse = tpEnquiry.EnquiryResponse ??
+            throw new ArgumentException($"No EnquiryResponse found for SupportReferenceNumber {supportReferenceNumber} and TP {tuitionPartnerSeoUrl}");
+
+        return tpEnquiryResponse!;
     }
 }

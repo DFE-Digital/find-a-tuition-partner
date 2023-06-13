@@ -35,6 +35,7 @@ applications:
     EmailSettings:OverrideAddress: ((email-override-email-address))
     EmailSettings:MergeResponses: ((email-merge-responses))
     EmailSettings:AllSentToEnquirer: ((email-all-sent-to-enquirer))
+    EmailSettings:MinsDelaySendingOutcomeEmailToTP: ((email-mins-delay-sending-outcome-email-to-tp))
     FeatureFlags:EnquiryBuilder: ((feature-flag-enquiry-builder))
     FeatureFlags:SendEmailsFromNtp: ((feature-flag-send-emails-from-ntp))
     FeatureFlags:VerifyEmail: ((feature-flag-verify-email))

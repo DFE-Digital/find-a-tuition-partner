@@ -69,7 +69,7 @@
         </ul>
 
         <div asp-validation-group-for="Data.KeyStageAndSubjectsText">
-          <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+          <govuk-character-count asp-for="Data.KeyStageAndSubjectsText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
               Can you support those key stages and subjects?
             </govuk-character-count-label>
@@ -88,7 +88,7 @@
         <p class="govuk-body">@Model.Data.EnquiryTuitionSetting</p>
 
         <div asp-validation-group-for="Data.TuitionSettingText">
-          <govuk-character-count asp-for="Data.TuitionSettingText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+          <govuk-character-count asp-for="Data.TuitionSettingText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
               To what extent can you support that tuition setting?
             </govuk-character-count-label>
@@ -109,7 +109,7 @@
         </p>
 
         <div asp-validation-group-for="Data.TutoringLogisticsText">
-          <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+          <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
               Can you support that tuition plan?
             </govuk-character-count-label>
@@ -132,7 +132,7 @@
         @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
         {
           <div asp-validation-group-for="Data.SENDRequirementsText">
-            <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+            <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
               <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                 Can you support those SEND requirements?
               </govuk-character-count-label>
@@ -155,7 +155,7 @@
         @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
         {
           <div asp-validation-group-for="Data.AdditionalInformationText">
-            <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+            <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
               <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
                 Can you support those considerations?
               </govuk-character-count-label>

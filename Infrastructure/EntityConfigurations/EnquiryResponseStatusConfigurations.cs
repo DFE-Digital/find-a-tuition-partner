@@ -42,8 +42,8 @@ public class EnquiryResponseStatusConfigurations : IEntityTypeConfiguration<Doma
             },
             new Domain.EnquiryResponseStatus
             {
-                Id = (int)EnquiryResponseStatus.Rejected,
-                Status = EnquiryResponseStatus.Rejected.DisplayName(),
+                Id = (int)EnquiryResponseStatus.NotInterested,
+                Status = EnquiryResponseStatus.NotInterested.DisplayName(),
                 Description = "The enquirer has indicated that they are not interested in the tuition partner response",
                 OrderBy = 5
             }
