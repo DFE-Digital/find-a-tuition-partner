@@ -58,6 +58,8 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         var tuitionPartnerEnquiriesWithResponses = enquiry.TuitionPartnerEnquiry.Where(x =>
             x.EnquiryResponse != null).ToList();
 
+        var numberOfTpsDeclinedEnquiry = enquiry.TuitionPartnerEnquiry.Count(x => x.TuitionPartnerDecinedEnquiry);
+
         var keyStageSubjects = enquiry
             .KeyStageSubjectEnquiry
             .Select(x => $"{x.KeyStage.Name}: {x.Subject.Name}")
@@ -73,6 +75,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             },
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
+            NumberOfTpsDeclinedEnquiry = numberOfTpsDeclinedEnquiry,
             KeyStageSubjects = keyStageSubjects,
             TuitionSettingName = enquiry.TuitionSettings.GetTuitionSettingName(),
             SENDRequirements = enquiry.SENDRequirements,

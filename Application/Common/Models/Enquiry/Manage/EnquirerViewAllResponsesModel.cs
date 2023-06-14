@@ -17,6 +17,8 @@ public class EnquirerViewAllResponsesModel
 
     public int NumberOfTpEnquiryWasSent { get; set; }
 
+    public int NumberOfTpsDeclinedEnquiry { get; set; }
+
     public string SupportReferenceNumber { get; set; } = null!;
 
     public string TuitionSettingName { get; set; } = null!;

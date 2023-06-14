@@ -75,7 +75,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 {
                     Token = selectedTuitionPartner.Token!
                 },
-                ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
+                ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond),
+                TuitionPartnerDecinedEnquiry = false
             }).ToList();
 
         var enquiry = new Domain.Enquiry()

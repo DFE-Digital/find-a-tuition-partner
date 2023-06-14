@@ -105,7 +105,7 @@ public class ResponseTests
     public async Task With_a_invalid_token_get_goes_to_404()
     {
         //Act
-        var result = await _fixture.GetPage<Response>().Execute(page =>
+        var result = await _fixture.GetPage<EditResponse>().Execute(page =>
         {
             page.PageContext = GetPageContext();
             return page.OnGetAsync();
@@ -120,7 +120,7 @@ public class ResponseTests
     public async Task With_a_invalid_token_post_goes_to_404()
     {
         //Act
-        var result = await _fixture.GetPage<Response>().Execute(page =>
+        var result = await _fixture.GetPage<EditResponse>().Execute(page =>
         {
             return page.OnPostAsync();
         });
@@ -201,7 +201,7 @@ public class ResponseTests
         };
 
         //Act
-        var result = await _fixture.GetPage<Response>().Execute(page =>
+        var result = await _fixture.GetPage<EditResponse>().Execute(page =>
         {
             page.Data = model;
             return page.OnPostAsync();

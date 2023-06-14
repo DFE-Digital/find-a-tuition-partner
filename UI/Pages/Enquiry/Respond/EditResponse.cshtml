@@ -1,8 +1,10 @@
-﻿@page "/enquiry-response/{tuitionPartnerSeoUrl}/{supportReferenceNumber}"
-@model UI.Pages.Enquiry.Respond.Response
+﻿@page "/enquiry-response/{tuitionPartnerSeoUrl}/{supportReferenceNumber}/edit"
+@model UI.Pages.Enquiry.Respond.EditResponse
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
+  var backUrl = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}?Token={@Model.Data.Token}";
   ViewData["Title"] = "Responding to the schools tuition requirements";
+  ViewData["BackLinkHref"] = backUrl;
   ViewData["IncludePrintPage"] = true;
 }
 
