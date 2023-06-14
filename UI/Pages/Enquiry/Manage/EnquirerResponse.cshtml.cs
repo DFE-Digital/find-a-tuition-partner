@@ -87,7 +87,7 @@ public class EnquirerResponse : PageModel
 
         await _mediator.Send(new UpdateEnquiryResponseStatusCommand(SupportReferenceNumber, TuitionPartnerSeoUrl, EnquiryResponseStatus.Undecided));
 
-        var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}&{enquirerResponseResultsModel.ToQueryString()}";
+        var redirectPageUrl = $"/enquiry/{SupportReferenceNumber}?Token={data.Token}&{enquirerResponseResultsModel.ToQueryString()}#all-responses-table";
         return Redirect(redirectPageUrl);
     }
 }

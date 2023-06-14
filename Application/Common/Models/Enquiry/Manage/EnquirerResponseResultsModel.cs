@@ -14,8 +14,8 @@ namespace Application.Common.Models.Enquiry.Manage
             EnquiryResponseResultsDirection = model.EnquiryResponseResultsDirection;
         }
 
-        public EnquiryResponseResultsOrderBy EnquiryResponseResultsOrderBy { get; set; } = EnquiryResponseResultsOrderBy.Status;
+        public EnquiryResponseResultsOrderBy EnquiryResponseResultsOrderBy { get; set; } = EnquiryResponseResultsOrderBy.Date;
 
-        public OrderByDirection EnquiryResponseResultsDirection { get; set; } = OrderByDirection.Ascending;
+        public OrderByDirection EnquiryResponseResultsDirection { get; set; } = OrderByDirection.Descending;
     }
 }

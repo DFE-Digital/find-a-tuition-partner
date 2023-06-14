@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Manage.NotInterestedFeedback
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
-  var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}";
+  var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}#all-responses-table";
   ViewData["Title"] = Model.Data.TuitionPartnerName + " has been removed from your list of responses";
 }
 

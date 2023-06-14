@@ -79,7 +79,7 @@ namespace UI.Pages.Enquiry.Manage
                                         Data.NotInterestedFeedback!));
             }
 
-            var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}";
+            var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}#all-responses-table";
             return Redirect(redirectPageUrl);
         }
     }

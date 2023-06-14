@@ -108,18 +108,18 @@
 @if (Model.Data.EnquirerViewResponses.Any())
 {
   var sortLink = $"/enquiry/{Model.SupportReferenceNumber}?Token={Model.Data.Token}&";
-  <table class="govuk-table" data-testid="enquirer-view-all-responses-table">
+  <table id="all-responses-table" class="govuk-table" data-testid="enquirer-view-all-responses-table">
     <caption class="govuk-visually-hidden">View responses to your tuition enquiry</caption>
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Date.GetAriaSort(Model.Data))">
-          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Date.GetSortQueryString(Model.Data)">Date</a>
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Date.GetSortQueryString(Model.Data)#all-responses-table">Date</a>
         </th>
         <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Name.GetAriaSort(Model.Data))">
-          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Name.GetSortQueryString(Model.Data)">Tuition partner response</a>
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Name.GetSortQueryString(Model.Data)#all-responses-table">Tuition partner response</a>
         </th>
         <th scope="col" class="govuk-table__header" aria-sort="@(Domain.Enums.EnquiryResponseResultsOrderBy.Status.GetAriaSort(Model.Data))">
-          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Status.GetSortQueryString(Model.Data)">Your interest</a>
+          <a class="table-column-sort" href="@sortLink@Domain.Enums.EnquiryResponseResultsOrderBy.Status.GetSortQueryString(Model.Data)#all-responses-table">Your interest</a>
         </th>
       </tr>
     </thead>

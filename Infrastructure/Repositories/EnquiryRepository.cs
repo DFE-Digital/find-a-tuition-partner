@@ -143,10 +143,10 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             _ => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
                                 ? results
                                     .OrderByDescending(e => e.EnquiryResponseStatusOrderBy)
-                                    .ThenBy(e => e.EnquiryResponseDate).ToList()
+                                    .ThenByDescending(e => e.EnquiryResponseDate).ToList()
                                 : results
                                     .OrderBy(e => e.EnquiryResponseStatusOrderBy)
-                                    .ThenBy(e => e.EnquiryResponseDate).ToList(),
+                                    .ThenByDescending(e => e.EnquiryResponseDate).ToList(),
         };
     }
 }
