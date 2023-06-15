@@ -29,21 +29,36 @@ Then("the Check Your Answers page displays the following:", (dataTable) => {
           row["Expected Content"]
         );
         break;
-      case "Tuition Plan":
+      case "How many pupils need tuition":
         cy.checkTextContent(
           ":nth-child(3) > .govuk-summary-list__value",
+          row["Expected Content"]
+        );
+      case "When do you want tuition to start":
+        cy.checkTextContent(
+          ":nth-child(4) > .govuk-summary-list__value",
+          row["Expected Content"]
+        );
+      case "How long do you need tuition for":
+        cy.checkTextContent(
+          ":nth-child(5) > .govuk-summary-list__value",
+          row["Expected Content"]
+        );
+      case "What time of day do you need tuition":
+        cy.checkTextContent(
+          ":nth-child(6) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
       case "SEND Support":
         cy.checkTextContent(
-          ":nth-child(4) > .govuk-summary-list__value",
+          ":nth-child(4) > :nth-child(4) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
       case "Other Considerations":
         cy.checkTextContent(
-          ":nth-child(5) > .govuk-summary-list__value",
+          ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
           row["Expected Content"]
         );
         break;
@@ -134,9 +149,24 @@ Then(
             row["Expected Content"]
           );
           break;
-        case "Tuition Plan":
+        case "How many pupils need tuition":
           cy.checkTextContent(
-            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(3) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "When do you want tuition to start":
+          cy.checkTextContent(
+            ":nth-child(4) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "How long do you need tuition for":
+          cy.checkTextContent(
+            ":nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "What time of day do you need tuition":
+          cy.checkTextContent(
+            ":nth-child(6) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -149,6 +179,12 @@ Then(
         case "Other Considerations":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Your school details":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(1) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -195,9 +231,24 @@ Then(
             row["Expected Content"]
           );
           break;
-        case "Tuition Plan":
+        case "How many pupils need tuition":
           cy.checkTextContent(
-            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(3) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "When do you want tuition to start":
+          cy.checkTextContent(
+            ":nth-child(4) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "How long do you need tuition for":
+          cy.checkTextContent(
+            ":nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "What time of day do you need tuition":
+          cy.checkTextContent(
+            ":nth-child(6) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -210,6 +261,12 @@ Then(
         case "Other Considerations":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Your school details":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(1) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -259,9 +316,24 @@ Then(
             row["Expected Content"]
           );
           break;
-        case "Tuition Plan":
+        case "How many pupils need tuition":
           cy.checkTextContent(
-            ":nth-child(4) > :nth-child(3) > .govuk-summary-list__value",
+            ":nth-child(3) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "When do you want tuition to start":
+          cy.checkTextContent(
+            ":nth-child(4) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "How long do you need tuition for":
+          cy.checkTextContent(
+            ":nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+        case "What time of day do you need tuition":
+          cy.checkTextContent(
+            ":nth-child(6) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
@@ -274,6 +346,12 @@ Then(
         case "Other Considerations":
           cy.checkTextContent(
             ":nth-child(4) > :nth-child(5) > .govuk-summary-list__value",
+            row["Expected Content"]
+          );
+          break;
+        case "Your school details":
+          cy.checkTextContent(
+            ":nth-child(6) > :nth-child(1) > .govuk-summary-list__value",
             row["Expected Content"]
           );
           break;
