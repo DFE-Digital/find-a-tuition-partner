@@ -42,7 +42,6 @@ jobs:
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
 
     steps:
-      
       - name: 'Log into Azure'
         uses: azure/login@v1
         with:
@@ -169,6 +168,11 @@ jobs:
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
     
     steps:
+      - name: 'Log into Azure'
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.TF_VAR_client_id }}","clientSecret":"${{ env.TF_VAR_client_secret }}","subscriptionId":"${{ env.TF_VAR_subscription_id }}","tenantId":"${{ env.TF_VAR_tenant_id }}"}'
+          
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
