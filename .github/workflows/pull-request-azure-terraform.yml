@@ -12,6 +12,7 @@ env:
   DOTNET_VERSION: '6.0.x'
   APP_CODE_PATH: './UI'
   AZURE_WEBAPP_NAME: 'find-a-tp-pr-353' # hard coding this for now
+  RESOURCE_GROUP: 's177d01-ntp-pr-353' # hard coding this for now
   TF_VERSION: '~>1.4.5'
   TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
   TF_ACTION_WORKING_DIR: './terraform/azure'
@@ -232,3 +233,8 @@ jobs:
         with:
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
             package: '${{ env.APP_CODE_PATH }}/publish'
+              
+      # Run database migrations and import data
+      - name: Run database migrations and import data
+        run: |
+          az webapp ssh --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --command 'dotnet ./UI.dll import'
