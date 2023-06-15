@@ -60,3 +60,15 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
   value        = azurerm_redis_cache.default.primary_connection_string
   key_vault_id = azurerm_key_vault.default.id
 }
+
+resource "azurerm_key_vault_secret" "govuknotifyapikey" {
+  name         = "GovUkNotify--ApiKey"
+  value        = var.govuk_notify_apikey
+  key_vault_id = azurerm_key_vault.default.id
+}
+
+resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
+  name         = "BlobStorage--ClientSecret"
+  value        = var.blob_storage_client_secret
+  key_vault_id = azurerm_key_vault.default.id
+}

@@ -304,6 +304,10 @@ variable "blobStorage_clientId" {
   default = "fdd09510-77b0-419f-b67c-2b5a25a073f0"
 }
 
+variable "blob_storage_client_secret" {
+  type = string
+}
+
 variable "blobStorage_containerName" {
   type    = string
   default = "ntp-tp-data"
@@ -327,6 +331,10 @@ variable "emailSettings_allSentToEnquirer" {
 variable "emailSettings_amalgamateResponses" {
   type    = bool
   default = true
+}
+
+variable "govuk_notify_apikey" {
+  type = string
 }
 
 variable "postgresql_server_admin_username" {
