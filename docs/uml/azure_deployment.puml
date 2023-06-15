@@ -73,12 +73,6 @@ Boundary(azureCIPDev, "Development", "Azure Subscription") {
 
 System_Ext(externalServices, "External Services", $sprite="cloud")
 
-' System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="file_text")
-' System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
-' System_Ext(postcodesIo, "postcodes.io", "Maps postcode to Local Authority District code", $sprite="map_marked")
-' System_Ext(bigQuery, "Google BigQuery", "Stores web request data for analytics", $sprite="database")
-' System_Ext(notify, "GOV.UK Notify", "Send OTPs and other notifications to the user", $sprite="envelope")
-
 Rel(users, frontDoor, "Uses", "HTTPS")
 Rel(frontDoor, app, "Uses", "HTTPS")
 Rel(app, db, "Uses", "PLSQL/TLS")
