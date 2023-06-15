@@ -6,6 +6,7 @@ using Application.Queries.Enquiry.Manage;
 
 namespace UI.Pages.Enquiry.Manage
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class NotInterestedFeedback : PageModel
     {
         private readonly IMediator _mediator;
