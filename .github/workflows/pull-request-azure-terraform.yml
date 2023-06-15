@@ -9,6 +9,7 @@ concurrency: pr-${{ github.event.number }}
 
 
 env:
+  DOTNET_VERSION: '6.0.x'
   APP_CODE_PATH: './UI'
   AZURE_WEBAPP_NAME: 'find-a-tp-pr-353' # hard coding this for now
   TF_VERSION: '~>1.4.5'
@@ -23,11 +24,7 @@ env:
   TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
 
-jobs:
-  build_and_test:
-    name: .NET Build and Test
-    uses: ./.github/workflows/build-and-test.yml
-    
+jobs:    
   terraform-plan:
     name: 'Provision FaTP into Azure via Terraform plan'
     runs-on: ubuntu-latest
@@ -45,7 +42,7 @@ jobs:
       - name: 'Log into Azure'
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ env.TF_VAR_client_id }}","clientSecret":"${{ env.TF_VAR_client_secret }}","subscriptionId":"${{ env.TF_VAR_subscription_id }}","tenantId":"${{ env.TF_VAR_tenant_id }}"}'
+          creds: '{"clientId":"${{ env.TF_VAR_client_id }}","clientSecret":"${{ env.TF_VAR_client_secret }}","subscriptionId":"${{ env.TF_VAR_subscription_id }}","tenantId":"${{ env.TF_VAR_tenant_id }}"}'   
           
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
@@ -176,6 +173,19 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+          
+     # Setup .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+     # Run dotnet build and publish
+      - name: .NET Build and Publish
+        working-directory: ${{ env.APP_CODE_PATH }}
+        run: |
+            dotnet build --configuration Release
+            dotnet publish -c Release -o './publish'
       
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
