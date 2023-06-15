@@ -23,7 +23,9 @@
 !include FONTAWESOME_5/database.puml
 !include FONTAWESOME_5/google_drive.puml
 !include FONTAWESOME_5/envelope.puml
+!include FONTAWESOME_5/cloud.puml
 !include AzurePuml/Networking/AzureFrontDoorService.puml
+!include AzurePuml/Networking/AzureNAT.puml
 !include AzurePuml/Web/AzureWebApp.puml
 !include AzurePuml/Databases/AzureDatabaseForPostgreSQL.puml
 !include AzurePuml/Databases/AzureRedisCache.puml
@@ -31,15 +33,14 @@
 !include AzurePuml/Compute/AzureFunction.puml
 !include AzurePuml/Storage/AzureBlobStorage.puml
 
-LAYOUT_LANDSCAPE()
+' LAYOUT_LANDSCAPE()
 
 Person(users, "External Users", "School staff/Tuition Partners", $sprite="users")
 
 Boundary(azureCIP, "Production", "Azure Subscription") {
-    Boundary(vnetDmz, "DMZ", "VNET") {
-        AzureFrontDoorService(frontDoor, "CDN & WAF", "Azure Front Door")
-    }
     Boundary(vnetPrivate, "Private", "VNET") {
+        AzureFrontDoorService(frontDoor, "Ingress", "Azure Front Door", "Also provides CDN & WAF")
+        AzureNAT(nat, "Egress", "NAT Gateway")
         AzureWebApp(app, "FATP Application", ".NET Core")
         AzureDatabaseForPostgreSQL(db, "FATP Database", "Azure Database for PostgreSQL")
         AzureRedisCache(cache, "Session Cache", "Azure Redis Cache")
@@ -53,22 +54,24 @@ Boundary(azureCIP, "Production", "Azure Subscription") {
 Person(deliveryTeam, "Delivery Team", "Developers, testers, etc.", $sprite="users")
 
 Boundary(azureCIPDev, "Development", "Azure Subscription") {
-    Boundary(vnetDmzDev, "DMZ", "VNET") {
-        AzureFrontDoorService(frontDoorDev, "CDN & WAF", "Azure Front Door")
-    }
-    Boundary(vnetPrivatePR123, "Private", "VNET") {
+    Boundary(vnetPrivateDev, "Private", "VNET") {
+    AzureFrontDoorService(frontDoorDev, "Ingress", "Azure Front Door")
+    AzureNAT(natDev, "Egress", "NAT Gateway")
+    Boundary(rgPR123, "PR123", "Resource Group") {
         AzureWebApp(appPR123, "FATP Application", ".NET Core")
         AzureDatabaseForPostgreSQL(dbPR123, "FATP Database", "Azure Database for PostgreSQL")
         AzureRedisCache(cachePR123, "Session Cache", "Azure Redis Cache")
         AzureFunction(emailTriggerPR123, "Email Trigger", ".NET Core")
     }
-    Boundary(vnetPrivatePR456, "Private", "VNET") {
+    Boundary(rgPR456, "PR456", "Resource Group") {
         AzureWebApp(appPR456, "FATP Application", ".NET Core")
         AzureDatabaseForPostgreSQL(dbPR456, "FATP Database", "Azure Database for PostgreSQL")
         AzureRedisCache(cachePR456, "Session Cache", "Azure Redis Cache")
         AzureFunction(emailTriggerPR456, "Email Trigger", ".NET Core")
     }
 }
+
+System_Ext(externalServices, "External Services", $sprite="cloud")
 
 ' System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="file_text")
 ' System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
@@ -81,32 +84,24 @@ Rel(frontDoor, app, "Uses", "HTTPS")
 Rel(app, db, "Uses", "PLSQL/TLS")
 Rel(app, cache, "Uses", "RESP/TLS")
 Rel(emailTrigger, app, "Trigger", "HTTPS")
-' Rel(app, logitIo, "Send log events", "TCPSink/TLS")
-' Rel(app, googleAnalytics, "Send analytics events", "HTTPS")
-' Rel(app, postcodesIo, "Query postcode data", "HTTPS")
-' Rel(app, bigQuery, "Send analytics events", "HTTPS")
-' Rel(app, notify, "Trigger notifications", "HTTPS")
+Rel(app, nat, "Outbound Traffic")
+Rel(nat, externalServices, "Use")
 
 Rel(deliveryTeam, frontDoorDev, "Uses", "HTTPS")
+Rel(natDev, externalServices, "Use")
 
 Rel(frontDoorDev, appPR123, "Uses", "HTTPS")
 Rel(appPR123, dbPR123, "Uses", "PLSQL/TLS")
 Rel(appPR123, cachePR123, "Uses", "RESP/TLS")
 Rel(emailTriggerPR123, appPR123, "Trigger", "HTTPS")
-' Rel(appPR123, logitIo, "Send log events", "TCPSink/TLS")
-' Rel(appPR123, googleAnalytics, "Send analytics events", "HTTPS")
-' Rel(appPR123, postcodesIo, "Query postcode data", "HTTPS")
-' Rel(appPR123, bigQuery, "Send analytics events", "HTTPS")
-' Rel(appPR123, notify, "Trigger notifications", "HTTPS")
+Rel(appPR123, natDev, "Outbound Traffic")
 
 Rel(frontDoorDev, appPR456, "Uses", "HTTPS")
 Rel(appPR456, dbPR456, "Uses", "PLSQL/TLS")
 Rel(appPR456, cachePR456, "Uses", "RESP/TLS")
 Rel(emailTriggerPR456, appPR456, "Trigger", "HTTPS")
-' Rel(appPR456, logitIo, "Send log events", "TCPSink/TLS")
-' Rel(appPR456, googleAnalytics, "Send analytics events", "HTTPS")
-' Rel(appPR456, postcodesIo, "Query postcode data", "HTTPS")
-' Rel(appPR456, bigQuery, "Send analytics events", "HTTPS")
-' Rel(appPR456, notify, "Trigger notifications", "HTTPS")
+Rel(appPR456, natDev, "Outbound Traffic")
+
+
 
 @enduml
