@@ -370,6 +370,25 @@ variable "postgresql_database_version" {
   default = 14
 }
 
+variable "postgresql_network_connectivity_method" {
+  type        = string
+  description = "Specify postgresql networking method, public or private. See https://learn.microsoft.com/en-gb/azure/postgresql/flexible-server/concepts-networking"
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private"], var.postgresql_network_connectivity_method)
+    error_message = "Valid values for postgresql_network_connectivity_method are public or private."
+  }
+}
+
+variable "postgresql_firewall_ipv4_allow" {
+  type = map(object({
+    start_ip_address = string
+    end_ip_address   = string
+  }))
+  description = "Map of IP address ranges to add into the postgres firewall. Note: only applicable if postgresql_network_connectivity_method is set to public."
+  default     = {}
+}
+
 variable "redis_cache_capacity" {
   type    = number
   default = 0 // 250 MB for Basic SKU
