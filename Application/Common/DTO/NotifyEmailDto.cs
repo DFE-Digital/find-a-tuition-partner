@@ -21,4 +21,8 @@ public class NotifyEmailDto
     public EmailTemplateType EmailTemplateType { get; set; }
 
     public NotifyResponseDto NotifyResponse { get; set; }
+
+    public string? PreviousExceptionCode { get; set; }
+
+    public string? PreviousExceptionMessage { get; set; }
 }

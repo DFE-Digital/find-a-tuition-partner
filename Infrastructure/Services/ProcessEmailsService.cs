@@ -374,7 +374,9 @@ public class ProcessEmailsService : IProcessEmailsService
                     EmailTemplateType = x.EmailTemplateShortName.GetEnumFromDisplayName<EmailTemplateType>(),
                     Personalisation = x.EmailPersonalisationLogs == null ?
                         new Dictionary<string, dynamic>() :
-                        x.EmailPersonalisationLogs!.Select(y => new KeyValuePair<string, dynamic>(y.Key, y.Value)).ToDictionary(x => x.Key, x => x.Value)
+                        x.EmailPersonalisationLogs!.Select(y => new KeyValuePair<string, dynamic>(y.Key, y.Value)).ToDictionary(x => x.Key, x => x.Value),
+                    PreviousExceptionCode = x!.EmailNotifyResponseLog == null ? null : x.EmailNotifyResponseLog.ExceptionCode,
+                    PreviousExceptionMessage = x!.EmailNotifyResponseLog == null ? null : x.EmailNotifyResponseLog.ExceptionMessage
                 }).ToList();
 
                 try
