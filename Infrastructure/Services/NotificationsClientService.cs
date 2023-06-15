@@ -72,15 +72,23 @@ public class NotificationsClientService : INotificationsClientService
             notifyEmail.NotifyResponse.ExceptionCode = ex.Message.GetGovNotifyStatusCodeFromExceptionMessage().ToString();
             notifyEmail.NotifyResponse.ExceptionMessage = ex.ToString();
 
-            if (ex.IsNonCriticalNotifyException())
+            if (!notifyEmail.NotifyResponse.ExceptionCode.Equals(notifyEmail.PreviousExceptionCode) ||
+                !notifyEmail.NotifyResponse.ExceptionMessage.Equals(notifyEmail.PreviousExceptionMessage))
             {
-                _logger.LogWarning(ex, "A non critical Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
-                throw new EmailSendException(ex.Message, ex);
+                if (ex.IsNonCriticalNotifyException())
+                {
+                    _logger.LogWarning(ex, "A non critical Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
+                    throw new EmailSendException(ex.Message, ex);
+                }
+                else
+                {
+                    _logger.LogError(ex, "An unexpected error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
+                    throw;
+                }
             }
             else
             {
-                _logger.LogError(ex, "An unexpected error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
-                throw;
+                return false;
             }
         }
     }
