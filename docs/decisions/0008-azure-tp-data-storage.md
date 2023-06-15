@@ -37,7 +37,7 @@ spreadsheets stored within a folder, and the importer accessing that folder via 
 ### Store the TP data within the GitHub repository
 
 This is storing the files within the GitHub repository alongside the code. Updating the files would essentially
-be a release and deployment
+be a release and deployment.
 
 * Good, because the respostory already exists
 * Good, because files would be versioned and released as code
@@ -46,7 +46,7 @@ be a release and deployment
 
 ### Use Azure BLOB Storage
 
-This is storing the files within a dedicated BLOB with Azure Blob Storage
+This is storing the files within a dedicated BLOB with Azure Blob Storage.
 
 * Good, because the service credential can be locked down to the single BLOB store
 * Good, because the data would be private
