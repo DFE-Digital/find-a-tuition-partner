@@ -3,6 +3,7 @@ using Application.Queries.Enquiry;
 
 namespace UI.Pages.Enquiry.Respond
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class ViewResponse : PageModel
     {
         protected readonly IMediator _mediator;

@@ -5,6 +5,7 @@ using UI.Models;
 
 namespace UI.Pages.Enquiry.Respond
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class EditResponse : ResponsePageModel<EditResponse>
     {
         public EditResponse(IMediator mediator, ISessionService sessionService) : base(sessionService, mediator)
