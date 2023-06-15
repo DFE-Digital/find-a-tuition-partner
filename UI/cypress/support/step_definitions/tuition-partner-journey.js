@@ -10,7 +10,10 @@ Then(
   "the page heading should show School Enquiry from {string} area",
   (LAD) => {
     cy.contains(".govuk-caption-l > strong", LAD);
-    cy.contains(".govuk-heading-l", "View the school’s tuition requirements");
+    cy.contains(
+      ".govuk-heading-l",
+      "Responding to the schools tuition requirements"
+    );
   }
 );
 
@@ -72,11 +75,11 @@ Then("the key stages and subjects should match the request:", (dataTable) => {
     switch (row["Section Name"]) {
       case "Key stages and subjects":
         cy.checkTextContent(
-          ".govuk-grid-column-two-thirds-from-desktop > .govuk-list > :nth-child(1)",
+          ".govuk-grid-column-two-thirds-from-desktop > :nth-child(3) > :nth-child(1)",
           "Key stage 1: English and Maths"
         );
         cy.checkTextContent(
-          ".govuk-grid-column-two-thirds-from-desktop > .govuk-list > :nth-child(2)",
+          ":nth-child(3) > :nth-child(2)",
           "Key stage 2: English and Maths"
         );
     }
@@ -104,7 +107,10 @@ Then(
       ".govuk-grid-column-two-thirds-from-desktop > :nth-child(10)",
       header
     );
-    cy.contains(":nth-child(11) > .display-pre-wrap", text);
+    cy.contains(":nth-child(1) > .display-pre-wrap", text);
+    cy.contains(":nth-child(2) > .display-pre-wrap", text);
+    cy.contains(":nth-child(3) > .display-pre-wrap", text);
+    cy.contains(":nth-child(4) > .display-pre-wrap", text);
   }
 );
 

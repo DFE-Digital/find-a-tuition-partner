@@ -43,7 +43,6 @@ Feature: View all responses page and Tuition partner contact page
     Scenario: Tuiton Partners Response Page has the expected structure
         Given a school clicks the magic link to view their enquiry
         Then they click View response from a tuition partner
-        When they click all the view your tuition requirement links the text shows
         Then the response page has the following information:
             | Requirement                    | Your Response                  | {TP's name}'s Response |
             | Key stage and subjects:        | Key stage 1: English and Maths | 80                     |
