@@ -11,6 +11,12 @@ deciders: NTP Dev Team, DfE Lead Developers
 DfE is migrating their 'Digital' accounts from Google Suite to Office 365. This means that the current method of 
 importing the TP data from Google Drive will stop working. We therefore needed an alternative solution.
 
+## Decision Drivers
+
+* Tuition Partner files are a number of spreadsheets and a number of logo files
+* Updated spreadsheets will be supplied weekly from the accreditation provider
+* Although they only contain public data, there is a desire to keep the actual spreadsheets private
+
 ## Considered Options
 
 * Switch to using OneDrive
@@ -20,7 +26,7 @@ importing the TP data from Google Drive will stop working. We therefore needed a
 ## Decision Outcome
 
 Chosen option: "Use Azure BLOB Storage", because it provides an isolated and dedicated place to store the TP data
-which is simple to integrate with.
+which is straightforward to integrate with.
 
 <!-- This is an optional element. Feel free to remove. -->
 ## Pros and Cons of the Options
