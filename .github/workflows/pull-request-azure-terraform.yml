@@ -239,7 +239,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
-          sudo apt-get install -y expect
+          sudo apt-get install -y sshpass
           
       - name: Run database migrations and import data
         run: |
@@ -250,30 +250,16 @@ jobs:
           # startup time seems to be a bit unpredictable...
           timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
           
-          expect -d <(cat <<EOF
-          spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
-          expect "password:"
-          send "Docker!\r"
-          send "export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0\r"
-          expect "*#"
-          send "export BlobStorage_AccountName=s177p01sharedtpdata\r"
-          expect "*#"
-          send "export BlobStorage_ContainerName=ntp-tp-data\r"
-          expect "*#"
-          send "export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16\r"
-          expect "*#"
-          send "export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}\r"
-          expect "*#"
-          send "cd ~/site/wwwroot\r"
-          expect "*#"
-          send "dotnet ./UI.dll import; echo \$?\r"
-          expect {
-            "0" { send_user "Command completed successfully.\n" }
-            default { send_user "Command failed.\n" }
-          }
-          EOF
-          )
-          
+          sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost '
+          export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
+          export BlobStorage_AccountName=s177p01sharedtpdata
+          export BlobStorage_ContainerName=ntp-tp-data
+          export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
+          export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
+          cd ~/site/wwwroot
+          dotnet ./UI.dll import
+          '
+  
           # clean up ssh tunnel(s)
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
