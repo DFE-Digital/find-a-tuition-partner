@@ -227,14 +227,29 @@ jobs:
           export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform apply -auto-approve tfplan.out
           
-      # Deploy to Azure Web apps
-      - name: Webapp Deploy
-        uses: azure/webapps-deploy@v2
-        with:
-            app-name: ${{ env.AZURE_WEBAPP_NAME }}
-            package: '${{ env.APP_CODE_PATH }}/publish'
+      # Deploy to Azure Web apps also Run database migrations and import data
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 's177-national tutoring programme-development'
+            appType: 'webApp'
+            WebAppName: '${{ env.AZURE_WEBAPP_NAME }}'
+            packageForLinux: '${{ env.APP_CODE_PATH }}/publish'
+            enableCustomDeployment: true
+            DeploymentType: 'webDeploy'
+            RemoveAdditionalFilesFlag: true
+            TakeAppOfflineFlag: false
+            ScriptType: 'Inline Script'
+            InlineScript: |
+              export BlobStorage_ClientId='fdd09510-77b0-419f-b67c-2b5a25a073f0'
+              export BlobStorage_AccountName='s177p01sharedtpdata'
+              export BlobStorage_ContainerName='ntp-tp-data'
+              export BlobStorage_TenantId='9c7d9dd3-840c-4b3f-818e-552865082e16'
+              export BlobStorage_ClientSecret = ${{ env.TF_VAR_blob_storage_client_secret }}
               
-      # Run database migrations and import data
-      - name: Run database migrations and import data
-        run: |
-          az webapp ssh --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --command 'dotnet ./UI.dll import'
+              # Navigate to the wwwroot directory
+              cd /home/site/wwwroot
+              
+              # Run database migrations and import data
+              dotnet ./UI.dll import
+              
