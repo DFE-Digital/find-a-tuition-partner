@@ -191,13 +191,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-            - name: Bundle web assets
-              working-directory: ${{ env.APP_CODE_PATH }}
-              run: |
-                npm ci
-                npm run build
-          
-     # Run dotnet build and publish
+
+      - name: Bundle web assets
+        working-directory: ${{ env.APP_CODE_PATH }}
+        run: |
+          npm ci
+          npm run build
+      
+      # Run dotnet build and publish
       - name: .NET Build and Publish
         working-directory: ${{ env.APP_CODE_PATH }}
         run: |
