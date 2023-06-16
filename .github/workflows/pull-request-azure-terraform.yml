@@ -247,8 +247,7 @@ jobs:
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
           az webapp create-remote-connection --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }}  -p 54321 &
-          # startup time seems to be a bit unpredictable...
-          timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
+          sleep 10  # Give the connection time to establish
           
           expect -d <(cat <<EOF
           spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
