@@ -256,7 +256,7 @@ jobs:
           export BlobStorage_ContainerName=ntp-tp-data
           export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
           export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
-          cd ~/site/wwwroot
+          cd /home/site/wwwroot
           dotnet ./UI.dll import
           '
   
