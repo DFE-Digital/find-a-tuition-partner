@@ -235,6 +235,12 @@ jobs:
               publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
               package: ${{ env.APP_CODE_PATH }}/publish
               
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          sudo apt-get install -y expect openssh-client
+          
       - name: Run database migrations and import data
         run: |
           export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
@@ -245,8 +251,8 @@ jobs:
           
           
           # hitting the website seems to have some effect on ssh!
-          # wget -O /dev/null -q https://find-a-tp-pr-353-cdnendpoint-ege4f6euezb5hgc0.z01.azurefd.net/
-          # sleep 60s
+          wget -O /dev/null -q https://find-a-tp-pr-353-cdnendpoint-ege4f6euezb5hgc0.z01.azurefd.net/
+          sleep 60s
           
           # clean up any old ssh tunnels before we start
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
@@ -260,7 +266,7 @@ jobs:
           expect "password:"
           send "Docker!\r"
           expect "*#"
-          send "cd home/site/wwwroot\r"
+          send "cd ~/site/wwwroot\r"
           expect "*#"
           send "dotnet ./UI.dll import\r"
           wait 
