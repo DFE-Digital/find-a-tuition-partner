@@ -255,17 +255,17 @@ jobs:
           # startup time seems to be a bit unpredictable...
           timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
           
-          expect -d <<EOF
-            spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
-            expect "password:"
-            send "Docker!\r"
-            expect "home#"
-            send "cd site/wwwroot\r"
-            expect "wwwroot#"
-            send "dotnet ./UI.dll import\r"
-            wait 
+          expect -d <(cat <<EOF
+          spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
+          expect "password:"
+          send "Docker!\r"
+          expect "*#"
+          send "cd home/site/wwwroot\r"
+          expect "*#"
+          send "dotnet ./UI.dll import\r"
+          wait 
           EOF
-          
+          )
           
           # clean up ssh tunnel(s)
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
