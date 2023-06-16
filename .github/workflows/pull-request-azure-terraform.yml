@@ -264,7 +264,6 @@ jobs:
           send "cd ~/site/wwwroot\r"
           expect "*#"
           send "dotnet ./UI.dll import\r"
-          wait 
           EOF
           )
           
