@@ -243,11 +243,25 @@ jobs:
           export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
           export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
           
-          az webapp ssh --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }}
+          #clean up any old ssh tunnels before we start
+          for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
-          # Navigate to the wwwroot directory
-          cd /home/site/wwwroot
+          az webapp create-remote-connection --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }}  -p 54321 &
+          # startup time seems to be a bit unpredictable...
+          timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
           
-          # Run database migrations and import data
-          dotnet ./UI.dll import
+          expect -d <(cat <<EOF
+          spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
+          expect "password:"
+          send "Docker!\r"
+          expect "home#"
+          send "cd site/wwwroot\r"
+          expect "wwwroot#"
+          send "dotnet ./UI.dll import"
+          EOF
+          )
+          
+          # clean up ssh tunnel(s)
+          for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
+          
               
