@@ -251,6 +251,7 @@ jobs:
           timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
           
           sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost '
+          export DOTNET_ENVIRONMENT=Development
           export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
           export BlobStorage_AccountName=s177p01sharedtpdata
           export BlobStorage_ContainerName=ntp-tp-data
