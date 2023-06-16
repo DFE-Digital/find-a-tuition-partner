@@ -243,12 +243,6 @@ jobs:
           
       - name: Run database migrations and import data
         run: |
-          export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
-          export BlobStorage_AccountName=s177p01sharedtpdata
-          export BlobStorage_ContainerName=ntp-tp-data
-          export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
-          export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
-          
           # clean up any old ssh tunnels before we start
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
@@ -260,10 +254,23 @@ jobs:
           spawn ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
           expect "password:"
           send "Docker!\r"
+          send "export BlobStorage_ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0\r"
+          expect "*#"
+          send "export BlobStorage_AccountName=s177p01sharedtpdata\r"
+          expect "*#"
+          send "export BlobStorage_ContainerName=ntp-tp-data\r"
+          expect "*#"
+          send "export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16\r"
+          expect "*#"
+          send "export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}\r"
           expect "*#"
           send "cd ~/site/wwwroot\r"
           expect "*#"
-          send "dotnet ./UI.dll import\r"
+          send "dotnet ./UI.dll import; echo \$?\r"
+          expect {
+            "0" { send_user "Command completed successfully.\n" }
+            default { send_user "Command failed.\n" }
+          }
           EOF
           )
           
