@@ -243,6 +243,11 @@ jobs:
           export BlobStorage_TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
           export BlobStorage_ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
           
+          
+          # hitting the website seems to have some effect on ssh!
+          wget -O /dev/null -q https://find-a-tp-pr-353-cdnendpoint-ege4f6euezb5hgc0.z01.azurefd.net/
+          sleep 60s
+          
           #clean up any old ssh tunnels before we start
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
@@ -258,6 +263,7 @@ jobs:
           send "cd site/wwwroot\r"
           expect "wwwroot#"
           send "dotnet ./UI.dll import"
+          wait 
           EOF
           )
           
