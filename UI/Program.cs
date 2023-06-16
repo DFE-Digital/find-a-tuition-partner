@@ -20,6 +20,8 @@ if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
 if (!string.IsNullOrEmpty(builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName]))
 {
     var keyVaultName = builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName];
