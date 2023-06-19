@@ -26,7 +26,7 @@ public class CheckYourAnswersTests
         _validator = new CheckYourAnswersModelValidator();
 
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
-            .WithName("a", "Alpha")
+            .WithName("e", "Echo")
             .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l

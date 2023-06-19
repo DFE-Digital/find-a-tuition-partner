@@ -9,5 +9,7 @@ public class TuitionPartnerEnquiryConfigurations : IEntityTypeConfiguration<Tuit
     public void Configure(EntityTypeBuilder<TuitionPartnerEnquiry> builder)
     {
         builder.HasIndex(e => e.TuitionPartnerId);
+
+        builder.HasOne(e => e.TuitionPartnerEnquirySubmittedEmailLog).WithMany(e => e.TuitionPartnerEnquiriesSubmitted).OnDelete(DeleteBehavior.Restrict);
     }
 }

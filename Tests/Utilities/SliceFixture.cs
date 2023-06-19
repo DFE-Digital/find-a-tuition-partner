@@ -116,7 +116,8 @@ public class SliceFixture : IAsyncLifetime
                     id = "id",
                     reference = "reference",
                     uri = "uri",
-                    content = new EmailResponseContent()
+                    content = new EmailResponseContent(),
+                    template = new Notify.Models.Template()
                 });
 
             NotificationClient.Setup(nc =>
@@ -235,8 +236,9 @@ public class SliceFixture : IAsyncLifetime
 
             return result;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            var a = ex.Message;
             dbContext.Database.RollbackTransaction();
             throw;
         }
@@ -319,6 +321,70 @@ public class SliceFixture : IAsyncLifetime
             db.Set<TEntity2>().Add(entity2);
             db.Set<TEntity3>().Add(entity3);
             db.Set<TEntity4>().Add(entity4);
+
+            return db.SaveChangesAsync();
+        });
+    }
+
+    public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4, TEntity5>(TEntity entity, TEntity2 entity2, TEntity3 entity3, TEntity4 entity4, TEntity5 entity5)
+        where TEntity : class
+        where TEntity2 : class
+        where TEntity3 : class
+        where TEntity4 : class
+        where TEntity5 : class
+    {
+        return ExecuteDbContextAsync(db =>
+        {
+            db.Set<TEntity>().Add(entity);
+            db.Set<TEntity2>().Add(entity2);
+            db.Set<TEntity3>().Add(entity3);
+            db.Set<TEntity4>().Add(entity4);
+            db.Set<TEntity5>().Add(entity5);
+
+            return db.SaveChangesAsync();
+        });
+    }
+
+    public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4, TEntity5, TEntity6>(TEntity entity, TEntity2 entity2, TEntity3 entity3, TEntity4 entity4, TEntity5 entity5, TEntity6 entity6)
+        where TEntity : class
+        where TEntity2 : class
+        where TEntity3 : class
+        where TEntity4 : class
+        where TEntity5 : class
+        where TEntity6 : class
+    {
+        return ExecuteDbContextAsync(db =>
+        {
+            db.Set<TEntity>().Add(entity);
+            db.Set<TEntity2>().Add(entity2);
+            db.Set<TEntity3>().Add(entity3);
+            db.Set<TEntity4>().Add(entity4);
+            db.Set<TEntity5>().Add(entity5);
+            db.Set<TEntity6>().Add(entity6);
+
+            return db.SaveChangesAsync();
+        });
+    }
+
+    public Task InsertAsync<TEntity, TEntity2, TEntity3, TEntity4, TEntity5, TEntity6, TEntity7>(TEntity entity, TEntity2 entity2, TEntity3 entity3, TEntity4 entity4, TEntity5 entity5, TEntity6 entity6, TEntity7 entity7)
+        where TEntity : class
+        where TEntity2 : class
+        where TEntity3 : class
+        where TEntity4 : class
+        where TEntity5 : class
+        where TEntity6 : class
+        where TEntity7 : class
+
+    {
+        return ExecuteDbContextAsync(db =>
+        {
+            db.Set<TEntity>().Add(entity);
+            db.Set<TEntity2>().Add(entity2);
+            db.Set<TEntity3>().Add(entity3);
+            db.Set<TEntity4>().Add(entity4);
+            db.Set<TEntity5>().Add(entity5);
+            db.Set<TEntity6>().Add(entity6);
+            db.Set<TEntity7>().Add(entity7);
 
             return db.SaveChangesAsync();
         });

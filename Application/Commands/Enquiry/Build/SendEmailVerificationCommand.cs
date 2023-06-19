@@ -1,8 +1,12 @@
 ﻿using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Application.Constants;
 using Application.Extensions;
+using Domain;
 using Domain.Enums;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using EmailStatus = Domain.Enums.EmailStatus;
 
 namespace Application.Commands.Enquiry.Build;
 
@@ -19,28 +23,71 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
     private const string EmailPasscodeKey = "email_passcode";
     private const string SessionTimeoutMinutesKey = "session_timeout_minutes";
 
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IProcessEmailsService _processEmailsService;
     private readonly INotificationsClientService _notificationsClientService;
     private readonly ILogger<SendEmailVerificationCommandHandler> _logger;
+    private readonly IHostEnvironment _hostEnvironment;
+
+    private string? _environmentNameNonProduction;
 
     public SendEmailVerificationCommandHandler(
+        IUnitOfWork unitOfWork,
+        IProcessEmailsService processEmailsService,
         INotificationsClientService notificationsClientService,
-        ILogger<SendEmailVerificationCommandHandler> logger)
+        ILogger<SendEmailVerificationCommandHandler> logger,
+        IHostEnvironment hostEnvironment)
     {
+        _unitOfWork = unitOfWork;
+        _processEmailsService = processEmailsService;
         _notificationsClientService = notificationsClientService;
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<int> Handle(SendEmailVerificationCommand request, CancellationToken cancellationToken)
     {
+        var validationResult = ValidateRequest(request);
+        if (validationResult != null)
+        {
+            validationResult = $"The {nameof(SendEmailVerificationCommand)} {validationResult}";
+            _logger.LogError(validationResult);
+            throw new ArgumentException(validationResult);
+        }
+
+        _environmentNameNonProduction = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
+
         var passcode = GeneratePasscode(request.PasscodeLength);
 
-        var emailVerificationNotificationsRecipient = GetEmailVerificationNotificationsRecipient(request, passcode);
+        var verificationEmailLog = GetVerificationEmailLog(request, passcode);
 
-        await _notificationsClientService.SendEmailAsync(emailVerificationNotificationsRecipient, EmailTemplateType.EmailVerification);
+        _unitOfWork.EmailLogRepository.AddAsync(verificationEmailLog, cancellationToken);
+
+        await _unitOfWork.Complete();
+
+        try
+        {
+            await _processEmailsService.SendEmailAsync(verificationEmailLog.Id);
+        }
+        catch (Exception)
+        {
+            await CleanUpData(verificationEmailLog.Id);
+            throw;
+        }
 
         _logger.LogInformation("Email verification passcode sent: {passcode}", passcode);
 
         return passcode;
+    }
+
+    private static string? ValidateRequest(SendEmailVerificationCommand request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return "Email is null";
+        }
+
+        return null;
     }
 
     private static int GeneratePasscode(int passcodeLength)
@@ -53,8 +100,31 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
         return rnd.Next(minNumber, maxNumber);
     }
 
-    private static NotificationsRecipientDto GetEmailVerificationNotificationsRecipient(
-        SendEmailVerificationCommand request, int passcode)
+    private EmailLog GetVerificationEmailLog(SendEmailVerificationCommand request, int passcode)
+    {
+        var emailTemplateType = EmailTemplateType.EmailVerification;
+
+        var verificationEmailPersonalisationLog = GetVerificationEmailPersonalisationLog(request, passcode);
+
+        var createdDateTime = DateTime.UtcNow;
+
+        var emailLog = new EmailLog()
+        {
+            CreatedDate = createdDateTime,
+            ProcessFromDate = createdDateTime,
+            FinishProcessingDate = createdDateTime.AddDays(IntegerConstants.EmailLogFinishProcessingAfterDays),
+            EmailAddress = request.Email!,
+            EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(),
+            EmailTemplateShortName = emailTemplateType.DisplayName(),
+            ClientReferenceNumber = emailTemplateType.DisplayName().CreateNotifyEmailClientReference(_environmentNameNonProduction!),
+            EmailStatusId = (int)EmailStatus.ToBeProcessed,
+            EmailPersonalisationLogs = verificationEmailPersonalisationLog
+        };
+
+        return emailLog;
+    }
+
+    private static List<EmailPersonalisationLog> GetVerificationEmailPersonalisationLog(SendEmailVerificationCommand request, int passcode)
     {
         var personalisation = new Dictionary<string, dynamic>()
             {
@@ -62,16 +132,29 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
                 { SessionTimeoutMinutesKey, request.SessionTimeoutMinutes.ToString() }
             };
 
-        var result = new NotificationsRecipientDto()
+        personalisation.AddDefaultEmailPersonalisation(request.BaseServiceUrl!);
+
+        return personalisation.Select(x => new EmailPersonalisationLog
         {
-            Email = request.Email,
-            OriginalEmail = request.Email,
-            EnquirerEmailForTestingPurposes = request.Email,
-            Personalisation = personalisation
-        };
+            Key = x.Key,
+            Value = x.Value.ToString()
+        }).ToList();
+    }
 
-        result.AddDefaultEmailDetails(request.BaseServiceUrl!, EmailTemplateType.EmailVerification);
+    private async Task CleanUpData(int emailLogId)
+    {
+        try
+        {
+            var emailLog = _unitOfWork.EmailLogRepository
+                .GetById(emailLogId);
 
-        return result;
+            _unitOfWork.EmailLogRepository.Remove(emailLog);
+
+            await _unitOfWork.Complete();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error thrown in SendEmailVerificationCommand CleanUpData");
+        }
     }
 }
