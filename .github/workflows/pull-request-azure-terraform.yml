@@ -241,6 +241,13 @@ jobs:
           export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform apply -auto-approve tfplan.out
           
+      - name: Debug Terraform Outputs
+        run: |
+          export ARM_CLIENT_ID=${{ env.TF_VAR_client_id }}
+          export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
+          export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
+          export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
+          terraform output
           
       - name: Set output as env vars
         run: |
