@@ -245,7 +245,7 @@ jobs:
         run: |
             echo "AZURE_WEBAPP_NAME=$(terraform output -raw azurerm_linux_web_app_default.name)" >> $GITHUB_ENV
             echo "AZURE_RESOURCE_GROUP=$(terraform output -raw azurerm_resource_group_default.name)" >> $GITHUB_ENV
-            echo "APP_BASE_URL=$(terraform output -raw azurerm_cdn_frontdoor_endpoint_endpoint.host_name)" >> $GITHUB_ENV
+            echo "APP_BASE_URL=$(terraform output -raw azurerm_cdn_frontdoor_endpoint_endpoint)" >> $GITHUB_ENV
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
