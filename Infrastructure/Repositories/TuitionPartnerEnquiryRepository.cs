@@ -1,4 +1,5 @@
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
@@ -45,7 +46,11 @@ public class TuitionPartnerEnquiryRepository : GenericRepository<TuitionPartnerE
             TuitionPartnerName = tuitionPartnerEnquiry.TuitionPartner.Name,
             EnquiryKeyStageSubjects = keyStageSubjects,
             EnquiryTuitionSetting = enquiry.TuitionSettings.GetTuitionSettingName(),
-            EnquiryTutoringLogistics = enquiry.TutoringLogistics,
+            EnquiryTutoringLogisticsDisplayModel = new TutoringLogisticsDisplayModel()
+            {
+                TutoringLogistics = enquiry.TutoringLogistics,
+                TutoringLogisticsDetailsModel = enquiry.TutoringLogistics.ToTutoringLogisticsDetailsModel()
+            },
             EnquirySENDRequirements = enquiry.SENDRequirements,
             EnquiryAdditionalInformation = enquiry.AdditionalInformation,
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
