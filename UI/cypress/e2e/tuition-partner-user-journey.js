@@ -176,7 +176,7 @@ Then(
 );
 
 Then(
-  "user has entered {string} and journeyed forward to the {string} tuition partner page",
+  "user has entered {string} and journeyed forward to the {int} tuition partner page",
   (postcode, tp) => {
     Step(this, "they enter '" + postcode + "' as the school's postcode");
     Step(this, "they click 'Continue'");
@@ -192,7 +192,7 @@ Then(
     Step(this, "they select No preference");
     Step(this, "they click 'Continue'");
     Step(this, "they will be taken to the 'Search Results' page");
-    Step(this, "they select the tuition partner '" + tp + "'");
+    Step(this, "they then select the tuition partner '" + tp + "'");
     Step(this, "the page's title is '" + tp + "'");
   }
 );
