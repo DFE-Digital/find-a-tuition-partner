@@ -10,14 +10,17 @@ Feature: The Check Your Answers page for the Enquiry Builder
         When user has journeyed forward to the check your answers page
         Then they are redirected to the check your answers page
         Then the Check Your Answers page displays the following:
-            | Section Name            | Expected Content                                |
-            | Key stages and subjects | Displays Key Stages and subjects table          |
-            | Tuition setting         | No preference                                   |
-            | Tuition Plan            | enquiry                                         |
-            | SEND Support            | enquiry                                         |
-            | Other Considerations    | enquiry                                         |
-            | Your school details     | Oxford Spires Academy, OX4 2AU                  |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
+            | Section Name                         | Expected Content                                |
+            | Key stages and subjects              | Displays Key Stages and subjects table          |
+            | Tuition setting                      | No preference                                   |
+            | How many pupils need tuition         | enquiry                                         |
+            | When do you want tuition to start    | enquiry                                         |
+            | How long do you need tuition for     | enquiry                                         |
+            | What time of day do you need tuition | enquiry                                         |
+            | SEND Support                         | enquiry                                         |
+            | Other Considerations                 | enquiry                                         |
+            | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
     Scenario: Change selections for Key Stages and Subjects
         Given a user has started the 'Find a tuition partner' journey
@@ -32,13 +35,17 @@ Feature: The Check Your Answers page for the Enquiry Builder
         And they click 'Continue'
         When they are redirected to the check your answers page
         Then the Check Your Answers page displays the following with the key stage and subjects updates:
-            | Section Name            | Expected Content                                |
-            | Key stages and subjects | Displays Key Stage and Subjects table           |
-            | Tuition setting         | No preference                                   |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
-            | Tuition Plan            | enquiry                                         |
-            | SEND Support            | enquiry                                         |
-            | Other Considerations    | enquiry                                         |
+            | Section Name                         | Expected Content                                |
+            | Key stages and subjects              | Displays Key Stage and Subjects table           |
+            | Tuition setting                      | No preference                                   |
+            | How many pupils need tuition         | enquiry                                         |
+            | When do you want tuition to start    | enquiry                                         |
+            | How long do you need tuition for     | enquiry                                         |
+            | What time of day do you need tuition | enquiry                                         |
+            | SEND Support                         | enquiry                                         |
+            | Other Considerations                 | enquiry                                         |
+            | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
     Scenario: Change selections for tuition setting
         Given a user has started the 'Find a tuition partner' journey
@@ -49,13 +56,17 @@ Feature: The Check Your Answers page for the Enquiry Builder
         And they click 'Continue'
         Then they are redirected to the check your answers page
         Then the Check Your Answers page displays the following with the tuition setting update:
-            | Section Name            | Expected Content                                |
-            | Key stages and subjects | Displays Key Stage and Subjects table           |
-            | Tuition setting         | Online                                          |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
-            | Tuition Plan            | enquiry                                         |
-            | SEND Support            | enquiry                                         |
-            | Other Considerations    | enquiry                                         |
+            | Section Name                         | Expected Content                                |
+            | Key stages and subjects              | Displays Key Stage and Subjects table           |
+            | Tuition setting                      | Online                                          |
+            | How many pupils need tuition         | enquiry                                         |
+            | When do you want tuition to start    | enquiry                                         |
+            | How long do you need tuition for     | enquiry                                         |
+            | What time of day do you need tuition | enquiry                                         |
+            | SEND Support                         | enquiry                                         |
+            | Other Considerations                 | enquiry                                         |
+            | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
     Scenario: Change selections for email address
         Given a user has started the 'Find a tuition partner' journey
@@ -66,13 +77,17 @@ Feature: The Check Your Answers page for the Enquiry Builder
         And they click 'Continue'
         Then they are redirected to the check your answers page
         Then the Check Your Answers page displays the following with the email address update:
-            | Section Name            | Expected Content                                |
-            | Key stages and subjects | Displays Key Stage and Subjects table           |
-            | Tuition setting         | No preference                                   |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
-            | Tuition Plan            | enquiry                                         |
-            | SEND Support            | enquiry                                         |
-            | Other Considerations    | enquiry                                         |
+            | Section Name                         | Expected Content                                |
+            | Key stages and subjects              | Displays Key Stage and Subjects table           |
+            | Tuition setting                      | No preference                                   |
+            | How many pupils need tuition         | enquiry                                         |
+            | When do you want tuition to start    | enquiry                                         |
+            | How long do you need tuition for     | enquiry                                         |
+            | What time of day do you need tuition | enquiry                                         |
+            | SEND Support                         | enquiry                                         |
+            | Other Considerations                 | enquiry                                         |
+            | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
     Scenario: Change selections for tuition questions
         Given a user has started the 'Find a tuition partner' journey
@@ -82,24 +97,28 @@ Feature: The Check Your Answers page for the Enquiry Builder
         When they type '5' characters for question 1
         And they click 'Continue'
         Then they are redirected to the check your answers page
-        When the user clicks the change button '4'
+        When the user clicks the change button '7'
         Then they are redirected to the SEND requirements page
         When they type '5' characters for question 2
         And they click 'Continue'
         Then they are redirected to the check your answers page
-        When the user clicks the change button '5'
+        When the user clicks the change button '8'
         Then they are redirected to the other requirements page
         When they type '0' characters for question 3
         And they click 'Continue'
         Then they are redirected to the check your answers page
         Then the Check Your Answers page displays the following with the email address update:
-            | Section Name            | Expected Content                                |
-            | Key stages and subjects | Displays Key Stage and Subjects table           |
-            | Tuition setting         | No preference                                   |
-            | Email Address           | simulate-delivered@notifications.service.gov.uk |
-            | Tuition Plan            | aaaaa                                           |
-            | SEND Support            | aaaaa                                           |
-            | Other Considerations    | Not specified                                   |
+            | Section Name                         | Expected Content                                |
+            | Key stages and subjects              | Displays Key Stage and Subjects table           |
+            | Tuition setting                      | No preference                                   |
+            | How many pupils need tuition         | aaaaa                                           |
+            | When do you want tuition to start    | aaaaa                                           |
+            | How long do you need tuition for     | aaaaa                                           |
+            | What time of day do you need tuition | aaaaa                                           |
+            | SEND Support                         | aaaaa                                           |
+            | Other Considerations                 | aaaaa                                           |
+            | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+            | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
 
 

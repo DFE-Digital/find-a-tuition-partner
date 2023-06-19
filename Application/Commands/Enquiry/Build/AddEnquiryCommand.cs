@@ -143,9 +143,24 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             return "Data.Email is null or empty";
         }
 
-        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogistics))
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsDetailsModel.NumberOfPupils))
         {
-            return "Data.TutoringLogistics is null or empty";
+            return "Data.TutoringLogisticsDetailsModel.NumberOfPupils is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsDetailsModel.StartDate))
+        {
+            return "Data.TutoringLogisticsDetailsModel.StartDate is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsDetailsModel.TuitionDuration))
+        {
+            return "Data.TutoringLogisticsDetailsModel.TuitionDuration is null or empty";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Data.TutoringLogisticsDetailsModel.TimeOfDay))
+        {
+            return "Data.TutoringLogisticsDetailsModel.TimeOfDay is null or empty";
         }
 
         return null;
@@ -190,11 +205,11 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         //Populate and save the enquiry
         return new Domain.Enquiry()
         {
-            SchoolId = request.Data?.SchoolId!,
-            Email = request.Data?.Email!,
-            TutoringLogistics = request.Data?.TutoringLogistics!,
-            SENDRequirements = request.Data?.SENDRequirements ?? null,
-            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
+            SchoolId = request.Data!.SchoolId!,
+            Email = request.Data!.Email!,
+            TutoringLogistics = request.Data!.TutoringLogisticsDetailsModel.ToJson(),
+            SENDRequirements = request.Data!.SENDRequirements,
+            AdditionalInformation = request.Data!.AdditionalInformation,
             TuitionPartnerEnquiry = tuitionPartnerEnquiries,
             SupportReferenceNumber = _enquiryReferenceNumber!,
             KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),

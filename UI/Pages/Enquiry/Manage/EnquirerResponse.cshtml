@@ -29,7 +29,7 @@
     </p>
     <ul class="govuk-list govuk-list--bullet app-print-hide">
       <li>
-        contact them to discuss your enquiry such as budget, funding, alternative arrangements and tutors available.
+        contact them to discuss your enquiry such as budget, funding, alternative arrangements and tutors available
       </li>
       <li>
         return to your enquiry list to view other tuition partner’s responses
@@ -38,24 +38,24 @@
   </div>
 </div>
 
-<hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
-
 <div class="govuk-width-container">
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
+
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
       <h2 class="govuk-heading-l govuk-!-padding-top-0">
         Their response to your enquiry
       </h2>
 
-      <h3 class="govuk-heading-m">
-        Key stage and subjects:
+      <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+        Key stage and subjects
       </h3>
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Your requirement</strong>
+        <strong>Your requirement:</strong>
       </p>
-
-      <ul class="govuk-list govuk-list-bullets-mobile-view">
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
         @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
         {
           <li>
@@ -65,103 +65,99 @@
       </ul>
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+        <strong>Response from @Model.Data.TuitionPartnerName:</strong>
       </p>
       <p class="govuk-body">
         <span class="display-pre-wrap">@Model.Data.KeyStageAndSubjectsText</span>
       </p>
 
-      <h3 class="govuk-heading-m">
-        Tuition setting:
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-5">
+
+      <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+        Tuition setting
       </h3>
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Your requirement</strong>
+        <strong>Your requirement:</strong>
       </p>
       <p class="govuk-body">
         @Model.Data.EnquiryTuitionSetting
       </p>
 
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+        <strong>Response from @Model.Data.TuitionPartnerName:</strong>
       </p>
       <p class="govuk-body">
         <span class="display-pre-wrap">@Model.Data.TuitionSettingText</span>
       </p>
 
-      <h3 class="govuk-heading-m">
-        Tuition plan:
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-5">
+
+      <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+        Tuition plan
       </h3>
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Your requirement</strong>
+        <strong>Your requirement:</strong>
       </p>
-      <govuk-details open="false">
-        <govuk-details-summary>
-          View your tuition requirement
-        </govuk-details-summary>
-        <govuk-details-text>
-          <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
-        </govuk-details-text>
-      </govuk-details>
+      <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
+
       <p class="govuk-body govuk-!-margin-bottom-0">
-        <strong>Response from @Model.Data.TuitionPartnerName</strong>
+        <strong>Response from @Model.Data.TuitionPartnerName:</strong>
       </p>
       <p class="govuk-body">
         <span class="display-pre-wrap">@Model.Data.TutoringLogisticsText</span>
       </p>
 
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-5">
+
       @if (!string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements))
       {
-        <h3 class="govuk-heading-m">
-          <span>Can you support the following SEND requirements:</span>
+        <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+          <span>Can you support the following SEND and additional requirements</span>
         </h3>
+
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <strong>Your requirement</strong>
+          <strong>Your requirement:</strong>
         </p>
-        <govuk-details open="false">
-          <govuk-details-summary>
-            View your tuition requirement
-          </govuk-details-summary>
-          <govuk-details-text>
-            <span class="display-pre-wrap">@Model.Data.EnquirySENDRequirements</span>
-          </govuk-details-text>
-        </govuk-details>
+        <p class="govuk-body">
+          <span class="display-pre-wrap">@Model.Data.EnquirySENDRequirements</span>
+        </p>
+
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <strong>Response from @Model.Data.TuitionPartnerName</strong>
+          <strong>Response from @Model.Data.TuitionPartnerName:</strong>
         </p>
         <p class="govuk-body">
           <span class="display-pre-wrap">@Model.Data.SENDRequirementsText</span>
         </p>
+
+        <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-5">
       }
 
       @if (!string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation))
       {
-        <h3 class="govuk-heading-m">
-          <span>Other tuition considerations?:</span>
+        <h3 class="govuk-heading-m govuk-!-margin-bottom-1">
+          <span>Other tuition requirements</span>
         </h3>
+
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <strong>Your requirement</strong>
+          <strong>Your requirement:</strong>
         </p>
-        <govuk-details open="false">
-          <govuk-details-summary>
-            View your tuition requirement
-          </govuk-details-summary>
-          <govuk-details-text>
-            <span class="display-pre-wrap">@Model.Data.EnquiryAdditionalInformation</span>
-          </govuk-details-text>
-        </govuk-details>
+        <p class="govuk-body">
+          <span class="display-pre-wrap">@Model.Data.EnquiryAdditionalInformation</span>
+        </p>
+
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <strong>Response from @Model.Data.TuitionPartnerName</strong>
+          <strong>Response from @Model.Data.TuitionPartnerName:</strong>
         </p>
         <p class="govuk-body">
           <span class="display-pre-wrap">@Model.Data.AdditionalInformationText</span>
         </p>
+
+        <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-5">
       }
     </div>
   </div>
 </div>
-
-<hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7 app-print-hide">
 
 <div class="govuk-width-container app-print-hide">
   <div class="govuk-grid-row">
