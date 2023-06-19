@@ -4,9 +4,14 @@ namespace Application.Common.Models.Enquiry.Manage;
 
 public record EnquirerViewAllResponsesModel : EnquirerResponseResultsModel
 {
+    public EnquirerViewAllResponsesModel()
+    {
+        TutoringLogisticsDisplayModel = new TutoringLogisticsDisplayModel();
+    }
+
     public string LocalAuthorityDistrict { get; set; } = null!;
 
-    public string TutoringLogistics { get; set; } = null!;
+    public TutoringLogisticsDisplayModel TutoringLogisticsDisplayModel { get; set; }
 
     public string? ErrorMessage { get; set; }
 

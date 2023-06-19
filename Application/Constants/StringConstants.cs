@@ -33,6 +33,8 @@
 
         public const string IsRequiredLabel = "This field is required";
 
+        public const string NotifyBulletedListFormat = "* ";
+
         public const string NotInterestedTextIfNoReasonSupplied = "No feedback provided";
     }
 }

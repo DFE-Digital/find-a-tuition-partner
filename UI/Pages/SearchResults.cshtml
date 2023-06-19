@@ -212,7 +212,7 @@
                     Subjects covered
                   </govuk-summary-list-row-key>
                   <govuk-summary-list-row-value>
-                    <ul class="govuk-list govuk-body-s govuk-list-bullets-mobile-view" data-testid="results-subjects">
+                    <ul class="govuk-list govuk-body-s govuk-list--bullet" data-testid="results-subjects">
                       @foreach (var keyStageSubjects in item.SubjectsCoverage!
                      .Select(e => e.Subject)
                      .Distinct()

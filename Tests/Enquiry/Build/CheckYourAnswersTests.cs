@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Notify.Exceptions;
 using Tests.TestData;
 using UI.Pages.Enquiry.Build;
+using TutoringLogisticsDetailsModel = Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel;
 
 namespace Tests.Enquiry.Build;
 
@@ -56,7 +57,13 @@ public class CheckYourAnswersTests
     {
         var model = new CheckYourAnswersModel
         {
-            TutoringLogistics = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                StartDate = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                TuitionDuration = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+                TimeOfDay = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1)
+            },
             SENDRequirements = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             AdditionalInformation = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             ConfirmTermsAndConditions = true
@@ -64,7 +71,10 @@ public class CheckYourAnswersTests
 
         var result = _validator.TestValidate(model);
 
-        result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TuitionDuration);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TimeOfDay);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirements);
         result.ShouldHaveValidationErrorFor(x => x.AdditionalInformation);
     }
@@ -86,7 +96,13 @@ public class CheckYourAnswersTests
             SchoolId = 1,
             SchoolUrn = 123,
             Email = "test@test.com",
-            TutoringLogistics = "Test content",
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = "Test content",
+                StartDate = "Test content",
+                TuitionDuration = "Test content",
+                TimeOfDay = "Test content"
+            },
             ConfirmTermsAndConditions = true
         };
 
@@ -120,7 +136,13 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "test@test.com",
-            //TutoringLogistics = "Test content",
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = "Test content",
+                StartDate = "Test content",
+                //TuitionDuration = "Test content",
+                TimeOfDay = "Test content"
+            },
             ConfirmTermsAndConditions = true
         };
 
@@ -134,7 +156,7 @@ public class CheckYourAnswersTests
 
         //Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(act);
-        exception.Message.Should().Be("The AddEnquiryCommand Data.TutoringLogistics is null or empty");
+        exception.Message.Should().Be("The AddEnquiryCommand Data.TutoringLogisticsDetailsModel.TuitionDuration is null or empty");
     }
 
 
@@ -154,7 +176,13 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "400error@test",
-            TutoringLogistics = "Test content",
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = "Test content",
+                StartDate = "Test content",
+                TuitionDuration = "Test content",
+                TimeOfDay = "Test content"
+            },
             ConfirmTermsAndConditions = true
         };
 
@@ -188,7 +216,13 @@ public class CheckYourAnswersTests
             TuitionSetting = TuitionSetting.NoPreference,
             SchoolId = 1,
             Email = "500error@test",
-            TutoringLogistics = "Test content",
+            TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = "Test content",
+                StartDate = "Test content",
+                TuitionDuration = "Test content",
+                TimeOfDay = "Test content"
+            },
             ConfirmTermsAndConditions = true
         };
 
@@ -220,7 +254,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.Online,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 ConfirmTermsAndConditions = true
             }
         };
@@ -237,7 +277,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true
@@ -259,7 +305,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = false
@@ -278,7 +330,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 //SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true
@@ -297,7 +355,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true
@@ -316,7 +380,13 @@ public class CheckYourAnswersTests
                 //TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true
@@ -335,7 +405,85 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 //Email = "test@test.com",
-                TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
+            }
+        };
+
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
+                Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionSetting = TuitionSetting.NoPreference,
+                Email = "test@test.com",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    //NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
+            }
+        };
+
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
+                Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionSetting = TuitionSetting.NoPreference,
+                Email = "test@test.com",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    //StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
+                SENDRequirements = "some SEND reqs",
+                AdditionalInformation = "some Additional Information",
+                ConfirmTermsAndConditions = true
+            }
+        };
+
+        yield return new object[]
+        {
+            new CheckYourAnswersModel {
+                Postcode = District.EastRidingOfYorkshire.SamplePostcode,
+                KeyStageSubjects = new Dictionary<KeyStage, List<Subject>>()
+                {
+                    {KeyStage.KeyStage1, new List<Subject>() { Subject.Maths } }
+                },
+                HasKeyStageSubjects = true,
+                TuitionSetting = TuitionSetting.NoPreference,
+                Email = "test@test.com",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    //TuitionDuration = "Test content",
+                    TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true
@@ -354,7 +502,13 @@ public class CheckYourAnswersTests
                 TuitionSetting = TuitionSetting.NoPreference,
                 SchoolId = 1,
                 Email = "test@test.com",
-                //TutoringLogistics = "Test content",
+                TutoringLogisticsDetailsModel = new TutoringLogisticsDetailsModel()
+                {
+                    NumberOfPupils = "Test content",
+                    StartDate = "Test content",
+                    TuitionDuration = "Test content",
+                    //TimeOfDay = "Test content"
+                },
                 SENDRequirements = "some SEND reqs",
                 AdditionalInformation = "some Additional Information",
                 ConfirmTermsAndConditions = true

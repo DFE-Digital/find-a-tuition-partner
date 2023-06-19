@@ -10,6 +10,6 @@ public class SENDRequirementsModelValidator : AbstractValidator<SENDRequirements
     {
         RuleFor(request => request.SENDRequirements)
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.LargeTextAreaMaxCharacterSize))
-            .WithMessage($"SEND requirements must be {IntegerConstants.LargeTextAreaMaxCharacterSize:N0} characters or less");
+            .WithMessage($"SEND and additional requirements must be {IntegerConstants.LargeTextAreaMaxCharacterSize:N0} characters or less");
     }
 }

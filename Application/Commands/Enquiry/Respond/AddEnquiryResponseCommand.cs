@@ -1,3 +1,4 @@
+using System;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Respond;
@@ -227,15 +228,29 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
     private List<EmailPersonalisationLog> GetTuitionPartnerResponseEmailPersonalisationLog(AddEnquiryResponseCommand request)
     {
+        string enquiryTutoringLogistics;
+        if (request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel != null)
+        {
+            var detailsModel = request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel;
+            enquiryTutoringLogistics = $"{StringConstants.NotifyBulletedListFormat}Number of pupils: {detailsModel!.NumberOfPupils.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Start date: {detailsModel!.StartDate.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Tuition duration: {detailsModel!.TuitionDuration.EscapeNotifyText()}{Environment.NewLine}" +
+                        $"{StringConstants.NotifyBulletedListFormat}Time of day: {detailsModel!.TimeOfDay.EscapeNotifyText()}";
+        }
+        else
+        {
+            enquiryTutoringLogistics = request.Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics.EscapeNotifyText()!;
+        }
+
         var personalisation = new Dictionary<string, dynamic>()
         {
             { EnquiryTuitionPartnerNameKey, _tpName! },
             { EnquiryLadNameKey, request.Data.LocalAuthorityDistrict },
-            { EnquiryKeyStageAndSubjects, string.Join(Environment.NewLine, request.Data.EnquiryKeyStageSubjects!) },
+            { EnquiryKeyStageAndSubjects, $"{StringConstants.NotifyBulletedListFormat}{string.Join(Environment.NewLine + StringConstants.NotifyBulletedListFormat, request.Data.EnquiryKeyStageSubjects!)}" },
             { EnquiryResponseKeyStageAndSubjects, request.Data.KeyStageAndSubjectsText.EscapeNotifyText(true)! },
             { EnquiryTuitionSettingKey, request.Data.EnquiryTuitionSetting },
             { EnquiryResponseTuitionSettingKey, request.Data.TuitionSettingText.EscapeNotifyText(true)! },
-            { EnquiryTuitionPlanKey, request.Data.EnquiryTutoringLogistics.EscapeNotifyText()! },
+            { EnquiryTuitionPlanKey, enquiryTutoringLogistics },
             { EnquiryResponseTuitionPlanKey, request.Data.TutoringLogisticsText.EscapeNotifyText(true)! },
             { EnquirySENDSupportKey, request.Data.EnquirySENDRequirements.EscapeNotifyText() ?? StringConstants.NotSpecified },
             { EnquiryResponseSENDSupportKey, request.Data.SENDRequirementsText.EscapeNotifyText(true) ?? StringConstants.NotSpecified },

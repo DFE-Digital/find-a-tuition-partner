@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Respond.Response
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
-  ViewData["Title"] = "View enquiry & capture response";
+  ViewData["Title"] = "Responding to the schools tuition requirements";
   ViewData["IncludePrintPage"] = true;
 }
 
@@ -18,8 +18,12 @@
     <div class="govuk-grid-column-full">
       <span show-if="!string.IsNullOrWhiteSpace(Model.Data.LocalAuthorityDistrict)" class="govuk-caption-l">School enquiry from the <strong>@Model.Data.LocalAuthorityDistrict</strong> area</span>
       <h1 class="govuk-heading-l">
-        View the school’s tuition requirements
+        Responding to the schools tuition requirements
       </h1>
+
+      <p class="govuk-body">
+        Reference number @Model.Data.SupportReferenceNumber
+      </p>
 
       <p class="govuk-body">
         To increase your chance of building a working relationship with this school, you should
@@ -59,7 +63,7 @@
           <span>Key stage and subjects:</span>
         </h2>
 
-        <ul class="govuk-list govuk-list-bullets-mobile-view">
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
           @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
           {
             <li>
@@ -74,7 +78,7 @@
               Can you support those key stages and subjects?
             </govuk-character-count-label>
             <govuk-character-count-hint>
-              For example, you may be able to support all of these but not at the same time
+              Can you explain how you can support specific areas within a subject
             </govuk-character-count-hint>
           </govuk-character-count>
         </div>
@@ -90,10 +94,10 @@
         <div asp-validation-group-for="Data.TuitionSettingText">
           <govuk-character-count asp-for="Data.TuitionSettingText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-              To what extent can you support that tuition setting?
+              How can you support that tuition setting?
             </govuk-character-count-label>
             <govuk-character-count-hint>
-              For example, you may be able to offer a mix of online and face-to-face tuition
+              If the school does not have a preference then you can make a suggestion
             </govuk-character-count-hint>
           </govuk-character-count>
         </div>
@@ -104,17 +108,15 @@
           Tuition plan:
         </h2>
 
-        <p class="govuk-body">
-          <span class="display-pre-wrap">@Model.Data.EnquiryTutoringLogistics</span>
-        </p>
+        <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
 
         <div asp-validation-group-for="Data.TutoringLogisticsText">
           <govuk-character-count asp-for="Data.TutoringLogisticsText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
             <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-              Can you support that tuition plan?
+              How can you support this tuition plan?
             </govuk-character-count-label>
             <govuk-character-count-hint>
-              You can suggest alternative to parts of this tuition plan, for example, a different start date
+              Give as much detail as possible an provide alternative offers if you cannot exactly match their criteria
             </govuk-character-count-hint>
           </govuk-character-count>
         </div>
@@ -122,7 +124,7 @@
         <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-          SEND requirements:
+          SEND and additional requirements:
         </h2>
 
         <p class="govuk-body">
@@ -134,7 +136,7 @@
           <div asp-validation-group-for="Data.SENDRequirementsText">
             <govuk-character-count asp-for="Data.SENDRequirementsText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
               <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-                Can you support those SEND requirements?
+                How can you support those requirements?
               </govuk-character-count-label>
               <govuk-character-count-hint>
                 For example, you may have specialist tutors who can support pupils with specific SEND requirements
@@ -145,7 +147,7 @@
         }
 
         <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
-          Other school considerations:
+          Other tuition requirements:
         </h2>
 
         <p class="govuk-body">
@@ -157,10 +159,10 @@
           <div asp-validation-group-for="Data.AdditionalInformationText">
             <govuk-character-count asp-for="Data.AdditionalInformationText" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
               <govuk-character-count-label class="govuk-label--s" is-page-heading="true">
-                Can you support those considerations?
+                How can you support those requirements
               </govuk-character-count-label>
               <govuk-character-count-hint>
-                Give as much detail as possible to increase your chance of matching the school’s tuition requirements
+                Give as much detail as possible and provide alternative offers if you cannot exactly match their criteria
               </govuk-character-count-hint>
             </govuk-character-count>
           </div>
@@ -181,7 +183,7 @@
     }
   }
   <input asp-for="Data.EnquiryTuitionSetting" type="hidden" />
-  <input asp-for="Data.EnquiryTutoringLogistics" type="hidden" />
+  <input asp-for="Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics" type="hidden" />
   <input asp-for="Data.EnquirySENDRequirements" type="hidden" />
   <input asp-for="Data.EnquiryAdditionalInformation" type="hidden" />
   <input asp-for="Data.EnquiryResponseCloseDateFormatted" type="hidden" />

@@ -40,7 +40,7 @@
               Key stage and subjects
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-              <ul class="govuk-list govuk-list-bullets-mobile-view">
+              <ul class="govuk-list govuk-list--bullet">
                 @foreach (var item in Model.Data.KeyStageSubjects)
                 {
                   <li>
@@ -63,14 +63,14 @@
               Tuition plan
             </govuk-summary-list-row-key>
             <govuk-summary-list-row-value>
-              <span class="display-pre-wrap">@Model.Data.TutoringLogistics</span>
+              <partial name="_TutoringLogistics" model="@Model.Data.TutoringLogisticsDisplayModel" />
             </govuk-summary-list-row-value>
           </govuk-summary-list-row>
           @if (!string.IsNullOrWhiteSpace(Model.Data.SENDRequirements))
           {
             <govuk-summary-list-row>
               <govuk-summary-list-row-key>
-                SEND requirements
+                SEND and additional requirements
               </govuk-summary-list-row-key>
               <govuk-summary-list-row-value>
                 <span class="display-pre-wrap">@Model.Data.SENDRequirements</span>

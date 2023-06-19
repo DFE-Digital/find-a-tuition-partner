@@ -4,17 +4,46 @@
 @using GovUk.Frontend.AspNetCore.TagHelpers
 @{
   var backLink = Model.Data.From == ReferrerList.CheckYourAnswers ? "/enquiry/build/check-your-answers" : "/enquiry/build/enquirer-email";
-  ViewData["Title"] = "What type of tuition plan do you need?";
+  ViewData["Title"] = "Your tuition plan";
   ViewData["BackLinkHref"] = $"{backLink}?{Model.Data.ToQueryString()}";
 }
 <form method="post">
-  <govuk-character-count asp-for="Data.TutoringLogistics" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
-    <govuk-character-count-label class="govuk-label--l" is-page-heading="true">
-      What type of tuition plan do you need?
+  <span class="govuk-caption-l">Create your tuition plan</span>
+  <h1 class="govuk-heading-l">Your tuition plan</h1>
+  <div class="govuk-inset-text">
+    You will be asked about SEND and additional requirements on the next page
+  </div>
+  <partial name="_PIIWarning" />
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--m">
+      How many pupils need tuition?
     </govuk-character-count-label>
     <govuk-character-count-hint>
-      For example, number of pupils, tuition hours per pupil, specific start date, length of tuition, preferred tutoring time of day
-      <partial name="_PIIWarning" />
+      Specify the number of pupils for each key stage and subject
+    </govuk-character-count-hint>
+  </govuk-character-count>
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.StartDate" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--m">
+      When do you want tuition to start?
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      You can ask for a specific date, within term time or during holidays
+    </govuk-character-count-hint>
+  </govuk-character-count>
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--m">
+      How long do you need tuition for?
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      Explain how many tuition hours per week per pupil is needed
+    </govuk-character-count-hint>
+  </govuk-character-count>
+  <govuk-character-count asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="2" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
+    <govuk-character-count-label class="govuk-label--m">
+      What time of day do you need tuition?
+    </govuk-character-count-label>
+    <govuk-character-count-hint>
+      For example, 1:30pm in the afternoon during school hours
     </govuk-character-count-hint>
   </govuk-character-count>
   <partial name="_SearchModelHiddenInputs" model="@Model.Data" />

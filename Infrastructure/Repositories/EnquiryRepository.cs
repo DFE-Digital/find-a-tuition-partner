@@ -1,5 +1,6 @@
 using Application.Common.DTO;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
@@ -68,7 +69,11 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         var result = new EnquirerViewAllResponsesModel
         {
             LocalAuthorityDistrict = enquiry.LocalAuthorityDistrict!,
-            TutoringLogistics = enquiry.TutoringLogistics!,
+            TutoringLogisticsDisplayModel = new TutoringLogisticsDisplayModel()
+            {
+                TutoringLogistics = enquiry.TutoringLogistics,
+                TutoringLogisticsDetailsModel = enquiry.TutoringLogistics.ToTutoringLogisticsDetailsModel()
+            },
             SupportReferenceNumber = enquiry.SupportReferenceNumber,
             NumberOfTpEnquiryWasSent = enquiry.TuitionPartnerEnquiry.Count,
             KeyStageSubjects = keyStageSubjects,

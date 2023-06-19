@@ -18,9 +18,19 @@ public class TutoringLogisticsTests
         _validator = new TutoringLogisticsModelValidator();
     }
 
-    private static TutoringLogisticsModel CreateModel(string data)
+    private static TutoringLogisticsModel CreateModel(string numberOfPupils, string startDate,
+        string tuitionDuration, string timeOfDay)
     {
-        return new TutoringLogisticsModel { TutoringLogistics = data };
+        return new TutoringLogisticsModel()
+        {
+            TutoringLogisticsDetailsModel = new Application.Common.Models.Enquiry.TutoringLogisticsDetailsModel()
+            {
+                NumberOfPupils = numberOfPupils,
+                StartDate = startDate,
+                TuitionDuration = tuitionDuration,
+                TimeOfDay = timeOfDay
+            },
+        };
     }
 
     [Theory]
@@ -29,15 +39,21 @@ public class TutoringLogisticsTests
     [InlineData(null)]
     public void With_no_input(string data)
     {
-        var model = CreateModel(data);
+        var model = CreateModel(data, data, data, data);
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TuitionDuration);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TimeOfDay);
     }
 
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize - 1));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -45,7 +61,10 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -53,15 +72,21 @@ public class TutoringLogisticsTests
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1));
+        var model = CreateModel(new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
+            new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1));
         var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.TutoringLogistics);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.NumberOfPupils);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.StartDate);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TuitionDuration);
+        result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsDetailsModel.TimeOfDay);
     }
 
     [Fact]
     public async Task With_a_valid_data_moves_to_next_page()
     {
-        var model = CreateModel("Test 123");
+        var model = CreateModel("Test 123", "Test 123", "Test 123", "Test 123");
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>
         {
@@ -75,7 +100,7 @@ public class TutoringLogisticsTests
     [Fact]
     public async Task With_a_valid_data_moves_to_cya_page()
     {
-        var model = CreateModel("Test 123");
+        var model = CreateModel("Test 123", "Test 123", "Test 123", "Test 123");
         model.From = Domain.Enums.ReferrerList.CheckYourAnswers;
 
         var result = await _fixture.GetPage<TutoringLogistics>().Execute(page =>

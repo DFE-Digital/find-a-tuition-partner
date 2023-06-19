@@ -6,6 +6,8 @@
         public const int LargeTextAreaMaxCharacterThreshold = 75;
         public const int MediumTextAreaMaxCharacterSize = 1000;
         public const int MediumTextAreaMaxCharacterThreshold = 70;
+        public const int SmallTextAreaMaxCharacterSize = 250;
+        public const int SmallTextAreaMaxCharacterThreshold = 60;
         public const int EnquiryDaysToRespond = 7;
         public const int AzureBlobStorageServiceTokenExpiryInHour = 1;
         public const int EmailLogFinishProcessingAfterDays = 2;

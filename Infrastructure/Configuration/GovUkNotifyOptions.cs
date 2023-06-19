@@ -12,7 +12,7 @@ public class GovUkNotifyOptions
 
     public string TemplateIdEnquiryResponseReceivedConfirmationToEnquirer { get; set; } = "af83c1e0-1577-4f90-80e5-27035301ead9";
 
-    public string TemplateIdEnquiryResponseSubmittedConfirmationToTp { get; set; } = "fa4f3699-4e98-4cea-add3-ac20ff05a0ca";
+    public string TemplateIdEnquiryResponseSubmittedConfirmationToTp { get; set; } = "011fabe9-72b3-4575-a343-fe008ad4df90";
 
     public string TemplateIdEmailVerification { get; set; } = "badaacff-87b8-4046-b953-a85a0a9e2a8b";
 
