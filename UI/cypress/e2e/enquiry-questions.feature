@@ -3,14 +3,14 @@ Feature: Enquiry Questions have correct structure and functionality
     Scenario: Tuition plan question shows correct error when no input provided
         Given user navigates to the first enquiry question
         When they click 'Continue'
-        Then they will see 'Enter the type of tuition plan that you need' as an error message for the 'no input error'
+        Then they will see 'Enter the number of pupils that need tuitionEnter when you want tuition to startEnter how long you need tuition forEnter what time of day you need tuition' as an error message for the 'no input error'
 
     Scenario: Tuition plan question shows correct warning when reaching close to Max char limit
         Given user navigates to the first enquiry question
-        When they type '7600' characters for question 1
-        Then the warning should be displayed showing they have '2400' characters left
-        When they type '11000' characters for question 1
-        Then the warning should be displayed showing they are over by '1000' characters
+        When they type '200' characters for question 1
+        Then the warning should be displayed showing they have '50' characters left
+        When they type '350' characters for question 1
+        Then the warning should be displayed showing they are over by '100' characters
 
     Scenario: Tuition plan second question shows correct warning when reaching close to Max char limit
         Given user navigates to the first enquiry question

@@ -161,6 +161,13 @@ When("they select the tuition partner {string}", (name) => {
   cy.get(".govuk-link").contains(name).click();
 });
 
+When("they then select the tuition partner {string}", (name) => {
+  const [firstName, lastName] = name.split(" ");
+  cy.get(
+    `[data-testid="results-list-item-${firstName}-${lastName}"] > .govuk-heading-m > [data-testid="tuition-partner-name-link"]`
+  );
+});
+
 Then("they see the tuition settings {string}", (tuitionSettings) => {
   const tuitionArray = tuitionSettings.split(",").map((s) => s.trim());
 

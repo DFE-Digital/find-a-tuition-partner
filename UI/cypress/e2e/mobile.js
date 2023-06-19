@@ -27,7 +27,7 @@ When("they select the 'Show search results' button", () => {
 });
 
 Then("the subject list is bullet pointed", () => {
-  cy.get(".govuk-list-bullets-mobile-view")
+  cy.get(".govuk-summary-list > :nth-child(1)")
     .first()
     .within(() => {
       cy.window().then((win) => {

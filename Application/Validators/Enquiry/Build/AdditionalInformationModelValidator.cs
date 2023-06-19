@@ -10,6 +10,6 @@ public class AdditionalInformationModelValidator : AbstractValidator<AdditionalI
     {
         RuleFor(request => request.AdditionalInformation)
             .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
-            .WithMessage($"Any other considerations for tuition partners to consider must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"Other tuition requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
     }
 }

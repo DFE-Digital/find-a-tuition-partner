@@ -60,17 +60,16 @@ Then("the page has title Request sent", () => {
 });
 
 Then("they enter an answer for tuition plan", () => {
-  cy.get(".govuk-label").should(
-    "contain.text",
-    "What type of tuition plan do you need?"
-  );
-  cy.get("#Data_TutoringLogistics").type("enquiry");
+  cy.get("#Data_TutoringLogisticsDetailsModel_NumberOfPupils").type("enquiry");
+  cy.get("#Data_TutoringLogisticsDetailsModel_StartDate").type("enquiry");
+  cy.get("#Data_TutoringLogisticsDetailsModel_TuitionDuration").type("enquiry");
+  cy.get("#Data_TutoringLogisticsDetailsModel_TimeOfDay").type("enquiry");
 });
 
 Then("they enter an answer for SEND requirements", () => {
   cy.get(".govuk-label").should(
     "contain.text",
-    "Do you need tuition partners who can support pupils with SEND? (optional)"
+    "Describe your pupils' SEND or additional requirements that require specialist tuition support (optional)"
   );
   cy.get("#Data_SENDRequirements").type("enquiry");
 });
@@ -78,7 +77,7 @@ Then("they enter an answer for SEND requirements", () => {
 Then("they enter an answer for other requirements", () => {
   cy.get(".govuk-label").should(
     "contain.text",
-    "Is there anything else that you want tuition partners to consider? (optional)"
+    "Is there anything else you want tuition partners to consider? (optional)"
   );
   cy.get("#Data_AdditionalInformation").type("enquiry");
 });
@@ -216,7 +215,18 @@ When("user navigates to the first enquiry question again", () => {
 
 When("they type {string} characters for question 1", (numOfChars) => {
   const totalText = "a".repeat(numOfChars);
-  cy.get("#Data_TutoringLogistics").clear().invoke("val", totalText);
+  cy.get("#Data_TutoringLogisticsDetailsModel_NumberOfPupils")
+    .clear()
+    .invoke("val", totalText);
+  cy.get("#Data_TutoringLogisticsDetailsModel_StartDate")
+    .clear()
+    .invoke("val", totalText);
+  cy.get("#Data_TutoringLogisticsDetailsModel_TuitionDuration")
+    .clear()
+    .invoke("val", totalText);
+  cy.get("#Data_TutoringLogisticsDetailsModel_TimeOfDay")
+    .clear()
+    .invoke("val", totalText);
 });
 
 When("they type {string} characters for question 2", (numOfChars) => {
@@ -230,11 +240,11 @@ When("they type {string} characters for question 3", (numOfChars) => {
 });
 
 Then("the text by the second and third questions is {string}", (text) => {
-  cy.get(":nth-child(4) > .govuk-summary-list__value").should(
+  cy.get(":nth-child(7) > .govuk-summary-list__value").should(
     "contain.text",
     "Not specified"
   );
-  cy.get(":nth-child(5) > .govuk-summary-list__value").should(
+  cy.get(":nth-child(8) > .govuk-summary-list__value").should(
     "contain.text",
     "Not specified"
   );

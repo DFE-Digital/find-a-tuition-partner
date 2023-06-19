@@ -211,7 +211,10 @@ public class ResponseTests
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
             EnquiryTuitionSetting = "EnquiryTuitionSetting",
-            EnquiryTutoringLogistics = "EnquiryTutoringLogistics",
+            EnquiryTutoringLogisticsDisplayModel = new Application.Common.Models.Enquiry.TutoringLogisticsDisplayModel()
+            {
+                TutoringLogistics = "EnquiryTutoringLogistics"
+            },
             TuitionPartnerSeoUrl = "d",
             SupportReferenceNumber = "RF15",
             Token = "TPToken"

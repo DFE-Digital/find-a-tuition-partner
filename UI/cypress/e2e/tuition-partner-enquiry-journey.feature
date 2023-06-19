@@ -20,8 +20,8 @@ Feature: Tuition Partner Enquiry Response Journey
             |                         | Key stage 2: English and Maths                                  |
         And the second response section is to be 'Tuition setting:' with Type 'No preference'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
-        Then the fourth response section is to be 'SEND requirements:' with text 'enquiry'
-        And the last response section is to be 'Other school considerations:' with text 'enquiry'
+        Then the fourth response section is to be 'SEND and additional requirements:' with text 'enquiry'
+        And the last response section is to be 'Other tuition requirements:' with text 'enquiry'
 
     Scenario: Clicking continue on successful tuition responses shows check your answers page
         Given a user has started the 'Find a tuition partner' journey
@@ -95,7 +95,7 @@ Feature: Tuition Partner Enquiry Response Journey
         Then the warning should be displayed showing they are over by '2100' characters
         When they type '80' characters for section 5
         When they click 'Continue'
-        Then the error message shows 'SEND requirements must be 10,000 characters or less'
+        Then the error message shows 'SEND and additional requirements must be 10,000 characters or less'
 
 
     Scenario: Tuition responses show correct warning when reaching close to and over Max char limit for Other school considerations
@@ -111,7 +111,7 @@ Feature: Tuition Partner Enquiry Response Journey
         When they type '10002' characters for section 5
         Then the warning should be displayed showing they are over by '2' characters
         When they click 'Continue'
-        Then the error message shows 'Other school considerations must be 10,000 characters or less'
+        Then the error message shows 'Other tuition requirements must be 10,000 characters or less'
 
     Scenario: Tuition responses show correct warning when there is no input for Key-stage and subjects
         Given a user has started the 'Find a tuition partner' journey
@@ -162,8 +162,8 @@ Feature: Tuition Partner Enquiry Response Journey
 
         And the second response section is to be 'Tuition setting:' with Type 'No preference'
         And the third response section is to be "Tuition plan:" with text 'enquiry'
-        Then the fourth response section is to be 'SEND requirements:' with text 'Not specified'
-        And the Other considerations section is to be 'Other school considerations:' with text 'Not specified'
+        Then the fourth response section is to be 'SEND and additional requirements:' with text 'Not specified'
+        And the Other considerations section is to be 'Other tuition requirements' with text 'Not specified'
         When they type '70' characters for section 1
         And they type '80' characters for section 2
         And they type '90' characters for section 3
