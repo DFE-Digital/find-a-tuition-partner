@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GiasPostcodeSearch", "GiasP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchMetricsMapper", "SearchMetricsMapper\SearchMetricsMapper.csproj", "{82171713-2C53-41F7-8296-6FC4E11CC59F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Functions", "Functions\Functions.csproj", "{D95DEFA3-F586-438D-8848-B6AB941A827A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Functions", "Functions\Functions.csproj", "{D95DEFA3-F586-438D-8848-B6AB941A827A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
