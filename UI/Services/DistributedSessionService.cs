@@ -86,6 +86,7 @@ public class DistributedSessionService : ISessionService
 
         return result;
     }
+
     public async Task<Dictionary<string, string>?> RetrieveDataAsync(string preKey = DefaultPreKey)
     {
         if (!IsSessionAvailable()) return null;
@@ -203,12 +204,12 @@ public class DistributedSessionService : ISessionService
         }
     }
 
-    private async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
+    public async Task SetAsync<T>(string key, T value, string preKey = DefaultPreKey)
     {
         await AddOrUpdateDataAsync(key, JsonConvert.SerializeObject(value), preKey);
     }
 
-    private async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
+    public async Task<T?> GetAsync<T>(string key, string preKey = DefaultPreKey)
     {
         var value = await RetrieveDataByKeyAsync(key, preKey);
         return string.IsNullOrEmpty(value) ? default : JsonConvert.DeserializeObject<T>(value);

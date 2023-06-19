@@ -1,4 +1,4 @@
-Feature: User can choose Key Stage Subject and type of tuition
+Feature: User can choose Key Stage Subject and tuition setting
   Scenario: key stages page url is '/which-key-stages'
     Given a user has arrived on the 'Which key stages' page
     Then the page URL ends with '/which-key-stages'

@@ -22,6 +22,345 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.EmailLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClientReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailAddressUsedForTesting")
+                        .HasColumnType("text");
+
+                    b.Property<int>("EmailStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmailTemplateShortName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FinishProcessingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastEmailSendAttemptDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastStatusChangedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessFromDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientReferenceNumber");
+
+                    b.HasIndex("EmailStatusId");
+
+                    b.HasIndex("FinishProcessingDate");
+
+                    b.HasIndex("LastEmailSendAttemptDate");
+
+                    b.HasIndex("ProcessFromDate");
+
+                    b.ToTable("EmailLog");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClientReferenceNumber = "historical_emails_when_log_implemented",
+                            CreatedDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2661),
+                            EmailAddress = "historical_emails_when_log_implemented",
+                            EmailStatusId = 7,
+                            EmailTemplateShortName = "historical_emails_when_log_implemented",
+                            FinishProcessingDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2662)
+                        });
+                });
+
+            modelBuilder.Entity("Domain.EmailLogHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmailStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastEmailSendAttemptDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessFromDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailLogId");
+
+                    b.ToTable("EmailLogHistory");
+                });
+
+            modelBuilder.Entity("Domain.EmailNotifyResponseLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EmailResponseContentBody")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailResponseContentFrom")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailResponseContentSubject")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExceptionCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NotifyId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TemplateId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TemplateUri")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TemplateVersion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Uri")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailLogId")
+                        .IsUnique();
+
+                    b.HasIndex("NotifyId")
+                        .IsUnique();
+
+                    b.ToTable("EmailNotifyResponseLog");
+                });
+
+            modelBuilder.Entity("Domain.EmailPersonalisationLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailLogId", "Key")
+                        .IsUnique();
+
+                    b.ToTable("EmailPersonalisationLog");
+                });
+
+            modelBuilder.Entity("Domain.EmailStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AllowEmailSending")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PollForStatusUpdateIfSent")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("RetrySendInSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status")
+                        .IsUnique();
+
+                    b.ToTable("EmailStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AllowEmailSending = true,
+                            Description = "Has been newly added to log, will be processed next time the email processing is run",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "to-be-processed"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AllowEmailSending = true,
+                            Description = "Is waiting for a chained email to be delivered (e.g. TP emails are only sent once the enquirer email has been delivered)",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "waiting-to-be-triggered"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AllowEmailSending = true,
+                            Description = "The email is to be sent is to be sent in the future (e.g. send notification emails daily)",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "delayed-email"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AllowEmailSending = false,
+                            Description = "The email has been processed and sent to GOV.UK Notify to be delivered",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "been-processed"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AllowEmailSending = false,
+                            Description = "GOV.UK Notify status: has placed the message in a queue, ready to be sent to the provider. It should only remain in this state for a few seconds.",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "created"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AllowEmailSending = false,
+                            Description = "GOV.UK Notify status: has sent the message to the provider. The provider will try to deliver the message to the recipient for up to 72 hours. GOV.UK Notify is waiting for delivery information.",
+                            PollForStatusUpdateIfSent = true,
+                            Status = "sending"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AllowEmailSending = false,
+                            Description = "GOV.UK Notify status: the message was successfully delivered.",
+                            PollForStatusUpdateIfSent = false,
+                            Status = "delivered"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AllowEmailSending = false,
+                            Description = "GOV.UK Notify status: the provider could not deliver the message because the email address was wrong. You should remove these email addresses from your database.",
+                            PollForStatusUpdateIfSent = false,
+                            Status = "permanent-failure"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AllowEmailSending = true,
+                            Description = "GOV.UK Notify status: the provider could not deliver the message. This can happen when the recipient’s inbox is full or their anti-spam filter rejects your email. Check your content does not look like spam before you try to send the message again.",
+                            PollForStatusUpdateIfSent = true,
+                            RetrySendInSeconds = 600,
+                            Status = "temporary-failure"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AllowEmailSending = true,
+                            Description = "GOV.UK Notify status: your message was not sent because there was a problem between Notify and the provider. You’ll have to try sending your messages again.",
+                            PollForStatusUpdateIfSent = true,
+                            RetrySendInSeconds = 60,
+                            Status = "technical-failure"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AllowEmailSending = true,
+                            Description = "Error when calling the GOV.UK Notify SendEmailAsync()",
+                            PollForStatusUpdateIfSent = false,
+                            RetrySendInSeconds = 600,
+                            Status = "processing-failure"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AllowEmailSending = false,
+                            Description = "The emails were configured not to be sent at the time the email was processed, expected to be used for non-production environments only",
+                            PollForStatusUpdateIfSent = false,
+                            Status = "sending-emails-deactivated"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.EmailTriggerActivation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ActivateEmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EmailLogId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivateEmailLogId")
+                        .IsUnique();
+
+                    b.HasIndex("EmailLogId", "ActivateEmailLogId")
+                        .IsUnique();
+
+                    b.ToTable("EmailTriggerActivation");
+                });
+
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.Property<int>("Id")
@@ -40,6 +379,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("EnquirerEnquirySubmittedEmailLogId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("LocalAuthorityDistrict")
                         .IsRequired()
                         .HasColumnType("text");
@@ -54,12 +396,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SENDRequirements")
                         .HasColumnType("text");
 
+                    b.Property<int?>("SchoolId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("SupportReferenceNumber")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("TuitionTypeId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("TutoringLogistics")
                         .IsRequired()
@@ -69,12 +411,14 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("Email");
 
+                    b.HasIndex("EnquirerEnquirySubmittedEmailLogId");
+
                     b.HasIndex("MagicLinkId");
+
+                    b.HasIndex("SchoolId");
 
                     b.HasIndex("SupportReferenceNumber")
                         .IsUnique();
-
-                    b.HasIndex("TuitionTypeId");
 
                     b.ToTable("Enquiries");
                 });
@@ -96,6 +440,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("EnquirerResponseEmailLogId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("KeyStageAndSubjectsText")
                         .IsRequired()
                         .HasColumnType("text");
@@ -103,7 +450,10 @@ namespace Infrastructure.Migrations
                     b.Property<string>("SENDRequirementsText")
                         .HasColumnType("text");
 
-                    b.Property<string>("TuitionTypeText")
+                    b.Property<int>("TuitionPartnerResponseEmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TuitionSettingText")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -112,6 +462,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnquirerResponseEmailLogId");
+
+                    b.HasIndex("TuitionPartnerResponseEmailLogId");
 
                     b.ToTable("EnquiryResponses");
                 });
@@ -3924,7 +4278,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -3933,9 +4287,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionTypeId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionSettingId", "LocalAuthorityDistrictId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "LocalAuthorityDistrictId");
+                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "LocalAuthorityDistrictId");
 
                     b.ToTable("LocalAuthorityDistrictCoverage");
                 });
@@ -4107,7 +4461,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4118,7 +4472,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId");
 
-                    b.HasIndex("TuitionTypeId");
+                    b.HasIndex("TuitionSettingId");
 
                     b.ToTable("Prices");
                 });
@@ -4205,6 +4559,35 @@ namespace Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.ScheduledProcessingInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("LastFinishedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastStartedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ScheduleName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleName")
+                        .IsUnique();
+
+                    b.ToTable("ScheduledProcessingInfo");
+                });
+
             modelBuilder.Entity("Domain.School", b =>
                 {
                     b.Property<int>("Id")
@@ -4221,11 +4604,17 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("EstablishmentNumber")
+                        .HasColumnType("integer");
+
                     b.Property<int>("EstablishmentStatusId")
                         .HasColumnType("integer");
 
                     b.Property<int>("EstablishmentTypeGroupId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("LocalAuthorityDistrictId")
                         .HasColumnType("integer");
@@ -4239,6 +4628,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Postcode")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("Ukprn")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Urn")
                         .HasColumnType("integer");
@@ -4422,7 +4814,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TuitionTypeId")
+                    b.Property<int>("TuitionSettingId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -4431,9 +4823,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TuitionPartnerId", "SubjectId");
 
-                    b.HasIndex("TuitionTypeId", "SubjectId");
+                    b.HasIndex("TuitionSettingId", "SubjectId");
 
-                    b.HasIndex("TuitionPartnerId", "TuitionTypeId", "SubjectId");
+                    b.HasIndex("TuitionPartnerId", "TuitionSettingId", "SubjectId");
 
                     b.ToTable("SubjectCoverage");
                 });
@@ -4536,6 +4928,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("ResponseCloseDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("TuitionPartnerEnquirySubmittedEmailLogId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("TuitionPartnerId")
                         .HasColumnType("integer");
 
@@ -4546,6 +4941,8 @@ namespace Infrastructure.Migrations
                     b.HasIndex("EnquiryResponseId");
 
                     b.HasIndex("MagicLinkId");
+
+                    b.HasIndex("TuitionPartnerEnquirySubmittedEmailLogId");
 
                     b.HasIndex("TuitionPartnerId");
 
@@ -4570,7 +4967,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("TuitionPartners", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.TuitionType", b =>
+            modelBuilder.Entity("Domain.TuitionSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -4593,7 +4990,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("SeoUrl")
                         .IsUnique();
 
-                    b.ToTable("TuitionTypes");
+                    b.ToTable("TuitionSettings");
 
                     b.HasData(
                         new
@@ -4605,9 +5002,24 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "In School",
-                            SeoUrl = "in-school"
+                            Name = "Face-to-face",
+                            SeoUrl = "face-to-face"
                         });
+                });
+
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.Property<int>("EnquiriesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TuitionSettingsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EnquiriesId", "TuitionSettingsId");
+
+                    b.HasIndex("TuitionSettingsId");
+
+                    b.ToTable("EnquiryTuitionSetting");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -4629,21 +5041,111 @@ namespace Infrastructure.Migrations
                     b.ToTable("DataProtectionKeys");
                 });
 
+            modelBuilder.Entity("Domain.EmailLog", b =>
+                {
+                    b.HasOne("Domain.EmailStatus", "EmailStatus")
+                        .WithMany("EmailLogs")
+                        .HasForeignKey("EmailStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EmailStatus");
+                });
+
+            modelBuilder.Entity("Domain.EmailLogHistory", b =>
+                {
+                    b.HasOne("Domain.EmailLog", "EmailLog")
+                        .WithMany("EmailLogHistories")
+                        .HasForeignKey("EmailLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmailLog");
+                });
+
+            modelBuilder.Entity("Domain.EmailNotifyResponseLog", b =>
+                {
+                    b.HasOne("Domain.EmailLog", "EmailLog")
+                        .WithOne("EmailNotifyResponseLog")
+                        .HasForeignKey("Domain.EmailNotifyResponseLog", "EmailLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmailLog");
+                });
+
+            modelBuilder.Entity("Domain.EmailPersonalisationLog", b =>
+                {
+                    b.HasOne("Domain.EmailLog", "EmailLog")
+                        .WithMany("EmailPersonalisationLogs")
+                        .HasForeignKey("EmailLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EmailLog");
+                });
+
+            modelBuilder.Entity("Domain.EmailTriggerActivation", b =>
+                {
+                    b.HasOne("Domain.EmailLog", "ActivateEmailLog")
+                        .WithOne("ThisEmailActivationTriggeredBy")
+                        .HasForeignKey("Domain.EmailTriggerActivation", "ActivateEmailLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.EmailLog", "EmailLog")
+                        .WithMany("EmailsActivatedByThisEmail")
+                        .HasForeignKey("EmailLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActivateEmailLog");
+
+                    b.Navigation("EmailLog");
+                });
+
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
+                    b.HasOne("Domain.EmailLog", "EnquirerEnquirySubmittedEmailLog")
+                        .WithMany("EnquirerEnquiriesSubmitted")
+                        .HasForeignKey("EnquirerEnquirySubmittedEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.MagicLink", "MagicLink")
                         .WithMany()
                         .HasForeignKey("MagicLinkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
-                        .WithMany()
-                        .HasForeignKey("TuitionTypeId");
+                    b.HasOne("Domain.School", "School")
+                        .WithMany("Enquiries")
+                        .HasForeignKey("SchoolId");
+
+                    b.Navigation("EnquirerEnquirySubmittedEmailLog");
 
                     b.Navigation("MagicLink");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("Domain.EnquiryResponse", b =>
+                {
+                    b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
+                        .WithMany("EnquirerResponses")
+                        .HasForeignKey("EnquirerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
+                        .WithMany("TuitionPartnerResponses")
+                        .HasForeignKey("TuitionPartnerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EnquirerResponseEmailLog");
+
+                    b.Navigation("TuitionPartnerResponseEmailLog");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -4717,9 +5219,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4727,7 +5229,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.Price", b =>
@@ -4744,9 +5246,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4754,7 +5256,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.School", b =>
@@ -4825,9 +5327,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.TuitionType", "TuitionType")
+                    b.HasOne("Domain.TuitionSetting", "TuitionSetting")
                         .WithMany()
-                        .HasForeignKey("TuitionTypeId")
+                        .HasForeignKey("TuitionSettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -4835,7 +5337,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartner");
 
-                    b.Navigation("TuitionType");
+                    b.Navigation("TuitionSetting");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>
@@ -4867,6 +5369,12 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerEnquirySubmittedEmailLog")
+                        .WithMany("TuitionPartnerEnquiriesSubmitted")
+                        .HasForeignKey("TuitionPartnerEnquirySubmittedEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.TuitionPartner", "TuitionPartner")
                         .WithMany()
                         .HasForeignKey("TuitionPartnerId")
@@ -4880,6 +5388,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("MagicLink");
 
                     b.Navigation("TuitionPartner");
+
+                    b.Navigation("TuitionPartnerEnquirySubmittedEmailLog");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartnerLogo", b =>
@@ -4889,6 +5399,47 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("Domain.TuitionPartnerLogo", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EnquiryTuitionSetting", b =>
+                {
+                    b.HasOne("Domain.Enquiry", null)
+                        .WithMany()
+                        .HasForeignKey("EnquiriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.TuitionSetting", null)
+                        .WithMany()
+                        .HasForeignKey("TuitionSettingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.EmailLog", b =>
+                {
+                    b.Navigation("EmailLogHistories");
+
+                    b.Navigation("EmailNotifyResponseLog");
+
+                    b.Navigation("EmailPersonalisationLogs");
+
+                    b.Navigation("EmailsActivatedByThisEmail");
+
+                    b.Navigation("EnquirerEnquiriesSubmitted");
+
+                    b.Navigation("EnquirerResponses");
+
+                    b.Navigation("ThisEmailActivationTriggeredBy");
+
+                    b.Navigation("TuitionPartnerEnquiriesSubmitted");
+
+                    b.Navigation("TuitionPartnerResponses");
+                });
+
+            modelBuilder.Entity("Domain.EmailStatus", b =>
+                {
+                    b.Navigation("EmailLogs");
                 });
 
             modelBuilder.Entity("Domain.Enquiry", b =>
@@ -4908,6 +5459,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("LocalAuthorities");
 
                     b.Navigation("LocalAuthorityDistricts");
+                });
+
+            modelBuilder.Entity("Domain.School", b =>
+                {
+                    b.Navigation("Enquiries");
                 });
 
             modelBuilder.Entity("Domain.TuitionPartner", b =>

@@ -21,7 +21,7 @@ Feature: View all responses page and Tuition partner contact page
             | Question                     | Your Requirements              |
             | Key stage and subjects       | Key stage 1: English and Maths |
             | Key stage and subjects       | Key stage 2: English and Maths |
-            | Tuition type                 | Any                            |
+            | Tuition setting              | No preference                  |
             | Tuition plan                 | enquiry                        |
             | Can you support SEND         | enquiry                        |
             | Other tuition considerations | enquiry                        |
@@ -48,7 +48,7 @@ Feature: View all responses page and Tuition partner contact page
             | Requirement                    | Your Response                  | {TP's name}'s Response |
             | Key stage and subjects:        | Key stage 1: English and Maths | 80                     |
             | Key stage and subjects:        | Key stage 2: English and Maths | 80                     |
-            | Tuition type:                  | Any                            | 80                     |
+            | Tuition setting:               | No preference                  | 80                     |
             | Tuition plan:                  | enquiry                        | 80                     |
             | Can you support SEND?:         | enquiry                        | 80                     |
             | Other tuition considerations?: | enquiry                        | 80                     |

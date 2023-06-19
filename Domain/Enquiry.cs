@@ -12,13 +12,19 @@ public class Enquiry
 
     public string LocalAuthorityDistrict { get; set; } = null!;
 
-    public int? TuitionTypeId { get; set; }
+    public int? SchoolId { get; set; }
 
     public int MagicLinkId { get; set; }
 
+    public int EnquirerEnquirySubmittedEmailLogId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public TuitionType TuitionType { get; set; } = null!;
+    public EmailLog EnquirerEnquirySubmittedEmailLog { get; set; } = null!;
+
+    public School School { get; set; } = null!;
+
+    public ICollection<TuitionSetting>? TuitionSettings { get; set; } = null!;
 
     public MagicLink MagicLink { get; set; } = null!;
 

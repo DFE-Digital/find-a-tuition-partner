@@ -10,11 +10,15 @@ dfe-analytics-dataset: fatp_events_staging
 govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id: b1e29214-dfc0-4225-b65a-df6a20c4c297
 govuk-notify-enquiry-submitted-to-tp-template-id: b24ffca7-6119-4dbf-8ae2-dceb2c300ca4
 govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id: f64db52d-08ce-4f2a-9b37-a374db1ad77a
-govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: 0aad4d76-baad-456b-a58d-8221812e514c
-override-email-address: 
-email-amalgamate-responses: false
+govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: fa4f3699-4e98-4cea-add3-ac20ff05a0ca
+govuk-notify-email-verification-template-id: badaacff-87b8-4046-b953-a85a0a9e2a8b
+email-override-email-address: 
+email-merge-responses: false
 email-all-sent-to-enquirer: true
 feature-flag-enquiry-builder: true
+feature-flag-send-emails-from-ntp: true
+feature-flag-verify-email: true
+feature-flag-send-tuition-partner-emails-when-enquirer-delivered: true
 azure-blob-storage-container-name: ntp-tp-data
 azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/
 azure-blob-storage-tuition-partner-logos-folder-name: tp-logos/

@@ -2,7 +2,7 @@ using Application.Common.Models;
 using Application.Validators;
 using Infrastructure.Configuration;
 using Microsoft.Extensions.Options;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace UI.Pages;
 [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -45,7 +45,7 @@ public class SearchResults : PageModel
     {
         IncludeEnquiryBuilder = _featureFlagsConfig.EnquiryBuilder;
 
-        data.TuitionType ??= TuitionType.Any;
+        data.TuitionSetting ??= TuitionSetting.NoPreference;
         data.KeyStages = data.KeyStages.UpdateFromSubjects(data.Subjects);
 
         Data = new SearchResultsModel(data)
@@ -54,27 +54,31 @@ public class SearchResults : PageModel
             {
                 Subjects = data.Subjects,
             }),
-            AllTuitionTypes = EnumExtensions.GetAllEnums<TuitionType>()
+            AllTuitionSettings = EnumExtensions.GetAllEnums<TuitionSetting>()
         };
 
         ModelState.Clear();
         MapErrors(await new SearchResultValidator().ValidateAsync(data));
         if (!ModelState.IsValid) return Page();
 
+        data.Postcode = data.Postcode.ToSanitisedPostcode();
+
         var searchResultData = await _mediator.Send(data);
         MapErrors(searchResultData.Validation);
         if (!ModelState.IsValid) return Page();
+
+        Data.Postcode = data.Postcode.ToSanitisedPostcode();
 
         Data.Results = searchResultData.Results;
 
         Data.From = ReferrerList.SearchResults;
 
-        //Clear compare list TuitionType if has been changed on compare list
-        if (data.PreviousTuitionType != null && data.PreviousTuitionType != data.TuitionType)
+        //Clear compare list TuitionSetting if has been changed on compare list
+        if (data.PreviousTuitionSetting != null && data.PreviousTuitionSetting != data.TuitionSetting)
         {
-            Data.CompareListTuitionType = null;
+            Data.CompareListTuitionSetting = null;
         }
-        Data.PreviousTuitionType = data.TuitionType;
+        Data.PreviousTuitionSetting = data.TuitionSetting;
 
         await SetSelectableTuitionPartners();
 

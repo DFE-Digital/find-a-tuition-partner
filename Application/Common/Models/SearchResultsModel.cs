@@ -15,10 +15,10 @@ namespace Application.Common.Models
         }
 
         public Dictionary<KeyStage, Selectable<string>[]> AllSubjects { get; set; } = new();
-        public IEnumerable<TuitionType> AllTuitionTypes { get; set; } = new List<TuitionType>();
+        public IEnumerable<TuitionSetting> AllTuitionSettings { get; set; } = new List<TuitionSetting>();
 
         public TuitionPartnersResult? Results { get; set; }
         public FluentValidationResult Validation { get; internal set; } = new();
-        public TuitionType? PreviousTuitionType { get; set; }
+        public TuitionSetting? PreviousTuitionSetting { get; set; }
     }
 }

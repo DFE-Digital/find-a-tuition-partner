@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
 using Tests.TestData;
 using UI.Pages.Enquiry.Respond;
-using TuitionType = Domain.Enums.TuitionType;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Tests.Enquiry.Respond;
 
@@ -30,7 +30,7 @@ public class ResponseTests
         var model = new ViewAndCaptureEnquiryResponseModel
         {
             KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
-            TuitionTypeText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
+            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
             TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
@@ -49,7 +49,7 @@ public class ResponseTests
         var model = new ViewAndCaptureEnquiryResponseModel
         {
             KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
-            TuitionTypeText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
+            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
             TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
@@ -68,7 +68,7 @@ public class ResponseTests
         var model = new ViewAndCaptureEnquiryResponseModel
         {
             KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TuitionTypeText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
             TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
@@ -79,7 +79,7 @@ public class ResponseTests
         var result = new ViewAndCaptureEnquiryResponseModelValidator().TestValidate(model);
 
         result.ShouldHaveValidationErrorFor(x => x.KeyStageAndSubjectsText);
-        result.ShouldHaveValidationErrorFor(x => x.TuitionTypeText);
+        result.ShouldHaveValidationErrorFor(x => x.TuitionSettingText);
         result.ShouldHaveValidationErrorFor(x => x.TutoringLogisticsText);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirementsText);
         result.ShouldHaveValidationErrorFor(x => x.AdditionalInformationText);
@@ -139,13 +139,22 @@ public class ResponseTests
         _ = _fixture.AddTuitionPartner(A.TuitionPartner
             .WithId(15)
             .WithName("d", "Delta")
-            .TaughtIn(District.Dacorum, TuitionType.InSchool)
+            .TaughtIn(District.Dacorum, TuitionSetting.FaceToFace)
             .WithSubjects(s => s
                 .Subject(Subjects.Id.KeyStage1English, l => l
-                    .InSchool().Costing(12m).ForGroupSizes(2))));
+                    .FaceToFace().Costing(12m).ForGroupSizes(2))));
 
 
         _ = _fixture.InsertAsync(
+            new EmailLog()
+            {
+                Id = 15,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF15",
+                EmailStatusId = 1
+            },
             new MagicLink()
             {
                 Id = 15,
@@ -162,7 +171,17 @@ public class ResponseTests
                 PostCode = District.Dacorum.SamplePostcode,
                 LocalAuthorityDistrict = District.Dacorum.LocalAuthorityName,
                 MagicLinkId = 15,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EnquirerEnquirySubmittedEmailLogId = 15
+            },
+            new EmailLog()
+            {
+                Id = 150,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF15-tp",
+                EmailStatusId = 1
             },
             new MagicLink()
             {
@@ -175,14 +194,15 @@ public class ResponseTests
                 EnquiryId = 15,
                 TuitionPartnerId = 15,
                 MagicLinkId = 150,
-                ResponseCloseDate = DateTime.UtcNow.AddDays(7)
+                ResponseCloseDate = DateTime.UtcNow.AddDays(7),
+                TuitionPartnerEnquirySubmittedEmailLogId = 150
             }
         );
 
         var model = new ViewAndCaptureEnquiryResponseModel
         {
             KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-            TuitionTypeText = "TuitionTypeText",
+            TuitionSettingText = "TuitionSettingText",
             TutoringLogisticsText = "TutoringLogisticsText",
             EnquirySENDRequirements = "EnquirySENDRequirements",
             SENDRequirementsText = "SENDRequirementsText",
@@ -190,7 +210,7 @@ public class ResponseTests
             AdditionalInformationText = "AdditionalInformationText",
             LocalAuthorityDistrict = "LocalAuthorityDistrict",
             EnquiryKeyStageSubjects = new List<string>() { "EnquiryKeyStageSubjects" },
-            EnquiryTuitionType = "EnquiryTuitionType",
+            EnquiryTuitionSetting = "EnquiryTuitionSetting",
             EnquiryTutoringLogistics = "EnquiryTutoringLogistics",
             TuitionPartnerSeoUrl = "d",
             SupportReferenceNumber = "RF15",
@@ -216,7 +236,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -229,7 +249,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 //EnquirySENDRequirements = "EnquirySENDRequirements",
                 //SENDRequirementsText = "SENDRequirementsText",
@@ -242,7 +262,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -258,7 +278,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 //KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -271,7 +291,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                //TuitionTypeText = "TuitionTypeText",
+                //TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -284,7 +304,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 //TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",
@@ -297,7 +317,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 //SENDRequirementsText = "SENDRequirementsText",
@@ -310,7 +330,7 @@ public class ResponseTests
         {
             new ViewAndCaptureEnquiryResponseModel {
                 KeyStageAndSubjectsText = "KeyStageAndSubjectsText",
-                TuitionTypeText = "TuitionTypeText",
+                TuitionSettingText = "TuitionSettingText",
                 TutoringLogisticsText = "TutoringLogisticsText",
                 EnquirySENDRequirements = "EnquirySENDRequirements",
                 SENDRequirementsText = "SENDRequirementsText",

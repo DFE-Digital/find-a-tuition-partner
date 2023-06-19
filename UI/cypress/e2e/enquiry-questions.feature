@@ -68,12 +68,12 @@ Feature: Enquiry Questions have correct structure and functionality
         Given user navigates to the first enquiry question
         When they click the 'Find a tuition partner' service name link
         Then they will be taken to the 'Find a tuition partner' journey start page
-        When user navigates to the first enquiry question
+        When user navigates to the first enquiry question again
         And they enter an answer for tuition plan
         And they click 'Continue'
         When they click the 'Find a tuition partner' service name link
         Then they will be taken to the 'Find a tuition partner' journey start page
-        When user navigates to the first enquiry question
+        When user navigates to the first enquiry question again
         And they enter an answer for tuition plan
         And they click 'Continue'
         Then they enter an answer for SEND requirements

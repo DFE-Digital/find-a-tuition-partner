@@ -5,6 +5,7 @@ using Infrastructure.Mapping;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Infrastructure.Repositories;
 
@@ -17,8 +18,11 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
     public async Task<int[]?> GetTuitionPartnersFilteredAsync(TuitionPartnersFilter filter, CancellationToken cancellationToken)
     {
         var queryable = _context.TuitionPartners.Where(x => x.IsActive).AsQueryable();
+        var tuitionSettingIds = filter == null || filter.TuitionSettingId == null || filter.TuitionSettingId == (int)TuitionSetting.NoPreference ? new List<int>() :
+            filter.TuitionSettingId == (int)TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+            new List<int>() { (int)filter.TuitionSettingId };
 
-        if (filter.SeoUrls is not null)
+        if (filter!.SeoUrls is not null)
         {
             queryable = queryable.Where(e => filter.SeoUrls.Contains(e.SeoUrl));
         }
@@ -28,27 +32,72 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             queryable = queryable.Where(e => e.Name.ToLower().Contains(filter.Name.ToLower()));
         }
 
-        if (filter.LocalAuthorityDistrictId != null)
+        if (filter.LocalAuthorityDistrictId != null || tuitionSettingIds.Any())
         {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId && (filter.TuitionTypeId == null || x.TuitionTypeId == filter.TuitionTypeId)));
-        }
-        else if (filter.TuitionTypeId != null)
-        {
-            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any(x => x.TuitionTypeId == filter.TuitionTypeId));
-        }
-
-        if (filter.SubjectIds != null)
-        {
-            foreach (var subjectId in filter.SubjectIds)
+            if (tuitionSettingIds.Count <= 1)
             {
-                // Must support all selected subjects for the tuition type if selected
-                // TODO: This is a slow query that gets worse as multiple subjects are selected. Will need optimising, possibly by denormalising the data
-                queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.SubjectId == subjectId && (filter.TuitionTypeId == null || x.TuitionTypeId == filter.TuitionTypeId)));
+                queryable = queryable
+                    .Where(e => e.LocalAuthorityDistrictCoverage
+                        .Any(x =>
+                            (filter.LocalAuthorityDistrictId == null || x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId) &&
+                            (!tuitionSettingIds.Any() || tuitionSettingIds[0] == x.TuitionSettingId)
+                        )
+                    );
+            }
+            else
+            {
+                queryable = queryable
+                    .Where(e => e.LocalAuthorityDistrictCoverage
+                        .Where(x => (filter.LocalAuthorityDistrictId == null || x.LocalAuthorityDistrictId == filter.LocalAuthorityDistrictId) &&
+                            tuitionSettingIds.Contains(x.TuitionSettingId))
+                        .GroupBy(x => x.LocalAuthorityDistrictId)
+                        .Any(x => x.Count() == tuitionSettingIds.Count)
+                    );
             }
         }
-        else if (filter.TuitionTypeId != null)
+        else
         {
-            queryable = queryable.Where(e => e.SubjectCoverage.Any(x => x.TuitionTypeId == filter.TuitionTypeId));
+            queryable = queryable.Where(e => e.LocalAuthorityDistrictCoverage.Any());
+        }
+
+        if (filter.SubjectIds != null && filter.SubjectIds.Any())
+        {
+            if (!tuitionSettingIds.Any())
+            {
+                queryable = queryable
+                    .Where(e => e.SubjectCoverage
+                        .Where(x => filter.SubjectIds.Contains(x.SubjectId))
+                        .Select(x => new { x.TuitionPartnerId, x.SubjectId })
+                        .Distinct()
+                        .GroupBy(x => x.TuitionPartnerId)
+                        .Any(x => x.Count() == filter.SubjectIds.Count())
+                    );
+            }
+            else
+            {
+                var expectedCount = (!tuitionSettingIds.Any() ? 1 : tuitionSettingIds.Count) * filter.SubjectIds.Count();
+
+                queryable = queryable
+                    .Where(e => e.SubjectCoverage
+                        .Where(x => filter.SubjectIds.Contains(x.SubjectId) &&
+                            tuitionSettingIds.Contains(x.TuitionSettingId))
+                        .GroupBy(x => x.TuitionPartnerId)
+                        .Any(x => x.Count() == expectedCount)
+                    );
+            }
+        }
+        else if (tuitionSettingIds.Any())
+        {
+            queryable = queryable
+                .Where(e => e.SubjectCoverage
+                    .Where(x => tuitionSettingIds.Contains(x.TuitionSettingId))
+                    .GroupBy(x => x.SubjectId)
+                    .Any(x => x.Count() == tuitionSettingIds.Count)
+                );
+        }
+        else
+        {
+            queryable = queryable.Where(e => e.SubjectCoverage.Any());
         }
 
         var ids = await queryable.Select(e => e.Id).ToArrayAsync(cancellationToken);
@@ -67,14 +116,14 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             var entities = await _context.TuitionPartners.AsNoTracking()
                 .Include(x => x.OrganisationType)
                 .IncludeTuitionForLocalDistrict(request.LocalAuthorityDistrictId)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.SubjectCoverage)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
                 .Include(x => x.SubjectCoverage)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.Prices)
-                .ThenInclude(x => x.TuitionType)
+                .ThenInclude(x => x.TuitionSetting)
                 .Include(x => x.Prices)
                 .ThenInclude(x => x.Subject)
                 .ThenInclude(x => x.KeyStage)
@@ -87,13 +136,13 @@ public class TuitionPartnerRepository : GenericRepository<TuitionPartner>, ITuit
             {
                 var result = entity.Adapt<TuitionPartnerResult>();
 
-                result.TuitionTypes = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionType).OrderByDescending(e => e.Id).Distinct().ToArray();
+                result.TuitionSettings = entity.LocalAuthorityDistrictCoverage.Select(e => e.TuitionSetting).OrderByDescending(e => e.Id).Distinct().ToArray();
 
-                var tuitionTypesIds = result.TuitionTypes.Select(e => e.Id);
+                var tuitionSettingIds = result.TuitionSettings.Select(e => e.Id);
 
-                result.SubjectsCoverage = entity.SubjectCoverage.Where(e => tuitionTypesIds.Contains(e.TuitionType.Id)).OrderBy(e => e.Id).Distinct().ToArray();
+                result.SubjectsCoverage = entity.SubjectCoverage.Where(e => tuitionSettingIds.Contains(e.TuitionSetting.Id)).OrderBy(e => e.Id).Distinct().ToArray();
 
-                result.Prices = entity.Prices.Where(e => tuitionTypesIds.Contains(e.TuitionType.Id)).OrderBy(e => e.Id).Distinct().ToArray();
+                result.Prices = entity.Prices.Where(e => tuitionSettingIds.Contains(e.TuitionSetting.Id)).OrderBy(e => e.Id).Distinct().ToArray();
 
                 results.Add(result);
             }

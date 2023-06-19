@@ -11,14 +11,20 @@ namespace UI.Extensions
             return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
         }
 
+        public static string ToQueryString(this SearchModel? model, Dictionary<string, string> itemsToInclude)
+        {
+            var routes = model?.ToRouteData(itemsToInclude, true) ?? new();
+            return string.Join("&", routes.Select(x => $"{x.Key}={x.Value}"));
+        }
+
         public static Dictionary<string, string> ToRouteData(this SearchModel model)
         {
             return model.ToRouteData(false);
         }
 
-        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude)
+        public static Dictionary<string, string> ToRouteData(this SearchModel model, Dictionary<string, string> itemsToInclude, bool flattenCollection = false)
         {
-            var dictionary = model.ToRouteData();
+            var dictionary = model.ToRouteData(flattenCollection);
 
             foreach (var itemToInclude in itemsToInclude)
             {
@@ -35,12 +41,12 @@ namespace UI.Extensions
             model.Add(x => x.From, dictionary);
             model.Add(x => x.Name, dictionary);
             model.Add(x => x.Postcode, dictionary);
-            model.Add(x => x.TuitionType, dictionary);
+            model.Add(x => x.TuitionSetting, dictionary);
             model.AddAll(x => x.KeyStages, dictionary, flattenCollection);
             model.AddAll(x => x.Subjects, dictionary, flattenCollection);
             model.Add(x => x.CompareListOrderBy, dictionary);
             model.Add(x => x.CompareListOrderByDirection, dictionary);
-            model.Add(x => x.CompareListTuitionType, dictionary);
+            model.Add(x => x.CompareListTuitionSetting, dictionary);
             model.Add(x => x.CompareListGroupSize, dictionary);
             model.Add(x => x.CompareListShowWithVAT, dictionary);
 

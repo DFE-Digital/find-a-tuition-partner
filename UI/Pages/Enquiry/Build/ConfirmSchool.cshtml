@@ -1,0 +1,73 @@
+﻿@page
+@model ConfirmSchool
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+  var title = Model.Data.HasSingleSchool ? "Confirm this is the school you need tuition for" : "Confirm which school you need tuition for";
+  var hintText = "We need to check which school you work for, and that you’re enquiring about tuition services on their behalf. This information won’t be shared with tuition partners.";
+  var backLink = Model.FromSchoolPostcode ? "/enquiry/build/school-postcode" : "/enquiry/build/guidance";
+  var backQueryString = Model.FromSchoolPostcode ? Model.Data.ToQueryString(new Dictionary<string, string>() { { "SchoolPostcode", Model.Data.SchoolPostcode! } }) : Model.Data.ToQueryString();
+  ViewData["Title"] = title;
+  ViewData["BackLinkHref"] = $"{backLink}?{backQueryString}";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form method="post">
+      @if(Model.Data.HasSingleSchool)
+      {
+        <h1 class="govuk-heading-l">@title</h1>
+        <p class="govuk-body" show-if="!Model.FromSchoolPostcode">@hintText</p>
+
+        <partial name="_SchoolDetails" model="@Model.Data.Schools.First()" />
+
+        <govuk-radios asp-for="Data.ConfirmedIsSchool">
+          <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend>
+              <h2 class="govuk-heading-m">Is this your school?</h2>
+            </govuk-radios-fieldset-legend>
+            <govuk-radios-item value="@true">
+              Yes
+            </govuk-radios-item>
+            <govuk-radios-item value="@false">
+              No, I need to choose another school
+            </govuk-radios-item>
+          </govuk-radios-fieldset>
+        </govuk-radios>
+      }
+      else
+      {
+        <govuk-radios asp-for="Data.SchoolId">
+          <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+              @title
+            </govuk-radios-fieldset-legend>
+            <govuk-radios-hint show-if="!Model.FromSchoolPostcode">
+              @hintText
+            </govuk-radios-hint>
+            @foreach (var school in Model.Data.Schools)
+            {
+              <govuk-radios-item value="@school.Id">
+                <h2 class="govuk-heading-m">@school.Urn, @school.EstablishmentName, @school.Postcode</h2>
+                <govuk-radios-item-conditional>
+                  <partial name="_SchoolDetails" model="@school" />
+                </govuk-radios-item-conditional>
+              </govuk-radios-item>
+            }
+          </govuk-radios-fieldset>
+        </govuk-radios>
+      }
+
+      <partial name="_SearchModelHiddenInputs" model="@Model.Data" />
+      <input asp-for="Data.HasSingleSchool" type="hidden" />
+      <input asp-for="Data.SchoolPostcode" type="hidden" />
+      <input type="hidden" name="handler" value="Submit" />
+      <div class="govuk-button-group">
+        <govuk-button prevent-double-click="true" type="submit">Continue</govuk-button>
+      </div>
+      @if(!Model.Data.HasSingleSchool)
+      {
+        <a class="govuk-link govuk-body" href="/enquiry/build/school-postcode?@backQueryString">I need to choose another school</a>
+      }
+    </form>
+  </div>
+</div>

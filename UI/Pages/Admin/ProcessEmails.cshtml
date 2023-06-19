@@ -1,0 +1,20 @@
+﻿@page
+@model UI.Pages.Admin.ProcessEmails
+@{
+  ViewData["Title"] = "Process emails";
+  ViewData["IncludeHomeLink"] = true;
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">
+      Process Emails
+    </h1>
+    <p class="govuk-body">
+      This page is used to process the emails for the find a tuition partner website.
+    </p>
+    <p class="govuk-body" id="process-emails-outcome" show-if="!string.IsNullOrEmpty(Model.Data.Outcome)">
+      Result: @Model.Data.Outcome
+    </p>
+  </div>
+</div>

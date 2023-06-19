@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using System.Web;
 using Application.Constants;
 using Domain.Enums;
 
@@ -32,8 +33,7 @@ public static class StringExtensions
     {
         foreach (TEnum enumLoop in Enum.GetValues(typeof(TEnum)))
         {
-            var displayNameLoop = enumLoop.DisplayName();
-            if (displayNameLoop.Equals(displayName, StringComparison.InvariantCultureIgnoreCase))
+            if (enumLoop.DisplayName().Equals(displayName, StringComparison.InvariantCultureIgnoreCase))
             {
                 resultInputType = enumLoop;
                 return true;
@@ -42,6 +42,18 @@ public static class StringExtensions
         resultInputType = default;
         return false;
     }
+
+    public static TEnum GetEnumFromDisplayName<TEnum>(this string displayName)
+        where TEnum : struct, Enum
+    {
+        var enumTryParse = displayName.TryParse(out TEnum returnEnum);
+
+        if (!enumTryParse)
+            throw new ArgumentException($"Invalid enum display name.  Enum {typeof(TEnum)} not got matching display name {displayName}");
+
+        return returnEnum;
+    }
+
     private static string RegexReplace(this string value, string pattern, string replacement)
         => Regex.Replace(
             value, pattern, replacement,
@@ -116,10 +128,17 @@ public static class StringExtensions
         return escapedText;
     }
 
-    public static string CreateNotifyClientReference(this string enquiryRef, EmailTemplateType emailTemplateType, string? tpName = null)
+    public static string CreateNotifyEnquiryClientReference(this string enquiryRef, string clientRefPrefix, EmailTemplateType emailTemplateType, string? tpName = null)
     {
         var tpSeoUrl = string.IsNullOrWhiteSpace(tpName) ? string.Empty : $"-{tpName.ToSeoUrl()}";
-        return $"{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
+        clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
+        return $"{clientRefPrefix}{enquiryRef}-{emailTemplateType.DisplayName()}{tpSeoUrl}";
+    }
+
+    public static string CreateNotifyEmailClientReference(this string emailTemplateTypeDisplayName, string clientRefPrefix)
+    {
+        clientRefPrefix = string.IsNullOrWhiteSpace(clientRefPrefix) ? string.Empty : $"{clientRefPrefix.ToSeoUrl()}-";
+        return $"{clientRefPrefix}{emailTemplateTypeDisplayName}";
     }
 
     public static string ExtractFileNameFromDirectory(this string path)
@@ -127,5 +146,33 @@ public static class StringExtensions
         var regex = new Regex(@"[^\\/]+$");
         var match = regex.Match(path);
         return match.Value;
+    }
+
+    public static string? ToSanitisedPostcode(this string? postcode)
+    {
+        if (string.IsNullOrEmpty(postcode))
+            return postcode;
+
+        var updatedPostcode = ToSanitisedPostcodeInner(postcode!);
+
+        if (string.IsNullOrEmpty(updatedPostcode))
+        {
+            updatedPostcode = ToSanitisedPostcodeInner(HttpUtility.UrlDecode(postcode!));
+        }
+
+        return updatedPostcode;
+    }
+
+    private static string ToSanitisedPostcodeInner(this string postcode)
+    {
+        var updatedPostcode = Regex.Replace(postcode, "[^A-Za-z0-9]", "").ToUpper();
+
+        var regex = new Regex(StringConstants.PostcodeRegExp);
+        var match = regex.Match(updatedPostcode);
+
+        if (!match.Success)
+            return string.Empty;
+
+        return $"{updatedPostcode.Substring(0, updatedPostcode.Length - 3)} {updatedPostcode.Substring(updatedPostcode.Length - 3, 3)}";
     }
 }

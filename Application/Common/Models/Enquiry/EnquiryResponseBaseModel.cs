@@ -5,16 +5,15 @@ public record EnquiryResponseBaseModel : EnquiryBaseModel
     public string TuitionPartnerName { get; set; } = string.Empty;
 
     public string? TuitionPartnerSeoUrl { get; set; }
-    public string Email { get; set; } = string.Empty;
     public string Token { get; set; } = string.Empty;
 
     public string LocalAuthorityDistrict { get; set; } = null!;
     public List<string> EnquiryKeyStageSubjects { get; set; } = null!;
     public string? KeyStageAndSubjectsText { get; set; } = string.Empty;
 
-    public string? TuitionTypeText { get; set; } = string.Empty;
+    public string? TuitionSettingText { get; set; } = string.Empty;
 
-    public string EnquiryTuitionType { get; set; } = string.Empty;
+    public string EnquiryTuitionSetting { get; set; } = string.Empty;
 
     public string? TutoringLogisticsText { get; set; } = string.Empty;
 

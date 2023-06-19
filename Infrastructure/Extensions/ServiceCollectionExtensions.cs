@@ -125,6 +125,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ITuitionPartnerService, TuitionPartnerService>();
+        services.AddScoped<IProcessEmailsService, ProcessEmailsService>();
         services.AddScoped<ILookupDataService, LookupDataService>();
         services.AddSingleton<IGenerateReferenceNumber, GenerateSupportReferenceNumber>();
         services.AddSingleton<IRandomTokenGenerator, RandomTokenGeneratorService>();
@@ -137,7 +138,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<ILocalAuthorityDistrictRepository, LocalAuthorityDistrictRepository>();
         services.AddScoped<ISubjectRepository, SubjectRepository>();
-        services.AddScoped<ITuitionTypeRepository, TuitionTypeRepository>();
+        services.AddScoped<ITuitionSettingRepository, TuitionSettingRepository>();
         services.AddScoped<ITuitionPartnerRepository, TuitionPartnerRepository>();
         services.AddScoped<IEnquiryRepository, EnquiryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -1,5 +1,5 @@
 ﻿using Application.Common.Models;
-using Application.Constants;
+using Application.Extensions;
 using Application.Queries;
 using FluentValidation;
 
@@ -14,9 +14,8 @@ public sealed class SearchResultValidator : AbstractValidator<GetSearchResultsQu
             .WithMessage("Enter a postcode");
 
         RuleFor(m => m.Postcode)
-            .Matches(StringConstants.PostcodeRegExp)
-            .WithMessage("Enter a real postcode")
-            .When(m => !string.IsNullOrEmpty(m.Postcode));
+            .Must(m => !string.IsNullOrEmpty(m.ToSanitisedPostcode()))
+            .WithMessage("Enter a real postcode");
 
         RuleForEach(m => m.Subjects)
             .Must(x => KeyStageSubject.TryParse(x, out var _));

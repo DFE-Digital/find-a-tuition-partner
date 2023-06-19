@@ -58,19 +58,19 @@ Feature: User can view full details of a Tuition Parner
     When they set the 'show-locations-covered' query string parameter value to 'true'
     Then the tuition partner locations covered table is displayed
 
-  Scenario Outline: tuition cost table shows available tuition types
+  Scenario Outline: tuition cost table shows available tuition settings
     Given a user has arrived on the 'Tuition Partner' page for '<tuition-partner>'
-    Then the tuition partner pricing table is displayed for '<tuition-types>':
-      | tuition-partner | tuition-types |
+    Then the tuition partner pricing table is displayed for '<tuition-settings>':
+      | tuition-partner | tuition-settings |
       | tp name 14      | Online        |
       | tp name 15      | Online        |
-      | tp name 16      | In school     |
+      | tp name 16      | Face-to-face     |
 
     Examples:
-      | tuition-partner | tuition-types |
+      | tuition-partner | tuition-settings |
       | tp name 14      | Online        |
       | tp name 15      | Online        |
-      | tp name 16      | In school     |
+      | tp name 16      | Face-to-face     |
 
 
   Scenario: tuition cost blurb states pricing uniformity
