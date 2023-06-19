@@ -9,7 +9,10 @@
   <govuk-error-summary show-if="!Model.ModelState.IsValid && Model.Data.ConfirmTermsAndConditions">
     <govuk-error-summary-item asp-for="Data.HasKeyStageSubjects" />
     <govuk-error-summary-item asp-for="Data.TuitionSetting" />
-    <govuk-error-summary-item asp-for="Data.TutoringLogistics" />
+    <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" />
+    <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.StartDate" />
+    <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" />
+    <govuk-error-summary-item asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" />
     <govuk-error-summary-item asp-for="Data.SENDRequirements" />
     <govuk-error-summary-item asp-for="Data.AdditionalInformation" />
     <govuk-error-summary-item asp-for="Data.Postcode" />
@@ -37,7 +40,7 @@
             }
             else
             {
-              <ul class="govuk-list govuk-list-bullets-mobile-view">
+              <ul class="govuk-list govuk-list--bullet">
                 @foreach (var item in @Model.Data?.KeyStageSubjects!)
                 {
                   <li>@(item.Key.DisplayName()): @(item.Value.Select(x => x.DisplayName()).OrderBy(x => x).DisplayList())</li>
@@ -71,24 +74,57 @@
         </govuk-summary-list-row>
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
-            <div asp-validation-group-for="Data.TutoringLogistics">
-              Tuition plan
+            <div asp-validation-group-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils">
+              How many pupils need tuition?
             </div>
           </govuk-summary-list-row-key>
-          <govuk-summary-list-row-value class="display-pre-wrap">@Model.Data!.TutoringLogistics</govuk-summary-list-row-value>
+          <govuk-summary-list-row-value class="display-pre-wrap">@Model.Data!.TutoringLogisticsDetailsModel.NumberOfPupils</govuk-summary-list-row-value>
           <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="TutoringLogistics" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_TutoringLogistics" visually-hidden-text="what type of tuition plan do you need">Change</govuk-summary-list-row-action>
+            <govuk-summary-list-row-action asp-page="TutoringLogistics" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_TutoringLogisticsDetailsModel_NumberOfPupils" visually-hidden-text="how many pupils need tuition">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.TutoringLogisticsDetailsModel.StartDate">
+              When do you want tuition to start?
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value class="display-pre-wrap">@Model.Data!.TutoringLogisticsDetailsModel.StartDate</govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="TutoringLogistics" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_TutoringLogisticsDetailsModel_StartDate" visually-hidden-text="when you want tuition to start">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.TutoringLogisticsDetailsModel.TuitionDuration">
+              How long do you need tuition for?
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value class="display-pre-wrap">@Model.Data!.TutoringLogisticsDetailsModel.TuitionDuration</govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="TutoringLogistics" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_TutoringLogisticsDetailsModel_TuitionDuration" visually-hidden-text="how long you need tuition for">Change</govuk-summary-list-row-action>
+          </govuk-summary-list-row-actions>
+        </govuk-summary-list-row>
+        <govuk-summary-list-row>
+          <govuk-summary-list-row-key>
+            <div asp-validation-group-for="Data.TutoringLogisticsDetailsModel.TimeOfDay">
+              What time of day do you need tuition?
+            </div>
+          </govuk-summary-list-row-key>
+          <govuk-summary-list-row-value class="display-pre-wrap">@Model.Data!.TutoringLogisticsDetailsModel.TimeOfDay</govuk-summary-list-row-value>
+          <govuk-summary-list-row-actions>
+            <govuk-summary-list-row-action asp-page="TutoringLogistics" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_TutoringLogisticsDetailsModel_TimeOfDay" visually-hidden-text="what time of day you need tuition">Change</govuk-summary-list-row-action>
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
         <govuk-summary-list-row>
           <govuk-summary-list-row-key>
             <div asp-validation-group-for="Data.SENDRequirements">
-              SEND requirements
+              SEND and additional requirements
             </div>
           </govuk-summary-list-row-key>
           <govuk-summary-list-row-value class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.SENDRequirements) ? StringConstants.NotSpecified : Model.Data.SENDRequirements)</govuk-summary-list-row-value>
           <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="SENDRequirements" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_SENDRequirements" visually-hidden-text="if you need tuition partners who can support pupils with SEND">Change</govuk-summary-list-row-action>
+            <govuk-summary-list-row-action asp-page="SENDRequirements" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_SENDRequirements" visually-hidden-text="SEND and additional requirements">Change</govuk-summary-list-row-action>
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
         <govuk-summary-list-row>
@@ -99,7 +135,7 @@
           </govuk-summary-list-row-key>
           <govuk-summary-list-row-value class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.AdditionalInformation) ? StringConstants.NotSpecified : Model.Data.AdditionalInformation)</govuk-summary-list-row-value>
           <govuk-summary-list-row-actions>
-            <govuk-summary-list-row-action asp-page="AdditionalInformation" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_AdditionalInformation" visually-hidden-text="anything else that you want tuition partners to consider">Change</govuk-summary-list-row-action>
+            <govuk-summary-list-row-action asp-page="AdditionalInformation" asp-all-route-data="@(Model.Data with { From = ReferrerList.CheckYourAnswers }).ToRouteData()" asp-fragment="Data_AdditionalInformation" visually-hidden-text="other tuition requirements">Change</govuk-summary-list-row-action>
           </govuk-summary-list-row-actions>
         </govuk-summary-list-row>
       </govuk-summary-list>
@@ -144,7 +180,10 @@
       </button>
       <input asp-for="Data.LocalAuthorityDistrictName" type="hidden" />
       <input asp-for="Data.HasKeyStageSubjects" type="hidden" />
-      <input asp-for="Data.TutoringLogistics" type="hidden" />
+      <input asp-for="Data.TutoringLogisticsDetailsModel.NumberOfPupils" type="hidden" />
+      <input asp-for="Data.TutoringLogisticsDetailsModel.StartDate" type="hidden" />
+      <input asp-for="Data.TutoringLogisticsDetailsModel.TuitionDuration" type="hidden" />
+      <input asp-for="Data.TutoringLogisticsDetailsModel.TimeOfDay" type="hidden" />
       <input asp-for="Data.SENDRequirements" type="hidden" />
       <input asp-for="Data.AdditionalInformation" type="hidden" />
       <input asp-for="Data.SchoolId" type="hidden" />
