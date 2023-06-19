@@ -8,5 +8,6 @@
         public const int SmallTextAreaMaxCharacterThreshold = 60;
         public const int EnquiryDaysToRespond = 7;
         public const int AzureBlobStorageServiceTokenExpiryInHour = 1;
+        public const int EmailLogFinishProcessingAfterDays = 2;
     }
 }
