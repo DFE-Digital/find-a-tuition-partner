@@ -255,9 +255,9 @@ jobs:
             export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
             export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
             export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
-            echo "AZURE_WEBAPP_NAME=$(terraform output -raw azurerm_linux_web_app_default.name)" >> $GITHUB_ENV
-            echo "AZURE_RESOURCE_GROUP=$(terraform output -raw azurerm_resource_group_default.name)" >> $GITHUB_ENV
-            echo "APP_BASE_URL=$(terraform output -raw azurerm_cdn_frontdoor_endpoint_endpoint.host_name)" >> $GITHUB_ENV
+            echo "AZURE_WEBAPP_NAME=$(terraform output -raw azurerm_linux_web_app_name)" >> $GITHUB_ENV
+            echo "AZURE_RESOURCE_GROUP=$(terraform output -raw azurerm_resource_group_name)" >> $GITHUB_ENV
+            echo "APP_BASE_URL=$(terraform output -raw azurerm_cdn_frontdoor_endpoint_host_name)" >> $GITHUB_ENV
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
