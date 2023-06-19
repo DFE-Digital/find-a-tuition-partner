@@ -51,6 +51,7 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
         {
             Data.EnquiryResponseParseSessionValues(sessionValue.Key, sessionValue.Value);
         }
+
         HttpContext.AddLadNameToAnalytics<CheckYourAnswers>(Data.LocalAuthorityDistrict);
 
         ModelState.Clear();
@@ -80,6 +81,8 @@ public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
             if (!await _sessionService.SessionDataExistsAsync(GetSessionKey(Data.TuitionPartnerSeoUrl!, Data.SupportReferenceNumber)))
                 return RedirectToPage("/Session/Timeout");
         }
+
+        Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogisticsDetailsModel = Data.EnquiryTutoringLogisticsDisplayModel.TutoringLogistics.ToTutoringLogisticsDetailsModel();
 
         if (!ModelState.IsValid) return Page();
 

@@ -113,21 +113,6 @@ When("they click View response from a tuition partner", () => {
   cy.get('[data-testid="view-enquiry-response-link"]').click();
 });
 
-When(
-  "they click all the view your tuition requirement links the text shows",
-  () => {
-    cy.get(
-      ":nth-child(14) > .govuk-details__summary > .govuk-details__summary-text"
-    ).click();
-    cy.get(
-      ":nth-child(19) > .govuk-details__summary > .govuk-details__summary-text"
-    ).click();
-    cy.get(
-      ":nth-child(24) > .govuk-details__summary > .govuk-details__summary-text"
-    ).click();
-  }
-);
-
 Then("the heading of the page is View Sherpa Online's response", () => {
   cy.contains(".govuk-heading-l > span", "View Sherpa response");
 });
@@ -151,40 +136,49 @@ Then("the response page has the following information:", (dataTable) => {
           .should("contain.text", "Key stage 2: English and Maths")
           .should("be.visible");
         cy.get(
-          ":nth-child(3) > .govuk-grid-row > .govuk-grid-column-two-thirds-from-desktop > :nth-child(6)"
+          ":nth-child(2) > .govuk-grid-row > .govuk-grid-column-two-thirds-from-desktop > :nth-child(7)"
         )
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Tuition setting:":
-        cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(9)")
+        cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(11)")
           .should("contain.text", yourResponse)
           .should("be.visible");
-        cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(11)")
+        cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(13)")
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Tuition plan:":
-        cy.get('[open=""] > .govuk-details__text > .display-pre-wrap')
+        cy.get(":nth-child(1) > .display-pre-wrap")
           .should("contain.text", yourResponse)
           .should("be.visible");
-        cy.get(".govuk-grid-column-two-thirds-from-desktop > :nth-child(16)")
+        cy.get(":nth-child(2) > .display-pre-wrap")
+          .should("contain.text", yourResponse)
+          .should("be.visible");
+        cy.get(":nth-child(3) > .display-pre-wrap")
+          .should("contain.text", yourResponse)
+          .should("be.visible");
+        cy.get(":nth-child(4) > .display-pre-wrap")
+          .should("contain.text", yourResponse)
+          .should("be.visible");
+        cy.get(":nth-child(19) > .display-pre-wrap")
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Can you support SEND?:":
-        cy.get(":nth-child(19) > .govuk-details__text")
+        cy.get(":nth-child(23) > .display-pre-wrap")
           .should("contain.text", yourResponse)
           .should("be.visible");
-        cy.get(":nth-child(21)")
+        cy.get(":nth-child(25) > .display-pre-wrap")
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
       case "Other tuition considerations?:":
-        cy.get(":nth-child(24) > .govuk-details__text")
+        cy.get(":nth-child(29) > .display-pre-wrap")
           .should("contain.text", yourResponse)
           .should("be.visible");
-        cy.get(":nth-child(26)")
+        cy.get(":nth-child(31) > .display-pre-wrap")
           .should("contain.text", tpResponse)
           .should("be.visible");
         break;
