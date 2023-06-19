@@ -11,9 +11,10 @@ concurrency: pr-${{ github.event.number }}
 env:
   DOTNET_VERSION: '6.0.x'
   APP_CODE_PATH: './UI'
+  APP_BASE_URL: ""
   TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
-  AZURE_WEBAPP_NAME: 'find-a-tp-pr-${{ github.event.number }}'
-  AZURE_RESOURCE_GROUP: 's177d01-ntp-pr-${{ github.event.number }}'
+  AZURE_WEBAPP_NAME: ''
+  AZURE_RESOURCE_GROUP: ''
   TF_VERSION: '~>1.4.5'
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
@@ -240,6 +241,12 @@ jobs:
           terraform apply -auto-approve tfplan.out
           
           
+      - name: Set output as env vars
+        run: |
+            echo "AZURE_WEBAPP_NAME=$(terraform output -raw azurerm_linux_web_app_default.name)" >> $GITHUB_ENV
+            echo "AZURE_RESOURCE_GROUP=$(terraform output -raw azurerm_resource_group_default.name)" >> $GITHUB_ENV
+            echo "APP_BASE_URL=$(terraform output -raw azurerm_cdn_frontdoor_endpoint_endpoint.host_name)" >> $GITHUB_ENV
+          
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
@@ -247,13 +254,12 @@ jobs:
               publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
               package: ${{ env.APP_CODE_PATH }}/publish
               
-      - name: Install dependencies
+      - name: Install dependencies to run the database migrations and import data
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget
           sudo apt-get install -y sshpass
           
-      - name: Delay Step to make sure website is up and running first
+      - name: Delay Step to make sure website is up and running
         run: |
           echo "Waiting for 30 seconds..."
           sleep 30
@@ -281,5 +287,19 @@ jobs:
           
           # clean up ssh tunnel(s)
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
+          
+      - name: End to End Testing
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: ./UI
+          config: baseUrl="${{ env.APP_BASE_URL }}/",video=false
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: UI/cypress/screenshots
+    
           
               

@@ -1,5 +1,5 @@
 module "fatp_azure_web_app_services_hosting" {
-  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.5"
+  source = "github.com/hasan3d/terraform-azurerm-web-app-services-hosting?ref=v0.1.6"
 
   environment    = local.environment
   project_name   = local.project_name
