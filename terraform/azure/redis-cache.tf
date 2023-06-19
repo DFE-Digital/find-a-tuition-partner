@@ -1,6 +1,6 @@
 resource "azurerm_redis_cache" "default" {
 
-  name                = "${local.service_name}-redis-cache"
+  name                = "${local.service_name}-${local.environment}-redis-cache"
   location            = local.azure_location
   resource_group_name = module.fatp_azure_web_app_services_hosting.azurerm_resource_group_default.name
   capacity            = local.redis_cache_capacity

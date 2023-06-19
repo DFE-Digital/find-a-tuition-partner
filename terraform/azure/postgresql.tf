@@ -1,5 +1,5 @@
 resource "azurerm_postgresql_flexible_server" "default" {
-  name                   = "${local.service_name}-psqlflexible-server"
+  name                   = "${local.service_name}-${local.environment}-psqlflexible-server"
   resource_group_name    = module.fatp_azure_web_app_services_hosting.azurerm_resource_group_default.name
   location               = local.azure_location
   version                = local.postgresql_database_version
@@ -41,7 +41,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "default" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "default" {
-  name      = "${local.service_name}-db"
+  name      = "${local.service_name}-${local.environment}-db"
   server_id = azurerm_postgresql_flexible_server.default.id
   collation = "en_US.utf8"
   charset   = "utf8"
