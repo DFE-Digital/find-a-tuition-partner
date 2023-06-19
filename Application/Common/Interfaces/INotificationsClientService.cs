@@ -8,5 +8,5 @@ public interface INotificationsClientService
     Task<bool> SendEmailAsync(NotifyEmailDto notifyEmail, bool includeChangedFromEmailAddress = true);
     Task<bool> SendEmailAsync(IEnumerable<NotifyEmailDto> notifyEmails);
 
-    Task<EmailStatus> GetEmailStatus(string notificationId);
+    Task<EmailStatus> GetEmailStatus(string notificationId, int previousStatusId, string? previousExceptionMessage);
 }
