@@ -12,8 +12,8 @@ env:
   DOTNET_VERSION: '6.0.x'
   APP_CODE_PATH: './UI'
   TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
-  AZURE_WEBAPP_NAME: 'find-a-tp-${{ env.TF_VAR_ENVIRONMENT }}'
-  AZURE_RESOURCE_GROUP: 's177d01-ntp-${{ env.TF_VAR_ENVIRONMENT }}'
+  AZURE_WEBAPP_NAME: 'find-a-tp-${{ TF_VAR_ENVIRONMENT }}'
+  AZURE_RESOURCE_GROUP: 's177d01-ntp-${{ TF_VAR_ENVIRONMENT }}'
   TF_VERSION: '~>1.4.5'
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
