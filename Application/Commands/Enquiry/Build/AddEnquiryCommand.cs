@@ -1,4 +1,3 @@
-using Application.Common.DTO;
 using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Models.Enquiry.Build;
@@ -8,7 +7,9 @@ using Domain;
 using Domain.Enums;
 using Domain.Search;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using EmailStatus = Domain.Enums.EmailStatus;
 using TuitionSetting = Domain.Enums.TuitionSetting;
 
 namespace Application.Commands.Enquiry.Build;
@@ -29,19 +30,31 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRandomTokenGenerator _randomTokenGenerator;
-    private readonly INotificationsClientService _notificationsClientService;
+    private readonly IProcessEmailsService _processEmailsService;
     private readonly IGenerateReferenceNumber _generateReferenceNumber;
     private readonly ILogger<AddEnquiryCommandHandler> _logger;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public AddEnquiryCommandHandler(IUnitOfWork unitOfWork, IRandomTokenGenerator randomTokenGenerator,
-        INotificationsClientService notificationsClientService,
-        IGenerateReferenceNumber generateReferenceNumber, ILogger<AddEnquiryCommandHandler> logger)
+    private readonly DateTime _createdDateTime = DateTime.UtcNow;
+    private string? _environmentNameNonProduction;
+    private string? _enquiryReferenceNumber;
+    private string? _enquirerToken;
+    private List<TuitionPartnerMagicLinkModel>? _tpMagicLinkModelList;
+    private bool _sendTuitionPartnerEmailsWhenEnquirerDelivered = true;
+
+    public AddEnquiryCommandHandler(IUnitOfWork unitOfWork,
+        IRandomTokenGenerator randomTokenGenerator,
+        IProcessEmailsService processEmailsService,
+        IGenerateReferenceNumber generateReferenceNumber,
+        ILogger<AddEnquiryCommandHandler> logger,
+        IHostEnvironment hostEnvironment)
     {
         _unitOfWork = unitOfWork;
         _randomTokenGenerator = randomTokenGenerator;
-        _notificationsClientService = notificationsClientService;
+        _processEmailsService = processEmailsService;
         _generateReferenceNumber = generateReferenceNumber;
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<SubmittedConfirmationModel> Handle(AddEnquiryCommand request, CancellationToken cancellationToken)
@@ -56,43 +69,12 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
             throw new ArgumentException(validationResult);
         }
 
-        var enquirySubmittedToTpNotificationsRecipients = GetEnquirySubmittedToTpNotificationsRecipients(
-            request.Data!.TuitionPartnersForEnquiry!.Results, request.Data?.Email!);
+        _sendTuitionPartnerEmailsWhenEnquirerDelivered = _processEmailsService.SendTuitionPartnerEmailsWhenEnquirerDelivered();
+        _environmentNameNonProduction = (_hostEnvironment.IsProduction() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null) ? string.Empty : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!.ToString();
+        _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+        _enquirerToken = _randomTokenGenerator.GenerateRandomToken();
 
-        var enquirySubmittedConfirmationToEnquirerNotificationsRecipient =
-            GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(request);
-
-        var enquirerMagicLink = new MagicLink()
-        {
-            Token = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token!
-        };
-
-        var tuitionPartnerEnquiry = enquirySubmittedToTpNotificationsRecipients.Select(selectedTuitionPartner =>
-            new TuitionPartnerEnquiry()
-            {
-                TuitionPartnerId = selectedTuitionPartner.TuitionPartnerId,
-                MagicLink = new MagicLink()
-                {
-                    Token = selectedTuitionPartner.Token!
-                },
-                ResponseCloseDate = DateTime.UtcNow.AddDays(IntegerConstants.EnquiryDaysToRespond)
-            }).ToList();
-
-        var enquiry = new Domain.Enquiry()
-        {
-            SchoolId = request.Data?.SchoolId!,
-            Email = request.Data?.Email!,
-            TutoringLogistics = request.Data?.TutoringLogistics!,
-            SENDRequirements = request.Data?.SENDRequirements ?? null,
-            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
-            TuitionPartnerEnquiry = tuitionPartnerEnquiry,
-            SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber(),
-            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
-            PostCode = request.Data!.Postcode!,
-            LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
-            TuitionSettings = await GetTuitionSettings(request.Data!.TuitionSetting),
-            MagicLink = enquirerMagicLink
-        };
+        var enquiry = await GetEnquiry(request);
 
         try
         {
@@ -102,7 +84,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         }
         catch (DbUpdateException ex)
         {
-            await HandleDbUpdateException(ex, enquiry);
+            enquiry = await HandleDbUpdateException(ex, request, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -112,146 +94,16 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
-        var enquirerViewAllResponsesPageLink =
-            $"{request.Data?.BaseServiceUrl}/enquiry/{enquiry.SupportReferenceNumber}?Token={enquirerMagicLink.Token}";
+        await ProcessEmailsAsync(enquiry);
 
-        enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Personalisation = GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
-                    request.Data!.TuitionPartnersForEnquiry!.Results!.Count(), enquirerViewAllResponsesPageLink);
+        //Result population
+        result.SupportReferenceNumber = _enquiryReferenceNumber;
+        result.EnquirerMagicLink = _enquirerToken;
 
-        enquirySubmittedConfirmationToEnquirerNotificationsRecipient.AddDefaultEnquiryDetails(
-            enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedConfirmationToEnquirer,
-            enquiry.CreatedAt);
-
-        await TrySendEnquirySubmittedConfirmationToEnquirerEmail(enquiry,
-            enquirySubmittedConfirmationToEnquirerNotificationsRecipient);
-
-        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-            x.Personalisation = GetEnquirySubmittedToTpPersonalisation(x.TuitionPartnerName!,
-                $"{request.Data!.BaseServiceUrl}/enquiry-response/{x.TuitionPartnerName.ToSeoUrl()}/{enquiry.SupportReferenceNumber}?Token={x.Token}",
-                request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!
-                ));
-
-        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-            x.AddDefaultEnquiryDetails(
-            enquiry.SupportReferenceNumber, request.Data!.BaseServiceUrl!, EmailTemplateType.EnquirySubmittedToTp,
-            enquiry.CreatedAt, x.TuitionPartnerName));
-
-        try
-        {
-            await _notificationsClientService.SendEmailAsync(enquirySubmittedToTpNotificationsRecipients,
-            EmailTemplateType.EnquirySubmittedToTp);
-        }
-        catch { } //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in NotificationsClientService
-
-        var tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
-
-        result.SupportReferenceNumber = enquiry.SupportReferenceNumber;
-        result.EnquirerMagicLink = enquirySubmittedConfirmationToEnquirerNotificationsRecipient.Token;
-        enquirySubmittedToTpNotificationsRecipients.ForEach(x =>
-            tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
-            {
-                TuitionPartnerSeoUrl = x.TuitionPartnerName.ToSeoUrl()!,
-                Email = x.OriginalEmail,
-                MagicLinkToken = x.Token!
-            }));
-
-        result.TuitionPartnerMagicLinks = tpMagicLinkModelList;
-
-        result.TuitionPartnerMagicLinksCount = tpMagicLinkModelList.Count;
+        result.TuitionPartnerMagicLinks = _tpMagicLinkModelList!;
+        result.TuitionPartnerMagicLinksCount = _tpMagicLinkModelList!.Count;
 
         return result;
-    }
-
-    private List<NotificationsRecipientDto> GetEnquirySubmittedToTpNotificationsRecipients(
-        IEnumerable<TuitionPartnerResult> recipients, string enquirerEmailForTestingPurposes)
-    {
-        return (from recipient in recipients
-                let token = _randomTokenGenerator.GenerateRandomToken()
-                select new NotificationsRecipientDto()
-                {
-                    Email = recipient.Email,
-                    OriginalEmail = recipient.Email,
-                    EnquirerEmailForTestingPurposes = enquirerEmailForTestingPurposes,
-                    Token = token,
-                    TuitionPartnerId = recipient.Id,
-                    TuitionPartnerName = recipient.Name,
-                    PersonalisationPropertiesToAmalgamate = new List<string>()
-                    { EnquiryTpNameKey, EnquiryResponseFormLinkKey }
-                }).ToList();
-    }
-
-    private static Dictionary<string, dynamic> GetEnquirySubmittedToTpPersonalisation(string tpName,
-        string responseFormLink,
-        string ladNameKey)
-    {
-        var personalisation = new Dictionary<string, dynamic>()
-            {
-                { EnquiryTpNameKey, tpName },
-                { EnquiryResponseFormLinkKey, responseFormLink },
-                { EnquiryLadNameKey, ladNameKey },
-                { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
-            };
-
-        return personalisation;
-    }
-
-    private NotificationsRecipientDto GetEnquirySubmittedConfirmationToEnquirerNotificationsRecipient(
-        AddEnquiryCommand request)
-    {
-        var token = _randomTokenGenerator.GenerateRandomToken();
-
-        var result = new NotificationsRecipientDto()
-        {
-            Email = request.Data?.Email!,
-            OriginalEmail = request.Data?.Email!,
-            EnquirerEmailForTestingPurposes = request.Data?.Email!,
-            Token = token
-        };
-        return result;
-    }
-
-    private static Dictionary<string, dynamic> GetGetEnquirySubmittedConfirmationToEnquirerPersonalisation(
-        int numberOfTpsContacted,
-        string enquirerViewAllResponsesPageLink)
-    {
-        var personalisation = new Dictionary<string, dynamic>()
-            {
-                { EnquiryNumberOfTpsContactedKey, numberOfTpsContacted.ToString() },
-                { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
-                { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
-            };
-
-        return personalisation;
-    }
-
-    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
-        IEnumerable<KeyStageSubject> keyStageSubjects)
-    {
-        var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
-
-        foreach (var (keyStageId, subjectId) in keyStageSubjects.ToArray().GetIdsForKeyStageSubjects())
-        {
-            keyStageSubjectEnquiry.Add(new KeyStageSubjectEnquiry()
-            {
-                KeyStageId = keyStageId,
-                SubjectId = subjectId
-            });
-        }
-
-        return keyStageSubjectEnquiry;
-    }
-
-    private async Task<List<Domain.TuitionSetting>?> GetTuitionSettings(TuitionSetting? tuitionSetting)
-    {
-        if (tuitionSetting == null || tuitionSetting == TuitionSetting.NoPreference)
-            return null;
-
-        var tuitionSettingIds = tuitionSetting == TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
-            new List<int>() { (int)tuitionSetting };
-
-        var settings = await _unitOfWork.TuitionSettingRepository.GetAllAsync(x => tuitionSettingIds.Contains(x.Id));
-
-        return settings.ToList();
     }
 
     private static string? ValidateRequest(AddEnquiryCommand request)
@@ -299,10 +151,228 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         return null;
     }
 
-    private async Task HandleDbUpdateException(DbUpdateException ex, Domain.Enquiry enquiry)
+    private async Task<Domain.Enquiry> GetEnquiry(AddEnquiryCommand request)
+    {
+        var enquirerEnquirySubmittedEmailLog = GetEnquirerEnquirySubmittedEmailLog(request);
+        var enquirerMagicLink = new MagicLink()
+        {
+            Token = _enquirerToken!
+        };
+
+        var tuitionPartnerEnquiries = GetTuitionPartnerEnquiries(request);
+
+        //Populate this to return before merge below
+        _tpMagicLinkModelList = new List<TuitionPartnerMagicLinkModel>();
+        tuitionPartnerEnquiries.ForEach(x =>
+            _tpMagicLinkModelList.Add(new TuitionPartnerMagicLinkModel()
+            {
+                TuitionPartnerSeoUrl = request.Data!.TuitionPartnersForEnquiry!.Results.FirstOrDefault(y => y.Id == x.TuitionPartnerId)!.SeoUrl,
+                Email = x.TuitionPartnerEnquirySubmittedEmailLog.EmailAddress,
+                MagicLinkToken = x.MagicLink.Token!
+            }));
+
+        //See if emails are merged, for non-production testing
+        var tpEmailLogs = tuitionPartnerEnquiries.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList();
+        var mergedEmailLog = _processEmailsService.MergeEmailForTesting(
+            tpEmailLogs,
+            new List<string>() { EnquiryTpNameKey, EnquiryResponseFormLinkKey });
+        if (mergedEmailLog != null)
+        {
+            mergedEmailLog.ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, EmailTemplateType.EnquirySubmittedToTp);
+            tuitionPartnerEnquiries.ForEach(x => x.TuitionPartnerEnquirySubmittedEmailLog = mergedEmailLog);
+        }
+
+        //Add email dependency
+        SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(
+            enquirerEnquirySubmittedEmailLog,
+            mergedEmailLog == null ? tpEmailLogs : new List<EmailLog>() { mergedEmailLog });
+
+        //Populate and save the enquiry
+        return new Domain.Enquiry()
+        {
+            SchoolId = request.Data?.SchoolId!,
+            Email = request.Data?.Email!,
+            TutoringLogistics = request.Data?.TutoringLogistics!,
+            SENDRequirements = request.Data?.SENDRequirements ?? null,
+            AdditionalInformation = request.Data?.AdditionalInformation ?? null,
+            TuitionPartnerEnquiry = tuitionPartnerEnquiries,
+            SupportReferenceNumber = _enquiryReferenceNumber!,
+            KeyStageSubjectEnquiry = GetKeyStageSubjectsEnquiry(request.Data!.Subjects!.ParseKeyStageSubjects()),
+            PostCode = request.Data!.Postcode!,
+            LocalAuthorityDistrict = request.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName!,
+            TuitionSettings = await GetTuitionSettings(request.Data!.TuitionSetting),
+            MagicLink = enquirerMagicLink,
+            EnquirerEnquirySubmittedEmailLog = enquirerEnquirySubmittedEmailLog,
+            CreatedAt = _createdDateTime
+        };
+    }
+
+    private EmailLog GetEnquirerEnquirySubmittedEmailLog(AddEnquiryCommand request)
+    {
+        var emailTemplateType = EmailTemplateType.EnquirySubmittedConfirmationToEnquirer;
+
+        var enquirerEnquirySubmittedEmailPersonalisationLog = GetEnquirerEnquirySubmittedEmailPersonalisationLog(request);
+
+        var emailLog = new EmailLog()
+        {
+            CreatedDate = _createdDateTime,
+            ProcessFromDate = _createdDateTime,
+            FinishProcessingDate = _createdDateTime.AddDays(IntegerConstants.EmailLogFinishProcessingAfterDays),
+            EmailAddress = request.Data?.Email!,
+            EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.Data?.Email!),
+            EmailTemplateShortName = emailTemplateType.DisplayName(),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType),
+            EmailStatusId = (int)EmailStatus.ToBeProcessed,
+            EmailPersonalisationLogs = enquirerEnquirySubmittedEmailPersonalisationLog
+        };
+
+        return emailLog;
+    }
+
+    private List<EmailPersonalisationLog> GetEnquirerEnquirySubmittedEmailPersonalisationLog(AddEnquiryCommand request)
+    {
+        var enquirerViewAllResponsesPageLink = $"{request.Data?.BaseServiceUrl}/enquiry/{_enquiryReferenceNumber}?Token={_enquirerToken}";
+
+        var personalisation = new Dictionary<string, dynamic>()
+        {
+            { EnquiryNumberOfTpsContactedKey, request.Data!.TuitionPartnersForEnquiry!.Results!.Count().ToString() },
+            { EnquirerViewAllResponsesPageLinkKey, enquirerViewAllResponsesPageLink },
+            { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
+        };
+
+        personalisation.AddDefaultEnquiryPersonalisation(_enquiryReferenceNumber!, request.Data!.BaseServiceUrl!, _createdDateTime);
+
+        return personalisation.Select(x => new EmailPersonalisationLog
+        {
+            Key = x.Key,
+            Value = x.Value.ToString()
+        }).ToList();
+    }
+
+    private List<TuitionPartnerEnquiry> GetTuitionPartnerEnquiries(AddEnquiryCommand request)
+    {
+        var tuitionPartnerResults = request.Data!.TuitionPartnersForEnquiry!.Results;
+
+        var tuitionPartnerEnquiries = tuitionPartnerResults.Select(tuitionPartnerResult =>
+        {
+            var token = _randomTokenGenerator.GenerateRandomToken();
+            return new TuitionPartnerEnquiry()
+            {
+                TuitionPartnerId = tuitionPartnerResult.Id,
+                MagicLink = new MagicLink()
+                {
+                    Token = token
+                },
+                ResponseCloseDate = _createdDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond),
+                TuitionPartnerEnquirySubmittedEmailLog = GetTuitionPartnerEnquirySubmittedEmailLog(request, tuitionPartnerResult, token)
+            };
+        }).ToList();
+
+        return tuitionPartnerEnquiries;
+    }
+
+    private EmailLog GetTuitionPartnerEnquirySubmittedEmailLog(AddEnquiryCommand request, TuitionPartnerResult tuitionPartnerResult, string tuitionPartnerToken)
+    {
+        var emailTemplateType = EmailTemplateType.EnquirySubmittedToTp;
+
+        var tuitionPartnerEnquirySubmittedEmailPersonalisationLog = GetTuitionPartnerEnquirySubmittedEmailPersonalisationLog(request,
+            tuitionPartnerResult, tuitionPartnerToken);
+
+        var emailLog = new EmailLog()
+        {
+            CreatedDate = _createdDateTime,
+            ProcessFromDate = _sendTuitionPartnerEmailsWhenEnquirerDelivered ? null : _createdDateTime,
+            FinishProcessingDate = _createdDateTime.AddDays(IntegerConstants.EmailLogFinishProcessingAfterDays),
+            EmailAddress = tuitionPartnerResult.Email,
+            EmailAddressUsedForTesting = _processEmailsService.GetEmailAddressUsedForTesting(request.Data?.Email!),
+            EmailTemplateShortName = emailTemplateType.DisplayName(),
+            ClientReferenceNumber = _enquiryReferenceNumber!.CreateNotifyEnquiryClientReference(_environmentNameNonProduction!, emailTemplateType, tuitionPartnerResult.Name),
+            EmailStatusId = _sendTuitionPartnerEmailsWhenEnquirerDelivered ? (int)EmailStatus.WaitingToBeTriggered : (int)EmailStatus.ToBeProcessed,
+            EmailPersonalisationLogs = tuitionPartnerEnquirySubmittedEmailPersonalisationLog
+        };
+
+        return emailLog;
+    }
+
+    private List<EmailPersonalisationLog> GetTuitionPartnerEnquirySubmittedEmailPersonalisationLog(
+        AddEnquiryCommand request,
+        TuitionPartnerResult tuitionPartnerResult,
+        string token)
+    {
+        var tuitionPartnerResponsesPageLink = $"{request.Data!.BaseServiceUrl}/enquiry-response/{tuitionPartnerResult.Name.ToSeoUrl()}/{_enquiryReferenceNumber}?Token={token}";
+
+        var personalisation = new Dictionary<string, dynamic>()
+        {
+            { EnquiryTpNameKey, tuitionPartnerResult.Name },
+            { EnquiryResponseFormLinkKey, tuitionPartnerResponsesPageLink },
+            { EnquiryLadNameKey, request!.Data!.TuitionPartnersForEnquiry!.LocalAuthorityDistrictName! },
+            { EnquiryDaysToRespond, IntegerConstants.EnquiryDaysToRespond }
+        };
+
+        personalisation.AddDefaultEnquiryPersonalisation(_enquiryReferenceNumber!, request.Data!.BaseServiceUrl!, _createdDateTime);
+
+        return personalisation.Select(x => new EmailPersonalisationLog
+        {
+            Key = x.Key,
+            Value = x.Value.ToString()
+        }).ToList();
+    }
+
+    private void SetTuitionPartnerEmailsActivatedOnEnquirerDelivery(EmailLog enquirerEmailLog, List<EmailLog> tpEmailLogs)
+    {
+        if (_sendTuitionPartnerEmailsWhenEnquirerDelivered &&
+            enquirerEmailLog != null &&
+            tpEmailLogs != null &&
+            tpEmailLogs.Any())
+        {
+            enquirerEmailLog.EmailsActivatedByThisEmail = new List<EmailTriggerActivation>();
+            foreach (var tpEmailLog in tpEmailLogs)
+            {
+                enquirerEmailLog.EmailsActivatedByThisEmail.Add(new EmailTriggerActivation()
+                {
+                    ActivateEmailLog = tpEmailLog,
+                });
+            }
+        }
+    }
+
+    private async Task<List<Domain.TuitionSetting>?> GetTuitionSettings(TuitionSetting? tuitionSetting)
+    {
+        if (tuitionSetting == null || tuitionSetting == TuitionSetting.NoPreference)
+            return null;
+
+        var tuitionSettingIds = tuitionSetting == TuitionSetting.Both ? new List<int>() { (int)TuitionSetting.Online, (int)TuitionSetting.FaceToFace } :
+            new List<int>() { (int)tuitionSetting };
+
+        var settings = await _unitOfWork.TuitionSettingRepository.GetAllAsync(x => tuitionSettingIds.Contains(x.Id));
+
+        return settings.ToList();
+    }
+
+    private static List<KeyStageSubjectEnquiry> GetKeyStageSubjectsEnquiry(
+        IEnumerable<KeyStageSubject> keyStageSubjects)
+    {
+        var keyStageSubjectEnquiry = new List<KeyStageSubjectEnquiry>();
+
+        foreach (var (keyStageId, subjectId) in keyStageSubjects.ToArray().GetIdsForKeyStageSubjects())
+        {
+            keyStageSubjectEnquiry.Add(new KeyStageSubjectEnquiry()
+            {
+                KeyStageId = keyStageId,
+                SubjectId = subjectId
+            });
+        }
+
+        return keyStageSubjectEnquiry;
+    }
+
+    private async Task<Domain.Enquiry> HandleDbUpdateException(DbUpdateException ex,
+        AddEnquiryCommand request,
+        CancellationToken cancellationToken)
     {
         var dataSaved = false;
         var retryAttempt = 0;
+        var updatedEnquiry = new Domain.Enquiry();
 
         while (!dataSaved)
         {
@@ -316,12 +386,16 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 _logger.LogError(
                     ex,
                     "Violation on unique constraint. Support Reference Number: {referenceNumber}.  Next retry attempt number: {retryAttempt}",
-                    enquiry.SupportReferenceNumber, retryAttempt);
+                    _enquiryReferenceNumber, retryAttempt);
 
-                enquiry.SupportReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
+                _unitOfWork.RollbackChanges();
 
+                _enquiryReferenceNumber = _generateReferenceNumber.GenerateReferenceNumber();
                 _logger.LogInformation("Generating new support reference number: {referenceNumber}",
-                    enquiry.SupportReferenceNumber);
+                    _enquiryReferenceNumber);
+
+                updatedEnquiry = await GetEnquiry(request);
+                _unitOfWork.EnquiryRepository.AddAsync(updatedEnquiry, cancellationToken);
 
                 try
                 {
@@ -341,32 +415,55 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 throw ex;
             }
         }
+        return updatedEnquiry;
     }
 
-    private async Task TrySendEnquirySubmittedConfirmationToEnquirerEmail(Domain.Enquiry enquiry,
-        NotificationsRecipientDto getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient)
+    private async Task ProcessEmailsAsync(Domain.Enquiry enquiry)
     {
         try
         {
-            await _notificationsClientService.SendEmailAsync(
-                getEnquirySubmittedConfirmationToEnquirerNotificationsRecipient,
-                EmailTemplateType.EnquirySubmittedConfirmationToEnquirer);
+            await _processEmailsService.SendEmailAsync(enquiry.EnquirerEnquirySubmittedEmailLog.Id);
         }
         catch (Exception)
         {
             await CleanUpData(enquiry);
             throw;
         }
+
+        try
+        {
+            if (!_sendTuitionPartnerEmailsWhenEnquirerDelivered)
+            {
+                var emailLogIds = enquiry.TuitionPartnerEnquiry.Select(x => x.TuitionPartnerEnquirySubmittedEmailLogId).ToArray();
+                await _processEmailsService.SendEmailsAsync(emailLogIds!);
+            }
+        }
+        catch
+        {
+            //We suppress the exceptions here since we want the user to get the confirmation page, errors are logged in the services
+        }
     }
 
     private async Task CleanUpData(Domain.Enquiry enquiry)
     {
-        _unitOfWork.EnquiryRepository.Remove(enquiry);
-        var tpMagicLinks = await _unitOfWork.TuitionPartnerEnquiryRepository
-            .GetAllAsync(x => x.Enquiry.SupportReferenceNumber == enquiry.SupportReferenceNumber, "Enquiry,MagicLink",
-                true);
-        tpMagicLinks.Select(x => x.MagicLink).ToList().ForEach(x => _unitOfWork.MagicLinkRepository.Remove(x));
-        _unitOfWork.MagicLinkRepository.Remove(enquiry.MagicLink);
-        await _unitOfWork.Complete();
+        try
+        {
+            var tpRecords = await _unitOfWork.TuitionPartnerEnquiryRepository
+                .GetAllAsync(x => x.Enquiry.SupportReferenceNumber == enquiry.SupportReferenceNumber, "Enquiry,MagicLink,TuitionPartnerEnquirySubmittedEmailLog",
+                    true);
+            tpRecords.Select(x => x.MagicLink).ToList().ForEach(x => _unitOfWork.MagicLinkRepository.Remove(x));
+            _unitOfWork.MagicLinkRepository.Remove(enquiry.MagicLink);
+
+            tpRecords.Select(x => x.TuitionPartnerEnquirySubmittedEmailLog).ToList().ForEach(x => _unitOfWork.EmailLogRepository.Remove(x));
+            _unitOfWork.EmailLogRepository.Remove(enquiry.EnquirerEnquirySubmittedEmailLog);
+
+            _unitOfWork.EnquiryRepository.Remove(enquiry);
+
+            await _unitOfWork.Complete();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error thrown in CleanUpData");
+        }
     }
 }

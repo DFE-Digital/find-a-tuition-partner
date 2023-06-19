@@ -13,6 +13,10 @@ public class TuitionPartnerEnquiry
 
     public DateTime ResponseCloseDate { get; set; } = DateTime.UtcNow.AddDays(7);
 
+    public int TuitionPartnerEnquirySubmittedEmailLogId { get; set; }
+
+    public EmailLog TuitionPartnerEnquirySubmittedEmailLog { get; set; } = null!;
+
     public Enquiry Enquiry { get; set; } = null!;
 
     public EnquiryResponse? EnquiryResponse { get; set; }
