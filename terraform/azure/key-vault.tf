@@ -48,7 +48,7 @@ resource "azurerm_key_vault" "default" {
 }
 
 resource "azurerm_key_vault_secret" "fatpdbconnectionstring" {
-  depends_on   = [azurerm_postgresql_flexible_server_database.default]
+  depends_on   = [azurerm_redis_cache.default]
   name         = "ConnectionStrings--FatpDatabase"
   value        = "Server=${azurerm_postgresql_flexible_server.default.name}.postgres.database.azure.com;Database=${azurerm_postgresql_flexible_server_database.default.name};Port=5432;User Id=${azurerm_postgresql_flexible_server.default.administrator_login};Password=${azurerm_postgresql_flexible_server.default.administrator_password};Ssl Mode=Require;TrustServerCertificate=True;"
   key_vault_id = azurerm_key_vault.default.id
@@ -62,12 +62,14 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
 }
 
 resource "azurerm_key_vault_secret" "govuknotifyapikey" {
+  depends_on   = [azurerm_redis_cache.default]
   name         = "GovUkNotify--ApiKey"
   value        = var.govuk_notify_apikey
   key_vault_id = azurerm_key_vault.default.id
 }
 
 resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
+  depends_on   = [azurerm_redis_cache.default]
   name         = "BlobStorage--ClientSecret"
   value        = var.blob_storage_client_secret
   key_vault_id = azurerm_key_vault.default.id
