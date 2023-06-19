@@ -83,6 +83,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<ITuitionPartnerService, TuitionPartnerService>();
+        services.AddScoped<IProcessEmailsService, ProcessEmailsService>();
         services.AddScoped<ILookupDataService, LookupDataService>();
         services.AddSingleton<IGenerateReferenceNumber, GenerateSupportReferenceNumber>();
         services.AddSingleton<IRandomTokenGenerator, RandomTokenGeneratorService>();

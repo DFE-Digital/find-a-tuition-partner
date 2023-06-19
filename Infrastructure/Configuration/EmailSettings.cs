@@ -6,8 +6,7 @@ public class EmailSettings
 
     public string OverrideAddress { get; set; } = string.Empty;
 
-    public bool AmalgamateResponses { get; set; } = false;
+    public bool MergeResponses { get; set; } = false;
 
     public bool AllSentToEnquirer { get; set; } = false;
-
 }

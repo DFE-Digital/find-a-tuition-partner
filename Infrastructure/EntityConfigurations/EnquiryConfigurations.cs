@@ -11,5 +11,7 @@ public class EnquiryConfigurations : IEntityTypeConfiguration<Enquiry>
         builder.HasIndex(e => e.Email);
 
         builder.HasIndex(e => e.SupportReferenceNumber).IsUnique();
+
+        builder.HasOne(e => e.EnquirerEnquirySubmittedEmailLog).WithMany(e => e.EnquirerEnquiriesSubmitted).OnDelete(DeleteBehavior.Restrict);
     }
 }
