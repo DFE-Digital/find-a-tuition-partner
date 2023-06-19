@@ -16,7 +16,11 @@ public class Enquiry
 
     public int MagicLinkId { get; set; }
 
+    public int EnquirerEnquirySubmittedEmailLogId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public EmailLog EnquirerEnquirySubmittedEmailLog { get; set; } = null!;
 
     public School School { get; set; } = null!;
 

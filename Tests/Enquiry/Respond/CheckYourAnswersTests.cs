@@ -120,6 +120,15 @@ public class CheckYourAnswersTests
 
 
         _ = _fixture.InsertAsync(
+            new EmailLog()
+            {
+                Id = 13,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF13",
+                EmailStatusId = 1
+            },
             new MagicLink()
             {
                 Id = 13,
@@ -136,7 +145,17 @@ public class CheckYourAnswersTests
                 PostCode = District.Dacorum.SamplePostcode,
                 LocalAuthorityDistrict = District.Dacorum.LocalAuthorityName,
                 MagicLinkId = 13,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EnquirerEnquirySubmittedEmailLogId = 13
+            },
+            new EmailLog()
+            {
+                Id = 130,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF13-tp",
+                EmailStatusId = 1
             },
             new MagicLink()
             {
@@ -149,7 +168,8 @@ public class CheckYourAnswersTests
                 EnquiryId = 13,
                 TuitionPartnerId = 13,
                 MagicLinkId = 130,
-                ResponseCloseDate = DateTime.UtcNow.AddDays(7)
+                ResponseCloseDate = DateTime.UtcNow.AddDays(7),
+                TuitionPartnerEnquirySubmittedEmailLogId = 130
             }
         );
 
@@ -201,6 +221,15 @@ public class CheckYourAnswersTests
 
 
         _ = _fixture.InsertAsync(
+            new EmailLog()
+            {
+                Id = 14,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF14",
+                EmailStatusId = 1
+            },
             new MagicLink()
             {
                 Id = 14,
@@ -217,7 +246,17 @@ public class CheckYourAnswersTests
                 PostCode = District.Dacorum.SamplePostcode,
                 LocalAuthorityDistrict = District.Dacorum.LocalAuthorityName,
                 MagicLinkId = 14,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EnquirerEnquirySubmittedEmailLogId = 14
+            },
+            new EmailLog()
+            {
+                Id = 140,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF14-tp",
+                EmailStatusId = 1
             },
             new MagicLink()
             {
@@ -230,7 +269,8 @@ public class CheckYourAnswersTests
                 EnquiryId = 14,
                 TuitionPartnerId = 14,
                 MagicLinkId = 140,
-                ResponseCloseDate = DateTime.UtcNow.AddDays(7)
+                ResponseCloseDate = DateTime.UtcNow.AddDays(7),
+                TuitionPartnerEnquirySubmittedEmailLogId = 140
             }
         );
 
