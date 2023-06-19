@@ -12,6 +12,14 @@
 
         public const string EnquiryTutoringLogistics = "EnquiryTutoringLogistics";
 
+        public const string EnquiryNumberOfPupils = "EnquiryNumberOfPupils";
+
+        public const string EnquiryStartDate = "EnquiryStartDate";
+
+        public const string EnquiryTuitionDuration = "EnquiryTuitionDuration";
+
+        public const string EnquiryTimeOfDay = "EnquiryTimeOfDay";
+
         public const string EnquirySENDRequirements = "EnquirySENDRequirements";
 
         public const string EnquiryAdditionalInformation = "EnquiryAdditionalInformation";

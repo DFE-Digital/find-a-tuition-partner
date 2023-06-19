@@ -12,12 +12,12 @@ Feature: Tuition partner details mobile view page tests
   Scenario: Subject list is not bullet pointed on search results page in tablet and above view
     Given a user has arrived on the 'Search results' page
     And a user is using a 'tablet'
-    Then the subject list is not bullet pointed
+    Then the subject list is bullet pointed
 
   Scenario: Subject list is not bullet pointed on tuition partner page in tablet and above view
     Given a user has arrived on the 'Tuition Partner' page for tp name 11
     And a user is using a 'tablet'
-    Then the subject list is not bullet pointed
+    Then the subject list is bullet pointed
 
   Scenario: Search results page heading is 'Find a tuition partner' in tablet and above view
     Given a user has arrived on the 'Search results' page
@@ -124,15 +124,15 @@ Feature: Tuition partner details mobile view page tests
     Given user navigates to the first enquiry question
     And a user is using a 'phone'
     When they click 'Continue'
-    Then they will see 'Enter the type of tuition plan that you need' as an error message for the 'no input error'
+    Then they will see 'Enter the number of pupils that need tuitionEnter when you want tuition to startEnter how long you need tuition forEnter what time of day you need tuition' as an error message for the 'no input error'
 
   Scenario: Tuition plan question shows correct warning when reaching close to Max char limit
     Given user navigates to the first enquiry question
     And a user is using a 'phone'
-    When they type '7600' characters for question 1
-    Then the warning should be displayed showing they have '2400' characters left
-    When they type '11000' characters for question 1
-    Then the warning should be displayed showing they are over by '1000' characters
+    When they type '200' characters for question 1
+    Then the warning should be displayed showing they have '50' characters left
+    When they type '1100' characters for question 1
+    Then the warning should be displayed showing they are over by '850' characters
 
   Scenario: Tuition plan second question shows correct warning when reaching close to Max char limit
     Given user navigates to the first enquiry question
@@ -176,13 +176,17 @@ Feature: Tuition partner details mobile view page tests
     When user has journeyed forward to the check your answers page
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following:
-      | Section Name            | Expected Content                                |
-      | Key stages and subjects | Displays Key Stages and subjects table          |
-      | Tuition setting         | No preference                                   |
-      | Email Address           | simulate-delivered@notifications.service.gov.uk |
-      | Tuition Plan            | enquiry                                         |
-      | SEND Support            | enquiry                                         |
-      | Other Considerations    | enquiry                                         |
+      | Section Name                         | Expected Content                                |
+      | Key stages and subjects              | Displays Key Stages and subjects table          |
+      | Tuition setting                      | No preference                                   |
+      | How many pupils need tuition         | enquiry                                         |
+      | When do you want tuition to start    | enquiry                                         |
+      | How long do you need tuition for     | enquiry                                         |
+      | What time of day do you need tuition | enquiry                                         |
+      | SEND Support                         | enquiry                                         |
+      | Other Considerations                 | enquiry                                         |
+      | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+      | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
 
   Scenario: Change selections for Key Stages and Subjects
@@ -198,13 +202,17 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     When they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the key stage and subjects updates:
-      | Section Name            | Expected Content                                |
-      | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Tuition setting         | No preference                                   |
-      | Email Address           | simulate-delivered@notifications.service.gov.uk |
-      | Tuition Plan            | enquiry                                         |
-      | SEND Support            | enquiry                                         |
-      | Other Considerations    | enquiry                                         |
+      | Section Name                         | Expected Content                                |
+      | Key stages and subjects              | Displays Key Stage and Subjects table           |
+      | Tuition setting                      | No preference                                   |
+      | How many pupils need tuition         | enquiry                                         |
+      | When do you want tuition to start    | enquiry                                         |
+      | How long do you need tuition for     | enquiry                                         |
+      | What time of day do you need tuition | enquiry                                         |
+      | SEND Support                         | enquiry                                         |
+      | Other Considerations                 | enquiry                                         |
+      | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+      | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
   Scenario: Change selections for tuition setting
     Given a user has started the 'Find a tuition partner' journey
@@ -215,13 +223,17 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the tuition setting update:
-      | Section Name            | Expected Content                                |
-      | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Tuition setting         | Online                                          |
-      | Email Address           | simulate-delivered@notifications.service.gov.uk |
-      | Tuition Plan            | enquiry                                         |
-      | SEND Support            | enquiry                                         |
-      | Other Considerations    | enquiry                                         |
+      | Section Name                         | Expected Content                                |
+      | Key stages and subjects              | Displays Key Stage and Subjects table           |
+      | Tuition setting                      | Online                                          |
+      | How many pupils need tuition         | enquiry                                         |
+      | When do you want tuition to start    | enquiry                                         |
+      | How long do you need tuition for     | enquiry                                         |
+      | What time of day do you need tuition | enquiry                                         |
+      | SEND Support                         | enquiry                                         |
+      | Other Considerations                 | enquiry                                         |
+      | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+      | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
   Scenario: Change selections for email address
     Given a user has started the 'Find a tuition partner' journey
@@ -232,13 +244,17 @@ Feature: Tuition partner details mobile view page tests
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the email address update:
-      | Section Name            | Expected Content                                |
-      | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Tuition setting         | No preference                                   |
-      | Email Address           | simulate-delivered@notifications.service.gov.uk |
-      | Tuition Plan            | enquiry                                         |
-      | SEND Support            | enquiry                                         |
-      | Other Considerations    | enquiry                                         |
+      | Section Name                         | Expected Content                                |
+      | Key stages and subjects              | Displays Key Stage and Subjects table           |
+      | Tuition setting                      | No preference                                   |
+      | How many pupils need tuition         | enquiry                                         |
+      | When do you want tuition to start    | enquiry                                         |
+      | How long do you need tuition for     | enquiry                                         |
+      | What time of day do you need tuition | enquiry                                         |
+      | SEND Support                         | enquiry                                         |
+      | Other Considerations                 | enquiry                                         |
+      | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+      | Email Address                        | simulate-delivered@notifications.service.gov.uk |
 
   Scenario: Change selections for tuition questions
     Given a user has started the 'Find a tuition partner' journey
@@ -248,24 +264,29 @@ Feature: Tuition partner details mobile view page tests
     When they type '5' characters for question 1
     And they click 'Continue'
     Then they are redirected to the check your answers page
-    When the user clicks the change button '4'
+    When the user clicks the change button '7'
     Then they are redirected to the SEND requirements page
     When they type '5' characters for question 2
     And they click 'Continue'
     Then they are redirected to the check your answers page
-    When the user clicks the change button '5'
+    When the user clicks the change button '8'
     Then they are redirected to the other requirements page
     When they type '0' characters for question 3
     And they click 'Continue'
     Then they are redirected to the check your answers page
     Then the Check Your Answers page displays the following with the email address update:
-      | Section Name            | Expected Content                                |
-      | Key stages and subjects | Displays Key Stage and Subjects table           |
-      | Tuition setting         | No preference                                   |
-      | Email Address           | simulate-delivered@notifications.service.gov.uk |
-      | Tuition Plan            | aaaaa                                           |
-      | SEND Support            | aaaaa                                           |
-      | Other Considerations    | Not specified                                   |
+      | Section Name                         | Expected Content                                |
+      | Key stages and subjects              | Displays Key Stage and Subjects table           |
+      | Tuition setting                      | No preference                                   |
+      | How many pupils need tuition         | aaaaa                                           |
+      | When do you want tuition to start    | aaaaa                                           |
+      | How long do you need tuition for     | aaaaa                                           |
+      | What time of day do you need tuition | aaaaa                                           |
+      | SEND Support                         | aaaaa                                           |
+      | Other Considerations                 | aaaaa                                           |
+      | Your school details                  | Oxford Spires Academy, OX4 2AU                  |
+      | Email Address                        | simulate-delivered@notifications.service.gov.uk |
+
 
 
 
