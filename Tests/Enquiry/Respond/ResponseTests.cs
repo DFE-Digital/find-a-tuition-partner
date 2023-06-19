@@ -146,6 +146,15 @@ public class ResponseTests
 
 
         _ = _fixture.InsertAsync(
+            new EmailLog()
+            {
+                Id = 15,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF15",
+                EmailStatusId = 1
+            },
             new MagicLink()
             {
                 Id = 15,
@@ -162,7 +171,17 @@ public class ResponseTests
                 PostCode = District.Dacorum.SamplePostcode,
                 LocalAuthorityDistrict = District.Dacorum.LocalAuthorityName,
                 MagicLinkId = 15,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EnquirerEnquirySubmittedEmailLogId = 15
+            },
+            new EmailLog()
+            {
+                Id = 150,
+                FinishProcessingDate = DateTime.UtcNow.AddDays(2),
+                EmailAddress = "email@test.com",
+                EmailTemplateShortName = "abc",
+                ClientReferenceNumber = "abc-RF15-tp",
+                EmailStatusId = 1
             },
             new MagicLink()
             {
@@ -175,7 +194,8 @@ public class ResponseTests
                 EnquiryId = 15,
                 TuitionPartnerId = 15,
                 MagicLinkId = 150,
-                ResponseCloseDate = DateTime.UtcNow.AddDays(7)
+                ResponseCloseDate = DateTime.UtcNow.AddDays(7),
+                TuitionPartnerEnquirySubmittedEmailLogId = 150
             }
         );
 

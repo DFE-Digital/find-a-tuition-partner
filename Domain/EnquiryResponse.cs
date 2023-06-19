@@ -17,4 +17,12 @@ public class EnquiryResponse
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? CompletedAt { get; set; }
+
+    public int EnquirerResponseEmailLogId { get; set; }
+
+    public int TuitionPartnerResponseEmailLogId { get; set; }
+
+    public EmailLog EnquirerResponseEmailLog { get; set; } = null!;
+
+    public EmailLog TuitionPartnerResponseEmailLog { get; set; } = null!;
 }

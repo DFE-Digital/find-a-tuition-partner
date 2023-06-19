@@ -9,7 +9,7 @@ public static class DictionaryExtensions
     private const string EnquiryContactUsKey = "contact_us_link";
 
     public static Dictionary<string, dynamic> AddDefaultEnquiryPersonalisation(this Dictionary<string, dynamic> personalisation,
-        string? enquiryRef, string baseUrl, DateTime? dateTime)
+        string? enquiryRef, string baseUrl, DateTime? dateTime = null)
     {
         personalisation ??= new Dictionary<string, dynamic>();
 
@@ -18,12 +18,22 @@ public static class DictionaryExtensions
             personalisation.Add(EnquiryRefKeyKey, enquiryRef);
         }
 
-        personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
-
         if (dateTime != null)
         {
             personalisation.Add(EnquiryDateTimeKey, dateTime.Value.ToLocalDateTime().ToString(StringConstants.DateFormatGDS));
         }
+
+        personalisation = personalisation.AddDefaultEmailPersonalisation(baseUrl);
+
+        return personalisation;
+    }
+
+    public static Dictionary<string, dynamic> AddDefaultEmailPersonalisation(this Dictionary<string, dynamic> personalisation,
+        string baseUrl)
+    {
+        personalisation ??= new Dictionary<string, dynamic>();
+
+        personalisation.Add(EnquiryContactUsKey, $"{baseUrl}/contact-us");
 
         return personalisation;
     }
