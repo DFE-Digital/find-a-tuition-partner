@@ -265,7 +265,9 @@ public class ProcessEmailsService : IProcessEmailsService
                     processedEmailsModel.EmailsCheckStatus++;
 
                     var currentStatus = emailLog.EmailStatus.Status.GetEnumFromDisplayName<EmailStatus>();
-                    var newStatus = await _notificationsClientService.GetEmailStatus(emailLog!.EmailNotifyResponseLog!.NotifyId!);
+                    var newStatus = await _notificationsClientService.GetEmailStatus(emailLog!.EmailNotifyResponseLog!.NotifyId!,
+                                                                                emailLog!.EmailStatusId,
+                                                                                emailLog!.EmailNotifyResponseLog!.ExceptionMessage);
 
                     if (currentStatus != newStatus)
                     {
@@ -281,8 +283,14 @@ public class ProcessEmailsService : IProcessEmailsService
                 }
                 catch (Exception ex)
                 {
+                    if (emailLog != null && emailLog.EmailNotifyResponseLog != null)
+                    {
+                        emailLog.EmailNotifyResponseLog.ExceptionMessage = ex.Message;
+                        _unitOfWork.EmailLogRepository.Update(emailLog);
+                        await _unitOfWork.Complete();
+                    }
                     //We don't want to throw the error here, we log and continue processing other emails
-                    _logger.LogError(ex, "Unexpected error in emailsToPollForStatusUpdate for EmailLog.ClientReferenceNumber: {ClientReferenceNumber}, EmailLog.Id: {EmailLogId}", emailLog!.ClientReferenceNumber, emailLog!.Id);
+                    _logger.LogError(ex, "Unexpected error in emailsToPollForStatusUpdate for EmailLog.ClientReferenceNumber: {ClientReferenceNumber}, EmailLog.Id: {EmailLogId}", emailLog?.ClientReferenceNumber, emailLog?.Id);
                 }
             }
         }

@@ -88,6 +88,7 @@ public class NotificationsClientService : INotificationsClientService
             }
             else
             {
+                _logger.LogInformation(ex, "A previously reported Notify error has occurred while attempting to SendEmailAsync, email ref: {clientReference}", clientReference);
                 return false;
             }
         }
@@ -116,7 +117,7 @@ public class NotificationsClientService : INotificationsClientService
         return allEmailsSent;
     }
 
-    public async Task<EmailStatus> GetEmailStatus(string notificationId)
+    public async Task<EmailStatus> GetEmailStatus(string notificationId, int previousStatusId, string? previousExceptionMessage)
     {
         try
         {
@@ -125,8 +126,14 @@ public class NotificationsClientService : INotificationsClientService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error has occurred while attempting to GetNotificationById, notificationId: {notificationId}", notificationId);
-            throw;
+            if (string.IsNullOrWhiteSpace(previousExceptionMessage) &&
+                !ex.Message.Equals(previousExceptionMessage))
+            {
+                _logger.LogError(ex, "An unexpected error has occurred while attempting to GetNotificationById, notificationId: {notificationId}", notificationId);
+                throw;
+            }
+            _logger.LogInformation(ex, "A previously reported unexpected error has occurred while attempting to GetNotificationById, notificationId: {notificationId}", notificationId);
+            return (EmailStatus)previousStatusId;
         }
     }
 
