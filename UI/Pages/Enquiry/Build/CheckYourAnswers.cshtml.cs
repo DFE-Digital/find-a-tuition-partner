@@ -181,8 +181,20 @@ public class CheckYourAnswers : PageModel
     {
         switch (key)
         {
-            case var k when k.Equals(SessionKeyConstants.EnquiryTutoringLogistics, StringComparison.OrdinalIgnoreCase):
-                Data.TutoringLogistics = value;
+            case var k when k.Equals(SessionKeyConstants.EnquiryNumberOfPupils, StringComparison.OrdinalIgnoreCase):
+                Data.TutoringLogisticsDetailsModel.NumberOfPupils = value;
+                break;
+
+            case var k when k.Equals(SessionKeyConstants.EnquiryStartDate, StringComparison.OrdinalIgnoreCase):
+                Data.TutoringLogisticsDetailsModel.StartDate = value;
+                break;
+
+            case var k when k.Equals(SessionKeyConstants.EnquiryTuitionDuration, StringComparison.OrdinalIgnoreCase):
+                Data.TutoringLogisticsDetailsModel.TuitionDuration = value;
+                break;
+
+            case var k when k.Equals(SessionKeyConstants.EnquiryTimeOfDay, StringComparison.OrdinalIgnoreCase):
+                Data.TutoringLogisticsDetailsModel.TimeOfDay = value;
                 break;
 
             case var k when k.Equals(SessionKeyConstants.EnquirySENDRequirements, StringComparison.OrdinalIgnoreCase):
