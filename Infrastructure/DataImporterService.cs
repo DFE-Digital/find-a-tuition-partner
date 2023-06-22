@@ -19,6 +19,8 @@ namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
+    private const double PercentageFailedGIASRecordsThrowError = 2;
+
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -140,6 +142,8 @@ public class DataImporterService : IHostedService
             }
         }
 
+        ReportGIASProcessingError(imported, failedValidation);
+
         DeactivateSchools(dbContext, importedSchoolUrns);
 
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -162,6 +166,20 @@ public class DataImporterService : IHostedService
 
                 schoolDatum.LocalAuthorityDistrictCode = locationData.LocalAuthorityDistrictCode ?? schoolDatum.LocalAuthorityDistrictCode;
                 schoolDatum.LocalAuthorityCode = locationData.LocalAuthorityId ?? schoolDatum.LocalAuthorityCode;
+            }
+        }
+    }
+
+    private void ReportGIASProcessingError(int imported, int failedValidation)
+    {
+        if (PercentageFailedGIASRecordsThrowError > 0)
+        {
+            var totalProcessedRecords = imported + failedValidation;
+            var failedPercentage = totalProcessedRecords == 0 ? 0 : failedValidation / (double)totalProcessedRecords * 100;
+            if (totalProcessedRecords == 0 ||
+                failedPercentage > PercentageFailedGIASRecordsThrowError)
+            {
+                _logger.LogError($"Too many failed records when processing the GIAS records, requires further investigation.  {{imported}} were imported successfully and {{failedValidation}} failed validation", imported, failedValidation);
             }
         }
     }
