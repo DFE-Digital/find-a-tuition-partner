@@ -11,7 +11,7 @@ Then(
       "contain.text",
       "Your interest"
     );
-    cy.get(".enquiry-status-box").should("contain.text", "UNREAD");
+    cy.get(":nth-child(3) > .govuk-tag").should("contain.text", "UNREAD");
   }
 );
 
@@ -42,7 +42,7 @@ Then("the school clicks {string}", (interested) => {
 });
 
 Then("the status of the response should be updated to {string}", (status) => {
-  cy.get(":nth-child(1) > :nth-child(3) > .enquiry-status-box").should(
+  cy.get(":nth-child(1) > :nth-child(3) > .govuk-tag").should(
     "contain.text",
     status
   );
@@ -72,7 +72,7 @@ Then("the school clicks the {string} link", () => {
 });
 
 Then("the status of the response is {string}", (text) => {
-  cy.get(":nth-child(1) > :nth-child(3) > .enquiry-status-box").should(
+  cy.get(":nth-child(1) > :nth-child(3) > .govuk-tag").should(
     "contain.text",
     text
   );
@@ -131,7 +131,7 @@ When("the school selects to filter options by your interest", () => {
 });
 
 Then("the tuition partners who responded positively show first", () => {
-  cy.get(".enquiry-status-box").then(($els) => {
+  cy.get(":nth-child(3) > .govuk-tag").then(($els) => {
     const allResponses = $els
       .map((index, el) => Cypress.$(el).text().trim())
       .get();
@@ -143,7 +143,7 @@ Then("the tuition partners who responded positively show first", () => {
 });
 
 Then("the tuition partners who haven't read show first", () => {
-  cy.get(".enquiry-status-box").then(($els) => {
+  cy.get(":nth-child(3) > .govuk-tag").then(($els) => {
     const allResponses = $els
       .map((index, el) => Cypress.$(el).text().trim())
       .get();

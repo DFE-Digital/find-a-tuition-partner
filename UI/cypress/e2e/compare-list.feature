@@ -116,16 +116,16 @@ Feature: Tuition Partner price comparison list
     And tp name 2 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 8 is entry 3 on the price comparison list page
-    And tp name 5 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
+    And tp name 1 is entry 4 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
     Then they choose to sort the price comparison list by price
     And tp name 6 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 2 is entry 3 on the price comparison list page
     And tp name 8 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
-    And tp name 5 is entry 6 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
+    And tp name 1 is entry 6 on the price comparison list page
 
 
   Scenario: User removes single item from price comparison list
@@ -295,15 +295,15 @@ Feature: Tuition Partner price comparison list
     And they add tp name 1 to their price comparison list on the results page
     When they choose to view their price comparison list from the results page
     Then there are 1 entries on the price comparison list page
-    And entry 1 on the price comparison list is the row tp name 1, '1 to 2', 'Online', '£20.12 VAT does not apply'
+    And entry 1 on the price comparison list is the row tp name 1, '1 to 3', 'Online', '£14.48 VAT does not apply'
 
   Scenario: The price comparison list can show VAT inclusive and then toggle to VAT exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
-    Then the tp name 1 price is '£20.12 VAT does not apply'
+    Then the tp name 1 price is '	£14.48 VAT does not apply'
     When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
-    And the tp name 1 price is '£20.12 VAT does not apply'
+    And the tp name 1 price is '£14.48 VAT does not apply'
 
   Scenario: The price comparison list price ordering works with inclusive or exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -311,8 +311,8 @@ Feature: Tuition Partner price comparison list
     And tp name 2 is entry 1 on the price comparison list page
     And tp name 7 is entry 2 on the price comparison list page
     And tp name 8 is entry 3 on the price comparison list page
-    And tp name 5 is entry 4 on the price comparison list page
-    And tp name 1 is entry 5 on the price comparison list page
+    And tp name 1 is entry 4 on the price comparison list page
+    And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
     When 'Show prices including VAT' VAT price comparison list refinement option is selected
     Then tp name 2 is entry 1 on the price comparison list page
