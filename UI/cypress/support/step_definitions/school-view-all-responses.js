@@ -87,7 +87,7 @@ Then(
             }
           );
           break;
-        case "Tuition Partner":
+        case "Tuition Partner Response":
           let tpName1;
           let tpName2;
           cy.get(".govuk-table__body > .govuk-table__row > :nth-child(2)")
@@ -95,12 +95,10 @@ Then(
             .then((text) => {
               tpName1 = text.trim();
             });
-          cy.get(".govuk-table__body > .govuk-table__row > :nth-child(3)")
-            .invoke("text")
-            .then((text) => {
-              tpName2 = text.trim();
-              expect(tpName2).to.contain(tpName1);
-            });
+          break;
+        case "Your interest":
+          // cy.get(':nth-child(3) > .table-column-sort').should('contain.text', column["Your interest"]);
+          cy.get(".enquiry-status-box").should("contain.text", column["Value"]);
           break;
         default:
           throw new Error(`Unexpected column name: ${column["Column"]}`);
