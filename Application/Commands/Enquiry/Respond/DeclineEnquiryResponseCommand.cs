@@ -1,5 +1,4 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Models.Enquiry.Respond;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Enquiry.Respond;
@@ -24,8 +23,6 @@ public class DeclineEnquiryResponseCommandHandler : IRequestHandler<DeclineEnqui
 
     public async Task<bool> Handle(DeclineEnquiryResponseCommand request, CancellationToken cancellationToken)
     {
-        var result = new ResponseConfirmationModel();
-
         var validationResult = ValidateRequest(request);
         if (validationResult != null)
         {
