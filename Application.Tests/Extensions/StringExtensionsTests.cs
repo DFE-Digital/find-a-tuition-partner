@@ -121,6 +121,21 @@ public class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData("Find/Location", "find/location")]
+    [InlineData("find/location", "find/location")]
+    [InlineData("FindPage/LocationSearch", "find-page/location-search")]
+    [InlineData("find-page/location-search", "find-page/location-search")]
+    [InlineData("Find/FindAnNTPApprovedTuitionPartner", "find/find-an-ntp-approved-tuition-partner")]
+    [InlineData("Find/FindATuitionPartner", "find/find-a-tuition-partner")]
+    [InlineData("Find/FindATuitionPartner ", "find/find-a-tuition-partner")]
+    [InlineData("Find/findATuitionPartner", "find/find-a-tuition-partner")]
+    [InlineData("tuition-partner/A Tuition Co", "tuition-partner/a-tuition-co")]
+    public void ToSeoUrl_ReturnsKebabCase_WhenDirectory(string camel, string kebab)
+    {
+        camel.ToSeoUrl(false).Should().Be(kebab);
+    }
+
+    [Theory]
     [InlineData("FindATuiti/onPartner", "find-a-tuition-partner")]
     public void ToSeoUrl_ReturnsKebabCase_With_Forward_Slash(string camel, string kebab)
     {
