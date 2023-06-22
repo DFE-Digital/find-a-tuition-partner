@@ -1,4 +1,5 @@
 using System;
+using System;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Respond;
@@ -8,7 +9,6 @@ using Domain;
 using Domain.Enums;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
 using EmailStatus = Domain.Enums.EmailStatus;
 
 namespace Application.Commands.Enquiry.Respond;
