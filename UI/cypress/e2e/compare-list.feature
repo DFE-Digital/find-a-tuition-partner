@@ -113,9 +113,9 @@ Feature: Tuition Partner price comparison list
   Scenario: User sorts price comparison list table by Price, uses min price for ascending, max price for descending
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to sort the price comparison list by price
-    And tp name 2 is entry 1 on the price comparison list page
-    And tp name 7 is entry 2 on the price comparison list page
-    And tp name 8 is entry 3 on the price comparison list page
+    And tp name 7 is entry 1 on the price comparison list page
+    And tp name 8 is entry 2 on the price comparison list page
+    And tp name 2 is entry 3 on the price comparison list page
     And tp name 1 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
@@ -230,15 +230,15 @@ Feature: Tuition Partner price comparison list
     And 'Online' tuition setting price comparison list refinement option is selected
     And they choose to sort the price comparison list by price
     Then tp name 8 is entry 1 on the price comparison list page
-    And tp name 2 is entry 2 on the price comparison list page
-    And tp name 7 is entry 3 on the price comparison list page
+    And tp name 7 is entry 2 on the price comparison list page
+    And tp name 2 is entry 3 on the price comparison list page
     And tp name 6 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
     And they choose to sort the price comparison list by price
     Then tp name 6 is entry 1 on the price comparison list page
-    And tp name 7 is entry 2 on the price comparison list page
-    And tp name 2 is entry 3 on the price comparison list page
+    And tp name 2 is entry 2 on the price comparison list page
+    And tp name 7 is entry 3 on the price comparison list page
     And tp name 8 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
@@ -308,17 +308,17 @@ Feature: Tuition Partner price comparison list
   Scenario: The price comparison list price ordering works with inclusive or exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to sort the price comparison list by price
-    And tp name 2 is entry 1 on the price comparison list page
-    And tp name 7 is entry 2 on the price comparison list page
-    And tp name 8 is entry 3 on the price comparison list page
+    And tp name 7 is entry 1 on the price comparison list page
+    And tp name 8 is entry 2 on the price comparison list page
+    And tp name 2 is entry 3 on the price comparison list page
     And tp name 1 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
     When 'Show prices including VAT' VAT price comparison list refinement option is selected
-    Then tp name 2 is entry 1 on the price comparison list page
-    And tp name 7 is entry 2 on the price comparison list page
-    And tp name 8 is entry 3 on the price comparison list page
-    And tp name 1 is entry 4 on the price comparison list page
+    Then tp name 7 is entry 1 on the price comparison list page
+    And tp name 8 is entry 2 on the price comparison list page
+    And tp name 1 is entry 3 on the price comparison list page
+    And tp name 2 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
 
