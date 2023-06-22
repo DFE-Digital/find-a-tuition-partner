@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GiasPostcodeSearch\GiasPostcodeSearch.csproj" />
     <ProjectReference Include="..\UI\UI.csproj" />
   </ItemGroup>
 
