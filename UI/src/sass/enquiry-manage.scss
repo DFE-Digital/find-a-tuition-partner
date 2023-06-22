@@ -1,24 +1,15 @@
-﻿span.enquiry-status-box {
-  padding: 0.2em;
-  font-weight: 600;
+﻿.enquiry-status-interested {
+  @extend .govuk-tag--green;
 }
 
-span.enquiry-status-interested {
-  background-color: #d0e1d9;
-  color: #689178;
+.enquiry-status-undecided {
+  @extend .govuk-tag--yellow;
 }
 
-span.enquiry-status-undecided {
-  background-color: #fef8c5;
-  color: #665d22;
+.enquiry-status-unread {
+  @extend .govuk-tag--grey;
 }
 
-span.enquiry-status-unread {
-  background-color: #eeefef;
-  color: #5b6063;
-}
-
-span.enquiry-status-not-set {
-  background-color: #dad6e7;
-  color: #5a4989;
+.enquiry-status-not-set {
+  @extend .govuk-tag--purple;
 }
