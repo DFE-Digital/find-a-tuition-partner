@@ -132,7 +132,7 @@ public class StringExtensionsTests
     [InlineData("tuition-partner/A Tuition Co", "tuition-partner/a-tuition-co")]
     public void ToSeoUrl_ReturnsKebabCase_WhenDirectory(string camel, string kebab)
     {
-        camel.ToSeoUrl().Should().Be(kebab);
+        camel.ToSeoUrl(false).Should().Be(kebab);
     }
 
     [Theory]
