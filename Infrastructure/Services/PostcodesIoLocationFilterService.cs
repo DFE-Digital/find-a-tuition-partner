@@ -45,6 +45,7 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
 
         parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
         parameters.LocalAuthority = lad.LocalAuthority.Name;
+        parameters.LocalAuthorityId = lad.LocalAuthority.Id;
         parameters.LocalAuthorityDistrictId = lad.Id;
         parameters.LocalAuthorityDistrictCode = lad.Code;
         parameters.LocalAuthorityDistrict = lad.Name;

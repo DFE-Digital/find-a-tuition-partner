@@ -159,6 +159,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeneralInformationAboutSchoolsRecords, GeneralInformatioAboutSchoolsRecords>();
         services.AddScoped<ISchoolsFactory, SchoolsFactory>();
         services.AddScoped<ITribalSpreadsheetTuitionPartnerFactory, TribalSpreadsheetTuitionPartnerFactory>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddHttpClient<ILocationFilterService, PostcodesIoLocationFilterService>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.postcodes.io");
+        });
         services.AddHostedService<DataImporterService>();
         return services;
     }

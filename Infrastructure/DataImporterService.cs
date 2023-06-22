@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Application;
+using Application.Common.Interfaces;
 using Application.DataImport;
 using Application.Extensions;
 using Application.Factories;
@@ -22,6 +23,8 @@ public class DataImporterService : IHostedService
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
 
+    private ILocationFilterService? _locationService;
+
     public DataImporterService(IHostApplicationLifetime host, ILogger<DataImporterService> logger, IServiceScopeFactory scopeFactory)
     {
         _host = host;
@@ -36,6 +39,7 @@ public class DataImporterService : IHostedService
         var dataFileEnumerable = scope.ServiceProvider.GetRequiredService<IDataFileEnumerable>();
         var logoFileEnumerable = scope.ServiceProvider.GetRequiredService<ILogoFileEnumerable>();
         var factory = scope.ServiceProvider.GetRequiredService<ITribalSpreadsheetTuitionPartnerFactory>();
+        _locationService = scope.ServiceProvider.GetRequiredService<ILocationFilterService>();
 
         _logger.LogInformation("Migrating database");
         await dbContext.Database.MigrateAsync(cancellationToken);
@@ -99,6 +103,8 @@ public class DataImporterService : IHostedService
                 isNewSchool = true;
             }
 
+            await UpdateInvalidLaAndLad(schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
+
             try
             {
                 school = giasFactory.GetSchool(school, schoolDatum, localAuthorityDistrictsIds, localAuthorityIds);
@@ -113,7 +119,7 @@ public class DataImporterService : IHostedService
             var results = await validator.ValidateAsync(school, cancellationToken);
             if (!results.IsValid)
             {
-                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{Urn}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from recoord {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
+                _logger.LogInformation($"OPEN Establishment name {{TuitionPartnerName}} {{Urn}} {{EstablishmentStatus}} {{EstablishmentTypeGroupId}} {{EstablishmentType}} General Information About Schools created from record {{originalFilename}} is not valid.{Environment.NewLine}{{Errors}}",
                         school.EstablishmentName, school.Urn, school.EstablishmentStatusId, school.EstablishmentTypeGroupId, schoolDatum.EstablishmentType, school.EstablishmentName, string.Join(Environment.NewLine, results.Errors));
                 failedValidation++;
                 continue;
@@ -138,6 +144,26 @@ public class DataImporterService : IHostedService
 
         await dbContext.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Successfully imported {Count} valid schools from GIAS dataset. {FailedValidationCount} schools failed validation", imported, failedValidation);
+    }
+
+    private async Task UpdateInvalidLaAndLad(SchoolDatum schoolDatum,
+        Dictionary<string, int> localAuthorityDistrictsIds,
+        Dictionary<int, string> localAuthorityIds)
+    {
+        if ((!localAuthorityDistrictsIds.Any(x => x.Key == schoolDatum.LocalAuthorityDistrictCode) ||
+            !localAuthorityIds.Any(x => x.Key == schoolDatum.LocalAuthorityCode)) &&
+            !string.IsNullOrWhiteSpace(schoolDatum.Postcode))
+        {
+            var locationData = await _locationService!.GetLocationFilterParametersAsync(schoolDatum.Postcode);
+            if (locationData != null)
+            {
+                _logger.LogInformation($"GIAS data LA/LAD data invalid but found via postcode lookup. Establishment name {{TuitionPartnerName}} {{Urn}} with LA Code {{LocalAuthorityCode}} and LAD Code {{LocalAuthorityDistrictCode}}.  Postcode lookup found LA Code {{FoundLocalAuthorityCode}} and LAD Code {{FoundLocalAuthorityDistrictCode}}",
+                    schoolDatum.Name, schoolDatum.Urn, schoolDatum.LocalAuthorityCode, schoolDatum.LocalAuthorityDistrictCode, locationData.LocalAuthorityId, locationData.LocalAuthorityDistrictCode);
+
+                schoolDatum.LocalAuthorityDistrictCode = locationData.LocalAuthorityDistrictCode ?? schoolDatum.LocalAuthorityDistrictCode;
+                schoolDatum.LocalAuthorityCode = locationData.LocalAuthorityId ?? schoolDatum.LocalAuthorityCode;
+            }
+        }
     }
 
     private void DeactivateSchools(NtpDbContext dbContext, List<int> importedSchoolUrns)
