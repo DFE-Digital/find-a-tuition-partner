@@ -383,7 +383,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
             var previousLastUpdated = _tpImportedDates[tuitionPartner.Name.ToLower()];
             if (previousLastUpdated > tuitionPartner.TPLastUpdatedData)
             {
-                _errors.Add($"The existing TP has a last updated date of {previousLastUpdated} and the spreadsheet last updated date is {tuitionPartner.TPLastUpdatedData}, which is before");
+                _warnings.Add($"The existing TP has a last updated date of {previousLastUpdated} and the spreadsheet last updated date is {tuitionPartner.TPLastUpdatedData}, which is before.");
             }
         }
     }

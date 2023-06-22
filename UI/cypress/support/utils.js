@@ -6,7 +6,7 @@ export const kebabCase = (string) =>
     )
     .trim()
     .replace(/[\s_]+/g, "-")
-    .replace(/[^a-zA-Z0-9_{}()\-~/]/g, "")
+    .replace(/[^a-zA-Z0-9_{}()\-~]/g, "")
     .replace(/[-]{2,}/g, "-")
     .toLowerCase();
 
