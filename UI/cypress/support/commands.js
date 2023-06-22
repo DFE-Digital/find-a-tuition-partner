@@ -79,7 +79,7 @@ Cypress.Commands.add("validateTPPageAndReturnLink", () => {
   // cy.get('[data-testid="tuition-setting"]').first().should("not.be.empty");
 
   // Check if 'pricing-group-size-column' exists before interacting with it
-  cy.get('body').then(($body) => {
+  cy.get("body").then(($body) => {
     if ($body.find('[data-testid="pricing-group-size-column"]').length > 0) {
       // 'pricing-group-size-column' was found, perform actions here
       const names = [];
@@ -134,7 +134,6 @@ Cypress.Commands.add("validateTPPageAndReturnLink", () => {
   //   cy.isWithinViewPort($el);
   // });
 });
-
 
 Cypress.Commands.add("checkTextContent", (selector, expectedText) => {
   cy.get(selector)

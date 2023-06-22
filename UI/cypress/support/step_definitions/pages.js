@@ -153,15 +153,13 @@ Then("the tuition partners response page is shown", () => {
 
 Then("the user has arrived on the contact tuition partner page", () => {
   cy.location("pathname").then((actualPath) => {
-    expect(actualPath).to.match(
-      /\/enquiry\/[A-Z]{2}\d{4}/
-    );
+    expect(actualPath).to.match(/\/enquiry\/[A-Z]{2}\d{4}/);
   });
 });
 
 Then("the school is navigated to the 'Are you sure' page", () => {
   cy.location("pathname").should("include", "confirm-not-interested");
-})
+});
 
 Then("the page URL ends with {string}", (url) => {
   cy.location("pathname").should("match", new RegExp(`${url}$`));

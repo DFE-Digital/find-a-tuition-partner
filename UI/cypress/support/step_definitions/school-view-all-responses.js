@@ -98,7 +98,10 @@ Then(
           break;
         case "Your interest":
           // cy.get(':nth-child(3) > .table-column-sort').should('contain.text', column["Your interest"]);
-          cy.get(':nth-child(3) > .govuk-tag').should("contain.text", column["Value"]);
+          cy.get(":nth-child(3) > .govuk-tag").should(
+            "contain.text",
+            column["Value"]
+          );
           break;
         default:
           throw new Error(`Unexpected column name: ${column["Column"]}`);
