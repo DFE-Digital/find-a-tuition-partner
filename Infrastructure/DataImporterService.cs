@@ -19,7 +19,7 @@ namespace Infrastructure;
 
 public class DataImporterService : IHostedService
 {
-    private const double PercentageFailedGIASRecordsThrowError = 2;
+    private const double PercentageFailedGIASRecordsLogsError = 2;
 
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
@@ -172,14 +172,18 @@ public class DataImporterService : IHostedService
 
     private void ReportGIASProcessingError(int imported, int failedValidation)
     {
-        if (PercentageFailedGIASRecordsThrowError > 0)
+        if (imported == 0)
+        {
+            throw new InvalidDataException("0 Schools imported from GIAS data");
+        }
+
+        if (PercentageFailedGIASRecordsLogsError > 0)
         {
             var totalProcessedRecords = imported + failedValidation;
-            var failedPercentage = totalProcessedRecords == 0 ? 0 : failedValidation / (double)totalProcessedRecords * 100;
-            if (totalProcessedRecords == 0 ||
-                failedPercentage > PercentageFailedGIASRecordsThrowError)
+            var failedPercentage = failedValidation / (double)totalProcessedRecords * 100;
+            if (failedPercentage > PercentageFailedGIASRecordsLogsError)
             {
-                _logger.LogError($"Too many failed records when processing the GIAS records, requires further investigation.  {{imported}} were imported successfully and {{failedValidation}} failed validation", imported, failedValidation);
+                _logger.LogError($"Too many failed records when processing the GIAS records, requires further investigation.  {{imported}} were imported successfully and {{failedValidation}} failed validation.  {{failedPercentage}}% failed, which is more than the {{PercentageFailedGIASRecordsLogsError}}% threshold.", imported, failedValidation, failedPercentage, PercentageFailedGIASRecordsLogsError);
             }
         }
     }
