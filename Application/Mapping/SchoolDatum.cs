@@ -29,8 +29,8 @@ public class SchoolDatum
         if (EstablishmentTypeGroup == (int)EstablishmentTypeGroups.WelshSchools)
             return false;
 
-        if (EstablishmentType == EstablishmentTypes.Id.OffshoreSchools || 
-            EstablishmentType == EstablishmentTypes.Id.BritishSchoolsOverseas || 
+        if (EstablishmentType == EstablishmentTypes.Id.OffshoreSchools ||
+            EstablishmentType == EstablishmentTypes.Id.BritishSchoolsOverseas ||
             EstablishmentType == EstablishmentTypes.Id.ServiceChildrensEducation)
             return false;
 
