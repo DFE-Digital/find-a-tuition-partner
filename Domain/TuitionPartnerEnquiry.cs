@@ -9,9 +9,9 @@ public class TuitionPartnerEnquiry
 
     public int MagicLinkId { get; set; }
 
-    public bool TuitionPartnerDecinedEnquiry { get; set; } = false;
+    public bool TuitionPartnerDeclinedEnquiry { get; set; } = false;
 
-    public DateTime? TuitionPartnerDecinedEnquiryDate { get; set; }
+    public DateTime? TuitionPartnerDeclinedEnquiryDate { get; set; }
 
     public int? EnquiryResponseId { get; set; }
 

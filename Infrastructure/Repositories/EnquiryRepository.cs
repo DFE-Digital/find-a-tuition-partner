@@ -58,7 +58,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         var tuitionPartnerEnquiriesWithResponses = enquiry.TuitionPartnerEnquiry.Where(x =>
             x.EnquiryResponse != null).ToList();
 
-        var numberOfTpsDeclinedEnquiry = enquiry.TuitionPartnerEnquiry.Count(x => x.TuitionPartnerDecinedEnquiry);
+        var numberOfTpsDeclinedEnquiry = enquiry.TuitionPartnerEnquiry.Count(x => x.TuitionPartnerDeclinedEnquiry);
 
         var keyStageSubjects = enquiry
             .KeyStageSubjectEnquiry

@@ -4928,10 +4928,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("ResponseCloseDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("TuitionPartnerDecinedEnquiry")
+                    b.Property<bool>("TuitionPartnerDeclinedEnquiry")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("TuitionPartnerDecinedEnquiryDate")
+                    b.Property<DateTime?>("TuitionPartnerDeclinedEnquiryDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("TuitionPartnerEnquirySubmittedEmailLogId")

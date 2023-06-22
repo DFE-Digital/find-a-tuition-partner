@@ -46,15 +46,15 @@ public class DeclineEnquiryResponseCommandHandler : IRequestHandler<DeclineEnqui
             throw new ArgumentException(errorMessage);
         }
 
-        if (tpEnquiry.TuitionPartnerDecinedEnquiry)
+        if (tpEnquiry.TuitionPartnerDeclinedEnquiry)
         {
             var errorMessage = $"Previously declined TuitionPartnerEnquiry with Support Ref ('{request.SupportReferenceNumber}') and Tuition Partner SeoUrl ('{request.TuitionPartnerSeoUrl}')";
             _logger.LogError(errorMessage);
             throw new ArgumentException(errorMessage);
         }
 
-        tpEnquiry.TuitionPartnerDecinedEnquiry = true;
-        tpEnquiry.TuitionPartnerDecinedEnquiryDate = DateTime.UtcNow;
+        tpEnquiry.TuitionPartnerDeclinedEnquiry = true;
+        tpEnquiry.TuitionPartnerDeclinedEnquiryDate = DateTime.UtcNow;
 
         await _unitOfWork.Complete();
 

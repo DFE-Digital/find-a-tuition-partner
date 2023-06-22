@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(NtpDbContext))]
-    [Migration("20230614160834_TuitionPartnerDecinedEnquiry")]
-    partial class TuitionPartnerDecinedEnquiry
+    [Migration("20230614160834_TuitionPartnerDeclinedEnquiry")]
+    partial class TuitionPartnerDeclinedEnquiry
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4547,10 +4547,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("ResponseCloseDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("TuitionPartnerDecinedEnquiry")
+                    b.Property<bool>("TuitionPartnerDeclinedEnquiry")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("TuitionPartnerDecinedEnquiryDate")
+                    b.Property<DateTime?>("TuitionPartnerDeclinedEnquiryDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("TuitionPartnerId")

@@ -280,7 +280,7 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                 },
                 ResponseCloseDate = _createdDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond),
                 TuitionPartnerEnquirySubmittedEmailLog = GetTuitionPartnerEnquirySubmittedEmailLog(request, tuitionPartnerResult, token),
-                TuitionPartnerDecinedEnquiry = false
+                TuitionPartnerDeclinedEnquiry = false
             };
         }).ToList();
 

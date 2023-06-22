@@ -5,19 +5,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class TuitionPartnerDecinedEnquiry : Migration
+    public partial class TuitionPartnerDeclinedEnquiry : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "TuitionPartnerDecinedEnquiry",
+                name: "TuitionPartnerDeclinedEnquiry",
                 table: "TuitionPartnersEnquiry",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "TuitionPartnerDecinedEnquiryDate",
+                name: "TuitionPartnerDeclinedEnquiryDate",
                 table: "TuitionPartnersEnquiry",
                 type: "timestamp with time zone",
                 nullable: true);
@@ -26,11 +26,11 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TuitionPartnerDecinedEnquiry",
+                name: "TuitionPartnerDeclinedEnquiry",
                 table: "TuitionPartnersEnquiry");
 
             migrationBuilder.DropColumn(
-                name: "TuitionPartnerDecinedEnquiryDate",
+                name: "TuitionPartnerDeclinedEnquiryDate",
                 table: "TuitionPartnersEnquiry");
         }
     }
