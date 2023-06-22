@@ -136,6 +136,13 @@ public class StringExtensionsTests
     }
 
     [Theory]
+    [InlineData("FindATuiti/onPartner", "find-a-tuition-partner")]
+    public void ToSeoUrl_ReturnsKebabCase_With_Forward_Slash(string camel, string kebab)
+    {
+        camel.ToSeoUrl().Should().Be(kebab);
+    }
+
+    [Theory]
     [InlineData("KeyStage1-Science", "key-stage-1-science")]
     [InlineData("KeyStage2 Literature", "key-stage-2-literature")]
     [InlineData("KeyStage3 Modern Foreign Languages", "key-stage-3-modern-foreign-languages")]
