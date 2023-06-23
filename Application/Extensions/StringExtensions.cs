@@ -11,9 +11,17 @@ namespace Application.Extensions;
 public static class StringExtensions
 {
     [return: NotNullIfNotNull("value")]
-    public static string? ToSeoUrl(this string? value)
+    public static string? ToSeoUrl(this string? value, bool replaceForwardSlash = true)
     {
-        var seo = value?
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        var seo = value;
+
+        if (replaceForwardSlash)
+            seo = seo.Replace("/", "");
+
+        seo = seo
             .RegexReplace(StringConstants.CamelCaseBoundaries, " $1")
             .Trim()
             .RegexReplace(StringConstants.SpacesAndUnderscore, "-")
