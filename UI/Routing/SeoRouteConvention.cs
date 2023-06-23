@@ -10,13 +10,13 @@ public class SeoRouteConvention : IPageRouteModelConvention, IOutboundParameterT
         {
             if (selector.AttributeRouteModel != null)
             {
-                selector.AttributeRouteModel.Template = selector.AttributeRouteModel.Template.ToSeoUrl();
+                selector.AttributeRouteModel.Template = selector.AttributeRouteModel.Template.ToSeoUrl(false);
             }
         }
     }
 
     public string? TransformOutbound(object? value)
     {
-        return value?.ToString().ToSeoUrl();
+        return value?.ToString().ToSeoUrl(false);
     }
 }
