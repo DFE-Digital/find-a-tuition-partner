@@ -16,6 +16,10 @@ async function setupNodeEvents(on, config) {
     },
   });
 
+  on("after:scenario", () => {
+    cy.clearCookies();
+  });
+
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
 
   on(
