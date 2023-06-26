@@ -51,6 +51,8 @@ async function setupNodeEvents(on, config) {
 
   // Add a listener for the 'after:spec' event to clear cookies
   on("after:spec", () => {
+    // Clear cookies using the Cypress.Cookies API
+    Cypress.Cookies.session({ preserve: [] });
     cy.clearCookies();
   });
 
