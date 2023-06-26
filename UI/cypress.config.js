@@ -6,12 +6,10 @@ async function setupNodeEvents(on, config) {
   on("task", {
     log(message) {
       console.log(message);
-
       return null;
     },
     table(message) {
       console.table(message);
-
       return null;
     },
   });
@@ -51,8 +49,8 @@ async function setupNodeEvents(on, config) {
     })
   );
 
-  // Add a listener for the 'afterEach' event to clear cookies
-  on("afterEach", () => {
+  // Add a listener for the 'after:spec' event to clear cookies
+  on("after:spec", () => {
     cy.clearCookies();
   });
 
