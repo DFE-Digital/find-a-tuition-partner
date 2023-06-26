@@ -48,6 +48,7 @@ async function setupNodeEvents(on, config) {
       },
     })
   );
+
   return config;
 }
 
