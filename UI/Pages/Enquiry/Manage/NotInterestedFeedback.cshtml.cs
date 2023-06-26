@@ -2,6 +2,7 @@ using Application.Commands.Enquiry.Build;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Queries.Enquiry;
 using Application.Queries.Enquiry.Manage;
+using UI.Extensions;
 
 namespace UI.Pages.Enquiry.Manage
 {
@@ -92,6 +93,8 @@ namespace UI.Pages.Enquiry.Manage
                                     Data.EnquirerNotInterestedReasonId!.Value,
                                     selectedReason.Description,
                                     selectedReason.CollectAdditionalInfoIfSelected ? Data.EnquirerNotInterestedReasonAdditionalInfo : null));
+
+                HttpContext.AddEnquirerNotInterestedReasonToAnalytics<NotInterestedFeedback>(selectedReason.Description);
             }
 
             var redirectPageUrl = $"/enquiry/{Data.SupportReferenceNumber}?Token={Data.Token}&{EnquirerResponseResultsModel.ToQueryString()}#all-responses-table";
