@@ -51,6 +51,11 @@ async function setupNodeEvents(on, config) {
     })
   );
 
+  // Add a listener for the 'afterEach' event to clear cookies
+  on("afterEach", () => {
+    cy.clearCookies();
+  });
+
   // Make sure to return the config object as it might have been modified by the plugin.
   return config;
 }
