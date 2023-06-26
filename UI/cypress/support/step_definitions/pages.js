@@ -131,7 +131,7 @@ Then(
   () => {
     cy.location("pathname").should(
       "match",
-      /^\/enquiry-response\/[a-z-()]+\/[A-Z0-9]+\/check-your-answers$/
+      /^\/enquiry-response\/[a-z0-9-()]+\/[A-Z0-9]+\/check-your-answers$/
     );
   }
 );
