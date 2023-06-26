@@ -61,7 +61,7 @@ public class SendNotInterestedNotificationCommandHandler : IRequestHandler<SendN
         {
             await _unitOfWork.Complete();
 
-            _logger.LogInformation("Not interested email setup to be sent.  Email id: {emailId}, SupportReferenceNumber: {supportReferenceNumber}, TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl} delayed by {minsDelaySendingOutcomeEmailToTP} mins",
+            _logger.LogInformation("Not interested email has been scheduled to be sent.  Email id: {emailId}, SupportReferenceNumber: {supportReferenceNumber}, TuitionPartnerSeoUrl: {tuitionPartnerSeoUrl} delayed by {minsDelaySendingOutcomeEmailToTP} mins",
                 enquiryResponse.TuitionPartnerResponseNotInterestedEmailLogId, request.SupportReferenceNumber, request.TuitionPartnerSeoUrl, _minsDelaySendingOutcomeEmailToTP);
 
             if (_minsDelaySendingOutcomeEmailToTP <= 0)

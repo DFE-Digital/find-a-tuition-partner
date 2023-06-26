@@ -35,6 +35,6 @@
 
         public const string NotifyBulletedListFormat = "* ";
 
-        public const string NotInterestedTextIfNoReasonSupplied = "No feedback provided";
+        public const string NotInterestedTextIfNoReasonSupplied = "The school has not provided any feedback on this occasion.";
     }
 }

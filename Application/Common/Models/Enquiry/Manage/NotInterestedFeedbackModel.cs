@@ -10,6 +10,12 @@ public record NotInterestedFeedbackModel
 
     public string TuitionPartnerName { get; set; } = null!;
 
-    public string? NotInterestedFeedback { get; set; }
+    public int? EnquirerNotInterestedReasonId { get; set; }
+
+    public string? EnquirerNotInterestedReasonAdditionalInfo { get; set; }
+
+    public bool MustCollectAdditionalInfo { get; set; }
+
+    public List<EnquirerNotInterestedReasonModel> EnquirerNotInterestedReasonModels { get; set; } = null!;
 
 }

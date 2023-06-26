@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         EmailLogRepository = new EmailLogRepository(_context);
         EmailStatusRepository = new EmailStatusRepository(_context);
+        EnquirerNotInterestedReasonRepository = new EnquirerNotInterestedReasonRepository(_context);
         EnquiryRepository = new EnquiryRepository(_context);
         EnquiryResponseRepository = new EnquiryResponseRepository(_context);
         EnquiryResponseStatusRepository = new EnquiryResponseStatusRepository(_context);
@@ -28,6 +29,7 @@ public class UnitOfWork : IUnitOfWork
     }
     public IEmailLogRepository EmailLogRepository { get; private set; }
     public IEmailStatusRepository EmailStatusRepository { get; private set; }
+    public IEnquirerNotInterestedReasonRepository EnquirerNotInterestedReasonRepository { get; private set; }
     public IEnquiryRepository EnquiryRepository { get; private set; }
     public IEnquiryResponseRepository EnquiryResponseRepository { get; private set; }
     public IEnquiryResponseStatusRepository EnquiryResponseStatusRepository { get; private set; }

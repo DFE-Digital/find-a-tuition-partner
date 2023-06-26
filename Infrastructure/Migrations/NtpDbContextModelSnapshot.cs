@@ -361,6 +361,69 @@ namespace Infrastructure.Migrations
                     b.ToTable("EmailTriggerActivation");
                 });
 
+            modelBuilder.Entity("Domain.EnquirerNotInterestedReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("CollectAdditionalInfoIfSelected")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("OrderBy")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Description")
+                        .IsUnique();
+
+                    b.ToTable("EnquirerNotInterestedReasons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response does not adequately cover my tuition plan needs",
+                            IsActive = true,
+                            OrderBy = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response does not adequately cover support for our pupils with SEND",
+                            IsActive = true,
+                            OrderBy = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response is too generic and doesn’t offer enough information",
+                            IsActive = true,
+                            OrderBy = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CollectAdditionalInfoIfSelected = true,
+                            Description = "Other",
+                            IsActive = true,
+                            OrderBy = 4
+                        });
+                });
+
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.Property<int>("Id")
@@ -440,8 +503,11 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EnquirerNotInterestedReason")
+                    b.Property<string>("EnquirerNotInterestedReasonAdditionalInfo")
                         .HasColumnType("text");
+
+                    b.Property<int?>("EnquirerNotInterestedReasonId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("EnquirerResponseEmailLogId")
                         .HasColumnType("integer");
@@ -474,6 +540,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnquirerNotInterestedReasonId");
 
                     b.HasIndex("EnquirerResponseEmailLogId");
 
@@ -5211,37 +5279,45 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
-            {
-                b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
-                    .WithMany("EnquirerResponses")
-                    .HasForeignKey("EnquirerResponseEmailLogId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("Domain.EnquirerNotInterestedReason", "EnquirerNotInterestedReason")
+                        .WithMany("EnquiryResponses")
+                        .HasForeignKey("EnquirerNotInterestedReasonId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("Domain.EnquiryResponseStatus", "EnquiryResponseStatus")
-                    .WithMany("EnquiryResponses")
-                    .HasForeignKey("EnquiryResponseStatusId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
+                        .WithMany("EnquirerResponses")
+                        .HasForeignKey("EnquirerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
-                    .WithMany("TuitionPartnerResponses")
-                    .HasForeignKey("TuitionPartnerResponseEmailLogId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("Domain.EnquiryResponseStatus", "EnquiryResponseStatus")
+                        .WithMany("EnquiryResponses")
+                        .HasForeignKey("EnquiryResponseStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("Domain.EmailLog", "TuitionPartnerResponseNotInterestedEmailLog")
-                    .WithOne("TuitionPartnerResponseNotInterested")
-                    .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseNotInterestedEmailLogId");
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerResponseEmailLog")
+                        .WithMany("TuitionPartnerResponses")
+                        .HasForeignKey("TuitionPartnerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("EnquirerResponseEmailLog");
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerResponseNotInterestedEmailLog")
+                        .WithOne("TuitionPartnerResponseNotInterested")
+                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseNotInterestedEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.Navigation("EnquiryResponseStatus");
+                    b.Navigation("EnquirerNotInterestedReason");
 
-                b.Navigation("TuitionPartnerResponseEmailLog");
+                    b.Navigation("EnquirerResponseEmailLog");
 
-                b.Navigation("TuitionPartnerResponseNotInterestedEmailLog");
-            });
+                    b.Navigation("EnquiryResponseStatus");
+
+                    b.Navigation("TuitionPartnerResponseEmailLog");
+
+                    b.Navigation("TuitionPartnerResponseNotInterestedEmailLog");
+                });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
                 {
@@ -5512,32 +5588,37 @@ namespace Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Domain.EmailLog", b =>
-            {
-                b.Navigation("EmailLogHistories");
+                {
+                    b.Navigation("EmailLogHistories");
 
-                b.Navigation("EmailNotifyResponseLog");
+                    b.Navigation("EmailNotifyResponseLog");
 
-                b.Navigation("EmailPersonalisationLogs");
+                    b.Navigation("EmailPersonalisationLogs");
 
-                b.Navigation("EmailsActivatedByThisEmail");
+                    b.Navigation("EmailsActivatedByThisEmail");
 
-                b.Navigation("EnquirerEnquiriesSubmitted");
+                    b.Navigation("EnquirerEnquiriesSubmitted");
 
-                b.Navigation("EnquirerResponses");
+                    b.Navigation("EnquirerResponses");
 
-                b.Navigation("ThisEmailActivationTriggeredBy");
+                    b.Navigation("ThisEmailActivationTriggeredBy");
 
-                b.Navigation("TuitionPartnerEnquiriesSubmitted");
+                    b.Navigation("TuitionPartnerEnquiriesSubmitted");
 
-                b.Navigation("TuitionPartnerResponseNotInterested");
+                    b.Navigation("TuitionPartnerResponseNotInterested");
 
-                b.Navigation("TuitionPartnerResponses");
-            });
+                    b.Navigation("TuitionPartnerResponses");
+                });
 
             modelBuilder.Entity("Domain.EmailStatus", b =>
-            {
-                b.Navigation("EmailLogs");
-            });
+                {
+                    b.Navigation("EmailLogs");
+                });
+
+            modelBuilder.Entity("Domain.EnquirerNotInterestedReason", b =>
+                {
+                    b.Navigation("EnquiryResponses");
+                });
 
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {

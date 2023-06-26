@@ -3,23 +3,42 @@
 @{
   var baseServiceUrl = Request.GetBaseServiceUrl();
   var skipLink = $"{baseServiceUrl}/enquiry/{Model.SupportReferenceNumber}?Token={@Model.Data.Token}&{Model.EnquirerResponseResultsModel.ToQueryString()}#all-responses-table";
-  ViewData["Title"] = Model.Data.TuitionPartnerName + " has been removed from your list of responses";
+  ViewData["Title"] = "You have removed the tuition partner " + Model.Data.TuitionPartnerName;
 }
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <form method="post">
-      <h1 class="govuk-heading-l">@Model.Data.TuitionPartnerName has been removed from your list of responses</h1>
+      <h1 class="govuk-heading-l">You have removed the tuition partner:</h1>
 
-      <govuk-character-count asp-for="Data.NotInterestedFeedback" threshold="@IntegerConstants.MediumTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.MediumTextAreaMaxCharacterSize">
-        <govuk-character-count-label class="govuk-label--m">
-          Provide anonymous feedback to the response from @Model.Data.TuitionPartnerName (optional)
-        </govuk-character-count-label>
-        <govuk-character-count-hint>
-          Your feedback helps to improve this service
-        </govuk-character-count-hint>
-      </govuk-character-count>
+      <h2 class="govuk-heading-m">@Model.Data.TuitionPartnerName</h2>
 
+      <govuk-radios asp-for="Data.EnquirerNotInterestedReasonId">
+        <govuk-radios-fieldset>
+          <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+            Provide anonymous feedback to their response (optional)
+          </govuk-radios-fieldset-legend>
+          <govuk-radios-hint>
+            Your feedback helps to improve this service
+          </govuk-radios-hint>
+          @foreach (var item in Model.Data.EnquirerNotInterestedReasonModels)
+          {
+            <govuk-radios-item id="@item.Description.ToSeoUrl()" value="@item.Id" checked="@item.Id == @Model.Data.EnquirerNotInterestedReasonId">
+              @item.Description
+              @if (item.CollectAdditionalInfoIfSelected)
+            {
+              <govuk-radios-item-conditional>
+                  <govuk-character-count asp-for="Data.EnquirerNotInterestedReasonAdditionalInfo" threshold="@IntegerConstants.SmallTextAreaMaxCharacterThreshold" rows="3" max-length="@IntegerConstants.SmallTextAreaMaxCharacterSize">
+                    <govuk-character-count-label>
+                      Specify your reasons
+                    </govuk-character-count-label>
+                  </govuk-character-count>
+              </govuk-radios-item-conditional>
+            }
+            </govuk-radios-item>
+          }
+        </govuk-radios-fieldset>
+      </govuk-radios>
       <div class="govuk-button-group">
         <govuk-button prevent-double-click="true" type="submit">Submit feedback</govuk-button>
         <a class="govuk-link" href="@skipLink">Skip and return to your enquiry</a>

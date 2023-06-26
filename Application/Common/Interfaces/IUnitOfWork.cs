@@ -6,6 +6,7 @@ public interface IUnitOfWork : IDisposable
 {
     IEmailLogRepository EmailLogRepository { get; }
     IEmailStatusRepository EmailStatusRepository { get; }
+    IEnquirerNotInterestedReasonRepository EnquirerNotInterestedReasonRepository { get; }
     IEnquiryRepository EnquiryRepository { get; }
     IEnquiryResponseRepository EnquiryResponseRepository { get; }
     IEnquiryResponseStatusRepository EnquiryResponseStatusRepository { get; }

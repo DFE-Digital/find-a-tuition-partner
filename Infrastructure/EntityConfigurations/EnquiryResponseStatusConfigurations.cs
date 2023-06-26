@@ -9,6 +9,8 @@ public class EnquiryResponseStatusConfigurations : IEntityTypeConfiguration<Doma
 {
     public void Configure(EntityTypeBuilder<Domain.EnquiryResponseStatus> builder)
     {
+        builder.HasMany(e => e.EnquiryResponses).WithOne(e => e.EnquiryResponseStatus).OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(e => e.Status).IsUnique();
 
         builder.HasData(

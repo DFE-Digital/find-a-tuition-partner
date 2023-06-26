@@ -18,7 +18,9 @@ public class EnquiryResponse
 
     public DateTime? CompletedAt { get; set; }
 
-    public string? EnquirerNotInterestedReason { get; set; }
+    public int? EnquirerNotInterestedReasonId { get; set; }
+
+    public string? EnquirerNotInterestedReasonAdditionalInfo { get; set; }
 
     public int EnquirerResponseEmailLogId { get; set; }
 
@@ -29,6 +31,8 @@ public class EnquiryResponse
     public int EnquiryResponseStatusId { get; set; }
 
     public DateTime EnquiryResponseStatusLastUpdated { get; set; } = DateTime.UtcNow;
+
+    public EnquirerNotInterestedReason? EnquirerNotInterestedReason { get; set; } = null!;
 
     public EmailLog EnquirerResponseEmailLog { get; set; } = null!;
 

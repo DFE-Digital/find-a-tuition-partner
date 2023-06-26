@@ -11,9 +11,15 @@ namespace Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "EnquirerNotInterestedReason",
+                name: "EnquirerNotInterestedReasonAdditionalInfo",
                 table: "EnquiryResponses",
                 type: "text",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "EnquirerNotInterestedReasonId",
+                table: "EnquiryResponses",
+                type: "integer",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
@@ -37,6 +43,22 @@ namespace Infrastructure.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
+                name: "EnquirerNotInterestedReasons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    CollectAdditionalInfoIfSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    OrderBy = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EnquirerNotInterestedReasons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EnquiryResponseStatus",
                 columns: table => new
                 {
@@ -49,6 +71,17 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EnquiryResponseStatus", x => x.Id);
+                });
+
+            migrationBuilder.InsertData(
+                table: "EnquirerNotInterestedReasons",
+                columns: new[] { "Id", "CollectAdditionalInfoIfSelected", "Description", "IsActive", "OrderBy" },
+                values: new object[,]
+                {
+                    { 1, false, "The response does not adequately cover my tuition plan needs", true, 1 },
+                    { 2, false, "The response does not adequately cover support for our pupils with SEND", true, 2 },
+                    { 3, false, "The response is too generic and doesn’t offer enough information", true, 3 },
+                    { 4, true, "Other", true, 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -68,6 +101,11 @@ namespace Infrastructure.Migrations
             //MANUAL CHANGES - END
 
             migrationBuilder.CreateIndex(
+                name: "IX_EnquiryResponses_EnquirerNotInterestedReasonId",
+                table: "EnquiryResponses",
+                column: "EnquirerNotInterestedReasonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EnquiryResponses_EnquiryResponseStatusId",
                 table: "EnquiryResponses",
                 column: "EnquiryResponseStatusId");
@@ -76,6 +114,12 @@ namespace Infrastructure.Migrations
                 name: "IX_EnquiryResponses_TuitionPartnerResponseNotInterestedEmailLo~",
                 table: "EnquiryResponses",
                 column: "TuitionPartnerResponseNotInterestedEmailLogId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EnquirerNotInterestedReasons_Description",
+                table: "EnquirerNotInterestedReasons",
+                column: "Description",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -89,7 +133,16 @@ namespace Infrastructure.Migrations
                 table: "EnquiryResponses",
                 column: "TuitionPartnerResponseNotInterestedEmailLogId",
                 principalTable: "EmailLog",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EnquiryResponses_EnquirerNotInterestedReasons_EnquirerNotIn~",
+                table: "EnquiryResponses",
+                column: "EnquirerNotInterestedReasonId",
+                principalTable: "EnquirerNotInterestedReasons",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_EnquiryResponses_EnquiryResponseStatus_EnquiryResponseStatu~",
@@ -97,7 +150,7 @@ namespace Infrastructure.Migrations
                 column: "EnquiryResponseStatusId",
                 principalTable: "EnquiryResponseStatus",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -107,11 +160,22 @@ namespace Infrastructure.Migrations
                 table: "EnquiryResponses");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_EnquiryResponses_EnquirerNotInterestedReasons_EnquirerNotIn~",
+                table: "EnquiryResponses");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_EnquiryResponses_EnquiryResponseStatus_EnquiryResponseStatu~",
                 table: "EnquiryResponses");
 
             migrationBuilder.DropTable(
+                name: "EnquirerNotInterestedReasons");
+
+            migrationBuilder.DropTable(
                 name: "EnquiryResponseStatus");
+
+            migrationBuilder.DropIndex(
+                name: "IX_EnquiryResponses_EnquirerNotInterestedReasonId",
+                table: "EnquiryResponses");
 
             migrationBuilder.DropIndex(
                 name: "IX_EnquiryResponses_EnquiryResponseStatusId",
@@ -122,7 +186,11 @@ namespace Infrastructure.Migrations
                 table: "EnquiryResponses");
 
             migrationBuilder.DropColumn(
-                name: "EnquirerNotInterestedReason",
+                name: "EnquirerNotInterestedReasonAdditionalInfo",
+                table: "EnquiryResponses");
+
+            migrationBuilder.DropColumn(
+                name: "EnquirerNotInterestedReasonId",
                 table: "EnquiryResponses");
 
             migrationBuilder.DropColumn(
