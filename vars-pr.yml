@@ -10,7 +10,7 @@ dfe-analytics-dataset: fatp_events_development
 govuk-notify-enquiry-submitted-confirmation-to-enquirer-template-id: b1e29214-dfc0-4225-b65a-df6a20c4c297
 govuk-notify-enquiry-submitted-to-tp-template-id: b24ffca7-6119-4dbf-8ae2-dceb2c300ca4
 govuk-notify-enquiry-response-received-confirmation-to-enquirer-template-id: af83c1e0-1577-4f90-80e5-27035301ead9
-govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: fa4f3699-4e98-4cea-add3-ac20ff05a0ca
+govuk-notify-enquiry-response-submitted-confirmation-to-tp-template-id: 011fabe9-72b3-4575-a343-fe008ad4df90
 govuk-notify-email-verification-template-id: badaacff-87b8-4046-b953-a85a0a9e2a8b
 govuk-notify-enquiry-outcome-to-tp-template-id: 4cc549a0-0295-4a9f-a9ab-91a1ddc572d0
 email-override-email-address: 
