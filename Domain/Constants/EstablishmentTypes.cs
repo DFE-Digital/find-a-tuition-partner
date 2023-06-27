@@ -6,6 +6,7 @@ public class EstablishmentTypes
     {
         public const int BritishSchoolsOverseas = 37;
         public const int ServiceChildrensEducation = 26;
+        public const int OffshoreSchools = 25;
     }
 }
 
