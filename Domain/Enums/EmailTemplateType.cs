@@ -13,5 +13,7 @@ public enum EmailTemplateType
     [Description("erct")]
     EnquiryResponseSubmittedConfirmationToTp,
     [Description("ever")]
-    EmailVerification
+    EmailVerification,
+    [Description("eotp")]
+    EnquiryOutcomeToTp
 }

@@ -5,7 +5,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         And a "I have not received my passcode" link is displayed
 
     Scenario: Valid Passcode is entered
@@ -13,7 +13,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         When they enter a valid passcode
         And they click 'Continue'
         And they are redirected to the enquiry question page
@@ -23,7 +23,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         When they click 'Continue'
         Then they will see 'Enter your passcode' as an error message for the 'no email adress'
 
@@ -32,7 +32,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         When they enter an invalid passcode
         And they click 'Continue'
         Then they will see 'Enter a correct passcode' as an error message for the 'no email adress'
@@ -42,7 +42,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         When they enter a passcode with letters and symbols
         And they click 'Continue'
         Then they will see 'The passcode must be a number' as an error message for the 'no email adress'
@@ -52,7 +52,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         When they enter a valid passcode
         And they click 'Continue'
         And they are redirected to the enquiry question page
@@ -64,7 +64,7 @@ Feature: Email Address Verification
         Then they enter a valid email address
         When they click 'Continue'
         Then the email address verification page is displayed
-        And their is an input field for the verification code
+        And there is an input field for the verification code
         And a "I have not received my passcode" link is displayed
         When they click I have not received my passcode
         And a drop down menu is displayed with a request new passcode button

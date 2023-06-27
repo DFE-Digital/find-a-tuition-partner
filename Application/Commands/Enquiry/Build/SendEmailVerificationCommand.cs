@@ -25,7 +25,6 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IProcessEmailsService _processEmailsService;
-    private readonly INotificationsClientService _notificationsClientService;
     private readonly ILogger<SendEmailVerificationCommandHandler> _logger;
     private readonly IHostEnvironment _hostEnvironment;
 
@@ -34,13 +33,11 @@ public class SendEmailVerificationCommandHandler : IRequestHandler<SendEmailVeri
     public SendEmailVerificationCommandHandler(
         IUnitOfWork unitOfWork,
         IProcessEmailsService processEmailsService,
-        INotificationsClientService notificationsClientService,
         ILogger<SendEmailVerificationCommandHandler> logger,
         IHostEnvironment hostEnvironment)
     {
         _unitOfWork = unitOfWork;
         _processEmailsService = processEmailsService;
-        _notificationsClientService = notificationsClientService;
         _logger = logger;
         _hostEnvironment = hostEnvironment;
     }

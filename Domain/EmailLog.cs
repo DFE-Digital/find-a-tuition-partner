@@ -27,6 +27,7 @@
         public ICollection<TuitionPartnerEnquiry>? TuitionPartnerEnquiriesSubmitted { get; set; }
         public ICollection<EnquiryResponse>? EnquirerResponses { get; set; }
         public ICollection<EnquiryResponse>? TuitionPartnerResponses { get; set; }
+        public EnquiryResponse? TuitionPartnerResponseNotInterested { get; set; }
 
         public EmailTriggerActivation? ThisEmailActivationTriggeredBy { get; set; }
         public ICollection<EmailTriggerActivation>? EmailsActivatedByThisEmail { get; set; }

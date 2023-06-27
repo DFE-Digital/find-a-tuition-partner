@@ -6,5 +6,6 @@ namespace Application.Common.Interfaces.Repositories;
 public interface IEnquiryRepository : IGenericRepository<Enquiry>
 {
     Task<Enquiry?> GetEnquiryBySupportReferenceNumber(string supportReferenceNumber);
-    Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber);
+    Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber, EnquirerResponseResultsModel enquirerResponseResultsModel);
+    Task<EnquiryResponse> GetEnquiryResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl);
 }

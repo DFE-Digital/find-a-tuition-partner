@@ -20,7 +20,7 @@ public static class DictionaryExtensions
 
         if (dateTime != null)
         {
-            personalisation.Add(EnquiryDateTimeKey, dateTime.Value.ToLocalDateTime().ToString(StringConstants.DateFormatGDS));
+            personalisation.Add(EnquiryDateTimeKey, dateTime.Value.ToLocalDateTime().ToString(StringConstants.DateTimeFormatGDS));
         }
 
         personalisation = personalisation.AddDefaultEmailPersonalisation(baseUrl);

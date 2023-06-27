@@ -64,8 +64,8 @@ public class CheckYourAnswersTests
                 TuitionDuration = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1),
                 TimeOfDay = new string('*', IntegerConstants.SmallTextAreaMaxCharacterSize + 1)
             },
-            SENDRequirements = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            AdditionalInformation = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            SENDRequirements = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            AdditionalInformation = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             ConfirmTermsAndConditions = true
         };
 

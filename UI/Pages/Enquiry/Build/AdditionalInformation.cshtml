@@ -18,7 +18,7 @@
     <li>let tuition partners know if your school is in a potentially hard to reach area for face-to-face tuition</li>
   </ul>
   <partial name="_PIIWarning" />
-  <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.AdditionalInformation" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       Is there anything else you want tuition partners to consider? (optional)
     </govuk-character-count-label>
