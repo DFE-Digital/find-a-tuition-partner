@@ -480,7 +480,7 @@ public class DataImporterService : IHostedService
         var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner)).ToList();
         if (partnersWithoutLogos.Any())
         {
-            _logger.LogInformation("{Count} active tuition partners do not have logos:\n{WithoutLogo}",
+            _logger.LogWarning("{Count} active tuition partners do not have logos:\n{WithoutLogo}",
                 partnersWithoutLogos.Count, string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
         }
 
