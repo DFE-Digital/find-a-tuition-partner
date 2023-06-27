@@ -2,7 +2,7 @@ using Application.Common.DTO;
 
 namespace Application.Common.Models.Enquiry.Manage;
 
-public class EnquirerViewAllResponsesModel
+public record EnquirerViewAllResponsesModel : EnquirerResponseResultsModel
 {
     public EnquirerViewAllResponsesModel()
     {
@@ -28,6 +28,8 @@ public class EnquirerViewAllResponsesModel
 
     public string? AdditionalInformation { get; set; }
     public DateTime EnquiryCreatedDateTime { get; set; }
+
+    public int NumberOfEnquirerNotInterestedResponses { get; set; }
 
     public string Token { get; set; } = string.Empty;
 

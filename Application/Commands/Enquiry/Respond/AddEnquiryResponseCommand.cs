@@ -8,6 +8,7 @@ using Domain.Enums;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using EmailStatus = Domain.Enums.EmailStatus;
+using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Application.Commands.Enquiry.Respond;
 
@@ -147,7 +148,9 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
             AdditionalInformationText = request.Data.AdditionalInformationText ?? null,
             CompletedAt = _createdDateTime,
             EnquirerResponseEmailLog = GetEnquirerResponseEmailLog(request),
-            TuitionPartnerResponseEmailLog = GetTuitionPartnerResponseEmailLog(request)
+            TuitionPartnerResponseEmailLog = GetTuitionPartnerResponseEmailLog(request),
+            EnquiryResponseStatusId = (int)EnquiryResponseStatus.Unread,
+            EnquiryResponseStatusLastUpdated = _createdDateTime
         };
     }
 

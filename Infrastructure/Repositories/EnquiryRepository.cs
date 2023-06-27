@@ -4,8 +4,10 @@ using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Manage;
 using Application.Extensions;
 using Domain;
+using Domain.Enums;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using EnquiryResponseStatus = Domain.Enums.EnquiryResponseStatus;
 
 namespace Infrastructure.Repositories;
 
@@ -17,7 +19,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
 
     public async Task<Enquiry?> GetEnquiryBySupportReferenceNumber(string supportReferenceNumber)
     {
-        var enquiry = await _context.Enquiries.AsNoTracking()
+        var enquiry = await _context.Enquiries
             .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
             .Include(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
@@ -31,7 +33,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
         return enquiry ?? null;
     }
 
-    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber)
+    public async Task<EnquirerViewAllResponsesModel> GetEnquirerViewAllResponses(string supportReferenceNumber, EnquirerResponseResultsModel enquirerResponseResultsModel)
     {
         var enquiry = await _context.Enquiries.AsNoTracking()
             .Where(e => e.SupportReferenceNumber == supportReferenceNumber)
@@ -42,6 +44,7 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             .ThenInclude(s => s.Subject)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.EnquiryResponse)
+            .ThenInclude(x => x!.EnquiryResponseStatus)
             .Include(x => x.TuitionPartnerEnquiry)
             .ThenInclude(x => x.MagicLink)
             .Include(x => x.TuitionPartnerEnquiry)
@@ -81,7 +84,9 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             SENDRequirements = enquiry.SENDRequirements,
             AdditionalInformation = enquiry.AdditionalInformation,
             EnquiryCreatedDateTime = enquiry.CreatedAt.ToLocalDateTime(),
-            EnquirerViewResponses = new List<EnquirerViewResponseDto>()
+            EnquirerViewResponses = new List<EnquirerViewResponseDto>(),
+            EnquiryResponseResultsOrderBy = enquirerResponseResultsModel.EnquiryResponseResultsOrderBy,
+            EnquiryResponseResultsDirection = enquirerResponseResultsModel.EnquiryResponseResultsDirection
         };
 
         foreach (var er in tuitionPartnerEnquiriesWithResponses)
@@ -89,14 +94,67 @@ public class EnquiryRepository : GenericRepository<Enquiry>, IEnquiryRepository
             var responseModel = new EnquirerViewResponseDto
             {
                 TuitionPartnerName = er.TuitionPartner.Name,
-                EnquiryResponseDate = er.EnquiryResponse?.CreatedAt!
+                EnquiryResponseDate = er.EnquiryResponse!.CreatedAt!,
+                EnquiryResponseStatus = (EnquiryResponseStatus)er.EnquiryResponse!.EnquiryResponseStatusId,
+                EnquiryResponseStatusOrderBy = er.EnquiryResponse!.EnquiryResponseStatus.OrderBy
             };
             result.EnquirerViewResponses.Add(responseModel);
         }
 
-        var orderByReceivedEnquirerViewResponses = result.EnquirerViewResponses
-            .OrderByDescending(x => x.EnquiryResponseDate).ToList();
-        result.EnquirerViewResponses = orderByReceivedEnquirerViewResponses;
+        result.NumberOfEnquirerNotInterestedResponses = result.EnquirerViewResponses.Count(x => x.EnquiryResponseStatus == EnquiryResponseStatus.NotInterested);
+
+        result.EnquirerViewResponses = result.EnquirerViewResponses
+            .Where(x => x.EnquiryResponseStatus != EnquiryResponseStatus.NotInterested).ToList();
+
+        result.EnquirerViewResponses = OrderEnquirerResponseResults(result.EnquirerViewResponses, enquirerResponseResultsModel);
+
         return result;
+    }
+
+    public async Task<EnquiryResponse> GetEnquiryResponse(string supportReferenceNumber, string tuitionPartnerSeoUrl)
+    {
+        if (string.IsNullOrWhiteSpace(supportReferenceNumber))
+            throw new ArgumentException("SupportReferenceNumber is null");
+
+        if (string.IsNullOrWhiteSpace(tuitionPartnerSeoUrl))
+            throw new ArgumentException("TuitionPartnerSeoUrl is null");
+
+        var enquiry = await GetEnquiryBySupportReferenceNumber(supportReferenceNumber) ??
+            throw new ArgumentException($"No enquiry found for SupportReferenceNumber {supportReferenceNumber}");
+
+        var tpEnquiry = enquiry.TuitionPartnerEnquiry
+            .SingleOrDefault(x => x.TuitionPartner.SeoUrl == tuitionPartnerSeoUrl) ??
+            throw new ArgumentException($"No TuitionPartnerEnquiry found for SupportReferenceNumber {supportReferenceNumber} and TP {tuitionPartnerSeoUrl}");
+
+        var tpEnquiryResponse = tpEnquiry.EnquiryResponse ??
+            throw new ArgumentException($"No EnquiryResponse found for SupportReferenceNumber {supportReferenceNumber} and TP {tuitionPartnerSeoUrl}");
+
+        return tpEnquiryResponse!;
+    }
+
+    private static List<EnquirerViewResponseDto> OrderEnquirerResponseResults(List<EnquirerViewResponseDto> results,
+        EnquirerResponseResultsModel enquirerResponseResultsModel)
+    {
+        if (!results.Any())
+            return results;
+
+        return enquirerResponseResultsModel.EnquiryResponseResultsOrderBy switch
+        {
+            EnquiryResponseResultsOrderBy.Date => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results.OrderByDescending(e => e.EnquiryResponseDate).ToList()
+                                : results.OrderBy(e => e.EnquiryResponseDate).ToList(),
+
+            EnquiryResponseResultsOrderBy.Name => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results.OrderByDescending(e => e.TuitionPartnerName).ToList()
+                                : results.OrderBy(e => e.TuitionPartnerName).ToList(),
+
+            _ => enquirerResponseResultsModel.EnquiryResponseResultsDirection == OrderByDirection.Descending
+                                ? results
+                                    .OrderByDescending(e => e.EnquiryResponseStatusOrderBy)
+                                    .ThenByDescending(e => e.EnquiryResponseDate).ToList()
+                                : results
+                                    .OrderBy(e => e.EnquiryResponseStatusOrderBy)
+                                    .ThenByDescending(e => e.EnquiryResponseDate).ToList(),
+        };
     }
 }

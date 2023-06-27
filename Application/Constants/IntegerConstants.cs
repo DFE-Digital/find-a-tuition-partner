@@ -2,8 +2,10 @@
 {
     public static class IntegerConstants
     {
-        public const int EnquiryQuestionsMaxCharacterSize = 10000;
-        public const int EnquiryQuestionsMaxCharacterThreshold = 75;
+        public const int LargeTextAreaMaxCharacterSize = 10000;
+        public const int LargeTextAreaMaxCharacterThreshold = 75;
+        public const int MediumTextAreaMaxCharacterSize = 1000;
+        public const int MediumTextAreaMaxCharacterThreshold = 70;
         public const int SmallTextAreaMaxCharacterSize = 250;
         public const int SmallTextAreaMaxCharacterThreshold = 60;
         public const int EnquiryDaysToRespond = 7;

@@ -37,7 +37,7 @@ public class SENDRequirementsTests
     [Fact]
     public void Has_less_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1));
+        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -45,7 +45,7 @@ public class SENDRequirementsTests
     [Fact]
     public void Has_equal_to_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize));
+        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize));
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -53,7 +53,7 @@ public class SENDRequirementsTests
     [Fact]
     public void Has_more_than_max_data()
     {
-        var model = CreateModel(new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1));
+        var model = CreateModel(new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1));
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.SENDRequirements);
     }

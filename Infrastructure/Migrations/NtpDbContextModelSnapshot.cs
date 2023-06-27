@@ -361,6 +361,69 @@ namespace Infrastructure.Migrations
                     b.ToTable("EmailTriggerActivation");
                 });
 
+            modelBuilder.Entity("Domain.EnquirerNotInterestedReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("CollectAdditionalInfoIfSelected")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("OrderBy")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Description")
+                        .IsUnique();
+
+                    b.ToTable("EnquirerNotInterestedReasons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response does not adequately cover my tuition plan needs",
+                            IsActive = true,
+                            OrderBy = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response does not adequately cover support for our pupils with SEND",
+                            IsActive = true,
+                            OrderBy = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CollectAdditionalInfoIfSelected = false,
+                            Description = "The response is too generic and doesn’t offer enough information",
+                            IsActive = true,
+                            OrderBy = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CollectAdditionalInfoIfSelected = true,
+                            Description = "Other",
+                            IsActive = true,
+                            OrderBy = 4
+                        });
+                });
+
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.Property<int>("Id")
@@ -440,8 +503,20 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("EnquirerNotInterestedReasonAdditionalInfo")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("EnquirerNotInterestedReasonId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("EnquirerResponseEmailLogId")
                         .HasColumnType("integer");
+
+                    b.Property<int>("EnquiryResponseStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EnquiryResponseStatusLastUpdated")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("KeyStageAndSubjectsText")
                         .IsRequired()
@@ -451,6 +526,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("TuitionPartnerResponseEmailLogId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TuitionPartnerResponseNotInterestedEmailLogId")
                         .HasColumnType("integer");
 
                     b.Property<string>("TuitionSettingText")
@@ -463,11 +541,82 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EnquirerNotInterestedReasonId");
+
                     b.HasIndex("EnquirerResponseEmailLogId");
+
+                    b.HasIndex("EnquiryResponseStatusId");
 
                     b.HasIndex("TuitionPartnerResponseEmailLogId");
 
+                    b.HasIndex("TuitionPartnerResponseNotInterestedEmailLogId")
+                        .IsUnique();
+
                     b.ToTable("EnquiryResponses");
+                });
+
+            modelBuilder.Entity("Domain.EnquiryResponseStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status")
+                        .IsUnique();
+
+                    b.ToTable("EnquiryResponseStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "The enquirer has indicated that they are interested in the tuition partner response",
+                            OrderBy = 1,
+                            Status = "INTERESTED"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "The enquirer has opened the tuition partner response, but has not confirmed if they are interested or not",
+                            OrderBy = 2,
+                            Status = "UNDECIDED"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "The enquirer has not yet viewed the tuition partner response",
+                            OrderBy = 3,
+                            Status = "UNREAD"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Status that is used for enquries that are historical and we don't have the latest status for",
+                            OrderBy = 4,
+                            Status = "NOT SET"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "The enquirer has indicated that they are not interested in the tuition partner response",
+                            OrderBy = 5,
+                            Status = "NOT INTERESTED"
+                        });
                 });
 
             modelBuilder.Entity("Domain.EstablishmentStatus", b =>
@@ -5169,9 +5318,20 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.EnquiryResponse", b =>
                 {
+                    b.HasOne("Domain.EnquirerNotInterestedReason", "EnquirerNotInterestedReason")
+                        .WithMany("EnquiryResponses")
+                        .HasForeignKey("EnquirerNotInterestedReasonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.EmailLog", "EnquirerResponseEmailLog")
                         .WithMany("EnquirerResponses")
                         .HasForeignKey("EnquirerResponseEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.EnquiryResponseStatus", "EnquiryResponseStatus")
+                        .WithMany("EnquiryResponses")
+                        .HasForeignKey("EnquiryResponseStatusId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -5181,9 +5341,20 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.EmailLog", "TuitionPartnerResponseNotInterestedEmailLog")
+                        .WithOne("TuitionPartnerResponseNotInterested")
+                        .HasForeignKey("Domain.EnquiryResponse", "TuitionPartnerResponseNotInterestedEmailLogId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("EnquirerNotInterestedReason");
+
                     b.Navigation("EnquirerResponseEmailLog");
 
+                    b.Navigation("EnquiryResponseStatus");
+
                     b.Navigation("TuitionPartnerResponseEmailLog");
+
+                    b.Navigation("TuitionPartnerResponseNotInterestedEmailLog");
                 });
 
             modelBuilder.Entity("Domain.KeyStageSubjectEnquiry", b =>
@@ -5472,6 +5643,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("TuitionPartnerEnquiriesSubmitted");
 
+                    b.Navigation("TuitionPartnerResponseNotInterested");
+
                     b.Navigation("TuitionPartnerResponses");
                 });
 
@@ -5480,11 +5653,21 @@ namespace Infrastructure.Migrations
                     b.Navigation("EmailLogs");
                 });
 
+            modelBuilder.Entity("Domain.EnquirerNotInterestedReason", b =>
+                {
+                    b.Navigation("EnquiryResponses");
+                });
+
             modelBuilder.Entity("Domain.Enquiry", b =>
                 {
                     b.Navigation("KeyStageSubjectEnquiry");
 
                     b.Navigation("TuitionPartnerEnquiry");
+                });
+
+            modelBuilder.Entity("Domain.EnquiryResponseStatus", b =>
+                {
+                    b.Navigation("EnquiryResponses");
                 });
 
             modelBuilder.Entity("Domain.LocalAuthority", b =>

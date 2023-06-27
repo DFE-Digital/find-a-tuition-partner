@@ -17,7 +17,7 @@ namespace UI.Pages.Enquiry.Manage
 
         [FromRoute(Name = "support-reference-number")] public string SupportReferenceNumber { get; set; } = string.Empty;
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGet(EnquirerResponseResultsModel enquirerResponseResultsModel)
         {
             var queryToken = Request.Query["Token"].ToString();
 
@@ -29,7 +29,11 @@ namespace UI.Pages.Enquiry.Manage
                 return NotFound();
             }
 
-            Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(SupportReferenceNumber));
+            Data = await _mediator.Send(new GetEnquirerViewAllResponsesQuery(SupportReferenceNumber) with
+            {
+                EnquiryResponseResultsOrderBy = enquirerResponseResultsModel.EnquiryResponseResultsOrderBy,
+                EnquiryResponseResultsDirection = enquirerResponseResultsModel.EnquiryResponseResultsDirection
+            });
 
             Data.Token = queryToken;
 

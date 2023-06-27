@@ -16,5 +16,7 @@ public record EnquirerViewTuitionPartnerDetailsModel
 
     public string? TuitionPartnerSeoUrl { get; set; }
 
+    public string? EnquirerEmailAddress { get; set; }
+
     public string Token { get; set; } = string.Empty;
 }
