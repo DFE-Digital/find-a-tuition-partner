@@ -189,6 +189,10 @@ public class NotificationsClientService : INotificationsClientService
                 !string.IsNullOrEmpty(notifyConfig.TemplateIdEmailVerification)
                 ? notifyConfig.TemplateIdEmailVerification
                 : string.Empty,
+            EmailTemplateType.EnquiryOutcomeToTp =>
+                !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryOutcomeToTp)
+                ? notifyConfig.TemplateIdEnquiryOutcomeToTp
+                : string.Empty,
             _ => string.Empty
         };
     }

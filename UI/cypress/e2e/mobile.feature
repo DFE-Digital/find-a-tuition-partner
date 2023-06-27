@@ -109,7 +109,7 @@ Feature: Tuition partner details mobile view page tests
     Then they enter a valid email address
     When they click 'Continue'
     Then the email address verification page is displayed
-    And their is an input field for the verification code
+    And there is an input field for the verification code
     When they enter a valid passcode
     And they click 'Continue'
     Then they are redirected to the enquiry question page

@@ -14,7 +14,8 @@
         public const string UrlUnsafeCharacters = "[^a-zA-Z0-9_{}()\\-~/]";
         public const string MultipleUnderscores = @"[-]{2,}";
 
-        public const string DateFormatGDS = @"dddd d MMMM yyyy h:mmtt";
+        public const string DateFormatGDS = @"dddd d MMMM yyyy";
+        public const string DateTimeFormatGDS = @"dddd d MMMM yyyy h:mmtt";
 
         public const string English = "English";
 
@@ -33,5 +34,7 @@
         public const string IsRequiredLabel = "This field is required";
 
         public const string NotifyBulletedListFormat = "* ";
+
+        public const string NotInterestedTextIfNoReasonSupplied = "The school has not provided any feedback on this occasion.";
     }
 }

@@ -51,14 +51,14 @@ public class CheckYourAnswersModelValidator : AbstractValidator<CheckYourAnswers
             .WithMessage($"What time of day you need tuition must be {IntegerConstants.SmallTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.SENDRequirements)
-            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.LargeTextAreaMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"SEND and additional requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"SEND and additional requirements must be {IntegerConstants.LargeTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.AdditionalInformation)
-            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.EnquiryQuestionsMaxCharacterSize))
+            .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && x.Replace("\r\n", "\n").Length <= IntegerConstants.LargeTextAreaMaxCharacterSize))
             .When(m => m.ConfirmTermsAndConditions)
-            .WithMessage($"Other tuition requirements must be {IntegerConstants.EnquiryQuestionsMaxCharacterSize:N0} characters or less");
+            .WithMessage($"Other tuition requirements must be {IntegerConstants.LargeTextAreaMaxCharacterSize:N0} characters or less");
 
         RuleFor(request => request.Postcode)
             .NotEmpty()
