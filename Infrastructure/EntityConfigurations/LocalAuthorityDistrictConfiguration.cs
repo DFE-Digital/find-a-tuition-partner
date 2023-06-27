@@ -321,7 +321,11 @@ public class LocalAuthorityDistrictConfiguration : IEntityTypeConfiguration<Loca
             new LocalAuthorityDistrict { Id = 306, Code = "E07000173", Name = "Gedling", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Nottinghamshire },
             new LocalAuthorityDistrict { Id = 307, Code = "E07000174", Name = "Mansfield", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Nottinghamshire },
             new LocalAuthorityDistrict { Id = 308, Code = "E07000175", Name = "Newark and Sherwood", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Nottinghamshire },
-            new LocalAuthorityDistrict { Id = 309, Code = "E07000176", Name = "Rushcliffe", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Nottinghamshire }
+            new LocalAuthorityDistrict { Id = 309, Code = "E07000176", Name = "Rushcliffe", RegionId = Regions.Id.EastMidlands, LocalAuthorityId = LocalAuthorities.Id.Nottinghamshire },
+            new LocalAuthorityDistrict { Id = 310, Code = "E06000063", Name = "Cumberland", RegionId = Regions.Id.NorthWest, LocalAuthorityId = LocalAuthorities.Id.Cumbria },
+            new LocalAuthorityDistrict { Id = 311, Code = "E06000065", Name = "North Yorkshire", RegionId = Regions.Id.YorkshireandTheHumber, LocalAuthorityId = LocalAuthorities.Id.NorthYorkshire },
+            new LocalAuthorityDistrict { Id = 312, Code = "E06000066", Name = "Somerset", RegionId = Regions.Id.SouthWest, LocalAuthorityId = LocalAuthorities.Id.Somerset },
+            new LocalAuthorityDistrict { Id = 313, Code = "E06000064", Name = "Westmorland and Furness", RegionId = Regions.Id.NorthWest, LocalAuthorityId = LocalAuthorities.Id.Cumbria }
         );
     }
 }
