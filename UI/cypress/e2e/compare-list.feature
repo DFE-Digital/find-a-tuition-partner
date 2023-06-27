@@ -237,8 +237,8 @@ Feature: Tuition Partner price comparison list
     And tp name 1 is entry 6 on the price comparison list page
     And they choose to sort the price comparison list by price
     Then tp name 6 is entry 1 on the price comparison list page
-    And tp name 7 is entry 2 on the price comparison list page
-    And tp name 2 is entry 3 on the price comparison list page
+    And tp name 2 is entry 2 on the price comparison list page
+    And tp name 7 is entry 3 on the price comparison list page
     And tp name 8 is entry 4 on the price comparison list page
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
