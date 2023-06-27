@@ -9,4 +9,6 @@ public class EmailSettings
     public bool MergeResponses { get; set; } = false;
 
     public bool AllSentToEnquirer { get; set; } = false;
+
+    public int MinsDelaySendingOutcomeEmailToTP { get; set; } = 1440; //1440 = 24 hours * 60 mins
 }

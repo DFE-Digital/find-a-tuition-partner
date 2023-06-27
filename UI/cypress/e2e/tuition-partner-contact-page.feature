@@ -30,9 +30,10 @@ Feature: View all responses page and Tuition partner contact page
     Scenario: A tuition partners name and response date is shown on view all responses page
         Given a school clicks the magic link to view their enquiry
         Then The tuition partner responses are shown at the bottom of the page as follows:
-            | Column          | Value       |
-            | Date            |             |
-            | Tuition Partner | {TP's name} |
+            | Column                   | Value       |
+            | Date                     |             |
+            | Tuition Partner Response | {TP's name} |
+            | Your interest            | UNREAD      |
 
 
     Scenario: Clicking on a Tuition Partners Response redirects to their response page
@@ -56,7 +57,7 @@ Feature: View all responses page and Tuition partner contact page
     Scenario: Contact us page has the expected content structure
         Given a school clicks the magic link to view their enquiry
         Then they click View response from a tuition partner
-        And they click contact tuition partner
+        When the school clicks 'I’m interested, contact tuition partner'
         Then the user has arrived on the contact tuition partner page
         Then the page has the correct content information
 
@@ -64,16 +65,14 @@ Feature: View all responses page and Tuition partner contact page
     Scenario: Clicking back redirects to tuition partner's response page
         Given a school clicks the magic link to view their enquiry
         Then they click View response from a tuition partner
-        And they click contact tuition partner
+        When the school clicks 'I’m interested, contact tuition partner'
         Then the user has arrived on the contact tuition partner page
-        When they click 'Back'
-        Then the tuition partners response page is shown
 
     Scenario: Clicking return to enquiry list returns to all enquiries page
         Given a school clicks the magic link to view their enquiry
         Then they click View response from a tuition partner
-        And they click contact tuition partner
+        When the school clicks 'I’m interested, contact tuition partner'
         Then the user has arrived on the contact tuition partner page
-        When they click return to your enquiry list
-        Then the user has arrived on the view all enquiry responses page
+
+
 

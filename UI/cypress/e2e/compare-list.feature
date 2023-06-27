@@ -300,7 +300,7 @@ Feature: Tuition Partner price comparison list
   Scenario: The price comparison list can show VAT inclusive and then toggle to VAT exclusive prices
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
-    Then the tp name 1 price is '£14.48 VAT does not apply'
+    Then the tp name 1 price is '	£14.48 VAT does not apply'
     When 'Show prices excluding VAT' VAT price comparison list refinement option is selected
     Then the tp name 7 price is '£8.68 to £45.83 excluding VAT'
     And the tp name 1 price is '£14.48 VAT does not apply'
