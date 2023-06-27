@@ -12,6 +12,10 @@ async function setupNodeEvents(on, config) {
       console.table(message);
       return null;
     },
+    clearCookies() {
+      cy.clearCookies(); // Add the clearCookies command here
+      return null;
+    },
   });
 
   await preprocessor.addCucumberPreprocessorPlugin(on, config);
