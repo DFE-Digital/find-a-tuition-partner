@@ -45,13 +45,13 @@ public class CheckYourAnswersTests
     {
         var model = new CheckYourAnswersModel
         {
-            KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            KeyStageAndSubjectsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            TuitionSettingText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            TutoringLogisticsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
-            SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            SENDRequirementsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             EnquiryAdditionalInformation = "EnquiryAdditionalInformation",
-            AdditionalInformationText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1)
+            AdditionalInformationText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1)
         };
 
         var result = new CheckYourAnswersModelValidator().TestValidate(model);

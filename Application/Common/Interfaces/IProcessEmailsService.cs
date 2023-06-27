@@ -11,4 +11,5 @@ public interface IProcessEmailsService
     string? GetEmailAddressUsedForTesting(string? emailToBeUsedIfTestingEnabled = null);
     EmailLog? MergeEmailForTesting(List<EmailLog> emailLogs, List<string> personalisationPropertiesToMerge);
     bool SendTuitionPartnerEmailsWhenEnquirerDelivered();
+    int GetMinsDelaySendingOutcomeEmailToTP();
 }

@@ -17,7 +17,7 @@ Given("User navigates to the email address page", () => {
   Step(this, "user is redirected to the enter email address page");
 });
 
-Then("their is an input field for the verification code", () => {
+Then("there is an input field for the verification code", () => {
   cy.get(".govuk-form-group").should("contain.text", "Enter passcode");
 });
 
