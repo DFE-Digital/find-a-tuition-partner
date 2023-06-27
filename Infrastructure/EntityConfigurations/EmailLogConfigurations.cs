@@ -23,8 +23,8 @@ public class EmailLogConfigurations : IEntityTypeConfiguration<EmailLog>
             new EmailLog
             {
                 Id = 1,
-                CreatedDate = DateTime.UtcNow,
-                FinishProcessingDate = DateTime.UtcNow,
+                CreatedDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2661),
+                FinishProcessingDate = new DateTime(2023, 6, 7, 20, 55, 43, 728, DateTimeKind.Utc).AddTicks(2662),
                 EmailAddress = "historical_emails_when_log_implemented",
                 EmailTemplateShortName = "historical_emails_when_log_implemented",
                 ClientReferenceNumber = "historical_emails_when_log_implemented",
