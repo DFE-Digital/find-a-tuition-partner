@@ -3,7 +3,7 @@ using Application.Common.Models.Enquiry.Manage;
 
 namespace Application.Queries.Enquiry;
 
-public record GetEnquirerViewAllResponsesQuery(string SupportReferenceNumber) : IRequest<EnquirerViewAllResponsesModel>;
+public record GetEnquirerViewAllResponsesQuery(string SupportReferenceNumber) : EnquirerResponseResultsModel, IRequest<EnquirerViewAllResponsesModel>;
 
 public class GetEnquirerViewAllResponsesQueryHandler : IRequestHandler<GetEnquirerViewAllResponsesQuery, EnquirerViewAllResponsesModel>
 {
@@ -17,6 +17,6 @@ public class GetEnquirerViewAllResponsesQueryHandler : IRequestHandler<GetEnquir
     public async Task<EnquirerViewAllResponsesModel> Handle(GetEnquirerViewAllResponsesQuery request, CancellationToken cancellationToken)
     {
         return await _unitOfWork.EnquiryRepository
-            .GetEnquirerViewAllResponses(request.SupportReferenceNumber);
+            .GetEnquirerViewAllResponses(request.SupportReferenceNumber, request);
     }
 }

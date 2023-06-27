@@ -29,13 +29,13 @@ public class ResponseTests
     {
         var model = new ViewAndCaptureEnquiryResponseModel
         {
-            KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
-            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
-            TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
+            KeyStageAndSubjectsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1),
+            TuitionSettingText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1),
+            TutoringLogisticsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
-            SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1),
+            SENDRequirementsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1),
             EnquiryAdditionalInformation = "EnquiryAdditionalInformation",
-            AdditionalInformationText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize - 1)
+            AdditionalInformationText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize - 1)
         };
 
         var result = new ViewAndCaptureEnquiryResponseModelValidator().TestValidate(model);
@@ -48,13 +48,13 @@ public class ResponseTests
     {
         var model = new ViewAndCaptureEnquiryResponseModel
         {
-            KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
-            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
-            TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
+            KeyStageAndSubjectsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize),
+            TuitionSettingText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize),
+            TutoringLogisticsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize),
             EnquirySENDRequirements = "EnquirySENDRequirements",
-            SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize),
+            SENDRequirementsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize),
             EnquiryAdditionalInformation = "EnquiryAdditionalInformation",
-            AdditionalInformationText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize)
+            AdditionalInformationText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize)
         };
 
         var result = new ViewAndCaptureEnquiryResponseModelValidator().TestValidate(model);
@@ -67,13 +67,13 @@ public class ResponseTests
     {
         var model = new ViewAndCaptureEnquiryResponseModel
         {
-            KeyStageAndSubjectsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TuitionSettingText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
-            TutoringLogisticsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            KeyStageAndSubjectsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            TuitionSettingText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
+            TutoringLogisticsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             EnquirySENDRequirements = "EnquirySENDRequirements",
-            SENDRequirementsText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1),
+            SENDRequirementsText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1),
             EnquiryAdditionalInformation = "EnquiryAdditionalInformation",
-            AdditionalInformationText = new string('*', IntegerConstants.EnquiryQuestionsMaxCharacterSize + 1)
+            AdditionalInformationText = new string('*', IntegerConstants.LargeTextAreaMaxCharacterSize + 1)
         };
 
         var result = new ViewAndCaptureEnquiryResponseModelValidator().TestValidate(model);

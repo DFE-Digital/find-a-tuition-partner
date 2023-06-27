@@ -43,6 +43,11 @@ namespace UI.Extensions
             httpContext.AddToAnalytics<T>("SchoolUrn", urn.ToString());
         }
 
+        public static void AddEnquirerNotInterestedReasonToAnalytics<T>(this HttpContext httpContext, string enquirerNotInterestedReason)
+        {
+            httpContext.AddToAnalytics<T>("EnquirerNotInterestedReason", enquirerNotInterestedReason);
+        }
+
         private static void AddToAnalytics<T>(this HttpContext httpContext, string? key, string? value)
         {
             if (httpContext != null && !string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))

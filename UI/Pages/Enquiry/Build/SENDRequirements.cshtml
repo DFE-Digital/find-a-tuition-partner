@@ -20,7 +20,7 @@
     <li>any social, behavioural or learning challenges</li>
   </ul>
   <partial name="_PIIWarning" />
-  <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.EnquiryQuestionsMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.EnquiryQuestionsMaxCharacterSize">
+  <govuk-character-count asp-for="Data.SENDRequirements" threshold="@IntegerConstants.LargeTextAreaMaxCharacterThreshold" rows="12" max-length="@IntegerConstants.LargeTextAreaMaxCharacterSize">
     <govuk-character-count-label class="govuk-label--m">
       Describe your pupils' SEND or additional requirements that require specialist tuition support (optional)
     </govuk-character-count-label>

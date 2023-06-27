@@ -1,0 +1,15 @@
+﻿.enquiry-status-interested {
+  @extend .govuk-tag--green;
+}
+
+.enquiry-status-undecided {
+  @extend .govuk-tag--yellow;
+}
+
+.enquiry-status-unread {
+  @extend .govuk-tag--grey;
+}
+
+.enquiry-status-not-set {
+  @extend .govuk-tag--purple;
+}
