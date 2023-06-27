@@ -1,0 +1,91 @@
+﻿@page "/enquiry-response/{tuitionPartnerSeoUrl}/{supportReferenceNumber}"
+@model UI.Pages.Enquiry.Respond.ViewResponse
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+  var continueLink = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}/edit?Token={@Model.Data.Token}";
+  var declineLink = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}/confirm-decline?Token={@Model.Data.Token}";
+  ViewData["Title"] = "View the school’s tuition requirements";
+  ViewData["IncludePrintPage"] = true;
+}
+
+<div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
+  <div class="govuk-grid-column-two-thirds-from-desktop">
+    <span show-if="!string.IsNullOrWhiteSpace(Model.Data.LocalAuthorityDistrict)" class="govuk-caption-l">School enquiry from the <strong>@Model.Data.LocalAuthorityDistrict</strong> area</span>
+    <h1 class="govuk-heading-l">
+      View the school’s tuition requirements
+    </h1>
+    <p class="govuk-body">Reference number: @Model.Data.SupportReferenceNumber</p>
+    <p class="govuk-body">@Model.Data.NumberOfTpEnquiryWasSent tuition partners received this enquiry</p>
+
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+      <span>Key stage and subjects:</span>
+    </h2>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
+      @foreach (var item in Model.Data.EnquiryKeyStageSubjects)
+      {
+        <li>
+          @item
+        </li>
+      }
+    </ul>
+
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+      Tuition setting:
+    </h2>
+
+    <p class="govuk-body">@Model.Data.EnquiryTuitionSetting</p>
+
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+      Tuition plan:
+    </h2>
+
+    <partial name="_TutoringLogistics" model="@Model.Data.EnquiryTutoringLogisticsDisplayModel" view-data='@new ViewDataDictionary(ViewData) {{"TutoringLogisticsBulletClass", "govuk-!-margin-left-2"}}' />
+
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+      SEND and additional requirements:
+    </h2>
+
+    <p class="govuk-body">
+      <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquirySENDRequirements) ? StringConstants.NotSpecified : Model.Data.EnquirySENDRequirements)</span>
+    </p>
+
+    <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+      Other tuition requirements:
+    </h2>
+
+    <p class="govuk-body">
+      <span class="display-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Data.EnquiryAdditionalInformation) ? StringConstants.NotSpecified : Model.Data.EnquiryAdditionalInformation)</span>
+    </p>
+
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-7">
+
+    <h1 class="govuk-heading-m govuk-!-padding-top-0">
+      Do you want to respond to this enquiry
+    </h1>
+
+    <p class="govuk-body">
+      You should <strong>respond to this enquiry</strong> if you:
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-2">
+      <li>
+        can meet their requirements or provide alternatives
+      </li>
+      <li>
+        want to discuss budget
+      </li>
+    </ul>
+
+    <p class="govuk-body">
+      If you <strong>decline this enquiry</strong>, we won’t tell the school but we’ll continue to send you other enquiries that might be more suitable
+    </p>
+
+    <div class="govuk-button-group">
+      <a class="govuk-button app-print-hide" data-module="govuk-button" draggable="false" href="@continueLink" role="button">Respond to this enquiry</a>
+      <a class="govuk-button govuk-button--secondary app-print-hide" data-module="govuk-button" draggable="false" href="@declineLink" role="button">Decline this enquiry</a>
+    </div>
+  </div>
+</div>

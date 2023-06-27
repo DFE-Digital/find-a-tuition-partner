@@ -86,11 +86,6 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
         {
             enquiry = await HandleDbUpdateException(ex, request, cancellationToken);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error has occurred while trying to save the enquiry.");
-            throw;
-        }
 
         _logger.LogInformation("Enquiry successfully created with magic links. EnquiryId: {enquiryId}", enquiry.Id);
 
@@ -279,7 +274,8 @@ public class AddEnquiryCommandHandler : IRequestHandler<AddEnquiryCommand, Submi
                     Token = token
                 },
                 ResponseCloseDate = _createdDateTime.AddDays(IntegerConstants.EnquiryDaysToRespond),
-                TuitionPartnerEnquirySubmittedEmailLog = GetTuitionPartnerEnquirySubmittedEmailLog(request, tuitionPartnerResult, token)
+                TuitionPartnerEnquirySubmittedEmailLog = GetTuitionPartnerEnquirySubmittedEmailLog(request, tuitionPartnerResult, token),
+                TuitionPartnerDeclinedEnquiry = false
             };
         }).ToList();
 

@@ -4,6 +4,7 @@ using Domain;
 
 namespace UI.Pages.Enquiry.Build;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class SchoolPostcode : PageModel
 {
     private readonly IMediator _mediator;
