@@ -5,7 +5,7 @@ When("a school navigates to the tp response page", () => {
 });
 
 Then(
-  "the school should see the tuition partner has responded with a defaut unread status",
+  "the school should see the tuition partner has responded with a default unread status",
   () => {
     cy.get(":nth-child(3) > .table-column-sort").should(
       "contain.text",
@@ -58,8 +58,22 @@ When("the school clicks the {string} button", () => {
   cy.get("form > .govuk-button-group > .govuk-button").click();
 });
 
+When("the school clicks the radio button with text {string}", (type) => {
+  const formattedType = type.replace(/\s/g, "-").toLowerCase();
+  cy.get(`#${formattedType}`).click();
+});
+
+When("the school clicks the radio button with value {string}", (value) => {
+  cy.get(`input[value=${value}]`).click();
+});
+
+Then("the additional information is added", () => {
+  cy.get("#Data_EnquirerNotInterestedReasonAdditionalInfo").type(
+    "This is a test feedback"
+  );
+});
+
 Then("the school submits feedback", () => {
-  cy.get("#Data_NotInterestedFeedback").type("This is a test feedback");
   cy.get("form > .govuk-button-group > .govuk-button").click();
 });
 
@@ -82,7 +96,7 @@ Then("the school chooses to skip the feedback", () => {
   cy.get("form > .govuk-button-group > .govuk-link").click();
 });
 
-Then("the school selects to filter options by tuition partner response", () => {
+Then("the school selects to sort options by tuition partner response", () => {
   cy.get(":nth-child(2) > .table-column-sort").click();
 });
 
@@ -126,7 +140,7 @@ Then("the tuition partners should be in descending alphabetical order", () => {
   });
 });
 
-When("the school selects to filter options by your interest", () => {
+When("the school selects to sort options by your interest", () => {
   cy.get(":nth-child(3) > .table-column-sort").click();
 });
 

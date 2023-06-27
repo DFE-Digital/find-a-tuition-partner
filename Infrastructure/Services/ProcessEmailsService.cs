@@ -18,6 +18,7 @@ public class ProcessEmailsService : IProcessEmailsService
     private const int ProcessingStillRunningForMinutesThrowError = 30;
     private const int ProcessingStillRunningForMinutesLogWarning = 5;
     private const string MergedEmailAddress = "merged_email_for_testing@education.gov.uk";
+    private const string TestingSimulateEmailAddress = "simulate-delivered@notifications.service.gov.uk";
     private const string ScheduleName = "Process Emails";
     private const string TestExtraInfoKey = "test_extra_info";
 
@@ -265,9 +266,21 @@ public class ProcessEmailsService : IProcessEmailsService
                     processedEmailsModel.EmailsCheckStatus++;
 
                     var currentStatus = emailLog.EmailStatus.Status.GetEnumFromDisplayName<EmailStatus>();
-                    var newStatus = await _notificationsClientService.GetEmailStatus(emailLog!.EmailNotifyResponseLog!.NotifyId!,
+
+                    var newStatus = currentStatus;
+
+                    if ((!string.IsNullOrWhiteSpace(emailLog.EmailAddressUsedForTesting) &&
+                        emailLog.EmailAddressUsedForTesting.Equals(TestingSimulateEmailAddress, StringComparison.InvariantCultureIgnoreCase)) ||
+                        emailLog.EmailAddress.Equals(TestingSimulateEmailAddress, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        newStatus = EmailStatus.NotifyDelivered;
+                    }
+                    else
+                    {
+                        newStatus = await _notificationsClientService.GetEmailStatus(emailLog!.EmailNotifyResponseLog!.NotifyId!,
                                                                                 emailLog!.EmailStatusId,
                                                                                 emailLog!.EmailNotifyResponseLog!.ExceptionMessage);
+                    }
 
                     if (currentStatus != newStatus)
                     {

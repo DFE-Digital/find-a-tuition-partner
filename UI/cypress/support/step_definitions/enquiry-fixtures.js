@@ -68,7 +68,7 @@ Given("An enquiry has been submitted", async () => {
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
     Step(this, "the email address verification page is displayed");
-    Step(this, "their is an input field for the verification code");
+    Step(this, "there is an input field for the verification code");
     Step(this, "they enter the valid passcode");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");
@@ -172,7 +172,7 @@ Given("An enquiry with no optional info has been submitted", async () => {
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
     Step(this, "the email address verification page is displayed");
-    Step(this, "their is an input field for the verification code");
+    Step(this, "there is an input field for the verification code");
     Step(this, "they enter the valid passcode");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");
@@ -238,7 +238,7 @@ Given("many tuition partners respond to an enquiry", async () => {
     Step(this, "they enter a valid email address");
     Step(this, "they click 'Continue'");
     Step(this, "the email address verification page is displayed");
-    Step(this, "their is an input field for the verification code");
+    Step(this, "there is an input field for the verification code");
     Step(this, "they enter the valid passcode");
     Step(this, "they click 'Continue'");
     Step(this, "they enter an answer for tuition plan");
