@@ -9,6 +9,7 @@ public class LocationFilterParameters
     public string? Region { get; set; }
     public string LocalAuthorityCode { get; set; } = null!;
     public string LocalAuthority { get; set; } = null!;
+    public int? LocalAuthorityId { get; set; } = null!;
     public int? LocalAuthorityDistrictId { get; set; } = null!;
     public string? LocalAuthorityDistrictCode { get; set; }
     public string LocalAuthorityDistrict { get; set; } = null!;
