@@ -39,7 +39,7 @@ public class LocalAuthorities
         public const int Derbyshire = 830;
         public const int Devon = 878;
         public const int Doncaster = 371;
-        public const int Dorset = 835;
+        public const int Dorset = 838;
         public const int Dudley = 332;
         public const int Durham = 840;
         public const int Ealing = 307;
