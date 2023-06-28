@@ -3,6 +3,7 @@ using Application.Constants;
 using Application.Extensions;
 using Application.Extraction;
 using Application.Factories;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Domain;
 using Domain.Constants;
 using Infrastructure.Mapping;
@@ -394,8 +395,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
         const string LADNameColumn = "E";
         const string RegionCodeColumn = "F";
         const string RegionNameColumn = "G";
-        const string FaceToFaceColumn = "H";
-        const string OnlineColumn = "I";
+        const string TuitionSettingColumn = "H";
 
         const string TableHeaderColumn = "A";
         const string TableHeader = "ID";
@@ -433,10 +433,18 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     }
                     else
                     {
-                        var faceToFace = spreadsheetExtractor!.GetCellValue(sheetName, FaceToFaceColumn, row).ParseBoolean();
-                        var online = spreadsheetExtractor!.GetCellValue(sheetName, OnlineColumn, row).ParseBoolean();
+                        var tuitionSettingString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionSettingColumn, row);
 
-                        ladsCovered[ladCode] = (ladId.LocalAuthorityDistrictId, ladName, regionCode, regionName, faceToFace, online);
+                        if (!tuitionSettingString.TryParseTuitionSetting(out TuitionSetting tuitionSetting))
+                        {
+                            _errors.Add($"Invalid TuitionSetting conversion.  '{tuitionSettingString}' is on row {row} on '{sheetName}' worksheet");
+                        }
+                        else
+                        {
+                            var faceToFace = tuitionSetting != TuitionSetting.Online;
+                            var online = tuitionSetting != TuitionSetting.FaceToFace;
+                            ladsCovered[ladCode] = (ladId.LocalAuthorityDistrictId, ladName, regionCode, regionName, faceToFace, online);
+                        }
                     }
                 }
                 else
@@ -560,10 +568,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     castError = true;
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
                 }
-                var tuitionSettingStringReplaced = tuitionSettingString.Replace("Both", TuitionSetting.NoPreference.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-                tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace("In School", TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-                tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace(TuitionSetting.FaceToFace.DisplayName().Replace("-", " "), TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-                if (!tuitionSettingStringReplaced.TryParse(out TuitionSetting tuitionSetting))
+                if (!tuitionSettingString.TryParseTuitionSetting(out TuitionSetting tuitionSetting))
                 {
                     castError = true;
                     _errors.Add($"Invalid TuitionSetting conversion.  '{tuitionSettingString}' is on row {row} on '{sheetName}' worksheet");
