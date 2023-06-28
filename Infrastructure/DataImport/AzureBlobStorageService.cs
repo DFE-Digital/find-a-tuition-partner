@@ -37,8 +37,8 @@ public class AzureBlobStorageService : IAzureBlobStorageService
 
         // Get the user delegation key using the custom token credential
         var userDelegationKey = await blobServiceClient
-            .GetUserDelegationKeyAsync(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow
-                .AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour));
+            .GetUserDelegationKeyAsync(DateTimeOffset.UtcNow.AddSeconds(-300), // sets the start time to be 300 seconds earlier, allowing for possible clock skew between the client and server.
+                DateTimeOffset.UtcNow.AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour));
 
         // Create a BlobSasBuilder object
         var expiry = DateTimeOffset.UtcNow.AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour);
