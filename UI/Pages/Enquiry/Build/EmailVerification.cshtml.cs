@@ -6,6 +6,7 @@ using Domain.Exceptions;
 
 namespace UI.Pages.Enquiry.Build;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class EmailVerification : PageModel
 {
     private readonly IMediator _mediator;

@@ -2,7 +2,7 @@ Feature: View all responses page and Tuition partner contact page
 
     Scenario: Submitting a successful response shows the confirmation page correctly
         Given a user has started the 'Find a tuition partner' journey
-        When a tuition partner clicks the magic link to respond to a schools enquiry
+        When a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         Then Tuition partner has journeyed to the check your answers page
         When  the user has arrived on the tuition response check your answers page
         And they click 'Submit'
