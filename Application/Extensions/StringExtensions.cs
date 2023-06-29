@@ -43,7 +43,7 @@ public static class StringExtensions
         var tuitionSettingStringReplaced = tuitionSettingString.Replace("Both", TuitionSetting.NoPreference.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
         tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace("In School", TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
         tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace(TuitionSetting.FaceToFace.DisplayName().Replace("-", " "), TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
-        return !tuitionSettingStringReplaced.TryParse(out tuitionSetting);
+        return tuitionSettingStringReplaced.TryParse(out tuitionSetting);
     }
 
     public static bool TryParse<TEnum>(this string displayName, out TEnum resultInputType)
