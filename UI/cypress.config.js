@@ -6,12 +6,14 @@ async function setupNodeEvents(on, config) {
   on("task", {
     log(message) {
       console.log(message);
-
       return null;
     },
     table(message) {
       console.table(message);
-
+      return null;
+    },
+    clearCookies() {
+      cy.clearCookies(); // Add the clearCookies command here
       return null;
     },
   });
@@ -51,7 +53,6 @@ async function setupNodeEvents(on, config) {
     })
   );
 
-  // Make sure to return the config object as it might have been modified by the plugin.
   return config;
 }
 

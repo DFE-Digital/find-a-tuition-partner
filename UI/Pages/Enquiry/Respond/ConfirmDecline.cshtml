@@ -1,0 +1,34 @@
+﻿@page "/enquiry-response/{tuitionPartnerSeoUrl}/{supportReferenceNumber}/confirm-decline"
+@model UI.Pages.Enquiry.Respond.ConfirmDecline
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@{
+  var backUrl = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}?Token={@Model.Data.Token}";
+  ViewData["Title"] = "You are about to decline this enquiry";
+  ViewData["BackLinkHref"] = backUrl;
+}
+
+<form method="post">
+  <div class="govuk-grid-row" xmlns="http://www.w3.org/1999/html">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <span show-if="!string.IsNullOrWhiteSpace(Model.Data.LocalAuthorityDistrict)" class="govuk-caption-l">School enquiry from the <strong>@Model.Data.LocalAuthorityDistrict</strong> area</span>
+      <h1 class="govuk-heading-l">
+        You are about to decline this enquiry
+      </h1>
+      <p class="govuk-body" data-testid="ref-num">Reference number: @Model.Data.SupportReferenceNumber</p>
+      <p class="govuk-body">If you decline this enquiry, you will no longer be able to access it.</p>
+
+      <div class="govuk-inset-text">
+        We’ll continue to e-mail you about future tuition enquiries.
+      </div>
+
+      <div class="govuk-button-group app-print-hide">
+        <govuk-button prevent-double-click="true" type="submit">Proceed and decline this enquiry</govuk-button>
+        <a class="govuk-link" href="@backUrl">Cancel</a>
+      </div>
+    </div>
+  </div>
+  <input asp-for="Data.LocalAuthorityDistrict" type="hidden" />
+  <input asp-for="Data.TuitionPartnerSeoUrl" type="hidden" />
+  <input asp-for="Data.SupportReferenceNumber" type="hidden" />
+  <input asp-for="Data.Token" type="hidden" />
+</form>
