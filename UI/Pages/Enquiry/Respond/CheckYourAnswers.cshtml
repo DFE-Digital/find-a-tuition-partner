@@ -2,7 +2,7 @@
 @model UI.Pages.Enquiry.Respond.CheckYourAnswers
 
 @{
-  var backUrl = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}?Token={@Model.Data.Token}";
+  var backUrl = $"/enquiry-response/{Model.Data.TuitionPartnerSeoUrl}/{Model.Data.SupportReferenceNumber}/edit?Token={@Model.Data.Token}";
   ViewData["Title"] = "Check your answers";
   ViewData["BackLinkHref"] = backUrl;
   ViewData["IncludePrintPage"] = true;

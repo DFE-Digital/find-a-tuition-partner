@@ -10,6 +10,10 @@ When("they click 'Back'", () => {
   cy.get(".govuk-back-link").click();
 });
 
+When("they click 'Cancel'", () => {
+  cy.get(".govuk-link").contains("Cancel").click();
+});
+
 When("they click 'Home'", () => {
   cy.get('[data-testid="home-link"]').click();
 });
