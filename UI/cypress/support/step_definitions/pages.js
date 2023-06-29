@@ -126,6 +126,34 @@ Then("the user has arrived on the tuition response page", () => {
   });
 });
 
+Then("the user has arrived on the tuition response edit page", () => {
+  cy.location("pathname").then((actualPath) => {
+    expect(actualPath).to.match(/enquiry-response\/.*\/[A-Z]{2}\d{4}\/edit/);
+  });
+});
+
+Then(
+  "the user has arrived on the confirm decline tuition response page",
+  () => {
+    cy.location("pathname").then((actualPath) => {
+      expect(actualPath).to.match(
+        /enquiry-response\/.*\/[A-Z]{2}\d{4}\/confirm-decline/
+      );
+    });
+  }
+);
+
+Then(
+  "the user has arrived on the declined tuition response confirmation page",
+  () => {
+    cy.location("pathname").then((actualPath) => {
+      expect(actualPath).to.match(
+        /enquiry-response\/.*\/[A-Z]{2}\d{4}\/declined-confirmation/
+      );
+    });
+  }
+);
+
 Then(
   "the user has arrived on the tuition response check your answers page",
   () => {

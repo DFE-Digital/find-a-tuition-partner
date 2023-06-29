@@ -6,6 +6,7 @@ using UI.Models;
 
 namespace UI.Pages.Enquiry.Respond;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class CheckYourAnswers : ResponsePageModel<CheckYourAnswers>
 {
     [BindProperty] public CheckYourAnswersModel Data { get; set; } = new();

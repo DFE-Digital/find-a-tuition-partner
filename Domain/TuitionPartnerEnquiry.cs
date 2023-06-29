@@ -9,6 +9,10 @@ public class TuitionPartnerEnquiry
 
     public int MagicLinkId { get; set; }
 
+    public bool TuitionPartnerDeclinedEnquiry { get; set; } = false;
+
+    public DateTime? TuitionPartnerDeclinedEnquiryDate { get; set; }
+
     public int? EnquiryResponseId { get; set; }
 
     public DateTime ResponseCloseDate { get; set; } = DateTime.UtcNow.AddDays(7);

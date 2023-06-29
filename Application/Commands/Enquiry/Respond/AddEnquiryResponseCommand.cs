@@ -1,4 +1,3 @@
-using System;
 using Application.Common.Interfaces;
 using Application.Common.Models.Enquiry;
 using Application.Common.Models.Enquiry.Respond;
@@ -91,15 +90,7 @@ public class AddEnquiryResponseCommandHandler : IRequestHandler<AddEnquiryRespon
 
         tpEnquiry.EnquiryResponse = GetEnquiryResponse(request);
 
-        try
-        {
-            await _unitOfWork.Complete();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error has occurred while trying to save the enquiry response");
-            throw;
-        }
+        await _unitOfWork.Complete();
 
         await ProcessEmailsAsync(tpEnquiry.EnquiryResponse);
 
