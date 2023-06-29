@@ -1,5 +1,10 @@
 Feature: Tuition Partner price comparison list
 
+  Scenario: User goes straight to their empty price comparison list page
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    When they choose to view their price comparison list from the results page
+    Then there are 0 entries on the price comparison list page
+
   Scenario: User can add a TP to their price comparison list from the results page
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     When they add tp name 1 to their price comparison list on the results page
@@ -25,11 +30,6 @@ Feature: Tuition Partner price comparison list
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     When they programmatically add the first 20 results to their price comparison list on the results page
     Then the price comparison list shows as having 20 entries on the results page
-
-  Scenario: User goes straight to their empty price comparison list page
-    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
-    When they choose to view their price comparison list from the results page
-    Then there are 0 entries on the price comparison list page
 
   Scenario: Price comparison list back button takes the user back to the search results
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
@@ -77,7 +77,6 @@ Feature: Tuition Partner price comparison list
     And the heading caption is 'Tuition partner for Wealden'
     And tp name 3 is entry 1 on the price comparison list page
     And tp name 1 is entry 1 on the not available list on the price comparison list page
-
 
   Scenario: The price comparison list displays the expected data for the search area
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'W1W 7RT'
@@ -127,7 +126,6 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
 
-
   Scenario: User removes single item from price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
     Then they choose to remove entry 2 on the price comparison list page
@@ -140,7 +138,6 @@ Feature: Tuition Partner price comparison list
     Then there are 5 entries on the price comparison list page
     And tp name 5 is entry 1 on the price comparison list page
     And tp name 2 is entry 2 on the price comparison list page
-
 
   Scenario: User clears full price comparison list then cancel
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -222,7 +219,6 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 1 is entry 6 on the price comparison list page
     And the tp name 7 price is '£41.67 excluding VAT'
-
 
   Scenario: The price comparison list price ordering works with refined data and any inavid TP data still follows the order they were added to price comparison list
     Given a user has selected TPs to add to their price comparison list and journeyed forward to the price comparison list page
@@ -322,7 +318,6 @@ Feature: Tuition Partner price comparison list
     And tp name 5 is entry 5 on the price comparison list page
     And tp name 6 is entry 6 on the price comparison list page
 
-
   Scenario: The price comparison list VAT defaults to inclusive on first load and then maintains own state after being selected
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add tp name 1 to their price comparison list on the results page
@@ -334,7 +329,6 @@ Feature: Tuition Partner price comparison list
     Then the search results are displayed
     When they choose to view their price comparison list from the results page
     Then the VAT select option is 'Show prices including VAT'
-
 
   Scenario: The price comparison list shows the Local Authority District for the request
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'

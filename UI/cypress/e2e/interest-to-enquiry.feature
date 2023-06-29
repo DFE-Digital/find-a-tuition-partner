@@ -2,7 +2,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with an interested status
         Given a user has started the 'Find a tuition partner' journey
-        Then a tuition partner clicks the magic link to respond to a schools enquiry
+        Then a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         Then Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -11,7 +11,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with an interested status
         Given a user has started the 'Find a tuition partner' journey
-        Then a tuition partner clicks the magic link to respond to a schools enquiry
+        Then a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -23,7 +23,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with a not interested status with first reason
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -39,7 +39,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with a not interested status with invalid other reason
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -55,7 +55,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with a not interested status with valid other reason
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -72,7 +72,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School can respond to an enquiry with an I’m undecided status
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -84,7 +84,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School's status is updated after clicking a TP response
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'
@@ -96,7 +96,7 @@ Feature: School can respond to a response to an enquiry with an interested/rejec
 
     Scenario: School skips feedback to a rejected enquiry
         Given a user has started the 'Find a tuition partner' journey
-        And a tuition partner clicks the magic link to respond to a schools enquiry
+        And a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response
         And Tuition partner has journeyed to the check your answers page
         When the user has arrived on the tuition response check your answers page
         And they click 'Submit'

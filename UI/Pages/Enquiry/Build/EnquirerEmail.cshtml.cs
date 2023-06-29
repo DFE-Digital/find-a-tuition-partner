@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace UI.Pages.Enquiry.Build;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class EnquirerEmail : PageModel
 {
     private readonly IMediator _mediator;

@@ -5,6 +5,8 @@ using Domain.Search;
 using FluentValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace UI.Pages;
+
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class CompareList : PageModel
 {
     private readonly IMediator _mediator;

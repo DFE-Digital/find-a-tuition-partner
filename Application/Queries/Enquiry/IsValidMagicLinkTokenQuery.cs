@@ -81,6 +81,12 @@ public class IsValidMagicLinkTokenQueryHandler : IRequestHandler<IsValidMagicLin
                 return false;
             }
 
+            if (tpEnquiry.TuitionPartnerDeclinedEnquiry)
+            {
+                _logger.LogInformation("Enquiry response previously declined for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}; Token: {Token}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl, request.Token);
+                return false;
+            }
+
             if (!tpEnquiry.TuitionPartner.IsActive)
             {
                 _logger.LogInformation("Enquiry response Tuition Partner deactivated for request.SupportReferenceNumber: {SupportReferenceNumber}; Tuition Partner URL: {TuitionPartnerSeoUrl}; Token: {Token}", request.SupportReferenceNumber, request.TuitionPartnerSeoUrl, request.Token);
