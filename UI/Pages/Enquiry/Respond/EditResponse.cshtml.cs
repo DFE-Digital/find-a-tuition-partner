@@ -5,9 +5,10 @@ using UI.Models;
 
 namespace UI.Pages.Enquiry.Respond
 {
-    public class Response : ResponsePageModel<Response>
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public class EditResponse : ResponsePageModel<EditResponse>
     {
-        public Response(IMediator mediator, ISessionService sessionService) : base(sessionService, mediator)
+        public EditResponse(IMediator mediator, ISessionService sessionService) : base(sessionService, mediator)
         {
         }
 
@@ -57,7 +58,7 @@ namespace UI.Pages.Enquiry.Respond
                 Data.EnquiryAdditionalInformation = enquiryData.AdditionalInformation;
             }
 
-            HttpContext.AddLadNameToAnalytics<Response>(Data.LocalAuthorityDistrict);
+            HttpContext.AddLadNameToAnalytics<EditResponse>(Data.LocalAuthorityDistrict);
 
             return Page();
         }

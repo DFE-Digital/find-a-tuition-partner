@@ -7,7 +7,52 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 
 Then(
-  "the page heading should show School Enquiry from {string} area",
+  "the read only page heading should show School Enquiry from {string} area",
+  (LAD) => {
+    cy.contains(".govuk-caption-l > strong", LAD);
+    cy.contains(".govuk-heading-l", "View the school");
+    cy.contains(".govuk-heading-l", "s tuition requirements");
+  }
+);
+
+Then("the page should display the reference number for the enquiry", () => {
+  const refNumRegex = /Reference number: ([a-zA-Z]{2})(\d{4})/;
+
+  cy.get("[data-testid='ref-num']")
+    .invoke("text")
+    .then((text) => {
+      expect(text).to.match(refNumRegex); // check that the text matches the regex
+    });
+});
+
+Then("the page should display the number of TPs sent to", () => {
+  const numberOfTPsRegex = /(\d{1,2}) tuition partners received this enquiry/;
+
+  cy.get("[data-testid='sent-to']")
+    .invoke("text")
+    .then((text) => {
+      expect(text).to.match(numberOfTPsRegex); // check that the text matches the regex
+    });
+});
+
+Then(
+  "the confirm decline page heading should show School Enquiry from {string} area",
+  (LAD) => {
+    cy.contains(".govuk-caption-l > strong", LAD);
+    cy.contains(".govuk-heading-l", "You are about to decline this enquiry");
+  }
+);
+
+Then(
+  "the declined confirmation page heading should show School Enquiry from {string} area",
+  (LAD) => {
+    cy.contains(".govuk-caption-l > strong", LAD);
+    cy.contains(".govuk-heading-l", "You have declined this enquiry");
+  }
+);
+
+Then(
+  "the edit page heading should show School Enquiry from {string} area",
   (LAD) => {
     cy.contains(".govuk-caption-l > strong", LAD);
     cy.contains(
@@ -21,7 +66,7 @@ Then(
   "the page should display the correct date format for the response deadline",
   () => {
     const deadlineRegex =
-      /You have until (\d{1,2}):(\d{2})(am|pm) on ([a-zA-Z]+) (\d{1,2}) ([a-zA-Z]+) (\d{4}) to respond to this enquiry/;
+      /You have until (\d{1,2}):(\d{2})(am|pm|AM|PM) on ([a-zA-Z]+) (\d{1,2}) ([a-zA-Z]+) (\d{4}) to respond to this enquiry/;
 
     cy.get(".govuk-inset-text")
       .invoke("text")
@@ -38,7 +83,7 @@ Then(
 
         expect(hour).to.be.within(1, 12); // check that the hour is valid
         expect(minute).to.be.within(0, 59); // check that the minute is valid
-        expect(ampm).to.be.oneOf(["am", "pm"]); // check that the am/pm indicator is valid
+        expect(ampm).to.be.oneOf(["am", "pm", "AM", "PM"]); // check that the am/pm indicator is valid
         expect(day).to.be.within(1, 31); // check that the day is valid
         expect(month).to.be.oneOf([
           "January",

@@ -4,6 +4,7 @@ using Application.Common.Models.Enquiry.Build;
 
 namespace UI.Pages.Enquiry.Build;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class TutoringLogistics : PageModel
 {
     private readonly ISessionService _sessionService;

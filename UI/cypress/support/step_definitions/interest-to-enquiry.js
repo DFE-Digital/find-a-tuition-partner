@@ -78,7 +78,7 @@ Then("the school submits feedback", () => {
 });
 
 Then("there is text {string} visible", (text) => {
-  cy.get("#main-content > :nth-child(6)").should("contain.text", text);
+  cy.get("[data-testid='all-enq-details']").should("contain.text", text);
 });
 
 Then("the school clicks the {string} link", () => {

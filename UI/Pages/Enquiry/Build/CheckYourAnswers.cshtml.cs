@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace UI.Pages.Enquiry.Build;
 
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class CheckYourAnswers : PageModel
 {
     private const string EnquirySubmissionConfirmationModelKey = "EnquirySubmissionConfirmationModel";

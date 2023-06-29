@@ -104,6 +104,17 @@ Given(
 );
 
 Given(
+  "a tuition partner clicks the magic link to respond to a schools enquiry and progresses to edit response",
+  () => {
+    Step(this, "An enquiry has been submitted");
+    cy.then(async () => {
+      cy.visit(await getFirstValidLink(enquiry.tpHrefs));
+    });
+    Step(this, "they click 'Respond to this enquiry' button");
+  }
+);
+
+Given(
   "the first tuition partner clicks the magic link to respond to a schools enquiry",
   () => {
     Step(this, "An enquiry has been submitted");
@@ -203,6 +214,7 @@ Given(
       cy.log(enquiryNoInfo.tpHrefs);
       cy.visit(await getFirstValidLink(enquiryNoInfo.tpHrefs));
     });
+    Step(this, "they click 'Respond to this enquiry' button");
   }
 );
 
