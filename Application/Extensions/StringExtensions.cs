@@ -38,9 +38,9 @@ public static class StringExtensions
     public static string[] SplitByLineBreaks(this string value)
         => value.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-    public static bool TryParseTuitionSetting(this string tuitionSettingString, out TuitionSetting tuitionSetting)
+    public static bool TryParseTribalTuitionSetting(this string tuitionSettingString, out TuitionSetting tuitionSetting)
     {
-        var tuitionSettingStringReplaced = tuitionSettingString.Replace("Both", TuitionSetting.NoPreference.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
+        var tuitionSettingStringReplaced = tuitionSettingString.Equals("Both", StringComparison.InvariantCultureIgnoreCase) ? TuitionSetting.NoPreference.DisplayName() : tuitionSettingString;
         tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace("In School", TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
         tuitionSettingStringReplaced = tuitionSettingStringReplaced.Replace(TuitionSetting.FaceToFace.DisplayName().Replace("-", " "), TuitionSetting.FaceToFace.DisplayName(), StringComparison.InvariantCultureIgnoreCase);
         return tuitionSettingStringReplaced.TryParse(out tuitionSetting);

@@ -434,7 +434,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     {
                         var tuitionSettingString = spreadsheetExtractor!.GetCellValue(sheetName, TuitionSettingColumn, row);
 
-                        if (!tuitionSettingString.TryParseTuitionSetting(out TuitionSetting tuitionSetting))
+                        if (!tuitionSettingString.TryParseTribalTuitionSetting(out TuitionSetting tuitionSetting))
                         {
                             _errors.Add($"Invalid TuitionSetting conversion.  '{tuitionSettingString}' is on row {row} on '{sheetName}' worksheet");
                         }
@@ -567,7 +567,7 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
                     castError = true;
                     _errors.Add($"Invalid Subject conversion.  '{subjectString}' is on row {row} on '{sheetName}' worksheet");
                 }
-                if (!tuitionSettingString.TryParseTuitionSetting(out TuitionSetting tuitionSetting))
+                if (!tuitionSettingString.TryParseTribalTuitionSetting(out TuitionSetting tuitionSetting))
                 {
                     castError = true;
                     _errors.Add($"Invalid TuitionSetting conversion.  '{tuitionSettingString}' is on row {row} on '{sheetName}' worksheet");
