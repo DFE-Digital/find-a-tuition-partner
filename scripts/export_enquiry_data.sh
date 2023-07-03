@@ -117,10 +117,10 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 								INNER JOIN "EnquiryResponses" ON "TuitionPartnersEnquiry"."EnquiryResponseId" = "EnquiryResponses"."Id"
 							WHERE "Enquiries"."Id" = "TuitionPartnersEnquiry"."EnquiryId"
 								AND "EnquiryResponses"."EnquiryResponseStatusId" = 5
-						) AS "Number Of Responses With Status - Rejected",
+						) AS "Number Of Responses With Status - Not Interested",
 						"ClientReferenceNumber" AS "Notify Ref - To Enquirer - Enquiry Submitted",
 						"EmailStatus"."Status" AS "Email Status - To Enquirer - Enquiry Submitted",
-						"EmailStatus"."Description" AS "Email Status Description - To Enquirer - Enquiry Submitted"
+						"EmailStatus"."Description" AS "Email Status Desc - To Enquirer - Enquiry Submitted"
 					FROM "Enquiries" 
 						LEFT JOIN "Schools" ON "Schools"."Id" = "Enquiries"."SchoolId"
 						LEFT JOIN "EmailLog" ON "EmailLog"."Id" = "Enquiries"."EnquirerEnquirySubmittedEmailLogId"
@@ -195,16 +195,16 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						"EnquiryResponses"."EnquirerNotInterestedReasonAdditionalInfo" AS "Enquirer Not Interested Reason Additional Information",
 						"TuitionPartnerEnquirySubmittedEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Enquiry Submitted",
 						"TuitionPartnerEnquirySubmittedEmailStatus"."Status" AS "Email Status - To Tuition Partner - Enquiry Submitted",
-						"TuitionPartnerEnquirySubmittedEmailStatus"."Description" AS "Email Status Description - To Tuition Partner - Enquiry Submitted",
+						"TuitionPartnerEnquirySubmittedEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Enquiry Submitted",
 						"TuitionPartnerResponseEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Response Submitted",
 						"TuitionPartnerResponseEmailStatus"."Status" AS "Email Status - To Tuition Partner - Response Submitted",
-						"TuitionPartnerResponseEmailStatus"."Description" AS "Email Status Description - To Tuition Partner - Response Submitted",
+						"TuitionPartnerResponseEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Response Submitted",
 						"EnquirerResponseEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Enquirer - Response Submitted",
 						"EnquirerResponseEmailStatus"."Status" AS "Email Status - To Enquirer - Response Submitted",
-						"EnquirerResponseEmailStatus"."Description" AS "Email Status Description - To Enquirer - Response Submitted",
-						"TuitionPartnerResponseNotInterestedEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Enquirer Not Interested",
-						"TuitionPartnerResponseNotInterestedEmailStatus"."Status" AS "Email Status - To Tuition Partner - Enquirer Not Interested",
-						"TuitionPartnerResponseNotInterestedEmailStatus"."Description" AS "Email Status Description - To Tuition Partner - Enquirer Not Interested"
+						"EnquirerResponseEmailStatus"."Description" AS "Email Status Desc - To Enquirer - Response Submitted",
+						"TuitionPartnerResponseNotInterestedEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Enquirer Not Int",
+						"TuitionPartnerResponseNotInterestedEmailStatus"."Status" AS "Email Status - To Tuition Partner - Enquirer Not Int",
+						"TuitionPartnerResponseNotInterestedEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Enquirer Not Int"
 					FROM "Enquiries"
 						INNER JOIN "TuitionPartnersEnquiry" ON "Enquiries"."Id" = "TuitionPartnersEnquiry"."EnquiryId"
 						INNER JOIN "TuitionPartners" ON "TuitionPartnersEnquiry"."TuitionPartnerId" = "TuitionPartners"."Id"
@@ -224,7 +224,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 					ORDER BY 
 						"Enquiries"."CreatedAt" ASC, 
 						COALESCE ("EnquiryResponses"."CompletedAt", "TuitionPartnersEnquiry"."TuitionPartnerDeclinedEnquiryDate") ASC,
-						"TuitionPartners"."Name"
+						"TuitionPartners"."Name" ASC
         )
         TO '\'$EXPORT_DIR'/responses.csv'\''
         WITH ( FORMAT CSV, HEADER );'
