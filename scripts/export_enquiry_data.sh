@@ -14,12 +14,12 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
     -c '\COPY ( 
 					SELECT 
 						"SupportReferenceNumber" AS "Reference",
-						"Schools"."EstablishmentName" AS "School Name",
+						'\''"'\'' || "Schools"."EstablishmentName" || '\''"'\'' AS "School Name",
 						"Schools"."Urn" AS "School URN",
 						"Postcode",
-						"LocalAuthorityDistrict" AS "Local Authority District",
+						'\''"'\'' || "LocalAuthorityDistrict" || '\''"'\'' AS "Local Authority District",
 						(
-							SELECT STRING_AGG("KeyStage"."Name" || '\'': '\'' || "Subjects"."Name", '\''; '\'' ORDER BY "KeyStage"."Id", "Subjects"."Name")
+							SELECT '\''"'\'' || STRING_AGG("KeyStage"."Name" || '\'': '\'' || "Subjects"."Name", '\''; '\'' ORDER BY "KeyStage"."Id", "Subjects"."Name") || '\''"'\''
 							FROM "KeyStageSubjectsEnquiry"
 								INNER JOIN "Subjects" ON "KeyStageSubjectsEnquiry"."SubjectId" = "Subjects"."Id"
 								INNER JOIN "KeyStage" ON "KeyStageSubjectsEnquiry"."KeyStageId" = "KeyStage"."Id"
@@ -119,13 +119,16 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 								AND "EnquiryResponses"."EnquiryResponseStatusId" = 5
 						) AS "Number Of Responses With Status - Not Interested",
 						"ClientReferenceNumber" AS "Notify Ref - To Enquirer - Enquiry Submitted",
+						"EmailLog"."CreatedDate" AS "Email Created Date - To Enquirer - Enquiry Submitted",
+						"EmailLog"."ProcessFromDate" AS "Email Process Date - To Enquirer - Enquiry Submitted",
 						"EmailStatus"."Status" AS "Email Status - To Enquirer - Enquiry Submitted",
-						"EmailStatus"."Description" AS "Email Status Desc - To Enquirer - Enquiry Submitted"
+						"EmailLog"."LastStatusChangedDate" AS "Email Status Date - To Enquirer - Enquiry Submitted",
+						'\''"'\'' || "EmailStatus"."Description" || '\''"'\'' AS "Email Status Desc - To Enquirer - Enquiry Submitted"
 					FROM "Enquiries" 
 						LEFT JOIN "Schools" ON "Schools"."Id" = "Enquiries"."SchoolId"
 						LEFT JOIN "EmailLog" ON "EmailLog"."Id" = "Enquiries"."EnquirerEnquirySubmittedEmailLogId"
 						LEFT JOIN "EmailStatus" ON "EmailStatus"."Id" = "EmailLog"."EmailStatusId"
-					ORDER BY "CreatedAt" ASC
+					ORDER BY "CreatedAt" DESC
         )
         TO '\'$EXPORT_DIR'/enquiries.csv'\''
         WITH ( FORMAT CSV, HEADER );' \
@@ -135,7 +138,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						"Enquiries"."SupportReferenceNumber" AS "Reference",
 						"TuitionPartners"."Name" AS "Tuition Partner Name",
 						(
-							SELECT STRING_AGG("KeyStage"."Name" || '\'': '\'' || "Subjects"."Name", '\''; '\'' ORDER BY "KeyStage"."Id", "Subjects"."Name")
+							SELECT '\''"'\'' || STRING_AGG("KeyStage"."Name" || '\'': '\'' || "Subjects"."Name", '\''; '\'' ORDER BY "KeyStage"."Id", "Subjects"."Name") || '\''"'\''
 							FROM "KeyStageSubjectsEnquiry"
 								INNER JOIN "Subjects" ON "KeyStageSubjectsEnquiry"."SubjectId" = "Subjects"."Id"
 								INNER JOIN "KeyStage" ON "KeyStageSubjectsEnquiry"."KeyStageId" = "KeyStage"."Id"
@@ -181,7 +184,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 							THEN trim('\''"'\'' FROM ("TutoringLogistics"::json->'\''TimeOfDay'\'')::text) 
 							ELSE NULL 
 						END AS "Enquiry - Time Of Day (Tuition Plan)",
-						"TutoringLogisticsText" AS "Response - Tuition Pla",
+						"TutoringLogisticsText" AS "Response - Tuition Plan",
 						"SENDRequirements" AS "Enquiry - SEND and additional requirements",
 						"SENDRequirementsText" AS "Response - SEND and additional requirements",
 						"AdditionalInformation" AS "Enquiry - Other tuition requirements",
@@ -190,21 +193,38 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						"CompletedAt" AS "Response - Completed At",
 						"TuitionPartnerDeclinedEnquiryDate" AS "Tuition Partner Declined Enquiry At",
 						"EnquiryResponseStatus"."Status" AS "Response Status For Enquirer",
-						"EnquiryResponses"."EnquiryResponseStatusLastUpdated" AS "Response Status For Enquirer Last Updated At",
-						"EnquirerNotInterestedReasons"."Description" AS "Enquirer Not Interested Reason",
+						CASE 
+							WHEN isfinite("EnquiryResponses"."EnquiryResponseStatusLastUpdated")
+							THEN "EnquiryResponses"."EnquiryResponseStatusLastUpdated"
+							ELSE NULL
+						END
+						AS "Response Status For Enquirer Last Updated At",
+						'\''"'\'' || "EnquirerNotInterestedReasons"."Description" || '\''"'\'' AS "Enquirer Not Interested Reason",
 						"EnquiryResponses"."EnquirerNotInterestedReasonAdditionalInfo" AS "Enquirer Not Interested Reason Additional Information",
 						"TuitionPartnerEnquirySubmittedEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Enquiry Submitted",
+						"TuitionPartnerEnquirySubmittedEmailLog"."CreatedDate" AS "Email Created Date - To Tuition Partner - Enquiry Submitted",
+						"TuitionPartnerEnquirySubmittedEmailLog"."ProcessFromDate" AS "Email Process Date - To Tuition Partner - Enquiry Submitted",
 						"TuitionPartnerEnquirySubmittedEmailStatus"."Status" AS "Email Status - To Tuition Partner - Enquiry Submitted",
-						"TuitionPartnerEnquirySubmittedEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Enquiry Submitted",
+						"TuitionPartnerEnquirySubmittedEmailLog"."LastStatusChangedDate" AS "Email Status Date - To Tuition Partner - Enquiry Submitted",
+						'\''"'\'' || "TuitionPartnerEnquirySubmittedEmailStatus"."Description" || '\''"'\'' AS "Email Status Desc - To Tuition Partner - Enquiry Submitted",
 						"TuitionPartnerResponseEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Response Submitted",
+						"TuitionPartnerResponseEmailLog"."CreatedDate" AS "Email Created Date - To Tuition Partner - Response Submitted",
+						"TuitionPartnerResponseEmailLog"."ProcessFromDate" AS "Email Process Date - To Tuition Partner - Response Submitted",
 						"TuitionPartnerResponseEmailStatus"."Status" AS "Email Status - To Tuition Partner - Response Submitted",
-						"TuitionPartnerResponseEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Response Submitted",
+						"TuitionPartnerResponseEmailLog"."LastStatusChangedDate" AS "Email Status Date - To Tuition Partner - Response Submitted",
+						'\''"'\'' || "TuitionPartnerResponseEmailStatus"."Description" || '\''"'\'' AS "Email Status Desc - To Tuition Partner - Response Submitted",
 						"EnquirerResponseEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Enquirer - Response Submitted",
+						"EnquirerResponseEmailLog"."CreatedDate" AS "Email Created Date - To Enquirer - Response Submitted",
+						"EnquirerResponseEmailLog"."ProcessFromDate" AS "Email Process Date - To Enquirer - Response Submitted",
 						"EnquirerResponseEmailStatus"."Status" AS "Email Status - To Enquirer - Response Submitted",
-						"EnquirerResponseEmailStatus"."Description" AS "Email Status Desc - To Enquirer - Response Submitted",
+						"EnquirerResponseEmailLog"."LastStatusChangedDate" AS "Email Status Date - To Enquirer - Response Submitted",
+						'\''"'\'' || "EnquirerResponseEmailStatus"."Description" || '\''"'\'' AS "Email Status Desc - To Enquirer - Response Submitted",
 						"TuitionPartnerResponseNotInterestedEmailLog"."ClientReferenceNumber" AS "Notify Ref - To Tuition Partner - Enquirer Not Int",
+						"TuitionPartnerResponseNotInterestedEmailLog"."CreatedDate" AS "Email Created Date - To Tuition Partner - Enquirer Not Int",
+						"TuitionPartnerResponseNotInterestedEmailLog"."ProcessFromDate" AS "Email Process Date - To Tuition Partner - Enquirer Not Int",
 						"TuitionPartnerResponseNotInterestedEmailStatus"."Status" AS "Email Status - To Tuition Partner - Enquirer Not Int",
-						"TuitionPartnerResponseNotInterestedEmailStatus"."Description" AS "Email Status Desc - To Tuition Partner - Enquirer Not Int"
+						"TuitionPartnerResponseNotInterestedEmailLog"."LastStatusChangedDate" AS "Email Status Date - To Tuition Partner - Enquirer Not Int",
+						'\''"'\'' || "TuitionPartnerResponseNotInterestedEmailStatus"."Description" || '\''"'\'' AS "Email Status Desc - To Tuition Partner - Enquirer Not Int"
 					FROM "Enquiries"
 						INNER JOIN "TuitionPartnersEnquiry" ON "Enquiries"."Id" = "TuitionPartnersEnquiry"."EnquiryId"
 						INNER JOIN "TuitionPartners" ON "TuitionPartnersEnquiry"."TuitionPartnerId" = "TuitionPartners"."Id"
@@ -220,7 +240,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						LEFT JOIN "EmailLog" AS "TuitionPartnerResponseNotInterestedEmailLog" ON "TuitionPartnerResponseNotInterestedEmailLog"."Id" = "EnquiryResponses"."TuitionPartnerResponseNotInterestedEmailLogId"
 						LEFT JOIN "EmailStatus" AS "TuitionPartnerResponseNotInterestedEmailStatus" ON "TuitionPartnerResponseNotInterestedEmailStatus"."Id" = "TuitionPartnerResponseNotInterestedEmailLog"."EmailStatusId"
 					ORDER BY 
-						"Enquiries"."CreatedAt" ASC, 
+						"Enquiries"."CreatedAt" DESC, 
 						COALESCE ("EnquiryResponses"."CompletedAt", "TuitionPartnersEnquiry"."TuitionPartnerDeclinedEnquiryDate") ASC,
 						"TuitionPartners"."Name" ASC
         )
