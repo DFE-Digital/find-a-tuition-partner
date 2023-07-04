@@ -5,7 +5,7 @@ resource "azurerm_key_vault" "default" {
   resource_group_name         = module.fatp_azure_web_app_services_hosting.azurerm_resource_group_default.name
   sku_name                    = "standard"
   tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 90
+  soft_delete_retention_days  = 7
   purge_protection_enabled    = true
   enabled_for_disk_encryption = true
 
