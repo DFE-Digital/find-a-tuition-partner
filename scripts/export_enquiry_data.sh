@@ -219,8 +219,6 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						LEFT JOIN "EmailStatus" AS "EnquirerResponseEmailStatus" ON "EnquirerResponseEmailStatus"."Id" = "EnquirerResponseEmailLog"."EmailStatusId"
 						LEFT JOIN "EmailLog" AS "TuitionPartnerResponseNotInterestedEmailLog" ON "TuitionPartnerResponseNotInterestedEmailLog"."Id" = "EnquiryResponses"."TuitionPartnerResponseNotInterestedEmailLogId"
 						LEFT JOIN "EmailStatus" AS "TuitionPartnerResponseNotInterestedEmailStatus" ON "TuitionPartnerResponseNotInterestedEmailStatus"."Id" = "TuitionPartnerResponseNotInterestedEmailLog"."EmailStatusId"
-					--Commented out, so includes the details of all the TPs the enquiry was sent to
-					--WHERE "EnquiryResponses"."Id" IS NOT NULL OR "TuitionPartnersEnquiry"."TuitionPartnerDeclinedEnquiry" = true
 					ORDER BY 
 						"Enquiries"."CreatedAt" ASC, 
 						COALESCE ("EnquiryResponses"."CompletedAt", "TuitionPartnersEnquiry"."TuitionPartnerDeclinedEnquiryDate") ASC,
