@@ -281,19 +281,18 @@ jobs:
           # clean up ssh tunnel(s)
           for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
           
-#      Temporarily commenting the E2E test for now as it timeout on the cookies.feature file. 
-#      - name: End to End Testing
-#        uses: cypress-io/github-action@v5
-#        with:
-#          working-directory: ./UI
-#          config: baseUrl="${{ env.APP_BASE_URL }}/",video=false
-#
-#      - name: Store screenshots on test failure
-#        uses: actions/upload-artifact@v3
-#        if: failure()
-#        with:
-#          name: cypress-screenshots
-#          path: UI/cypress/screenshots
+      - name: End to End Testing
+        uses: cypress-io/github-action@v5
+        with:
+          working-directory: ./UI
+          config: baseUrl="${{ env.APP_BASE_URL }}/",video=false
+
+      - name: Store screenshots on test failure
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: UI/cypress/screenshots
     
           
               
