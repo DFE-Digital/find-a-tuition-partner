@@ -9,6 +9,10 @@
   // Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
   var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
 
+  var includeBackToTopLink = ViewData["IncludeBackToTopLink"] == null ? false : (bool)ViewData["IncludeBackToTopLink"]!;
+  var comparePricesSearchResultsModel = ViewData["IncludeComparePricesLink"] == null ? null : ViewData["IncludeComparePricesLink"] as Application.Common.Models.SearchResultsModel;
+  var totalCompareListedTuitionPartners = ViewData["TotalCompareListedTuitionPartners"] == null ? 0 : (int)ViewData["TotalCompareListedTuitionPartners"]!;
+
   var includeHomeLink = ViewData["IncludeHomeLink"] as bool? == true;
   var backLinkHref = ViewData["BackLinkHref"] as string;
   var backLinkText = ViewData["BackLinkText"] as string;
@@ -166,7 +170,7 @@
 
   <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
-  <header class="govuk-header " role="banner" data-module="govuk-header">
+  <header class="govuk-header " role="banner" data-module="govuk-header" id="top">
     <div class="govuk-header__container govuk-width-container">
       <div class="govuk-header__logo">
         <a href="/" class="govuk-header__link govuk-header__link--homepage">
@@ -258,6 +262,25 @@
     <main class="govuk-main-wrapper " id="main-content" role="main">
       @RenderBody()
     </main>
+    @if (includeBackToTopLink)
+    {
+      <div class="govuk-body app-back-to-top-banner app-print-hide" data-module="back-to-top-banner">
+        <partial name="_TopLink" />
+        @if (comparePricesSearchResultsModel != null)
+        {
+          <a asp-page="/CompareList" asp-all-route-data="@comparePricesSearchResultsModel.ToRouteData()" class="govuk-link total-compare-listed-tuition-partners-top-link"
+             module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
+            Compare tuition partner prices
+            <span id="total-compare-listed-tuition-partners-badge-top" class="moj-notification-badge my-compare-listed-partners-badge">
+              @totalCompareListedTuitionPartners
+            </span>
+          </a>
+        }
+      </div>
+      <div class="govuk-grid-row app-print-hide top-link-no-js">
+        <partial name="_TopLink" />
+      </div>
+    }
   </div>
 
   <footer class="govuk-footer " role="contentinfo">
