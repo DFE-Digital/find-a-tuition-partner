@@ -253,6 +253,7 @@ jobs:
 #          echo "Continuing with the workflow and Run database migrations and import data"
           
       - name: Run database migrations and import data
+        working-directory: ${{ env.APP_CODE_PATH }}
         run: |
           export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
           export BlobStorage__AccountName=s177p01sharedtpdata
