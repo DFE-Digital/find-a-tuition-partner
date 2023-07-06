@@ -447,3 +447,48 @@ Then("the price comparison list key stage subjects header is not shown", () => {
     "not.exist"
   );
 });
+
+When(
+  "they scroll to the top of in page price comparison list page link",
+  () => {
+    cy.get(
+      '[data-testid="my-compare-listed-tuition-partners-link"]'
+    ).scrollIntoView();
+  }
+);
+
+Then("the top fixed price comparison list page link is not visible", () => {
+  cy.get('[data-testid="my-compare-listed-tuition-partners-link-top"]').should(
+    "not.be.visible"
+  );
+});
+
+When("they scroll to the first result", () => {
+  cy.get('[data-testid="results-list-item"]').first().scrollIntoView();
+});
+
+Then("the top fixed price comparison list page link is visible", () => {
+  cy.get('[data-testid="my-compare-listed-tuition-partners-link-top"]').should(
+    "be.visible"
+  );
+});
+
+Then(
+  "the top fixed price comparison list shows as having {int} entries on the results page",
+  (numEntries) => {
+    cy.get("#total-compare-listed-tuition-partners-badge-top").should((el) =>
+      expect(parseInt(el.text().trim())).to.equal(numEntries)
+    );
+  }
+);
+
+When(
+  "they choose to view their price comparison list from the results page using the fixed price comparison list page link",
+  () => {
+    cy.get('[data-testid="my-compare-listed-tuition-partners-link-top"]').click(
+      {
+        force: true,
+      }
+    );
+  }
+);
