@@ -254,7 +254,7 @@ jobs:
           
       - name: Get workflow IP address
         id: whats-my-ip
-        uses: ./.github/actions/whats-my-ip-address.yml
+        uses: ./.github/actions/whats-my-ip-address
         
       - name: Add Azure firewall rules
         run: |
