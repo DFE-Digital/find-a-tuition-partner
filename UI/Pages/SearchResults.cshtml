@@ -14,6 +14,9 @@
   ViewData["Title"] = "Your options for choosing a tuition partner";
   ViewData["BackLinkHref"] = $"/which-tuition-settings?{Model.Data.ToQueryString()}";
   ViewData["IncludePrintPage"] = true;
+  ViewData["IncludeBackToTopLink"] = true;
+  ViewData["IncludeComparePricesLink"] = Model.Data;
+  ViewData["TotalCompareListedTuitionPartners"] = Model.TotalCompareListedTuitionPartners;
 
   var validResults = (Model.Data != null && Model.Data.Results != null && Model.Data.Results.Results != null && Model.Data.Results.LocalAuthorityDistrictName != null);
   var results = !validResults ? new List<TuitionPartnerResult>() : Model!.Data!.Results!.Results;
@@ -181,7 +184,7 @@
                 Update price comparison list
               </govuk-button>
             </div>
-            <div class="govuk-grid-column-full">
+            <div class="govuk-grid-column-full" id="my-compare-list-link">
               <a asp-page="/CompareList" asp-all-route-data="@Model.Data.ToRouteData()" class="govuk-link govuk-!-font-size-24"
                  module="my-compare-listed-tuition-partners-link" data-testid="my-compare-listed-tuition-partners-link">
                 Compare tuition partner prices
