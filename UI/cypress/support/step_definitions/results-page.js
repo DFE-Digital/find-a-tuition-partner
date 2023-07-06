@@ -6,9 +6,14 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 import { getJumpToLocationId, kebabCase, KeyStageSubjects } from "../utils";
 
+Given("the price comparison list is cleared", () => {
+  cy.clearCookie(".FindATuitionPartner.PriceComparisonList");
+});
+
 Given(
   "a user has arrived on the 'Search results' page for {string}",
   (keyStageSubject) => {
+    Step(this, "the price comparison list is cleared");
     cy.visit(
       `/search-results?postcode=sk11eb&${KeyStageSubjects(
         "subjects",
@@ -21,6 +26,7 @@ Given(
 Given(
   "a user has arrived on the 'Search results' page for {string} without a postcode",
   (keyStage) => {
+    Step(this, "the price comparison list is cleared");
     cy.visit(
       `/search-results?key-subjects=KeyStage1&subjects=KeyStage1-English`
     );
@@ -30,6 +36,7 @@ Given(
 Given(
   "a user has arrived on the 'Search results' page for {string} for postcode {string}",
   (keystages, postcode) => {
+    Step(this, "the price comparison list is cleared");
     const query = keystages
       .split(",")
       .map((s) => KeyStageSubjects("subjects", s.trim()))
@@ -41,6 +48,7 @@ Given(
 Given(
   "a user has arrived on the 'Search results' page for {string} for postcode {string} and tuition setting {string}",
   (keystages, postcode, tuitionSetting) => {
+    Step(this, "the price comparison list is cleared");
     const query = keystages
       .split(",")
       .map((s) => KeyStageSubjects("subjects", s.trim()))
@@ -64,6 +72,7 @@ Given(
 Given(
   "a user has arrived on the 'Search results' page without subjects for postcode {string}",
   (postcode) => {
+    Step(this, "the price comparison list is cleared");
     cy.visit(`/search-results?Postcode=${postcode}`);
   }
 );
@@ -71,11 +80,13 @@ Given(
 Given(
   "a user has arrived on the 'Search results' page without subjects or postcode",
   () => {
+    Step(this, "the price comparison list is cleared");
     cy.visit(`/search-results`);
   }
 );
 
 Given("a user has arrived on the 'Search results' page", () => {
+  Step(this, "the price comparison list is cleared");
   cy.visit(
     `/search-results?Postcode=sk11eb&Subjects=KeyStage1-English&Subjects=KeyStage1-Maths&Subjects=KeyStage1-Science&Subjects=KeyStage2-English&Subjects=KeyStage2-Maths&Subjects=KeyStage2-Science&Subjects=KeyStage3-English&Subjects=KeyStage3-Humanities&Subjects=KeyStage3-Maths&Subjects=KeyStage3-Modern%20foreign%20languages&Subjects=KeyStage3-Science&Subjects=KeyStage4-English&Subjects=KeyStage4-Humanities&Subjects=KeyStage4-Maths&Subjects=KeyStage4-Modern%20foreign%20languages&Subjects=KeyStage4-Science&KeyStages=KeyStage1&KeyStages=KeyStage2&KeyStages=KeyStage3&KeyStages=KeyStage4`
   );
