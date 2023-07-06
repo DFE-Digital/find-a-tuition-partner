@@ -64,11 +64,11 @@ Feature: Tuition Partner price comparison list
     When they click on the option heading for 'Key stage 4'
     And they select subject 'key-stage-4-humanities'
     Then the price comparison list shows as having 2 entries on the results page
+
   Scenario: User changes their postcode to exclude a price comparison listed TP
     Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
     And they add tp name 1 to their price comparison list on the results page
     And they add tp name 3 to their price comparison list on the results page
-
     When they enter 'TN22 2BL' as the school's postcode
     And they click 'Search'
     Then the price comparison list shows as having 2 entries on the results page
@@ -341,3 +341,31 @@ Feature: Tuition Partner price comparison list
     When they choose to view their price comparison list from the results page
     Then there are 1 entries on the price comparison list page
     Then the correct Local Authority District is shown for 'Scarborough'
+
+  Scenario: User cannot see top fixed price comparison list page link when above the in page link
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    When they scroll to the top of in page price comparison list page link
+    Then the top fixed price comparison list page link is not visible
+
+  Scenario: User can see top fixed price comparison list page link when below the in page link
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    When they scroll to the first result
+    Then the top fixed price comparison list page link is visible
+
+  Scenario: User can add lots of TPs to their price comparison list in quick succession from the results page and the fixed price comparison list page link is updated
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    When they programmatically add the first 20 results to their price comparison list on the results page
+    And they scroll to the first result
+    Then the top fixed price comparison list page link is visible
+    Then the top fixed price comparison list shows as having 20 entries on the results page
+
+  Scenario: User can add use the fixed price comparison list page link to go to the price comparison page
+    Given a user has arrived on the 'Search results' page for 'Key stage 2 English' for postcode 'SK1 1EB'
+    And they add tp name 1 to their price comparison list on the results page
+    And they add tp name 2 to their price comparison list on the results page
+    And they scroll to the first result
+    When they choose to view their price comparison list from the results page using the fixed price comparison list page link
+    Then there are 2 entries on the price comparison list page
+    And the heading caption is 'Tuition partners for Stockport'
+    And tp name 1 is entry 1 on the price comparison list page
+    And tp name 2 is entry 2 on the price comparison list page
