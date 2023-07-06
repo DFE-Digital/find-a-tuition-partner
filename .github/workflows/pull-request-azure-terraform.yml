@@ -252,6 +252,14 @@ jobs:
 #          sleep 30
 #          echo "Continuing with the workflow and Run database migrations and import data"
           
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/whats-my-ip-address.yml
+        
+      - name: Add Azure firewall rules
+        run: |
+            az sql server firewall-rule create --resource-group ${{ inputs.az_resource_group_name }} --server ${{ inputs.az_sql_database_server_name }} --name db-migrate-importer --start-ip-address ${{ steps.whats-my-ip.outputs.ip }} --end-ip-address ${{ steps.whats-my-ip.outputs.ip }}
+            
       - name: Run database migrations and import data
         working-directory: ${{ env.APP_CODE_PATH }}
         run: |
@@ -291,6 +299,12 @@ jobs:
 #          
 #          # clean up ssh tunnel(s)
 #          for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
+          
+      - name: Remove Azure firewall rules
+        shell: bash
+        if: always()
+        run: |
+          az sql server firewall-rule delete --resource-group ${{ inputs.az_resource_group_name }} --server ${{ inputs.az_sql_database_server_name }} --name db-migrate-importer
           
       - name: End to End Testing
         uses: cypress-io/github-action@v5
