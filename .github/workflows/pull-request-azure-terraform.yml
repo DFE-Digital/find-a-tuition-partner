@@ -240,12 +240,6 @@ jobs:
           export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
           export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform apply -auto-approve tfplan.out
-          
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-              app-name: ${{ env.AZURE_WEBAPP_NAME }}
-              package: ${{ env.APP_CODE_PATH }}/publish
 #              
 #      - name: Install dependencies to run the database migrations and import data
 #        run: |
@@ -267,6 +261,13 @@ jobs:
           export BlobStorage__ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
           export "ConnectionStrings__FatpDatabase=Server=${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com;Database=${{ env.AZURE_WEBAPP_NAME }}-db;Port=5432;User Id=${{ env.TF_VAR_postgresql_server_admin_username }};Password=${{ env.TF_VAR_postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
           dotnet ./publish/UI.dll import
+          
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.APP_CODE_PATH }}/publish
+          
 #      - name: Run database migrations and import data
 #        run: |
 #          # clean up any old ssh tunnels before we start
