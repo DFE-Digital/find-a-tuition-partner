@@ -68,18 +68,26 @@ const CompareListCheckbox = (() => {
       );
     }
   };
+  const setBadge = (badgeElementId, totalCompareListedTuitionPartners) => {
+    const badgeElement = document.getElementById(badgeElementId);
+    if (badgeElement) {
+      badgeElement.textContent = totalCompareListedTuitionPartners;
+      setCompareListedTuitionPartnersBadgeClass(
+        badgeElement,
+        totalCompareListedTuitionPartners
+      );
+    }
+  };
   const updateSearchResultPage = (result, checkBox, elseCheckboxState) => {
     if (isResultValid(result) && result.isCallSuccessful) {
-      const badgeElement = document.getElementById(
-        "totalCompareListedTuitionPartners"
+      setBadge(
+        "totalCompareListedTuitionPartners",
+        result.totalCompareListedTuitionPartners
       );
-      if (badgeElement) {
-        badgeElement.textContent = result.totalCompareListedTuitionPartners;
-        setCompareListedTuitionPartnersBadgeClass(
-          badgeElement,
-          result.totalCompareListedTuitionPartners
-        );
-      }
+      setBadge(
+        "total-compare-listed-tuition-partners-badge-top",
+        result.totalCompareListedTuitionPartners
+      );
     } else {
       checkBox.checked = elseCheckboxState;
     }
