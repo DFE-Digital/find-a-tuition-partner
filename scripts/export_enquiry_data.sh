@@ -14,6 +14,7 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
     -c '\COPY ( 
 					SELECT 
 						"SupportReferenceNumber" AS "Reference",
+						"CreatedAt" AS "Enquiry Created At",
 						"Schools"."EstablishmentName" AS "School Name",
 						"Schools"."Urn" AS "School URN",
 						"Postcode",
@@ -65,7 +66,6 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						END AS "Time Of Day (Tuition Plan)",
 						"SENDRequirements" AS "SEND and additional requirements",
 						"AdditionalInformation" AS "Other tuition requirements",
-						"CreatedAt" AS "Enquiry Created At",
 						(
 							SELECT count(*)
 							FROM "TuitionPartnersEnquiry"
@@ -136,6 +136,8 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
     -c '\COPY ( 
 					SELECT 
 						"Enquiries"."SupportReferenceNumber" AS "Reference",
+						"Enquiries"."CreatedAt" AS "Enquiry - Created At",
+						"CompletedAt" AS "Response - Completed At",
 						"TuitionPartners"."Name" AS "Tuition Partner Name",
 						(
 							SELECT STRING_AGG("KeyStage"."Name" || '\'': '\'' || "Subjects"."Name", '\''; '\'' ORDER BY "KeyStage"."Id", "Subjects"."Name")
@@ -189,8 +191,6 @@ cf conduit $DB_SERVICE -c '{"read_only": true}' -- psql \
 						"SENDRequirementsText" AS "Response - SEND and additional requirements",
 						"AdditionalInformation" AS "Enquiry - Other tuition requirements",
 						"AdditionalInformationText" AS "Response - Other tuition requirements",
-						"Enquiries"."CreatedAt" AS "Enquiry - Created At",
-						"CompletedAt" AS "Response - Completed At",
 						"TuitionPartnerDeclinedEnquiryDate" AS "Tuition Partner Declined Enquiry At",
 						"EnquiryResponseStatus"."Status" AS "Response Status For Enquirer",
 						CASE 
