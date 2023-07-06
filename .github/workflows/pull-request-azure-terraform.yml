@@ -258,7 +258,7 @@ jobs:
         
       - name: Add Azure firewall rules
         run: |
-          az postgres server firewall-rule create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --server ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com --name db-migrate-importer --start-ip-address ${{ steps.whats-my-ip.outputs.ip }} --end-ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          az postgres server firewall-rule create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --server-name ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com --name db-migrate-importer --start-ip-address ${{ steps.whats-my-ip.outputs.ip }} --end-ip-address ${{ steps.whats-my-ip.outputs.ip }}
             
       - name: Run database migrations and import data
         working-directory: ${{ env.APP_CODE_PATH }}
@@ -304,7 +304,7 @@ jobs:
         shell: bash
         if: always()
         run: |
-          az postgres server firewall-rule create delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --server ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com --name db-migrate-importer
+          az postgres server firewall-rule create delete --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --server-name ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com --name db-migrate-importer
           
       - name: End to End Testing
         uses: cypress-io/github-action@v5
