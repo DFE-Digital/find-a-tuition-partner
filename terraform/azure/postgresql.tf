@@ -25,15 +25,6 @@ resource "azurerm_postgresql_flexible_server" "default" {
   }
 }
 
-resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rule" {
-  for_each = local.postgresql_network_connectivity_method == "public" ? local.postgresql_firewall_ipv4_allow : {}
-
-  name             = each.key
-  server_id        = azurerm_postgresql_flexible_server.default.id
-  start_ip_address = each.value.start_ip_address
-  end_ip_address   = each.value.end_ip_address
-}
-
 resource "azurerm_postgresql_flexible_server_configuration" "default" {
   name      = "azure.extensions"
   server_id = azurerm_postgresql_flexible_server.default.id
