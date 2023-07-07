@@ -28,7 +28,7 @@ output "azurerm_cdn_frontdoor_endpoint_endpoint" {
 }
 
 output "azurerm_public_ip_address" {
-  value       = azurerm_public_ip.nat_gateway.ip_address
+  value       = azurerm_public_ip.nat_gateway[0].ip_address
   description = "Get the public static IP"
 }
 
