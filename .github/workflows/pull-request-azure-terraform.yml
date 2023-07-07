@@ -223,7 +223,7 @@ jobs:
       - name: Get Front Door Hostname and Set to APP_BASE_URL
         shell: bash
         run: |
-          APP_BASE_URL=$(az afd endpoint show -g ${{ env.AZURE_WEBAPP_NAME }} --profile-name ${{ env.AZURE_WEBAPP_NAME }}-cdn --endpoint-name ${{ env.AZURE_WEBAPP_NAME }}-cdnendpoint --query "hostName" -o tsv)
+          APP_BASE_URL=$(az afd endpoint show -g ${{ env.AZURE_RESOURCE_GROUP }} --profile-name ${{ env.AZURE_WEBAPP_NAME }}-cdn --endpoint-name ${{ env.AZURE_WEBAPP_NAME }}-cdnendpoint --query "hostName" -o tsv)
           echo "APP_BASE_URL=$APP_BASE_URL" >> $GITHUB_ENV
             
       - name: End to End Testing
