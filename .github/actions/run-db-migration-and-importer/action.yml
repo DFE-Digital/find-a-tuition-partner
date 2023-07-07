@@ -17,6 +17,9 @@ inputs:
   postgresql_server_admin_password:
     required: true
     type: string
+  working_directory:
+    required: true
+    type: string
   run_db_migrations_and_import_data_on_deployed_app:
     description: 'Run database migrations and import data on the deployed app'
     required: true
@@ -38,7 +41,8 @@ runs:
 
     - name: Run database migrations and import data
       shell: bash
-#      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == false }}
+      working-directory: ${{ inputs.working_directory }}
+      if: ${{ !inputs.run_db_migrations_and_import_data_on_deployed_app }}
       run: |
         echo "Running database migrations and import data..."
         export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
@@ -51,7 +55,7 @@ runs:
         
     - name: Run database migrations and import data on deployed app
       shell: bash
-      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == true }}
+      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app }}
       run: |
         echo "Running database migrations and import data on deployed app..."
         # clean up any old ssh tunnels before we start

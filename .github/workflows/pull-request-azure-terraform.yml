@@ -212,6 +212,7 @@ jobs:
           blob_storage_client_secret: ${{ env.TF_VAR_blob_storage_client_secret }}
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
+          working_directory: ${{ env.APP_CODE_PATH }}
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
