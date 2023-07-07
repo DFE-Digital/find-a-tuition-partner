@@ -14,17 +14,17 @@ env:
   TF_VERSION: '~>1.4.5'
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
-    
-defaults:
-  run:
-    shell: bash
-    working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
 
 jobs:
   teardown_deployment:
     name: Teardown Deployment
     runs-on: ubuntu-latest
     environment: 'development'
+    
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
 
     steps:
       # Checkout the repository to the GitHub Actions runner
