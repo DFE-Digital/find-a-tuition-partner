@@ -212,7 +212,6 @@ jobs:
           blob_storage_client_secret: ${{ env.TF_VAR_blob_storage_client_secret }}
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
-          working_directory: ${{ env.APP_CODE_PATH }}
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -224,7 +223,7 @@ jobs:
         shell: bash
         run: |
           APP_BASE_URL=$(az afd endpoint show -g ${{ env.AZURE_RESOURCE_GROUP }} --profile-name ${{ env.AZURE_WEBAPP_NAME }}-cdn --endpoint-name ${{ env.AZURE_WEBAPP_NAME }}-cdnendpoint --query "hostName" -o tsv)
-          echo "APP_BASE_URL=$APP_BASE_URL" >> $GITHUB_ENV
+          echo "APP_BASE_URL=https://$APP_BASE_URL" >> $GITHUB_ENV
             
       - name: End to End Testing
         uses: cypress-io/github-action@v5

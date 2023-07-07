@@ -17,9 +17,6 @@ inputs:
   postgresql_server_admin_password:
     required: true
     type: string
-  working_directory:
-    required: true
-    type: string
   run_db_migrations_and_import_data_on_deployed_app:
     description: 'Run database migrations and import data on the deployed app'
     required: true
@@ -41,7 +38,6 @@ runs:
 
     - name: Run database migrations and import data
       shell: bash
-      working-directory: ${{ inputs.working_directory }}
       if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == false }}
       run: |
         echo "Running database migrations and import data..."
@@ -55,7 +51,6 @@ runs:
         
     - name: Run database migrations and import data on deployed app
       shell: bash
-      working-directory: ${{ inputs.working_directory }}
       if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == true }}
       run: |
         echo "Running database migrations and import data on deployed app..."
