@@ -54,6 +54,13 @@ jobs:
                          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER_NAME }}"  \
                          -backend-config="key=${{ env.TF_ACTION_WORKING_DIR }}/${{ env.TF_STATE_KEY }}" 
           
+      # Download saved plan from artifacts  
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+          path: ${{ env.TF_ACTION_WORKING_DIR }}
+          
       - name: 'Terraform Destroy'
         run: |
-          terraform destroy -auto-approve
+          terraform destroy -auto-approve tfplan.out
