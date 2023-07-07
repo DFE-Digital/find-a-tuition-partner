@@ -38,7 +38,7 @@ runs:
 
     - name: Run database migrations and import data
       shell: bash
-      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == false }}
+#      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == false }}
       run: |
         echo "Running database migrations and import data..."
         export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
