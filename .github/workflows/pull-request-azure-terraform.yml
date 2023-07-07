@@ -10,18 +10,19 @@ concurrency: pr-${{ github.event.number }}
 
 env:
   DOTNET_VERSION: '6.0.x'
+  NODE_VERSION: '16'
   APP_CODE_PATH: './UI'
-  APP_BASE_URL: "https://find-a-tp-pr-${{ github.event.number }}-cdnendpoint-ege4f6euezb5hgc0.z01.azurefd.net"
+  APP_BASE_URL: ''
   TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
   AZURE_WEBAPP_NAME: 'find-a-tp-pr-${{ github.event.number }}'
   AZURE_RESOURCE_GROUP: 's177d01-ntp-pr-${{ github.event.number }}'
   TF_VERSION: '~>1.4.5'
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
-  TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
-  TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-  TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
   TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
@@ -42,12 +43,7 @@ jobs:
         shell: bash
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
 
-    steps:
-      - name: 'Log into Azure'
-        uses: azure/login@v1
-        with:
-          creds: '{"clientId":"${{ env.TF_VAR_client_id }}","clientSecret":"${{ env.TF_VAR_client_secret }}","subscriptionId":"${{ env.TF_VAR_subscription_id }}","tenantId":"${{ env.TF_VAR_tenant_id }}"}'   
-          
+    steps:     
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
@@ -69,11 +65,6 @@ jobs:
 
       - name: 'Terraform Init'
         run: |
-          export ARM_CLIENT_ID=${{ env.TF_VAR_client_id }}
-          export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
-          export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
-          export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
-
           terraform init -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}"  \
                          -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}"  \
                          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER_NAME }}"  \
@@ -90,10 +81,6 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
-          export ARM_CLIENT_ID=${{ env.TF_VAR_client_id }}
-          export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
-          export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
-          export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform plan -var-file="vars-pr.tfvars" -var="postgresql_server_admin_username=${TF_VAR_postgresql_server_admin_username}" \
                             -var="postgresql_server_admin_password=${TF_VAR_postgresql_server_admin_password}" \
                             -var="environment=${TF_VAR_ENVIRONMENT}" \
@@ -171,39 +158,24 @@ jobs:
         working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
     
     steps:
-      - name: 'Log into Azure'
-        uses: azure/login@v1
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
         with:
-          creds: '{"clientId":"${{ env.TF_VAR_client_id }}","clientSecret":"${{ env.TF_VAR_client_secret }}","subscriptionId":"${{ env.TF_VAR_subscription_id }}","tenantId":"${{ env.TF_VAR_tenant_id }}"}'
+          az_tenant_id: ${{ env.ARM_TENANT_ID }}
+          az_subscription_id: ${{ env.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ env.ARM_CLIENT_ID }}
+          az_client_secret: ${{ env.ARM_CLIENT_SECRET }}
           
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
           
-     # Setup .NET Core SDK
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Build and publish web app
+        uses: ./.github/actions/build-and-publish-app
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-      # Run npm build 
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Bundle web assets
-        working-directory: ${{ env.APP_CODE_PATH }}
-        run: |
-          npm ci
-          npm run build
-      
-      # Run dotnet build and publish
-      - name: .NET Build and Publish
-        working-directory: ${{ env.APP_CODE_PATH }}
-        run: |
-            dotnet build --configuration Release
-            dotnet publish -c Release -o './publish'
+          dotnet_version: ${{ env.DOTNET_VERSION }}
+          node_version: ${{ env.NODE_VERSION }}
+          working_directory: ${{ env.APP_CODE_PATH }}
       
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
@@ -215,11 +187,6 @@ jobs:
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
-          export ARM_CLIENT_ID=${{ env.TF_VAR_client_id }}
-          export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
-          export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
-          export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
-
           terraform init -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}"  \
                          -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}"  \
                          -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER_NAME }}"  \
@@ -235,77 +202,30 @@ jobs:
       # Terraform Apply
       - name: Terraform Apply
         run: |
-          export ARM_CLIENT_ID=${{ env.TF_VAR_client_id }}
-          export ARM_CLIENT_SECRET=${{ env.TF_VAR_client_secret }}
-          export ARM_TENANT_ID=${{ env.TF_VAR_tenant_id }}
-          export ARM_SUBSCRIPTION_ID=${{ env.TF_VAR_subscription_id }}
           terraform apply -auto-approve tfplan.out
-#              
-#      - name: Install dependencies to run the database migrations and import data
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y sshpass
-#          
-#      - name: Delay Step to make sure website is up and running
-#        run: |
-#          echo "Waiting for 30 seconds..."
-#          sleep 30
-#          echo "Continuing with the workflow and Run database migrations and import data"
           
-      - name: Get workflow IP address
-        id: whats-my-ip
-        uses: ./.github/actions/whats-my-ip-address
-        
-      - name: Add Azure firewall rules
-        run: |
-          az postgres flexible-server firewall-rule create --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server --rule-name db-migrate-importer --start-ip-address ${{ steps.whats-my-ip.outputs.ip }}
-            
-      - name: Run database migrations and import data
-        working-directory: ${{ env.APP_CODE_PATH }}
-        run: |
-          export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
-          export BlobStorage__AccountName=s177p01sharedtpdata
-          export BlobStorage__ContainerName=ntp-tp-data
-          export BlobStorage__TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
-          export BlobStorage__ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
-          export "ConnectionStrings__FatpDatabase=Server=${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com;Database=${{ env.AZURE_WEBAPP_NAME }}-db;Port=5432;User Id=${{ env.TF_VAR_postgresql_server_admin_username }};Password=${{ env.TF_VAR_postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
-          dotnet ./publish/UI.dll import
+      - name: Run Database Migration and Data Importer
+        uses: ./.github/actions/run-db-migration-and-importer
+        with:
+          az_resource_group_name: ${{ env.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ env.AZURE_WEBAPP_NAME }}
+          blob_storage_client_secret: ${{ env.TF_VAR_blob_storage_client_secret }}
+          postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
+          postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
+          working_directory: ${{ env.APP_CODE_PATH }}
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: ${{ env.APP_CODE_PATH }}/publish
-          
-#      - name: Run database migrations and import data
-#        run: |
-#          # clean up any old ssh tunnels before we start
-#          for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
-#          
-#          az webapp create-remote-connection --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }}  -p 54321 &
-#          # startup time seems to be a bit unpredictable...
-#          timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
-#          
-#          sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost '
-#          export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
-#          export BlobStorage__AccountName=s177p01sharedtpdata
-#          export BlobStorage__ContainerName=ntp-tp-data
-#          export BlobStorage__TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
-#          export BlobStorage__ClientSecret=${{ env.TF_VAR_blob_storage_client_secret }}
-#          export "ConnectionStrings__FatpDatabase=Server=${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server.postgres.database.azure.com;Database=${{ env.AZURE_WEBAPP_NAME }}-db;Port=5432;User Id=${{ env.TF_VAR_postgresql_server_admin_username }};Password=${{ env.TF_VAR_postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
-#          cd /home/site/wwwroot
-#          dotnet ./UI.dll import
-#          '
-#          
-#          # clean up ssh tunnel(s)
-#          for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
-          
-      - name: Remove Azure firewall rules
+
+      - name: Get Front Door Hostname and Set to APP_BASE_URL
         shell: bash
-        if: always()
         run: |
-          az postgres flexible-server firewall-rule delete --rule-name db-migrate-importer --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-psqlflexible-server
-          
+          APP_BASE_URL=$(az afd endpoint show -g ${{ env.AZURE_WEBAPP_NAME }} --profile-name ${{ env.AZURE_WEBAPP_NAME }}-cdn --endpoint-name ${{ env.AZURE_WEBAPP_NAME }}-cdnendpoint --query "hostName" -o tsv)
+          echo "APP_BASE_URL=$APP_BASE_URL" >> $GITHUB_ENV
+            
       - name: End to End Testing
         uses: cypress-io/github-action@v5
         with:
@@ -318,6 +238,4 @@ jobs:
         with:
           name: cypress-screenshots
           path: UI/cypress/screenshots
-    
-          
               

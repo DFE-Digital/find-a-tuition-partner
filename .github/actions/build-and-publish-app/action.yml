@@ -1,0 +1,43 @@
+name: Build and Publish App
+description: Sets up .Net and Node js for specified version and builds and publish application
+
+inputs:
+  dotnet_version:
+    required: true
+    type: string
+  node_version:
+    required: true
+    type: string
+  working_directory:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:    
+    - name: Setup .NET Core ${{ inputs.dotnet_version }}
+      shell: bash
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+        
+    - name: Use Node.js ${{ inputs.node_version }}
+      shell: bash
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Bundle web assets
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+          npm ci
+          npm run build
+        
+    - name: .NET Build and Publish
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+          dotnet build --configuration Release
+          dotnet publish -c Release -o './publish'
