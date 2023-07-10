@@ -20,8 +20,9 @@ inputs:
   working_directory:
     required: true
     type: string
-  run_db_migrations_and_import_data_on_deployed_app:
-    description: 'Run database migrations and import data on the deployed app'
+    default: './UI'
+  run_db_migration_and_import_data_on_deployed_app:
+    description: 'Run database migration and import data on the deployed app'
     required: true
     default: false
     type: boolean
@@ -33,16 +34,19 @@ runs:
     - name: Get workflow IP address
       id: whats-my-ip
       uses: ./.github/actions/whats-my-ip-address
+      with:
+        is_enabled: ${{ inputs.run_db_migration_and_import_data_on_deployed_app == 'false' }}
 
     - name: Add Azure firewall rules
       shell: bash
+      if: ${{ inputs.run_db_migration_and_import_data_on_deployed_app == 'false' }}
       run: |
         az postgres flexible-server firewall-rule create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-psqlflexible-server --rule-name db-migrate-importer --start-ip-address ${{ steps.whats-my-ip.outputs.ip }}
 
     - name: Run database migrations and import data
       shell: bash
       working-directory: ${{ inputs.working_directory }}
-      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == 'false' }}
+      if: ${{ inputs.run_db_migration_and_import_data_on_deployed_app == 'false' }}
       run: |
         echo "Running database migrations and import data..."
         export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
@@ -53,9 +57,9 @@ runs:
         export "ConnectionStrings__FatpDatabase=Server=${{ inputs.az_webapp_name }}-psqlflexible-server.postgres.database.azure.com;Database=${{ inputs.az_webapp_name }}-db;Port=5432;User Id=${{ inputs.postgresql_server_admin_username }};Password=${{ inputs.postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
         dotnet ./publish/UI.dll import
         
-    - name: Run database migrations and import data on deployed app
+    - name: Run database migration and import data on deployed app
       shell: bash
-      if: ${{ inputs.run_db_migrations_and_import_data_on_deployed_app == 'true' }}
+      if: ${{ inputs.run_db_migration_and_import_data_on_deployed_app == 'true' }}
       run: |
         echo "Running database migrations and import data on deployed app..."
         # clean up any old ssh tunnels before we start
@@ -81,6 +85,6 @@ runs:
 
     - name: Remove Azure firewall rules
       shell: bash
-      if: always()
+      if: ${{ inputs.run_db_migration_and_import_data_on_deployed_app == 'false' }}
       run: |
         az postgres flexible-server firewall-rule delete --rule-name db-migrate-importer --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-psqlflexible-server --yes

@@ -1,6 +1,13 @@
 name: Whats My Ip Address
 description: Gets the workflow runner ip address
 
+inputs:
+  is_enabled:
+    description: 'Gets the workflow runner ip address If enabled'
+    required: true
+    default: false
+    type: boolean
+    
 outputs:
   ip:
     description: The workflow runner's ip address
@@ -12,6 +19,7 @@ runs:
   steps:
     - name: Get Workflow runner IP
       shell: bash
+      if: ${{ inputs.is_enabled == 'true' }}
       id: whats-my-ip
       run: |
         # Resolving IP Address

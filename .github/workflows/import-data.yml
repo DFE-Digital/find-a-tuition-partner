@@ -16,10 +16,10 @@ on:
       environment:
         description: 'Target environment'
         required: true
-        default: qa
+        default: development
         type: choice
         options:
-          - qa
+          - development
           - research
           - staging
           - production
@@ -28,36 +28,18 @@ jobs:
   migrate_import_data:
     name: Migrate Database and Import Data
     runs-on: ubuntu-latest
-
-    env:
-      CF_API: "https://api.london.cloud.service.gov.uk"
-      CF_ORG: "dfe"
-      CF_SPACE: ntp-${{ inputs.environment }}
+    environment: ${{ inputs.environment }}
 
     permissions:
       contents: read
 
     steps:
-      - name: Install the CF CLI
-        run: |
-          wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
-          sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
-
-      - name: Authenticate
-        env:
-          CF_USERNAME: ${{ secrets.CF_USERNAME }}
-          CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        run: |
-          echo "Logging into $CF_ORG/$CF_SPACE..."
-          cf api "${CF_API}"
-          cf auth
-          cf target -o "${CF_ORG}" -s "${CF_SPACE}"
-
-      - name: Run database migrations and import data
-        run: |
-          cf run-task find-a-tuition-partner-${{ inputs.environment }} \
-            --command "exec /home/vcap/deps/0/dotnet_publish/UI import" \
-            --name find-a-tuition-partner-${{ inputs.environment }}-data-import
-      
-      - name: Logout
-        run: cf logout
+      - name: Run Database Migration and Data Importer
+        uses: ./.github/actions/run-db-migration-and-importer
+        with:
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+          postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+          postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }} 
+          run_db_migration_and_import_data_on_deployed_app: true
