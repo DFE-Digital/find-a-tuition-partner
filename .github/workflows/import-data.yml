@@ -34,4 +34,3 @@ jobs:
           blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
           postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
           postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }} 
-          run_db_migration_and_import_data_on_deployed_app: true
