@@ -69,8 +69,7 @@ runs:
           # startup time seems to be a bit unpredictable...
           timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
         
-        sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost
-        
+        sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost << EOF
         export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
         export BlobStorage__AccountName=s177p01sharedtpdata
         export BlobStorage__ContainerName=ntp-tp-data
@@ -79,6 +78,7 @@ runs:
         export "ConnectionStrings__FatpDatabase=Server=${{ inputs.az_webapp_name }}-psqlflexible-server.postgres.database.azure.com;Database=${{ inputs.az_webapp_name }}-db;Port=5432;User Id=${{ inputs.postgresql_server_admin_username }};Password=${{ inputs.postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
         cd /home/site/wwwroot
         dotnet ./UI.dll import
+        EOF
         
         # clean up ssh tunnels
         for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
