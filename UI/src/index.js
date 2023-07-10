@@ -79,6 +79,12 @@ import PrintThisPage from "./javascript/print-this-page";
 var printThisPage = new PrintThisPage();
 printThisPage.init();
 
+import BackToTop from "./javascript/back-to-top";
+const backToTopBanner = document.querySelectorAll(
+  '[data-module="back-to-top-banner"]'
+);
+BackToTop.init(backToTopBanner);
+
 import CompareListCheckbox from "./javascript/compare-list-checkbox";
 const compareListCheckboxes = document.querySelectorAll(
   '[data-module="compare-list-checkbox"]'
