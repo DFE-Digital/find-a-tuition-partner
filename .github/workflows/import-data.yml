@@ -1,4 +1,4 @@
-name: Run Database Migrations and Import Data
+name: Run Database Migrations and Import Data New
 
 on:
   workflow_call:
@@ -6,11 +6,6 @@ on:
       environment:
         required: true
         type: string
-    secrets:
-      CF_USERNAME:
-        required: true
-      CF_PASSWORD:
-        required: true
   workflow_dispatch:
     inputs:
       environment:
@@ -26,12 +21,9 @@ on:
 
 jobs:
   migrate_import_data:
-    name: Migrate Database and Import Data
+    name: Migrate Database and Import Data New
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-
-    permissions:
-      contents: read
 
     steps:
       - name: Run Database Migration and Data Importer
