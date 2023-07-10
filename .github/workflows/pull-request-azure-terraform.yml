@@ -204,6 +204,12 @@ jobs:
         run: |
           terraform apply -auto-approve tfplan.out
           
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.APP_CODE_PATH }}/publish
+          
       - name: Run Database Migration and Data Importer
         uses: ./.github/actions/run-db-migration-and-importer
         with:
@@ -214,12 +220,6 @@ jobs:
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           working_directory: ${{ env.APP_CODE_PATH }}
           run_db_migration_and_import_data_on_deployed_app: true # testing running the db migration via ssh into the app service
-          
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ${{ env.APP_CODE_PATH }}/publish
 
       - name: Get Front Door Hostname and Set to APP_BASE_URL
         shell: bash
