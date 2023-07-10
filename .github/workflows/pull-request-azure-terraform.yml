@@ -213,6 +213,7 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           working_directory: ${{ env.APP_CODE_PATH }}
+          run_db_migration_and_import_data_on_deployed_app: true # testing running the db migration via ssh into the app service
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
