@@ -207,8 +207,7 @@ public class DataImporterService : IHostedService
     private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
     CancellationToken cancellationToken)
     {
-        //This will throw an error if there is not just 1 file
-        var dataFile = dataFileEnumerable.Single();
+        var dataFile = GetImportTuitionPartnerFile(dataFileEnumerable);
         var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions
@@ -343,6 +342,14 @@ public class DataImporterService : IHostedService
         }
 
         await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
+    }
+
+    private static DataFile GetImportTuitionPartnerFile(IDataFileEnumerable dataFileEnumerable)
+    {
+
+        var dataFile = dataFileEnumerable.OrderByDescending(x => x.Filename).FirstOrDefault();
+
+        return dataFile == null ? throw new InvalidDataException("No TP spreadsheets to import") : dataFile;
     }
 
     private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
