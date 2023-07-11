@@ -13,7 +13,6 @@ env:
   NODE_VERSION: '16'
   APP_CODE_PATH: './UI'
   APP_BASE_URL: ''
-  TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
   AZURE_WEBAPP_NAME: 'find-a-tp-pr-${{ github.event.number }}'
   AZURE_RESOURCE_GROUP: 's177d01-ntp-pr-${{ github.event.number }}'
   TF_VERSION: '~>1.4.5'
@@ -23,6 +22,7 @@ env:
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  TF_VAR_environment: pr-${{ github.event.number }}
   TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
   TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
@@ -81,12 +81,7 @@ jobs:
         id: tf-plan
         run: |
           export exitcode=0
-          terraform plan -var-file="vars-pr.tfvars" -var="postgresql_server_admin_username=${TF_VAR_postgresql_server_admin_username}" \
-                            -var="postgresql_server_admin_password=${TF_VAR_postgresql_server_admin_password}" \
-                            -var="environment=${TF_VAR_ENVIRONMENT}" \
-                            -var="govuk_notify_apikey=${TF_VAR_govuk_notify_apikey}" \
-                            -var="blob_storage_client_secret=${TF_VAR_blob_storage_client_secret}" \
-                            -var="monitor_email_receivers=${TF_VAR_monitor_email_receivers}"  -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
+          terraform plan -var-file="vars-pr.tfvars" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
           
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
           

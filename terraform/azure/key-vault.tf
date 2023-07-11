@@ -45,6 +45,12 @@ resource "azurerm_key_vault" "default" {
   }
 
   tags = local.tags
+
+  lifecycle {
+    ignore_changes = [
+      access_policy,
+    ]
+  }
 }
 
 resource "azurerm_key_vault_secret" "fatpdbconnectionstring" {
