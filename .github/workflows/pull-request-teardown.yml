@@ -14,7 +14,7 @@ env:
   TF_VERSION: '~>1.4.5'
   TF_ACTION_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
-  TF_VAR_ENVIRONMENT: pr-${{ github.event.number }}
+  TF_VAR_environment: pr-${{ github.event.number }}
   TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
   TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
@@ -62,9 +62,4 @@ jobs:
 
       - name: 'Terraform Destroy'
         run: |
-          terraform destroy -auto-approve -var-file="vars-pr.tfvars" -var="postgresql_server_admin_username=${TF_VAR_postgresql_server_admin_username}" \
-                            -var="postgresql_server_admin_password=${TF_VAR_postgresql_server_admin_password}" \
-                            -var="environment=${TF_VAR_ENVIRONMENT}" \
-                            -var="govuk_notify_apikey=${TF_VAR_govuk_notify_apikey}" \
-                            -var="blob_storage_client_secret=${TF_VAR_blob_storage_client_secret}" \
-                            -var="monitor_email_receivers=${TF_VAR_monitor_email_receivers}"
+          terraform destroy -auto-approve -var-file="vars-pr.tfvars"
