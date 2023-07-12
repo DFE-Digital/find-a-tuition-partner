@@ -1,0 +1,33 @@
+name: End to End Testing
+description: End to End Testing
+
+inputs:
+  az_resource_group_name:
+    required: true
+    type: string
+  az_webapp_name:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - name: Get Front Door Hostname and Set to APP_BASE_URL
+      shell: bash
+      run: |
+        APP_BASE_URL=$(az afd endpoint show -g ${{ inputs.az_resource_group_name }} --profile-name ${{ inputs.az_webapp_name }}-cdn --endpoint-name ${{ inputs.az_webapp_name }}-cdnendpoint --query "hostName" -o tsv)
+        echo "APP_BASE_URL=https://$APP_BASE_URL" >> $GITHUB_ENV
+
+    - name: End to End Testing
+      uses: cypress-io/github-action@v5
+      with:
+        working-directory: ./UI
+        config: baseUrl="${{ env.APP_BASE_URL }}/",video=false
+
+    - name: Store screenshots on test failure
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: UI/cypress/screenshots

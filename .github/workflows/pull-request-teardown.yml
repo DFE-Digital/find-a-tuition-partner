@@ -12,7 +12,7 @@ env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   TF_VERSION: '~>1.4.5'
-  TF_ACTION_WORKING_DIR: './terraform/azure'
+  TF_WORKING_DIR: './terraform/azure'
   TF_STATE_KEY: 'terraform.tfstate'
   TF_VAR_environment: pr-${{ github.event.number }}
   TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
@@ -30,7 +30,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+        working-directory: ${{ env.TF_WORKING_DIR }}
 
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -45,20 +45,25 @@ jobs:
           terraform_wrapper: false
 
       - name: 'Set TF State Key'
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "TF_STATE_KEY=pr-${{ github.event.pull_request.number }}-terraform.tfstate" >> $GITHUB_ENV
-          else
-            echo "TF_STATE_KEY=dev-terraform.tfstate" >> $GITHUB_ENV
-          fi
+        uses: ./.github/actions/set-terraform-state-key
+          
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ env.ARM_TENANT_ID }}
+          az_subscription_id: ${{ env.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ env.ARM_CLIENT_ID }}
+          az_client_secret: ${{ env.ARM_CLIENT_SECRET }}
       
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
-        run: |
-          terraform init -backend-config="resource_group_name=${{ secrets.TF_STATE_RESOURCE_GROUP }}"  \
-                         -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}"  \
-                         -backend-config="container_name=${{ secrets.TF_STATE_CONTAINER_NAME }}"  \
-                         -backend-config="key=${{ env.TF_ACTION_WORKING_DIR }}/${{ env.TF_STATE_KEY }}" 
+        uses: ./.github/actions/terraform-init
+        with:
+          backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+          backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+          backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+          tf_working_directory: ${{ env.TF_WORKING_DIR }}
+          tf_state_key: ${{ env.TF_STATE_KEY }}
 
       - name: 'Terraform Destroy'
         run: |

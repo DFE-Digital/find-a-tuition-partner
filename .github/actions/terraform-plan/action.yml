@@ -1,0 +1,128 @@
+name: Terraform Plan
+description: Terraform Plan
+
+inputs:
+  terraform_version:
+    required: true
+    type: string
+    default: '~>1.4.5'
+  github_token:
+    required: true
+    type: string
+  non_pr_env_name:
+    required: true
+    type: string
+    default: 'dev'
+  backend_config_resource_group_name:
+    required: true
+    type: string
+  backend_config_storage_account_name:
+    required: true
+    type: string
+  backend_config_container_name:
+    required: true
+    type: string
+  tf_working_directory:
+    required: true
+    type: string
+  tf_state_key:
+    required: true
+    type: string
+  tf_var_file_env:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    # Install the latest version of the Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ inputs.terraform_version }}
+        terraform_wrapper: false
+
+    - name: 'Set TF State Key'
+      uses: ./.github/actions/set-terraform-state-key
+      with:
+        non_pr_env_name: ${{ inputs.non_pr_env_name }}
+
+    - name: 'Terraform Init'
+      uses: ./.github/actions/terraform-init
+      with:
+        backend_config_resource_group_name: ${{ inputs.backend_config_resource_group_name }}
+        backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
+        backend_config_container_name: ${{ inputs.backend_config_container_name }}
+        tf_working_directory: ${{ inputs.tf_working_directory }}
+        tf_state_key: ${{ inputs.tf_state_key }}
+    
+    # Checks that all Terraform configuration files adhere to a canonical format
+    # Will fail the build if not
+    - name: Terraform Format
+      run: terraform fmt -check
+    
+    # Generates an execution plan for Terraform
+    # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
+    - name: Terraform Plan
+      id: tf-plan
+      run: |
+        export exitcode=0
+        terraform plan -var-file="vars-${{ inputs.tf_var_file_env }}.tfvars" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
+        
+        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+        
+        if [ $exitcode -eq 1 ]; then
+          echo Terraform Plan Failed!
+          exit 1
+        else 
+          exit 0
+        fi
+    
+    # Save plan to artifacts  
+    - name: Publish Terraform Plan
+      uses: actions/upload-artifact@v3
+      with:
+        name: tfplan
+        path: ${{ inputs.tf_working_directory }}/tfplan.out
+    
+    # Create string output of Terraform Plan
+    - name: Create String Output
+      id: tf-plan-string
+      run: |
+        TERRAFORM_PLAN=$(terraform show -no-color tfplan.out)
+        
+        delimiter="$(openssl rand -hex 8)"
+        echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+        echo "## Terraform Plan Output" >> $GITHUB_OUTPUT
+        echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo '```terraform' >> $GITHUB_OUTPUT
+        echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo "</details>" >> $GITHUB_OUTPUT
+        echo "${delimiter}" >> $GITHUB_OUTPUT
+    
+    # Publish Terraform Plan as task summary
+    - name: Publish Terraform Plan to Task Summary
+      env:
+        SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
+      run: |
+        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+    
+    # If this is a PR post the changes
+    - name: Push Terraform Output to PR
+      if: github.ref != 'refs/heads/main'
+      uses: actions/github-script@v6
+      env:
+        SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"
+      with:
+        github-token: ${{ inputs.github_token }}
+        script: |
+          const body = `${process.env.SUMMARY}`;
+          github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+          })

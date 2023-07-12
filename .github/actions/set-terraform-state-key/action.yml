@@ -1,0 +1,21 @@
+name: Set TF State Key
+description: Set TF State Key
+
+inputs:
+  non_pr_env_name:
+    required: true
+    type: string
+    default: 'dev'
+
+runs:
+  using: composite
+
+  steps:
+    - name: 'Set TF State Key'
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "TF_STATE_KEY=pr-${{ github.event.pull_request.number }}-terraform.tfstate" >> $GITHUB_ENV
+        else
+          echo "TF_STATE_KEY=${{ inputs.non_pr_env_name }}-terraform.tfstate" >> $GITHUB_ENV
+        fi
