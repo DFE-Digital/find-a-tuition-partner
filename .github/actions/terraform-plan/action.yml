@@ -44,6 +44,7 @@ runs:
         terraform_wrapper: false
 
     - name: 'Set TF State Key'
+      id: get-amended-tf-state-key
       uses: ./.github/actions/set-terraform-state-key
       with:
         non_pr_env_name: ${{ inputs.non_pr_env_name }}
@@ -55,7 +56,7 @@ runs:
         backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
         backend_config_container_name: ${{ inputs.backend_config_container_name }}
         tf_working_directory: ${{ inputs.tf_working_directory }}
-        tf_state_key: ${{ inputs.tf_state_key }}
+        tf_state_key: ${{ steps.get-amended-tf-state-key.TF_STATE_KEY }}
     
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
@@ -93,7 +94,7 @@ runs:
       id: tf-plan-string
       shell: bash
       run: |
-        TERRAFORM_PLAN=$(terraform show -no-color tfplan.out)
+        TERRAFORM_PLAN=$(terraform -chdir=${{ inputs.tf_working_directory }} show -no-color tfplan.out)
         
         delimiter="$(openssl rand -hex 8)"
         echo "summary<<${delimiter}" >> $GITHUB_OUTPUT

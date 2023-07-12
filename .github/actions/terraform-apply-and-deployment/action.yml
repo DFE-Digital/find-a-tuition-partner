@@ -60,6 +60,10 @@ inputs:
   postgresql_server_admin_password:
     required: true
     type: string
+  non_pr_env_name:
+    required: true
+    type: string
+    default: 'dev'
   run_database_migrations_and_import_data:
     description: 'Run database migration and import data on the deployed app'
     required: true
@@ -92,6 +96,12 @@ runs:
         terraform_version: ${{ inputs.terraform_version }}
         terraform_wrapper: false
 
+    - name: 'Set TF State Key'
+      id: get-amended-tf-state-key
+      uses: ./.github/actions/set-terraform-state-key
+      with:
+        non_pr_env_name: ${{ inputs.non_pr_env_name }}
+        
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       uses: ./.github/actions/terraform-init
@@ -100,7 +110,7 @@ runs:
         backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
         backend_config_container_name: ${{ inputs.backend_config_container_name }}
         tf_working_directory: ${{ inputs.tf_working_directory }}
-        tf_state_key: ${{ inputs.tf_state_key }}
+        tf_state_key: ${{ steps.get-amended-tf-state-key.TF_STATE_KEY }}
 
     # Download saved plan from artifacts  
     - name: Download Terraform Plan
@@ -113,7 +123,7 @@ runs:
     - name: Terraform Apply
       shell: bash
       run: |
-        terraform apply -auto-approve tfplan.out
+        terraform -chdir=${{ inputs.tf_working_directory }} apply -auto-approve tfplan.out
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
