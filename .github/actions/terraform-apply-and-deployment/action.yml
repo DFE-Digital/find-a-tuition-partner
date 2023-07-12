@@ -110,7 +110,7 @@ runs:
         backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
         backend_config_container_name: ${{ inputs.backend_config_container_name }}
         tf_working_directory: ${{ inputs.tf_working_directory }}
-        tf_state_key: ${{ steps.get-amended-tf-state-key.TF_STATE_KEY }}
+        tf_state_key: ${{ env.TF_STATE_KEY }}
 
     # Download saved plan from artifacts  
     - name: Download Terraform Plan
