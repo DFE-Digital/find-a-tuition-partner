@@ -34,6 +34,11 @@ inputs:
 
 runs:
   using: composite
+  
+  defaults:
+    run:
+      shell: bash
+      working-directory: ${{ inputs.tf_working_directory }}
 
   steps:
     # Install the latest version of the Terraform CLI
