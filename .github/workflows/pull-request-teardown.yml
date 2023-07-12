@@ -43,9 +43,6 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
           terraform_wrapper: false
-
-      - name: 'Set TF State Key'
-        uses: ./.github/actions/set-terraform-state-key
           
       - name: Azure CLI Login
         uses: ./.github/actions/azure-login
@@ -63,7 +60,6 @@ jobs:
           backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
           backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
           tf_working_directory: ${{ env.TF_WORKING_DIR }}
-          tf_state_key: ${{ env.TF_STATE_KEY }}
 
       - name: 'Terraform Destroy'
         run: |

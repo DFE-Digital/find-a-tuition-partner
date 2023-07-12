@@ -29,17 +29,11 @@ env:
 
 jobs:    
   terraform-plan:
-    name: 'Provision FaTP into Azure via Terraform plan'
+    name: 'Terraform plan'
     runs-on: ubuntu-latest
     environment: 'development'
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR }}
 
     steps:     
       # Checkout the repository to the GitHub Actions runner
@@ -60,17 +54,11 @@ jobs:
           tf_var_file_env: 'pr'
   
   terraform-apply:
-    name: 'Terraform Apply Deployment and End to End Testing'
+    name: 'Terraform Apply, Deployment and End to End Testing'
     runs-on: ubuntu-latest
     environment: 'development'
     needs: [terraform-plan]
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR }}
-    
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout

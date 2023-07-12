@@ -14,18 +14,24 @@ inputs:
   tf_working_directory:
     required: true
     type: string
-  tf_state_key:
-      required: true
-      type: string
+  non_pr_env_name:
+    required: true
+    default: 'dev'
+    description: Specify non PR environment
 
 runs:
   using: composite
 
   steps:
+    - name: 'Set TF State Key'
+      uses: ./.github/actions/set-terraform-state-key
+      with:
+        non_pr_env_name: ${{ inputs.non_pr_env_name }}
+        
     - name: 'Terraform Init'
       shell: bash
       run: |
         terraform -chdir=${{ inputs.tf_working_directory }} init -backend-config="resource_group_name=${{ inputs.backend_config_resource_group_name }}"  \
                        -backend-config="storage_account_name=${{ inputs.backend_config_storage_account_name }}"  \
                        -backend-config="container_name=${{ inputs.backend_config_container_name }}"  \
-                       -backend-config="key=${{ inputs.tf_working_directory }}/${{ inputs.tf_state_key }}" 
+                       -backend-config="key=${{ inputs.tf_working_directory }}/${{ env.TF_STATE_KEY }}" 

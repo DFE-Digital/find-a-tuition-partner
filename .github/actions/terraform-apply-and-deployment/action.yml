@@ -95,12 +95,6 @@ runs:
       with:
         terraform_version: ${{ inputs.terraform_version }}
         terraform_wrapper: false
-
-    - name: 'Set TF State Key'
-      id: get-amended-tf-state-key
-      uses: ./.github/actions/set-terraform-state-key
-      with:
-        non_pr_env_name: ${{ inputs.non_pr_env_name }}
         
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -110,7 +104,7 @@ runs:
         backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
         backend_config_container_name: ${{ inputs.backend_config_container_name }}
         tf_working_directory: ${{ inputs.tf_working_directory }}
-        tf_state_key: ${{ env.TF_STATE_KEY }}
+        non_pr_env_name: ${{ inputs.non_pr_env_name }}
 
     # Download saved plan from artifacts  
     - name: Download Terraform Plan

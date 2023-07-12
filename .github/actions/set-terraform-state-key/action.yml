@@ -6,10 +6,6 @@ inputs:
     required: true
     default: 'dev'
     description: Specify non PR environment
-outputs:
-  TF_STATE_KEY:
-    description: Get the TF_STATE_KEY
-    value: ${{ steps.get-amended-tf-state-key.outputs.TF_STATE_KEY }}
 
 runs:
   using: composite
@@ -17,7 +13,6 @@ runs:
   steps:
     - name: 'Set TF State Key'
       shell: bash
-      id: get-amended-tf-state-key
       run: |
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "TF_STATE_KEY=pr-${{ github.event.pull_request.number }}-terraform.tfstate" >> $GITHUB_ENV
