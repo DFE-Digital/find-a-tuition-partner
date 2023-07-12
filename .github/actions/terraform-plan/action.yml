@@ -60,12 +60,14 @@ runs:
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
     - name: Terraform Format
+      shell: bash
       run: terraform fmt -check
     
     # Generates an execution plan for Terraform
     # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
     - name: Terraform Plan
       id: tf-plan
+      shell: bash
       run: |
         export exitcode=0
         terraform plan -var-file="vars-${{ inputs.tf_var_file_env }}.tfvars" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
@@ -89,6 +91,7 @@ runs:
     # Create string output of Terraform Plan
     - name: Create String Output
       id: tf-plan-string
+      shell: bash
       run: |
         TERRAFORM_PLAN=$(terraform show -no-color tfplan.out)
         
@@ -105,6 +108,7 @@ runs:
     
     # Publish Terraform Plan as task summary
     - name: Publish Terraform Plan to Task Summary
+      shell: bash
       env:
         SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
       run: |
