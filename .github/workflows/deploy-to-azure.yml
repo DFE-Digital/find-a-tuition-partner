@@ -1,0 +1,81 @@
+name: Deploy to Azure
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      run_database_migrations_and_import_data:
+        required: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: development
+        type: choice
+        options:
+          - development
+          - research
+          - staging
+          - production
+      run_database_migrations_and_import_data:
+        description: 'Run database migrations and import data'
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency: azure-deploy-${{ inputs.environment }}
+
+    env:
+      WORKING_DIR: './UI'
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+
+      - name: Build and publish web app
+        uses: ./.github/actions/build-and-publish-app
+        with:
+          working_directory: ${{ env.WORKING_DIR }}
+
+      #  Will revisit this section later
+#      - name: Add DfE Analytics credentials.json
+#        run: |
+#          tee UI/dfe-analytics-credentials.json << EOF
+#          ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
+#          EOF
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          package: ${{ env.WORKING_DIR }}/publish
+
+      - name: Run Database Migration and Data Importer
+        uses: ./.github/actions/run-db-migration-and-importer
+        with:
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+          postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+          postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+          run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }} 

@@ -5,12 +5,15 @@ inputs:
   dotnet_version:
     required: true
     type: string
+    default: '6.0.x'
   node_version:
     required: true
     type: string
+    default: '16'
   working_directory:
     required: true
     type: string
+    default: './UI'
 
 runs:
   using: composite

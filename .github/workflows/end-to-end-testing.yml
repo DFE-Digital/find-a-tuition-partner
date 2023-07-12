@@ -6,21 +6,13 @@ on:
       environment:
         description: 'Target environment for the End to End tests'
         required: true
-        default: qa
+        default: development
         type: choice
         options:
-          - qa
+          - development
           - research
           - staging
           - production
-      username:
-        description: 'Username'
-        required: false 
-        type: string
-      password:
-        description: 'Password'
-        required: false 
-        type: string
 
 jobs:
   end-to-end-testing:
@@ -30,25 +22,13 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v4
+        
+      - name: End to End Testing
+        uses: ./.github/actions/end-to-end-testing
         with:
-          working-directory: ./UI
-          config: baseUrl=https://find-a-tuition-partner-${{ inputs.environment }}.london.cloudapps.digital/
-        env:
-          CYPRESS_username: ${{ inputs.username }}
-          CYPRESS_password: ${{ inputs.password }}
-
-      - name: Store screenshots on test failure
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: UI/cypress/screenshots
-      - name: Store videos
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: cypress-videos
-          path: UI/cypress/videos
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          az_tenant_id: ${{ env.ARM_TENANT_ID }}
+          az_subscription_id: ${{ env.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ env.ARM_CLIENT_ID }}
+          az_client_secret: ${{ env.ARM_CLIENT_SECRET }}

@@ -42,9 +42,6 @@ inputs:
   tf_working_directory:
     required: true
     type: string
-  tf_state_key:
-    required: true
-    type: string
   az_resource_group_name:
     required: true
     type: string
