@@ -70,7 +70,7 @@ runs:
       shell: bash
       run: |
         export exitcode=0
-        terraform plan -chdir=${{ inputs.tf_working_directory }} -var-file="vars-${{ inputs.tf_var_file_env }}.tfvars" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
+        terraform -chdir=${{ inputs.tf_working_directory }} plan -var-file="vars-${{ inputs.tf_var_file_env }}.tfvars" -detailed-exitcode -no-color -out tfplan.out || export exitcode=$?
         
         echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
         
