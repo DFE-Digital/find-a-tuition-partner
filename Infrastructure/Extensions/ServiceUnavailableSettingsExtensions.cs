@@ -17,7 +17,11 @@ namespace Infrastructure.Extensions
 
         public static void GetServiceUnavailableSettings(this ServiceUnavailableSettings serviceUnavailableSettings, IConfiguration configuration)
         {
-            serviceUnavailableSettings.Message = configuration.GetValue<string>("Message");
+            var message = configuration.GetValue<string>("Message");
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                serviceUnavailableSettings.Message = message;
+            }
 
             var startDateTime = configuration.GetValue<string>("StartDateTime");
             var endDateTime = configuration.GetValue<string>("EndDateTime");

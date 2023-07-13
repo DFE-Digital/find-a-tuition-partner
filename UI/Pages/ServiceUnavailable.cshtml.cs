@@ -27,8 +27,13 @@ namespace UI.Pages
 
             _logger.LogWarning("The service is currently unavailable until {EndDateTime}", _serviceUnavailableSettingsConfig.EndDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
 
-            Message = _serviceUnavailableSettingsConfig.Message
+            Message = _serviceUnavailableSettingsConfig.Message;
+
+            if (_serviceUnavailableSettingsConfig.EndDateTime.HasValue)
+            {
+                Message = Message
                 .Replace("{EndDateTime}", _serviceUnavailableSettingsConfig.EndDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
+            }
 
             if (_serviceUnavailableSettingsConfig.StartDateTime.HasValue)
             {
