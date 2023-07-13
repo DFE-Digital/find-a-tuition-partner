@@ -24,8 +24,13 @@ namespace UI.Pages
             }
 
             Message = _serviceUnavailableSettingsConfig.Message
-                .Replace("{StartDateTime}", _serviceUnavailableSettingsConfig.StartDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS))
                 .Replace("{EndDateTime}", _serviceUnavailableSettingsConfig.EndDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
+
+            if (_serviceUnavailableSettingsConfig.StartDateTime.HasValue)
+            {
+                Message = Message
+                    .Replace("{StartDateTime}", _serviceUnavailableSettingsConfig.StartDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
+            }
 
             return Page();
         }

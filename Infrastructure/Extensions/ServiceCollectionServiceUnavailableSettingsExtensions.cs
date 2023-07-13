@@ -17,9 +17,9 @@ public static class ServiceCollectionServiceUnavailableSettingsExtensions
 
     public static bool IsServiceUnavailable(this ServiceUnavailableSettings serviceUnavailableSettings)
     {
-        return serviceUnavailableSettings.StartDateTime != null &&
-            serviceUnavailableSettings.StartDateTime < DateTime.Now &&
+        return (serviceUnavailableSettings.StartDateTime == null ||
+            serviceUnavailableSettings.StartDateTime < DateTime.Now.ToLocalTime()) &&
             serviceUnavailableSettings.EndDateTime != null &&
-            serviceUnavailableSettings.EndDateTime > DateTime.Now;
+            serviceUnavailableSettings.EndDateTime > DateTime.Now.ToLocalTime();
     }
 }

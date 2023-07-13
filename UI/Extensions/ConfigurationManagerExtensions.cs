@@ -11,18 +11,18 @@ namespace UI.Extensions
             var startDateTime = configuration["ServiceUnavailableSettings:StartDateTime"];
             var endDateTime = configuration["ServiceUnavailableSettings:EndDateTime"];
 
-            if (!string.IsNullOrEmpty(startDateTime) &&
-                !string.IsNullOrEmpty(endDateTime))
+            if (!string.IsNullOrEmpty(endDateTime))
             {
                 if (currentPath != "/service-unavailable" &&
-                    DateTime.TryParseExact(startDateTime, "MM/dd/yyyy HH:mm:ss", null,
-                                              DateTimeStyles.AssumeLocal, out DateTime start) &&
                     DateTime.TryParseExact(endDateTime, "MM/dd/yyyy HH:mm:ss", null,
                                               DateTimeStyles.AssumeLocal, out DateTime end))
                 {
+                    var hasStartDate = DateTime.TryParseExact(startDateTime, "MM/dd/yyyy HH:mm:ss", null,
+                                              DateTimeStyles.AssumeLocal, out DateTime start);
+
                     var serviceUnavailableSettings = new ServiceUnavailableSettings()
                     {
-                        StartDateTime = start,
+                        StartDateTime = hasStartDate ? start : null,
                         EndDateTime = end
                     };
 
