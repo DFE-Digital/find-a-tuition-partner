@@ -26,4 +26,4 @@ azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/
 azure-blob-storage-tuition-partner-logos-folder-name: tp-logos/
 service-unavailable-message: 'You will be able to use the service from {EndDateTime}.' #If {StartDateTime} or {EndDateTime} are used in the message these will be replaced by the values set below
 service-unavailable-start-date-time: #MM/dd/yyyy HH:mm:ss e.g. '07/26/2023 17:00:00' - Not required, but if supplied then the current datetime must be after this for the site to be unavailable.
-service-unavailable-end-date-time: '07/13/2023 14:45:00' #MM/dd/yyyy HH:mm:ss e.g. '07/26/2023 18:00:00' - To set the site to unavailable then this must be supplied as a future date/time and the site will be unavailable until then.
+service-unavailable-end-date-time: '07/13/2023 15:10:00' #MM/dd/yyyy HH:mm:ss e.g. '07/26/2023 18:00:00' - To set the site to unavailable then this must be supplied as a future date/time and the site will be unavailable until then.

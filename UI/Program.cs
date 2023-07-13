@@ -220,6 +220,11 @@ var policyCollection = new HeaderPolicyCollection()
         });
 app.UseSecurityHeaders(policyCollection);
 
+// Ensure all date and currency formatting is set to UK/GB
+var cultureInfo = new CultureInfo("en-GB");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
 app.Use(async (context, next) =>
 {
     if (builder.Configuration.IsServiceUnavailable((string)context.Request.Path))
@@ -230,11 +235,6 @@ app.Use(async (context, next) =>
 
     await next();
 });
-
-// Ensure all date and currency formatting is set to UK/GB
-var cultureInfo = new CultureInfo("en-GB");
-CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 app.Run();
 

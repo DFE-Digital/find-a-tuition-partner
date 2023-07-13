@@ -1,4 +1,5 @@
-﻿using Infrastructure.Configuration;
+﻿using Application.Extensions;
+using Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,8 +19,8 @@ public static class ServiceCollectionServiceUnavailableSettingsExtensions
     public static bool IsServiceUnavailable(this ServiceUnavailableSettings serviceUnavailableSettings)
     {
         return (serviceUnavailableSettings.StartDateTime == null ||
-            serviceUnavailableSettings.StartDateTime < DateTime.Now.ToLocalTime()) &&
+            serviceUnavailableSettings.StartDateTime < DateTime.UtcNow.ToLocalDateTime()) &&
             serviceUnavailableSettings.EndDateTime != null &&
-            serviceUnavailableSettings.EndDateTime > DateTime.Now.ToLocalTime();
+            serviceUnavailableSettings.EndDateTime > DateTime.UtcNow.ToLocalDateTime();
     }
 }
