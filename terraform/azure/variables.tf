@@ -159,6 +159,7 @@ variable "service_log_storage_sas_expiry" {
 variable "service_log_ipv4_allow_list" {
   description = "IPv4 addresses that are authorised to modify the Log storage account"
   type        = list(string)
+  default     = []
 }
 
 variable "enable_monitoring" {
