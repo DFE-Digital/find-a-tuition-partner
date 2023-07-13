@@ -24,3 +24,6 @@ feature-flag-send-tuition-partner-emails-when-enquirer-delivered: true
 azure-blob-storage-container-name: ntp-tp-data
 azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/
 azure-blob-storage-tuition-partner-logos-folder-name: tp-logos/
+service-unavailable-message: 'You will be able to use the service from {EndDateTime}.'
+service-unavailable-start-date-time: #MM/dd/yyyy HH:mm:ss
+service-unavailable-end-date-time: #MM/dd/yyyy HH:mm:ss

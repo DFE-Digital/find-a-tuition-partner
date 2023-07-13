@@ -54,6 +54,7 @@ builder.Services.AddNotificationConfig(builder.Configuration)
     .AddNotificationClientServiceConfiguration(builder.Configuration);
 builder.Services.AddEmailSettingsConfig(builder.Configuration);
 builder.Services.AddFeatureFlagConfig(builder.Configuration);
+builder.Services.AddServiceUnavailableSettingsConfig(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();
@@ -218,6 +219,17 @@ var policyCollection = new HeaderPolicyCollection()
                 .None();
         });
 app.UseSecurityHeaders(policyCollection);
+
+app.Use(async (context, next) =>
+{
+    if (builder.Configuration.IsServiceUnavailable((string)context.Request.Path))
+    {
+        context.Response.Redirect("/service-unavailable");
+        return;
+    }
+
+    await next();
+});
 
 // Ensure all date and currency formatting is set to UK/GB
 var cultureInfo = new CultureInfo("en-GB");
