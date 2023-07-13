@@ -32,7 +32,7 @@ namespace UI.Pages
             if (_serviceUnavailableSettingsConfig.EndDateTime.HasValue)
             {
                 Message = Message
-                .Replace("{EndDateTime}", _serviceUnavailableSettingsConfig.EndDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
+                    .Replace("{EndDateTime}", _serviceUnavailableSettingsConfig.EndDateTime!.Value.ToString(StringConstants.DateTimeFormatGDS));
             }
 
             if (_serviceUnavailableSettingsConfig.StartDateTime.HasValue)
