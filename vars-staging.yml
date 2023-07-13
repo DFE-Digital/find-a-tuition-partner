@@ -25,5 +25,5 @@ azure-blob-storage-container-name: ntp-tp-data
 azure-blob-storage-tuition-partner-data-folder-name: tp-spreadsheets/
 azure-blob-storage-tuition-partner-logos-folder-name: tp-logos/
 service-unavailable-message: 'You will be able to use the service from {EndDateTime}.'
-service-unavailable-start-date-time: #MM/dd/yyyy HH:mm:ss
-service-unavailable-end-date-time: #MM/dd/yyyy HH:mm:ss
+service-unavailable-start-date-time: #MM/dd/yyyy HH:mm:ss e.g. '07/26/2023 17:00:00'
+service-unavailable-end-date-time: #MM/dd/yyyy HH:mm:ss e.g. '07/26/2023 18:00:00'
