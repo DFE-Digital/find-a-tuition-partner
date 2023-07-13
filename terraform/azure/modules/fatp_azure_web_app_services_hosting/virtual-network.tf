@@ -28,6 +28,8 @@ resource "azurerm_subnet" "web_app_service_infra_subnet" {
   resource_group_name  = local.resource_group.name
   address_prefixes     = [local.web_app_service_infra_subnet_cidr]
 
+  service_endpoints = ["Microsoft.Storage"]
+
   delegation {
     name = "delegation"
 

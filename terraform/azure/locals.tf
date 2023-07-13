@@ -17,6 +17,7 @@ locals {
   redis_cache_version                = var.redis_cache_version
   redis_cache_patch_schedule_day     = var.redis_cache_patch_schedule_day
   redis_cache_patch_schedule_hour    = var.redis_cache_patch_schedule_hour
+  service_log_ipv4_allow_list        = var.service_log_ipv4_allow_list
 
   tags = {
     "Environment"      = var.environment,

@@ -26,7 +26,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "default" {
-  name             = "allow-static-public-ip-fw"
+  name             = "azurerm-natgateway-public-static-ip-fw"
   server_id        = azurerm_postgresql_flexible_server.default.id
   start_ip_address = module.fatp_azure_web_app_services_hosting.azurerm_public_ip_address
   end_ip_address   = module.fatp_azure_web_app_services_hosting.azurerm_public_ip_address

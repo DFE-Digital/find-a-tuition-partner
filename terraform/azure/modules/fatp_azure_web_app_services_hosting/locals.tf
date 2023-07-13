@@ -50,6 +50,7 @@ locals {
   enable_service_logs            = var.enable_service_logs
   service_log_level              = var.service_log_level
   service_log_retention          = var.service_log_retention
+  service_log_ipv4_allow_list    = var.service_log_ipv4_allow_list
   service_log_storage_sas_start  = var.service_log_storage_sas_start
   service_log_storage_sas_expiry = var.service_log_storage_sas_expiry
   service_log_types              = toset(["app", "http"])

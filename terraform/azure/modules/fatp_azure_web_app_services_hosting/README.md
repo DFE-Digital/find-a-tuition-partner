@@ -39,8 +39,6 @@ module "azure_web_app_services_hosting" {
   enable_service_logs                       = true
   service_log_level                         = "Informational"
   service_log_retention                     = 30
-  service_log_storage_sas_start             = "2023-03-22T00:00:00Z"
-  service_log_storage_sas_expiry            = "2024-03-22T00:00:00Z"
 
   # Monitoring is disabled by default. If enabled, the following metrics will be monitored:
   # CPU usage, Memory usage, Latency, HTTP regional availability
@@ -285,6 +283,8 @@ module "azure_web_app_services_hosting" {
 | [azurerm_storage_account_blob_container_sas.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account_blob_container_sas) | data source |
 | [azurerm_virtual_network.existing_virtual_network](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/virtual_network) | data source |
 | [dns_a_record_set.web_app_service_ip_address](https://registry.terraform.io/providers/hashicorp/dns/latest/docs/data-sources/a_record_set) | data source |
+| [azurerm_storage_account_network_rules.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules) | resource |
+| [azurerm_monitor_diagnostic_setting.container_app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
 
 ## Inputs
 
@@ -340,8 +340,7 @@ module "azure_web_app_services_hosting" {
 | <a name="input_service_health_check_path"></a> [service\_health\_check\_path](#input\_service\_health\_check\_path) | Service health check path | `string` | `"/"` | no |
 | <a name="input_service_log_level"></a> [service\_log\_level](#input\_service\_log\_level) | Service log level | `string` | `"Information"` | no |
 | <a name="input_service_log_retention"></a> [service\_log\_retention](#input\_service\_log\_retention) | Service log retention in days | `number` | `30` | no |
-| <a name="input_service_log_storage_sas_expiry"></a> [service\_log\_storage\_sas\_expiry](#input\_service\_log\_storage\_sas\_expiry) | Service log sas token start date/time | `string` | `""` | no |
-| <a name="input_service_log_storage_sas_start"></a> [service\_log\_storage\_sas\_start](#input\_service\_log\_storage\_sas\_start) | Service log sas token start date/time | `string` | `""` | no |
+| <a name="input_service_log_ipv4_allow_list"></a> [service\_log\_ipv4\_allow\_list](#input\_service\_log\_ipv4\_allow\_list) | IPv4 addresses that are authorised to modify the Log storage account | `list(string)` | n/a | yes |
 | <a name="input_service_plan_os"></a> [service\_plan\_os](#input\_service\_plan\_os) | Service plan operating system. Valid values are `Windows` or `Linux`. | `string` | `"Windows"` | no |
 | <a name="input_service_plan_sku"></a> [service\_plan\_sku](#input\_service\_plan\_sku) | Service plan sku | `string` | `"S1"` | no |
 | <a name="input_service_stack"></a> [service\_stack](#input\_service\_stack) | The application stack for the web app. Valid values are `dotnet`, `dotnetcore`, `node`, `python`, `php`, `java`, `ruby` or `go`. | `string` | `"dotnet"` | no |

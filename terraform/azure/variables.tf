@@ -156,6 +156,11 @@ variable "service_log_storage_sas_expiry" {
   default     = ""
 }
 
+variable "service_log_ipv4_allow_list" {
+  description = "IPv4 addresses that are authorised to modify the Log storage account"
+  type        = list(string)
+}
+
 variable "enable_monitoring" {
   description = "Create an App Insights instance and notification group for the Web App Service"
   type        = bool
