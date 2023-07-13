@@ -4,9 +4,11 @@ using Application.Common.Interfaces;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure.Analytics;
+using Infrastructure.Configuration;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 using UI.Constants;
 using UI.Filters;
 using UI.Routing;
@@ -54,7 +56,7 @@ builder.Services.AddNotificationConfig(builder.Configuration)
     .AddNotificationClientServiceConfiguration(builder.Configuration);
 builder.Services.AddEmailSettingsConfig(builder.Configuration);
 builder.Services.AddFeatureFlagConfig(builder.Configuration);
-builder.Services.AddServiceUnavailableSettingsConfig(builder.Configuration);
+builder.Services.AddSingleton<IConfigureOptions<ServiceUnavailableSettings>, ServiceUnavailableSettingsConfigure>();
 builder.Services.AddRepositories();
 builder.Services.AddCqrs();
 builder.Services.LogKeyMetrics();
@@ -227,7 +229,8 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 app.Use(async (context, next) =>
 {
-    if (builder.Configuration.IsServiceUnavailable((string)context.Request.Path))
+    if ((string)context.Request.Path != "/service-unavailable" &&
+        builder.Configuration.IsServiceUnavailable())
     {
         context.Response.Redirect("/service-unavailable");
         return;
