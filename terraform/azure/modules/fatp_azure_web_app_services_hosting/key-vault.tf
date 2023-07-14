@@ -47,7 +47,7 @@ resource "azurerm_key_vault" "default" {
     bypass                     = "AzureServices"
     default_action             = "Deny"
     ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address]
-    virtual_network_subnet_ids = [azurerm_subnet.keyvault_subnet[0].id]
+    virtual_network_subnet_ids = [azurerm_subnet.keyvault_subnet.id]
   }
 
   tags = local.tags
