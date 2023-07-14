@@ -19,6 +19,7 @@ locals {
   redis_cache_private_endpoint_subnet_cidr = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 1)
   redis_cache_subnet_cidr                  = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 2)
   postgresql_subnet_cidr                   = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 3)
+  keyvault_subnet_cidr                     = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 4)
 
   service_plan_sku      = var.service_plan_sku
   service_plan_os       = var.service_plan_os
