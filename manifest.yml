@@ -40,3 +40,5 @@ applications:
     FeatureFlags:SendEmailsFromNtp: ((feature-flag-send-emails-from-ntp))
     FeatureFlags:VerifyEmail: ((feature-flag-verify-email))
     FeatureFlags:SendTuitionPartnerEmailsWhenEnquirerDelivered: ((feature-flag-send-tuition-partner-emails-when-enquirer-delivered))
+    ServiceUnavailableSettings:StartDateTime: ((service-unavailable-start-date-time))
+    ServiceUnavailableSettings:EndDateTime: ((service-unavailable-end-date-time))
