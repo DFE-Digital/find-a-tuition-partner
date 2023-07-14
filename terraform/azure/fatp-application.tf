@@ -1,12 +1,16 @@
 module "fatp_azure_web_app_services_hosting" {
   source = "./modules/fatp_azure_web_app_services_hosting"
 
-  environment    = local.environment
-  project_name   = local.project_name
-  service_name   = local.service_name
-  azure_location = local.azure_location
+  environment    = var.environment
+  project_name   = var.project_name
+  service_name   = var.service_name
+  azure_location = var.azure_location
 
-  tags = local.tags
+  tags = {
+    "Environment"      = var.environment,
+    "Product"          = var.service_offering,
+    "Service Offering" = var.service_offering
+  }
 
   launch_in_vnet                = var.launch_in_vnet
   existing_virtual_network      = var.existing_virtual_network
