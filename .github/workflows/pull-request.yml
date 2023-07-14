@@ -51,6 +51,8 @@ jobs:
       - name: Get workflow IP address
         id: whats-my-ip
         uses: ./.github/actions/whats-my-ip-address
+        with:
+          is_enabled: true
 
       - name: Add Storage Account firewall rules
         run: |
