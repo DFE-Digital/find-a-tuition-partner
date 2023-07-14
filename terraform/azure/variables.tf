@@ -305,60 +305,28 @@ variable "cdn_frontdoor_origin_fqdn_override" {
   default     = ""
 }
 
-variable "blobStorage_clientId" {
-  type    = string
-  default = "fdd09510-77b0-419f-b67c-2b5a25a073f0"
-}
-
-variable "blob_storage_client_secret" {
-  type = string
-}
-
-variable "blobStorage_containerName" {
-  type    = string
-  default = "ntp-tp-data"
-}
-
-variable "blobStorage_accountName" {
-  type    = string
-  default = "s177p01sharedtpdata"
-}
-
-variable "blobStorage_tenantId" {
-  type    = string
-  default = "9c7d9dd3-840c-4b3f-818e-552865082e16"
-}
-
-variable "emailSettings_allSentToEnquirer" {
-  type    = bool
-  default = true
-}
-
-variable "emailSettings_amalgamateResponses" {
-  type    = bool
-  default = true
-}
-
-variable "govuk_notify_apikey" {
-  type = string
-}
-
 variable "postgresql_server_admin_username" {
-  type = string
+  type        = string
+  description = "Specify a login that will be assigned to the administrator when creating the Postgres server"
+  default     = ""
 }
 
 variable "postgresql_server_admin_password" {
-  type = string
+  type        = string
+  description = "Specify a password that will be assigned to the administrator when creating the Postgres server"
+  default     = ""
 }
 
 variable "postgresql_sku_name" {
-  type    = string
-  default = "B_Standard_B1ms"
+  type        = string
+  description = "Specify the SKU to be used for the Postgres server"
+  default     = "B_Standard_B1ms"
 }
 
 variable "postgresql_storage_mb" {
-  type    = number
-  default = 32768
+  type        = number
+  description = "Specify the max amount of storage allowed for the Postgres server"
+  default     = 32768
 }
 
 variable "postgresql_backup_retention_days" {
@@ -372,8 +340,52 @@ variable "postgresql_ssl_enforcement_enabled" {
 }
 
 variable "postgresql_database_version" {
-  type    = string
-  default = 14
+  type        = string
+  description = "Specify the version of postgres server to run (either 11,12,13 or 14)"
+  default     = 14
+}
+
+variable "postgresql_availability_zone" {
+  type        = string
+  description = "Specify the availibility zone in which the Postgres server should be located"
+  default     = "1"
+}
+
+variable "postgresql_enabled_extensions" {
+  type        = string
+  description = "Specify a comma seperated list of Postgres extensions to enable. See https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-extensions#postgres-14-extensions"
+  default     = "CITEXT,UUID-OSSP"
+}
+
+variable "postgresql_collation" {
+  type        = string
+  description = "Specify the collation to be used for the Postgres database"
+  default     = "en_US.utf8"
+}
+
+variable "postgresql_charset" {
+  type        = string
+  description = "Specify the charset to be used for the Postgres database"
+  default     = "utf8"
+}
+
+variable "postgresql_network_connectivity_method" {
+  type        = string
+  description = "Specify postgresql networking method, public or private. See https://learn.microsoft.com/en-gb/azure/postgresql/flexible-server/concepts-networking"
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private"], var.postgresql_network_connectivity_method)
+    error_message = "Valid values for postgresql_network_connectivity_method are public or private."
+  }
+}
+
+variable "postgresql_firewall_ipv4_allow" {
+  type = map(object({
+    start_ip_address = string
+    end_ip_address   = string
+  }))
+  description = "Map of IP address ranges to add into the postgres firewall. Note: only applicable if postgresql_network_connectivity_method is set to public."
+  default     = {}
 }
 
 variable "redis_cache_capacity" {
@@ -406,4 +418,59 @@ variable "redis_cache_patch_schedule_hour" {
   description = "Redis Cache patch schedule hour"
   type        = number
   default     = 23
+}
+
+variable "redis_cache_firewall_ipv4_allow_list" {
+  description = "A list of IPv4 address that require remote access to the Redis server"
+  type        = list(string)
+  default     = []
+}
+
+variable "key_vault_secret_expiry_years" {
+  description = "Number of years from now when the Key Vault secret should be considered expired"
+  type        = number
+  default     = 5
+}
+
+variable "app_setting_blobStorage_clientId" {
+  type    = string
+  default = "fdd09510-77b0-419f-b67c-2b5a25a073f0"
+}
+
+variable "blob_storage_client_secret" {
+  type = string
+}
+
+variable "app_setting_blobStorage_containerName" {
+  type    = string
+  default = "ntp-tp-data"
+}
+
+variable "app_setting_blobStorage_accountName" {
+  type    = string
+  default = "s177p01sharedtpdata"
+}
+
+variable "app_setting_blobStorage_tenantId" {
+  type    = string
+  default = "9c7d9dd3-840c-4b3f-818e-552865082e16"
+}
+
+variable "app_setting_emailSettings_allSentToEnquirer" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_emailSettings_amalgamateResponses" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_emailSettings_mergeResponses" {
+  type    = bool
+  default = true
+}
+
+variable "govuk_notify_apikey" {
+  type = string
 }

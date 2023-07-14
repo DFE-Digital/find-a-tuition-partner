@@ -8,7 +8,7 @@ module "fatp_azure_web_app_services_hosting" {
 
   tags = local.tags
 
-  launch_in_vnet                = local.launch_in_vnet
+  launch_in_vnet                = var.launch_in_vnet
   existing_virtual_network      = var.existing_virtual_network
   existing_resource_group       = var.existing_resource_group
   virtual_network_address_space = var.virtual_network_address_space
@@ -20,19 +20,20 @@ module "fatp_azure_web_app_services_hosting" {
   service_worker_count  = var.service_worker_count
   service_app_settings = {
     "ASPNETCORE_ENVIRONMENT"            = var.aspnetcore_environment,
-    "BlobStorage_AccountName"           = var.blobStorage_accountName,
-    "BlobStorage_ClientId"              = var.blobStorage_clientId,
-    "BlobStorage_ContainerName"         = var.blobStorage_containerName,
-    "BlobStorage_TenantId"              = var.blobStorage_tenantId,
-    "EmailSettings_AllSentToEnquirer"   = var.emailSettings_allSentToEnquirer,
-    "EmailSettings_AmalgamateResponses" = var.emailSettings_amalgamateResponses,
-    "FatpAzureKeyVaultName"             = "${local.service_name}-${local.environment}-kv"
+    "BlobStorage_AccountName"           = var.app_setting_blobStorage_accountName,
+    "BlobStorage_ClientId"              = var.app_setting_blobStorage_clientId,
+    "BlobStorage_ContainerName"         = var.app_setting_blobStorage_containerName,
+    "BlobStorage_TenantId"              = var.app_setting_blobStorage_tenantId,
+    "EmailSettings_AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
+    "EmailSettings_AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
+    "EmailSettings_MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
+    "FatpAzureKeyVaultName"             = "${replace(local.resource_prefix, "-", "")}-kv"
   }
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min
   enable_service_logs                       = var.enable_service_logs
-  service_log_storage_sas_start             = var.service_log_storage_sas_start == "" ? timestamp() : var.service_log_storage_sas_start
-  service_log_storage_sas_expiry            = var.service_log_storage_sas_expiry == "" ? timeadd(timestamp(), "8760h") : var.service_log_storage_sas_expiry
+  service_log_storage_sas_start             = var.service_log_storage_sas_start
+  service_log_storage_sas_expiry            = var.service_log_storage_sas_expiry
   service_log_level                         = var.service_log_level
   service_log_retention                     = var.service_log_retention
 
@@ -61,4 +62,27 @@ module "fatp_azure_web_app_services_hosting" {
   cdn_frontdoor_waf_mode                          = var.cdn_frontdoor_waf_mode
   cdn_frontdoor_host_add_response_headers         = var.cdn_frontdoor_host_add_response_headers
   cdn_frontdoor_remove_response_headers           = var.cdn_frontdoor_remove_response_headers
+
+  # Postges and Redis stuff
+  postgresql_database_version            = var.postgresql_database_version
+  postgresql_server_admin_username       = var.postgresql_server_admin_username
+  postgresql_server_admin_password       = var.postgresql_server_admin_password
+  postgresql_storage_mb                  = var.postgresql_storage_mb
+  postgresql_sku_name                    = var.postgresql_sku_name
+  postgresql_ssl_enforcement_enabled     = var.postgresql_ssl_enforcement_enabled
+  postgresql_backup_retention_days       = var.postgresql_backup_retention_days
+  postgresql_availability_zone           = var.postgresql_availability_zone
+  postgresql_enabled_extensions          = var.postgresql_enabled_extensions
+  postgresql_collation                   = var.postgresql_collation
+  postgresql_charset                     = var.postgresql_charset
+  postgresql_network_connectivity_method = var.postgresql_network_connectivity_method
+  postgresql_firewall_ipv4_allow         = var.postgresql_firewall_ipv4_allow
+  redis_cache_capacity                   = var.redis_cache_capacity
+  redis_cache_family                     = var.redis_cache_family
+  redis_cache_sku                        = var.redis_cache_sku
+  redis_cache_version                    = var.redis_cache_version
+  redis_cache_patch_schedule_day         = var.redis_cache_patch_schedule_day
+  redis_cache_patch_schedule_hour        = var.redis_cache_patch_schedule_hour
+  redis_cache_firewall_ipv4_allow_list   = var.redis_cache_firewall_ipv4_allow_list
+  key_vault_secret_expiry_years          = var.key_vault_secret_expiry_years
 }

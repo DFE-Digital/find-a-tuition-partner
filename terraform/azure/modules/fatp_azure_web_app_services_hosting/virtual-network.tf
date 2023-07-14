@@ -77,3 +77,111 @@ resource "azurerm_subnet_network_security_group_association" "web_app_service_in
   subnet_id                 = azurerm_subnet.web_app_service_infra_subnet[0].id
   network_security_group_id = azurerm_network_security_group.web_app_service_infra_allow_frontdoor_inbound_only[0].id
 }
+
+resource "azurerm_subnet" "redis_cache_subnet" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  name                 = "${local.resource_prefix}rediscache"
+  virtual_network_name = local.virtual_network.name
+  resource_group_name  = local.resource_group.name
+  address_prefixes     = [local.redis_cache_subnet_cidr]
+}
+
+resource "azurerm_subnet_route_table_association" "redis_cache_subnet" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  subnet_id      = azurerm_subnet.redis_cache_subnet[0].id
+  route_table_id = azurerm_route_table.default[0].id
+}
+
+resource "azurerm_subnet" "redis_cache_private_endpoint_subnet" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  name                                      = "${local.resource_prefix}rediscacheprivateendpoint"
+  virtual_network_name                      = local.virtual_network.name
+  resource_group_name                       = local.resource_group.name
+  address_prefixes                          = [local.redis_cache_private_endpoint_subnet_cidr]
+  private_endpoint_network_policies_enabled = true
+}
+
+resource "azurerm_subnet_route_table_association" "redis_cache_private_endpoint_subnet" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  subnet_id      = azurerm_subnet.redis_cache_private_endpoint_subnet[0].id
+  route_table_id = azurerm_route_table.default[0].id
+}
+
+resource "azurerm_private_dns_zone" "redis_cache_private_link" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  name                = "${local.resource_prefix}.redis.cache.windows.net"
+  resource_group_name = local.resource_group.name
+  tags                = local.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "redis_cache_private_link" {
+  count = local.launch_in_vnet ? (
+    local.redis_cache_sku == "Premium" ? 1 : 0
+  ) : 0
+
+  name                  = "${local.resource_prefix}rediscacheprivatelink"
+  resource_group_name   = local.resource_group.name
+  private_dns_zone_name = azurerm_private_dns_zone.redis_cache_private_link[0].name
+  virtual_network_id    = local.virtual_network.id
+  tags                  = local.tags
+}
+
+resource "azurerm_subnet" "postgresql_subnet" {
+  count = local.launch_in_vnet && local.postgresql_network_connectivity_method == "private" ? 1 : 0
+
+  name                                      = "${local.resource_prefix}postgresql"
+  virtual_network_name                      = local.virtual_network.name
+  resource_group_name                       = local.resource_group.name
+  address_prefixes                          = [local.postgresql_subnet_cidr]
+  private_endpoint_network_policies_enabled = true
+  service_endpoints                         = ["Microsoft.Sql"]
+  delegation {
+    name = "fs"
+    service_delegation {
+      name = "Microsoft.DBforPostgreSQL/flexibleServers"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
+resource "azurerm_subnet_route_table_association" "postgresql_subnet" {
+  count = local.launch_in_vnet && local.postgresql_network_connectivity_method == "private" ? 1 : 0
+
+  subnet_id      = azurerm_subnet.postgresql_subnet[0].id
+  route_table_id = azurerm_route_table.default[0].id
+}
+
+resource "azurerm_private_dns_zone" "postgresql_private_link" {
+  count = local.launch_in_vnet && local.postgresql_network_connectivity_method == "private" ? 1 : 0
+
+  name                = "${local.resource_prefix}.postgres.database.azure.com"
+  resource_group_name = local.resource_group.name
+  tags                = local.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_private_link" {
+  count = local.launch_in_vnet && local.postgresql_network_connectivity_method == "private" ? 1 : 0
+
+  name                  = "${local.resource_prefix}pgsqlprivatelink"
+  resource_group_name   = local.resource_group.name
+  private_dns_zone_name = azurerm_private_dns_zone.postgresql_private_link[0].name
+  virtual_network_id    = local.virtual_network.id
+  tags                  = local.tags
+}
