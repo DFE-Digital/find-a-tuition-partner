@@ -83,7 +83,7 @@ resource "azurerm_monitor_diagnostic_setting" "default_redis_cache" {
   count = local.enable_monitoring ? 1 : 0
 
   name               = "${local.resource_prefix}-default-redis-diag"
-  target_resource_id = azurerm_redis_cache.default[0].id
+  target_resource_id = azurerm_redis_cache.default.id
 
   log_analytics_workspace_id     = azurerm_log_analytics_workspace.web_app_service.id
   log_analytics_destination_type = "Dedicated"
