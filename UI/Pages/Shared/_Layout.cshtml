@@ -9,6 +9,8 @@
   // Only allow search engines to index pages on the production environment that have explicitly set AllowIndexing to true
   var allowIndexing = HostEnvironment.IsProduction() && ViewData["AllowIndexing"] as bool? == true;
 
+  var serviceIsUnavailable = ViewData["ServiceIsUnavailable"] == null ? false : (bool)ViewData["ServiceIsUnavailable"]!;
+
   var includeBackToTopLink = ViewData["IncludeBackToTopLink"] == null ? false : (bool)ViewData["IncludeBackToTopLink"]!;
   var comparePricesSearchResultsModel = ViewData["IncludeComparePricesLink"] == null ? null : ViewData["IncludeComparePricesLink"] as Application.Common.Models.SearchResultsModel;
   var totalCompareListedTuitionPartners = ViewData["TotalCompareListedTuitionPartners"] == null ? 0 : (int)ViewData["TotalCompareListedTuitionPartners"]!;
@@ -202,16 +204,19 @@
   </header>
 
   <div class="govuk-width-container ">
-    <div class="govuk-phase-banner">
-      <p class="govuk-phase-banner__content" data-testid="phase-banner">
-        <strong class="govuk-tag govuk-phase-banner__content__tag">
-          beta
-        </strong>
-        <span class="govuk-phase-banner__text">
-          This is a new service – your <a href="@($"/feedback{fromReturnUrl}")" class="govuk-link" data-testid="phase-banner-feedback-link">feedback</a> will help us to improve it.
-        </span>
-      </p>
-    </div>
+    @if (!serviceIsUnavailable)
+    {
+      <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content" data-testid="phase-banner">
+          <strong class="govuk-tag govuk-phase-banner__content__tag">
+            beta
+          </strong>
+          <span class="govuk-phase-banner__text">
+            This is a new service – your <a href="@($"/feedback{fromReturnUrl}")" class="govuk-link" data-testid="phase-banner-feedback-link">feedback</a> will help us to improve it.
+          </span>
+        </p>
+      </div>
+    }
 
     @if (sessionDataExists)
     {
@@ -287,6 +292,8 @@
     <div class="govuk-width-container ">
       <div class="govuk-footer__meta">
         <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+          @if (!serviceIsUnavailable)
+          {
           <h2 class="govuk-visually-hidden">Support links</h2>
           <ul data-testid="govuk-footer-link" class="govuk-footer__inline-list">
             <li class="govuk-footer__inline-list-item">
@@ -305,6 +312,7 @@
               <a class="govuk-footer__link" data-testid="report-issues-link" href="@($"/report-issues{fromReturnUrl}")">Report issues</a>
             </li>
           </ul>
+          }
 
           <svg aria-hidden="true" focusable="false" class="govuk-footer__licence-logo"
                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 483.2 195.7" height="17" width="41">
