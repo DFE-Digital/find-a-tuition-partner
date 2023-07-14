@@ -61,26 +61,17 @@ jobs:
         with:
           is_enabled: true
           
-      - name: Check Storage Account Network Rules
-        id: check_network_rules
+      - name: Check And Add Storage Account Network Rules
         run: |
-            RULES=$(az storage account network-rule list --account-name findatppr${{ github.event.number }}logs --query '[*].{IP: ipAddressOrRange}' --output json | jq -r '.[] | .IP')
-            if [[ -z "$RULES" ]]; then
-            echo "No network rules found for the specified storage account"
-            echo "STORAGE_ACCOUNT_RULES_STATUS=failure" >> $GITHUB_ENV
+            storageName=findatppr${{ github.event.number }}logs
+            availability=$(az storage account network-rule list --account-name $storageName --query 'nameAvailable' --output ts)
+            if [[ $availability == "false" ]]; then
+              echo "Storage account $storageName exists."
+              az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             else
-            echo "Network rules found: $RULES"
-            echo "STORAGE_ACCOUNT_RULES_STATUS=success" >> $GITHUB_ENV
+              echo "Storage account $storageName does not exist."
             fi
           
-      - name: Add Storage Account Network rules
-        run: |
-          if [[ "${{ env.STORAGE_ACCOUNT_RULES_STATUS }}" == "failure" ]]; then
-            echo "Got failure but continue."
-          else
-            az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-          fi
-        
       - name: Terraform Plan
         id: tf-plan
         uses: ./.github/actions/terraform-plan
