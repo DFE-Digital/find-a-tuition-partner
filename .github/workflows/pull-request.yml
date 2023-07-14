@@ -64,7 +64,7 @@ jobs:
       - name: Check And Add Storage Account Network Rules
         run: |
             storageName=findatppr${{ github.event.number }}logs
-            availability=$(az storage account network-rule list --account-name $storageName --query 'nameAvailable' --output tsv)
+            availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
             if [[ $availability == "false" ]]; then
               echo "Storage account $storageName exists."
               az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
