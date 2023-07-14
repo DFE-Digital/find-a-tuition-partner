@@ -108,7 +108,7 @@ runs:
     
     # If this is a PR post the changes
     - name: Push Terraform Output to PR
-      if: github.ref != 'refs/heads/main'
+      if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
       env:
         SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"

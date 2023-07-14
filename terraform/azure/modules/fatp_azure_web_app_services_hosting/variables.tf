@@ -570,10 +570,6 @@ variable "app_setting_blobStorage_clientId" {
   default = "fdd09510-77b0-419f-b67c-2b5a25a073f0"
 }
 
-variable "blob_storage_client_secret" {
-  type = string
-}
-
 variable "app_setting_blobStorage_containerName" {
   type    = string
   default = "ntp-tp-data"
@@ -602,8 +598,4 @@ variable "app_setting_emailSettings_amalgamateResponses" {
 variable "app_setting_emailSettings_mergeResponses" {
   type    = bool
   default = true
-}
-
-variable "govuk_notify_apikey" {
-  type = string
 }
