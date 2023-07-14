@@ -63,6 +63,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/actions/whats-my-ip-address
+        
+      - name: Add Storage Account firewall rules
+        run: |
+          az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+        
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
         with:
@@ -80,6 +88,10 @@ jobs:
           blob_storage_client_secret: ${{ env.TF_VAR_blob_storage_client_secret }}
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
+          
+      - name: Remove Storage Account firewall rules
+        run: |
+          az storage account network-rule remove -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
