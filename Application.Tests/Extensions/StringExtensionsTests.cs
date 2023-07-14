@@ -412,4 +412,43 @@ public class StringExtensionsTests
         // Assert
         actualOutput.Should().BeEquivalentTo($"{clientPrefix.ToSeoUrl()}-{enquiryRef}-{EmailTemplateType.EnquirySubmittedConfirmationToEnquirer.DisplayName()}-{tpName.ToSeoUrl()}");
     }
+
+    [Theory]
+    [InlineData("No preference", TuitionSetting.NoPreference)]
+    [InlineData("no preference", TuitionSetting.NoPreference)]
+    [InlineData("Online", TuitionSetting.Online)]
+    [InlineData("online", TuitionSetting.Online)]
+    [InlineData("Face-to-face", TuitionSetting.FaceToFace)]
+    [InlineData("face-to-face", TuitionSetting.FaceToFace)]
+    [InlineData("Both face-to-face and online", TuitionSetting.Both)]
+    [InlineData("both face-to-face and online", TuitionSetting.Both)]
+    [InlineData("Both", TuitionSetting.NoPreference)]
+    [InlineData("both", TuitionSetting.NoPreference)]
+    [InlineData("Face to face", TuitionSetting.FaceToFace)]
+    [InlineData("face to face", TuitionSetting.FaceToFace)]
+    [InlineData("In School", TuitionSetting.FaceToFace)]
+    [InlineData("in School", TuitionSetting.FaceToFace)]
+    public void TryParseTribalTuitionSetting_Valid(string value, TuitionSetting expected)
+    {
+        // Act
+        var isValid = value.TryParseTribalTuitionSetting(out TuitionSetting tuitionSetting);
+
+        // Assert
+        tuitionSetting.Should().Be(expected);
+        isValid.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("abc")]
+    [InlineData("")]
+    [InlineData("Face-to-face and online")]
+    public void TryParseTribalTuitionSetting_InValid(string value)
+    {
+        // Act
+        var isValid = value.TryParseTribalTuitionSetting(out TuitionSetting tuitionSetting);
+
+        // Assert
+        tuitionSetting.Should().Be(default);
+        isValid.Should().BeFalse();
+    }
 }
