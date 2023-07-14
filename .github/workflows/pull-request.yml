@@ -40,6 +40,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/actions/whats-my-ip-address
+
+      - name: Add Storage Account firewall rules
+        run: |
+          az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+        
       - name: Terraform Plan
         id: tf-plan
         uses: ./.github/actions/terraform-plan
@@ -66,10 +74,6 @@ jobs:
       - name: Get workflow IP address
         id: whats-my-ip
         uses: ./.github/actions/whats-my-ip-address
-        
-      - name: Add Storage Account firewall rules
-        run: |
-          az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
         
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
