@@ -5,7 +5,6 @@ module "fatp_azure_web_app_services_hosting" {
   project_name   = var.project_name
   service_name   = var.service_name
   azure_location = var.azure_location
-  key_vault_name = "${var.service_name}-${var.environment}"
 
   tags = {
     "Environment"      = var.environment,
@@ -32,7 +31,7 @@ module "fatp_azure_web_app_services_hosting" {
     "EmailSettings_AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
     "EmailSettings_AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
     "EmailSettings_MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
-    "FatpAzureKeyVaultName"             = "${replace(key_vault_name, "-", "")}-kv"
+    "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv"
   }
 
   # App secrets
