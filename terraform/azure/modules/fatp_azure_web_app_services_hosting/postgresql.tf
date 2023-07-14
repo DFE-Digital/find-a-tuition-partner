@@ -25,7 +25,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
 
 resource "azurerm_postgresql_flexible_server_database" "default" {
   name      = "${local.resource_prefix}-db"
-  server_id = azurerm_postgresql_flexible_server.default[0].id
+  server_id = azurerm_postgresql_flexible_server.default.id
   collation = local.postgresql_collation
   charset   = local.postgresql_charset
 }
@@ -35,7 +35,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
   count = local.postgresql_enabled_extensions != "" ? 1 : 0
 
   name      = "azure.extensions"
-  server_id = azurerm_postgresql_flexible_server.default[0].id
+  server_id = azurerm_postgresql_flexible_server.default.id
   value     = local.postgresql_enabled_extensions
 }
 
@@ -43,7 +43,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "web_app_default_sta
   count = local.postgresql_network_connectivity_method == "public" ? 1 : 0
 
   name             = "${replace(local.resource_prefix, "-", "")}webapp"
-  server_id        = azurerm_postgresql_flexible_server.default[0].id
+  server_id        = azurerm_postgresql_flexible_server.default.id
   start_ip_address = azurerm_public_ip.nat_gateway[0].ip_address
   end_ip_address   = azurerm_public_ip.nat_gateway[0].ip_address
 }

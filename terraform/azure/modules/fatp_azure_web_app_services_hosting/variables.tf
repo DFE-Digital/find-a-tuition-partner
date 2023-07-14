@@ -599,3 +599,11 @@ variable "app_setting_emailSettings_mergeResponses" {
   type    = bool
   default = true
 }
+
+variable "govuk_notify_apikey" {
+  type = string
+}
+
+variable "blob_storage_client_secret" {
+  type = string
+}
