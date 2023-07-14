@@ -1,0 +1,21 @@
+﻿@page
+@using System.Net
+
+@model ServiceUnavailable
+@{
+  ViewData["Title"] = "Sorry, the service is unavailable";
+  ViewData["ServiceIsUnavailable"] = true;
+}
+
+<div class="govuk-width-container">
+  <div class="govuk-main-wrapper govuk-main-wrapper--l">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Sorry, the service is unavailable</h1>
+        <p class="govuk-body">
+          @Model.Message
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
