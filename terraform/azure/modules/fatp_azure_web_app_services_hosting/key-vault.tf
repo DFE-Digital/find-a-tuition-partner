@@ -1,5 +1,5 @@
 resource "azurerm_key_vault" "default" {
-  name                        = "${local.service_name}-${local.environment}-kv"
+  name                        = "${replace(local.resource_prefix, "-", "")}-kv"
   location                    = local.azure_location
   resource_group_name         = local.resource_group.name
   sku_name                    = "standard"
