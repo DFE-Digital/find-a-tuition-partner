@@ -44,7 +44,7 @@ jobs:
       - name: Calculate Vnet Address Space
         id: calculate_vnet_address_pace
         run: |
-          VNET_ADDRESS_SPACE_CALCULATED=$(( ${github.event.number} % 256 ))
+          VNET_ADDRESS_SPACE_CALCULATED=$(( ${GITHUB_RUN_NUMBER} % 256 ))
           echo "TF_VAR_virtual_network_address_space=${VNET_ADDRESS_SPACE_CALCULATED}" >> $GITHUB_ENV
         
       - name: Azure CLI Login
