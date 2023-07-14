@@ -26,7 +26,7 @@ env:
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-  TF_VAR_virtual_network_address_space: "172.${{ github.event.number % 256 }}.0.0/12"
+  TF_VAR_virtual_network_address_space: "172.0.0.0/12"
 
 jobs:    
   terraform-plan:
@@ -40,6 +40,12 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Calculate Vnet Address Space
+        id: calculate_vnet_address_pace
+        run: |
+          VNET_ADDRESS_SPACE_CALCULATED=$(( ${github.event.number} % 256 ))
+          echo "TF_VAR_virtual_network_address_space=${VNET_ADDRESS_SPACE_CALCULATED}" >> $GITHUB_ENV
         
       - name: Azure CLI Login
         uses: ./.github/actions/azure-login
