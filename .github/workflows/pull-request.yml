@@ -60,15 +60,15 @@ jobs:
             RULES=$(az storage account network-rule list --account-name findatppr${{ github.event.number }}logs --query '[*].{IP: ipAddressOrRange}' --output json | jq -r '.[] | .IP')
             if [[ -z "$RULES" ]]; then
             echo "No network rules found for the specified storage account"
-            echo "::set-output name=rules_status::failure"
+            echo "STORAGE_ACCOUNT_RULES_STATUS=failure" >> $GITHUB_ENV
             else
             echo "Network rules found: $RULES"
-            echo "::set-output name=rules_status::success"
+            echo "STORAGE_ACCOUNT_RULES_STATUS=success" >> $GITHUB_ENV
             fi
           
       - name: Add Storage Account Network rules
         run: |
-          if [[ "${{ steps.check_network_rules.outputs.rules_status }}" == "failure" ]]; then
+          if [[ "${{ env.STORAGE_ACCOUNT_RULES_STATUS }}" == "failure" ]]; then
             echo "Got failure but continue."
           else
             az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}

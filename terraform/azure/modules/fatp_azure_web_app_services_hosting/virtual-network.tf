@@ -188,7 +188,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_private_lin
 
 resource "azurerm_subnet" "keyvault_subnet" {
   name                 = "${local.resource_prefix}keyvault"
-  address_prefixes     = local.keyvault_subnet_cidr
+  address_prefixes     = [local.keyvault_subnet_cidr]
   virtual_network_name = local.virtual_network.name
   resource_group_name  = local.resource_group.name
   service_endpoints    = ["Microsoft.KeyVault"]
