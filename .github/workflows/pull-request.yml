@@ -53,10 +53,26 @@ jobs:
         uses: ./.github/actions/whats-my-ip-address
         with:
           is_enabled: true
-
-      - name: Add Storage Account firewall rules
+          
+      - name: Check Storage Account Network Rules
+        id: check_network_rules
         run: |
-          az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+            RULES=$(az storage account network-rule list --account-name findatppr${{ github.event.number }}logs --query '[*].{IP: ipAddressOrRange}' --output json | jq -r '.[] | .IP')
+            if [[ -z "$RULES" ]]; then
+            echo "No network rules found for the specified storage account"
+            echo "::set-output name=rules_status::failure"
+            else
+            echo "Network rules found: $RULES"
+            echo "::set-output name=rules_status::success"
+            fi
+          
+      - name: Add Storage Account Network rules
+        run: |
+          if [[ "${{ steps.check_network_rules.outputs.rules_status }}" == "failure" ]]; then
+            echo "Got failure but continue."
+          else
+            az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
         
       - name: Terraform Plan
         id: tf-plan
@@ -103,7 +119,7 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
-      - name: Remove Storage Account firewall rules
+      - name: Remove Storage Account Network rules
         run: |
           az storage account network-rule remove -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             
