@@ -57,30 +57,3 @@ resource "azurerm_monitor_diagnostic_setting" "web_app" {
     }
   }
 }
-
-data "azurerm_storage_account_blob_container_sas" "logs" {
-  for_each = local.enable_service_logs ? local.service_log_types : []
-
-  connection_string = azurerm_storage_account.logs[0].primary_connection_string
-  container_name    = azurerm_storage_container.logs[each.value].name
-  https_only        = true
-
-  start  = local.service_log_storage_sas_start != "" ? local.service_log_storage_sas_start : formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timestamp())
-  expiry = local.service_log_storage_sas_expiry != "" ? local.service_log_storage_sas_expiry : formatdate("YYYY-MM-DD'T'hh:mm:ssZ", timeadd(timestamp(), "+8760h")) # +12 months
-
-  permissions {
-    read   = true
-    add    = true
-    create = true
-    write  = true
-    delete = true
-    list   = true
-  }
-
-  lifecycle {
-    ignore_changes = [
-      start,
-      expiry
-    ]
-  }
-}
