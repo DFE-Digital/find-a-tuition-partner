@@ -78,23 +78,6 @@ jobs:
                   echo "No available address space could be found."
             fi
           
-      - name: Get workflow IP address
-        id: whats-my-ip
-        uses: ./.github/actions/whats-my-ip-address
-        with:
-          is_enabled: true
-          
-      - name: Check And Add Storage Account Network Rules
-        run: |
-            storageName=findatppr${{ github.event.number }}logs
-            availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
-            if [[ $availability == "false" ]]; then
-              echo "Storage account $storageName exists."
-              az storage account network-rule add -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-            else
-              echo "Storage account $storageName does not exist."
-            fi
-          
       - name: Terraform Plan
         id: tf-plan
         uses: ./.github/actions/terraform-plan
@@ -118,31 +101,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - name: Azure CLI Login
-        uses: ./.github/actions/azure-login
-        with:
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-        
-      - name: Get workflow IP address
-        id: whats-my-ip
-        uses: ./.github/actions/whats-my-ip-address
-        with:
-          is_enabled: true
-          
-      - name: Add Key Vault firewall rules
-        run: |
-          # Check if Key Vault exists
-          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
-          if [ -z "$EXISTS" ]; then
-            # Key Vault does not exist, ignore
-            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
-          else
-            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-          fi
-        
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
         with:
@@ -161,9 +119,6 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
-      - name: Remove firewall rules
-        run: |
-          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing

@@ -32,3 +32,9 @@ output "azurerm_public_ip_address" {
   description = "Get the public static IP"
 }
 
+output "client_ip" {
+  value       = local.client_ip
+  description = "The client IP address"
+}
+
+

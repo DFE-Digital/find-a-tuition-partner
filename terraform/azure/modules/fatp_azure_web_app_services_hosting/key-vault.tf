@@ -11,13 +11,11 @@ resource "azurerm_key_vault" "default" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address]
+    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, local.client_ip]
     virtual_network_subnet_ids = [azurerm_subnet.keyvault_subnet.id]
   }
 
   tags = local.tags
-
-  depends_on = [azurerm_redis_cache.default]
 }
 
 resource "azurerm_key_vault_access_policy" "serviceprinciplepolicy" {
@@ -62,13 +60,6 @@ resource "azurerm_key_vault_secret" "fatpdbconnectionstring" {
   value           = "Server=${azurerm_postgresql_flexible_server.default.name}.postgres.database.azure.com;Database=${azurerm_postgresql_flexible_server_database.default.name};Port=5432;User Id=${azurerm_postgresql_flexible_server.default.administrator_login};Password=${azurerm_postgresql_flexible_server.default.administrator_password};Ssl Mode=Require;TrustServerCertificate=True;"
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
-
-  lifecycle {
-    ignore_changes = [
-      value,
-      expiration_date
-    ]
-  }
 }
 
 resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
@@ -78,12 +69,6 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
 
-  lifecycle {
-    ignore_changes = [
-      value,
-      expiration_date
-    ]
-  }
 }
 
 resource "azurerm_key_vault_secret" "govuknotifyapikey" {
@@ -91,13 +76,6 @@ resource "azurerm_key_vault_secret" "govuknotifyapikey" {
   value           = var.govuk_notify_apikey
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
-
-  lifecycle {
-    ignore_changes = [
-      value,
-      expiration_date
-    ]
-  }
 }
 
 resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
@@ -105,13 +83,6 @@ resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
   value           = var.blob_storage_client_secret
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
-
-  lifecycle {
-    ignore_changes = [
-      value,
-      expiration_date
-    ]
-  }
 }
 
 resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {

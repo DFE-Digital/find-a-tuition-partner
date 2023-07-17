@@ -4,6 +4,7 @@ locals {
   service_name    = "${var.service_name}-${local.environment}"
   resource_prefix = local.service_name
   azure_location  = var.azure_location
+  client_ip       = data.http.clientip.body
 
   tags = var.tags
 

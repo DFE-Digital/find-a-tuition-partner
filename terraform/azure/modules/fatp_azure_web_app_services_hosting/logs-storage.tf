@@ -12,11 +12,6 @@ resource "azurerm_storage_account" "logs" {
 
   tags = local.tags
 
-  lifecycle {
-    ignore_changes = [
-      network_rules,
-    ]
-  }
 }
 
 resource "azurerm_storage_container" "logs" {
@@ -34,7 +29,7 @@ resource "azurerm_storage_account_network_rules" "logs" {
   default_action             = "Deny"
   bypass                     = ["AzureServices"]
   virtual_network_subnet_ids = [azurerm_subnet.web_app_service_infra_subnet[0].id]
-  ip_rules                   = local.service_log_ipv4_allow_list
+  ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, local.client_ip]
 
   private_link_access {
     endpoint_resource_id = local.service_app.id
