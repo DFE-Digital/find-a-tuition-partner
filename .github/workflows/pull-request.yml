@@ -87,7 +87,7 @@ jobs:
           
       - name: Set workflow IP address 
         run: |
-          ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }} = ${{ steps.whats-my-ip.outputs.ip }}
+          echo "WORKFLOW_RUNNER_IP_ADDRESS=${{ steps.whats-my-ip.outputs.ip }}" >> $GITHUB_ENV
           echo "WORKFLOW_RUNNER_IP_ADDRESS: ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}"
           
       - name: Check And Add Storage Account Network Rules
