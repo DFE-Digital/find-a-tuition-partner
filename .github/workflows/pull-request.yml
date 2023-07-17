@@ -26,7 +26,7 @@ env:
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-  TF_VAR_virtual_network_address_space: "172.0.0.0/12"
+  TF_VAR_virtual_network_address_space: "172.0.0.0/16"
 
 jobs:    
   terraform-plan:
@@ -41,12 +41,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - name: Calculate Vnet Address Space
-        id: calculate_vnet_address_pace
-        run: |
-          VNET_ADDRESS_SPACE_CALCULATED=$(( ${GITHUB_RUN_NUMBER} % 256 ))
-          echo "TF_VAR_virtual_network_address_space=172.${VNET_ADDRESS_SPACE_CALCULATED}.0.0/16" >> $GITHUB_ENV
-        
       - name: Azure CLI Login
         uses: ./.github/actions/azure-login
         with:
@@ -54,6 +48,30 @@ jobs:
           az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           az_client_id: ${{ secrets.ARM_CLIENT_ID }}
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          
+      - name: Check and create unique VNet Address Space
+        run: |
+          # Define new VNet information
+          NEW_VNET_ADDRESS_BASE="172.0"
+          NEW_VNET_ADDRESS_SUFFIX="/16"
+          # Fetch existing VNets in the subscription
+          VNets=$(az network vnet list --query '[].{Name:name, AddressSpace:addressSpace.addressPrefixes[0]}')
+          
+          # Loop to generate a unique address space
+          for ((i=0; i<=255; i++))
+          do
+            for ((j=0; j<=255; j++))
+            do
+              NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
+              # Check if new VNet address space already exists
+              if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
+                   echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
+                   exit 0
+              fi
+            done
+          done
+          
+          echo "No available address space could be found."
         
       - name: Get workflow IP address
         id: whats-my-ip
