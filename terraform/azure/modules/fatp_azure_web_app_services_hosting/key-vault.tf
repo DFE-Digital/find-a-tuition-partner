@@ -16,6 +16,8 @@ resource "azurerm_key_vault" "default" {
   }
 
   tags = local.tags
+
+  depends_on = [azurerm_redis_cache.default]
 }
 
 resource "azurerm_key_vault_access_policy" "serviceprinciplepolicy" {

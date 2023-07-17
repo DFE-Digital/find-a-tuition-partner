@@ -163,7 +163,6 @@ jobs:
           
       - name: Remove firewall rules
         run: |
-          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
           az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
             
       - name: End to End Testing
