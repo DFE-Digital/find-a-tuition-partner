@@ -35,7 +35,6 @@ jobs:
     environment: 'development'
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
-      workflowRunnerIpAddress: ${{ steps.whats-my-ip.outputs.ip }}
 
     steps:     
       # Checkout the repository to the GitHub Actions runner
@@ -96,18 +95,6 @@ jobs:
               echo "Storage account $storageName does not exist."
             fi
           
-      - name: Add Key Vault firewall rules
-        run: |
-          # Check if Key Vault exists
-          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
-          if [ -z "$EXISTS" ]; then
-            # Key Vault does not exist, ignore
-            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
-          else
-            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-          fi
-          
-          
       - name: Terraform Plan
         id: tf-plan
         uses: ./.github/actions/terraform-plan
@@ -119,7 +106,12 @@ jobs:
           backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
           tf_working_directory: ${{ env.TF_WORKING_DIR }}
           tf_var_file_env: 'pr'
-  
+          
+      - name: Remove Firewall rules
+        if: always()
+        run: |
+          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
+          
   terraform-apply:
     name: 'Terraform Apply, Deployment and End to End Testing'
     runs-on: ubuntu-latest
@@ -130,6 +122,23 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/actions/whats-my-ip-address
+        with:
+          is_enabled: true
+          
+      - name: Add Key Vault firewall rules
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
+          if [ -z "$EXISTS" ]; then
+            # Key Vault does not exist, ignore
+            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
+          else
+            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
         
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
@@ -152,8 +161,7 @@ jobs:
       - name: Remove Storage Account Network rules
         if: always()
         run: |
-          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ needs.terraform-plan.outputs.workflowRunnerIpAddress }}
-          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ needs.terraform-plan.outputs.workflowRunnerIpAddress }}
+          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
