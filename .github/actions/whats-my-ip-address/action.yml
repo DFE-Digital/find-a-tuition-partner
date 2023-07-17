@@ -51,6 +51,7 @@ runs:
             if [[ $ip =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                 unbuffered_echo "IP Address: $ip"
                 echo "ip=$ip" >> $GITHUB_OUTPUT 
+                echo "WORKFLOW_RUNNER_IP_ADDRESS=$ip" >> $GITHUB_ENV
                 exit 0
             fi
         

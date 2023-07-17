@@ -27,6 +27,7 @@ env:
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
   TF_VAR_virtual_network_address_space: "172.0.0.0/16"
+  WORKFLOW_RUNNER_IP_ADDRESS: ''
 
 jobs:    
   terraform-plan:
@@ -54,24 +55,31 @@ jobs:
           # Define new VNet information
           NEW_VNET_ADDRESS_BASE="172.0"
           NEW_VNET_ADDRESS_SUFFIX="/16"
+          EXISTING_VNET_NAME=${{ env.AZURE_WEBAPP_NAME}}-default
           # Fetch existing VNets in the subscription
           VNets=$(az network vnet list --query '[].{Name:name, AddressSpace:addressSpace.addressPrefixes[0]}')
           
-          # Loop to generate a unique address space
-          for ((i=0; i<=255; i++))
-          do
-            for ((j=0; j<=255; j++))
-            do
-              NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
-              # Check if new VNet address space already exists
-              if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
-                   echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
-                   exit 0
-              fi
-            done
-          done
+          # Check if the VNet address space already exists in the target resource group
+          EXISTS=$(az network vnet show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name=$EXISTING_VNET_NAME --query "addressSpace.addressPrefixes[0]" --output tsv)
           
-          echo "No available address space could be found."
+          if [ -z "$EXISTS" ]; then
+             # Loop to generate a unique address space
+             for ((i=0; i<=255; i++))
+             do
+               for ((j=0; j<=255; j++))
+               do
+                 NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
+                 # Check if new VNet address space already exists
+                 if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
+                      echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
+                      echo "The Vnet address space: $TF_VAR_virtual_network_address_space"
+                      exit 0
+                 fi
+               done
+             done
+          
+             echo "No available address space could be found."
+          fi
         
       - name: Get workflow IP address
         id: whats-my-ip
@@ -85,10 +93,22 @@ jobs:
             availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
             if [[ $availability == "false" ]]; then
               echo "Storage account $storageName exists."
-              az storage account network-rule add -g s177d01-ntp-pr-${{ github.event.number }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+              az storage account network-rule add -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             else
               echo "Storage account $storageName does not exist."
             fi
+          
+      - name: Add Key Vault firewall rules
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --output tsv 2>/dev/null)
+          if [ -z "$EXISTS" ]; then
+            # Key Vault does not exist, ignore
+            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
+          else
+            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+          fi
+          
           
       - name: Terraform Plan
         id: tf-plan
@@ -113,10 +133,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - name: Get workflow IP address
-        id: whats-my-ip
-        uses: ./.github/actions/whats-my-ip-address
-        
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
         with:
@@ -136,8 +152,10 @@ jobs:
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
       - name: Remove Storage Account Network rules
+        if: always()
         run: |
-          az storage account network-rule remove -g s177d01-ntp-pr-${{ github.event.number }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
