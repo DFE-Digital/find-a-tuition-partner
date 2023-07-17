@@ -54,8 +54,7 @@ resource "azurerm_key_vault" "default" {
 
   lifecycle {
     ignore_changes = [
-      access_policy,
-      network_acls
+      access_policy
     ]
   }
 }
