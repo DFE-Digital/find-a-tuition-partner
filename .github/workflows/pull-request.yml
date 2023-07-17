@@ -166,10 +166,10 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
-      - name: Remove Key Vault firewall rules
-        if: always()
-        run: |
-          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
+#      - name: Remove Key Vault firewall rules
+#        if: always()
+#        run: |
+#          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
