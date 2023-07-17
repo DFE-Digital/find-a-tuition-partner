@@ -27,7 +27,6 @@ env:
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
   TF_VAR_virtual_network_address_space: "172.0.0.0/16"
-  WORKFLOW_RUNNER_IP_ADDRESS: ''
 
 jobs:    
   terraform-plan:
@@ -36,6 +35,7 @@ jobs:
     environment: 'development'
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+      workflowRunnerIpAddress: ${{ steps.whats-my-ip.outputs.ip }}
 
     steps:     
       # Checkout the repository to the GitHub Actions runner
@@ -85,18 +85,13 @@ jobs:
         with:
           is_enabled: true
           
-      - name: Set workflow IP address 
-        run: |
-          echo "WORKFLOW_RUNNER_IP_ADDRESS=${{ steps.whats-my-ip.outputs.ip }}" >> $GITHUB_ENV
-          echo "WORKFLOW_RUNNER_IP_ADDRESS: ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}"
-          
       - name: Check And Add Storage Account Network Rules
         run: |
             storageName=findatppr${{ github.event.number }}logs
             availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
             if [[ $availability == "false" ]]; then
               echo "Storage account $storageName exists."
-              az storage account network-rule add -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name $storageName --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+              az storage account network-rule add -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             else
               echo "Storage account $storageName does not exist."
             fi
@@ -109,7 +104,7 @@ jobs:
             # Key Vault does not exist, ignore
             echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
           else
-            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
           fi
           
           
@@ -157,8 +152,8 @@ jobs:
       - name: Remove Storage Account Network rules
         if: always()
         run: |
-          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
-          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ needs.terraform-plan.outputs.workflowRunnerIpAddress }}
+          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ needs.terraform-plan.outputs.workflowRunnerIpAddress }}
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
