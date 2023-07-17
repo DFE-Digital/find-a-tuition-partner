@@ -59,28 +59,26 @@ jobs:
           # Fetch existing VNets in the subscription
           VNets=$(az network vnet list --query '[].{Name:name, AddressSpace:addressSpace.addressPrefixes[0]}')
           
-          # Check if the VNet address space already exists in the target resource group
-          EXISTS=$(az network vnet show --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name=$EXISTING_VNET_NAME --query id --output tsv)
+          RG_EXISTS=$(az group show --name ${{ env.AZURE_RESOURCE_GROUP }} --query id --output tsv || echo "")
+          if [ -z "$RG_EXISTS" ]; then
+              # Loop to generate a unique address space
+                for ((i=0; i<=255; i++))
+                do
+                  for ((j=0; j<=255; j++))
+                  do
+                    NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
+                    # Check if new VNet address space already exists
+                    if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
+                         echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
+                         echo "The Vnet address space: $NEW_VNET_ADDRESS"
+                         exit 0
+                    fi
+                  done
+                done
           
-          if [ -z "$EXISTS" ]; then
-             # Loop to generate a unique address space
-             for ((i=0; i<=255; i++))
-             do
-               for ((j=0; j<=255; j++))
-               do
-                 NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
-                 # Check if new VNet address space already exists
-                 if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
-                      echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
-                      echo "The Vnet address space: $NEW_VNET_ADDRESS"
-                      exit 0
-                 fi
-               done
-             done
+                echo "No available address space could be found."
+         fi
           
-             echo "No available address space could be found."
-          fi
-        
       - name: Get workflow IP address
         id: whats-my-ip
         uses: ./.github/actions/whats-my-ip-address
