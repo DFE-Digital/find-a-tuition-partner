@@ -99,7 +99,7 @@ jobs:
       - name: Add Key Vault firewall rules
         run: |
           # Check if Key Vault exists
-          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --output tsv 2>/dev/null)
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
           if [ -z "$EXISTS" ]; then
             # Key Vault does not exist, ignore
             echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
