@@ -123,6 +123,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+        
       - name: Get workflow IP address
         id: whats-my-ip
         uses: ./.github/actions/whats-my-ip-address
@@ -158,7 +166,7 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
-      - name: Remove Storage Account Network rules
+      - name: Remove Key Vault firewall rules
         if: always()
         run: |
           az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}  
