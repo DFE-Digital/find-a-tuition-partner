@@ -16,3 +16,7 @@ data "dns_a_record_set" "web_app_service_ip_address" {
 }
 
 data "azurerm_client_config" "current" {}
+
+data "http" "clientip" {
+  url = "https://ipv4.icanhazip.com/"
+}

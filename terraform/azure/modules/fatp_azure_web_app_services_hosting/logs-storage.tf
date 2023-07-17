@@ -11,6 +11,12 @@ resource "azurerm_storage_account" "logs" {
   enable_https_traffic_only = true
 
   tags = local.tags
+
+  lifecycle {
+    ignore_changes = [
+      network_rules,
+    ]
+  }
 }
 
 resource "azurerm_storage_container" "logs" {
@@ -35,7 +41,7 @@ resource "azurerm_storage_account_network_rules" "logs" {
   }
 }
 
-resource "azurerm_monitor_diagnostic_setting" "container_app" {
+resource "azurerm_monitor_diagnostic_setting" "web_app" {
   count = local.enable_service_logs ? 1 : 0
 
   name                           = "${local.resource_prefix}-storage-diag"
@@ -69,5 +75,12 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
     write  = true
     delete = true
     list   = true
+  }
+
+  lifecycle {
+    ignore_changes = [
+      start,
+      expiry
+    ]
   }
 }

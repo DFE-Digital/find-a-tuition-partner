@@ -46,7 +46,7 @@ resource "azurerm_key_vault" "default" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address]
+    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, data.http.clientip.url]
     virtual_network_subnet_ids = [azurerm_subnet.keyvault_subnet.id]
   }
 
@@ -55,6 +55,7 @@ resource "azurerm_key_vault" "default" {
   lifecycle {
     ignore_changes = [
       access_policy,
+      network_acls
     ]
   }
 }
@@ -69,6 +70,7 @@ resource "azurerm_key_vault_secret" "fatpdbconnectionstring" {
   lifecycle {
     ignore_changes = [
       value,
+      expiration_date
     ]
   }
 }
@@ -83,6 +85,7 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
   lifecycle {
     ignore_changes = [
       value,
+      expiration_date
     ]
   }
 }
@@ -96,6 +99,7 @@ resource "azurerm_key_vault_secret" "govuknotifyapikey" {
   lifecycle {
     ignore_changes = [
       value,
+      expiration_date
     ]
   }
 }
@@ -109,6 +113,7 @@ resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
   lifecycle {
     ignore_changes = [
       value,
+      expiration_date
     ]
   }
 }

@@ -106,7 +106,7 @@ jobs:
             # Key Vault does not exist, ignore
             echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
           else
-            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
           fi
           
           
@@ -133,6 +133,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/actions/whats-my-ip-address
+        with:
+          is_enabled: true
+        
       - name: Terraform Apply and Deployment
         uses: ./.github/actions/terraform-apply-and-deployment
         with:
@@ -154,8 +160,8 @@ jobs:
       - name: Remove Storage Account Network rules
         if: always()
         run: |
-          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
-          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ env.WORKFLOW_RUNNER_IP_ADDRESS }}
+          az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name findatppr${{ github.event.number }}logs --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
