@@ -12,6 +12,12 @@ resource "azurerm_storage_account" "logs" {
 
   tags = local.tags
 
+  lifecycle {
+    ignore_changes = [
+      network_rules,
+    ]
+  }
+
 }
 
 resource "azurerm_storage_container" "logs" {
