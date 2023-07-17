@@ -29,7 +29,7 @@ resource "azurerm_storage_account_network_rules" "logs" {
   default_action             = "Deny"
   bypass                     = ["AzureServices"]
   virtual_network_subnet_ids = [azurerm_subnet.web_app_service_infra_subnet[0].id]
-  ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, local.client_ip]
+  ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address]
 
   private_link_access {
     endpoint_resource_id = local.service_app.id
