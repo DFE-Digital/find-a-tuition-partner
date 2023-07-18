@@ -79,13 +79,6 @@ runs:
         az_client_id: ${{ inputs.az_client_id }}
         az_client_secret: ${{ inputs.az_client_secret }}
 
-    - name: Build and publish web app
-      uses: ./.github/actions/build-and-publish-app
-      with:
-        dotnet_version: ${{ inputs.dotnet_version }}
-        node_version: ${{ inputs.node_version }}
-        working_directory: ${{ inputs.working_directory }}
-
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -115,6 +108,13 @@ runs:
       shell: bash
       run: |
         terraform -chdir=${{ inputs.tf_working_directory }} apply -auto-approve tfplan.out
+        
+    - name: Build and publish web app
+      uses: ./.github/actions/build-and-publish-app
+      with:
+        dotnet_version: ${{ inputs.dotnet_version }}
+        node_version: ${{ inputs.node_version }}
+        working_directory: ${{ inputs.working_directory }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
