@@ -46,7 +46,7 @@ resource "azurerm_key_vault" "default" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, ]
+    ip_rules                   = [azurerm_public_ip.nat_gateway[0].ip_address, local.client_ip, ]
     virtual_network_subnet_ids = [azurerm_subnet.keyvault_subnet.id, ]
   }
 
