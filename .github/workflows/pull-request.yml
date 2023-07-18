@@ -95,6 +95,17 @@ jobs:
             echo "Storage account $storageName does not exist."
           fi
           
+      - name: Add Key Vault firewall rules
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
+          if [ -z "$EXISTS" ]; then
+            # Key Vault does not exist, ignore
+            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
+          else
+            az keyvault network-rule add --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
+          
       - name: Terraform Plan
         id: tf-plan
         uses: ./.github/actions/terraform-plan
@@ -108,6 +119,7 @@ jobs:
           tf_var_file_env: 'pr'
           
       - name: Remove Storage Account Network rules
+        if: always()
         run: |
             storageName=findatppr${{ github.event.number }}logs
             availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
@@ -117,6 +129,18 @@ jobs:
             else
               echo "Storage account $storageName does not exist."
             fi
+          
+      - name: Remove Key Vault firewall rules
+        if: always()
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
+          if [ -z "$EXISTS" ]; then
+            # Key Vault does not exist, ignore
+            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
+          else
+            az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
             
           
   terraform-apply:
@@ -175,6 +199,7 @@ jobs:
           
 
       - name: Remove Key Vault firewall rules
+        if: always()
         run: |
           # Check if Key Vault exists
           EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
