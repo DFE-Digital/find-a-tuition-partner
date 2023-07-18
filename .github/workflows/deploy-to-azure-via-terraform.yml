@@ -19,6 +19,7 @@ jobs:
       tf_var_environment: 'dev'
       tf_var_file_env: 'dev'
       virtual_network_address_space: '172.0.0.0/16'
+      az_webapp_name: 'find-a-tp-dev'
     
     secrets:
       az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}

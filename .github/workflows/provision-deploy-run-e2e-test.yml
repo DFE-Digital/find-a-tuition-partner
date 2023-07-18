@@ -30,9 +30,10 @@ on:
         required: true
         type: string
         default: '10.0.0.0/16'
-    secrets:
       az_webapp_name:
         required: true
+        type: string
+    secrets:
       az_resource_group_name:
         required: true
       az_tenant_id:
@@ -94,7 +95,7 @@ jobs:
           az_client_id: ${{ secrets.az_client_id }}
           az_client_secret: ${{ secrets.az_client_secret }}
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ secrets.az_webapp_name }}
+          az_webapp_name: ${{ inputs.az_webapp_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           backend_config_resource_group_name: ${{ secrets.backend_config_resource_group_name }}
           backend_config_storage_account_name: ${{ secrets.backend_config_storage_account_name }}
@@ -140,7 +141,7 @@ jobs:
           backend_config_container_name: ${{ secrets.backend_config_container_name }}
           tf_working_directory: ${{ inputs.tf_working_directory }}
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ secrets.az_webapp_name }}
+          az_webapp_name: ${{ inputs.az_webapp_name }}
           blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
           postgresql_server_admin_username: ${{ secrets.postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
@@ -176,7 +177,7 @@ jobs:
         uses: ./.github/actions/end-to-end-testing
         with:
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ secrets.az_webapp_name }}
+          az_webapp_name: ${{ inputs.az_webapp_name }}
           az_tenant_id: ${{ secrets.az_tenant_id }}
           az_subscription_id: ${{ secrets.az_subscription_id }}
           az_client_id: ${{ secrets.az_client_id }}
