@@ -70,7 +70,7 @@ runs:
       shell: bash
       run: |
         webAppName=${{ inputs.az_webapp_name }}
-        storageName=${ webAppName//-/ }logs
+        storageName=${webAppName//-/}logs
         availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
         if [[ $availability == "false" ]]; then
           echo "Storage account $storageName exists."
@@ -186,7 +186,7 @@ runs:
       shell: bash
       run: |
         webAppName=${{ inputs.az_webapp_name }}
-        storageName=${ webAppName//-/ }logs
+        storageName=${webAppName//-/}logs
         availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
         if [[ $availability == "false" ]]; then
           echo "Storage account $storageName exists."
