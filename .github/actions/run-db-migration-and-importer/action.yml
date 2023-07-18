@@ -32,7 +32,7 @@ runs:
       if: ${{ inputs.run_database_migrations_and_import_data == 'true' }}
       run: |
         echo "Running database migrations and import data on deployed app..."   
-        sleep 60s # wait for the SSH connection to establish
+        sleep 120s # wait for the SSH connection to establish
         # clean up any old ssh tunnels before we start
         for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
         
