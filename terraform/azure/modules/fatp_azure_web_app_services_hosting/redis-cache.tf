@@ -1,6 +1,6 @@
 resource "azurerm_redis_cache" "default" {
 
-  name                = "${replace(local.resource_prefix, "-", "")}-redis-cache"
+  name                = "${local.resource_prefix}-redis-cache"
   location            = local.azure_location
   resource_group_name = local.resource_group.name
   capacity            = local.redis_cache_capacity
@@ -30,7 +30,7 @@ resource "azurerm_redis_cache" "default" {
 
 resource "azurerm_redis_firewall_rule" "web_app_default_static_ip" {
 
-  name                = "${replace(local.resource_prefix, "-", "")}webapp"
+  name                = "${local.resource_prefix}webapp"
   redis_cache_name    = azurerm_redis_cache.default.name
   resource_group_name = local.resource_group.name
   start_ip            = azurerm_public_ip.nat_gateway[0].ip_address
@@ -40,7 +40,7 @@ resource "azurerm_redis_firewall_rule" "web_app_default_static_ip" {
 resource "azurerm_redis_firewall_rule" "default" {
   for_each = toset(local.redis_cache_firewall_ipv4_allow_list)
 
-  name                = "${replace(local.resource_prefix, "-", "")}fw${each.key}"
+  name                = "${local.resource_prefix}fw${each.key}"
   redis_cache_name    = azurerm_redis_cache.default.name
   resource_group_name = local.resource_group.name
   start_ip            = each.value

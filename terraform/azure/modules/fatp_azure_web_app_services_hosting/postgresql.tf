@@ -1,5 +1,5 @@
 resource "azurerm_postgresql_flexible_server" "default" {
-  name                   = "${replace(local.resource_prefix, "-", "")}-psqlflexible-server"
+  name                   = "${local.resource_prefix}-psqlflexible-server"
   resource_group_name    = local.resource_group.name
   location               = local.azure_location
   version                = local.postgresql_database_version
@@ -42,7 +42,7 @@ resource "azurerm_postgresql_flexible_server_configuration" "extensions" {
 resource "azurerm_postgresql_flexible_server_firewall_rule" "web_app_default_static_ip" {
   count = local.postgresql_network_connectivity_method == "public" ? 1 : 0
 
-  name             = "${replace(local.resource_prefix, "-", "")}webapp"
+  name             = "${local.resource_prefix}webapp"
   server_id        = azurerm_postgresql_flexible_server.default.id
   start_ip_address = azurerm_public_ip.nat_gateway[0].ip_address
   end_ip_address   = azurerm_public_ip.nat_gateway[0].ip_address
