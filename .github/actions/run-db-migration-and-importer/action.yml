@@ -31,13 +31,14 @@ runs:
       shell: bash
       if: ${{ inputs.run_database_migrations_and_import_data == 'true' }}
       run: |
-        echo "Running database migrations and import data on deployed app..."
+        echo "Running database migrations and import data on deployed app..."   
+        sleep 60s # wait for the SSH connection to establish
         # clean up any old ssh tunnels before we start
         for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
         
         az webapp create-remote-connection --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }}  -p 54321 &
-          # startup time seems to be a bit unpredictable...
-          timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
+        # startup time seems to be a bit unpredictable...
+        timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
         
         sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost << EOF
         export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
