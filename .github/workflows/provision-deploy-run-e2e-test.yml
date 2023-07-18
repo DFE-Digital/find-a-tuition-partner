@@ -73,6 +73,10 @@ jobs:
         
       - name: Set Environment Variables
         run: |
+            echo "ARM_CLIENT_ID=${{ secrets.az_client_id }}" >> $GITHUB_ENV
+            echo "ARM_CLIENT_SECRET=${{ secrets.az_client_secret }}" >> $GITHUB_ENV
+            echo "ARM_TENANT_ID=${{ secrets.az_tenant_id }}" >> $GITHUB_ENV
+            echo "ARM_SUBSCRIPTION_ID=${{ secrets.az_subscription_id }}" >> $GITHUB_ENV
             echo "TF_VAR_environment=${{ inputs.tf_var_environment }}" >> $GITHUB_ENV
             echo "TF_VAR_postgresql_server_admin_username=${{ secrets.postgresql_server_admin_username }}" >> $GITHUB_ENV
             echo "TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}" >> $GITHUB_ENV
@@ -112,6 +116,10 @@ jobs:
         
       - name: Set Environment Variables
         run: |
+          echo "ARM_CLIENT_ID=${{ secrets.az_client_id }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.az_client_secret }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.az_tenant_id }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.az_subscription_id }}" >> $GITHUB_ENV
           echo "TF_VAR_environment=${{ inputs.tf_var_environment }}" >> $GITHUB_ENV
           echo "TF_VAR_postgresql_server_admin_username=${{ secrets.postgresql_server_admin_username }}" >> $GITHUB_ENV
           echo "TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}" >> $GITHUB_ENV
@@ -153,6 +161,10 @@ jobs:
         
       - name: Set Environment Variables
         run: |
+          echo "ARM_CLIENT_ID=${{ secrets.az_client_id }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.az_client_secret }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.az_tenant_id }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.az_subscription_id }}" >> $GITHUB_ENV
           echo "TF_VAR_environment=${{ inputs.tf_var_environment }}" >> $GITHUB_ENV
           echo "TF_VAR_postgresql_server_admin_username=${{ secrets.postgresql_server_admin_username }}" >> $GITHUB_ENV
           echo "TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}" >> $GITHUB_ENV
