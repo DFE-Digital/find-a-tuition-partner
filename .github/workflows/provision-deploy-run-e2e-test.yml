@@ -33,43 +33,30 @@ on:
     secrets:
       az_webapp_name:
         required: true
-        type: string
       az_resource_group_name:
         required: true
-        type: string
       az_tenant_id:
         required: true
-        type: string
       az_subscription_id:
         required: true
-        type: string
       az_client_id:
         required: true
-        type: string
       az_client_secret:
         required: true
-        type: string
       blob_storage_client_secret:
         required: true
-        type: string
       postgresql_server_admin_username:
         required: true
-        type: string
       postgresql_server_admin_password:
         required: true
-        type: string
       govuk_notify_apikey:
         required: true
-        type: string
       backend_config_resource_group_name:
         required: true
-        type: string
       backend_config_storage_account_name:
         required: true
-        type: string
       backend_config_container_name:
         required: true
-        type: string
 
 jobs:
   terraform-plan:
