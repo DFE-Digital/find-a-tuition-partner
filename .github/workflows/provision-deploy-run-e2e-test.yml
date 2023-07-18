@@ -8,15 +8,15 @@ on:
         type: string
         default: 'development'
       working_directory:
-        required: true
+        required: false
         type: string
         default: './UI'
       terraform_version:
-        required: true
+        required: false
         type: string
         default: '~>1.4.5'
       tf_working_directory:
-        required: true
+        required: false
         type: string
         default: './terraform/azure'
       tf_var_file_env:
@@ -87,6 +87,7 @@ jobs:
             echo "TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}" >> $GITHUB_ENV
             echo "TF_VAR_govuk_notify_apikey=${{ secrets.govuk_notify_apikey }}" >> $GITHUB_ENV
             echo "TF_VAR_blob_storage_client_secret=${{ secrets.blob_storage_client_secret }}" >> $GITHUB_ENV
+            echo "TF_VAR_virtual_network_address_space=${{ inputs.virtual_network_address_space }}" >> $GITHUB_ENV
           
       - name: Terraform Plan
         id: tf-plan
