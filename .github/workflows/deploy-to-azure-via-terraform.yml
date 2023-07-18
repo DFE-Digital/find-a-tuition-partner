@@ -10,84 +10,28 @@ on:
 
 concurrency: azure-deploy-to-dev-via-terraform
 
-
-env:
-  APP_CODE_PATH: './UI'
-  APP_BASE_URL: ''
-  TF_VERSION: '~>1.4.5'
-  TF_WORKING_DIR: './terraform/azure'
-  TF_STATE_KEY: 'terraform.tfstate'
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
-  TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
-  TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
-  TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
-  TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-
 jobs:
-  terraform-plan:
-    name: 'Terraform plan'
-    runs-on: ubuntu-latest
-    environment: 'development'
-    outputs:
-      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
-
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Terraform Plan
-        id: tf-plan
-        uses: ./.github/actions/terraform-plan
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
-          backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
-          backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
-          tf_working_directory: ${{ env.TF_WORKING_DIR }}
-          tf_var_file_env: 'dev'
-  
-  terraform-apply:
-    name: 'Terraform Apply, Deployment and End to End Testing'
-    runs-on: ubuntu-latest
-    environment: 'development'
-    needs: [terraform-plan]
-
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Terraform Apply and Deployment
-        uses: ./.github/actions/terraform-apply-and-deployment
-        with:
-          working_directory: ${{ env.APP_CODE_PATH }}
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
-          backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
-          backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
-          tf_working_directory: ${{ env.TF_WORKING_DIR }}
-          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
-          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-          postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
-          postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
-
-      - name: End to End Testing
-        uses: ./.github/actions/end-to-end-testing
-        with:
-          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
-          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+  provision-deploy-run-e2e-test:
+    name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+    uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
+    with:
+      environment: 'development'
+      tf_var_environment: 'dev'
+      tf_var_file_env: 'dev'
+      virtual_network_address_space: '172.0.0.0/16'
+    
+    secrets:
+      az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+      az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
               
