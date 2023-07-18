@@ -58,6 +58,24 @@ on:
       backend_config_container_name:
         required: true
 
+env:
+  APP_CODE_PATH=${{ inputs.working_directory }}
+  AZURE_WEBAPP_NAME=${{ secrets.az_webapp_name }}
+  AZURE_RESOURCE_GROUP=${{ secrets.az_resource_group_name }}
+  TF_VERSION=${{ inputs.terraform_version }}
+  TF_WORKING_DIR=${{ inputs.tf_working_directory }}
+  ARM_CLIENT_ID=${{ secrets.az_client_id }}
+  ARM_CLIENT_SECRET=${{ secrets.az_client_secret }}
+  ARM_TENANT_ID=${{ secrets.az_tenant_id }}
+  ARM_SUBSCRIPTION_ID=${{ secrets.az_subscription_id }}
+  TF_VAR_environment=${{ inputs.tf_var_environment }}
+  TF_VAR_postgresql_server_admin_username=${{ secrets.postgresql_server_admin_username }}
+  TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}
+  TF_VAR_govuk_notify_apikey=${{ secrets.govuk_notify_apikey }}
+  TF_VAR_blob_storage_client_secret=${{ secrets.blob_storage_client_secret }}
+  TF_VAR_virtual_network_address_space=${{ inputs.virtual_network_address_space }}
+
+
 jobs:
   terraform-plan:
     name: 'Terraform plan'
@@ -70,24 +88,6 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Set Environment Variables
-        run: |
-            echo "APP_CODE_PATH=${{ inputs.working_directory }}" >> $GITHUB_ENV
-            echo "AZURE_WEBAPP_NAME=${{ secrets.az_webapp_name }}" >> $GITHUB_ENV
-            echo "AZURE_RESOURCE_GROUP=${{ secrets.az_resource_group_name }}" >> $GITHUB_ENV
-            echo "TF_VERSION=${{ inputs.terraform_version }}" >> $GITHUB_ENV
-            echo "TF_WORKING_DIR=${{ inputs.tf_working_directory }}" >> $GITHUB_ENV
-            echo "ARM_CLIENT_ID=${{ secrets.az_client_id }}" >> $GITHUB_ENV
-            echo "ARM_CLIENT_SECRET=${{ secrets.az_client_secret }}" >> $GITHUB_ENV
-            echo "ARM_TENANT_ID=${{ secrets.az_tenant_id }}" >> $GITHUB_ENV
-            echo "ARM_SUBSCRIPTION_ID=${{ secrets.az_subscription_id }}" >> $GITHUB_ENV
-            echo "TF_VAR_environment=${{ inputs.tf_var_environment }}" >> $GITHUB_ENV
-            echo "TF_VAR_postgresql_server_admin_username=${{ secrets.postgresql_server_admin_username }}" >> $GITHUB_ENV
-            echo "TF_VAR_postgresql_server_admin_password=${{ secrets.postgresql_server_admin_password }}" >> $GITHUB_ENV
-            echo "TF_VAR_govuk_notify_apikey=${{ secrets.govuk_notify_apikey }}" >> $GITHUB_ENV
-            echo "TF_VAR_blob_storage_client_secret=${{ secrets.blob_storage_client_secret }}" >> $GITHUB_ENV
-            echo "TF_VAR_virtual_network_address_space=${{ inputs.virtual_network_address_space }}" >> $GITHUB_ENV
           
       - name: Terraform Plan
         id: tf-plan
