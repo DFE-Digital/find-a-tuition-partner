@@ -26,7 +26,7 @@ env:
   TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-  TF_VAR_virtual_network_address_space: "172.0.0.0/16"
+  TF_VAR_virtual_network_address_space: "10.0.0.0/16"
 
 jobs:    
   terraform-plan:
@@ -49,34 +49,34 @@ jobs:
           az_client_id: ${{ secrets.ARM_CLIENT_ID }}
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
           
-      - name: Check and create unique VNet Address Space
-        run: |
-            # Define new VNet information
-            NEW_VNET_ADDRESS_BASE="172.0"
-            NEW_VNET_ADDRESS_SUFFIX="/16"
-            EXISTING_VNET_NAME=${{ env.AZURE_WEBAPP_NAME}}-default
-            # Fetch existing VNets in the subscription
-            VNets=$(az network vnet list --query '[].{Name:name, AddressSpace:addressSpace.addressPrefixes[0]}')
-            
-            RG_EXISTS=$(az group show --name ${{ env.AZURE_RESOURCE_GROUP }} --query id --output tsv || echo "")
-            if [ -z "$RG_EXISTS" ]; then
-                # Loop to generate a unique address space
-                  for ((i=0; i<=255; i++))
-                  do
-                    for ((j=0; j<=255; j++))
-                    do
-                      NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
-                      # Check if new VNet address space already exists
-                      if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
-                           echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
-                           echo "The Vnet address space: $NEW_VNET_ADDRESS"
-                           exit 0
-                      fi
-                    done
-                  done
-            
-                  echo "No available address space could be found."
-            fi
+#      - name: Check and create unique VNet Address Space
+#        run: |
+#            # Define new VNet information
+#            NEW_VNET_ADDRESS_BASE="172.0"
+#            NEW_VNET_ADDRESS_SUFFIX="/16"
+#            EXISTING_VNET_NAME=${{ env.AZURE_WEBAPP_NAME}}-default
+#            # Fetch existing VNets in the subscription
+#            VNets=$(az network vnet list --query '[].{Name:name, AddressSpace:addressSpace.addressPrefixes[0]}')
+#            
+#            RG_EXISTS=$(az group show --name ${{ env.AZURE_RESOURCE_GROUP }} --query id --output tsv || echo "")
+#            if [ -z "$RG_EXISTS" ]; then
+#                # Loop to generate a unique address space
+#                  for ((i=0; i<=255; i++))
+#                  do
+#                    for ((j=0; j<=255; j++))
+#                    do
+#                      NEW_VNET_ADDRESS="$NEW_VNET_ADDRESS_BASE.$i.$j$NEW_VNET_ADDRESS_SUFFIX"
+#                      # Check if new VNet address space already exists
+#                      if ! echo "$VNets" | jq -r '.[] | select(.AddressSpace == '\"$NEW_VNET_ADDRESS\"')' | grep -q "$NEW_VNET_ADDRESS"; then
+#                           echo "TF_VAR_virtual_network_address_space=$NEW_VNET_ADDRESS" >> $GITHUB_ENV
+#                           echo "The Vnet address space: $NEW_VNET_ADDRESS"
+#                           exit 0
+#                      fi
+#                    done
+#                  done
+#            
+#                  echo "No available address space could be found."
+#            fi
           
       - name: Get workflow IP address
         id: whats-my-ip
