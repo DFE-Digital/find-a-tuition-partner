@@ -173,6 +173,18 @@ jobs:
           postgresql_server_admin_username: ${{ env.TF_VAR_postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ env.TF_VAR_postgresql_server_admin_password }}
           
+
+      - name: Remove Key Vault firewall rules
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ env.AZURE_WEBAPP_NAME }}-kv --query id --output tsv || echo "")
+          if [ -z "$EXISTS" ]; then
+            # Key Vault does not exist, ignore
+            echo "Key Vault: ${{ env.AZURE_WEBAPP_NAME }}-kv does not exist"
+          else
+            az keyvault network-rule remove --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
+          
             
       - name: End to End Testing
         uses: ./.github/actions/end-to-end-testing
