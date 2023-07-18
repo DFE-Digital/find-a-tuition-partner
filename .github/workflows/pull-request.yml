@@ -107,6 +107,18 @@ jobs:
           tf_working_directory: ${{ env.TF_WORKING_DIR }}
           tf_var_file_env: 'pr'
           
+      - name: Remove Storage Account Network rules
+        run: |
+            storageName=findatppr${{ github.event.number }}logs
+            availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
+            if [[ $availability == "false" ]]; then
+              echo "Storage account $storageName exists."
+              az storage account network-rule remove -g ${{ env.AZURE_RESOURCE_GROUP }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+            else
+              echo "Storage account $storageName does not exist."
+            fi
+            
+          
   terraform-apply:
     name: 'Terraform Apply, Deployment and End to End Testing'
     runs-on: ubuntu-latest
