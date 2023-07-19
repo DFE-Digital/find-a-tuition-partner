@@ -6,6 +6,10 @@ inputs:
     required: true
     type: string
     default: '~>1.4.5'
+  working_directory:
+    required: true
+    type: string
+    default: './UI'
   github_token:
     required: true
     type: string
