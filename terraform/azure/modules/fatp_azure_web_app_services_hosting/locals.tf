@@ -142,6 +142,7 @@ locals {
   postgresql_charset                     = var.postgresql_charset
   postgresql_network_connectivity_method = var.postgresql_network_connectivity_method
   postgresql_firewall_ipv4_allow         = var.postgresql_firewall_ipv4_allow
+  postgresql_is_high_available           = contains(["GP_Standard_D2s_v3", "GP_Standard_D4s_v3"], local.postgresql_sku_name)
   redis_cache_capacity                   = var.redis_cache_capacity
   redis_cache_family                     = var.redis_cache_family
   redis_cache_sku                        = var.redis_cache_sku

@@ -13,8 +13,11 @@ resource "azurerm_postgresql_flexible_server" "default" {
   backup_retention_days  = var.postgresql_backup_retention_days
   tags                   = local.tags
 
-  high_availability {
-    mode = "SameZone"
+  dynamic "high_availability" {
+    for_each = local.postgresql_is_high_available ? [1] : []
+    content {
+      mode = "SameZone"
+    }
   }
 
   lifecycle {
