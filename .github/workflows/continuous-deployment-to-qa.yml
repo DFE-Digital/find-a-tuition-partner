@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [ 1, 2, 3, 4, 5]
+        containers: [ 1, 2, 3, 4]
     environment: ${{ inputs.environment }}
     needs: [ deploy_to_azure ]
     steps:
