@@ -18,18 +18,6 @@ inputs:
     required: true
     type: string
     default: '~>1.4.5'
-  az_tenant_id:
-    required: true
-    type: string
-  az_subscription_id:
-    required: true
-    type: string
-  az_client_id:
-    required: true
-    type: string
-  az_client_secret:
-    required: true
-    type: string
   backend_config_resource_group_name:
     required: true
     type: string
@@ -71,32 +59,6 @@ runs:
   using: composite
   
   steps:
-    - name: Azure CLI Login
-      uses: ./.github/actions/azure-login
-      with:
-        az_tenant_id: ${{ inputs.az_tenant_id }}
-        az_subscription_id: ${{ inputs.az_subscription_id }}
-        az_client_id: ${{ inputs.az_client_id }}
-        az_client_secret: ${{ inputs.az_client_secret }}
-        
-    - name: Get workflow IP address
-      id: whats-my-ip
-      uses: ./.github/actions/whats-my-ip-address
-      with:
-        is_enabled: true
-        
-    - name: Check Key Vault and Whitelist GitHub runner IP to the firewall
-      shell: bash
-      run: |
-        # Check if Key Vault exists
-        EXISTS=$(az keyvault show --name ${{ inputs.az_webapp_name }}-kv --query id --output tsv || echo "")
-        if [ -z "$EXISTS" ]; then
-          # Key Vault does not exist, ignore
-          echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
-        else
-          az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-        fi
-
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -149,16 +111,3 @@ runs:
         postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
         postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
         run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
-        
-    - name: Remove GitHub runner IP from the Key Vault firewall firewall rules
-      if: always()
-      shell: bash
-      run: |
-        # Check if Key Vault exists
-        EXISTS=$(az keyvault show --name ${{ inputs.az_webapp_name }}-kv --query id --output tsv || echo "")
-        if [ -z "$EXISTS" ]; then
-          # Key Vault does not exist, ignore
-          echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
-        else
-          az keyvault network-rule remove --resource-group ${{ inputs.az_resource_group_name  }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
-        fi

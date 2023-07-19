@@ -76,8 +76,8 @@ env:
   TF_VAR_virtual_network_address_space: ${{ inputs.virtual_network_address_space }}
 
 jobs:
-  terraform-plan:
-    name: 'Terraform plan'
+  terraform-plan-apply-and-deployment:
+    name: 'Terraform Plan, Apply and Deployment'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     outputs:
@@ -90,7 +90,7 @@ jobs:
           
       - name: Terraform Plan
         id: tf-plan
-        uses: ./.github/actions/terraform-plan
+        uses: ./.github/actions/terraform-plan-apply-and-deployment
         with:
           terraform_version: ${{ inputs.terraform_version }}
           az_tenant_id: ${{ secrets.az_tenant_id  }}
@@ -105,34 +105,6 @@ jobs:
           backend_config_container_name: ${{ secrets.backend_config_container_name }}
           tf_working_directory: ${{ inputs.tf_working_directory }}
           tf_var_file_env: ${{ inputs.tf_var_file_env }}
-          non_pr_env_name: ${{ inputs.non_pr_env_name }}
-  
-  
-  terraform-apply:
-    name: 'Terraform Apply and Deployment'
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    needs: [terraform-plan]
-
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Terraform Apply and Deployment
-        uses: ./.github/actions/terraform-apply-and-deployment
-        with:
-          working_directory: ${{ inputs.working_directory }}
-          az_tenant_id: ${{ secrets.az_tenant_id }}
-          az_subscription_id: ${{ secrets.az_subscription_id }}
-          az_client_id: ${{ secrets.az_client_id }}
-          az_client_secret: ${{ secrets.az_client_secret }}
-          backend_config_resource_group_name: ${{ secrets.backend_config_resource_group_name }}
-          backend_config_storage_account_name: ${{ secrets.backend_config_storage_account_name }}
-          backend_config_container_name: ${{ secrets.backend_config_container_name }}
-          tf_working_directory: ${{ inputs.tf_working_directory }}
-          az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ inputs.az_webapp_name }}
           blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
           postgresql_server_admin_username: ${{ secrets.postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}

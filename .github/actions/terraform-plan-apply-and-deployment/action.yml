@@ -1,5 +1,5 @@
-name: Terraform Plan
-description: Terraform Plan
+name: Terraform Plan, Apply and Deployment
+description: Terraform Plan, Apply and Deployment
 
 inputs:
   terraform_version:
@@ -44,6 +44,15 @@ inputs:
     required: true
     type: string
   az_client_secret:
+    required: true
+    type: string
+  blob_storage_client_secret:
+    required: true
+    type: string
+  postgresql_server_admin_username:
+    required: true
+    type: string
+  postgresql_server_admin_password:
     required: true
     type: string
 
@@ -180,6 +189,21 @@ runs:
               repo: context.repo.repo,
               body: body
           })
+          
+    - name: Terraform Apply and Deployment
+      uses: ./.github/actions/terraform-apply-and-deployment
+      with:
+          working_directory: ${{ inputs.working_directory }}
+          backend_config_resource_group_name: ${{ inputs.backend_config_resource_group_name }}
+          backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
+          backend_config_container_name: ${{ inputs.backend_config_container_name }}
+          tf_working_directory: ${{ inputs.tf_working_directory }}
+          az_resource_group_name: ${{ inputs.az_resource_group_name  }}
+          az_webapp_name: ${{ inputs.az_webapp_name }}
+          blob_storage_client_secret: ${{ inputs.blob_storage_client_secret }}
+          postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
+          postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
+          non_pr_env_name: ${{ inputs.non_pr_env_name }}
           
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

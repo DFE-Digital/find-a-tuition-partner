@@ -91,7 +91,7 @@ variable "service_stack_version" {
 variable "service_worker_count" {
   description = "The number of Workers for the App Service"
   type        = number
-  default     = 1
+  default     = 3
 }
 
 variable "service_app_settings" {
