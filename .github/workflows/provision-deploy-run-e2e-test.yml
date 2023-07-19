@@ -118,7 +118,7 @@ jobs:
       matrix:
         containers: [ 1, 2, 3]
     environment: ${{ inputs.environment }}
-    needs: [ terraform-apply ]
+    needs: [ terraform-plan-apply-and-deployment ]
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
