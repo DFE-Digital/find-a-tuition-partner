@@ -1,0 +1,99 @@
+name: Terraform Teardown Deployment
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        default: 'development'
+      terraform_version:
+        required: false
+        type: string
+        default: '~>1.4.5'
+      tf_working_directory:
+        required: false
+        type: string
+        default: './terraform/azure'
+      tf_var_file_env:
+        required: true
+        type: string
+        default: 'pr'
+    secrets:
+      az_tenant_id:
+        required: true
+      az_subscription_id:
+        required: true
+      az_client_id:
+        required: true
+      az_client_secret:
+        required: true
+      blob_storage_client_secret:
+        required: true
+      postgresql_server_admin_username:
+        required: true
+      postgresql_server_admin_password:
+        required: true
+      govuk_notify_apikey:
+        required: true
+      backend_config_resource_group_name:
+        required: true
+      backend_config_storage_account_name:
+        required: true
+      backend_config_container_name:
+        required: true
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.az_client_id }}
+  ARM_CLIENT_SECRET: ${{ secrets.az_client_secret }}
+  ARM_TENANT_ID: ${{ secrets.az_tenant_id }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.az_subscription_id }}
+  TF_VAR_environment: ${{ inputs.tf_var_environment }}
+  TF_VAR_postgresql_server_admin_username: ${{ secrets.postgresql_server_admin_username }}
+  TF_VAR_postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
+  TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
+  TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
+
+jobs:
+  teardown_teardown_deployment:
+    name: Terraform Teardown Deployment
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.tf_working_directory }}
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Install the latest version of the Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.terraform_version }}
+          terraform_wrapper: false
+
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ secrets.az_tenant_id }}
+          az_subscription_id: ${{ secrets.az_subscription_id }}
+          az_client_id: ${{ secrets.az_client_id }}
+          az_client_secret: ${{ secrets.az_client_secret }}
+      
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        uses: ./.github/actions/terraform-init
+        with:
+          backend_config_resource_group_name: ${{ secrets.backend_config_resource_group_name }}
+          backend_config_storage_account_name: ${{ secrets.backend_config_storage_account_name }}
+          backend_config_container_name: ${{ secrets.backend_config_container_name }}
+          tf_working_directory: ${{ inputs.tf_working_directory }}
+
+      - name: 'Terraform Destroy'
+        run: |
+          terraform destroy -auto-approve -var-file="vars-${{ inputs.tf_var_file_env }}.tfvars"

@@ -17,3 +17,4 @@ monitor_slack_channel                         = ""
 service_worker_count                          = 1
 service_plan_sku                              = "S1"
 postgresql_network_connectivity_method        = "public"
+virtual_network_address_space                 = "10.0.0.0/16"

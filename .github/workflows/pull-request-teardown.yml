@@ -6,61 +6,24 @@ on:
 
 concurrency: pr-${{ github.event.number }}
 
-env:
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  TF_VERSION: '~>1.4.5'
-  TF_WORKING_DIR: './terraform/azure'
-  TF_STATE_KEY: 'terraform.tfstate'
-  TF_VAR_environment: pr-${{ github.event.number }}
-  TF_VAR_postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
-  TF_VAR_postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
-  TF_VAR_govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
-  TF_VAR_blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
-  TF_VAR_monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
-
 jobs:
-  teardown_deployment:
-    name: Teardown Deployment
-    runs-on: ubuntu-latest
-    environment: 'development'
-    
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ env.TF_WORKING_DIR }}
+  teardown_teardown_deployment:
+    name: Terraform Teardown Deployment
+    uses: ./.github/workflows/terraform-teardown.yml
+    with:
+      environment: 'development'
+      tf_var_environment: 'pr-${{ github.event.number }}'
+      tf_var_file_env: 'pr'
 
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      # Install the latest version of the Terraform CLI
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-          terraform_wrapper: false
-          
-      - name: Azure CLI Login
-        uses: ./.github/actions/azure-login
-        with:
-          az_tenant_id: ${{ env.ARM_TENANT_ID }}
-          az_subscription_id: ${{ env.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ env.ARM_CLIENT_ID }}
-          az_client_secret: ${{ env.ARM_CLIENT_SECRET }}
-      
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-      - name: Terraform Init
-        uses: ./.github/actions/terraform-init
-        with:
-          backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
-          backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
-          backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
-          tf_working_directory: ${{ env.TF_WORKING_DIR }}
-
-      - name: 'Terraform Destroy'
-        run: |
-          terraform destroy -auto-approve -var-file="vars-pr.tfvars"
+    secrets:
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
