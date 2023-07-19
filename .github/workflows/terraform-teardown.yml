@@ -22,6 +22,12 @@ on:
       tf_var_environment:
         required: true
         type: string
+      az_webapp_name:
+        required: true
+        type: string
+      az_resource_group_name:
+        required: true
+        type: string
     secrets:
       az_tenant_id:
         required: true
@@ -96,6 +102,25 @@ jobs:
           backend_config_storage_account_name: ${{ secrets.backend_config_storage_account_name }}
           backend_config_container_name: ${{ secrets.backend_config_container_name }}
           tf_working_directory: ${{ inputs.tf_working_directory }}
+          
+      - name: Get workflow IP address
+        id: whats-my-ip
+        uses: ./.github/actions/whats-my-ip-address
+        with:
+          is_enabled: true
+
+      - name: Check Storage Account and Whitelist GitHub runner IP to the firewall
+        shell: bash
+        run: |
+          webAppName=${{ inputs.az_webapp_name }}
+          storageName=${webAppName//-/}logs
+          availability=$(az storage account check-name --name $storageName --query 'nameAvailable' --output tsv)
+          if [[ $availability == "false" ]]; then
+            echo "Storage account $storageName exists."
+            az storage account network-rule add -g ${{ inputs.az_resource_group_name }} --account-name $storageName --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          else
+            echo "Storage account $storageName does not exist."
+          fi
 
       - name: 'Terraform Destroy'
         run: |

@@ -14,6 +14,8 @@ jobs:
       environment: 'development'
       tf_var_environment: 'pr-${{ github.event.number }}'
       tf_var_file_env: 'pr'
+      az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
+      az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
 
     secrets:
       az_tenant_id: ${{ secrets.ARM_TENANT_ID }}

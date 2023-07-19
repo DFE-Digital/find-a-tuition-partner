@@ -17,6 +17,7 @@ jobs:
       tf_var_file_env: 'pr'
       virtual_network_address_space: '10.0.0.0/16'
       az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
+      non_pr_env_name: 'dev'
       
     secrets:
       az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
