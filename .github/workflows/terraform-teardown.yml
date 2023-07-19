@@ -121,6 +121,18 @@ jobs:
           else
             echo "Storage account $storageName does not exist."
           fi
+          
+      - name: Check Key Vault and Whitelist GitHub runner IP to the firewall
+        shell: bash
+        run: |
+          # Check if Key Vault exists
+          EXISTS=$(az keyvault show --name ${{ inputs.az_webapp_name }}-kv --query id --output tsv || echo "")
+          if [ -z "$EXISTS" ]; then
+          # Key Vault does not exist, ignore
+          echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
+          else
+          az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+          fi
 
       - name: 'Terraform Destroy'
         run: |
