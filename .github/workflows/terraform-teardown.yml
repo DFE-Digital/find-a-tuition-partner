@@ -19,6 +19,9 @@ on:
         required: true
         type: string
         default: 'pr'
+      tf_var_environment:
+        required: true
+        type: string
     secrets:
       az_tenant_id:
         required: true
