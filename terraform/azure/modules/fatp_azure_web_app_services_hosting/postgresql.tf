@@ -13,6 +13,10 @@ resource "azurerm_postgresql_flexible_server" "default" {
   backup_retention_days  = var.postgresql_backup_retention_days
   tags                   = local.tags
 
+  high_availability {
+    mode = "SameZone"
+  }
+
   lifecycle {
     ignore_changes = [
       # Azure will automatically assign an Availability Zone if one is not specified. 
