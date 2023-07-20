@@ -49,7 +49,7 @@ module "fatp_azure_web_app_services_hosting" {
   # Monitoring is disabled by default. If enabled, the following metrics will be monitored:
   # CPU usage, Memory usage, Latency, HTTP regional availability
   enable_monitoring              = var.enable_monitoring
-  monitor_email_receivers        = split(",", var.monitor_email_receivers)
+  monitor_email_receivers        = var.monitor_email_receivers
   monitor_endpoint_healthcheck   = var.monitor_endpoint_healthcheck
   monitor_enable_slack_webhook   = var.monitor_enable_slack_webhook
   monitor_slack_webhook_receiver = var.monitor_slack_webhook_receiver
