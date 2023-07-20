@@ -9,6 +9,7 @@ using Infrastructure.Configuration;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using UI.Constants;
 using UI.Filters;
@@ -120,6 +121,11 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(x => x.FullName);
 });
+
+var connectionString = builder.Configuration.GetNtpConnectionString();
+
+builder.Services.AddHealthChecks()
+    .AddCheck("Custom PostgreSQL check", new PostgreSqlCustomHealthCheck(connectionString), HealthStatus.Unhealthy, tags: new[] { "db", "postgresql" });
 
 builder.AddAnalytics();
 
@@ -238,6 +244,11 @@ app.UseSecurityHeaders(policyCollection);
 var cultureInfo = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/health");
+});
 
 app.Use(async (context, next) =>
 {
