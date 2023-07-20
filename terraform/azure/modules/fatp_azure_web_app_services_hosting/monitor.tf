@@ -47,9 +47,9 @@ resource "azurerm_application_insights_standard_web_test" "web_app_service" {
   enabled                 = true
 
   geo_locations = [
-    "emea-se-sto-edge", # UK West
-    "emea-nl-ams-azr",  # West Europe
-    "emea-ru-msa-edge"  # UK South
+    # "emea-se-sto-edge", # UK West
+    "emea-nl-ams-azr", # West Europe
+    #"emea-ru-msa-edge"  # UK South
   ]
 
   request {
@@ -163,7 +163,7 @@ resource "azurerm_monitor_metric_alert" "http" {
   application_insights_web_test_location_availability_criteria {
     web_test_id           = azurerm_application_insights_standard_web_test.web_app_service[0].id
     component_id          = azurerm_application_insights.web_app_service.id
-    failed_location_count = 2 # 2 out of 3 locations
+    failed_location_count = 1 # 1 out of 1 location
   }
 
   action {

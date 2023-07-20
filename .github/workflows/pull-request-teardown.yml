@@ -11,7 +11,7 @@ jobs:
     name: Terraform Teardown Deployment
     uses: ./.github/workflows/terraform-teardown.yml
     with:
-      environment: 'development'
+      environment: 'qa'
       tf_var_environment: 'pr-${{ github.event.number }}'
       tf_var_file_env: 'pr'
       az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
@@ -29,3 +29,5 @@ jobs:
       backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
       backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
       backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+      monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK_NON_PROD_ENV }}
+      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}

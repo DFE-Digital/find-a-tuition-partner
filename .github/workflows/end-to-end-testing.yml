@@ -6,7 +6,7 @@ on:
       environment:
         description: 'Target environment for the End to End tests'
         required: true
-        default: development
+        default: qa
         type: choice
         options:
           - qa
@@ -37,6 +37,7 @@ jobs:
           az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           az_client_id: ${{ secrets.ARM_CLIENT_ID }}
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          post_slack_notification: true
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}

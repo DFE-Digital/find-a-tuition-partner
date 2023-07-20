@@ -14,7 +14,7 @@ on:
       environment:
         description: 'Target environment for the deployment'
         required: true
-        default: development
+        default: qa
         type: choice
         options:
           - qa

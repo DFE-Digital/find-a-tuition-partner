@@ -103,7 +103,7 @@ variable "service_app_settings" {
 variable "service_health_check_path" {
   description = "Service health check path"
   type        = string
-  default     = "/"
+  default     = "/health"
 }
 
 variable "service_health_check_eviction_time_in_min" {
@@ -181,7 +181,7 @@ variable "monitor_slack_channel" {
 variable "monitor_endpoint_healthcheck" {
   description = "Specify a route that should be monitored for a 200 OK status"
   type        = string
-  default     = "/"
+  default     = "/health"
 }
 
 variable "enable_cdn_frontdoor" {

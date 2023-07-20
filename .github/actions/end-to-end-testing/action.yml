@@ -20,6 +20,10 @@ inputs:
   az_client_secret:
     required: true
     type: string
+  post_slack_notification:
+    required: true
+    default: false
+    type: boolean
 
 runs:
   using: composite
@@ -51,3 +55,12 @@ runs:
       with:
         name: cypress-screenshots
         path: UI/cypress/screenshots
+
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      if: ${{ inputs.post_slack_notification == 'true' }}
+      env:
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_MESSAGE: "${{ env.APP_BASE_URL }}"
+        SLACK_TITLE: ${{ inputs.az_webapp_name }} Deployment
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_NON_PROD_ENV }}

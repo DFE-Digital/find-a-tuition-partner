@@ -32,7 +32,11 @@ on:
       non_pr_env_name:
         required: true
         type: string
-        default: 'dev'
+        default: 'qa'
+      post_slack_notification:
+        required: true
+        default: false
+        type: boolean
     secrets:
       az_resource_group_name:
         required: true
@@ -58,6 +62,10 @@ on:
         required: true
       backend_config_container_name:
         required: true
+      monitor_slack_webhook_receiver:
+        required: true
+      monitor_email_receivers:
+        required: true
 
 env:
   ARM_CLIENT_ID: ${{ secrets.az_client_id }}
@@ -69,6 +77,8 @@ env:
   TF_VAR_postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
+  TF_VAR_monitor_slack_webhook_receiver: $ {{ secrets.monitor_slack_webhook_receiver }}
+  TF_VAR_monitor_email_receivers: $ {{ secrets.monitor_email_receivers }}
 
 jobs:
   terraform-plan-apply-and-deployment:
@@ -128,6 +138,7 @@ jobs:
           az_subscription_id: ${{ secrets.az_subscription_id }}
           az_client_id: ${{ secrets.az_client_id }}
           az_client_secret: ${{ secrets.az_client_secret }}
+          post_slack_notification: ${{ inputs.post_slack_notification }}
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}

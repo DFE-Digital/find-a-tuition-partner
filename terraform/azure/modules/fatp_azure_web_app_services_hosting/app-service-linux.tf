@@ -20,7 +20,7 @@ resource "azurerm_linux_web_app" "default" {
     vnet_route_all_enabled            = true
     http2_enabled                     = true
     minimum_tls_version               = "1.2"
-    worker_count                      = 3 # local.service_worker_count
+    worker_count                      = local.service_worker_count
     application_stack {
       dotnet_version = local.service_stack == "dotnet" ? local.service_stack_version : null
       node_version   = local.service_stack == "node" ? local.service_stack_version : null

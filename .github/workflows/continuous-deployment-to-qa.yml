@@ -15,7 +15,7 @@ jobs:
     needs: build_and_test
     uses: ./.github/workflows/deploy-to-azure.yml
     with:
-      environment: development
+      environment: qa
       run_database_migrations_and_import_data: true
     secrets: inherit
 
@@ -42,6 +42,7 @@ jobs:
           az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           az_client_id: ${{ secrets.ARM_CLIENT_ID }}
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          post_slack_notification: false
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}

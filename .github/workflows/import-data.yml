@@ -11,7 +11,7 @@ on:
       environment:
         description: 'Target environment'
         required: true
-        default: development
+        default: qa
         type: choice
         options:
           - qa
