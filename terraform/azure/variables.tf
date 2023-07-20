@@ -373,7 +373,7 @@ variable "postgresql_charset" {
 variable "postgresql_network_connectivity_method" {
   type        = string
   description = "Specify postgresql networking method, public or private. See https://learn.microsoft.com/en-gb/azure/postgresql/flexible-server/concepts-networking"
-  default     = "private"
+  default     = "public"
   validation {
     condition     = contains(["public", "private"], var.postgresql_network_connectivity_method)
     error_message = "Valid values for postgresql_network_connectivity_method are public or private."

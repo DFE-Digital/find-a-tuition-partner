@@ -6,7 +6,7 @@ on:
       environment:
         required: true
         type: string
-        default: 'development'
+        default: 'qa'
       working_directory:
         required: false
         type: string
@@ -26,10 +26,6 @@ on:
       tf_var_environment:
         required: true
         type: string
-      virtual_network_address_space:
-        required: true
-        type: string
-        default: '10.0.0.0/16'
       az_webapp_name:
         required: true
         type: string
@@ -73,7 +69,6 @@ env:
   TF_VAR_postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
-  TF_VAR_virtual_network_address_space: ${{ inputs.virtual_network_address_space }}
 
 jobs:
   terraform-plan-apply-and-deployment:
@@ -88,7 +83,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
           
-      - name: Terraform Plan
+      - name: Terraform Plan, Apply and Deployment
         id: tf-plan
         uses: ./.github/actions/terraform-plan-apply-and-deployment
         with:

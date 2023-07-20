@@ -14,7 +14,7 @@ on:
         default: development
         type: choice
         options:
-          - development
+          - qa
           - research
           - staging
           - production

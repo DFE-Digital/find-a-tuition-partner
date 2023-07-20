@@ -6,7 +6,7 @@ on:
       environment:
         required: true
         type: string
-        default: 'development'
+        default: 'qa'
       terraform_version:
         required: false
         type: string

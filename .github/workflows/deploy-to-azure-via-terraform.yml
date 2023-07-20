@@ -15,11 +15,11 @@ jobs:
     name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
     uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
     with:
-      environment: 'development'
-      tf_var_environment: 'dev'
-      tf_var_file_env: 'dev'
+      environment: 'qa'
+      tf_var_environment: 'qa'
+      tf_var_file_env: 'qa'
       virtual_network_address_space: '172.0.0.0/16'
-      az_webapp_name: 'find-a-tp-dev'
+      az_webapp_name: 'find-a-tp-qa'
     
     secrets:
       az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
@@ -30,7 +30,7 @@ jobs:
       az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
       postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
       postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
-      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_APIKEY }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_API_KEY }}
       blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
       backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
       backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}

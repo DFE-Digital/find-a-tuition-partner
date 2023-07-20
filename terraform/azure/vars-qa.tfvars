@@ -16,6 +16,5 @@ enable_monitoring                             = false
 monitor_slack_webhook_receiver                = ""
 monitor_slack_channel                         = ""
 service_worker_count                          = 1
-virtual_network_address_space                 = "172.0.0.0/12"
+virtual_network_address_space                 = "10.1.0.0/16"
 service_plan_sku                              = "S1"
-postgresql_network_connectivity_method        = "public"
