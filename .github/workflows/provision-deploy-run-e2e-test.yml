@@ -78,6 +78,7 @@ env:
   TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
   TF_VAR_monitor_slack_webhook_receiver: $ {{ secrets.monitor_slack_webhook_receiver }}
+  TF_VAR_monitor_email_receivers: $ {{ secrets.monitor_email_receivers }}
 
 jobs:
   terraform-plan-apply-and-deployment:
@@ -91,17 +92,6 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Transform Monitor Email Receivers Secret to Terraform Variable
-        run: |
-            emails="${{ secrets.monitor_email_receivers }}"
-            IFS='|' read -ra EMAIL_ARRAY <<< "$emails"
-            EMAIL_LIST=""
-            for email in "${EMAIL_ARRAY[@]}"; do
-              EMAIL_LIST+="\"$email\","
-            done
-            EMAIL_LIST="[${EMAIL_LIST%?}]"
-            echo "TF_VAR_monitor_email_receivers=$EMAIL_LIST" >> $GITHUB_ENV
           
       - name: Terraform Plan, Apply and Deployment
         id: tf-plan
