@@ -76,7 +76,7 @@ resource "azurerm_monitor_action_group" "web_app_service" {
   tags                = local.tags
 
   dynamic "email_receiver" {
-    for_each = toset(local.monitor_email_receivers)
+    for_each = local.monitor_email_receivers
 
     content {
       name                    = "Email ${email_receiver.value}"

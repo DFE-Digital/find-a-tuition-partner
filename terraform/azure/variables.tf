@@ -172,7 +172,6 @@ variable "monitor_email_receivers" {
   description = "A pipe-separated string of email addresses that should be notified by monitoring alerts"
   type        = string
   default     = ""
-  sensitive   = true
 }
 
 variable "monitor_enable_slack_webhook" {
