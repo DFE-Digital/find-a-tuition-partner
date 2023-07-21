@@ -18,6 +18,7 @@ jobs:
       az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
       non_pr_env_name: 'qa'
       post_slack_notification: true
+      monitor_email_receivers: ${{ vars.MONITOR_EMAIL_RECEIVERS }}
       
     secrets:
       az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
@@ -33,7 +34,6 @@ jobs:
       backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
       backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
       monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK_NON_PROD_ENV }}
-      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
 
           
       
