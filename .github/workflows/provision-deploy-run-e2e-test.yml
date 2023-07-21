@@ -80,8 +80,8 @@ env:
   TF_VAR_postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
   TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
-  TF_VAR_monitor_slack_webhook_receiver: $ {{ secrets.monitor_slack_webhook_receiver }}
-  TF_VAR_monitor_email_receivers: $ {{ inputs.monitor_email_receivers }}
+  TF_VAR_monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
+  TF_VAR_monitor_email_receivers: ${{ inputs.monitor_email_receivers }}
 
 jobs:
   terraform-plan-apply-and-deployment:
