@@ -37,9 +37,6 @@ on:
         required: true
         default: false
         type: boolean
-      monitor_email_receivers:
-        required: true
-        type: string
     secrets:
       az_resource_group_name:
         required: true
@@ -67,8 +64,8 @@ on:
         required: true
       monitor_slack_webhook_receiver:
         required: true
-#      monitor_email_receivers:
-#        required: true
+      monitor_email_receivers:
+        required: true
 
 env:
   ARM_CLIENT_ID: ${{ secrets.az_client_id }}
@@ -81,7 +78,7 @@ env:
   TF_VAR_govuk_notify_apikey: ${{ secrets.govuk_notify_apikey }}
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
   TF_VAR_monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
-  TF_VAR_monitor_email_receivers: ${{ inputs.monitor_email_receivers }}
+  TF_VAR_monitor_email_receivers: ${{ secrets.monitor_email_receivers }}
 
 jobs:
   terraform-plan-apply-and-deployment:
