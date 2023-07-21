@@ -24,11 +24,6 @@ public static class HostBuilderExtensions
                 .Enrich.FromLogContext()
                 .Enrich.WithEnvironmentName()
                 .WriteTo.Console();
-
-            if (!string.IsNullOrWhiteSpace(appLogging.TcpSinkUri))
-            {
-                config.WriteTo.TCPSink(appLogging.TcpSinkUri);
-            }
         });
 
         return hostBuilder;
