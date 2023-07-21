@@ -24,6 +24,9 @@ inputs:
     required: true
     default: false
     type: boolean
+  monitor_slack_webhook_receiver:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -63,4 +66,4 @@ runs:
         SLACK_COLOR: ${{ job.status }}
         SLACK_MESSAGE: "${{ env.APP_BASE_URL }}"
         SLACK_TITLE: ${{ inputs.az_webapp_name }} Deployment
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_NON_PROD_ENV }}
+        SLACK_WEBHOOK: ${{ inputs.monitor_slack_webhook_receiver }}

@@ -38,6 +38,7 @@ jobs:
           az_client_id: ${{ secrets.ARM_CLIENT_ID }}
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
           post_slack_notification: true
+          monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}

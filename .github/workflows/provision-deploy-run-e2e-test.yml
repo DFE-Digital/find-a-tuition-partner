@@ -139,6 +139,7 @@ jobs:
           az_client_id: ${{ secrets.az_client_id }}
           az_client_secret: ${{ secrets.az_client_secret }}
           post_slack_notification: ${{ inputs.post_slack_notification }}
+          monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
