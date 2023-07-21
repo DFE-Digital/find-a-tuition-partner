@@ -169,7 +169,7 @@ variable "enable_monitoring" {
 }
 
 variable "monitor_email_receivers" {
-  description = "A list of email addresses that should be notified by monitoring alerts"
+  description = "A pipe-separated string of email addresses that should be notified by monitoring alerts"
   type        = string
   default     = ""
   sensitive   = true
