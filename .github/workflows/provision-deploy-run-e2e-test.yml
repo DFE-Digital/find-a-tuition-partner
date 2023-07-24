@@ -66,6 +66,8 @@ on:
         required: true
       monitor_email_receivers:
         required: true
+      dfeAnalytics_credential:
+        required: true
 
 env:
   ARM_CLIENT_ID: ${{ secrets.az_client_id }}
@@ -114,6 +116,7 @@ jobs:
           postgresql_server_admin_username: ${{ secrets.postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
+          dfeAnalytics_credential: ${{ secrets.dfeAnalytics_credential }}
   
   e2e-tests:
     name: 'End to End Testing'

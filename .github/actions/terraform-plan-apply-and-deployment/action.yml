@@ -59,6 +59,9 @@ inputs:
   postgresql_server_admin_password:
     required: true
     type: string
+  dfeAnalytics_credential:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -208,6 +211,7 @@ runs:
           postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
           postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
+          dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
           
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

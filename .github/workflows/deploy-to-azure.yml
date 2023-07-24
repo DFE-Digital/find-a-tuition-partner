@@ -56,13 +56,7 @@ jobs:
         uses: ./.github/actions/build-and-publish-app
         with:
           working_directory: ${{ env.WORKING_DIR }}
-
-      #  Will revisit this section later
-#      - name: Add DfE Analytics credentials.json
-#        run: |
-#          tee UI/dfe-analytics-credentials.json << EOF
-#          ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
-#          EOF
+          dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2

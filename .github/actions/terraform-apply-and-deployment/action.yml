@@ -54,6 +54,9 @@ inputs:
     required: true
     default: true
     type: boolean
+  dfeAnalytics_credential:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -95,6 +98,7 @@ runs:
         dotnet_version: ${{ inputs.dotnet_version }}
         node_version: ${{ inputs.node_version }}
         working_directory: ${{ inputs.working_directory }}
+        dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2

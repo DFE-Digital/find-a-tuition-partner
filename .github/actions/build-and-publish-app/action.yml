@@ -14,6 +14,9 @@ inputs:
     required: true
     type: string
     default: './UI'
+  dfeAnalytics_credential:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -40,7 +43,7 @@ runs:
       shell: bash
       run: |
           tee ${{ inputs.working_directory }}/dfe-analytics-credentials.json << EOF
-          ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
+          ${{ inputs.dfeAnalytics_credential }}
           EOF
         
     - name: .NET Build and Publish

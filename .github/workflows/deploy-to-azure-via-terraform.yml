@@ -38,4 +38,5 @@ jobs:
       backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
       monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
       monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
+      dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
               
