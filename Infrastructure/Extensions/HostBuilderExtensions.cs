@@ -1,9 +1,10 @@
 ﻿using Infrastructure.Configuration;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
-using Serilog.Sinks.Network;
 
 namespace Infrastructure.Extensions;
 
@@ -24,6 +25,12 @@ public static class HostBuilderExtensions
                 .Enrich.FromLogContext()
                 .Enrich.WithEnvironmentName()
                 .WriteTo.Console();
+
+            if (!string.IsNullOrEmpty(appLogging.AppInsightInstrumentationKey))
+            {
+                config.WriteTo.ApplicationInsights(new TelemetryClient(new TelemetryConfiguration(appLogging.AppInsightInstrumentationKey)), TelemetryConverter.Traces);
+            }
+
         });
 
         return hostBuilder;

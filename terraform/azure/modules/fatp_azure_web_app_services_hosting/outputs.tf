@@ -37,4 +37,10 @@ output "client_ip" {
   description = "The client IP address"
 }
 
+output "application_insights_instrumentation_key" {
+  value       = azurerm_application_insights.web_app_service.instrumentation_key
+  description = "App insights instrumentation key"
+  sensitive   = true
+}
+
 

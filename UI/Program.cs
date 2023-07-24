@@ -37,8 +37,6 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Host.AddLogging();
 
-builder.Services.AddApplicationInsightsTelemetry();
-
 builder.Services.AddDistributedCache(builder.Configuration);
 
 builder.Services.AddSession(options =>

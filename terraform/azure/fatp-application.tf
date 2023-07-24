@@ -23,15 +23,18 @@ module "fatp_azure_web_app_services_hosting" {
   service_stack_version = var.service_stack_version
   service_worker_count  = var.service_worker_count
   service_app_settings = {
-    "ASPNETCORE_ENVIRONMENT"            = var.aspnetcore_environment,
-    "BlobStorage_AccountName"           = var.app_setting_blobStorage_accountName,
-    "BlobStorage_ClientId"              = var.app_setting_blobStorage_clientId,
-    "BlobStorage_ContainerName"         = var.app_setting_blobStorage_containerName,
-    "BlobStorage_TenantId"              = var.app_setting_blobStorage_tenantId,
-    "EmailSettings_AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
-    "EmailSettings_AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
-    "EmailSettings_MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
-    "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv"
+    "ASPNETCORE_ENVIRONMENT"                  = var.aspnetcore_environment,
+    "BlobStorage_AccountName"                 = var.app_setting_blobStorage_accountName,
+    "BlobStorage_ClientId"                    = var.app_setting_blobStorage_clientId,
+    "BlobStorage_ContainerName"               = var.app_setting_blobStorage_containerName,
+    "BlobStorage_TenantId"                    = var.app_setting_blobStorage_tenantId,
+    "EmailSettings_AllSentToEnquirer"         = var.app_setting_emailSettings_allSentToEnquirer,
+    "EmailSettings_AmalgamateResponses"       = var.app_setting_emailSettings_amalgamateResponses,
+    "EmailSettings_MergeResponses"            = var.app_setting_emailSettings_mergeResponses,
+    "FatpAzureKeyVaultName"                   = "${var.service_name}-${var.environment}-kv",
+    "AppLogging_AppInsightInstrumentationKey" = module.fatp_azure_web_app_services_hosting.application_insights_instrumentation_key,
+    "AppLogging_DefaultLogEventLevel"         = var.appLogging_defaultLogEventLevel,
+    "AppLogging_OverrideLogEventLevel"        = var.appLogging_overrideLogEventLevel
   }
 
   # App secrets

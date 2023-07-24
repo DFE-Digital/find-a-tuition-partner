@@ -475,3 +475,13 @@ variable "app_setting_emailSettings_mergeResponses" {
 variable "govuk_notify_apikey" {
   type = string
 }
+
+variable "appLogging_defaultLogEventLevel" {
+  type    = string
+  default = "Debug"
+}
+
+variable "appLogging_overrideLogEventLevel" {
+  type    = string
+  default = "Information"
+}
