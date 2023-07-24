@@ -23,20 +23,20 @@ module "fatp_azure_web_app_services_hosting" {
   service_stack_version = var.service_stack_version
   service_worker_count  = var.service_worker_count
   service_app_settings = {
-    "ASPNETCORE_ENVIRONMENT"            = var.aspnetcore_environment,
-    "BlobStorage:AccountName"           = var.app_setting_blobStorage_accountName,
-    "BlobStorage:ClientId"              = var.app_setting_blobStorage_clientId,
-    "BlobStorage:ContainerName"         = var.app_setting_blobStorage_containerName,
-    "BlobStorage:TenantId"              = var.app_setting_blobStorage_tenantId,
-    "EmailSettings:AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
-    "EmailSettings:AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
-    "EmailSettings:MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
-    "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv",
-    "AppLogging:DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
-    "AppLogging:OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
-    "DfeAnalytics:CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
-    "DfeAnalytics:ProjectId"            = var.dfeAnalytics_projectId,
-    "DfeAnalytics:DatasetId"            = var.dfeAnalytics_datasetId
+    "ASPNETCORE_ENVIRONMENT"             = var.aspnetcore_environment,
+    "BlobStorage__AccountName"           = var.app_setting_blobStorage_accountName,
+    "BlobStorage__ClientId"              = var.app_setting_blobStorage_clientId,
+    "BlobStorage__ContainerName"         = var.app_setting_blobStorage_containerName,
+    "BlobStorage__TenantId"              = var.app_setting_blobStorage_tenantId,
+    "EmailSettings__AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
+    "EmailSettings__AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
+    "EmailSettings__MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
+    "FatpAzureKeyVaultName"              = "${var.service_name}-${var.environment}-kv",
+    "AppLogging__DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
+    "AppLogging__OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
+    "DfeAnalytics__CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
+    "DfeAnalytics__ProjectId"            = var.dfeAnalytics_projectId,
+    "DfeAnalytics__DatasetId"            = var.dfeAnalytics_datasetId
   }
 
   # App secrets
