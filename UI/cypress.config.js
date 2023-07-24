@@ -63,5 +63,6 @@ module.exports = defineConfig({
     baseUrl: "https://localhost:7036/",
     specPattern: "**/*.feature",
     setupNodeEvents,
+    defaultCommandTimeout: 10000, // Command timeout overridden for E2E tests
   },
 });
