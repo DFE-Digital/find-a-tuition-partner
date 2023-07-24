@@ -26,10 +26,13 @@ public static class HostBuilderExtensions
                 .Enrich.WithEnvironmentName()
                 .WriteTo.Console();
 
-            if (!string.IsNullOrEmpty(appLogging.AppInsightInstrumentationKey))
+            var appInsightInstrumentationKey = context.Configuration.
+                GetSection("APPINSIGHTS")["INSTRUMENTATIONKEY"];
+
+            if (!string.IsNullOrEmpty(appInsightInstrumentationKey))
             {
                 var telemetryConfigs = TelemetryConfiguration.CreateDefault();
-                telemetryConfigs.InstrumentationKey = appLogging.AppInsightInstrumentationKey;
+                telemetryConfigs.InstrumentationKey = appInsightInstrumentationKey;
                 var telemetryClient = new TelemetryClient(telemetryConfigs);
 
                 config.WriteTo.ApplicationInsights(telemetryClient, TelemetryConverter.Traces);

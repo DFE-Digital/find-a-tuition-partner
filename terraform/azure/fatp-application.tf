@@ -32,7 +32,6 @@ module "fatp_azure_web_app_services_hosting" {
     "EmailSettings_AmalgamateResponses"       = var.app_setting_emailSettings_amalgamateResponses,
     "EmailSettings_MergeResponses"            = var.app_setting_emailSettings_mergeResponses,
     "FatpAzureKeyVaultName"                   = "${var.service_name}-${var.environment}-kv",
-    "AppLogging_AppInsightInstrumentationKey" = module.fatp_azure_web_app_services_hosting.application_insights_instrumentation_key,
     "AppLogging_DefaultLogEventLevel"         = var.appLogging_defaultLogEventLevel,
     "AppLogging_OverrideLogEventLevel"        = var.appLogging_overrideLogEventLevel
   }
