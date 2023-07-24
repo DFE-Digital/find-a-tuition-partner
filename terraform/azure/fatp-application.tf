@@ -24,19 +24,19 @@ module "fatp_azure_web_app_services_hosting" {
   service_worker_count  = var.service_worker_count
   service_app_settings = {
     "ASPNETCORE_ENVIRONMENT"            = var.aspnetcore_environment,
-    "BlobStorage_AccountName"           = var.app_setting_blobStorage_accountName,
-    "BlobStorage_ClientId"              = var.app_setting_blobStorage_clientId,
-    "BlobStorage_ContainerName"         = var.app_setting_blobStorage_containerName,
-    "BlobStorage_TenantId"              = var.app_setting_blobStorage_tenantId,
-    "EmailSettings_AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
-    "EmailSettings_AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
-    "EmailSettings_MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
+    "BlobStorage:AccountName"           = var.app_setting_blobStorage_accountName,
+    "BlobStorage:ClientId"              = var.app_setting_blobStorage_clientId,
+    "BlobStorage:ContainerName"         = var.app_setting_blobStorage_containerName,
+    "BlobStorage:TenantId"              = var.app_setting_blobStorage_tenantId,
+    "EmailSettings:AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
+    "EmailSettings:AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
+    "EmailSettings:MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
     "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv",
-    "AppLogging_DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
-    "AppLogging_OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
-    "DfeAnalytics_CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
-    "DfeAnalytics_ProjectId"            = var.dfeAnalytics_projectId,
-    "DfeAnalytics_DatasetId"            = var.dfeAnalytics_datasetId
+    "AppLogging:DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
+    "AppLogging:OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
+    "DfeAnalytics:CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
+    "DfeAnalytics:ProjectId"            = var.dfeAnalytics_projectId,
+    "DfeAnalytics:DatasetId"            = var.dfeAnalytics_datasetId
   }
 
   # App secrets
