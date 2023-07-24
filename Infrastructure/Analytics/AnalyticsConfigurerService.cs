@@ -43,6 +43,10 @@ namespace Infrastructure.Analytics
             var dfeAnalyticsSettings = new DfeAnalyticsSettings();
             _configuration.GetSection(DfeAnalyticsSettings.DfeAnalyticsConfigName).Bind(dfeAnalyticsSettings);
 
+            // Adding some logging to see If we get the values correctly from the config
+            _logger.LogInformation("DfeAnalyticsSettings values: DatasetId={0}, CredentialsJsonFile={1} and ProjectId={}",
+                dfeAnalyticsSettings.DatasetId, dfeAnalyticsSettings.CredentialsJsonFile, dfeAnalyticsSettings.ProjectId);
+            
             // Do we have the bare minimum of configuration?
 
             // `DatasetId` is always required
