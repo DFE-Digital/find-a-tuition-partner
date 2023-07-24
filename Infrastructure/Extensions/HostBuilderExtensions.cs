@@ -28,7 +28,7 @@ public static class HostBuilderExtensions
 
             if (!string.IsNullOrEmpty(appLogging.AppInsightInstrumentationKey))
             {
-                config.WriteTo.ApplicationInsights(new TelemetryClient(new TelemetryConfiguration(appLogging.AppInsightInstrumentationKey)), TelemetryConverter.Traces);
+                config.WriteTo.ApplicationInsights(appLogging.AppInsightInstrumentationKey, TelemetryConverter.Traces);
             }
 
         });
