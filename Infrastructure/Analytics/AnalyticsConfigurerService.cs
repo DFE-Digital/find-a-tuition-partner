@@ -42,7 +42,7 @@ namespace Infrastructure.Analytics
         {
             var dfeAnalyticsSettings = new DfeAnalyticsSettings();
             _configuration.GetSection(DfeAnalyticsSettings.DfeAnalyticsConfigName).Bind(dfeAnalyticsSettings);
-            
+
             // Do we have the bare minimum of configuration?
 
             // `DatasetId` is always required
