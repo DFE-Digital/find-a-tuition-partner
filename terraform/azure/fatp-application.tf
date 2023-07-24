@@ -33,7 +33,10 @@ module "fatp_azure_web_app_services_hosting" {
     "EmailSettings_MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
     "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv",
     "AppLogging_DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
-    "AppLogging_OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel
+    "AppLogging_OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
+    "DfeAnalytics_CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
+    "DfeAnalytics_ProjectId"            = var.dfeAnalytics_projectId,
+    "DfeAnalytics_DatasetId"            = var.dfeAnalytics_datasetId
   }
 
   # App secrets

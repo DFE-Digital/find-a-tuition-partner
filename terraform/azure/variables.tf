@@ -485,3 +485,18 @@ variable "appLogging_overrideLogEventLevel" {
   type    = string
   default = "Information"
 }
+
+variable "dfeAnalytics_credentialsJsonFile" {
+  type    = string
+  default = "dfe-analytics-credentials.json"
+}
+
+variable "dfeAnalytics_projectId" {
+  type    = string
+  default = "find-a-tuition-partner"
+}
+
+variable "dfeAnalytics_datasetId" {
+  type    = string
+  default = ""
+}

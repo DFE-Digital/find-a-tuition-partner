@@ -21,3 +21,4 @@ monitor_slack_channel                         = "#ntp-dev-team"
 service_worker_count                          = 3
 virtual_network_address_space                 = "10.1.0.0/16"
 service_plan_sku                              = "S2"
+dfeAnalytics_datasetId                        = "fatp_events_qa"
