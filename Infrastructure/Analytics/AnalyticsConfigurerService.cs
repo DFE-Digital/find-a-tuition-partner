@@ -49,8 +49,8 @@ namespace Infrastructure.Analytics
                 return false;
             }
 
-            // One of `CredentialsJson` or `CredentialsJsonFile` is required
-            if (string.IsNullOrEmpty(section["CredentialsJson"]) && string.IsNullOrEmpty(section["CredentialsJsonFile"]))
+            // `CredentialsJsonFile` is required
+            if (string.IsNullOrEmpty(section["CredentialsJsonFile"]))
             {
                 return false;
             }
