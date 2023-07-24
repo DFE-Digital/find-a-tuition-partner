@@ -26,8 +26,7 @@ public static class HostBuilderExtensions
                 .Enrich.WithEnvironmentName()
                 .WriteTo.Console();
 
-            var appInsightInstrumentationKey = context.Configuration.
-                GetSection("APPINSIGHTS")["INSTRUMENTATIONKEY"];
+            var appInsightInstrumentationKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
 
             if (!string.IsNullOrEmpty(appInsightInstrumentationKey))
             {
