@@ -10,7 +10,7 @@ jobs:
     name: Nightly Migrate Database and Import Data
     strategy:
       matrix:
-        environment: [development, research, staging, production]
+        environment: [qa, research, staging, production]
     uses: ./.github/workflows/import-data.yml
     with:
       environment: ${{ matrix.environment }}

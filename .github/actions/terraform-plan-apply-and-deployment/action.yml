@@ -16,7 +16,7 @@ inputs:
   non_pr_env_name:
     required: true
     type: string
-    default: 'dev'
+    default: 'qa'
   backend_config_resource_group_name:
     required: true
     type: string

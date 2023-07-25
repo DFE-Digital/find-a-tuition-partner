@@ -4,7 +4,7 @@ description: Set TF State Key
 inputs:
   non_pr_env_name:
     required: true
-    default: 'dev'
+    default: 'qa'
     description: Specify non PR environment
 
 runs:

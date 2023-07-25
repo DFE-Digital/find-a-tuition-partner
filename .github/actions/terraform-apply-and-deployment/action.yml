@@ -48,7 +48,7 @@ inputs:
   non_pr_env_name:
     required: true
     type: string
-    default: 'dev'
+    default: 'qa'
   run_database_migrations_and_import_data:
     description: 'Run database migration and import data on the deployed app'
     required: true
