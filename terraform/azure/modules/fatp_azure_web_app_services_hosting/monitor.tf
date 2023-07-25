@@ -202,23 +202,23 @@ resource "azurerm_monitor_metric_alert" "latency" {
 resource "azurerm_monitor_metric_alert" "web_app_service" {
   count = local.enable_monitoring ? 1 : 0
 
-  name                = "${local.resource_prefix}-webappservice"
+  name                = "${local.resource_prefix}-webapp-errors"
   resource_group_name = local.resource_group.name
-  scopes              = [azurerm_linux_web_app.default.id]
+  scopes              = [azurerm_linux_web_app.default[0].id]
   description         = "This alert will trigger when the count of Server Errors (HTTP 5xx) or log level errors exceeds the threshold"
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "Http5xx"
     aggregation      = "Count"
-    operator         = "GreaterThan"
-    threshold        = 2
+    operator         = "Equals"
+    threshold        = 1
   }
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "Errors"
     aggregation      = "Count"
-    operator         = "GreaterThan"
-    threshold        = 2
+    operator         = "Equals"
+    threshold        = 1
   }
   action {
     action_group_id = azurerm_monitor_action_group.web_app_service[0].id
