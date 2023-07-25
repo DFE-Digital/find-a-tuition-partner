@@ -205,17 +205,10 @@ resource "azurerm_monitor_metric_alert" "web_app_service" {
   name                = "${local.resource_prefix}-webapp-errors"
   resource_group_name = local.resource_group.name
   scopes              = [azurerm_linux_web_app.default[0].id]
-  description         = "This alert will trigger when the count of Server Errors (HTTP 5xx) or log level errors exceeds the threshold"
+  description         = "This alert will trigger when the count of Server Errors (HTTP 5xx) errors exceeds the threshold"
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name      = "Http5xx"
-    aggregation      = "Count"
-    operator         = "Equals"
-    threshold        = 1
-  }
-  criteria {
-    metric_namespace = "Microsoft.Web/sites"
-    metric_name      = "Errors"
     aggregation      = "Count"
     operator         = "Equals"
     threshold        = 1

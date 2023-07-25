@@ -17,7 +17,7 @@ jobs:
       tf_var_file_env: 'pr'
       az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
       non_pr_env_name: 'qa'
-      post_slack_notification: false
+      post_slack_notification: true
       
     secrets:
       az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
