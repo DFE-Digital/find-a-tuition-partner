@@ -170,6 +170,7 @@ variable "monitor_slack_webhook_receiver" {
   description = "A Slack App webhook URL"
   type        = string
   default     = ""
+  sensitive   = true
 }
 
 variable "monitor_slack_channel" {
