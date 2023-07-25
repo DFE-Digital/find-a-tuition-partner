@@ -197,6 +197,10 @@ runs:
               body: body
           })
           
+    - name: Create a staging deployment slot
+      shell: bash
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot staging
+          
     - name: Terraform Apply and Deployment
       uses: ./.github/actions/terraform-apply-and-deployment
       with:
@@ -213,6 +217,12 @@ runs:
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
           
+
+    - name: Delete slot on staging site
+      if: always()
+      shell: bash
+      run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot staging
+        
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()
       shell: bash

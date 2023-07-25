@@ -199,21 +199,34 @@ resource "azurerm_monitor_metric_alert" "latency" {
   tags = local.tags
 }
 
-resource "azurerm_monitor_metric_alert" "web_app_service" {
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
   count = local.enable_monitoring ? 1 : 0
 
   name                = "${local.resource_prefix}-webapp-errors"
+  location            = local.resource_group.location
   resource_group_name = local.resource_group.name
-  scopes              = [azurerm_linux_web_app.default[0].id]
-  description         = "This alert will trigger when the count of Server Errors (HTTP 5xx) errors exceeds the threshold"
-  criteria {
-    metric_namespace = "Microsoft.Web/sites"
-    metric_name      = "Http5xx"
-    aggregation      = "Count"
-    operator         = "Equals"
-    threshold        = 1
-  }
   action {
-    action_group_id = azurerm_monitor_action_group.web_app_service[0].id
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
   }
+  data_source_id = azurerm_application_insights.web_app_service.id
+  description    = "This rule triggers when there are traces or requests with a result code of 500 or a severity level of 3."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  traces
+  | union requests
+  | where resultCode == "500" or severityLevel == 3
+  | where timestamp > ago(6m)
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 10
+  trigger {
+    operator  = "GreaterThan"
+    threshold = 1
+  }
+
+  tags = local.tags
 }

@@ -105,6 +105,11 @@ runs:
       with:
         app-name: ${{ inputs.az_webapp_name }}
         package: ${{ inputs.working_directory }}/publish
+        slot-name: staging
+        
+    - name: Swap slots to production
+      shell: bash
+      run: az webapp deployment slot swap -s staging -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
 
     - name: Run Database Migration and Data Importer
       uses: ./.github/actions/run-db-migration-and-importer

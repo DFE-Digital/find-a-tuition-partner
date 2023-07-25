@@ -443,12 +443,14 @@ variable "postgresql_server_admin_username" {
   type        = string
   description = "Specify a login that will be assigned to the administrator when creating the Postgres server"
   default     = ""
+  sensitive   = true
 }
 
 variable "postgresql_server_admin_password" {
   type        = string
   description = "Specify a password that will be assigned to the administrator when creating the Postgres server"
   default     = ""
+  sensitive   = true
 }
 
 variable "postgresql_sku_name" {
@@ -602,9 +604,11 @@ variable "app_setting_emailSettings_mergeResponses" {
 }
 
 variable "govuk_notify_apikey" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "blob_storage_client_secret" {
-  type = string
+  type      = string
+  sensitive = true
 }
