@@ -462,14 +462,60 @@ variable "app_setting_emailSettings_allSentToEnquirer" {
   default = true
 }
 
-variable "app_setting_emailSettings_amalgamateResponses" {
-  type    = bool
-  default = true
+variable "app_setting_emailSettings_overrideAddress" {
+  type    = string
+  default = ""
+}
+
+variable "app_setting_emailSettings_minsDelaySendingOutcomeEmailToTP" {
+  type    = number
+  default = 3
 }
 
 variable "app_setting_emailSettings_mergeResponses" {
   type    = bool
   default = true
+}
+
+variable "app_setting_featureFlags_enquiryBuilder" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_featureFlags_sendEmailsFromNtp" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_featureFlags_verifyEmail" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_featureFlags_sendTuitionPartnerEmailsWhenEnquirerDelivered" {
+  type    = bool
+  default = true
+}
+
+variable "app_setting_serviceUnavailableSettings_startDateTime" {
+  type        = string
+  description = "#dd/MM/yyyy HH:mm:ss e.g. '26/07/2023 17:00:00' - Not required, but if supplied then the current datetime must be after this for the site to be unavailable."
+  default     = ""
+}
+
+variable "app_setting_serviceUnavailableSettings_endDateTime" {
+  type        = string
+  description = "#dd/MM/yyyy HH:mm:ss e.g. '26/07/2023 18:00:00' - To set the site to unavailable then this must be supplied as a future date/time and the site will be unavailable until then."
+  default     = ""
+}
+
+variable "app_setting_googleTagManager_containerId" {
+  type    = string
+  default = ""
+}
+
+variable "app_setting_googleAnalytics_measurementId" {
+  type = string
 }
 
 variable "govuk_notify_apikey" {

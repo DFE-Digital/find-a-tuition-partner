@@ -81,13 +81,15 @@ jobs:
           # Set deployment slot configuration
           az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ env.deployment_slot }} --settings $settings
 
-          # Get production slot settings
-          PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
-          PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
-
-          # Set deployment slot settings
-          az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ env.deployment_slot }} --settings WEBSITE_HEALTHCHECK_PATH=$PROD_HEALTH_CHECK
-          az appservice plan update --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --number-of-workers $PROD_WORKER_COUNT
+      - name: Copy production deployment slot generic configurations to the target deployment slot
+        shell: bash
+        run: |
+         # Get production slot settings
+         PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
+         PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
+         
+         # Set deployment slot settings
+         az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations '{"healthCheckPath": $PROD_HEALTH_CHECK, "numberOfWorkers": $PROD_WORKER_COUNT, "ftpsState": "Disabled" }'
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2

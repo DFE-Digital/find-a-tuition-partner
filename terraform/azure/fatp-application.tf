@@ -23,20 +23,29 @@ module "fatp_azure_web_app_services_hosting" {
   service_stack_version = var.service_stack_version
   service_worker_count  = var.service_worker_count
   service_app_settings = {
-    "ASPNETCORE_ENVIRONMENT"             = var.aspnetcore_environment,
-    "BlobStorage__AccountName"           = var.app_setting_blobStorage_accountName,
-    "BlobStorage__ClientId"              = var.app_setting_blobStorage_clientId,
-    "BlobStorage__ContainerName"         = var.app_setting_blobStorage_containerName,
-    "BlobStorage__TenantId"              = var.app_setting_blobStorage_tenantId,
-    "EmailSettings__AllSentToEnquirer"   = var.app_setting_emailSettings_allSentToEnquirer,
-    "EmailSettings__AmalgamateResponses" = var.app_setting_emailSettings_amalgamateResponses,
-    "EmailSettings__MergeResponses"      = var.app_setting_emailSettings_mergeResponses,
-    "FatpAzureKeyVaultName"              = "${var.service_name}-${var.environment}-kv",
-    "AppLogging__DefaultLogEventLevel"   = var.appLogging_defaultLogEventLevel,
-    "AppLogging__OverrideLogEventLevel"  = var.appLogging_overrideLogEventLevel,
-    "DfeAnalytics__CredentialsJsonFile"  = var.dfeAnalytics_credentialsJsonFile,
-    "DfeAnalytics__ProjectId"            = var.dfeAnalytics_projectId,
-    "DfeAnalytics__DatasetId"            = var.dfeAnalytics_datasetId
+    "ASPNETCORE_ENVIRONMENT"                                      = var.aspnetcore_environment,
+    "BlobStorage__AccountName"                                    = var.app_setting_blobStorage_accountName,
+    "BlobStorage__ClientId"                                       = var.app_setting_blobStorage_clientId,
+    "BlobStorage__ContainerName"                                  = var.app_setting_blobStorage_containerName,
+    "BlobStorage__TenantId"                                       = var.app_setting_blobStorage_tenantId,
+    "EmailSettings__AllSentToEnquirer"                            = var.app_setting_emailSettings_allSentToEnquirer,
+    "EmailSettings__OverrideAddress"                              = var.app_setting_emailSettings_overrideAddress,
+    "EmailSettings__MergeResponses"                               = var.app_setting_emailSettings_mergeResponses,
+    "EmailSettings__MinsDelaySendingOutcomeEmailToTP"             = var.app_setting_emailSettings_minsDelaySendingOutcomeEmailToTP,
+    "FatpAzureKeyVaultName"                                       = "${var.service_name}-${var.environment}-kv",
+    "AppLogging__DefaultLogEventLevel"                            = var.appLogging_defaultLogEventLevel,
+    "AppLogging__OverrideLogEventLevel"                           = var.appLogging_overrideLogEventLevel,
+    "DfeAnalytics__CredentialsJsonFile"                           = var.dfeAnalytics_credentialsJsonFile,
+    "DfeAnalytics__ProjectId"                                     = var.dfeAnalytics_projectId,
+    "DfeAnalytics__DatasetId"                                     = var.dfeAnalytics_datasetId,
+    "FeatureFlags__EnquiryBuilder"                                = var.app_setting_featureFlags_enquiryBuilder,
+    "FeatureFlags__SendEmailsFromNtp"                             = var.app_setting_featureFlags_sendEmailsFromNtp,
+    "FeatureFlags__VerifyEmail"                                   = var.app_setting_featureFlags_verifyEmail,
+    "FeatureFlags__SendTuitionPartnerEmailsWhenEnquirerDelivered" = var.app_setting_featureFlags_sendTuitionPartnerEmailsWhenEnquirerDelivered,
+    "ServiceUnavailableSettings__StartDateTime"                   = var.app_setting_serviceUnavailableSettings_startDateTime,
+    "ServiceUnavailableSettings__EndDateTime"                     = var.app_setting_serviceUnavailableSettings_endDateTime,
+    "GoogleTagManager__ContainerId"                               = var.app_setting_googleTagManager_containerId,
+    "GoogleAnalytics__MeasurementId"                              = var.app_setting_googleAnalytics_measurementId
   }
 
   # App secrets
