@@ -102,10 +102,8 @@ runs:
         # Get production slot configuration
         prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
         # Set staging slot configuration
-        for config in $prod_config
+        echo "$prod_config" | while IFS=$'\t' read -r name value
         do
-          name=$(echo $config | cut -f1)
-          value=$(echo $config | cut -f2)
           echo "::add-mask::$value"
           az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot staging --settings "$name=$value"
         done
