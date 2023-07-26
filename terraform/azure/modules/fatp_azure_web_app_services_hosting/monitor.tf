@@ -224,7 +224,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
   frequency      = 5
   time_window    = 10
   trigger {
-    operator  = "GreaterThan"
+    operator  = "Equal"
     threshold = 1
   }
 

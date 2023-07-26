@@ -212,12 +212,6 @@ runs:
           postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
-          
-
-    - name: Delete slot on staging site
-      if: always()
-      shell: bash
-      run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot staging
         
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

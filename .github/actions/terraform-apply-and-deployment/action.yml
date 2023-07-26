@@ -57,6 +57,11 @@ inputs:
   dfeAnalytics_credential:
     required: true
     type: string
+  deployment_slot:
+    description: 'Deployment slot name'
+    required: false
+    default: "staging"
+    type: string
 
 runs:
   using: composite
@@ -92,21 +97,33 @@ runs:
       run: |
         terraform -chdir=${{ inputs.tf_working_directory }} apply -auto-approve tfplan.out
         
-    - name: Create a staging deployment slot
+    - name: Create a deployment slot
       shell: bash
-      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot staging
-
-    - name: Copy production deployment slot configuration to staging deployment slot
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
+      
+    - name: Copy production deployment slot configuration to the target deployment slot
       shell: bash
       run: |
         # Get production slot configuration
+        settings=""
         prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
-        # Set staging slot configuration
-        echo "$prod_config" | while IFS=$'\t' read -r name value
+        # Construct settings string
+        while IFS=$'\t' read -r name value
         do
           echo "::add-mask::$value"
-          az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot staging --settings "$name=$value"
-        done
+          settings+="$name=$value "
+        done < <(echo "$prod_config")
+        
+        # Set deployment slot configuration
+        az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ inputs.deployment_slot }} --settings $settings
+        
+        # Get production slot settings
+        PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
+        PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
+        
+        # Set deployment slot settings
+        az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ inputs.deployment_slot }} --settings WEBSITE_HEALTHCHECK_PATH=$PROD_HEALTH_CHECK
+        az appservice plan update --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --number-of-workers $PROD_WORKER_COUNT
         
     - name: Build and publish web app
       uses: ./.github/actions/build-and-publish-app
@@ -121,12 +138,8 @@ runs:
       with:
         app-name: ${{ inputs.az_webapp_name }}
         package: ${{ inputs.working_directory }}/publish
-        slot-name: staging
+        slot-name: ${{ inputs.deployment_slot }}
         
-    - name: Swap slots to production
-      shell: bash
-      run: az webapp deployment slot swap -s staging -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
-
     - name: Run Database Migration and Data Importer
       uses: ./.github/actions/run-db-migration-and-importer
       with:
@@ -136,3 +149,12 @@ runs:
         postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
         postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
         run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+        
+    - name: Swap slots to production
+      shell: bash
+      run: az webapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
+      
+    - name: Delete non prod deployment slot
+      if: always()
+      shell: bash
+      run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
