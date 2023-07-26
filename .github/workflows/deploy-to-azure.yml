@@ -89,7 +89,7 @@ jobs:
          PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
          
          # Set deployment slot settings
-         az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations '{"healthCheckPath": $PROD_HEALTH_CHECK, "numberOfWorkers": $PROD_WORKER_COUNT, "ftpsState": "Disabled" }'
+         az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ env.deployment_slot }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
