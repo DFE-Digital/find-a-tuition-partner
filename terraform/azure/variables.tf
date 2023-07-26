@@ -515,7 +515,8 @@ variable "app_setting_googleTagManager_containerId" {
 }
 
 variable "app_setting_googleAnalytics_measurementId" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "govuk_notify_apikey" {
