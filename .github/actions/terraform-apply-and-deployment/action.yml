@@ -92,6 +92,24 @@ runs:
       run: |
         terraform -chdir=${{ inputs.tf_working_directory }} apply -auto-approve tfplan.out
         
+    - name: Create a staging deployment slot
+      shell: bash
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot staging
+
+    - name: Copy production deployment slot configuration to staging deployment slot
+      shell: bash
+      run: |
+        # Get production slot configuration
+        prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
+        # Set staging slot configuration
+        for config in $prod_config
+        do
+          name=$(echo $config | cut -f1)
+          value=$(echo $config | cut -f2)
+          echo "::add-mask::$value"
+          az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot staging --settings "$name=$value"
+        done
+        
     - name: Build and publish web app
       uses: ./.github/actions/build-and-publish-app
       with:

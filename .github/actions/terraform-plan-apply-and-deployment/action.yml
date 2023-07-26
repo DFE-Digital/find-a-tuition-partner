@@ -62,9 +62,6 @@ inputs:
   dfeAnalytics_credential:
     required: true
     type: string
-  govuk_notify_apikey:
-    required: false
-    type: string
 
 runs:
   using: composite
@@ -199,14 +196,6 @@ runs:
               repo: context.repo.repo,
               body: body
           })
-          
-    - name: Create a staging deployment slot
-      shell: bash
-      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot staging
-
-    - name: Set bare minimum config for the app in staging deployment slot to run
-      shell: bash
-      run: az webapp config appsettings set --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot staging --settings ASPNETCORE_ENVIRONMENT=Development GovUkNotify__ApiKey=${{ inputs.govuk_notify_apikey }}
       
     - name: Terraform Apply and Deployment
       uses: ./.github/actions/terraform-apply-and-deployment
