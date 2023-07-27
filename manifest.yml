@@ -42,3 +42,4 @@ applications:
     FeatureFlags:SendTuitionPartnerEmailsWhenEnquirerDelivered: ((feature-flag-send-tuition-partner-emails-when-enquirer-delivered))
     ServiceUnavailableSettings:StartDateTime: ((service-unavailable-start-date-time))
     ServiceUnavailableSettings:EndDateTime: ((service-unavailable-end-date-time))
+    ConnectionStrings:FatpDatabase: ((connection-strings-fatp-database))

@@ -68,6 +68,7 @@ jobs:
           --var environment-postfix=-$PR_NUMBER \
           --var dotnet-environment=$PR_NUMBER \
           --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
+          --var connection-strings-fatp-database="${{ secrets.CONNECTION_STRINGS_FATP_DATABASE }}" \
           --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
           --var azure-blob-storage-client-secret="${{ secrets.AZURE_BLOB_STORAGE_CLIENT_SECRET }}" \
           --var azure-blob-storage-client-id="${{ vars.AZURE_BLOB_STORAGE_CLIENT_ID }}" \
