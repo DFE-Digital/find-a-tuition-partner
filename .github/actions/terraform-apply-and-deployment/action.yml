@@ -142,6 +142,10 @@ runs:
         package: ${{ inputs.working_directory }}/publish
         slot-name: ${{ inputs.deployment_slot }}
         
+    - name: Swap slots to production
+      shell: bash
+      run: az webapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
+        
     - name: Run Database Migration and Data Importer
       uses: ./.github/actions/run-db-migration-and-importer
       with:
@@ -151,10 +155,6 @@ runs:
         postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
         postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
         run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
-        
-    - name: Swap slots to production
-      shell: bash
-      run: az webapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
       
     - name: Delete non prod deployment slot
       if: always()

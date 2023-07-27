@@ -18,12 +18,11 @@ jobs:
       environment: 'qa'
       tf_var_environment: 'qa'
       tf_var_file_env: 'qa'
-      virtual_network_address_space: '172.0.0.0/16'
       az_webapp_name: 'find-a-tp-qa'
-      post_slack_notification: false
+      non_pr_env_name: 'qa'
+      post_slack_notification: true
     
     secrets:
-      az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
       az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
       az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
       az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
