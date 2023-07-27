@@ -63,4 +63,9 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rule" {
   server_id        = azurerm_postgresql_flexible_server.default.id
   start_ip_address = each.value.start_ip_address
   end_ip_address   = each.value.end_ip_address
+
+  ignore_changes = [
+    start_ip_address,
+    end_ip_address,
+  ]
 }

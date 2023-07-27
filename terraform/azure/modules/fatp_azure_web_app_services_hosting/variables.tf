@@ -522,6 +522,7 @@ variable "postgresql_firewall_ipv4_allow" {
   }))
   description = "Map of IP address ranges to add into the postgres firewall. Note: only applicable if postgresql_network_connectivity_method is set to public."
   default     = {}
+  sensitive   = true
 }
 
 variable "redis_cache_capacity" {
