@@ -8,7 +8,7 @@ on:
 # Ideally, we will configure this workflow to trigger on per environment basis such as qa, staging etc. 
 # For testing purposes, we will trigger this a on a push to a test branch
 
-concurrency: azure-deploy-to-dev-via-terraform
+concurrency: azure-deploy-to-qa-via-terraform
 
 jobs:
   provision-deploy-run-e2e-test:
@@ -18,11 +18,12 @@ jobs:
       environment: 'qa'
       tf_var_environment: 'qa'
       tf_var_file_env: 'qa'
-      az_webapp_name: 'find-a-tp-qa'
       non_pr_env_name: 'qa'
-      post_slack_notification: true
+      run_e2e_test: false
+      run_database_migrations_and_import_data: true
     
     secrets:
+      az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
       az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
       az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
       az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}

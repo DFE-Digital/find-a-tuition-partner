@@ -62,6 +62,10 @@ inputs:
   dfeAnalytics_credential:
     required: true
     type: string
+  run_database_migrations_and_import_data:
+    required: true
+    default: false
+    type: boolean
 
 runs:
   using: composite
@@ -212,6 +216,7 @@ runs:
           postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
+          run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
         
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

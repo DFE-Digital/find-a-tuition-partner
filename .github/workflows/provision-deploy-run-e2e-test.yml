@@ -26,18 +26,21 @@ on:
       tf_var_environment:
         required: true
         type: string
-      az_webapp_name:
-        required: true
-        type: string
       non_pr_env_name:
         required: true
         type: string
         default: 'qa'
-      post_slack_notification:
+      run_e2e_test:
+        required: true
+        default: false
+        type: boolean
+      run_database_migrations_and_import_data:
         required: true
         default: false
         type: boolean
     secrets:
+      az_webapp_name:
+        required: true
       az_resource_group_name:
         required: true
       az_tenant_id:
@@ -105,7 +108,7 @@ jobs:
           az_client_id: ${{ secrets.az_client_id }}
           az_client_secret: ${{ secrets.az_client_secret }}
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ inputs.az_webapp_name }}
+          az_webapp_name: ${{ secrets.az_webapp_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           backend_config_resource_group_name: ${{ secrets.backend_config_resource_group_name }}
           backend_config_storage_account_name: ${{ secrets.backend_config_storage_account_name }}
@@ -117,10 +120,12 @@ jobs:
           postgresql_server_admin_password: ${{ secrets.postgresql_server_admin_password }}
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ secrets.dfeAnalytics_credential }}
+          run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
   
   e2e-tests:
     name: 'End to End Testing'
     runs-on: ubuntu-latest
+    if: ${{ inputs.run_e2e_test == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -136,12 +141,11 @@ jobs:
         uses: ./.github/actions/end-to-end-testing
         with:
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
-          az_webapp_name: ${{ inputs.az_webapp_name }}
+          az_webapp_name: ${{ secrets.az_webapp_name }}
           az_tenant_id: ${{ secrets.az_tenant_id }}
           az_subscription_id: ${{ secrets.az_subscription_id }}
           az_client_id: ${{ secrets.az_client_id }}
           az_client_secret: ${{ secrets.az_client_secret }}
-          post_slack_notification: ${{ inputs.post_slack_notification }}
           monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
         env:
           SPLIT: ${{ strategy.job-total }}
