@@ -84,7 +84,6 @@ env:
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
   TF_VAR_monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
   TF_VAR_monitor_email_receivers: ${{ secrets.monitor_email_receivers }}
-  RUN_E2E_TEST: ${{ inputs.run_e2e_test }}
 
 jobs:
   terraform-plan-apply-and-deployment:
@@ -126,7 +125,6 @@ jobs:
   e2e-tests:
     name: 'End to End Testing'
     runs-on: ubuntu-latest
-    if: env.RUN_E2E_TEST == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -137,8 +135,12 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Echo run_e2e_test value
+        run: echo "The value of run_e2e_test is ${{ inputs.run_e2e_test }}"
 
       - name: End to End Testing
+        if: ${{ inputs.run_e2e_test == 'true' }}
         uses: ./.github/actions/end-to-end-testing
         with:
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
