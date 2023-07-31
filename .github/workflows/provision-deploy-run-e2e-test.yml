@@ -135,12 +135,9 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Echo run_e2e_test value
-        run: echo "The value of run_e2e_test is ${{ inputs.run_e2e_test }}"
-
+      
       - name: End to End Testing
-        if: ${{ inputs.run_e2e_test == 'true' }}
+        if: ${{ inputs.run_e2e_test }}
         uses: ./.github/actions/end-to-end-testing
         with:
           az_resource_group_name: ${{ secrets.az_resource_group_name  }}
