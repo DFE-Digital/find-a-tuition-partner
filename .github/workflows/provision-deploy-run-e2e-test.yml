@@ -126,7 +126,7 @@ jobs:
   e2e-tests:
     name: 'End to End Testing'
     runs-on: ubuntu-latest
-    if: ${{ env.RUN_E2E_TEST == 'true' }}
+    if: env.RUN_E2E_TEST == 'true'
     strategy:
       fail-fast: false
       matrix:
