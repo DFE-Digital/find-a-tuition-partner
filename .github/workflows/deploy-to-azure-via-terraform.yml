@@ -1,26 +1,45 @@
-name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+name: 'Deploy FaTP into Azure via Terraform'
 
 on:
-  push:
-    branches:
-      - main
-
-# Ideally, we will configure this workflow to trigger on per environment basis such as qa, staging etc. 
-# For testing purposes, we will trigger this a on a push to a test branch
-
-concurrency: azure-deploy-to-qa-via-terraform
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      run_database_migrations_and_import_data:
+        required: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
+      run_database_migrations_and_import_data:
+        description: 'Run database migrations and import data'
+        required: true
+        default: false
+        type: boolean
+        
+concurrency: azure-deploy-via-terraform-${{ inputs.environment }}
 
 jobs:
   provision-deploy-run-e2e-test:
     name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
     uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
     with:
-      environment: 'qa'
-      tf_var_environment: 'qa'
-      tf_var_file_env: 'qa'
-      non_pr_env_name: 'qa'
+      environment: ${{ inputs.environment }}
+      tf_var_environment: ${{ inputs.environment }}
+      tf_var_file_env: ${{ inputs.environment }}
+      non_pr_env_name: ${{ inputs.environment }}
       run_e2e_test: false
-      run_database_migrations_and_import_data: true
+      run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
     
     secrets:
       az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
