@@ -217,16 +217,17 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
   traces
   | union requests
   | where resultCode == "500" or severityLevel == 3
-  | where timestamp > ago(6m)
+  | where timestamp > ago(5m)
   | order by timestamp desc
   | take 1
   QUERY
   frequency      = 5
-  time_window    = 10
+  time_window    = 6
   trigger {
     operator  = "Equal"
     threshold = 1
   }
+  auto_mitigation_enabled = true
 
   tags = local.tags
 }

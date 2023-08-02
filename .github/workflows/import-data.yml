@@ -1,4 +1,4 @@
-name: Run Database Migrations and Import Data New
+name: Run Database Migrations and Import Data
 
 on:
   workflow_call:
