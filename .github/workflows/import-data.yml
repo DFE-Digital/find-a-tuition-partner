@@ -21,11 +21,15 @@ on:
 
 jobs:
   migrate_import_data:
-    name: Migrate Database and Import Data New
+    name: Migrate Database and Import Data
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
     steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        
       - name: Run Database Migration and Data Importer
         uses: ./.github/actions/run-db-migration-and-importer
         with:
