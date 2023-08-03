@@ -30,6 +30,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ inputs.az_tenant_id }}
+          az_subscription_id: ${{ inputs.az_subscription_id }}
+          az_client_id: ${{ inputs.az_client_id }}
+          az_client_secret: ${{ inputs.az_client_secret }}
+        
       - name: Run Database Migration and Data Importer
         uses: ./.github/actions/run-db-migration-and-importer
         with:
