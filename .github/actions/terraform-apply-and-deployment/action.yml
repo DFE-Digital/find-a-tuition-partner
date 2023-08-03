@@ -1,0 +1,162 @@
+name: Terraform Apply and Deployment
+description: Terraform Apply and Deployment
+
+inputs:
+  dotnet_version:
+    required: true
+    type: string
+    default: '6.0.x'
+  node_version:
+    required: true
+    type: string
+    default: '16'
+  working_directory:
+    required: true
+    type: string
+    default: './UI'
+  terraform_version:
+    required: true
+    type: string
+    default: '~>1.4.5'
+  backend_config_resource_group_name:
+    required: true
+    type: string
+  backend_config_storage_account_name:
+    required: true
+    type: string
+  backend_config_container_name:
+    required: true
+    type: string
+  tf_working_directory:
+    required: true
+    type: string
+  az_resource_group_name:
+    required: true
+    type: string
+  az_webapp_name:
+    required: true
+    type: string
+  blob_storage_client_secret:
+    required: true
+    type: string
+  postgresql_server_admin_username:
+    required: true
+    type: string
+  postgresql_server_admin_password:
+    required: true
+    type: string
+  non_pr_env_name:
+    required: true
+    type: string
+    default: 'qa'
+  run_database_migrations_and_import_data:
+    description: 'Run database migration and import data on the deployed app'
+    required: true
+    default: true
+    type: boolean
+  dfeAnalytics_credential:
+    required: true
+    type: string
+  deployment_slot:
+    description: 'Deployment slot name'
+    required: false
+    default: "staging"
+    type: string
+
+runs:
+  using: composite
+  
+  steps:
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ inputs.terraform_version }}
+        terraform_wrapper: false
+        
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      uses: ./.github/actions/terraform-init
+      with:
+        backend_config_resource_group_name: ${{ inputs.backend_config_resource_group_name }}
+        backend_config_storage_account_name: ${{ inputs.backend_config_storage_account_name }}
+        backend_config_container_name: ${{ inputs.backend_config_container_name }}
+        tf_working_directory: ${{ inputs.tf_working_directory }}
+        non_pr_env_name: ${{ inputs.non_pr_env_name }}
+
+    # Download saved plan from artifacts  
+    - name: Download Terraform Plan
+      uses: actions/download-artifact@v3
+      with:
+        name: tfplan
+        path: ${{ inputs.tf_working_directory }}
+
+    # Terraform Apply
+    - name: Terraform Apply
+      shell: bash
+      run: |
+        terraform -chdir=${{ inputs.tf_working_directory }} apply -auto-approve tfplan.out
+        
+    - name: Create a deployment slot
+      shell: bash
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
+      
+    - name: Copy production deployment slot configuration to the target deployment slot
+      shell: bash
+      run: |
+        # Get production slot configuration
+        settings=""
+        prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
+        # Construct settings string
+        while IFS=$'\t' read -r name value
+        do
+          echo "::add-mask::$value"
+          settings+="$name=$value "
+        done < <(echo "$prod_config")
+        
+        # Set deployment slot configuration
+        az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ inputs.deployment_slot }} --settings $settings
+        
+    - name: Copy production deployment slot generic configurations to the target deployment slot
+      shell: bash
+      run: |
+        # Get production slot settings
+        PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
+        PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
+    
+        # Set deployment slot settings
+        az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ inputs.deployment_slot }}
+        
+    - name: Build and publish web app
+      uses: ./.github/actions/build-and-publish-app
+      with:
+        dotnet_version: ${{ inputs.dotnet_version }}
+        node_version: ${{ inputs.node_version }}
+        working_directory: ${{ inputs.working_directory }}
+        dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ inputs.az_webapp_name }}
+        package: ${{ inputs.working_directory }}/publish
+        slot-name: ${{ inputs.deployment_slot }}
+        
+    - name: Swap slots to production
+      shell: bash
+      run: az webapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
+        
+    - name: Run Database Migration and Data Importer
+      uses: ./.github/actions/run-db-migration-and-importer
+      with:
+        az_resource_group_name: ${{ inputs.az_resource_group_name  }}
+        az_webapp_name: ${{ inputs.az_webapp_name }}
+        blob_storage_client_secret: ${{ inputs.blob_storage_client_secret }}
+        postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
+        postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
+        run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+      
+    - name: Delete non prod deployment slot
+      if: always()
+      shell: bash
+      run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}

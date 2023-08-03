@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Application.Common.Interfaces;
+using Azure.Identity;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure.Analytics;
@@ -8,21 +9,38 @@ using Infrastructure.Configuration;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using UI.Constants;
 using UI.Filters;
 using UI.Routing;
 using UI.Services;
+using AppEnvironmentVariables = Infrastructure.Constants.EnvironmentVariables;
 using AssemblyReference = UI.AssemblyReference;
 
 // Data import is a stand-alone process that should terminate once completed
 if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
+
+if (!string.IsNullOrEmpty(builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName]))
+{
+    var keyVaultName = builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName];
+    builder.Configuration.AddAzureKeyVault(new Uri($"https://{keyVaultName}.vault.azure.net/"),
+        new DefaultAzureCredential());
+}
+
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
 
 builder.Host.AddLogging();
+
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.EnableDebugLogger = false; // Disable standard logging
+});
 
 builder.Services.AddDistributedCache(builder.Configuration);
 
@@ -108,6 +126,11 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(x => x.FullName);
 });
+
+var connectionString = builder.Configuration.GetNtpConnectionString();
+
+builder.Services.AddHealthChecks()
+    .AddCheck("Custom PostgreSQL check", new PostgreSqlCustomHealthCheck(connectionString), HealthStatus.Unhealthy, tags: new[] { "db", "postgresql" });
 
 builder.AddAnalytics();
 
@@ -226,6 +249,11 @@ app.UseSecurityHeaders(policyCollection);
 var cultureInfo = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/health");
+});
 
 app.Use(async (context, next) =>
 {

@@ -10,38 +10,40 @@ jobs:
     name: .NET Build and Test
     uses: ./.github/workflows/build-and-test.yml
 
-  deploy_to_gpaas:
-    name: Deploy to GOV.UK PaaS
+  deploy_to_azure:
+    name: Deploy to Azure
     needs: build_and_test
-    uses: ./.github/workflows/deploy-to-gpaas.yml
+    uses: ./.github/workflows/deploy-to-azure.yml
     with:
       environment: qa
       run_database_migrations_and_import_data: true
     secrets: inherit
 
-  end-to-end-testing:
-    name: End to End Testing
-    needs: deploy_to_gpaas
+  e2e-tests:
+    name: 'End to End Testing'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [ 1, 2, 3]
+    environment: ${{ inputs.environment }}
+    needs: [ deploy_to_azure ]
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v4
+      - name: End to End Testing
+        uses: ./.github/actions/end-to-end-testing
         with:
-          working-directory: ./UI
-          config: baseUrl=https://find-a-tuition-partner-qa.london.cloudapps.digital/
-
-      - name: Store screenshots on test failure
-        uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: UI/cypress/screenshots
-      - name: Store videos
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: cypress-videos
-          path: UI/cypress/videos
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          post_slack_notification: false
+          monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}

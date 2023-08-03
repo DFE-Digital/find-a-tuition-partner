@@ -14,4 +14,3 @@ jobs:
     uses: ./.github/workflows/import-data.yml
     with:
       environment: ${{ matrix.environment }}
-    secrets: inherit

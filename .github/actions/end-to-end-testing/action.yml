@@ -1,0 +1,64 @@
+name: End to End Testing
+description: End to End Testing
+
+inputs:
+  az_resource_group_name:
+    required: true
+    type: string
+  az_webapp_name:
+    required: true
+    type: string
+  az_tenant_id:
+    required: true
+    type: string
+  az_subscription_id:
+    required: true
+    type: string
+  az_client_id:
+    required: true
+    type: string
+  az_client_secret:
+    required: true
+    type: string
+  monitor_slack_webhook_receiver:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - name: Azure CLI Login
+      uses: ./.github/actions/azure-login
+      with:
+        az_tenant_id: ${{ inputs.az_tenant_id }}
+        az_subscription_id: ${{ inputs.az_subscription_id }}
+        az_client_id: ${{ inputs.az_client_id }}
+        az_client_secret: ${{ inputs.az_client_secret }}
+        
+    - name: Get Front Door Hostname and Set to APP_BASE_URL
+      shell: bash
+      run: |
+        APP_BASE_URL=$(az afd endpoint show -g ${{ inputs.az_resource_group_name }} --profile-name ${{ inputs.az_webapp_name }}-cdn --endpoint-name ${{ inputs.az_webapp_name }}-cdnendpoint --query "hostName" -o tsv)
+        echo "APP_BASE_URL=https://$APP_BASE_URL" >> $GITHUB_ENV
+
+    - name: End to End Testing
+      uses: cypress-io/github-action@v5
+      with:
+        working-directory: ./UI
+        config: baseUrl="${{ env.APP_BASE_URL }}/",video=false
+
+    - name: Store screenshots on test failure
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: UI/cypress/screenshots
+
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_MESSAGE: "${{ env.APP_BASE_URL }}"
+        SLACK_TITLE: ${{ inputs.az_webapp_name }} Deployment
+        SLACK_WEBHOOK: ${{ inputs.monitor_slack_webhook_receiver }}
