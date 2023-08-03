@@ -50,12 +50,9 @@ public static class ServiceCollectionExtensions
         {
             services.AddStackExchangeRedisCache(options =>
             {
-                options.ConfigurationOptions = new ConfigurationOptions
-                {
-                    SyncTimeout = 15000,
-                    AsyncTimeout = 15000
-                };
-                options.ConfigurationOptions.EndPoints.Add(connectionString);
+                options.ConfigurationOptions = ConfigurationOptions.Parse(connectionString);
+                options.ConfigurationOptions.SyncTimeout = 15000;
+                options.ConfigurationOptions.AsyncTimeout = 15000;
             });
         }
         else
