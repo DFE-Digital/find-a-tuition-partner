@@ -5,5 +5,7 @@ resource "azurerm_service_plan" "default" {
   os_type             = local.service_plan_os
   sku_name            = local.service_plan_sku
 
+  per_site_scaling_enabled = true
+
   tags = local.tags
 }
