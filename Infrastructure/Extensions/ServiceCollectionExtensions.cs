@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Infrastructure.Extensions;
 
@@ -50,6 +51,11 @@ public static class ServiceCollectionExtensions
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = connectionString;
+                options.ConfigurationOptions = new ConfigurationOptions()
+                {
+                    SyncTimeout = 15000,
+                    AsyncTimeout = 15000
+                };
             });
         }
         else
