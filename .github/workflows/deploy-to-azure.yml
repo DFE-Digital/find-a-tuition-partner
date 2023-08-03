@@ -63,14 +63,14 @@ jobs:
           
       - name: Create a deployment slot
         shell: bash
-        run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ env.deployment_slot }}
+        run: az webapp deployment slot create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --slot ${{ env.deployment_slot }}
 
       - name: Copy production deployment slot configuration to the target deployment slot
         shell: bash
         run: |
           # Get production slot configuration
           settings=""
-          prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
+          prod_config=$(az webapp config appsettings list --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[].{name:name, value:value}" --output tsv)
           # Construct settings string
           while IFS=$'\t' read -r name value
           do
@@ -79,17 +79,17 @@ jobs:
           done < <(echo "$prod_config")
 
           # Set deployment slot configuration
-          az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ env.deployment_slot }} --settings $settings
+          az webapp config appsettings set --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --slot ${{ env.deployment_slot }} --settings $settings
 
       - name: Copy production deployment slot generic configurations to the target deployment slot
         shell: bash
         run: |
          # Get production slot settings
-         PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
-         PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
+         PROD_HEALTH_CHECK=$(az webapp config show --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query healthCheckPath --output tsv)
+         PROD_WORKER_COUNT=$(az webapp config show --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query numberOfWorkers --output tsv)
          
          # Set deployment slot settings
-         az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ env.deployment_slot }}
+         az webapp config set -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_WEBAPP_NAME }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ env.deployment_slot }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -110,9 +110,9 @@ jobs:
           
       - name: Swap slots to production
         shell: bash
-        run: az webapp deployment slot swap -s ${{ env.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
+        run: az webapp deployment slot swap -s ${{ env.deployment_slot }} -n ${{ secrets.AZURE_WEBAPP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP }} --target-slot production
         
       - name: Delete non prod deployment slot
         if: always()
         shell: bash
-        run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ env.deployment_slot }}
+        run: az webapp deployment slot delete --resource-group ${{ secrets.AZURE_RESOURCE_GROUP  }}  --name ${{ secrets.AZURE_WEBAPP_NAME }} --slot ${{ env.deployment_slot }}
