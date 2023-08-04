@@ -1,0 +1,61 @@
+name: 'Deploy FaTP into Azure via Terraform'
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      run_database_migrations_and_import_data:
+        required: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
+      run_database_migrations_and_import_data:
+        description: 'Run database migrations and import data'
+        required: true
+        default: false
+        type: boolean
+        
+concurrency: azure-deploy-via-terraform-${{ inputs.environment }}
+
+jobs:
+  provision-deploy-run-e2e-test:
+    name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+    uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
+    with:
+      environment: ${{ inputs.environment }}
+      tf_var_environment: ${{ inputs.environment }}
+      tf_var_file_env: ${{ inputs.environment }}
+      non_pr_env_name: ${{ inputs.environment }}
+      run_e2e_test: false
+      run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+    
+    secrets:
+      az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+      az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_API_KEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+      monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
+      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
+      dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
+              

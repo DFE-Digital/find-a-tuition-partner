@@ -16,7 +16,12 @@ public class ExceptionLoggingMiddleware
 
             if (context.Response.StatusCode == 404)
             {
-                var url = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}";
+                var scheme = context.Request.Scheme;
+                var host = context.Request.Headers.ContainsKey("X-Forwarded-Host") ? context.Request.Headers["X-Forwarded-Host"].ToString() : context.Request.Host.ToString();
+                var path = context.Request.Path;
+                var queryString = context.Request.QueryString;
+
+                var url = $"{scheme}://{host}{path}{queryString}";
 
                 var additionalComment = string.Empty;
                 var ntpReferer = context.Request.GetNtpRefererUrl();

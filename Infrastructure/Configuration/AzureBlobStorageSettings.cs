@@ -2,7 +2,7 @@ namespace Infrastructure.Configuration;
 
 public class AzureBlobStorageSettings
 {
-    public const string AzureBlobStorage = "AzureBlobStorage";
+    public const string BlobStorage = "BlobStorage";
 
     public string ClientId { get; set; } = string.Empty;
     public string ClientSecret { get; set; } = string.Empty;

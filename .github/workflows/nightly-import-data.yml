@@ -8,10 +8,30 @@ on:
 jobs:
   nightly_migrate_import_data:
     name: Nightly Migrate Database and Import Data
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         environment: [qa, research, staging, production]
-    uses: ./.github/workflows/import-data.yml
-    with:
-      environment: ${{ matrix.environment }}
-    secrets: inherit
+    environment: ${{ matrix.environment }}
+    
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+
+      - name: Run Database Migration and Data Importer
+        uses: ./.github/actions/run-db-migration-and-importer
+        with:
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
+          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+          postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+          postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }} 

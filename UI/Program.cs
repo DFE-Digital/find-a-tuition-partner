@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Application.Common.Interfaces;
+using Azure.Identity;
 using FluentValidation.AspNetCore;
 using GovUk.Frontend.AspNetCore;
 using Infrastructure.Analytics;
@@ -8,21 +9,38 @@ using Infrastructure.Configuration;
 using Infrastructure.DataImport;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using UI.Constants;
 using UI.Filters;
 using UI.Routing;
 using UI.Services;
+using AppEnvironmentVariables = Infrastructure.Constants.EnvironmentVariables;
 using AssemblyReference = UI.AssemblyReference;
 
 // Data import is a stand-alone process that should terminate once completed
 if (await Import.RunImport(args)) return;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables();
+
+if (!string.IsNullOrEmpty(builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName]))
+{
+    var keyVaultName = builder.Configuration[AppEnvironmentVariables.FatpAzureKeyVaultName];
+    builder.Configuration.AddAzureKeyVault(new Uri($"https://{keyVaultName}.vault.azure.net/"),
+        new DefaultAzureCredential());
+}
+
 builder.AddEnvironmentConfiguration();
 builder.Services.AddHttpContextAccessor();
 
 builder.Host.AddLogging();
+
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.EnableDebugLogger = false; // Disable standard logging
+});
 
 builder.Services.AddDistributedCache(builder.Configuration);
 
@@ -108,6 +126,11 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.CustomSchemaIds(x => x.FullName);
 });
+
+var connectionString = builder.Configuration.GetNtpConnectionString();
+
+builder.Services.AddHealthChecks()
+    .AddCheck("Custom PostgreSQL check", new PostgreSqlCustomHealthCheck(connectionString), HealthStatus.Unhealthy, tags: new[] { "db", "postgresql" });
 
 builder.AddAnalytics();
 
@@ -227,6 +250,11 @@ var cultureInfo = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/health");
+});
+
 app.Use(async (context, next) =>
 {
     if ((string)context.Request.Path != "/service-unavailable" &&
@@ -238,6 +266,14 @@ app.Use(async (context, next) =>
 
     await next();
 });
+
+// If our application gets hit really hard, then threads need to be spawned
+// By default the number of threads that exist in the threadpool is the amount of CPUs (1)
+// Each time we have to spawn a new thread it gets delayed by 500ms
+// Setting the min higher means there will not be that delay in creating threads up to the min
+// Re-evaluate this based on performance tests
+// Found because redis kept timing out because it was delayed too long waiting for a thread to execute
+ThreadPool.SetMinThreads(400, 400);
 
 app.Run();
 

@@ -8,11 +8,9 @@ namespace UI.Extensions
     {
         public static string GetBaseServiceUrl(this HttpRequest request)
         {
-            if (!request.IsHttps)
-            {
-                request.Scheme = "https";
-            }
-            return $"{request.Scheme}://{request.Host}{request.PathBase}";
+            var scheme = request.IsHttps ? "https" : "http";
+            var host = request.Headers.ContainsKey("X-Forwarded-Host") ? request.Headers["X-Forwarded-Host"].ToString() : request.Host.ToString();
+            return $"{scheme}://{host}{request.PathBase}";
         }
 
         public static string GetNtpRefererUrl(this HttpRequest request)
@@ -34,9 +32,17 @@ namespace UI.Extensions
 
         public static string GetFromUrlForQueryString(this HttpRequest request)
         {
-            var currentPathAndQuery = request.GetEncodedUrl().Replace("http://", "https://");
+            var currentUrl = new Uri(request.GetEncodedUrl());
+            var host = request.Headers.ContainsKey("X-Forwarded-Host") ? request.Headers["X-Forwarded-Host"].ToString() : currentUrl.Host;
+            var builder = new UriBuilder(currentUrl)
+            {
+                Scheme = "https",
+                Host = host
+            };
+            var currentPathAndQuery = builder.Uri.ToString();
             return $"FromReturnUrl={HttpUtility.UrlEncode(currentPathAndQuery)}";
         }
+
 
         private static string GetReferer(this HttpRequest request)
         {
@@ -53,7 +59,6 @@ namespace UI.Extensions
 
             return referrer;
         }
-
         private static string GetNtpUrl(this HttpRequest request, string urlString)
         {
             var ntpUrl = string.Empty;
@@ -64,7 +69,8 @@ namespace UI.Extensions
 
                 if (uri != null)
                 {
-                    if (string.Equals(uri.Host, request.Host.Host.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                    var host = request.Headers.ContainsKey("X-Forwarded-Host") ? request.Headers["X-Forwarded-Host"].ToString() : request.Host.Host.ToString();
+                    if (string.Equals(uri.Host, host, StringComparison.InvariantCultureIgnoreCase))
                     {
                         ntpUrl = $"https://{uri.Authority}{uri.PathAndQuery}";
                     }
@@ -77,6 +83,7 @@ namespace UI.Extensions
 
             return ntpUrl;
         }
+
 
         private static string GetHost(string urlString)
         {

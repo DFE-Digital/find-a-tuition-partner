@@ -1,4 +1,4 @@
-name: Pull Request Deployment and End to End Testing
+name: 'Pull Request Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
 
 on:
   workflow_dispatch:
@@ -7,106 +7,36 @@ on:
 
 concurrency: pr-${{ github.event.number }}
 
-env:
-  PR_NUMBER: pr-${{ github.event.number }}
-  BASE_URL: "https://find-a-tuition-partner-pr-${{ github.event.number }}.london.cloudapps.digital"
-  CF_API: "https://api.london.cloud.service.gov.uk"
-  CF_ORG: "dfe"
-  CF_SPACE: ntp-qa
-
 jobs:
-  build_deploy_test:
-    name: Build, Deploy and Run End to End Tests
-    runs-on: ubuntu-latest
+  provision-deploy-run-e2e-test:
+    name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+    uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
+    with:
+      environment: 'qa'
+      tf_var_environment: 'pr-${{ github.event.number }}'
+      tf_var_file_env: 'pr'
+      non_pr_env_name: 'qa'
+      run_e2e_test: true
+      run_database_migrations_and_import_data: true
+      
+    secrets:
+      az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
+      az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_API_KEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+      monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
+      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
+      dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Use Node.js 16
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - name: Bundle web assets
-      working-directory: ./UI
-      run: |
-        npm ci
-        npm run build
-
-    - name: Add DfE Analytics credentials.json
-      run: |
-        tee UI/dfe-analytics-credentials.json << EOF
-        ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
-        EOF
-
-    - name: Install the CF CLI
-      run: |
-        wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
-        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
-
-    - name: Authenticate
-      env:
-        CF_USERNAME: ${{ secrets.CF_USERNAME }}
-        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-      run: |
-        echo "Logging into $CF_ORG/$CF_SPACE..."
-        cf api "${CF_API}"
-        cf auth
-        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
-
-    - name: Create database backing service
-      run: |
-        cf create-service postgres small-13 find-a-tuition-partner-$PR_NUMBER-postgres-db --wait
-
-    - name: Create Redis backing service
-      run: |
-        cf create-service redis tiny-6.x find-a-tuition-partner-$PR_NUMBER-redis-db --wait
-
-    - name: Deploy to PaaS
-      run: |
-        cf push --strategy rolling --vars-file vars-pr.yml \
-          --var environment-postfix=-$PR_NUMBER \
-          --var dotnet-environment=$PR_NUMBER \
-          --var tcp-sink-uri="${{ secrets.TCP_SINK_URI }}" \
-          --var govuk-notify-api-key="${{ secrets.GOVUK_NOTIFY_API_KEY }}" \
-          --var azure-blob-storage-client-secret="${{ secrets.AZURE_BLOB_STORAGE_CLIENT_SECRET }}" \
-          --var azure-blob-storage-client-id="${{ vars.AZURE_BLOB_STORAGE_CLIENT_ID }}" \
-          --var azure-blob-storage-tenant-id="${{ vars.AZURE_BLOB_STORAGE_TENANT_ID }}" \
-          --var azure-blob-storage-account-name="${{ vars.AZURE_BLOB_STORAGE_ACCOUNT_NAME }}" 
-
-    - name: Run database migrations and import data
-      run: |
-        cf run-task find-a-tuition-partner-$PR_NUMBER \
-          --command "exec /home/vcap/deps/0/dotnet_publish/UI import" \
-          --name find-a-tuition-partner-$PR_NUMBER-data-import
-    
-    - name: Logout
-      run: cf logout
-
-    - name: Wait for Action Tutoring's details page - surrogate for waiting for migration task to complete
-      uses: cygnetdigital/wait_for_response@v2.0.0
-      with:
-        url: "${{ env.BASE_URL }}/tuition-partner/action-tutoring"
-        timeout: 600000
-        interval: 15000
-
-    - name: End to End Testing
-      uses: cypress-io/github-action@v5
-      with:
-        working-directory: ./UI
-        config: baseUrl="${{ env.BASE_URL }}/",video=false
-
-    - name: Store screenshots on test failure
-      uses: actions/upload-artifact@v3
-      if: failure()
-      with:
-        name: cypress-screenshots
-        path: UI/cypress/screenshots
-
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_COLOR: ${{ job.status }}
-        SLACK_MESSAGE: "${{ env.BASE_URL }}"
-        SLACK_TITLE: PR Deployment
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          
+      
+              

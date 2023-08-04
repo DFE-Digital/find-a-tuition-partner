@@ -1,6 +1,7 @@
 ﻿using Dfe.Analytics.AspNetCore;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.BigQuery.V2;
+using Infrastructure.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -39,24 +40,25 @@ namespace Infrastructure.Analytics
 
         private bool IsAnalyticsConfigured()
         {
-            var section = _configuration.GetSection("DfeAnalytics");
+            var dfeAnalyticsSettings = new DfeAnalyticsSettings();
+            _configuration.GetSection(DfeAnalyticsSettings.DfeAnalyticsConfigName).Bind(dfeAnalyticsSettings);
 
             // Do we have the bare minimum of configuration?
 
             // `DatasetId` is always required
-            if (string.IsNullOrEmpty(section["DatasetId"]))
+            if (string.IsNullOrEmpty(dfeAnalyticsSettings.DatasetId))
             {
                 return false;
             }
 
-            // One of `CredentialsJson` or `CredentialsJsonFile` is required
-            if (string.IsNullOrEmpty(section["CredentialsJson"]) && string.IsNullOrEmpty(section["CredentialsJsonFile"]))
+            // `CredentialsJsonFile` is required
+            if (string.IsNullOrEmpty(dfeAnalyticsSettings.CredentialsJsonFile))
             {
                 return false;
             }
 
             // If using `CredentialsJsonFile` then `ProjectId` is required
-            if (!string.IsNullOrEmpty(section["CredentialsJsonFile"]) && string.IsNullOrEmpty(section["ProjectId"]))
+            if (!string.IsNullOrEmpty(dfeAnalyticsSettings.CredentialsJsonFile) && string.IsNullOrEmpty(dfeAnalyticsSettings.ProjectId))
             {
                 return false;
             }
@@ -66,10 +68,11 @@ namespace Infrastructure.Analytics
 
         public static void ConfigureServices(WebApplicationBuilder builder)
         {
-            var section = builder.Configuration.GetSection("DfeAnalytics");
+            var dfeAnalyticsSettings = new DfeAnalyticsSettings();
+            builder.Configuration.GetSection(DfeAnalyticsSettings.DfeAnalyticsConfigName).Bind(dfeAnalyticsSettings);
 
-            var projectId = section["ProjectId"];
-            var credentialsJsonFile = section["CredentialsJsonFile"];
+            var projectId = dfeAnalyticsSettings.ProjectId;
+            var credentialsJsonFile = dfeAnalyticsSettings.CredentialsJsonFile;
 
             builder.Services.AddDfeAnalytics(options =>
             {
@@ -79,7 +82,7 @@ namespace Infrastructure.Analytics
 
                 if (!string.IsNullOrEmpty(credentialsJsonFile))
                 {
-                    var creds = GoogleCredential.FromFile(section["CredentialsJsonFile"]);
+                    var creds = GoogleCredential.FromFile(credentialsJsonFile);
                     options.BigQueryClient = BigQueryClient.Create(projectId, creds);
                 }
             });
