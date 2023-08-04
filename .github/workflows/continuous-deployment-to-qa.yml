@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         containers: [ 1, 2, 3]
-    environment: ${{ inputs.environment }}
+    environment: qa
     needs: [ deploy_to_azure ]
     steps:
       # Checkout the repository to the GitHub Actions runner
