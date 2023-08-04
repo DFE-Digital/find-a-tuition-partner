@@ -1,8 +1,10 @@
 const { defineConfig } = require("cypress");
 const webpack = require("@cypress/webpack-preprocessor");
 const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+const cypressSplit = require("cypress-split");
 
 async function setupNodeEvents(on, config) {
+  cypressSplit(on, config);
   on("task", {
     log(message) {
       console.log(message);
@@ -61,5 +63,6 @@ module.exports = defineConfig({
     baseUrl: "https://localhost:7036/",
     specPattern: "**/*.feature",
     setupNodeEvents,
+    defaultCommandTimeout: 10000, // Command timeout overridden for E2E tests
   },
 });

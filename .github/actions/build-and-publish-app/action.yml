@@ -1,0 +1,54 @@
+name: Build and Publish App
+description: Sets up .Net and Node js for specified version and builds and publish application
+
+inputs:
+  dotnet_version:
+    required: true
+    type: string
+    default: '6.0.x'
+  node_version:
+    required: true
+    type: string
+    default: '16'
+  working_directory:
+    required: true
+    type: string
+    default: './UI'
+  dfeAnalytics_credential:
+    required: true
+    type: string
+
+runs:
+  using: composite
+
+  steps:    
+    - name: Setup .NET Core ${{ inputs.dotnet_version }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+        
+    - name: Use Node.js ${{ inputs.node_version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Bundle web assets
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+          npm ci
+          npm run build
+        
+    - name: Add DfE Analytics credentials.json
+      shell: bash
+      run: |
+          tee ${{ inputs.working_directory }}/dfe-analytics-credentials.json << EOF
+          ${{ inputs.dfeAnalytics_credential }}
+          EOF
+        
+    - name: .NET Build and Publish
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+          dotnet build --configuration Release
+          dotnet publish -c Release -o './publish'

@@ -6,41 +6,28 @@ on:
 
 concurrency: pr-${{ github.event.number }}
 
-env:
-  PR_NUMBER: pr-${{ github.event.number }}
-  CF_API: "https://api.london.cloud.service.gov.uk"
-  CF_ORG: "dfe"
-  CF_SPACE: ntp-qa
-
 jobs:
-  teardown_deployment:
-    name: Teardown Deployment
-    runs-on: ubuntu-latest
+  teardown_teardown_deployment:
+    name: Terraform Teardown Deployment
+    uses: ./.github/workflows/terraform-teardown.yml
+    with:
+      environment: 'qa'
+      tf_var_environment: 'pr-${{ github.event.number }}'
+      tf_var_file_env: 'pr'
+      az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
+      az_resource_group_name: 's177d01-ntp-pr-${{ github.event.number }}'
 
-    steps:
-    - name: Install the CF CLI
-      run: |
-        wget -v -O cf.tar.gz "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8"
-        sudo tar xzf cf.tar.gz --wildcards --directory /usr/local/bin/ "cf*"
-
-    - name: Authenticate
-      env:
-        CF_USERNAME: ${{ secrets.CF_USERNAME }}
-        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-      run: |
-        echo "Logging into $CF_ORG/$CF_SPACE..."
-        cf api "${CF_API}"
-        cf auth
-        cf target -o "${CF_ORG}" -s "${CF_SPACE}"
-
-    - name: Delete application
-      run: |
-        cf delete find-a-tuition-partner-$PR_NUMBER -f
-
-    - name: Delete database backing service
-      run: |
-        cf delete-service find-a-tuition-partner-$PR_NUMBER-postgres-db -f
-
-    - name: Delete database backing service
-      run: |
-        cf delete-service find-a-tuition-partner-$PR_NUMBER-redis-db -f
+    secrets:
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_API_KEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+      monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
+      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}

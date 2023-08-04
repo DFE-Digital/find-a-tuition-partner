@@ -1,12 +1,10 @@
-﻿using System.Text.Json;
-using Application;
+﻿using Application;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
 using Application.DataImport;
 using Application.Extraction;
 using Application.Factories;
 using Infrastructure.Configuration;
-using Infrastructure.Configuration.GPaaS;
 using Infrastructure.Constants;
 using Infrastructure.DataImport;
 using Infrastructure.Extraction;
@@ -18,6 +16,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Infrastructure.Extensions;
 
@@ -51,7 +50,9 @@ public static class ServiceCollectionExtensions
         {
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = connectionString;
+                options.ConfigurationOptions = ConfigurationOptions.Parse(connectionString);
+                options.ConfigurationOptions.SyncTimeout = 15000;
+                options.ConfigurationOptions.AsyncTimeout = 15000;
             });
         }
         else
@@ -62,53 +63,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static VcapServices? GetVcapServices(this IConfiguration configuration)
-    {
-        var vcapServicesJson = configuration["VCAP_SERVICES"];
-
-        if (string.IsNullOrEmpty(vcapServicesJson))
-        {
-            return null;
-        }
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        return JsonSerializer.Deserialize<VcapServices>(vcapServicesJson, options);
-    }
     public static string GetNtpConnectionString(this IConfiguration configuration)
     {
-        var vcapServices = configuration.GetVcapServices();
-
-        if (vcapServices != null)
-        {
-            var postgresCredentials = vcapServices?.Postgres?.FirstOrDefault()?.Credentials;
-
-            if (postgresCredentials?.IsValid() == true)
-            {
-                return $"Host={postgresCredentials.Host};Port={postgresCredentials.Port};Username={postgresCredentials.Username};Password={postgresCredentials.Password};Database={postgresCredentials.Name}";
-            }
-        }
-
         return configuration.GetConnectionString(EnvironmentVariables.FatpDatabaseConnectionString);
     }
 
     public static string? GetRedisConnectionString(this IConfiguration configuration)
     {
-        var vcapServices = configuration.GetVcapServices();
-
-        if (vcapServices != null)
-        {
-            var redisCredentials = vcapServices?.Redis?.FirstOrDefault()?.Credentials;
-
-            if (redisCredentials?.IsValid() == true)
-            {
-                return $"{redisCredentials.Host}:{redisCredentials.Port},ssl=true,password={redisCredentials.Password}";
-            }
-        }
-
         return configuration.GetConnectionString(EnvironmentVariables.FatpRedisConnectionString);
     }
 
@@ -148,9 +109,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
     {
         var azureBlobStorageSettings = new AzureBlobStorageSettings();
-        configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage).Bind(azureBlobStorageSettings);
+        configuration.GetSection(AzureBlobStorageSettings.BlobStorage).Bind(azureBlobStorageSettings);
         azureBlobStorageSettings.Validate();
-        services.Configure<AzureBlobStorageSettings>(configuration.GetSection(AzureBlobStorageSettings.AzureBlobStorage));
+        services.Configure<AzureBlobStorageSettings>(configuration.GetSection(AzureBlobStorageSettings.BlobStorage));
         services.AddOptions();
         services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
         services.AddScoped<IDataFileEnumerable, AzureBlobStorageDataFileEnumerable>();

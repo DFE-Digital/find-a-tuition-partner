@@ -1,0 +1,55 @@
+name: Run Database Migration and Data Importer
+description: Run Database Migration and Data Importer
+
+inputs:
+  az_resource_group_name:
+    required: true
+    type: string
+  az_webapp_name:
+    required: true
+    type: string
+  blob_storage_client_secret:
+    required: true
+    type: string
+  postgresql_server_admin_username:
+    required: true
+    type: string
+  postgresql_server_admin_password:
+    required: true
+    type: string
+  run_database_migrations_and_import_data:
+    description: 'Run database migration and import data on the deployed app'
+    required: true
+    default: true
+    type: boolean
+
+runs:
+  using: composite
+
+  steps:     
+    - name: Run database migration and import data on deployed app
+      shell: bash
+      if: ${{ inputs.run_database_migrations_and_import_data == 'true' }}
+      run: |
+        echo "Running database migrations and import data on deployed app..."   
+        sleep 120s # wait for the SSH connection to establish
+        # clean up any old ssh tunnels before we start
+        for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
+        
+        az webapp create-remote-connection --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }}  -p 54321 &
+        # startup time seems to be a bit unpredictable...
+        timeout 600 bash -c 'until echo > /dev/tcp/localhost/54321; do sleep 5; done'
+        
+        sshpass -p 'Docker!' ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -p 54321 root@localhost << EOF
+        export BlobStorage__ClientId=fdd09510-77b0-419f-b67c-2b5a25a073f0
+        export BlobStorage__AccountName=s177p01sharedtpdata
+        export BlobStorage__ContainerName=ntp-tp-data
+        export BlobStorage__TenantId=9c7d9dd3-840c-4b3f-818e-552865082e16
+        export BlobStorage__ClientSecret=${{ inputs.blob_storage_client_secret }}
+        export "ConnectionStrings__FatpDatabase=Server=${{ inputs.az_webapp_name }}-psqlflexible-server.postgres.database.azure.com;Database=${{ inputs.az_webapp_name }}-db;Port=5432;User Id=${{ inputs.postgresql_server_admin_username }};Password=${{ inputs.postgresql_server_admin_password }};Ssl Mode=Require;TrustServerCertificate=True;"
+        cd /home/site/wwwroot
+        dotnet ./UI.dll import
+        EOF
+        
+        # clean up ssh tunnels
+        for p in $(pgrep -f "webapp create-remote-connection"); do kill $p; done
