@@ -42,6 +42,21 @@ resource "azurerm_key_vault" "default" {
     ]
   }
 
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_linux_function_app.dataextraction[0].identity[0].principal_id
+
+    key_permissions = [
+      "Get",
+      "List",
+    ]
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+
 
   network_acls {
     bypass                     = "AzureServices"

@@ -42,6 +42,28 @@ resource "azurerm_subnet" "web_app_service_infra_subnet" {
   }
 }
 
+resource "azurerm_subnet" "function_app_service_infra_subnet" {
+  count = local.launch_in_vnet ? 1 : 0
+
+  name                 = "${local.resource_prefix}-webappserviceinfra"
+  virtual_network_name = local.virtual_network.name
+  resource_group_name  = local.resource_group.name
+  address_prefixes     = [local.function_app_service_infra_subnet_cidr]
+
+  service_endpoints = ["Microsoft.Storage"]
+
+  delegation {
+    name = "delegation"
+
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/action",
+      ]
+    }
+  }
+}
+
 resource "azurerm_subnet_route_table_association" "web_app_service_infra_subnet" {
   count = local.launch_in_vnet ? 1 : 0
 

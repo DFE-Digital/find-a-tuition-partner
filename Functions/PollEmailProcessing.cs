@@ -15,7 +15,7 @@ namespace Functions
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [Function("PollEmailProcessing")]
+        //[Function("PollEmailProcessing")]
         public async Task RunAysnc([TimerTrigger("* * * * *")] MyInfo myTimer)
         {
             var url = Environment.GetEnvironmentVariable("PollEmailProcessingUrl", EnvironmentVariableTarget.Process);
