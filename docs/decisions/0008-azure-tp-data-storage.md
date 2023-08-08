@@ -37,7 +37,7 @@ This is making use of OneDrive in much the same way as Google Drive was used. Ha
 spreadsheets stored within a folder, and the importer accessing that folder via a service credential.
 
 * Good, because it is easy for non-technical users to update the spreadsheets
-* Goodm because OneDrive is already protected against malware
+* Good because OneDrive is already protected against malware
 * Bad, because the service credential would need 'READ_ALL' permissions and could access all files in OneDrive
 
 ### Store the TP data within the GitHub repository
