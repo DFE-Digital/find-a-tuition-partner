@@ -1,0 +1,101 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome
+!define FONTAWESOME_5 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!define AzurePuml https://raw.githubusercontent.com/plantuml-stdlib/Azure-PlantUML/release/2-2/dist
+
+!includeurl AzurePuml/AzureCommon.puml
+!includeurl AzurePuml/AzureC4Integration.puml
+
+!includeurl AzurePuml/Web/AzureWebApp.puml
+!includeurl AzurePuml/Databases/AzureRedisCache.puml
+
+!include DEVICONS/dotnet.puml
+!include DEVICONS/postgresql.puml
+!include DEVICONS/google_analytics.puml
+!include DEVICONS/redis.puml
+!include FONTAWESOME/file_text.puml
+!include FONTAWESOME_5/users.puml
+!include FONTAWESOME_5/map_marked.puml
+!include FONTAWESOME_5/file_excel.puml
+!include FONTAWESOME_5/database.puml
+!include FONTAWESOME_5/google_drive.puml
+!include FONTAWESOME_5/envelope.puml
+!include FONTAWESOME_5/cloud.puml
+!include AzurePuml/Networking/AzureFrontDoorService.puml
+!include AzurePuml/Networking/AzureNAT.puml
+!include AzurePuml/Web/AzureWebApp.puml
+!include AzurePuml/Databases/AzureDatabaseForPostgreSQL.puml
+!include AzurePuml/Databases/AzureRedisCache.puml
+!include AzurePuml/Management/AzureResourceGroups.puml
+!include AzurePuml/Compute/AzureFunction.puml
+!include AzurePuml/Storage/AzureBlobStorage.puml
+
+' LAYOUT_LANDSCAPE()
+
+Person(users, "External Users", "School staff/Tuition Partners", $sprite="users")
+
+Boundary(azureCIP, "Production", "Azure Subscription") {
+    Boundary(vnetPrivate, "Private", "VNET") {
+        AzureFrontDoorService(frontDoor, "Ingress", "Azure Front Door", "Also provides CDN & WAF")
+        AzureNAT(nat, "Egress", "NAT Gateway")
+        AzureWebApp(app, "FATP Application", ".NET Core")
+        AzureDatabaseForPostgreSQL(db, "FATP Database", "Azure Database for PostgreSQL")
+        AzureRedisCache(cache, "Session Cache", "Azure Redis Cache")
+        AzureFunction(emailTrigger, "Email Trigger", ".NET Core")
+    }
+    Boundary(sharedRG, "Shared", "Azure Resource Group") {
+        AzureBlobStorage(tpData, "Tuition Partner Data", "Excel")
+    }
+}
+
+Person(deliveryTeam, "Delivery Team", "Developers, testers, etc.", $sprite="users")
+
+Boundary(azureCIPDev, "Development", "Azure Subscription") {
+    Boundary(vnetPrivateDev, "Private", "VNET") {
+    AzureFrontDoorService(frontDoorDev, "Ingress", "Azure Front Door")
+    AzureNAT(natDev, "Egress", "NAT Gateway")
+    Boundary(rgPR123, "PR123", "Resource Group") {
+        AzureWebApp(appPR123, "FATP Application", ".NET Core")
+        AzureDatabaseForPostgreSQL(dbPR123, "FATP Database", "Azure Database for PostgreSQL")
+        AzureRedisCache(cachePR123, "Session Cache", "Azure Redis Cache")
+        AzureFunction(emailTriggerPR123, "Email Trigger", ".NET Core")
+    }
+    Boundary(rgPR456, "PR456", "Resource Group") {
+        AzureWebApp(appPR456, "FATP Application", ".NET Core")
+        AzureDatabaseForPostgreSQL(dbPR456, "FATP Database", "Azure Database for PostgreSQL")
+        AzureRedisCache(cachePR456, "Session Cache", "Azure Redis Cache")
+        AzureFunction(emailTriggerPR456, "Email Trigger", ".NET Core")
+    }
+}
+
+System_Ext(externalServices, "External Services", $sprite="cloud")
+
+Rel(users, frontDoor, "Uses", "HTTPS")
+Rel(frontDoor, app, "Uses", "HTTPS")
+Rel(app, db, "Uses", "PLSQL/TLS")
+Rel(app, cache, "Uses", "RESP/TLS")
+Rel(emailTrigger, app, "Trigger", "HTTPS")
+Rel(app, nat, "Outbound Traffic")
+Rel(nat, externalServices, "Use")
+
+Rel(deliveryTeam, frontDoorDev, "Uses", "HTTPS")
+Rel(natDev, externalServices, "Use")
+
+Rel(frontDoorDev, appPR123, "Uses", "HTTPS")
+Rel(appPR123, dbPR123, "Uses", "PLSQL/TLS")
+Rel(appPR123, cachePR123, "Uses", "RESP/TLS")
+Rel(emailTriggerPR123, appPR123, "Trigger", "HTTPS")
+Rel(appPR123, natDev, "Outbound Traffic")
+
+Rel(frontDoorDev, appPR456, "Uses", "HTTPS")
+Rel(appPR456, dbPR456, "Uses", "PLSQL/TLS")
+Rel(appPR456, cachePR456, "Uses", "RESP/TLS")
+Rel(emailTriggerPR456, appPR456, "Trigger", "HTTPS")
+Rel(appPR456, natDev, "Outbound Traffic")
+
+
+
+@enduml
