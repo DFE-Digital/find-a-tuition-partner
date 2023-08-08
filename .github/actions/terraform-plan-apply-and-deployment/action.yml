@@ -217,6 +217,10 @@ runs:
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
           run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+          az_tenant_id: ${{ inputs.az_tenant_id }}
+          az_subscription_id: ${{ inputs.az_subscription_id }}
+          az_client_id: ${{ inputs.az_client_id }}
+          az_client_secret: ${{ inputs.az_client_secret }}
         
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

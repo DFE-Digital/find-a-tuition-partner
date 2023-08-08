@@ -62,6 +62,18 @@ inputs:
     required: false
     default: "staging"
     type: string
+  az_tenant_id:
+    required: true
+    type: string
+  az_subscription_id:
+    required: true
+    type: string
+  az_client_id:
+    required: true
+    type: string
+  az_client_secret:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -141,6 +153,15 @@ runs:
         app-name: ${{ inputs.az_webapp_name }}
         package: ${{ inputs.working_directory }}/publish
         slot-name: ${{ inputs.deployment_slot }}
+        
+    - name: Deploy to Azure Function App
+      uses: ./.github/actions/deploy-function-app
+      with:
+        az_tenant_id: ${{ inputs.az_tenant_id }}
+        az_subscription_id: ${{ inputs.az_subscription_id }}
+        az_client_id: ${{ inputs.az_client_id }}
+        az_client_secret: ${{ inputs.az_client_secret }}
+        az_resource_group_name: ${{ inputs.az_resource_group_name }}
         
     - name: Swap slots to production
       shell: bash
