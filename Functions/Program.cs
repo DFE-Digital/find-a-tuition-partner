@@ -14,11 +14,11 @@ var host = new HostBuilder()
             configurationBuilder.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true);
             configurationBuilder.AddUserSecrets<Program>(optional: true, reloadOnChange: true);
         }
-        
+
         var builtConfig = configurationBuilder.Build();
 
         var keyVaultUrl = builtConfig[AppEnvironmentVariables.FatpAzureKeyVaultName];
-        
+
         if (!string.IsNullOrEmpty(keyVaultUrl))
         {
             var credential = new DefaultAzureCredential();

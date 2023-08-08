@@ -34,14 +34,14 @@ public class DataExtraction
             var result = await command.ExecuteScalarAsync(cancellationToken);
 
             var castResult = Convert.ToInt64(result);
-            
+
             _logger.LogInformation("The query count is: {castResult}", castResult);
-            
+
         }
         catch (NpgsqlException ex)
         {
             // In case of exception (database not available, wrong query, etc.) return Unhealthy
-           _logger.LogError(ex.Message);
+            _logger.LogError(ex.Message);
         }
     }
 }
