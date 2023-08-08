@@ -112,18 +112,14 @@ You can then access the application on [https://localhost:7036/](https://localho
 
 ## Logging and Metrics
 
-The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a TCP sink for logit.io data source integration.
+The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a Serilog sink that writes log events to Microsoft Application Insights data source integration.
 
-### logit.io
+### Microsoft Application Insights
 
-[logit.io](logit.io) provides the ELK stack (Elasticsearch, Logstash, and Kibana) and Grafana as a service. The service ships logs to the find a tuition partner stack in the NTP account which is what new developers and analysts should request access to.
-
-Log interrogation is provided by OpenSearch and metrics dashboards are configured in Grafana. logit.io provides alerting within its service however Grafana can also be configured to send alerts if required.
-
-If you need to test logit.io integration from your development environment, use the following command to add the neccessary user secret:
+If you need to test Microsoft Application Insights integration from your development environment, use the following command to add the neccessary user secret:
 
 ```
-dotnet user-secrets set "AppLogging:TcpSinkUri" "<TLS_URL>" -p UI
+dotnet user-secrets set "APPINSIGHTS:INSTRUMENTATIONKEY" "<KEY>" -p UI
 ```
 
 ### Google Tag Manager
@@ -207,45 +203,3 @@ Please note: This automated accessibility testing is not sufficient to replace m
 The team currently use the following tools to aid manual security testing
 
 * [OWASP Zed Attack Proxy](https://www.zaproxy.org/)
-
-## GOV.UK PaaS
-
-Follow the [Cloud Foundry command line set up guide](https://docs.cloud.service.gov.uk/get_started.html#set-up-the-cloud-foundry-command-line) to support managing the deployments locally.
-
-The [Manual Environment Setup](docs/runbooks/manual-environment-setup.md) runbook details the commands used.
-
-## Reporting
-
-### Exporting anonymised enquiry data
-
-There is a bash script (so will need MacOS, Linux, or WSL) which will export enquiry and response data to a CSV for analysis.
-
-This uses conduit to connect to the production database in ready only mode from the local machine, and then runs some SQL to export the required data.
-
-In order to use this you need to have the cloudfoundry CLI on your machine, and to have installed conduit:
-
-```
-cf install-plugin conduit
-```
-
-Once this has been installed, to export the data you:
-
-Log in to `cf` if you haven't already
-
-```
-cf login
-```
-
-Once you have logged in, run the export script:
-
-```
-cd scripts
-./export_enquiry_data.sh
-```
-
-The data will be exported into a new directory `scripts/exports/production/<date>/`
-
-By default this will export data from the `production` environment. You can export data from other enqvironments if needed, e.g.
-```
-./export_enquiry_data.sh staging
-```
