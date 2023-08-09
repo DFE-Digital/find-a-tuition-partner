@@ -14,7 +14,7 @@
 !include FONTAWESOME_5/map_marked.puml
 !include FONTAWESOME_5/file_excel.puml
 !include FONTAWESOME_5/database.puml
-!include FONTAWESOME_5/google_drive.puml
+!include FONTAWESOME_5/cloud_upload_alt.puml
 !include FONTAWESOME_5/envelope.puml
 
 Person(schoolStaff, "School Staff", "Member of the school team that has identified a set of pupils with tutoring needs", $sprite="users")
@@ -23,7 +23,7 @@ Person_Ext(tpQa, "Tuition Partner Quality Assurance", "Accreditation partner con
 
 Person_Ext(tuitionPartner, "Tuition Partner", "Companies that can supply tutors to schools", $sprite="users")
  
-Container(googleDrive, "Google Drive", "TP Data spreadsheets and logos stored within a folder", $sprite="google_drive")
+Container(azureBlobStorage, "Azure Blob Storage", "TP Data spreadsheets and logos stored within a folder", $sprite="cloud_upload_alt")
 
 System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Service") {
     Container(app, "Web Application", "C#, ASP.NET Core 6.0 Razor Pages", "Search for quality assured Tuition Partners that offer services in a specified location", $sprite="dotnet")
@@ -40,8 +40,8 @@ System_Ext(notify, "GOV.UK Notify", "Send OTPs and other notifications to the us
 
 Rel(schoolStaff, app, "Uses", "REST API")
 Rel(tuitionPartner, app, "Responds to enquiries", "REST API")
-Rel(tpQa, googleDrive, "Supplies data via delivery team", "Excel")
-Rel_Up(dataImporter, googleDrive, "Read tuition Partner data in Excel format", "REST API")
+Rel(tpQa, azureBlobStorage, "Supplies data via delivery team", "Excel")
+Rel_Up(dataImporter, azureBlobStorage, "Read tuition Partner data in Excel format", "REST API")
 Rel_Right(app, db, "Read TP Data\nRead/Write Enquiry")
 Rel_Left(app, cache, "Store Session")
 Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
