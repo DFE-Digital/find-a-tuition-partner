@@ -112,11 +112,11 @@ You can then access the application on [https://localhost:7036/](https://localho
 
 ## Logging and Metrics
 
-The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a Serilog sink that writes log events to Microsoft Application Insights data source integration.
+The service uses [Serilog](https://github.com/serilog/serilog) to support logging structured event data. It is configured to write logs to the console as default and optionally write to a Serilog sink that writes log events to Azure Application Insights data source integration.
 
-### Microsoft Application Insights
+### Azure Application Insights
 
-If you need to test Microsoft Application Insights integration from your development environment, use the following command to add the neccessary user secret:
+If you need to test Azure Application Insights integration from your development environment, use the following command to add the necessary user secret:
 
 ```
 dotnet user-secrets set "APPINSIGHTS:INSTRUMENTATIONKEY" "<KEY>" -p UI
@@ -126,7 +126,7 @@ dotnet user-secrets set "APPINSIGHTS:INSTRUMENTATIONKEY" "<KEY>" -p UI
 
 Google Tag Manager is used to track service traffic and usage. There is a separate container per environment and therefore container id. The Google Analytics: GA4 Configuration tag type is set up within GTM to track page events via GA4.
 
-If you need to test Google Tag Manager integration from your development environment, use the following command to add the neccessary user secret:
+If you need to test Google Tag Manager integration from your development environment, use the following command to add the necessary user secret:
 
 ```
 dotnet user-secrets set "GoogleTagManager:ContainerId" "<CONTAINER_ID>" -p UI

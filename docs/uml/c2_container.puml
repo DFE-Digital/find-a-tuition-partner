@@ -32,7 +32,7 @@ System_Boundary(fatp, "Find a tuition partner hosted in GOV.UK Platform as a Ser
     Container(dataImporter, "Data Importer", "C#, .NET 6.0 console app", "Decrypts and imports Tuition Partner data files. Run as Cloud Foundry task", $sprite="dotnet")
 }
 
-System_Ext(logitIo, "logit.io", "ELK stack and Grafana as a service", $sprite="file_text")
+System_Ext(appInsights, "Azure Application Insights", "Application performance monitoring (APM) and Tracing", $sprite="file_text")
 System_Ext(googleAnalytics, "Google Analytics", "Opt in metrics collection", $sprite="google_analytics")
 System_Ext(postcodesIo, "postcodes.io", "Maps postcode to Local Authority District code", $sprite="map_marked")
 System_Ext(bigQuery, "Google BigQuery", "Stores web request data for analytics", $sprite="database")
@@ -45,7 +45,7 @@ Rel_Up(dataImporter, googleDrive, "Read tuition Partner data in Excel format", "
 Rel_Right(app, db, "Read TP Data\nRead/Write Enquiry")
 Rel_Left(app, cache, "Store Session")
 Rel_Left(dataImporter, db, "Applies migrations, writes Tuition Partner data")
-Rel_Down(app, logitIo, "Send log events", "TCP Sink")
+Rel_Down(app, appInsights, "Send log events", "Application Insights")
 Rel_Down(app, googleAnalytics, "Send analytics events", "REST API")
 Rel_Down(app, postcodesIo, "Query postcode data", "REST API")
 Rel_Down(app, bigQuery, "Send analytics events", "REST API")
