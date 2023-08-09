@@ -32,7 +32,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     concurrency: azure-deploy-${{ inputs.environment }}
