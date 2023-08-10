@@ -99,33 +99,7 @@ runs:
         
     - name: Create a deployment slot
       shell: bash
-      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
-      
-    - name: Copy production deployment slot configuration to the target deployment slot
-      shell: bash
-      run: |
-        # Get production slot configuration
-        settings=""
-        prod_config=$(az webapp config appsettings list --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query "[].{name:name, value:value}" --output tsv)
-        # Construct settings string
-        while IFS=$'\t' read -r name value
-        do
-          echo "::add-mask::$value"
-          settings+="$name=$value "
-        done < <(echo "$prod_config")
-        
-        # Set deployment slot configuration
-        az webapp config appsettings set --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --slot ${{ inputs.deployment_slot }} --settings $settings
-        
-    - name: Copy production deployment slot generic configurations to the target deployment slot
-      shell: bash
-      run: |
-        # Get production slot settings
-        PROD_HEALTH_CHECK=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query healthCheckPath --output tsv)
-        PROD_WORKER_COUNT=$(az webapp config show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} --query numberOfWorkers --output tsv)
-    
-        # Set deployment slot settings
-        az webapp config set -g ${{ inputs.az_resource_group_name }} -n ${{ inputs.az_webapp_name }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ inputs.deployment_slot }}
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ secrets.AZURE_WEBAPP_NAME }}
         
     - name: Build and publish web app
       uses: ./.github/actions/build-and-publish-app

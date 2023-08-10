@@ -63,33 +63,7 @@ jobs:
           
       - name: Create a deployment slot
         shell: bash
-        run: az webapp deployment slot create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --slot ${{ env.deployment_slot }}
-
-      - name: Copy production deployment slot configuration to the target deployment slot
-        shell: bash
-        run: |
-          # Get production slot configuration
-          settings=""
-          prod_config=$(az webapp config appsettings list --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[].{name:name, value:value}" --output tsv)
-          # Construct settings string
-          while IFS=$'\t' read -r name value
-          do
-            echo "::add-mask::$value"
-            settings+="$name=$value "
-          done < <(echo "$prod_config")
-
-          # Set deployment slot configuration
-          az webapp config appsettings set --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --slot ${{ env.deployment_slot }} --settings $settings
-
-      - name: Copy production deployment slot generic configurations to the target deployment slot
-        shell: bash
-        run: |
-         # Get production slot settings
-         PROD_HEALTH_CHECK=$(az webapp config show --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query healthCheckPath --output tsv)
-         PROD_WORKER_COUNT=$(az webapp config show --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query numberOfWorkers --output tsv)
-         
-         # Set deployment slot settings
-         az webapp config set -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_WEBAPP_NAME }} --generic-configurations "{\"healthCheckPath\": \"$PROD_HEALTH_CHECK\", \"numberOfWorkers\": \"$PROD_WORKER_COUNT\", \"ftpsState\": \"Disabled\"}" --slot ${{ env.deployment_slot }}
+        run: az webapp deployment slot create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --slot ${{ env.deployment_slot }} --configuration-source ${{ secrets.AZURE_WEBAPP_NAME }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
