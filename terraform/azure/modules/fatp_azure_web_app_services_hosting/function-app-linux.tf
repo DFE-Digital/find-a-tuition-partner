@@ -20,24 +20,24 @@ resource "azurerm_linux_function_app" "default" {
     http2_enabled          = true
     minimum_tls_version    = "1.2"
     worker_count           = local.service_worker_count
-  }
 
-  application_stack {
-    dotnet_version              = local.service_stack == "dotnet" ? local.service_stack_version : null
-    use_dotnet_isolated_runtime = true
-  }
+    application_stack {
+      dotnet_version              = local.service_stack == "dotnet" ? local.service_stack_version : null
+      use_dotnet_isolated_runtime = true
+    }
 
-  dynamic "ip_restriction" {
-    for_each = local.restrict_web_app_service_to_cdn_inbound_only && local.enable_cdn_frontdoor ? [1] : []
-    content {
-      name   = "Allow CDN Traffic"
-      action = "Allow"
-      headers {
-        x_azure_fdid = [
-          azurerm_cdn_frontdoor_profile.cdn[0].resource_guid
-        ]
+    dynamic "ip_restriction" {
+      for_each = local.restrict_web_app_service_to_cdn_inbound_only && local.enable_cdn_frontdoor ? [1] : []
+      content {
+        name   = "Allow CDN Traffic"
+        action = "Allow"
+        headers {
+          x_azure_fdid = [
+            azurerm_cdn_frontdoor_profile.cdn[0].resource_guid
+          ]
+        }
+        service_tag = "AzureFrontDoor.Backend"
       }
-      service_tag = "AzureFrontDoor.Backend"
     }
   }
 
