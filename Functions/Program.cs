@@ -17,12 +17,12 @@ var host = new HostBuilder()
 
         var builtConfig = configurationBuilder.Build();
 
-        var keyVaultUrl = builtConfig[AppEnvironmentVariables.FatpAzureKeyVaultName];
+        var keyVaultName = builtConfig[AppEnvironmentVariables.FatpAzureKeyVaultName];
 
-        if (!string.IsNullOrEmpty(keyVaultUrl))
+        if (!string.IsNullOrEmpty(keyVaultName))
         {
             var credential = new DefaultAzureCredential();
-            configurationBuilder.AddAzureKeyVault(new Uri(keyVaultUrl), credential);
+            configurationBuilder.AddAzureKeyVault(new Uri($"https://{keyVaultName}.vault.azure.net/"), credential);
         }
     })
     .ConfigureServices(builder =>
