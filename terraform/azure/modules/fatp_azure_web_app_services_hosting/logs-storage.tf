@@ -23,7 +23,7 @@ resource "azurerm_storage_account" "logs" {
 resource "azurerm_storage_account" "functionapplogs" {
   count = local.enable_service_logs ? 1 : 0
 
-  name                      = "${replace(local.service_name, "-", "")}functionapplogs"
+  name                      = "${replace(local.service_name, "-", "")}falogs"
   resource_group_name       = azurerm_resource_group.default[0].name
   location                  = azurerm_resource_group.default[0].location
   account_tier              = "Standard"
