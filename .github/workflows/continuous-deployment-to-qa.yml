@@ -5,6 +5,8 @@ on:
     branches:
       - main
 
+concurrency: continuous-deployment-to-qa-${{ github.event.number }}
+
 jobs:
   build_and_test:
     name: .NET Build and Test
