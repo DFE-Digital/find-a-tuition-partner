@@ -67,10 +67,10 @@ The Tuition Partner data is imported from a container in Azure Blob Storage.
 You can then use the following commands to add the necessary user secrets after obtaining the client secret:
 
 ```
-dotnet user-secrets set "AzureBlobStorage:ClientSecret" "<will be shared privately>" -p UI
-dotnet user-secrets set "AzureBlobStorage:AccountName" "s177p01sharedtpdata" -p UI
-dotnet user-secrets set "AzureBlobStorage:ClientId" "fdd09510-77b0-419f-b67c-2b5a25a073f0" -p UI
-dotnet user-secrets set "AzureBlobStorage:TenantId" "9c7d9dd3-840c-4b3f-818e-552865082e16" -p UI
+dotnet user-secrets set "BlobStorage:ClientSecret" "<will be shared privately>" -p UI
+dotnet user-secrets set "BlobStorage:AccountName" "s177p01sharedtpdata" -p UI
+dotnet user-secrets set "BlobStorage:ClientId" "fdd09510-77b0-419f-b67c-2b5a25a073f0" -p UI
+dotnet user-secrets set "BlobStorage:TenantId" "9c7d9dd3-840c-4b3f-818e-552865082e16" -p UI
 ```
 
 #### Data Import
