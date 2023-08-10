@@ -99,7 +99,7 @@ runs:
         
     - name: Create a deployment slot
       shell: bash
-      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ secrets.AZURE_WEBAPP_NAME }}
+      run: az webapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ inputs.az_webapp_name }}
         
     - name: Build and publish web app
       uses: ./.github/actions/build-and-publish-app
