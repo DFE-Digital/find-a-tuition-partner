@@ -48,6 +48,10 @@ module "fatp_azure_web_app_services_hosting" {
     "GoogleAnalytics__MeasurementId"                              = var.app_setting_googleAnalytics_measurementId
   }
 
+  function_app_settings = {
+    "FatpAzureKeyVaultName" = "${var.service_name}-${var.environment}-kv"
+  }
+
   # App secrets
   govuk_notify_apikey        = var.govuk_notify_apikey
   blob_storage_client_secret = var.blob_storage_client_secret

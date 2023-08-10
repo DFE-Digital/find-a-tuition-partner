@@ -114,6 +114,12 @@ variable "service_app_settings" {
   default     = {}
 }
 
+variable "function_app_settings" {
+  description = "Function app settings"
+  type        = map(string)
+  default     = {}
+}
+
 variable "service_health_check_path" {
   description = "Service health check path"
   type        = string

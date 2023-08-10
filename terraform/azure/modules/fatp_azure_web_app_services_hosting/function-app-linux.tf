@@ -1,5 +1,5 @@
-resource "azurerm_linux_function_app" "dataextraction" {
-  name                = "${local.resource_prefix}-dataextraction-fa"
+resource "azurerm_linux_function_app" "default" {
+  name                = "${local.resource_prefix}-fa"
   resource_group_name = local.resource_group.name
   location            = local.resource_group.location
 
@@ -8,6 +8,11 @@ resource "azurerm_linux_function_app" "dataextraction" {
   service_plan_id            = azurerm_service_plan.default.id
   virtual_network_subnet_id  = azurerm_subnet.function_app_service_infra_subnet[0].id
   https_only                 = true
+
+  app_settings = merge(
+    local.function_app_insights_settings,
+    local.function_app_settings
+  )
 
   site_config {
     always_on              = true
