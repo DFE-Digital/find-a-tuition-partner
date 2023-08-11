@@ -5,52 +5,38 @@ on:
     branches:
       - main
 
+concurrency: continuous-deployment-to-qa-${{ github.event.number }}
+
 jobs:
   build_and_test:
     name: .NET Build and Test
     uses: ./.github/workflows/build-and-test.yml
-
-  deploy_to_azure:
-    name: Deploy to Azure
-    needs: build_and_test
-    uses: ./.github/workflows/deploy-to-azure.yml
+  
+  provision-deploy-run-e2e-test:
+    name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+    uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
     with:
-      environment: qa
+      environment: 'qa'
+      tf_var_environment: 'qa'
+      tf_var_file_env: 'qa'
+      non_pr_env_name: 'qa'
+      run_e2e_test: true
       run_database_migrations_and_import_data: true
-    secrets: inherit
-
-  e2e-tests:
-    name: 'End to End Testing'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [ 1, 2, 3]
-    environment: qa
-    needs: [ deploy_to_azure ]
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Azure CLI Login
-        uses: ./.github/actions/azure-login
-        with:
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-
-      - name: End to End Testing
-        uses: ./.github/actions/end-to-end-testing
-        with:
-          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP  }}
-          az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
-        env:
-          SPLIT: ${{ strategy.job-total }}
-          SPLIT_INDEX: ${{ strategy.job-index }}
+    
+    secrets:
+      az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+      az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+      az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      postgresql_server_admin_username: ${{ secrets.POSTGRESQL_SERVER_ADMIN_USERNAME }}
+      postgresql_server_admin_password: ${{ secrets.POSTGRESQL_SERVER_ADMIN_PASSWORD }}
+      govuk_notify_apikey: ${{ secrets.GOVUK_NOTIFY_API_KEY }}
+      blob_storage_client_secret: ${{ secrets.BLOB_STORAGE_CLIENT_SECRET }}
+      backend_config_resource_group_name: ${{ secrets.TF_STATE_RESOURCE_GROUP }}
+      backend_config_storage_account_name: ${{ secrets.TF_STATE_STORAGE_ACCOUNT_NAME }}
+      backend_config_container_name: ${{ secrets.TF_STATE_CONTAINER_NAME }}
+      monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
+      monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
+      dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
