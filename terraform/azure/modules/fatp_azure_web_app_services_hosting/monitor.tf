@@ -47,7 +47,7 @@ resource "azurerm_application_insights" "function_app_service" {
 
 resource "azurerm_monitor_diagnostic_setting" "function_app_service" {
   name                       = "${local.resource_prefix}-functionappservice"
-  target_resource_id         = local.service_app.id
+  target_resource_id         = azurerm_linux_function_app.default.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.function_app_service.id
 
   dynamic "enabled_log" {

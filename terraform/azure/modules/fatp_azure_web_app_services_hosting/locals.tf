@@ -54,7 +54,7 @@ locals {
   function_app_insights_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.function_app_service.connection_string,
     "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.function_app_service.instrumentation_key,
-    "PollEmailProcessingUrl"                = local.environment != "production" ? "${azurerm_cdn_frontdoor_endpoint.endpoint[0].host_name}/admin/process-emails" : "https://www.find-tuition-partner.service.gov.uk/admin/process-emails"
+    "PollEmailProcessingUrl"                = local.environment != "production" ? "https://${azurerm_cdn_frontdoor_endpoint.endpoint[0].host_name}/admin/process-emails" : "https://www.find-tuition-partner.service.gov.uk/admin/process-emails"
   }
 
   service_health_check_path                 = var.service_health_check_path
