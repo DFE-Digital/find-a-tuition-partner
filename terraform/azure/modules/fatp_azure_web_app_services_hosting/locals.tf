@@ -77,6 +77,9 @@ locals {
     "AppServiceIPSecAuditLogs",
     "AppServicePlatformLogs"
   ])
+  function_app_diagnostic_setting_types = toset([
+    "FunctionAppLogs"
+  ])
 
   enable_monitoring              = var.enable_monitoring
   monitor_email_receivers        = var.monitor_email_receivers

@@ -51,7 +51,7 @@ resource "azurerm_monitor_diagnostic_setting" "function_app_service" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.function_app_service.id
 
   dynamic "enabled_log" {
-    for_each = local.service_diagnostic_setting_types
+    for_each = local.function_app_diagnostic_setting_types
     content {
       category = enabled_log.value
 
