@@ -384,6 +384,10 @@ public class ProcessEmailsService : IProcessEmailsService
                                     x.ProcessFromDate != null &&
                                     x.ProcessFromDate <= DateTime.UtcNow &&
                                     x.FinishProcessingDate > DateTime.UtcNow &&
+                                    //For the email processing scheduled job, only process the emails if they were created more than 20 seconds ago.
+                                    //Since they may be being sent immediately using the email id (via the user action on the website, a separate process).
+                                    //If both process at the same time we end up with duplicate emails being sent.
+                                    (emailLogIds != null || x.CreatedDate.AddSeconds(20) < DateTime.UtcNow) &&
                                     (emailLogIds == null ||
                                     emailLogIds.Count() == 0 ||
                                     emailLogIds.Contains(x.Id))),
@@ -488,7 +492,7 @@ public class ProcessEmailsService : IProcessEmailsService
 
     private void UpdateEmailLogWithNotifyResponse(EmailLog emailToUpdate, NotifyEmailDto emailResult)
     {
-        var notifyResponse = emailToUpdate.EmailNotifyResponseLog == null ? new EmailNotifyResponseLog() : emailToUpdate.EmailNotifyResponseLog;
+        var notifyResponse = emailToUpdate.EmailNotifyResponseLog ?? new EmailNotifyResponseLog();
 
         notifyResponse = emailResult.NotifyResponse.Adapt(notifyResponse);
 
