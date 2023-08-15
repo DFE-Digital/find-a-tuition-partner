@@ -49,7 +49,9 @@ module "fatp_azure_web_app_services_hosting" {
   }
 
   function_app_settings = {
-    "FatpAzureKeyVaultName" = "${var.service_name}-${var.environment}-kv"
+    "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv",
+    "DataExtractionRecipientEmail"      = var.fa_app_setting_dataExtraction_recipient_email,
+    "DataExtractionTimerCronExpression" = var.fa_app_setting_dataExtraction_timer_cron_expression
   }
 
   # App secrets

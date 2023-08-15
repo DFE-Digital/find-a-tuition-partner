@@ -15,5 +15,7 @@ public enum EmailTemplateType
     [Description("ever")]
     EmailVerification,
     [Description("eotp")]
-    EnquiryOutcomeToTp
+    EnquiryOutcomeToTp,
+    [Description("ede")]
+    DataExtraction
 }

@@ -25,9 +25,12 @@ var host = new HostBuilder()
             configurationBuilder.AddAzureKeyVault(new Uri($"https://{keyVaultName}.vault.azure.net/"), credential);
         }
     })
-    .ConfigureServices(builder =>
+    .ConfigureServices((hostContext, services) =>
     {
-        builder.AddHttpClient();
+        services.AddHttpClient();
+
+        services.AddNotificationConfig(hostContext.Configuration)
+            .AddNotificationClientServiceConfiguration(hostContext.Configuration);
     })
     .AddLogging()
     .Build();

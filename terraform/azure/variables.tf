@@ -553,3 +553,13 @@ variable "dfeAnalytics_datasetId" {
   type    = string
   default = ""
 }
+
+variable "fa_app_setting_dataExtraction_recipient_email" {
+  type    = string
+  default = "ntp.DIGITAl@education.gov.uk"
+}
+
+variable "fa_app_setting_dataExtraction_timer_cron_expression" {
+  type    = string
+  default = "1 1 * * *"
+}
