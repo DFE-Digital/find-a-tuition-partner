@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
 
+//Minor change for testing
 public class NtpDbContext : DbContext, INtpDbContext, IDataProtectionKeyContext
 {
     public NtpDbContext(DbContextOptions<NtpDbContext> options) : base(options)
