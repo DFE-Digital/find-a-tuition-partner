@@ -59,8 +59,9 @@ module "fatp_azure_web_app_services_hosting" {
   }
 
   # App secrets
-  govuk_notify_apikey        = var.govuk_notify_apikey
-  blob_storage_client_secret = var.blob_storage_client_secret
+  govuk_notify_apikey                       = var.govuk_notify_apikey
+  blob_storage_client_secret                = var.blob_storage_client_secret
+  blob_storage_enquiries_data_client_secret = var.blob_storage_enquiries_data_client_secret
 
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min

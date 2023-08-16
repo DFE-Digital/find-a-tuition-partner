@@ -620,5 +620,6 @@ variable "blob_storage_client_secret" {
 }
 
 variable "blob_storage_enquiries_data_client_secret" {
-  type = string
+  type      = string
+  sensitive = true
 }
