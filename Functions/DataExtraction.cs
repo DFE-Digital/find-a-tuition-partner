@@ -1,12 +1,11 @@
 using System.Globalization;
-using Application.Common.DTO;
 using Application.Common.Interfaces;
+using Azure.Storage.Blobs;
 using CsvHelper;
-using Domain.Enums;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Notify.Client;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using AppEnvironmentVariables = Infrastructure.Constants.EnvironmentVariables;
 
@@ -16,20 +15,29 @@ public class DataExtraction
 {
     private readonly ILogger<DataExtraction> _logger;
     private readonly IConfiguration _configuration;
-    private readonly INotificationsClientService _notificationsClientService;
+    private readonly BlobStorageEnquiriesDataSettings _blobConfig;
+    private readonly IGenerateUserDelegationSasTokenAsync _generateUserDelegationSasToken;
 
     public DataExtraction(ILogger<DataExtraction> logger, IConfiguration configuration,
-        INotificationsClientService notificationsClientService)
+        IOptions<BlobStorageEnquiriesDataSettings> blobConfig,
+        IGenerateUserDelegationSasTokenAsync generateUserDelegationSasToken)
     {
         _logger = logger;
         _configuration = configuration;
-        _notificationsClientService = notificationsClientService;
+        _blobConfig = blobConfig.Value;
+        _generateUserDelegationSasToken = generateUserDelegationSasToken;
     }
 
     [Function("DataExtraction")]
     public async Task RunAsync([TimerTrigger("%DataExtractionTimerCronExpression%")] MyInfo myTimer, CancellationToken cancellationToken)
     {
         _logger.LogInformation($"Find a Tuition Partner DataExtraction function started execution at: {DateTime.UtcNow}");
+
+        var sasToken = await _generateUserDelegationSasToken.GenerateUserDelegationSasTokenAsync();
+
+        // Create a BlobServiceClient with the SAS token
+        var blobServiceClient =
+            new BlobServiceClient(new Uri($"https://{_blobConfig.AccountName}.blob.core.windows.net?{sasToken}"));
 
         var dbConnectionString = _configuration.GetConnectionString(AppEnvironmentVariables.FatpDatabaseConnectionString);
         await using var connection = new NpgsqlConnection(dbConnectionString);
@@ -41,7 +49,9 @@ public class DataExtraction
 
             var enquiriesCommandReader = await enquiriesCommand.ExecuteReaderAsync(cancellationToken);
 
-            byte[] enquiriesByteArray = ConvertDataReaderToCSVByteArray(enquiriesCommandReader);
+            byte[] enquiriesByteArray = ConvertDataReaderToCsvByteArray(enquiriesCommandReader);
+
+            await UploadToBlobStorage(enquiriesByteArray, "enquiries.csv", blobServiceClient); // Upload to blob storage
 
             await enquiriesCommandReader.CloseAsync();
 
@@ -50,29 +60,11 @@ public class DataExtraction
 
             var enquiriesResponsesCommandReader = await enquiriesResponsesCommand.ExecuteReaderAsync(cancellationToken);
 
-            byte[] enquiriesResponseByteArray = ConvertDataReaderToCSVByteArray(enquiriesResponsesCommandReader);
+            byte[] enquiriesResponseByteArray = ConvertDataReaderToCsvByteArray(enquiriesResponsesCommandReader);
+
+            await UploadToBlobStorage(enquiriesResponseByteArray, "responses.csv", blobServiceClient); // Upload to blob storage
 
             await enquiriesResponsesCommandReader.CloseAsync();
-
-            var personalisation = new Dictionary<string, dynamic>
-            {
-                { "link_to_enquiries_file", NotificationClient.PrepareUpload(enquiriesByteArray, true, true, "2 weeks")},
-                { "link_to_enquiries_responses _file", NotificationClient.PrepareUpload(enquiriesResponseByteArray, true, true, "2 weeks")}
-            };
-
-            var recipientEmail = _configuration["DataExtractionRecipientEmail"];
-
-            if (string.IsNullOrEmpty(recipientEmail)) throw new ArgumentNullException("DataExtractionRecipientEmail");
-
-            var notifyEmail = new NotifyEmailDto()
-            {
-                ClientReference = $"DataExtraction-FA-{DateTime.UtcNow}",
-                Email = recipientEmail,
-                Personalisation = personalisation,
-                EmailTemplateType = EmailTemplateType.DataExtraction
-            };
-
-            await _notificationsClientService.SendEmailAsync(notifyEmail);
 
             _logger.LogInformation(
                 $"Find a Tuition Partner DataExtraction function finished execution at: {DateTime.UtcNow}");
@@ -88,7 +80,7 @@ public class DataExtraction
         }
     }
 
-    private static byte[] ConvertDataReaderToCSVByteArray(NpgsqlDataReader dr)
+    private static byte[] ConvertDataReaderToCsvByteArray(NpgsqlDataReader dr)
     {
         using var memoryStream = new MemoryStream();
         using var writer = new StreamWriter(memoryStream);
@@ -98,5 +90,13 @@ public class DataExtraction
         writer.Flush();
 
         return memoryStream.ToArray();
+    }
+
+    private async Task UploadToBlobStorage(byte[] byteArray, string blobName, BlobServiceClient inputBlobServiceClient)
+    {
+        var blobContainerClient = inputBlobServiceClient.GetBlobContainerClient(_blobConfig.ContainerName);
+        var blobClient = blobContainerClient.GetBlobClient(blobName);
+        using var stream = new MemoryStream(byteArray);
+        await blobClient.UploadAsync(stream, overwrite: true);
     }
 }

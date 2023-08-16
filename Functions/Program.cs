@@ -1,4 +1,6 @@
+using Application.Common.Interfaces;
 using Azure.Identity;
+using Functions;
 using Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +31,12 @@ var host = new HostBuilder()
     {
         services.AddHttpClient();
 
-        services.AddNotificationConfig(hostContext.Configuration)
-            .AddNotificationClientServiceConfiguration(hostContext.Configuration);
+        var blobStorageEnquiriesDataSettings = new BlobStorageEnquiriesDataSettings();
+        hostContext.Configuration.GetSection(BlobStorageEnquiriesDataSettings.BlobStorageEnquiriesData).Bind(blobStorageEnquiriesDataSettings);
+        blobStorageEnquiriesDataSettings.Validate();
+        services.Configure<BlobStorageEnquiriesDataSettings>(hostContext.Configuration.GetSection(BlobStorageEnquiriesDataSettings.BlobStorageEnquiriesData));
+        services.AddOptions();
+        services.AddScoped<IGenerateUserDelegationSasTokenAsync, GenerateUserDelegationSasToken>();
     })
     .AddLogging()
     .Build();
