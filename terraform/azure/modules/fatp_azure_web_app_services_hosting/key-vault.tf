@@ -135,6 +135,20 @@ resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
   }
 }
 
+resource "azurerm_key_vault_secret" "blobstorageenquiriesdataclientsecret" {
+  name            = "BlobStorageEnquiriesData--ClientSecret"
+  value           = var.blob_storage_enquiries_data_client_secret
+  key_vault_id    = azurerm_key_vault.default.id
+  expiration_date = local.key_vault_year_from_now
+
+  lifecycle {
+    ignore_changes = [
+      value,
+      expiration_date,
+    ]
+  }
+}
+
 resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {
   count = local.enable_monitoring ? 1 : 0
 

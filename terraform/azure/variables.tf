@@ -554,12 +554,31 @@ variable "dfeAnalytics_datasetId" {
   default = ""
 }
 
-variable "fa_app_setting_dataExtraction_recipient_email" {
-  type    = string
-  default = "ntp.DIGITAl@education.gov.uk"
-}
-
 variable "fa_app_setting_dataExtraction_timer_cron_expression" {
   type    = string
   default = "1 1 * * *"
+}
+
+variable "app_setting_blobStorage_enquiries_data_clientId" {
+  type    = string
+  default = "10e39e46-b948-4cd9-ac27-90dc6e4bd472"
+}
+
+variable "blob_storage_enquiries_data_client_secret" {
+  type = string
+}
+
+variable "app_setting_blobStorage_enquiries_data_containerName" {
+  type    = string
+  default = "ntp-enquiries-data"
+}
+
+variable "app_setting_blobStorage_enquiries_data_accountName" {
+  type    = string
+  default = "s177p01enquiriesdata"
+}
+
+variable "app_setting_blobStorage_enquiries_data_tenantId" {
+  type    = string
+  default = "9c7d9dd3-840c-4b3f-818e-552865082e16"
 }

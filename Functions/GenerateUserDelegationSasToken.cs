@@ -35,7 +35,8 @@ public class GenerateUserDelegationSasToken : IGenerateUserDelegationSasTokenAsy
 
         // Create a BlobSasBuilder object
         var expiry = DateTimeOffset.UtcNow.AddHours(IntegerConstants.AzureBlobStorageServiceTokenExpiryInHour);
-        var sasBuilder = new BlobSasBuilder(BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List, expiry)
+        var sasBuilder = new BlobSasBuilder(BlobContainerSasPermissions.Read | BlobContainerSasPermissions.List
+                                                                             | BlobContainerSasPermissions.Write, expiry)
         {
             BlobContainerName = _config.ContainerName,
             Resource = "c", // container

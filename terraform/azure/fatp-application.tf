@@ -49,9 +49,13 @@ module "fatp_azure_web_app_services_hosting" {
   }
 
   function_app_settings = {
-    "FatpAzureKeyVaultName"             = "${var.service_name}-${var.environment}-kv",
-    "DataExtractionRecipientEmail"      = var.fa_app_setting_dataExtraction_recipient_email,
-    "DataExtractionTimerCronExpression" = var.fa_app_setting_dataExtraction_timer_cron_expression
+    "FatpAzureKeyVaultName"                   = "${var.service_name}-${var.environment}-kv",
+    "DataExtractionTimerCronExpression"       = var.fa_app_setting_dataExtraction_timer_cron_expression,
+    "BlobStorageEnquiriesData__AccountName"   = var.app_setting_blobStorage_enquiries_data_accountName,
+    "BlobStorageEnquiriesData__ClientId"      = var.app_setting_blobStorage_enquiries_data_clientId,
+    "BlobStorageEnquiriesData__ContainerName" = var.app_setting_blobStorage_enquiries_data_containerName,
+    "BlobStorageEnquiriesData__TenantId"      = var.app_setting_blobStorage_enquiries_data_tenantId,
+    "PollEmailProcessingUrl"                  = var.environment != "production" ? "https://${module.fatp_azure_web_app_services_hosting.azurerm_cdn_frontdoor_endpoint_endpoint.host_name}/admin/process-emails" : "https://www.find-tuition-partner.service.gov.uk/admin/process-emails"
   }
 
   # App secrets

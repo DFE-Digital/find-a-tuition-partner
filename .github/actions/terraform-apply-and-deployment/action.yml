@@ -74,6 +74,9 @@ inputs:
   az_client_secret:
     required: true
     type: string
+  az_function_app_name:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -128,6 +131,10 @@ runs:
         package: ${{ inputs.working_directory }}/publish
         slot-name: ${{ inputs.deployment_slot }}
         
+    - name: Create a Function App deployment slot
+      shell: bash
+      run: az functionapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ inputs.az_function_app_name }}
+        
     - name: Deploy to Azure Function App
       uses: ./.github/actions/deploy-function-app
       with:
@@ -136,6 +143,7 @@ runs:
         az_client_id: ${{ inputs.az_client_id }}
         az_client_secret: ${{ inputs.az_client_secret }}
         az_resource_group_name: ${{ inputs.az_resource_group_name }}
+        az_function_app_name: ${{ inputs.az_function_app_name }}
         
     - name: Swap slots to production
       shell: bash
@@ -150,8 +158,17 @@ runs:
         postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
         postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
         run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+        
+    - name: Swap slots to Function App production
+      shell: bash
+      run: az functionapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_function_app_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
       
     - name: Delete non prod deployment slot
       if: always()
       shell: bash
       run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
+      
+    - name: Delete non prod Function App deployment slot
+      if: always()
+      shell: bash
+      run: az functionapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }}

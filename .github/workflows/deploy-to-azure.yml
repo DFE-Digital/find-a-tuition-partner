@@ -71,15 +71,6 @@ jobs:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           package: ${{ env.WORKING_DIR }}/publish
           slot-name: ${{ env.deployment_slot }}
-          
-      - name: Deploy to Azure Function App
-        uses: ./.github/actions/deploy-function-app
-        with:
-          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
-          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
-          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
 
       - name: Run Database Migration and Data Importer
         uses: ./.github/actions/run-db-migration-and-importer

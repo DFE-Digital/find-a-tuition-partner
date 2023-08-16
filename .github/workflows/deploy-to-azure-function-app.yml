@@ -1,0 +1,70 @@
+name: Deploy to Azure Function App
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for the deployment'
+        required: true
+        default: qa
+        type: choice
+        options:
+          - qa
+          - research
+          - staging
+          - production
+
+env:
+  deployment_slot: "staging"
+
+jobs:
+  deploy:
+    name: Deploy to Azure Function App ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    concurrency: azure-function-app-deploy-${{ inputs.environment }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Azure CLI Login
+        uses: ./.github/actions/azure-login
+        with:
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+
+
+      - name: Create a Function App deployment slot
+        shell: bash
+        run: az functionapp deployment slot create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_FUNCTION_APP_NAME }} --slot ${{ env.deployment_slot }} --configuration-source ${{ secrets.AZURE_FUNCTION_APP_NAME }}
+
+      - name: Deploy to Azure Function App
+        uses: ./.github/actions/deploy-function-app
+        with:
+          az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          az_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          az_function_app_name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
+          az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+
+
+      - name: Swap slots to Function App production
+        shell: bash
+        run: az functionapp deployment slot swap -s ${{ env.deployment_slot }} -n ${{ secrets.AZURE_FUNCTION_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP }} --target-slot production
+
+      - name: Delete non prod Function App deployment slot
+        if: always()
+        shell: bash
+        run: az functionapp deployment slot delete --resource-group ${{ secrets.AZURE_RESOURCE_GROUP  }}  --name ${{ secrets.AZURE_FUNCTION_APP_NAME }} --slot ${{ env.deployment_slot }}

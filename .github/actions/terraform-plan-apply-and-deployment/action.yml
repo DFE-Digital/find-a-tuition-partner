@@ -66,6 +66,9 @@ inputs:
     required: true
     default: false
     type: boolean
+  az_function_app_name:
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -221,6 +224,7 @@ runs:
           az_subscription_id: ${{ inputs.az_subscription_id }}
           az_client_id: ${{ inputs.az_client_id }}
           az_client_secret: ${{ inputs.az_client_secret }}
+          az_function_app_name: ${{ inputs.az_function_app_name }}
         
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()

@@ -55,6 +55,8 @@ on:
         required: true
       monitor_email_receivers:
         required: true
+      blob_storage_enquiries_data_client_secret:
+        required: true
 
 env:
   ARM_CLIENT_ID: ${{ secrets.az_client_id }}
@@ -68,6 +70,7 @@ env:
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
   TF_VAR_monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
   TF_VAR_monitor_email_receivers: ${{ secrets.monitor_email_receivers }}
+  TF_VAR_blob_storage_enquiries_data_client_secret: ${{ secrets.blob_storage_enquiries_data_client_secret }}
 
 jobs:
   teardown_teardown_deployment:

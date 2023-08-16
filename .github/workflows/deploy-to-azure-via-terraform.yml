@@ -43,6 +43,7 @@ jobs:
     
     secrets:
       az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}
+      az_function_app_name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
       az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
       az_tenant_id: ${{ secrets.ARM_TENANT_ID }}
       az_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
@@ -58,4 +59,5 @@ jobs:
       monitor_slack_webhook_receiver: ${{ secrets.SLACK_WEBHOOK }}
       monitor_email_receivers: ${{ secrets.MONITOR_EMAIL_RECEIVERS }}
       dfeAnalytics_credential: ${{ secrets.DFE_ANALYTICS_CREDENTIALS_JSON }}
+      blob_storage_enquiries_data_client_secret: ${{ secrets.BLOB_STORAGE_ENQUIRIES_DATA_CLIENT_SECRET }}
               

@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Globalization;
 using Application.Common.Interfaces;
 using Azure.Storage.Blobs;
@@ -86,7 +87,22 @@ public class DataExtraction
         using var writer = new StreamWriter(memoryStream);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-        csv.WriteRecords(dr); // Writes the data reader to CSV
+        var records = new List<dynamic>();
+
+        while (dr.Read())
+        {
+            dynamic obj = new ExpandoObject();
+            var objectDictionary = (IDictionary<string, object>)obj;
+
+            for (int i = 0; i < dr.FieldCount; i++)
+            {
+                objectDictionary[dr.GetName(i)] = dr.GetValue(i);
+            }
+
+            records.Add(obj);
+        }
+
+        csv.WriteRecords(records);
         writer.Flush();
 
         return memoryStream.ToArray();
