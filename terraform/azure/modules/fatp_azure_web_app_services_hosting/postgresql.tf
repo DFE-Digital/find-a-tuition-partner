@@ -63,10 +63,3 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rule" {
   start_ip_address = each.value.start_ip_address
   end_ip_address   = each.value.end_ip_address
 }
-
-resource "azurerm_management_lock" "azurerm_postgresql_flexible_server" {
-  name       = "postgresql-flexible-server"
-  scope      = azurerm_postgresql_flexible_server.default.id
-  lock_level = "CanNotDelete"
-  notes      = "The postgresql flexible server is not allowed to delete"
-}
