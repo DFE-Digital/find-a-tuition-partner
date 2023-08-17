@@ -58,6 +58,7 @@ jobs:
           az_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
           az_function_app_name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
           az_resource_group_name: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          deployment_slot: ${{ env.deployment_slot }}
 
 
       - name: Swap slots to Function App production

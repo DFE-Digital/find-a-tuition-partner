@@ -144,6 +144,7 @@ runs:
         az_client_secret: ${{ inputs.az_client_secret }}
         az_resource_group_name: ${{ inputs.az_resource_group_name }}
         az_function_app_name: ${{ inputs.az_function_app_name }}
+        deployment_slot: ${{ inputs.deployment_slot }}
         
     - name: Swap slots to production
       shell: bash

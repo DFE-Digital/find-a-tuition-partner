@@ -28,6 +28,10 @@ inputs:
   az_resource_group_name:
     required: true
     type: string
+  deployment_slot:
+    required: true
+    type: string
+    default: 'staging'
     
 runs:
   using: composite
@@ -62,4 +66,5 @@ runs:
       with:
         app-name: ${{ inputs.az_function_app_name }}
         package: '${{ inputs.working_directory }}/output'
+        slot-name: ${{ inputs.deployment_slot }}
     
