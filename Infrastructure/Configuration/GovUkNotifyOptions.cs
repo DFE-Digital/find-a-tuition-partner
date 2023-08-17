@@ -18,6 +18,4 @@ public class GovUkNotifyOptions
 
     public string TemplateIdEnquiryOutcomeToTp { get; set; } = "4cc549a0-0295-4a9f-a9ab-91a1ddc572d0";
 
-    public string TemplateIdDataExtraction { get; set; } = "cfb7c588-5acb-4e3b-8795-f46c5ee09633";
-
 }

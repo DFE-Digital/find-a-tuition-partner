@@ -193,10 +193,6 @@ public class NotificationsClientService : INotificationsClientService
                 !string.IsNullOrEmpty(notifyConfig.TemplateIdEnquiryOutcomeToTp)
                 ? notifyConfig.TemplateIdEnquiryOutcomeToTp
                 : string.Empty,
-            EmailTemplateType.DataExtraction =>
-                !string.IsNullOrEmpty(notifyConfig.TemplateIdDataExtraction)
-                    ? notifyConfig.TemplateIdDataExtraction
-                    : string.Empty,
             _ => string.Empty
         };
     }

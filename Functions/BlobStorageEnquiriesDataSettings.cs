@@ -8,7 +8,7 @@ public class BlobStorageEnquiriesDataSettings
     public string ClientSecret { get; set; } = string.Empty;
     public string TenantId { get; set; } = string.Empty;
     public string AccountName { get; set; } = string.Empty;
-    public string ContainerName { get; set; } = "ntp-enquiries-data";
+    public string ContainerName { get; set; } = "ntp-enquiries-data-qa";
 
     public void Validate()
     {
