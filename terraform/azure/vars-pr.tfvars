@@ -12,6 +12,7 @@ postgresql_sku_name                                  = "B_Standard_B1ms"
 postgresql_storage_mb                                = 32768
 enable_service_logs                                  = true
 enable_cdn_frontdoor                                 = true
+cdn_frontdoor_sku                                    = "Premium_AzureFrontDoor"
 cdn_frontdoor_enable_rate_limiting                   = true
 enable_monitoring                                    = true
 monitor_enable_slack_webhook                         = true
