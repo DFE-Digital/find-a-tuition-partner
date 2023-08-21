@@ -25,9 +25,3 @@ app_setting_googleTagManager_containerId                   = "GTM-KV8MCQW"
 appLogging_defaultLogEventLevel                            = "Information"
 appLogging_overrideLogEventLevel                           = "Information"
 app_setting_emailSettings_minsDelaySendingOutcomeEmailToTP = 1440
-cdn_frontdoor_host_redirects = [
-  {
-    "from" = "find-tuition-partner.service.gov.uk",
-    "to"   = "www.find-tuition-partner.service.gov.uk"
-  }
-]
