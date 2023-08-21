@@ -38,6 +38,10 @@ on:
         required: true
         default: false
         type: boolean
+      deploy_to_azure_function_app:
+        required: true
+        default: false
+        type: boolean
     secrets:
       az_webapp_name:
         required: true
@@ -126,7 +130,8 @@ jobs:
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ secrets.dfeAnalytics_credential }}
           run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
-          az_function_app_name: ${{ secrets.az_function_app_name}}
+          az_function_app_name: ${{ secrets.az_function_app_name }}
+          deploy_to_azure_function_app: ${{ inputs.deploy_to_azure_function_app }}
   
   e2e-tests:
     name: 'End to End Testing'

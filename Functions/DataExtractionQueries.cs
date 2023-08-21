@@ -231,4 +231,30 @@ ORDER BY
     COALESCE (""EnquiryResponses"".""CompletedAt"", ""TuitionPartnersEnquiry"".""TuitionPartnerDeclinedEnquiryDate"") ASC,
     ""TuitionPartners"".""Name"" ASC
     ";
+
+    public static readonly string TPLaLadRegionsTSPsqlQuery = @"
+    SELECT tp.""Id"" as TP_Id,
+	tp.""Name"" as TP_Name,
+	tp.""SeoUrl"" as TP_Seo_Url,
+	r.""Code"" as Region_Code,
+	r.""Name"" as Region_Name,
+	la.""Code"" as LA_Code,
+	la.""Name"" as LA_Name,
+	lad.""Code"" as LAD_Code,
+	lad.""Name"" as LAD_Name,
+	ts.""Name"" as Tuition_Setting_Name
+FROM ""TuitionPartners"" tp
+INNER JOIN ""LocalAuthorityDistrictCoverage"" lac ON (tp.""Id"" = lac.""TuitionPartnerId"")
+INNER JOIN ""LocalAuthorityDistricts"" lad ON (lad.""Id"" = lac.""LocalAuthorityDistrictId"")
+INNER JOIN ""LocalAuthority"" la ON (la.""Id"" = lad.""LocalAuthorityId"")
+INNER JOIN ""Regions"" r ON (r.""Id"" = lad.""RegionId"")
+INNER JOIN ""TuitionSettings"" ts ON (ts.""Id"" = lac.""TuitionSettingId"")
+WHERE tp.""IsActive"" = true
+ORDER BY
+	tp.""Name"",
+	r.""Name"",
+	la.""Name"",
+	lad.""Name"",
+	ts.""Name""
+    ";
 }

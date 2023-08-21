@@ -77,6 +77,10 @@ inputs:
   az_function_app_name:
     required: true
     type: string
+  deploy_to_azure_function_app:
+    required: true
+    default: false
+    type: boolean
 
 runs:
   using: composite
@@ -133,9 +137,11 @@ runs:
         
     - name: Create a Function App deployment slot
       shell: bash
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
       run: az functionapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ inputs.az_function_app_name }}
         
     - name: Deploy to Azure Function App
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
       uses: ./.github/actions/deploy-function-app
       with:
         az_tenant_id: ${{ inputs.az_tenant_id }}
@@ -162,6 +168,7 @@ runs:
         
     - name: Swap slots to Function App production
       shell: bash
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
       run: az functionapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_function_app_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
       
     - name: Delete non prod deployment slot
@@ -170,6 +177,6 @@ runs:
       run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
       
     - name: Delete non prod Function App deployment slot
-      if: always()
+      if: always() && ${{ inputs.deploy_to_azure_function_app == 'true' }}
       shell: bash
       run: az functionapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }}

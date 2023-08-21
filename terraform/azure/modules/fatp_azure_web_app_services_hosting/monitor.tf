@@ -268,3 +268,84 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
 
   tags = local.tags
 }
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_down_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-faapp-down"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when the function app is down in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(10m)
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 0
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_error_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-faapp-errors"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when a function within the function app has encountered an error in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(2m)
+  | where success == false
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 1
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}

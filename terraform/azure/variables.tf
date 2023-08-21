@@ -450,7 +450,7 @@ variable "blob_storage_client_secret" {
 
 variable "app_setting_blobStorage_containerName" {
   type    = string
-  default = "ntp-tp-data-qa"
+  default = "ntp-tp-data"
 }
 
 variable "app_setting_blobStorage_accountName" {
@@ -570,7 +570,7 @@ variable "blob_storage_enquiries_data_client_secret" {
 
 variable "app_setting_blobStorage_enquiries_data_containerName" {
   type    = string
-  default = "ntp-enquiries-data"
+  default = "ntp-enquiries-data-qa"
 }
 
 variable "app_setting_blobStorage_enquiries_data_accountName" {

@@ -26,6 +26,11 @@ on:
         required: true
         default: false
         type: boolean
+      deploy_to_azure_function_app:
+        description: 'Deploy to Azure Function App'
+        required: true
+        default: false
+        type: boolean
         
 concurrency: azure-deploy-via-terraform-${{ inputs.environment }}
 
@@ -40,6 +45,7 @@ jobs:
       non_pr_env_name: ${{ inputs.environment }}
       run_e2e_test: false
       run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+      deploy_to_azure_function_app: ${{ inputs.deploy_to_azure_function_app }}
     
     secrets:
       az_webapp_name: ${{ secrets.AZURE_WEBAPP_NAME }}

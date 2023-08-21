@@ -18,6 +18,7 @@ jobs:
       non_pr_env_name: 'qa'
       run_e2e_test: true
       run_database_migrations_and_import_data: true
+      deploy_to_azure_function_app: true
       
     secrets:
       az_webapp_name: 'find-a-tp-pr-${{ github.event.number }}'
