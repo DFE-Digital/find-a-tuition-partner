@@ -36,5 +36,7 @@
         public const string NotifyBulletedListFormat = "* ";
 
         public const string NotInterestedTextIfNoReasonSupplied = "The school has not provided any feedback on this occasion.";
+
+        public const string TPDataImportLogMessagePrefix = "Tuition Partner Data Import: ";
     }
 }

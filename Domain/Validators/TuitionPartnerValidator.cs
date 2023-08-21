@@ -6,11 +6,11 @@ namespace Domain.Validators;
 
 public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
 {
-    private readonly Dictionary<string, TuitionPartner> _successfullyProcessed;
+    private readonly List<TuitionPartner> _allProcessedTps;
 
-    public TuitionPartnerValidator(Dictionary<string, TuitionPartner> successfullyProcessed)
+    public TuitionPartnerValidator(List<TuitionPartner> allProcessedTps)
     {
-        _successfullyProcessed = successfullyProcessed;
+        _allProcessedTps = allProcessedTps;
 
         RuleFor(m => m.Name)
             .NotEmpty()
@@ -86,21 +86,21 @@ public class TuitionPartnerValidator : AbstractValidator<TuitionPartner>
 
     private bool NotBeADuplicateImportId(string importId)
     {
-        return !_successfullyProcessed.Any(x => string.Equals(x.Value.ImportId, importId, StringComparison.InvariantCultureIgnoreCase));
+        return !_allProcessedTps.Any(x => string.Equals(x.ImportId, importId, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private bool NotBeADuplicateSeoUrl(string seoUrl)
     {
-        return !_successfullyProcessed.Any(x => string.Equals(x.Value.SeoUrl, seoUrl, StringComparison.InvariantCultureIgnoreCase));
+        return !_allProcessedTps.Any(x => string.Equals(x.SeoUrl, seoUrl, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private string DuplicateImportIdErrorMessage(TuitionPartner tuitionPartner)
     {
-        return $"Duplicate import id in {_successfullyProcessed.First(x => string.Equals(x.Value.ImportId, tuitionPartner.ImportId, StringComparison.InvariantCultureIgnoreCase)).Key}";
+        return $"Duplicate import id: {tuitionPartner.ImportId}";
     }
 
     private string DuplicateSeoUrlErrorMessage(TuitionPartner tuitionPartner)
     {
-        return $"Duplicate seo url in {_successfullyProcessed.First(x => string.Equals(x.Value.SeoUrl, tuitionPartner.SeoUrl, StringComparison.InvariantCultureIgnoreCase)).Key}";
+        return $"Duplicate seo url: {tuitionPartner.SeoUrl}";
     }
 }

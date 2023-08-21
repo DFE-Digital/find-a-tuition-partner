@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Application;
 using Application.Common.Interfaces;
+using Application.Constants;
 using Application.DataImport;
 using Application.Extensions;
 using Application.Factories;
@@ -20,10 +21,12 @@ namespace Infrastructure;
 public class DataImporterService : IHostedService
 {
     private const double PercentageFailedGIASRecordsLogsError = 2;
+    private const string NoChangesLabel = "No Changes";
 
     private readonly IHostApplicationLifetime _host;
     private readonly ILogger _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private SortedDictionary<string, List<TuitionPartner>> _processedTPs = new();
 
     private ILocationFilterService? _locationService;
 
@@ -36,6 +39,7 @@ public class DataImporterService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        string originalFilename = string.Empty;
         using var scope = _scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<NtpDbContext>();
         var dataFileEnumerable = scope.ServiceProvider.GetRequiredService<IDataFileEnumerable>();
@@ -48,31 +52,40 @@ public class DataImporterService : IHostedService
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
-        await strategy.ExecuteAsync(
-            async () =>
-            {
-                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+        _processedTPs = new SortedDictionary<string, List<TuitionPartner>>();
 
-                await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
+        try
+        {
 
-                await ImportTuitionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
+            await strategy.ExecuteAsync(
+                async () =>
+                {
+                    await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                await transaction.CommitAsync(cancellationToken);
-            });
+                    originalFilename = await ImportTuitionPartnerFiles(dbContext, dataFileEnumerable, factory, cancellationToken);
 
+                    await ImportTuitionPartnerLogos(dbContext, logoFileEnumerable, cancellationToken);
 
-        var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
-        var giasFactory = scope.ServiceProvider.GetRequiredService<ISchoolsFactory>();
+                    await transaction.CommitAsync(cancellationToken);
+                });
 
-        await strategy.ExecuteAsync(
-            async () =>
-            {
-                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            LogProcessedTPsMessage(originalFilename);
+        }
+        finally
+        {
+            var generalInformatioAboutSchoolsRecords = scope.ServiceProvider.GetRequiredService<IGeneralInformationAboutSchoolsRecords>();
+            var giasFactory = scope.ServiceProvider.GetRequiredService<ISchoolsFactory>();
 
-                await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
+            await strategy.ExecuteAsync(
+                async () =>
+                {
+                    await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                await transaction.CommitAsync(cancellationToken);
-            });
+                    await ImportGeneralInformationAboutSchools(dbContext, generalInformatioAboutSchoolsRecords, giasFactory, cancellationToken);
+
+                    await transaction.CommitAsync(cancellationToken);
+                });
+        }
 
         _host.StopApplication();
     }
@@ -204,11 +217,10 @@ public class DataImporterService : IHostedService
         }
     }
 
-    private async Task ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
+    private async Task<string> ImportTuitionPartnerFiles(NtpDbContext dbContext, IDataFileEnumerable dataFileEnumerable, ITribalSpreadsheetTuitionPartnerFactory factory,
     CancellationToken cancellationToken)
     {
         var dataFile = GetImportTuitionPartnerFile(dataFileEnumerable);
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>();
 
         var regions = await dbContext.Regions
             .Include(e => e.LocalAuthorityDistricts)
@@ -228,7 +240,9 @@ public class DataImporterService : IHostedService
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
 
-        _logger.LogInformation("Number of existing TPs {AllExistingTPsCount}", allExistingTPs.Count);
+        var activeTps = allExistingTPs.Where(x => x.IsActive).Count();
+
+        _logger.LogInformation("Number of existing active TPs {activeTps}, with {deactivatedTps} currently deactivated", activeTps, (allExistingTPs.Count - activeTps));
 
         var tpImportedDates = allExistingTPs
                 .Select(x => new { x.Name, x.TPLastUpdatedData })
@@ -267,19 +281,22 @@ public class DataImporterService : IHostedService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception thrown when processing Tuition Partners from file {OriginalFilename}", originalFilename);
-            //Errors reading any file then throw exception, so cancels the transaction and rollsback db.
+            _logger.LogError(ex, "{TPDataImportLogMessagePrefix}Exception thrown when processing Tuition Partners from file {OriginalFilename}",
+                StringConstants.TPDataImportLogMessagePrefix, originalFilename);
+            //Errors reading the file then throw exception, so cancels the transaction and rollsback db.
             throw;
         }
 
         foreach (var tuitionPartnerToProcess in tuitionPartnersToProcess)
         {
-            var validator = new TuitionPartnerValidator(successfullyProcessed);
+            var validator = new TuitionPartnerValidator(GetAllProcessedTPs());
             var results = await validator.ValidateAsync(tuitionPartnerToProcess, cancellationToken);
+
+            //There is a lot of validation within GetTuitionPartners, so it's unlikely that this will throw an error, but is here for completeness
             if (!results.IsValid)
             {
                 var errorMsg = $"Tuition Partner name {tuitionPartnerToProcess.Name} created from file {originalFilename} is not valid.{Environment.NewLine}{string.Join(Environment.NewLine, results.Errors)}";
-                _logger.LogError(message: errorMsg);
+                _logger.LogError(message: $"{StringConstants.TPDataImportLogMessagePrefix}{errorMsg}");
                 //Errors validating any file then throw exception, so cancels the transaction and rollsback db.
                 throw new ValidationException(errorMsg);
             }
@@ -297,8 +314,7 @@ public class DataImporterService : IHostedService
 
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Added Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                    tuitionPartnerToProcess.Name, tuitionPartnerToProcess.Id, originalFilename);
+                AddToProcessedTPs("Added", tuitionPartnerToProcess);
             }
             else if (matchedTPs.Count == 1)
             {
@@ -322,26 +338,69 @@ public class DataImporterService : IHostedService
 
                     await dbContext.SaveChangesAsync(cancellationToken);
 
-                    _logger.LogInformation("Updated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                        existingTP.Name, existingTP.Id, originalFilename);
+                    AddToProcessedTPs("Updated", tuitionPartnerToProcess);
                 }
                 else
                 {
-                    _logger.LogInformation("No changes for Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId} from file {OriginalFilename}",
-                        existingTP.Name, existingTP.Id, originalFilename);
+                    AddToProcessedTPs(NoChangesLabel, tuitionPartnerToProcess);
                 }
             }
             else if (matchedTPs.Count > 1)
             {
                 var errorMsg = $"The file {originalFilename} with seo url('{tuitionPartnerToProcess.SeoUrl}') and import id('{tuitionPartnerToProcess.ImportId}') is returning more than 1 result from the database.";
-                _logger.LogError(message: errorMsg);
+                _logger.LogError(message: $"{StringConstants.TPDataImportLogMessagePrefix}{errorMsg}");
                 throw new InvalidOperationException(errorMsg);
             }
-
-            successfullyProcessed.Add(tuitionPartnerToProcess.SeoUrl, tuitionPartnerToProcess);
         }
 
-        await DeactivateTPs(dbContext, allExistingTPs, successfullyProcessed, cancellationToken);
+        await DeactivateTPs(dbContext, allExistingTPs, cancellationToken);
+
+        return originalFilename;
+    }
+
+    private void LogProcessedTPsMessage(string filename)
+    {
+        var msg = $"The {filename} was successfully processed, with the following Tuition Partner outcomes.";
+        var hasChanges = false;
+
+        foreach (var kvp in _processedTPs)
+        {
+            if (kvp.Key != NoChangesLabel)
+                hasChanges = true;
+
+            msg += $"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}{kvp.Key}:{Environment.NewLine}{Environment.NewLine}";
+
+            msg += string.Join(Environment.NewLine, kvp.Value.Select(x => $"{x.Name}"));
+        }
+
+        if (hasChanges)
+            msg = $"{StringConstants.TPDataImportLogMessagePrefix}{msg}";
+
+        _logger.LogInformation(msg);
+    }
+
+    private void AddToProcessedTPs(string key, TuitionPartner tuitionPartner)
+    {
+        if (_processedTPs.ContainsKey(key))
+        {
+            _processedTPs[key].Add(tuitionPartner);
+        }
+        else
+        {
+            _processedTPs.Add(key, new List<TuitionPartner>() { tuitionPartner });
+        }
+    }
+
+    private List<TuitionPartner> GetAllProcessedTPs()
+    {
+        var tps = new List<TuitionPartner>();
+
+        foreach (var kvp in _processedTPs)
+        {
+            tps.AddRange(kvp.Value);
+        }
+
+        return tps;
     }
 
     private static DataFile GetImportTuitionPartnerFile(IDataFileEnumerable dataFileEnumerable)
@@ -349,7 +408,7 @@ public class DataImporterService : IHostedService
 
         var dataFile = dataFileEnumerable.OrderByDescending(x => x.Filename).FirstOrDefault();
 
-        return dataFile == null ? throw new InvalidDataException("No TP spreadsheets to import") : dataFile;
+        return dataFile == null ? throw new InvalidDataException($"{StringConstants.TPDataImportLogMessagePrefix}No TP spreadsheets to import") : dataFile;
     }
 
     private static void ImportTuitionPartnerLocalAuthorityDistrictCoverage(NtpDbContext dbContext, TuitionPartner existingTP, TuitionPartner tuitionPartnerToProcess)
@@ -432,11 +491,13 @@ public class DataImporterService : IHostedService
         }
     }
 
-    private async Task DeactivateTPs(NtpDbContext dbContext, List<TuitionPartner> allExistingTPs, Dictionary<string, TuitionPartner> successfullyProcessed, CancellationToken cancellationToken)
+    private async Task DeactivateTPs(NtpDbContext dbContext, List<TuitionPartner> allExistingTPs, CancellationToken cancellationToken)
     {
+        var allProcessedTps = GetAllProcessedTPs();
+
         var tpsToDeactivate = allExistingTPs
                     .Where(x => x.IsActive &&
-                                !successfullyProcessed.Select(s => s.Value.ImportId.ToLower()).Contains(x.ImportId.ToLower()))
+                                !allProcessedTps.Select(s => s.ImportId.ToLower()).Contains(x.ImportId.ToLower()))
                     .ToList();
 
         if (tpsToDeactivate != null)
@@ -447,8 +508,7 @@ public class DataImporterService : IHostedService
 
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Deactivated Tuition Partner {TuitionPartnerName} with id of {TuitionPartnerId}",
-                    tpToDeactivate.Name, tpToDeactivate.Id);
+                AddToProcessedTPs("Deactivated", tpToDeactivate);
             }
         }
     }
@@ -487,14 +547,16 @@ public class DataImporterService : IHostedService
         var partnersWithoutLogos = partners.Except(matching.Select(x => x.Partner)).ToList();
         if (partnersWithoutLogos.Any())
         {
-            _logger.LogWarning("{Count} active tuition partners do not have logos:\n{WithoutLogo}",
+            _logger.LogWarning("{TPDataImportLogMessagePrefix}Warning - {Count} active tuition partners do not have logos:\n{WithoutLogo}",
+                StringConstants.TPDataImportLogMessagePrefix,
                 partnersWithoutLogos.Count, string.Join("\n", partnersWithoutLogos.Select(x => x.SeoUrl)));
         }
 
         var logosWithoutPartners = logos.Except(matching.Select(x => x.Logo)).ToList();
         if (logosWithoutPartners.Any())
         {
-            _logger.LogWarning("{Count} logos files do not match an active tuition partner:\n{UnmatchedLogos}",
+            _logger.LogWarning("{TPDataImportLogMessagePrefix}Warning - {Count} logos files do not match an active tuition partner:\n{UnmatchedLogos}",
+                StringConstants.TPDataImportLogMessagePrefix,
                 logosWithoutPartners.Count, string.Join("\n", logosWithoutPartners.Select(x => x.Filename)));
         }
 
