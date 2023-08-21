@@ -354,7 +354,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "data_extraction_fa_error
 resource "azurerm_monitor_scheduled_query_rules_alert" "email_processing_fa_error_alert" {
   count = local.enable_monitoring ? 1 : 0
 
-  name                = "${local.resource_prefix}-fa-data-extraction-errors"
+  name                = "${local.resource_prefix}-fa-email-processing-errors"
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
   action {

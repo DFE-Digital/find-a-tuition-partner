@@ -75,17 +75,17 @@ public class DataExtraction
 
             // Generate the tPLaLadRegionsTS.csv and upload it to the blob storage logic. 
 
-            await using var tPLaLadRegionsTSCommand =
+            await using var tPLaLadRegionsTsCommand =
                 new NpgsqlCommand(DataExtractionQueries.TPLaLadRegionsTSPsqlQuery, connection);
 
-            var tPLaLadRegionsTSCommandReader = await tPLaLadRegionsTSCommand.ExecuteReaderAsync(cancellationToken);
+            var tPLaLadRegionsTsCommandReader = await tPLaLadRegionsTsCommand.ExecuteReaderAsync(cancellationToken);
 
-            var tPLaLadRegionsTSByteArray = ConvertDataReaderToCsvByteArray(tPLaLadRegionsTSCommandReader);
+            var tPLaLadRegionsTsByteArray = ConvertDataReaderToCsvByteArray(tPLaLadRegionsTsCommandReader);
 
             // Do not change the CSV file name; it references the logic app, which expects the file name with this exact name.  
-            await UploadToBlobStorage(tPLaLadRegionsTSByteArray, "tPLaLadRegionsTS.csv", blobServiceClient); // Upload to blob storage
+            await UploadToBlobStorage(tPLaLadRegionsTsByteArray, "tPLaLadRegionsTS.csv", blobServiceClient); // Upload to blob storage
 
-            await tPLaLadRegionsTSCommandReader.CloseAsync();
+            await tPLaLadRegionsTsCommandReader.CloseAsync();
 
             _logger.LogInformation(
                 $"Find a Tuition Partner DataExtraction function finished execution at: {DateTime.UtcNow}");

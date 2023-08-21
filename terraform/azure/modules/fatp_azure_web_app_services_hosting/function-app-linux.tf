@@ -48,6 +48,9 @@ resource "azurerm_linux_function_app" "default" {
   lifecycle {
     ignore_changes = [
       sticky_settings,
+      tags["hidden-link: /app-insights-instrumentation-key"],
+      tags["hidden-link: /app-insights-resource-id"],
+      tags["hidden-link: /app-insights-conn-string"]
     ]
   }
 
