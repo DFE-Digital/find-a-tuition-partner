@@ -309,17 +309,59 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_down_alert"
   tags = local.tags
 }
 
-resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_error_alert" {
+resource "azurerm_monitor_scheduled_query_rules_alert" "data_extraction_fa_error_alert" {
   count = local.enable_monitoring ? 1 : 0
 
-  name                = "${local.resource_prefix}-faapp-errors"
+  name                = "${local.resource_prefix}-fa-data-extraction-errors"
   location            = local.resource_group.location
   resource_group_name = local.resource_group.name
   action {
     action_group = [azurerm_monitor_action_group.web_app_service[0].id]
   }
   data_source_id = azurerm_application_insights.function_app_service.id
-  description    = "This rule triggers when a function within the function app has encountered an error in a FaTP environment."
+  description    = "This rule triggers when the function DataExtraction has encountered an error in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(1d)
+  | where operation_Name =~ 'DataExtraction'
+  | where success == false
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 1
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "email_processing_fa_error_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-fa-data-extraction-errors"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when the function PollEmailProcessing has encountered an error in a FaTP environment."
   enabled        = true
   severity       = 0 // Critical
   query          = <<-QUERY
@@ -335,6 +377,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_error_alert
     cloud_RoleName,
     invocationId=customDimensions['InvocationId']
   | where timestamp > ago(2m)
+  | where operation_Name =~ 'PollEmailProcessing'
   | where success == false
   | order by timestamp desc
   | take 1
