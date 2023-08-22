@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using Application;
 using Application.Common.Interfaces;
 using Application.Constants;
@@ -360,7 +361,7 @@ public class DataImporterService : IHostedService
 
     private void LogProcessedTPsMessage(string filename)
     {
-        var msg = $"The {filename} was successfully processed, with the following Tuition Partner outcomes.";
+        var sb = new StringBuilder($"The {filename} was successfully processed, with the following Tuition Partner outcomes.");
         var hasChanges = false;
 
         foreach (var kvp in _processedTPs)
@@ -368,15 +369,15 @@ public class DataImporterService : IHostedService
             if (kvp.Key != NoChangesLabel)
                 hasChanges = true;
 
-            msg += $"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}{kvp.Key}:{Environment.NewLine}{Environment.NewLine}";
+            sb.Append($"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}{kvp.Key}:{Environment.NewLine}{Environment.NewLine}");
 
-            msg += string.Join(Environment.NewLine, kvp.Value.Select(x => $"{x.Name}"));
+            sb.Append(string.Join(Environment.NewLine, kvp.Value.Select(x => $"{x.Name}")));
         }
 
         if (hasChanges)
-            msg = $"{StringConstants.TPDataImportLogMessagePrefix}{msg}";
+            sb.Insert(0, StringConstants.TPDataImportLogMessagePrefix);
 
-        _logger.LogInformation(msg);
+        _logger.LogInformation(sb.ToString());
     }
 
     private void AddToProcessedTPs(string key, TuitionPartner tuitionPartner)
