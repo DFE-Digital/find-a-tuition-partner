@@ -252,8 +252,8 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
   severity       = 0 // Critical
   query          = <<-QUERY
   traces
-  | union requests
-  | where resultCode == "500" or severityLevel == 3
+  | union requests, exceptions
+  | where (resultCode == "500" or severityLevel == 3)
   | where timestamp > ago(5m)
   | order by timestamp desc
   | take 1
