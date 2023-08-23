@@ -80,6 +80,15 @@ locals {
     "FunctionAppLogs"
   ])
 
+  postgres_flexi_server_diagnostic_setting_types = toset([
+    "PostgreSQLLogs",
+    "PostgreSQLFlexSessions",
+    "PostgreSQLFlexQueryStoreRuntime",
+    "PostgreSQLFlexQueryStoreWaitStats",
+    "PostgreSQLFlexTableStats",
+    "PostgreSQLFlexDatabaseXacts"
+  ])
+
   enable_monitoring              = var.enable_monitoring
   monitor_email_receivers        = var.monitor_email_receivers
   monitor_enable_slack_webhook   = var.monitor_enable_slack_webhook
