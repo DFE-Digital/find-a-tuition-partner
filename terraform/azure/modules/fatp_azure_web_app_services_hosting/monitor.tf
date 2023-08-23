@@ -336,6 +336,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "data_extraction_fa_error
     invocationId=customDimensions['InvocationId']
   | where timestamp > ago(1d)
   | where operation_Name =~ 'DataExtraction'
+  | where cloud_RoleName !endswith 'fa-staging'
   | where success == false
   | order by timestamp desc
   | take 1
@@ -378,6 +379,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "email_processing_fa_erro
     invocationId=customDimensions['InvocationId']
   | where timestamp > ago(2m)
   | where operation_Name =~ 'PollEmailProcessing'
+  | where cloud_RoleName !endswith 'fa-staging'
   | where success == false
   | order by timestamp desc
   | take 1
