@@ -164,7 +164,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 
@@ -173,7 +172,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 }
