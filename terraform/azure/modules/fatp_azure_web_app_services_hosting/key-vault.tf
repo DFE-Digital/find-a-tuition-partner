@@ -26,7 +26,12 @@ resource "azurerm_key_vault" "default" {
 
 }
 
+// We have already created the access policy for the pipeline_service_account as parts of the azurerm_key_vault resource access_policy block.
+// We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
+// otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
+  count = data.azurerm_key_vault_access_policy.existing_pipeline_service_account ? 0 : 1
+
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
@@ -46,7 +51,12 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
   ]
 }
 
+// We have already created the access policy for the fatp_web_app as parts of the azurerm_key_vault resource access_policy block.
+// We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
+// otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
+  count = data.azurerm_key_vault_access_policy.existing_fatp_web_app ? 0 : 1
+
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_linux_web_app.default[0].identity[0].principal_id

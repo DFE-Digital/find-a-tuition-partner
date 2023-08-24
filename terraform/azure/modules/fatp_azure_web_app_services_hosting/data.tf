@@ -40,3 +40,15 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
     list   = true
   }
 }
+
+data "azurerm_key_vault_access_policy" "existing_pipeline_service_account" {
+  key_vault_id = azurerm_key_vault.default.id
+  object_id    = data.azurerm_client_config.current.object_id
+  name         = "Key & Secret Management"
+}
+
+data "azurerm_key_vault_access_policy" "existing_fatp_web_app" {
+  key_vault_id = azurerm_key_vault.default.id
+  object_id    = azurerm_linux_web_app.default[0].identity[0].principal_id
+  name         = "Key & Secret Management"
+}
