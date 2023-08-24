@@ -21,7 +21,7 @@ on:
 
 jobs:
   migrate_import_data:
-    name: Migrate Database and Import Data
+    name: Migrate Database and Import Data to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 

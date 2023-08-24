@@ -182,7 +182,6 @@ var policyCollection = new HeaderPolicyCollection()
     .AddContentTypeOptionsNoSniff()
     .AddStrictTransportSecurityMaxAgeIncludeSubDomains(maxAgeInSeconds: 60 * 60 * 24 * 365) // maxage = one year in seconds
     .AddFrameOptionsDeny()
-    .AddXssProtectionBlock()
     .AddReferrerPolicyStrictOriginWhenCrossOrigin()
     .RemoveServerHeader()
     .AddContentSecurityPolicy(cspBuilder =>
