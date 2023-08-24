@@ -110,6 +110,7 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
 }
 
 resource "azurerm_key_vault_secret" "govuknotifyapikey" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
   name            = "GovUkNotify--ApiKey"
   value           = var.govuk_notify_apikey
   key_vault_id    = azurerm_key_vault.default.id
@@ -124,6 +125,7 @@ resource "azurerm_key_vault_secret" "govuknotifyapikey" {
 }
 
 resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
   name            = "BlobStorage--ClientSecret"
   value           = var.blob_storage_client_secret
   key_vault_id    = azurerm_key_vault.default.id
@@ -138,6 +140,7 @@ resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
 }
 
 resource "azurerm_key_vault_secret" "blobstorageenquiriesdataclientsecret" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
   name            = "BlobStorageEnquiriesData--ClientSecret"
   value           = var.blob_storage_enquiries_data_client_secret
   key_vault_id    = azurerm_key_vault.default.id
