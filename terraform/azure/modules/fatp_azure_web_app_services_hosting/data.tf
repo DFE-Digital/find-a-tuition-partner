@@ -41,14 +41,21 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
   }
 }
 
-data "azurerm_key_vault_access_policy" "existing_pipeline_service_account" {
-  key_vault_id = azurerm_key_vault.default.id
-  object_id    = data.azurerm_client_config.current.object_id
-  name         = "Key & Secret Management"
+data "external" "check_existing_pipeline_service_account" {
+  program = ["./check_policy_exists.sh"]
+
+  query = {
+    keyvault_name  = azurerm_key_vault.default.name
+    principal_name = data.azurerm_client_config.current.object_id
+  }
 }
 
-data "azurerm_key_vault_access_policy" "existing_fatp_web_app" {
-  key_vault_id = azurerm_key_vault.default.id
-  object_id    = azurerm_linux_web_app.default[0].identity[0].principal_id
-  name         = "Key & Secret Management"
+data "external" "check_existing_fatp_web_app" {
+  program = ["./check_policy_exists.sh"]
+
+  query = {
+    keyvault_name  = azurerm_key_vault.default.name
+    principal_name = azurerm_linux_web_app.default[0].identity[0].principal_id
+  }
 }
+
