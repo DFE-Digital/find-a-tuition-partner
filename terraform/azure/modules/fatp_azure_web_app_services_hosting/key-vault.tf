@@ -30,9 +30,7 @@ resource "azurerm_key_vault" "default" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
-  depends_on = [azurerm_key_vault.default]
-
-  count = data.external.check_existing_pipeline_service_account.result.exists == "false" ? 1 : 0
+  for_each = data.external.check_existing_pipeline_service_account.result.exists == "false" ? toset(["create"]) : toset([])
 
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -57,9 +55,8 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
-  depends_on = [azurerm_key_vault.default, azurerm_linux_web_app.default]
+  for_each = data.external.check_existing_fatp_web_app.result.exists == "false" ? toset(["create"]) : toset([])
 
-  count = data.external.check_existing_fatp_web_app.result.exists == "false" ? 1 : 0
 
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
