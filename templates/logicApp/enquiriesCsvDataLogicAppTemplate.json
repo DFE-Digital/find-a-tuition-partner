@@ -1,0 +1,418 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workflows_find_a_tp_enquiriesdatacsv_workflow_name": {
+      "defaultValue": "find-a-tp-{{Environment}}-enquiriesdatacsv-workflow",
+      "type": "String"
+    },
+    "connections_azureblob_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/{{connectionName}}",
+      "type": "String"
+    },
+    "connections_office365_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/{{connectionName}}",
+      "type": "String"
+    },
+    "connections_sharepointonline_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/{{connectionName}}",
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2017-07-01",
+      "name": "[parameters('workflows_find_a_tp_enquiriesdatacsv_workflow_name')]",
+      "location": "westeurope",
+      "tags": {
+        "Environment": "{{Environment}}",
+        "Product": "National Tutoring Programme",
+        "Service Offering": "National Tutoring Programme"
+      },
+      "properties": {
+        "state": "Disabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "Recurrence": {
+              "recurrence": {
+                "frequency": "Day",
+                "interval": 1,
+                "schedule": {
+                  "hours": [
+                    "4"
+                  ]
+                },
+                "timeZone": "GMT Standard Time"
+              },
+              "evaluatedRecurrence": {
+                "frequency": "Day",
+                "interval": 1,
+                "schedule": {
+                  "hours": [
+                    "4"
+                  ]
+                },
+                "timeZone": "GMT Standard Time"
+              },
+              "type": "Recurrence"
+            }
+          },
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Send_Error_email_(V2)": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Body": "<p>Hi,<br>\n<br>\nThe logic app that runs every night to sync the most recent Enquiries data extracted from the FaTP database to the appropriate SharePoint folder failed to do so<br>\n<br>\nError status: @{result('Scope')[0]['status']}<br>\n<br>\nRegards,<br>\n<br>\nThe FaTP service team<br>\n<br>\n</p>",
+                      "Importance": "High",
+                      "Subject": "ERROR - Updating the Enquiries CSVs from the Azure Blob storage holding area to SharePoint",
+                      "To": "{{emailRecipient}}"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['office365']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                  }
+                }
+              },
+              "runAfter": {
+                "Scope": [
+                  "Failed"
+                ]
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@result('Scope')[0]['status']",
+                      "Failed"
+                    ]
+                  }
+                ]
+              },
+              "type": "If"
+            },
+            "Scope": {
+              "actions": {
+                "For_each": {
+                  "foreach": "@body('Lists_blobs_(V2)')?['value']",
+                  "actions": {
+                    "Name_ends_with_CSV": {
+                      "actions": {
+                        "If_enquiries_CSV_file": {
+                          "actions": {
+                            "Get_enquiries_blob_content_(V2)": {
+                              "runAfter": {},
+                              "metadata": {
+                                "JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmZW5xdWlyaWVzLmNzdg==": "{{containerName}}/enquiries.csv"
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent('JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmZW5xdWlyaWVzLmNzdg=='))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              }
+                            },
+                            "Get_enquiries_file_metadata_using_path": {
+                              "runAfter": {
+                                "Get_enquiries_blob_content_(V2)": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/GetFileByPath",
+                                "queries": {
+                                  "path": "{{sharePointFilePath}}/enquiries.csv",
+                                  "queryParametersSingleEncoded": true
+                                }
+                              }
+                            },
+                            "Update_Enquiries_CSV": {
+                              "runAfter": {
+                                "Get_enquiries_file_metadata_using_path": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "body": "@body('Get_enquiries_blob_content_(V2)')",
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "put",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/files/@{encodeURIComponent(encodeURIComponent(body('Get_enquiries_file_metadata_using_path')?['Id']))}"
+                              }
+                            }
+                          },
+                          "runAfter": {},
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@items('For_each')?['Name']",
+                                  "enquiries.csv"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": "If"
+                        },
+                        "If_responses_CSV_file": {
+                          "actions": {
+                            "Get_file_responses_CSV_file_metadata_using_path": {
+                              "runAfter": {
+                                "Get_responses_blob_content_(V2)_": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/GetFileByPath",
+                                "queries": {
+                                  "path": "{{sharePointFilePath}}/responses.csv",
+                                  "queryParametersSingleEncoded": true
+                                }
+                              }
+                            },
+                            "Get_responses_blob_content_(V2)_": {
+                              "runAfter": {},
+                              "metadata": {
+                                "JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmcmVzcG9uc2VzLmNzdg==": "{{containerName}}/responses.csv"
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent('JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmcmVzcG9uc2VzLmNzdg=='))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              }
+                            },
+                            "Update_Responses_CSV_file_": {
+                              "runAfter": {
+                                "Get_file_responses_CSV_file_metadata_using_path": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "body": "@body('Get_responses_blob_content_(V2)_')",
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "put",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/files/@{encodeURIComponent(encodeURIComponent(body('Get_file_responses_CSV_file_metadata_using_path')?['Id']))}"
+                              }
+                            }
+                          },
+                          "runAfter": {
+                            "If_enquiries_CSV_file": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@items('For_each')?['Name']",
+                                  "responses.csv"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": "If"
+                        },
+                        "If_tPLaLadRegionsTS_CSV_file": {
+                          "actions": {
+                            "Get_TPLaLadRegionsTS_blob_content_(V2)_": {
+                              "runAfter": {},
+                              "metadata": {
+                                "JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmdFBMYUxhZFJlZ2lvbnNUUy5jc3Y=": "{{containerName}}/tPLaLadRegionsTS.csv"
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent('JTJmbnRwLWVucXVpcmllcy1kYXRhLXByJTJmdFBMYUxhZFJlZ2lvbnNUUy5jc3Y='))}/content",
+                                "queries": {
+                                  "inferContentType": true
+                                }
+                              }
+                            },
+                            "Get_tPLaLadRegionsTS_CSV_file_metadata_using_path": {
+                              "runAfter": {
+                                "Get_TPLaLadRegionsTS_blob_content_(V2)_": [
+                                  "Succeeded",
+                                  "Failed"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "get",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/GetFileByPath",
+                                "queries": {
+                                  "path": "{{sharePointFilePath}}/tPLaLadRegionsTS.csv",
+                                  "queryParametersSingleEncoded": true
+                                }
+                              }
+                            },
+                            "Update_TPLaLadRegionsTS_CSV_file_": {
+                              "runAfter": {
+                                "Get_tPLaLadRegionsTS_CSV_file_metadata_using_path": [
+                                  "Succeeded"
+                                ]
+                              },
+                              "type": "ApiConnection",
+                              "inputs": {
+                                "body": "@body('Get_responses_blob_content_(V2)_')",
+                                "host": {
+                                  "connection": {
+                                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                                  }
+                                },
+                                "method": "put",
+                                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('{{sharePointSiteName}}'))}/files/@{encodeURIComponent(encodeURIComponent(body('Get_tPLaLadRegionsTS_CSV_file_metadata_using_path')?['Id']))}"
+                              }
+                            }
+                          },
+                          "runAfter": {
+                            "If_responses_CSV_file": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@items('For_each')?['Name']",
+                                  "tPLaLadRegionsTS.csv"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": "If"
+                        }
+                      },
+                      "runAfter": {},
+                      "expression": {
+                        "and": [
+                          {
+                            "endsWith": [
+                              "@items('For_each')?['Name']",
+                              ".csv"
+                            ]
+                          }
+                        ]
+                      },
+                      "type": "If"
+                    }
+                  },
+                  "runAfter": {
+                    "Lists_blobs_(V2)": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "Foreach"
+                },
+                "Lists_blobs_(V2)": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/foldersV2/@{encodeURIComponent(encodeURIComponent('{{containerName}}'))}",
+                    "queries": {
+                      "nextPageMarker": "",
+                      "useFlatListing": false
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "type": "Scope"
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "azureblob": {
+                "connectionId": "[parameters('connections_azureblob_externalid')]",
+                "connectionName": "azureblob",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/azureblob"
+              },
+              "office365": {
+                "connectionId": "[parameters('connections_office365_externalid')]",
+                "connectionName": "office365",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/office365"
+              },
+              "sharepointonline": {
+                "connectionId": "[parameters('connections_sharepointonline_externalid')]",
+                "connectionName": "sharepointonline",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/sharepointonline"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

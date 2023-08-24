@@ -21,6 +21,7 @@ locals {
   redis_cache_subnet_cidr                  = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 2)
   postgresql_subnet_cidr                   = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 3)
   keyvault_subnet_cidr                     = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 4)
+  function_app_service_infra_subnet_cidr   = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 5)
 
   service_plan_sku      = var.service_plan_sku
   service_plan_os       = var.service_plan_os
@@ -49,6 +50,12 @@ locals {
     "XDT_MicrosoftApplicationInsights_NodeJS"         = "1",
   }
 
+  function_app_settings = var.function_app_settings
+  function_app_insights_settings = {
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.function_app_service.connection_string,
+    "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.function_app_service.instrumentation_key
+  }
+
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min
 
@@ -68,6 +75,18 @@ locals {
     "AppServiceAuditLogs",
     "AppServiceIPSecAuditLogs",
     "AppServicePlatformLogs"
+  ])
+  function_app_diagnostic_setting_types = toset([
+    "FunctionAppLogs"
+  ])
+
+  postgres_flexi_server_diagnostic_setting_types = toset([
+    "PostgreSQLLogs",
+    "PostgreSQLFlexSessions",
+    "PostgreSQLFlexQueryStoreRuntime",
+    "PostgreSQLFlexQueryStoreWaitStats",
+    "PostgreSQLFlexTableStats",
+    "PostgreSQLFlexDatabaseXacts"
   ])
 
   enable_monitoring              = var.enable_monitoring

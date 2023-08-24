@@ -42,6 +42,21 @@ resource "azurerm_key_vault" "default" {
     ]
   }
 
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_linux_function_app.default.identity[0].principal_id
+
+    key_permissions = [
+      "Get",
+      "List",
+    ]
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+
 
   network_acls {
     bypass                     = "AzureServices"
@@ -109,6 +124,20 @@ resource "azurerm_key_vault_secret" "govuknotifyapikey" {
 resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
   name            = "BlobStorage--ClientSecret"
   value           = var.blob_storage_client_secret
+  key_vault_id    = azurerm_key_vault.default.id
+  expiration_date = local.key_vault_year_from_now
+
+  lifecycle {
+    ignore_changes = [
+      value,
+      expiration_date,
+    ]
+  }
+}
+
+resource "azurerm_key_vault_secret" "blobstorageenquiriesdataclientsecret" {
+  name            = "BlobStorageEnquiriesData--ClientSecret"
+  value           = var.blob_storage_enquiries_data_client_secret
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
 

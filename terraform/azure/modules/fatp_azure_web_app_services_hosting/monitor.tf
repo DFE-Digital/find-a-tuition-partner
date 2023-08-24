@@ -35,6 +35,43 @@ resource "azurerm_monitor_diagnostic_setting" "web_app_service" {
   }
 }
 
+resource "azurerm_application_insights" "function_app_service" {
+  name                = "${local.resource_prefix}-insights-fa"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.function_app_service.id
+  retention_in_days   = 30
+  tags                = local.tags
+}
+
+resource "azurerm_monitor_diagnostic_setting" "function_app_service" {
+  name                       = "${local.resource_prefix}-functionappservice"
+  target_resource_id         = azurerm_linux_function_app.default.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.function_app_service.id
+
+  dynamic "enabled_log" {
+    for_each = local.function_app_diagnostic_setting_types
+    content {
+      category = enabled_log.value
+
+      retention_policy {
+        enabled = true
+        days    = local.service_log_retention
+      }
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = true
+      days    = local.service_log_retention
+    }
+  }
+}
+
 resource "azurerm_application_insights_standard_web_test" "web_app_service" {
   count = local.enable_monitoring ? 1 : 0
 
@@ -215,9 +252,135 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "web_app_service" {
   severity       = 0 // Critical
   query          = <<-QUERY
   traces
-  | union requests
-  | where resultCode == "500" or severityLevel == 3
+  | union requests, exceptions
+  | where (resultCode == "500" or severityLevel == 3)
   | where timestamp > ago(5m)
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 1
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "function_app_down_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-faapp-down"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when the function app is down in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(10m)
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 0
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "data_extraction_fa_error_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-fa-data-extraction-errors"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when the function DataExtraction has encountered an error in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(1d)
+  | where operation_Name =~ 'DataExtraction'
+  | where cloud_RoleName !endswith 'fa-staging'
+  | where success == false
+  | order by timestamp desc
+  | take 1
+  QUERY
+  frequency      = 5
+  time_window    = 6
+  trigger {
+    operator  = "Equal"
+    threshold = 1
+  }
+  auto_mitigation_enabled = true
+
+  tags = local.tags
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "email_processing_fa_error_alert" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name                = "${local.resource_prefix}-fa-email-processing-errors"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  action {
+    action_group = [azurerm_monitor_action_group.web_app_service[0].id]
+  }
+  data_source_id = azurerm_application_insights.function_app_service.id
+  description    = "This rule triggers when the function PollEmailProcessing has encountered an error in a FaTP environment."
+  enabled        = true
+  severity       = 0 // Critical
+  query          = <<-QUERY
+  requests
+  | project
+    timestamp,
+    id,
+    operation_Name,
+    success,
+    resultCode,
+    duration,
+    operation_Id,
+    cloud_RoleName,
+    invocationId=customDimensions['InvocationId']
+  | where timestamp > ago(2m)
+  | where operation_Name =~ 'PollEmailProcessing'
+  | where cloud_RoleName !endswith 'fa-staging'
+  | where success == false
   | order by timestamp desc
   | take 1
   QUERY

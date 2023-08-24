@@ -25,3 +25,4 @@ app_setting_googleTagManager_containerId                   = "GTM-KV8MCQW"
 appLogging_defaultLogEventLevel                            = "Information"
 appLogging_overrideLogEventLevel                           = "Information"
 app_setting_emailSettings_minsDelaySendingOutcomeEmailToTP = 1440
+app_setting_blobStorage_enquiries_data_containerName       = "ntp-enquiries-data-production"

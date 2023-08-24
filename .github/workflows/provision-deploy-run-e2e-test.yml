@@ -38,6 +38,10 @@ on:
         required: true
         default: false
         type: boolean
+      deploy_to_azure_function_app:
+        required: true
+        default: false
+        type: boolean
     secrets:
       az_webapp_name:
         required: true
@@ -71,6 +75,10 @@ on:
         required: true
       dfeAnalytics_credential:
         required: true
+      blob_storage_enquiries_data_client_secret:
+        required: true
+      az_function_app_name:
+        required: true
 
 env:
   ARM_CLIENT_ID: ${{ secrets.az_client_id }}
@@ -84,6 +92,7 @@ env:
   TF_VAR_blob_storage_client_secret: ${{ secrets.blob_storage_client_secret }}
   TF_VAR_monitor_slack_webhook_receiver: ${{ secrets.monitor_slack_webhook_receiver }}
   TF_VAR_monitor_email_receivers: ${{ secrets.monitor_email_receivers }}
+  TF_VAR_blob_storage_enquiries_data_client_secret: ${{ secrets.blob_storage_enquiries_data_client_secret }}
 
 jobs:
   terraform-plan-apply-and-deployment:
@@ -121,6 +130,8 @@ jobs:
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ secrets.dfeAnalytics_credential }}
           run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+          az_function_app_name: ${{ secrets.az_function_app_name }}
+          deploy_to_azure_function_app: ${{ inputs.deploy_to_azure_function_app }}
   
   e2e-tests:
     name: 'End to End Testing'

@@ -100,6 +100,12 @@ variable "service_app_settings" {
   default     = {}
 }
 
+variable "function_app_settings" {
+  description = "Function app settings"
+  type        = map(string)
+  default     = {}
+}
+
 variable "service_health_check_path" {
   description = "Service health check path"
   type        = string
@@ -609,6 +615,11 @@ variable "govuk_notify_apikey" {
 }
 
 variable "blob_storage_client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "blob_storage_enquiries_data_client_secret" {
   type      = string
   sensitive = true
 }
