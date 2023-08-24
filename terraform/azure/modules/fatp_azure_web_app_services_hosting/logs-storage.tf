@@ -70,7 +70,7 @@ resource "azurerm_monitor_diagnostic_setting" "web_app" {
     category = "Transaction"
 
     retention_policy {
-      enabled = false
+      enabled = true
     }
   }
 }
@@ -87,7 +87,7 @@ resource "azurerm_monitor_diagnostic_setting" "function_app" {
     category = "Transaction"
 
     retention_policy {
-      enabled = false
+      enabled = true
     }
   }
 }
