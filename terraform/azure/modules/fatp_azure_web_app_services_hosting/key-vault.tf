@@ -8,56 +8,6 @@ resource "azurerm_key_vault" "default" {
   purge_protection_enabled    = true
   enabled_for_disk_encryption = true
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "Create",
-      "Get",
-    ]
-
-    secret_permissions = [
-      "Set",
-      "Get",
-      "Delete",
-      "Purge",
-      "Recover",
-      "List",
-    ]
-  }
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_linux_web_app.default[0].identity[0].principal_id
-
-    key_permissions = [
-      "Get",
-      "List",
-    ]
-
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_linux_function_app.default.identity[0].principal_id
-
-    key_permissions = [
-      "Get",
-      "List",
-    ]
-
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
-
-
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
@@ -74,6 +24,58 @@ resource "azurerm_key_vault" "default" {
     ]
   }
 
+}
+
+resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
+  key_vault_id = azurerm_key_vault.default.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  key_permissions = [
+    "Create",
+    "Get",
+  ]
+
+  secret_permissions = [
+    "Set",
+    "Get",
+    "Delete",
+    "Purge",
+    "Recover",
+    "List",
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "fatp_web_app" {
+  key_vault_id = azurerm_key_vault.default.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.default[0].identity[0].principal_id
+
+  key_permissions = [
+    "Get",
+    "List",
+  ]
+
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "fatp_function_app" {
+  key_vault_id = azurerm_key_vault.default.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_function_app.default.identity[0].principal_id
+
+  key_permissions = [
+    "Get",
+    "List",
+  ]
+
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
 }
 
 resource "azurerm_key_vault_secret" "fatpdbconnectionstring" {
