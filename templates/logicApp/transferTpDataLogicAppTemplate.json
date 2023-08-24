@@ -1,0 +1,442 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workflows_find_a_tp_tpdatatransfer_workflow_name": {
+      "defaultValue": "find-a-tp-{{Environment}}-tpdatatransfer-workflow",
+      "type": "String"
+    },
+    "connections_azureblob_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/azureblob",
+      "type": "String"
+    },
+    "connections_office365_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/office365",
+      "type": "String"
+    },
+    "connections_sharepointonline_externalid": {
+      "defaultValue": "/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Web/connections/sharepointonline",
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2017-07-01",
+      "name": "[parameters('workflows_find_a_tp_tpdatatransfer_workflow_name')]",
+      "location": "westeurope",
+      "tags": {
+        "Environment": "{{Environment}}",
+        "Product": "National Tutoring Programme",
+        "Service Offering": "National Tutoring Programme"
+      },
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "When_a_file_is_created_or_modified_(properties_only)_-_spreadsheet": {
+              "recurrence": {
+                "frequency": "Minute",
+                "interval": 10
+              },
+              "evaluatedRecurrence": {
+                "frequency": "Minute",
+                "interval": 10
+              },
+              "splitOn": "@triggerBody()?['value']",
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://educationgovuk.sharepoint.com/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL'))}/tables/@{encodeURIComponent(encodeURIComponent('ce14e9ec-2e70-4b9b-86ca-edb465fcaa3d'))}/onupdatedfileitems",
+                "queries": {
+                  "folderPath": "DfE AND TRIBAL/New TP info for DfE Digital service/tp-spreadsheets"
+                }
+              },
+              "conditions": [
+                {
+                  "expression": "@endswith(triggerOutputs()?['body/{FilenameWithExtension}'], '_DfE Tuition Partner.xlsx')"
+                }
+              ]
+            }
+          },
+          "actions": {
+            "Condition_-_If_Scope_success": {
+              "actions": {
+                "Send_an_email_(V2)_-_365_-_Success_-_DfE": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Body": "<p>A new/updated TP spreadsheet from Tribal (named @{triggerBody()?['{FilenameWithExtension}']}) was added to sharepoint (tp-spreadsheets folder in <a href=\"https://educationgovuk.sharepoint.com/:f:/r/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL/Shared%20Documents/DfE%20AND%20TRIBAL/New%20TP%20info%20for%20DfE%20Digital%20service?csf=1&amp;web=1&amp;e=jkzUmr\">New TP info for DfE Digital service</a>).</p>\n<p>This has been successfully uploaded to Azure blob storage holding area, along with any changes to the TP logo files (tp-logos folder in <a href=\"https://educationgovuk.sharepoint.com/:f:/r/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL/Shared%20Documents/DfE%20AND%20TRIBAL/New%20TP%20info%20for%20DfE%20Digital%20service?csf=1&amp;web=1&amp;e=jkzUmr\">New TP info for DfE Digital service</a>).</p>\n<p><span style=\"background-color: rgb(255, 255, 255)\">The latest spreadsheet (using date/time in the spreadsheet name) and logos within the Azure Blob storage holding area are scheduled to automatically update the production website data overnight. If this needs to be done sooner then the import process can be run manually via GitHub Actions:</span> <a href=\"https://mcas-proxyweb.mcas.ms/certificate-checker?login=false&amp;originalUrl=https%3A%2F%2Fgithub.com.mcas.ms%2FDFE-Digital%2Ffind-a-tuition-partner%2Factions%2Fworkflows%2Fimport-data.yml%3FMcasTsid%3D20893&amp;McasCSRF=0b974317d45413776aeba2524b9d799a280660c7a84ab5944bb2eb6cd2310b34\">https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/import-data.yml</a></p>\n<p><span style=\"background-color: rgb(255, 255, 255)\">If there are data issues processing the latest spreadsheet then the import process will send alerts.</span></p>\n<p>If there are concerns about the data and validation (e.g. if there have been recent issues with the data; structural changes to the spreadsheet or changes to the importer code) the import process can be manually run immediately against the Staging environment. This will allow the data validation to take place prior to the automatic upload to the production database overnight. <span style=\"background-color: rgb(255, 255, 255)\">This is done via GitHub Actions:</span> <a href=\"https://mcas-proxyweb.mcas.ms/certificate-checker?login=false&amp;originalUrl=https%3A%2F%2Fgithub.com.mcas.ms%2FDFE-Digital%2Ffind-a-tuition-partner%2Factions%2Fworkflows%2Fimport-data.yml%3FMcasTsid%3D20893&amp;McasCSRF=0b974317d45413776aeba2524b9d799a280660c7a84ab5944bb2eb6cd2310b34\">https://github.com/DFE-Digital/find-a-tuition-partner/actions/workflows/import-data.yml</a></p>",
+                      "Importance": "Normal",
+                      "Subject": "New TP spreadsheet from Tribal added to Azure Blob storage holding area",
+                      "To": "{{dfeEmailRecipient}}"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['office365']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                  }
+                },
+                "Send_an_email_(V2)_-_365_-_Success_-_Tribal": {
+                  "runAfter": {
+                    "Send_an_email_(V2)_-_365_-_Success_-_DfE": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": {
+                      "Body": "<p>The new/updated TP spreadsheet (named @{triggerBody()?['{FilenameWithExtension}']}) that was added has been successfully uploaded to the DfE Azure blob storage holding area, along with any changes to the TP logo files.</p>\n<p><span style=\"background-color: rgb(255, 255, 255)\">The latest spreadsheet (using date/time in the spreadsheet name) and logos will be scheduled to automatically update the production website data overnight. If this needs to be done sooner then this must be done manually by DfE.</span></p>\n<p><span style=\"background-color: rgb(255, 255, 255)\">If there are data issues processing the latest spreadsheet then the import process will send alerts.</span></p>",
+                      "Importance": "Normal",
+                      "Subject": "The TP spreadsheet was added to Azure Blob storage holding area",
+                      "To": "{{tribalEmailRecipient}}"
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['office365']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                  }
+                }
+              },
+              "runAfter": {
+                "Scope": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Send_an_email_(V2)_-_365_-_Error_-_DfE": {
+                    "runAfter": {},
+                    "type": "ApiConnection",
+                    "inputs": {
+                      "body": {
+                        "Body": "<p>A new/updated TP spreadsheet from Tribal (named @{triggerBody()?['{FilenameWithExtension}']}) was added to sharepoint (tp-spreadsheets folder in <a href=\"https://mcas-proxyweb.mcas.ms/certificate-checker?login=false&amp;originalUrl=https%3A%2F%2Feducationgovuk.sharepoint.com.mcas.ms%2F%3Af%3A%2Fr%2Fsites%2FEXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL%2FShared%2520Documents%2FDfE%2520AND%2520TRIBAL%2FNew%2520TP%2520info%2520for%2520DfE%2520Digital%2520service%3Fcsf%3D1%26web%3D1%26e%3DjkzUmr%26McasTsid%3D20893&amp;McasCSRF=0b974317d45413776aeba2524b9d799a280660c7a84ab5944bb2eb6cd2310b34\">New TP info for DfE Digital service</a>), <span style=\"background-color: rgb(255, 255, 255)\">along with any changes to the TP logo files (tp-logos folder in</span> <a href=\"https://mcas-proxyweb.mcas.ms/certificate-checker?login=false&amp;originalUrl=https%3A%2F%2Feducationgovuk.sharepoint.com.mcas.ms%2F%3Af%3A%2Fr%2Fsites%2FEXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL%2FShared%2520Documents%2FDfE%2520AND%2520TRIBAL%2FNew%2520TP%2520info%2520for%2520DfE%2520Digital%2520service%3Fcsf%3D1%26web%3D1%26e%3DjkzUmr%26McasTsid%3D20893&amp;McasCSRF=0b974317d45413776aeba2524b9d799a280660c7a84ab5944bb2eb6cd2310b34\">New TP info for DfE Digital service</a><span style=\"background-color: rgb(255, 255, 255)\">).</span></p>\n<p>The Azure Logic App that processes the spreadsheet and logos has thrown an error.</p>\n<p>The Azure Logic app run history should be analysed to establish what the cause of this error is and consider if further actions are needed.</p>\n<p>Error status: @{result('Scope')[0]['status']}</p>\n<p><strong>NOTE: It is possible that spreadsheet and logos have still been updated within the Azure Blob storage holding area, in which case they will still be imported in to the production database overnight.</strong></p>",
+                        "Importance": "High",
+                        "Subject": "ERROR - Adding the new TP spreadsheet from Tribal to Azure Blob storage holding area",
+                        "To": "{{dfeEmailRecipient}}"
+                      },
+                      "host": {
+                        "connection": {
+                          "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                      },
+                      "method": "post",
+                      "path": "/v2/Mail"
+                    }
+                  },
+                  "Send_an_email_(V2)_-_365_-_Error_-_Tribal": {
+                    "runAfter": {
+                      "Send_an_email_(V2)_-_365_-_Error_-_DfE": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "ApiConnection",
+                    "inputs": {
+                      "body": {
+                        "Body": "<p>The new/updated TP spreadsheet (named @{triggerBody()?['{FilenameWithExtension}']}) that was added, <span style=\"background-color: rgb(255, 255, 255)\">along with any changes to the TP logo files have resulted in an error when being added to the Azure Blob storage holding area.</span></p>\n<p>The Azure Logic App that processes the spreadsheet and logos has thrown an error and the cause of this should be investigated by DfE.</p>\n<p><strong>NOTE: It is possible that spreadsheet and logos have still been updated within the Azure Blob storage holding area, in which case they will still be imported in to the production database overnight.</strong></p>",
+                        "Importance": "High",
+                        "Subject": "ERROR - Adding the new TP spreadsheet to Azure Blob storage holding area",
+                        "To": "{{tribalEmailRecipient}}"
+                      },
+                      "host": {
+                        "connection": {
+                          "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                      },
+                      "method": "post",
+                      "path": "/v2/Mail"
+                    }
+                  },
+                  "Terminate": {
+                    "runAfter": {
+                      "Send_an_email_(V2)_-_365_-_Error_-_Tribal": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "Terminate",
+                    "inputs": {
+                      "runError": {
+                        "message": "result('Scope')[0]['status']"
+                      },
+                      "runStatus": "Failed"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@result('Scope')[0]['status']",
+                      "Succeeded"
+                    ]
+                  }
+                ]
+              },
+              "type": "If"
+            },
+            "Scope": {
+              "actions": {
+                "Create_blob_(V2)_-_spreadsheet": {
+                  "runAfter": {
+                    "Get_file_content_-_spreadsheet": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "body": "@body('Get_file_content_-_spreadsheet')",
+                    "headers": {
+                      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "ReadFileMetadataFromServer": true
+                    },
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files",
+                    "queries": {
+                      "folderPath": "/ntp-tp-data",
+                      "name": "tp-spreadsheets/@{triggerBody()?['{FilenameWithExtension}']}",
+                      "queryParametersSingleEncoded": true
+                    }
+                  },
+                  "runtimeConfiguration": {
+                    "contentTransfer": {
+                      "transferMode": "Chunked"
+                    }
+                  }
+                },
+                "For_each_-_current_logo": {
+                  "foreach": "@body('Lists_blobs_(V2)_-_current_logos')?['value']",
+                  "actions": {
+                    "Copy_blob_(V2)_-_current_logo_to_archive_folder": {
+                      "runAfter": {},
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "headers": {
+                          "ReadFileMetadataFromServer": true
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                          }
+                        },
+                        "method": "post",
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/copyFile",
+                        "queries": {
+                          "destination": "/ntp-tp-data/tp-logos-archive/@{items('For_each_-_current_logo')?['Name']}",
+                          "overwrite": true,
+                          "queryParametersSingleEncoded": true,
+                          "source": "/ntp-tp-data/tp-logos/@{items('For_each_-_current_logo')?['Name']}"
+                        }
+                      }
+                    },
+                    "Delete_blob_(V2)_-_current_logo": {
+                      "runAfter": {
+                        "Copy_blob_(V2)_-_current_logo_to_archive_folder": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "headers": {
+                          "SkipDeleteIfFileNotFoundOnServer": false
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                          }
+                        },
+                        "method": "delete",
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files/@{encodeURIComponent(encodeURIComponent('/ntp-tp-data/tp-logos/',items('For_each_-_current_logo')?['Name']))}"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Lists_blobs_(V2)_-_current_logos": [
+                      "Succeeded",
+                      "TimedOut",
+                      "Skipped",
+                      "Failed"
+                    ]
+                  },
+                  "type": "Foreach"
+                },
+                "For_each_-_sharepoint_logo": {
+                  "foreach": "@body('Get_files_(properties_only)_-_logos')?['value']",
+                  "actions": {
+                    "Create_blob_(V2)_-_logo": {
+                      "runAfter": {
+                        "Get_file_content": [
+                          "Succeeded"
+                        ]
+                      },
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "body": "@body('Get_file_content')",
+                        "headers": {
+                          "ReadFileMetadataFromServer": true
+                        },
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['azureblob']['connectionId']"
+                          }
+                        },
+                        "method": "post",
+                        "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files",
+                        "queries": {
+                          "folderPath": "/ntp-tp-data",
+                          "name": "tp-logos/@{items('For_each_-_sharepoint_logo')?['{FilenameWithExtension}']}",
+                          "queryParametersSingleEncoded": true
+                        }
+                      },
+                      "runtimeConfiguration": {
+                        "contentTransfer": {
+                          "transferMode": "Chunked"
+                        }
+                      }
+                    },
+                    "Get_file_content": {
+                      "runAfter": {},
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connection": {
+                            "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                          }
+                        },
+                        "method": "get",
+                        "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://educationgovuk.sharepoint.com/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL'))}/files/@{encodeURIComponent(items('For_each_-_sharepoint_logo')?['{Identifier}'])}/content",
+                        "queries": {
+                          "inferContentType": true
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Get_files_(properties_only)_-_logos": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "Foreach"
+                },
+                "Get_file_content_-_spreadsheet": {
+                  "runAfter": {},
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://educationgovuk.sharepoint.com/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL'))}/files/@{encodeURIComponent(triggerBody()?['{Identifier}'])}/content",
+                    "queries": {
+                      "inferContentType": true
+                    }
+                  }
+                },
+                "Get_files_(properties_only)_-_logos": {
+                  "runAfter": {
+                    "For_each_-_current_logo": [
+                      "Succeeded",
+                      "TimedOut",
+                      "Skipped",
+                      "Failed"
+                    ]
+                  },
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['sharepointonline']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/datasets/@{encodeURIComponent(encodeURIComponent('https://educationgovuk.sharepoint.com/sites/EXTERNAL-NTPDfEDELIVERYPARTNERS2-TRIBAL'))}/tables/@{encodeURIComponent(encodeURIComponent('ce14e9ec-2e70-4b9b-86ca-edb465fcaa3d'))}/getfileitems",
+                    "queries": {
+                      "$filter": "substringof('.png', FileLeafRef) or substringof('.svg', FileLeafRef)",
+                      "folderPath": "DfE AND TRIBAL/New TP info for DfE Digital service/tp-logos"
+                    }
+                  }
+                },
+                "Lists_blobs_(V2)_-_current_logos": {
+                  "runAfter": {
+                    "Create_blob_(V2)_-_spreadsheet": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                      }
+                    },
+                    "method": "get",
+                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/foldersV2/@{encodeURIComponent(encodeURIComponent('/ntp-tp-data/tp-logos'))}",
+                    "queries": {
+                      "nextPageMarker": "",
+                      "useFlatListing": false
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "type": "Scope"
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "azureblob": {
+                "connectionId": "[parameters('connections_azureblob_externalid')]",
+                "connectionName": "azureblob",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/azureblob"
+              },
+              "office365": {
+                "connectionId": "[parameters('connections_office365_externalid')]",
+                "connectionName": "office365",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/office365"
+              },
+              "sharepointonline": {
+                "connectionId": "[parameters('connections_sharepointonline_externalid')]",
+                "connectionName": "sharepointonline",
+                "id": "/subscriptions/{{subscriptionId}}/providers/Microsoft.Web/locations/westeurope/managedApis/sharepointonline"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
