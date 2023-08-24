@@ -20,7 +20,6 @@ resource "azurerm_monitor_diagnostic_setting" "web_app_service" {
 
       retention_policy {
         enabled = true
-        days    = local.service_log_retention
       }
     }
   }
@@ -30,7 +29,6 @@ resource "azurerm_monitor_diagnostic_setting" "web_app_service" {
 
     retention_policy {
       enabled = true
-      days    = local.service_log_retention
     }
   }
 }
@@ -57,7 +55,6 @@ resource "azurerm_monitor_diagnostic_setting" "function_app_service" {
 
       retention_policy {
         enabled = true
-        days    = local.service_log_retention
       }
     }
   }
@@ -67,7 +64,6 @@ resource "azurerm_monitor_diagnostic_setting" "function_app_service" {
 
     retention_policy {
       enabled = true
-      days    = local.service_log_retention
     }
   }
 }

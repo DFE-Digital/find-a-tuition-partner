@@ -62,7 +62,6 @@ resource "azurerm_monitor_diagnostic_setting" "webhook" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 
@@ -71,7 +70,6 @@ resource "azurerm_monitor_diagnostic_setting" "webhook" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 }

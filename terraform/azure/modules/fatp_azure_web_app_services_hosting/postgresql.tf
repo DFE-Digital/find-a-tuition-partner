@@ -81,7 +81,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_postgresql_flexible_serve
 
       retention_policy {
         enabled = true
-        days    = local.service_log_retention
       }
     }
   }
@@ -91,7 +90,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_postgresql_flexible_serve
 
     retention_policy {
       enabled = true
-      days    = local.service_log_retention
     }
   }
 }

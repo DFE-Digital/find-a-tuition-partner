@@ -177,6 +177,6 @@ runs:
       run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
       
     - name: Delete non prod Function App deployment slot
-      if: always() && ${{ inputs.deploy_to_azure_function_app == 'true' }}
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
       shell: bash
       run: az functionapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }}
