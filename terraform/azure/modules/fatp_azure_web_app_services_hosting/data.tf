@@ -42,7 +42,7 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
 }
 
 data "external" "check_existing_pipeline_service_account" {
-  program = ["./scripts/check_policy_exists.sh"]
+  program = ["./scripts/check_access_policy_exists.sh"]
 
   query = {
     keyvault_name  = azurerm_key_vault.default.name
@@ -51,7 +51,7 @@ data "external" "check_existing_pipeline_service_account" {
 }
 
 data "external" "check_existing_fatp_web_app" {
-  program = ["./scripts/check_policy_exists.sh"]
+  program = ["./scripts/check_access_policy_exists.sh"]
 
   query = {
     keyvault_name  = azurerm_key_vault.default.name
