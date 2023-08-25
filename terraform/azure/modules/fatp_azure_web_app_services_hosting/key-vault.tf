@@ -30,8 +30,8 @@ resource "azurerm_key_vault" "default" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
-  // Only create the policy if object_id doesn't exist in the list of objectIds
-  for_each = local.pipeline_object_id_exists ? toset([]) : toset(["create"])
+  // Only create the policy if the value for the key is "create"
+  count = local.pipeline_kv_access_policies["pipeline_service_account"] == "create" ? 1 : 0
 
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -56,8 +56,8 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
-  // Only create the policy if the web app's principal_id doesn't exist in the list of objectIds
-  for_each = local.fatp_web_app_object_id_exists ? toset([]) : toset(["create"])
+  // Only create the policy if the value for the key is "create"
+  count = local.fatp_web_app_kv_access_policies["fatp_web_app"] == "create" ? 1 : 0
 
 
   key_vault_id = azurerm_key_vault.default.id
