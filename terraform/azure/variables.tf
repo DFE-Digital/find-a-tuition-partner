@@ -582,3 +582,4 @@ variable "app_setting_blobStorage_enquiries_data_tenantId" {
   type    = string
   default = "9c7d9dd3-840c-4b3f-818e-552865082e16"
 }
+
