@@ -49,6 +49,10 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
     "Recover",
     "List",
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // We have already created the access policy for the fatp_web_app as parts of the azurerm_key_vault resource access_policy block.
@@ -70,6 +74,10 @@ resource "azurerm_key_vault_access_policy" "fatp_web_app" {
     "Get",
     "List",
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "fatp_function_app" {
