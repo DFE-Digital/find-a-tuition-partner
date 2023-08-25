@@ -623,15 +623,3 @@ variable "blob_storage_enquiries_data_client_secret" {
   type      = string
   sensitive = true
 }
-
-variable "existing_key_vault_access_policy_objectIds" {
-  description = "This variable is used in creating the key vault's pipeline_service_account access policy. It is currently set via the following github action: terraform-plan-apply-and-deployment"
-  type        = list(string)
-  default     = []
-}
-
-variable "existing_web_app" {
-  description = "This variable is used in creating the key vault's fatp_web_app access policy. It is currently set via the following github action: terraform-plan-apply-and-deployment."
-  type        = bool
-  default     = false
-}

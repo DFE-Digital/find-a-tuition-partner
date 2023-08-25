@@ -117,41 +117,7 @@ runs:
         else
           az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
         fi
-      
-    - name: Get access policies' objectIds for the Key Vault and assigns it to a Terraform variable
-      shell: bash
-      run: |
-        # Check if Key Vault exists
-        EXISTS=$(az keyvault show --name ${{ inputs.az_webapp_name }}-kv --query id --output tsv || echo "")
-        if [ -z "$EXISTS" ]; then
-          echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
-        else
-          kvName=${{ inputs.az_webapp_name }}-kv
-          input=$(echo "{\"keyvault_name\": \"$kvName\" }")
-
-          KEYVAULT_NAME=$(echo $input | jq -r .keyvault_name)
-
-          policies=$(az keyvault show --name $KEYVAULT_NAME --query "properties.accessPolicies[*].objectId" --output tsv)
-
-          objectIds_json=$(echo "$policies" | jq -R . | jq -s -c .)
-        
-          echo "TF_VAR_existing_key_vault_access_policy_objectIds=$objectIds_json" >> $GITHUB_ENV
-
-        fi
-        
-    - name: Check if Web App exists in Azure
-      shell: bash
-      run: |
-        webapp_info=$(az webapp show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} || echo "not_exists")
-
-        if [ "$webapp_info" == "not_exists" ]; then
-          echo "Web App does not exist."
-          echo "TF_VAR_existing_web_app=false" >> $GITHUB_ENV
-        else
-          echo "Web App exists."
-          echo "TF_VAR_existing_web_app=true" >> $GITHUB_ENV
-        fi
-        
+              
     # Install the latest version of the Terraform CLI
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
