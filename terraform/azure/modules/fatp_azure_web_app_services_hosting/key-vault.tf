@@ -26,8 +26,8 @@ resource "azurerm_key_vault" "default" {
 
 }
 
-// We have already created the access policy for the pipeline_service_account as parts of the azurerm_key_vault resource access_policy block.
-// We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
+// We already created the access policy for the pipeline_service_account and fatp_web_app as parts of the azurerm_key_vault resource access_policy block.
+// We must make sure that these are only added if we don't already have it because we have segregated them from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
   count = local.should_create_svc_acc_kv_policy
@@ -55,8 +55,8 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
   }
 }
 
-// We have already created the access policy for the fatp_web_app as parts of the azurerm_key_vault resource access_policy block.
-// We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
+// We already created the access policy for the pipeline_service_account and fatp_web_app as parts of the azurerm_key_vault resource access_policy block.
+// We must make sure that these are only added if we don't already have it because we have segregated them from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
   count = local.should_create_fatp_web_kv_policy
