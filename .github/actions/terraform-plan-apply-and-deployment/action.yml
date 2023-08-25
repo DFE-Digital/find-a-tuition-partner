@@ -149,7 +149,7 @@ runs:
           echo "TF_VAR_existing_web_app=false" >> $GITHUB_ENV
         else
           echo "Web App exists."
-          # echo "TF_VAR_existing_web_app=true" >> $GITHUB_ENV
+          echo "TF_VAR_existing_web_app=true" >> $GITHUB_ENV
         fi
         
     # Install the latest version of the Terraform CLI

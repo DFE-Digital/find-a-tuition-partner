@@ -176,5 +176,7 @@ locals {
   existing_kv_access_policies_objectIds = var.existing_key_vault_access_policy_objectIds
   is_access_policies_objectIds_empty    = length(local.existing_kv_access_policies_objectIds) == 0 ? true : false
   should_create_svc_acc_kv_policy       = local.is_access_policies_objectIds_empty ? 1 : (contains(local.existing_kv_access_policies_objectIds, data.azurerm_client_config.current.object_id) ? 0 : 1)
-  should_create_fatp_web_kv_policy      = local.is_access_policies_objectIds_empty ? 1 : (length(data.azurerm_linux_web_app.fatp_web_app) > 0 && contains(local.existing_kv_access_policies_objectIds, data.azurerm_linux_web_app.fatp_web_app[0].identity[0].principal_id) ? 0 : 1)
+  fatp_web_app_exists                   = length(data.azurerm_linux_web_app.fatp_web_app) > 0
+  fatp_web_app_principal_id             = local.fatp_web_app_exists ? data.azurerm_linux_web_app.fatp_web_app[0].identity[0].principal_id : ""
+  should_create_fatp_web_kv_policy      = local.is_access_policies_objectIds_empty ? 1 : (local.fatp_web_app_exists && !contains(local.existing_kv_access_policies_objectIds, local.fatp_web_app_principal_id) ? 1 : 0)
 }
