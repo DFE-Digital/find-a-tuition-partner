@@ -173,7 +173,7 @@ locals {
   key_vault_timestamp_parts              = regex("^(?P<year>\\d+)(?P<remainder>-.*)$", timestamp())
   key_vault_year_from_now                = format("%d%s", local.key_vault_timestamp_parts.year + local.key_vault_secret_expiry_years, local.key_vault_timestamp_parts.remainder)
 
-  existing_kv_access_policies_objectIds = jsondecode(var.existing_key_vault_access_policy_objectIds)
+  existing_kv_access_policies_objectIds = var.existing_key_vault_access_policy_objectIds
   should_create_fatp_web_kv_policy      = contains(local.existing_kv_access_policies_objectIds, azurerm_linux_web_app.default[0].identity[0].principal_id) ? 0 : 1
   should_create_svc_acc_kv_policy       = contains(local.existing_kv_access_policies_objectIds, data.azurerm_client_config.current.object_id) ? 0 : 1
 }
