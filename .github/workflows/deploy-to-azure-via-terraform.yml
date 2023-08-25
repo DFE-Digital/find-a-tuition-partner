@@ -36,7 +36,7 @@ concurrency: azure-deploy-via-terraform-${{ inputs.environment }}
 
 jobs:
   provision-deploy-run-e2e-test:
-    name: 'Provision FaTP into Azure via Terraform, Deployment and End to End Testing'
+    name: Provision FaTP into Azure via Terraform, Deployment and End to End Testing - ${{ inputs.environment }}
     uses: ./.github/workflows/provision-deploy-run-e2e-test.yml
     with:
       environment: ${{ inputs.environment }}
