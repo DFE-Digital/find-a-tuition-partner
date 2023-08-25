@@ -133,9 +133,10 @@ runs:
 
           policies=$(az keyvault show --name $KEYVAULT_NAME --query "properties.accessPolicies[*].objectId" --output tsv)
 
-          objectIds_json=$(echo "$policies" | jq -R . | jq -s .)
+          objectIds_json=$(echo "$policies" | jq -R . | jq -s -c .)
         
           echo "TF_VAR_existing_key_vault_access_policy_objectIds=$objectIds_json" >> $GITHUB_ENV
+
         fi
         
     - name: Check if Web App exists in Azure
