@@ -172,4 +172,7 @@ locals {
   key_vault_secret_expiry_years          = var.key_vault_secret_expiry_years
   key_vault_timestamp_parts              = regex("^(?P<year>\\d+)(?P<remainder>-.*)$", timestamp())
   key_vault_year_from_now                = format("%d%s", local.key_vault_timestamp_parts.year + local.key_vault_secret_expiry_years, local.key_vault_timestamp_parts.remainder)
+  // Check if the current object_id exists in the list of objectIds
+  pipeline_object_id_exists     = contains(data.external.existing_kv_access_policy.result.objectIds, data.azurerm_client_config.current.object_id)
+  fatp_web_app_object_id_exists = contains(data.external.existing_kv_access_policy.result.objectIds, azurerm_linux_web_app.default[0].identity[0].principal_id)
 }
