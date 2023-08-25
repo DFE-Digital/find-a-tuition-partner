@@ -628,3 +628,8 @@ variable "existing_key_vault_access_policy_objectIds" {
   type    = list(string)
   default = []
 }
+
+variable "existing_web_app" {
+  type    = bool
+  default = false
+}

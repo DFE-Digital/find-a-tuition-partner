@@ -120,4 +120,5 @@ module "fatp_azure_web_app_services_hosting" {
   redis_cache_firewall_ipv4_allow_list       = var.redis_cache_firewall_ipv4_allow_list
   key_vault_secret_expiry_years              = var.key_vault_secret_expiry_years
   existing_key_vault_access_policy_objectIds = var.existing_key_vault_access_policy_objectIds
+  existing_web_app                           = var.existing_web_app
 }

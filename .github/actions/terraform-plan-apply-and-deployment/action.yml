@@ -128,6 +128,19 @@ runs:
           echo "TF_VAR_existing_key_vault_access_policy_objectIds=$objectIds_json" >> $GITHUB_ENV
         fi
         
+    - name: Check if Web App exists in Azure
+      shell: bash
+      run: |
+        webapp_info=$(az webapp show --name ${{ inputs.az_webapp_name }} --resource-group ${{ inputs.az_resource_group_name }} || echo "not_exists")
+
+        if [ "$webapp_info" == "not_exists" ]; then
+          echo "Web App does not exist."
+          echo "TF_VAR_existing_web_app=false" >> $GITHUB_ENV
+        else
+          echo "Web App exists."
+          # echo "TF_VAR_existing_web_app=true" >> $GITHUB_ENV
+        fi
+        
     # Install the latest version of the Terraform CLI
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
