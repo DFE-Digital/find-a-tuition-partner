@@ -623,3 +623,8 @@ variable "blob_storage_enquiries_data_client_secret" {
   type      = string
   sensitive = true
 }
+
+variable "existing_key_vault_access_policy_objectIds" {
+  type    = list(string)
+  default = []
+}

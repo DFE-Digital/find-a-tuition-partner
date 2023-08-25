@@ -116,6 +116,16 @@ runs:
           echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
         else
           az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+        
+          input=$(echo '{"keyvault_name": ${{ inputs.az_webapp_name }}-kv }') 
+
+          KEYVAULT_NAME=$(echo $input | jq -r .keyvault_name)
+
+          policies=$(az keyvault show --name $KEYVAULT_NAME --query "properties.accessPolicies[*].objectId" --output tsv)
+
+          objectIds_json=$(echo "$policies" | jq -R . | jq -s .)
+        
+          echo "TF_VAR_existing_key_vault_access_policy_objectIds=$objectIds_json" >> $GITHUB_ENV
         fi
         
     # Install the latest version of the Terraform CLI

@@ -41,11 +41,3 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
   }
 }
 
-data "external" "existing_kv_access_policy" {
-  program = ["./scripts/existing_kv_access_policy.sh"]
-
-  query = {
-    keyvault_name = azurerm_key_vault.default.name
-  }
-}
-

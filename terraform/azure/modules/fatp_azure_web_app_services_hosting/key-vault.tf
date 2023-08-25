@@ -31,7 +31,7 @@ resource "azurerm_key_vault" "default" {
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
   // Only create the policy if the value for the key is "create"
-  count = local.pipeline_kv_access_policies["pipeline_service_account"] == "create" ? 1 : 0
+  count = local.should_create_svc_acc_kv_policy
 
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -57,7 +57,7 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
   // Only create the policy if the value for the key is "create"
-  count = local.fatp_web_app_kv_access_policies["fatp_web_app"] == "create" ? 1 : 0
+  count = local.should_create_fatp_web_kv_policy
 
 
   key_vault_id = azurerm_key_vault.default.id
