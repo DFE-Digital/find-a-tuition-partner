@@ -116,7 +116,20 @@ runs:
           echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
         else
           az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
+        fi
         
+    - name: Install jq
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y jq  
+      
+    - name: Get access policies' objectIds for the Key Vault and assigns it to a Terraform variable
+      shell: bash
+      run: |
+        # Check if Key Vault exists
+        EXISTS=$(az keyvault show --name ${{ inputs.az_webapp_name }}-kv --query id --output tsv || echo "")
+        if [ -z "$EXISTS" ]; then
+          echo "Key Vault: ${{ inputs.az_webapp_name }}-kv does not exist"
+        else
           input=$(echo '{"keyvault_name": ${{ inputs.az_webapp_name }}-kv }') 
 
           KEYVAULT_NAME=$(echo $input | jq -r .keyvault_name)
