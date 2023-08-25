@@ -30,7 +30,6 @@ resource "azurerm_key_vault" "default" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
-  // Only create the policy if the value for the key is "create"
   count = local.should_create_svc_acc_kv_policy
 
   key_vault_id = azurerm_key_vault.default.id
@@ -56,9 +55,7 @@ resource "azurerm_key_vault_access_policy" "pipeline_service_account" {
 // We must make sure that this is only added if we don't already have it because we have segregated it from the main azurerm_key_vault resource;
 // otherwise, an error will be raised.
 resource "azurerm_key_vault_access_policy" "fatp_web_app" {
-  // Only create the policy if the value for the key is "create"
   count = local.should_create_fatp_web_kv_policy
-
 
   key_vault_id = azurerm_key_vault.default.id
   tenant_id    = data.azurerm_client_config.current.tenant_id

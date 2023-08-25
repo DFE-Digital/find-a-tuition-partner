@@ -41,3 +41,8 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
   }
 }
 
+data "azurerm_linux_web_app" "fatp_web_app" {
+  name                = local.resource_prefix
+  resource_group_name = local.resource_group.name
+}
+
