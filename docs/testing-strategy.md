@@ -48,7 +48,7 @@ The [Deploy to Azure](../.github/workflows/deploy-to-azure.yml) or In case you m
 ## Production
 
 The [Deploy to Azure](../.github/workflows/deploy-to-azure.yml) or In case you make modifications to the Terraform code, such as adding or modifying application settings configuration, use
-[Deploy FaTP into Azure via Terraform](../.github/workflows/deploy-to-azure-via-terraform.yml) workflow is used to deploy to staging following team and Tuition Partner (if their data has changed) sign off.
+[Deploy FaTP into Azure via Terraform](../.github/workflows/deploy-to-azure-via-terraform.yml) workflow is used to deploy to production following team and Tuition Partner (if their data has changed) sign off.
 
 - Deployment from `main` branch
 - Exception and performance anomaly alerts into Slack and via Email.
