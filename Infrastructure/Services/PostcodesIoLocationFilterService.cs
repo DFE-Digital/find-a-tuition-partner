@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using Application.Common.Interfaces;
+using Domain;
 using Domain.Search;
 
 namespace Infrastructure.Services;
@@ -37,11 +38,23 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
             Country = result["country"]!.ToString(),
             Region = result["region"]?.ToString(),
             LocalAuthorityDistrict = result["admin_district"]?.ToString() ?? "",
-            LocalAuthorityDistrictCode = result["codes"]!["admin_district"]!.ToString()
+            LocalAuthorityDistrictCode = result["codes"]!["admin_district"]!.ToString(),
+            LocalAdministrativeUnit2Code = result["codes"]!["lau2"]!.ToString()
         };
 
-        var lad = await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
-        if (lad == null) return parameters;
+        LocalAuthorityDistrict? lad = null;
+
+        if (!string.IsNullOrEmpty(parameters.LocalAdministrativeUnit2Code))
+        {
+            lad = await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAdministrativeUnit2Code);
+        }
+
+        lad ??= await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
+
+        if (lad == null)
+        {
+            return parameters;
+        }
 
         parameters.LocalAuthorityCode = lad.LocalAuthority.Code;
         parameters.LocalAuthority = lad.LocalAuthority.Name;
