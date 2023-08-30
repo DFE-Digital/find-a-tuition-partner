@@ -21,15 +21,17 @@ Date       | Searches | Run Time | Searches Per Second | Average Response Time |
 
 ### Scaling
 
-All environments use three nodes for resiliance and to confirm that there are no bugs related to an accidental reliance on state in a single node. It is however preferable to run performance testing against a single node to understand what load can be sustained per node.
+All environments use three nodes for resilience and to confirm that there are no bugs related to an accidental reliance on state in a single node. It is however preferable to run performance testing against a single node to understand what load can be sustained per node.
 
-Change the number of nodes used to one on the target environment by issuing the following cf command
+Change the number of nodes used to one on the target environment by following:
 
-```
-cf scale find-a-tuition-partner-<ENVIRONMENT> -i 1
-```
-
-For reference, the production environment uses 1GB application instances and a medium database wheras the other environments use 256MB application instances and a small database. The performance test should be run against the latter configuration for consistency. This also provides a possible cost saving avenue.
+1) Navigate to the Azure Portal.
+2) In the left navigation pane, click on "App Services".
+3) From the list, select the FaTP Web App.
+4) In the left navigation of the web app, under the "Settings" section, select "Scale out (App Service plan)".
+5) Use the slider or the specific instance count box to set the number of instances you want for the application to run on.
+6) For more advanced scaling, you can also set up autoscaling rules based on metrics like CPU usage or memory. This way, Azure can automatically add or remove instances as needed.
+7) Once you've made your selections, click on the "Save" button
 
 ### Performance Testing
 

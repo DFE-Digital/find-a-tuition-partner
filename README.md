@@ -11,11 +11,9 @@ The code in this repository is for the find a tuition partner service. This serv
 ## Further documentation
 
 * [Architectural Decision Records (ADR)](docs/decisions)
-* [Runbooks](docs/runbooks)
+* [RunBooks](docs/runbooks)
 * [C4 Diagrams](docs/uml)
-* [Release Process](docs/release-process.md)
 * [Errors and Bugs](docs/errors-and-bugs.md)
-* [Disaster Recovery](docs/runbooks/disaster-recovery.md)
 
 ## Architecture
 

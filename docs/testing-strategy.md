@@ -17,23 +17,26 @@ Developers are expected to run all tests, linting and code quality checks agains
 
 ## Pull Requests
 
-The [pull request](../.github/workflows/pull-request.yml) workflow is run whenever a PR is created or updated. This will build the service, run `dotnet test`, use docker compose to spin up the service, create the database and populate it with seed data then run the end to end tests against this temporary stack. The end to end tests will also check for accessibiliy violations.
+The [pull request](../.github/workflows/pull-request.yml) workflow is run whenever a PR is created or updated. This will build the service, run `dotnet test`, use docker compose to spin up the service, create the database and populate it with seed data then run the end to end tests against this temporary stack. The end to end tests will also check for accessibility violations.
 
 Pull requests cannot me merged into `main` without the pull request workflow having run successfully.
 
 ## QA
 
-All commits to the `main` branch automatically trigger the [deploy to GPaaS](../.github/workflows/deploy-to-gpaas.yml) workflow.
+All commits to the `main` branch automatically trigger the [Deploy FaTP into Azure via Terraform](../.github/workflows/deploy-to-azure-via-terraform.yml) workflow.
 
 - `Target environment for the deployment` = `qa`
 - `Run database migrations and import data` = `true`
+- `Deploy to Azure Function App` = `true`
 - Runs full suite of end to end tests
-- Exception and performance anomaly alerts into Slack
+- Exception and performance anomaly alerts into Slack and via email
 - Manual QA and team sign off
 
 ## Staging
 
-The [deploy to GPaaS](../.github/workflows/deploy-to-gpaas.yml) workflow is used to deploy to staging following manual QA and team sign off.
+The [Deploy to Azure](../.github/workflows/deploy-to-azure.yml) or In case you make modifications to the Terraform code, such as adding or modifying application settings configuration, use
+[Deploy FaTP into Azure via Terraform](../.github/workflows/deploy-to-azure-via-terraform.yml) workflow is used to deploy to staging following manual QA and team sign off.
+
 
 - Deployment from `main` branch
 - Runs full suite of end to end tests
@@ -44,11 +47,11 @@ The [deploy to GPaaS](../.github/workflows/deploy-to-gpaas.yml) workflow is used
 
 ## Production
 
-The [deploy to GPaaS](../.github/workflows/deploy-to-gpaas.yml) workflow is used to deploy to staging following team and Tution Partner (if their data has changed) sign off.
+The [Deploy to Azure](../.github/workflows/deploy-to-azure.yml) or In case you make modifications to the Terraform code, such as adding or modifying application settings configuration, use
+[Deploy FaTP into Azure via Terraform](../.github/workflows/deploy-to-azure-via-terraform.yml) workflow is used to deploy to staging following team and Tuition Partner (if their data has changed) sign off.
 
 - Deployment from `main` branch
-- Runs full suite of end to end tests
-- Exception and performance anomaly alerts into Slack
+- Exception and performance anomaly alerts into Slack and via Email.
 
 ## Research
 
