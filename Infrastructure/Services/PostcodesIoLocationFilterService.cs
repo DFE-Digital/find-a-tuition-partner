@@ -44,11 +44,25 @@ public class PostcodesIoLocationFilterService : ILocationFilterService
 
         LocalAuthorityDistrict? lad = null;
 
+        //Use the "lau2" to get the LAD, since this is more granular and matches the dataset supplied by TPs
         if (!string.IsNullOrEmpty(parameters.LocalAdministrativeUnit2Code))
         {
             lad = await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAdministrativeUnit2Code);
+
+            //If there was an lad match then check that the "lau2" and "admin_district" have the same LA Id
+            if (lad != null &&
+                !string.IsNullOrEmpty(parameters.LocalAuthorityDistrictCode) &&
+                !parameters.LocalAdministrativeUnit2Code.Equals(parameters.LocalAuthorityDistrictCode, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var ladToCompare = await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
+                if (ladToCompare != null && ladToCompare.LocalAuthorityId != lad.LocalAuthorityId)
+                {
+                    lad = null;
+                }
+            }
         }
 
+        //If no lad from "lau2" (above) then use "admin_district"
         lad ??= await _unitOfWork.LocalAuthorityDistrictRepository.GetLocalAuthorityDistrictAsync(parameters.LocalAuthorityDistrictCode);
 
         if (lad == null)
