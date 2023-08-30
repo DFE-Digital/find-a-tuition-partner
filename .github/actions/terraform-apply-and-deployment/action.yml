@@ -62,6 +62,25 @@ inputs:
     required: false
     default: "staging"
     type: string
+  az_tenant_id:
+    required: true
+    type: string
+  az_subscription_id:
+    required: true
+    type: string
+  az_client_id:
+    required: true
+    type: string
+  az_client_secret:
+    required: true
+    type: string
+  az_function_app_name:
+    required: true
+    type: string
+  deploy_to_azure_function_app:
+    required: true
+    default: false
+    type: boolean
 
 runs:
   using: composite
@@ -116,6 +135,23 @@ runs:
         package: ${{ inputs.working_directory }}/publish
         slot-name: ${{ inputs.deployment_slot }}
         
+    - name: Create a Function App deployment slot
+      shell: bash
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
+      run: az functionapp deployment slot create --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }} --configuration-source ${{ inputs.az_function_app_name }}
+        
+    - name: Deploy to Azure Function App
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
+      uses: ./.github/actions/deploy-function-app
+      with:
+        az_tenant_id: ${{ inputs.az_tenant_id }}
+        az_subscription_id: ${{ inputs.az_subscription_id }}
+        az_client_id: ${{ inputs.az_client_id }}
+        az_client_secret: ${{ inputs.az_client_secret }}
+        az_resource_group_name: ${{ inputs.az_resource_group_name }}
+        az_function_app_name: ${{ inputs.az_function_app_name }}
+        deployment_slot: ${{ inputs.deployment_slot }}
+        
     - name: Swap slots to production
       shell: bash
       run: az webapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_webapp_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
@@ -129,8 +165,18 @@ runs:
         postgresql_server_admin_username: ${{ inputs.postgresql_server_admin_username }}
         postgresql_server_admin_password: ${{ inputs.postgresql_server_admin_password }}
         run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+        
+    - name: Swap slots to Function App production
+      shell: bash
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
+      run: az functionapp deployment slot swap -s ${{ inputs.deployment_slot }} -n ${{ inputs.az_function_app_name }} -g ${{ inputs.az_resource_group_name }} --target-slot production
       
     - name: Delete non prod deployment slot
       if: always()
       shell: bash
       run: az webapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_webapp_name }} --slot ${{ inputs.deployment_slot }}
+      
+    - name: Delete non prod Function App deployment slot
+      if: ${{ inputs.deploy_to_azure_function_app == 'true' }}
+      shell: bash
+      run: az functionapp deployment slot delete --resource-group ${{ inputs.az_resource_group_name  }}  --name ${{ inputs.az_function_app_name }} --slot ${{ inputs.deployment_slot }}

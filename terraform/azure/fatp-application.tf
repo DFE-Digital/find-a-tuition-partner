@@ -48,9 +48,20 @@ module "fatp_azure_web_app_services_hosting" {
     "GoogleAnalytics__MeasurementId"                              = var.app_setting_googleAnalytics_measurementId
   }
 
+  function_app_settings = {
+    "FatpAzureKeyVaultName"                   = "${var.service_name}-${var.environment}-kv",
+    "DataExtractionTimerCronExpression"       = var.fa_app_setting_dataExtraction_timer_cron_expression,
+    "BlobStorageEnquiriesData__AccountName"   = var.app_setting_blobStorage_enquiries_data_accountName,
+    "BlobStorageEnquiriesData__ClientId"      = var.app_setting_blobStorage_enquiries_data_clientId,
+    "BlobStorageEnquiriesData__ContainerName" = var.app_setting_blobStorage_enquiries_data_containerName,
+    "BlobStorageEnquiriesData__TenantId"      = var.app_setting_blobStorage_enquiries_data_tenantId,
+    "PollEmailProcessingUrl"                  = var.environment != "production" ? "https://${module.fatp_azure_web_app_services_hosting.azurerm_cdn_frontdoor_endpoint_endpoint.host_name}/admin/process-emails" : "https://www.find-tuition-partner.service.gov.uk/admin/process-emails"
+  }
+
   # App secrets
-  govuk_notify_apikey        = var.govuk_notify_apikey
-  blob_storage_client_secret = var.blob_storage_client_secret
+  govuk_notify_apikey                       = var.govuk_notify_apikey
+  blob_storage_client_secret                = var.blob_storage_client_secret
+  blob_storage_enquiries_data_client_secret = var.blob_storage_enquiries_data_client_secret
 
   service_health_check_path                 = var.service_health_check_path
   service_health_check_eviction_time_in_min = var.service_health_check_eviction_time_in_min

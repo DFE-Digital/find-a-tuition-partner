@@ -1,0 +1,70 @@
+name: Deploy project to Azure Function App
+description: Deploy project to Azure Function App
+
+inputs:
+  dotnet_version:
+    required: true
+    type: string
+    default: '6.0.x'
+  working_directory:
+    required: true
+    type: string
+    default: './Functions'
+  az_tenant_id:
+    required: true
+    type: string
+  az_subscription_id:
+    required: true
+    type: string
+  az_client_id:
+    required: true
+    type: string
+  az_client_secret:
+    required: true
+    type: string
+  az_function_app_name:
+    required: true
+    type: string
+  az_resource_group_name:
+    required: true
+    type: string
+  deployment_slot:
+    required: true
+    type: string
+    default: 'staging'
+    
+runs:
+  using: composite
+  
+  steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v3
+
+    - name: Setup DotNet ${{ inputs.dotnet_version }} Environment
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet_version }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: bash
+      run: |
+        pushd './${{ inputs.working_directory }}'
+        dotnet build --configuration Release --output ./output
+        popd
+        
+    - name: Azure CLI Login
+      uses: ./.github/actions/azure-login
+      with:
+        az_tenant_id: ${{ inputs.az_tenant_id }}
+        az_subscription_id: ${{ inputs.az_subscription_id }}
+        az_client_id: ${{ inputs.az_client_id }}
+        az_client_secret: ${{ inputs.az_client_secret }}
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ inputs.az_function_app_name }}
+        package: '${{ inputs.working_directory }}/output'
+        slot-name: ${{ inputs.deployment_slot }}
+    

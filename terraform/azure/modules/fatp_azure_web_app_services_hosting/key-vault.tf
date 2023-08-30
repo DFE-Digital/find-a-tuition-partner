@@ -42,6 +42,21 @@ resource "azurerm_key_vault" "default" {
     ]
   }
 
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_linux_function_app.default.identity[0].principal_id
+
+    key_permissions = [
+      "Get",
+      "List",
+    ]
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+
 
   network_acls {
     bypass                     = "AzureServices"
@@ -54,7 +69,6 @@ resource "azurerm_key_vault" "default" {
 
   lifecycle {
     ignore_changes = [
-      access_policy,
       network_acls[0].ip_rules,
     ]
   }
@@ -93,6 +107,7 @@ resource "azurerm_key_vault_secret" "fatpredisconnectionstring" {
 }
 
 resource "azurerm_key_vault_secret" "govuknotifyapikey" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
   name            = "GovUkNotify--ApiKey"
   value           = var.govuk_notify_apikey
   key_vault_id    = azurerm_key_vault.default.id
@@ -107,8 +122,24 @@ resource "azurerm_key_vault_secret" "govuknotifyapikey" {
 }
 
 resource "azurerm_key_vault_secret" "blobstorageclientsecret" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
   name            = "BlobStorage--ClientSecret"
   value           = var.blob_storage_client_secret
+  key_vault_id    = azurerm_key_vault.default.id
+  expiration_date = local.key_vault_year_from_now
+
+  lifecycle {
+    ignore_changes = [
+      value,
+      expiration_date,
+    ]
+  }
+}
+
+resource "azurerm_key_vault_secret" "blobstorageenquiriesdataclientsecret" {
+  depends_on      = [azurerm_postgresql_flexible_server_database.default]
+  name            = "BlobStorageEnquiriesData--ClientSecret"
+  value           = var.blob_storage_enquiries_data_client_secret
   key_vault_id    = azurerm_key_vault.default.id
   expiration_date = local.key_vault_year_from_now
 
@@ -135,7 +166,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 
@@ -144,7 +174,6 @@ resource "azurerm_monitor_diagnostic_setting" "default_key_vault" {
 
     retention_policy {
       enabled = true
-      days    = 7
     }
   }
 }

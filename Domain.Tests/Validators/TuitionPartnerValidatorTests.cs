@@ -11,7 +11,7 @@ public class TuitionPartnerValidatorTests
 
     public TuitionPartnerValidatorTests()
     {
-        _validator = new TuitionPartnerValidator(new Dictionary<string, TuitionPartner>());
+        _validator = new TuitionPartnerValidator(new List<TuitionPartner>());
     }
 
     [Theory]
@@ -247,9 +247,9 @@ public class TuitionPartnerValidatorTests
     [Fact]
     public void With_invalid_import_id()
     {
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        var successfullyProcessed = new List<TuitionPartner>
         {
-            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+            { new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
         };
         var validator = new TuitionPartnerValidator(successfullyProcessed);
         var model = new TuitionPartner { ImportId = "123" };
@@ -260,9 +260,9 @@ public class TuitionPartnerValidatorTests
     [Fact]
     public void With_valid_import_id()
     {
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        var successfullyProcessed = new List<TuitionPartner>
         {
-            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+            { new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
         };
         var validator = new TuitionPartnerValidator(successfullyProcessed);
         var model = new TuitionPartner { ImportId = "1234" };
@@ -273,9 +273,9 @@ public class TuitionPartnerValidatorTests
     [Fact]
     public void With_invalid_seourl_id()
     {
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        var successfullyProcessed = new List<TuitionPartner>
         {
-            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+            { new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
         };
         var validator = new TuitionPartnerValidator(successfullyProcessed);
         var model = new TuitionPartner { SeoUrl = "ABC" };
@@ -286,9 +286,9 @@ public class TuitionPartnerValidatorTests
     [Fact]
     public void With_valid_seourl_id()
     {
-        var successfullyProcessed = new Dictionary<string, TuitionPartner>
+        var successfullyProcessed = new List<TuitionPartner>
         {
-            { "test.xls", new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
+            { new TuitionPartner() { SeoUrl = "abc", ImportId = "123" } }
         };
         var validator = new TuitionPartnerValidator(successfullyProcessed);
         var model = new TuitionPartner { SeoUrl = "ABCD" };

@@ -11,11 +11,12 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
 
     public void SetStream(Stream stream)
     {
-        _document?.Dispose();
+        if (_document == null)
+        {
+            _document = SpreadsheetDocument.Open(stream, false);
+        }
 
-        _document = SpreadsheetDocument.Open(stream, false);
-
-        var workbookPart = _document.WorkbookPart;
+        var workbookPart = _document!.WorkbookPart;
         if (workbookPart == null)
         {
             throw new ArgumentException("Spreadsheet workbook could not be accessed from the supplied stream", nameof(stream));
@@ -25,6 +26,10 @@ public class OpenXmlSpreadsheetExtractor : ISpreadsheetExtractor, IDisposable
     public void PreloadSheet(string sheetName)
     {
         _loadedData ??= new Dictionary<string, Dictionary<string, string>>();
+
+        if (_loadedData.ContainsKey(sheetName))
+            return;
+
         var data = new Dictionary<string, string>();
 
         var descendants = GetWorksheet(sheetName).Descendants<Cell>();

@@ -16,7 +16,7 @@ namespace Functions
         }
 
         [Function("PollEmailProcessing")]
-        public async Task RunAysnc([TimerTrigger("* * * * *")] MyInfo myTimer)
+        public async Task RunAsync([TimerTrigger("* * * * *")] MyInfo myTimer)
         {
             var url = Environment.GetEnvironmentVariable("PollEmailProcessingUrl", EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(url))

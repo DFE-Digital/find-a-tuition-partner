@@ -40,3 +40,4 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
     list   = true
   }
 }
+

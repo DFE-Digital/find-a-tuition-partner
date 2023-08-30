@@ -35,3 +35,10 @@ resource "azurerm_subnet_nat_gateway_association" "app_service" {
   nat_gateway_id = azurerm_nat_gateway.default[0].id
   subnet_id      = azurerm_subnet.web_app_service_infra_subnet[0].id
 }
+
+resource "azurerm_subnet_nat_gateway_association" "function_app_service" {
+  count = local.launch_in_vnet && local.enable_nat_gateway ? 1 : 0
+
+  nat_gateway_id = azurerm_nat_gateway.default[0].id
+  subnet_id      = azurerm_subnet.function_app_service_infra_subnet[0].id
+}

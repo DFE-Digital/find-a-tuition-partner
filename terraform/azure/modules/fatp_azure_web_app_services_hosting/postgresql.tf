@@ -55,7 +55,6 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "web_app_default_sta
   end_ip_address   = azurerm_public_ip.nat_gateway[0].ip_address
 }
 
-
 resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rule" {
   for_each = local.postgresql_network_connectivity_method == "public" ? local.postgresql_firewall_ipv4_allow : {}
 
@@ -63,4 +62,34 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "firewall_rule" {
   server_id        = azurerm_postgresql_flexible_server.default.id
   start_ip_address = each.value.start_ip_address
   end_ip_address   = each.value.end_ip_address
+}
+
+resource "azurerm_monitor_diagnostic_setting" "default_postgresql_flexible_server" {
+  count = local.enable_monitoring ? 1 : 0
+
+  name               = "${local.resource_prefix}-postgresql-diag"
+  target_resource_id = azurerm_postgresql_flexible_server.default.id
+
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.web_app_service.id
+  log_analytics_destination_type = "Dedicated"
+
+
+  dynamic "enabled_log" {
+    for_each = local.postgres_flexi_server_diagnostic_setting_types
+    content {
+      category = enabled_log.value
+
+      retention_policy {
+        enabled = true
+      }
+    }
+  }
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = true
+    }
+  }
 }

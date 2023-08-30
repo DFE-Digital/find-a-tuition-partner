@@ -84,12 +84,13 @@ public class TribalSpreadsheetTuitionPartnerFactory : ITribalSpreadsheetTuitionP
 
         if (_allWarnings.Any())
         {
-            _logger.LogWarning("Issue(s) importing Tribal spreadsheet '{filename}': {warnings}", filename, string.Join(Environment.NewLine, _allWarnings));
+            _logger.LogWarning("{TPDataImportLogMessagePrefix}There were the following warnings(s) in '{filename}': {warnings}", StringConstants.TPDataImportLogMessagePrefix,
+                filename, string.Join(Environment.NewLine, _allWarnings));
         }
 
         if (_allErrors.Any())
         {
-            throw new InvalidOperationException($"Error(s) importing Tribal spreadsheet '{filename}': {string.Join(Environment.NewLine, _allErrors)}");
+            throw new InvalidOperationException($"There were the following error(s) in '{filename}': {string.Join(Environment.NewLine, _allErrors)}");
         }
 
         return tuitionPartners;

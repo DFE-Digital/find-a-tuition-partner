@@ -66,6 +66,13 @@ inputs:
     required: true
     default: false
     type: boolean
+  az_function_app_name:
+    required: true
+    type: string
+  deploy_to_azure_function_app:
+    required: true
+    default: false
+    type: boolean
 
 runs:
   using: composite
@@ -110,7 +117,7 @@ runs:
         else
           az keyvault network-rule add --resource-group ${{ inputs.az_resource_group_name }} --name ${{ inputs.az_webapp_name }}-kv --ip-address ${{ steps.whats-my-ip.outputs.ip }}
         fi
-        
+              
     # Install the latest version of the Terraform CLI
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -217,6 +224,12 @@ runs:
           non_pr_env_name: ${{ inputs.non_pr_env_name }}
           dfeAnalytics_credential: ${{ inputs.dfeAnalytics_credential }}
           run_database_migrations_and_import_data: ${{ inputs.run_database_migrations_and_import_data }}
+          az_tenant_id: ${{ inputs.az_tenant_id }}
+          az_subscription_id: ${{ inputs.az_subscription_id }}
+          az_client_id: ${{ inputs.az_client_id }}
+          az_client_secret: ${{ inputs.az_client_secret }}
+          az_function_app_name: ${{ inputs.az_function_app_name }}
+          deploy_to_azure_function_app: ${{ inputs.deploy_to_azure_function_app }}
         
     - name: Remove GitHub runner IP from the Storage Account firewall rule
       if: always()
