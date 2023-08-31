@@ -262,7 +262,8 @@ public class DataImporterService : IHostedService
                 TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 (exception, sleepDuration, retryCount, context) =>
                 {
-                    _logger.LogWarning(exception, "Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}", originalFilename, sleepDuration, retryCount, numberOfRetries);
+                    _logger.LogWarning(exception, "{TPDataImportLogMessagePrefix}Exception thrown when reading Tuition Partner from file {OriginalFilename}.  Retrying in {SleepDuration}. Attempt {RetryCount} out of {NumberOfRetries}",
+                        StringConstants.TPDataImportLogMessagePrefix, originalFilename, sleepDuration, retryCount, numberOfRetries);
                 });
 
 
