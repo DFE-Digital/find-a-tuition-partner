@@ -27,7 +27,7 @@ A user contacting the service desk will result in the creation of a Zendesk tick
 
 ### Via Alerts Posted to Slack
 
-Warning and above log entries generate alerts from [logit.io](https://dashboard.logit.io/a/11f9b93e-af04-480b-a838-4d3a19e93e39/s/5a330412-9270-4c5b-ba07-0035bf55fe95/elastalert/viewrules). These alerts are posted to the following Slack channels:
+Warning and above log entries generate alerts from Azure App Insights. These alerts are posted to the following Slack channels and via email:
 
 * #ntp-find-a-tuition-partner-alerts (via exception_alerts.yaml) - alerts from the *Production* environment. **Should be investigated and triaged immediately**
 * #ntp-dev-team (via exception_alerts_non_production.yaml) - alerts from the non production environment
