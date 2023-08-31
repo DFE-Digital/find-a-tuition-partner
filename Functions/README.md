@@ -3,7 +3,7 @@
 
 The Enquiries data is extracted from the FaTP database to a container in Azure Blob Storage.
 
-**You must get a client secret and run the four `dotnet user-secrets set` commands below for the data extraction function to work. To request the client secret, please contact the project lead.**
+**You must get a client secret and run the five `dotnet user-secrets set` commands below for the data extraction function to work. To request the client secret, please contact the project lead.**
 
 You can then use the following commands to add the necessary user secrets after obtaining the client secret:
 
