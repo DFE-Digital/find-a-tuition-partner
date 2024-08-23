@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Infrastructure.Extensions;
 
@@ -24,7 +25,7 @@ public static class HostBuilderExtensions
                 .MinimumLevel.Override("System", overrideLogEventLevel.Value)
                 .Enrich.FromLogContext()
                 .Enrich.WithEnvironmentName()
-                .WriteTo.Console();
+                .WriteTo.Console(theme: ConsoleTheme.None);
 
             var appInsightInstrumentationKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
 

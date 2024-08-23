@@ -157,6 +157,18 @@ app.UseStatusCodePagesWithReExecute("/Error", "?Status={0}");
 
 app.UseHttpsRedirection();
 
+// Decommission the site from midnight on 1st September by redirecting all traffic to a gov.uk page
+app.Use(async (context, next) =>
+{
+    if (DateTime.Now > new DateTime(2024, 8, 23, 13, 00, 00))
+    {
+        context.Response.Redirect("https://www.gov.uk/government/publications/tutoring-in-education-settings");
+        return;
+    }
+
+    await next();
+});
+
 var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
 app.UseStaticFiles(new StaticFileOptions
 {
