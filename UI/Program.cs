@@ -157,10 +157,11 @@ app.UseStatusCodePagesWithReExecute("/Error", "?Status={0}");
 
 app.UseHttpsRedirection();
 
-// Decommission the site from midnight on 1st September by redirecting all traffic to a gov.uk page
+// Retire the site from midnight on 1st September by redirecting all traffic to a gov.uk page about tutoring
 app.Use(async (context, next) =>
 {
-    if (DateTime.UtcNow > new DateTime(2024, 8, 23, 13, 00, 00))
+    // 00:00 BST on 1st September 2024 is 23:00 UTC on 31st August
+    if (DateTime.UtcNow >= new DateTime(2024, 8, 31, 23, 0, 0))
     {
         context.Response.Redirect("https://www.gov.uk/government/publications/tutoring-in-education-settings");
         return;
